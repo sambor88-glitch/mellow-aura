@@ -16,6 +16,7 @@ Strona pracowni ceramiki i rękodzieła Katarzyny Samborskiej — Kraków.
 | `github.md` | Zapis powiązania z repozytorium i notatki o synchronizacji |
 | `support.js`, `doc-page.js` | Biblioteki potrzebne do otwarcia plików `.dc.html` |
 | `.claude/skills/` | Dziewięć instrukcji — wygląd i UX — z których Claude korzysta sam przy pracy nad stroną, panelem, telefonem i drukiem |
+| `CLAUDE.md` | Stos, źródła prawdy i zasady pracy nad kodem — Claude wczytuje go na początku każdej sesji |
 
 ## Jak to otworzyć
 
