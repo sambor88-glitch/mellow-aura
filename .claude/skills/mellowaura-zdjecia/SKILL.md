@@ -40,7 +40,8 @@ dobieraj jakość per plik tak, żeby PSNR wobec oryginału wyniósł **co najmn
 (`ImageChops.difference` i histogram), a różnica w wadze całego katalogu to niecałe 270 KB.
 
 Po wrzuceniu pliku dopisz ścieżkę w polach `img` i `gallery` w tablicy `PRODUCTS`, a dla zdjęć
-pracowni w `studioHero`.
+pracowni w `studioHero`. W prototypie Kasia może też wgrać zdjęcia z panelu (Produkty → pasek galerii przy produkcie,
+kilka plików naraz) — trafiają do `s.gals[id]` i żyją do odświeżenia strony; we wdrożeniu idą na serwer.
 
 **Cel wagowy:** zdjęcie produktu poniżej **150 KB**, zdjęcie na całą szerokość poniżej **250 KB**.
 Jeden plik ten próg przekracza — `zestaw-flatlay.webp` ma 313 KB, bo to flat-lay gęsty od drobnych

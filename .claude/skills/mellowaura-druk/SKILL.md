@@ -86,7 +86,7 @@ Certyfikat podpisuje się długopisem, więc linie muszą mieć gdzie pomieści�
 
 ```html
 <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 4mm; border-bottom: 0.25mm dotted #C6B8A5; padding-bottom: 1.6mm">
-  <span style="color: #8A7A69; letter-spacing: 0.08em">Praca</span><span style="flex: 1"></span>
+  <span style="color: #726456; letter-spacing: 0.08em">Praca</span><span style="flex: 1"></span>
 </div>
 ```
 

@@ -3,13 +3,15 @@ branch: main
 
 ## Last sync
 
-date: 2026-09-14T21:50:46Z
+date: 2026-09-14T22:07:19Z
 
 ### Updated in this project
 
+- Sprawdzenie po wgraniu przez Kasię: pliki główne doszły (MellowAura, README, github.md, certyfikat, voucher, specyfikacja, oba warianty zakupu, Plan wdrozenia). **Nie doszedł katalog `.claude/skills/`** — ukryty folder, Finder go nie pokazał; hashe skilli w repo są stare. Wgrany omyłkowo pusty szkic `Plan developmentu - MellowAura.dc.html` (206 B) — do usunięcia z repo, lokalnie usunięty.
+
 - Pobrane z repozytorium: paleta po audycie kontrastu (`#8A7A69→#726456` / `#9B8C7C` na ciemnym tle, `#A0907D→#736454`, `#8C6440→#855F3D`) i zdjęcia w WebP — nałożone na lokalną wersję `MellowAura.dc.html`, która ma nowsze funkcje (animacje, zakładki Ustawienia i Treści, galerie produktów). PNG-i usunięte.
 - Pobrane `.claude/skills/` (9 instrukcji wyglądu i UX + `kontrast.py`), nowe `README.md` i `.gitignore`.
-- Do wypchnięcia ręcznie do repozytorium: `MellowAura.dc.html` (scalona), `README.md` (dopisane dwa pliki), `github.md`, `Plan wdrozenia - Laravel krok po kroku.dc.html`, `Plan developmentu - MellowAura.dc.html` — dwóch ostatnich w repozytorium jeszcze nie ma.
+- Do wypchnięcia ręcznie do repozytorium: `MellowAura.dc.html` (scalona), `README.md` (dopisane dwa pliki), `github.md`, `Plan wdrozenia - Laravel krok po kroku.dc.html`.
 - Rozjazd w skillach naprawiony: przykłady komponentów w `mellowaura-design`, `-panel`, `-strona`, `-druk`, `-aplikacja` przepisane na paletę AA; sekcja „Ruch" opisuje 9 animacji; `-panel` opisuje zakładki Treści i Ustawienia oraz galerie. Dokumenty do druku i plany też w nowej palecie.
 - Lista plików do wgrania i instrukcja krok po kroku: `WYPCHNIJ.md` (nie wgrywać do repo).
 
@@ -42,6 +44,8 @@ Stare, publiczne repozytorium `mellow_aura` zostało usunięte 14.09.2026 (potwi
 Nowe repozytorium `mellow-aura` nie zawiera katalogu `uploads/` ani żadnych danych wrażliwych.
 
 ## Sync history
+
+- 2026-09-14T21:50:46Z — scalenie palety AA i WebP z repo z lokalnymi funkcjami; skopiowane `.claude/skills/`.
 
 - 2026-09-14T19:14:41Z — projekt wgrany do nowego, czystego repozytorium `mellow-aura` (26 plików, bez `uploads/`).
 - 2026-09-14T19:10:53Z — repozytorium `mellow_aura` (publiczne): wgrane 48 plików, następnie usunięte dwa zrzuty ekranu z danymi wrażliwymi; pozostały w historii.

@@ -100,7 +100,7 @@ przychodzących nie istnieje dla wyszukiwarki.
 <div style="padding: 72px 0 40px">
   <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 26px">
     <span style="width: 34px; height: 1px; background: #B98E64"></span>
-    <span style="font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #8C6440">nadtytuł</span>
+    <span style="font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #855F3D">nadtytuł</span>
   </div>
   <h1 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(32px, 4.4vw, 52px); line-height: 1.04; margin: 0 0 20px; text-wrap: pretty">Nagłówek</h1>
   <p style="font-size: 17.5px; line-height: 1.68; color: #5C5043; max-width: 46ch; margin: 0; text-wrap: pretty">Jedno zdanie o tym, po co tu jesteś.</p>
@@ -125,7 +125,7 @@ przychodzących nie istnieje dla wyszukiwarki.
       </div>
       <div style="padding: 18px">
         <div style="font-family: Newsreader, serif; font-size: 20px">{{ it.name }}</div>
-        <div style="font-size: 13px; color: #8A7A69; margin-top: 4px">{{ it.priceLabel }}</div>
+        <div style="font-size: 13px; color: #726456; margin-top: 4px">{{ it.priceLabel }}</div>
       </div>
     </div>
   </sc-for>

@@ -8,7 +8,6 @@ Strona pracowni ceramiki i rękodzieła Katarzyny Samborskiej — Kraków.
 | --- | --- |
 | `MellowAura.dc.html` | Cała strona: 20 widoków, sklep z własnym koszykiem i BLIK-iem, konfigurator kubka z napisem, warsztaty z terminami, usługi na zamówienie, dziennik i panel właścicielki (8 zakładek — w tym Ustawienia i Treści); galerie produktów z karuzelą na kartach, animacje wejścia i przejść |
 | `Plan wdrozenia - Laravel krok po kroku.dc.html` | Ośmiotygodniowy plan wdrożenia na Laravel + Forge: konta, schemat bazy, pułapki, pierwsze kroki |
-| `Plan developmentu - MellowAura.dc.html` | Plan rozwoju serwisu po starcie |
 | `Specyfikacja wdrozenia - MellowAura.dc.html` | Dokument dla osoby wdrażającej: adresy stron z tytułami i opisami, dane strukturalne, zakres panelu, integracje, braki do uzupełnienia |
 | `Certyfikat unikatu.dc.html` | Dwustronna karta A6 do wydruku, dołączana do każdej paczki |
 | `Voucher warsztatowy.dc.html` | Pozioma karta A4 — voucher na warsztat do wydruku |

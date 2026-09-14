@@ -48,7 +48,7 @@ Na karcie produktu cena i „Do koszyka" nie mogą wyjechać poza ekran przy prz
 <div style="position: sticky; bottom: 0; z-index: 50; background: rgba(243, 237, 228, 0.96); backdrop-filter: blur(14px); border-top: 1px solid #E2D7C7; padding: 14px 16px calc(14px + env(safe-area-inset-bottom)); display: flex; gap: 12px; align-items: center">
   <div style="flex: 1 1 auto; min-width: 0">
     <div style="font-family: Newsreader, serif; font-size: 22px; line-height: 1">{{ cena }}</div>
-    <div style="font-size: 11.5px; color: #8A7A69">{{ wariant }}</div>
+    <div style="font-size: 11.5px; color: #726456">{{ wariant }}</div>
   </div>
   <button onClick="{{ doKoszyka }}" style="flex: 0 0 auto; background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px 28px; font-size: 14px" style-hover="background: #24417E">Do koszyka</button>
 </div>

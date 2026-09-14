@@ -44,8 +44,21 @@ adminTabs: [
 Do markupu dochodzi flaga `tabZam: s.adminTab === 'zamowienia'` i owinięcie zawartości w `<sc-if>`.
 Przycisk „Wyloguj" zostaje na końcu paska z `margin-left: auto`.
 
-Powyżej sześciu zakładek pasek się łamie i przestaje być czytelny — wtedy zamiast siódmej
-rozbuduj istniejącą albo zaproponuj boczne menu.
+Obecne zakładki (8): Produkty · Warsztaty i terminy · Kubek z napisem · Usługi i zestawy · Wypały ·
+Dziennik i wydarzenia · Treści · Ustawienia. Zanim dodasz nową, sprawdź, czy rzecz nie należy do jednej z dwóch ostatnich:
+
+- **Treści** — wszystko, co jest zdaniem na stronie: akapity „O mnie", sekcja Kasi na głównej, FAQ (pytania, odpowiedzi,
+  kolejność), kafelki materiałów, notki pod cennikami, hasło w stopce. Wzór: pole `TEXTS[klucz]` + `this.t('klucz')`
+  w `renderVals()` + wpis w `contentFields`.
+- **Ustawienia** — liczby i dane, które wracają w wielu miejscach: koszty dostawy, pakowanie, zaliczka, telefon,
+  Instagram, Facebook, miasto oraz listy w rozwijanych polach formularzy (`s.lists`) i przedziały budżetu (`s.budgets`).
+  Nową listę dodajesz jednym wpisem w `formLists` — edytor (zmiana, kolejność, usuwanie, dodawanie) jest wspólny (`mkList`).
+
+Zdjęcia produktów: każdy wiersz w „Produkty" ma pasek galerii (`s.gals[id]`) — pierwsze zdjęcie to okładka,
+kolejne przewijają się na karcie w sklepie po najechaniu. Wgrywanie wielu plików: `readImgs(e, cb)`.
+
+Pasek z ośmioma zakładkami łamie się na wąskim ekranie — to akceptowalne w prototypie, we wdrożeniu
+zaplanuj boczne menu. Nie dodawaj dziewiątej zakładki bez tej zmiany.
 
 ## Kafelek z liczbą
 
@@ -56,8 +69,8 @@ Panel otwiera rząd czterech liczb: dziś, ten tydzień, do wysłania, do odpisa
   <sc-for list="{{ kpi }}" as="k" hint-placeholder-count="4">
     <div style="flex: 1 1 180px; min-width: 0; background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 20px 22px">
       <div style="font-family: Newsreader, serif; font-size: 34px; line-height: 1; color: #2F2620">{{ k.value }}</div>
-      <div style="font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: #8A7A69; margin-top: 6px">{{ k.label }}</div>
-      <div style="font-size: 12.5px; color: #A0907D; margin-top: 8px">{{ k.hint }}</div>
+      <div style="font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: #726456; margin-top: 6px">{{ k.label }}</div>
+      <div style="font-size: 12.5px; color: #736454; margin-top: 8px">{{ k.hint }}</div>
     </div>
   </sc-for>
 </div>
@@ -75,10 +88,10 @@ składa się w jedną kolumnę:
 <div style="display: grid; gap: 10px">
   <sc-for list="{{ zamowienia }}" as="z" hint-placeholder-count="5">
     <div style="background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 16px 18px; display: flex; flex-wrap: wrap; gap: 14px; align-items: center">
-      <div style="flex: 0 0 auto; font-size: 12.5px; color: #A0907D; font-variant-numeric: tabular-nums">{{ z.nr }}</div>
+      <div style="flex: 0 0 auto; font-size: 12.5px; color: #736454; font-variant-numeric: tabular-nums">{{ z.nr }}</div>
       <div style="flex: 1 1 200px; min-width: 0">
         <div style="font-size: 14.5px; color: #2F2620">{{ z.klient }}</div>
-        <div style="font-size: 12.5px; color: #8A7A69; margin-top: 2px">{{ z.pozycje }}</div>
+        <div style="font-size: 12.5px; color: #726456; margin-top: 2px">{{ z.pozycje }}</div>
       </div>
       <div style="flex: 0 0 auto; font-family: Newsreader, serif; font-size: 19px; font-variant-numeric: tabular-nums">{{ z.kwota }}</div>
       <span style="flex: 0 0 auto; border-radius: 999px; padding: 5px 12px; font-size: 11.5px; background: {{ z.stBg }}; color: {{ z.stFg }}">{{ z.status }}</span>
@@ -97,7 +110,7 @@ składa się w jedną kolumnę:
 | Nowe | `#D6A39C` | `#2F2620` |
 | W realizacji | `#EDE4D8` | `#5C5043` |
 | Wysłane | `#F0F3FA` | `#24417E` |
-| Zakończone | `#F7F2EA` | `#8A7A69` |
+| Zakończone | `#F7F2EA` | `#726456` |
 | Problem | `#F7ECE9` | `#8C3A2E` |
 
 Status ma być rzeczownikiem po polsku i znaczyć dokładnie jeden etap. Jeśli potrzebujesz szóstego,
@@ -112,7 +125,7 @@ po prawej (`flex: 0 1 260px`). Reguły:
   wtedy, gdy naprawdę są parą (rozmiar i cena).
 - Wgrywanie zdjęcia to `<label>` z linią przerywaną `1px dashed #C6B8A5` i ukrytym `<input type="file">`.
   Po wybraniu pliku pokazujesz podgląd nad opisem.
-- Podpowiedź pod polem: `12.5px`, kolor `#A0907D`, zdanie po ludzku — „JPG lub PNG, najlepiej kwadrat".
+- Podpowiedź pod polem: `12.5px`, kolor `#736454`, zdanie po ludzku — „JPG lub PNG, najlepiej kwadrat".
 - Wiersze powtarzalne (rozmiary, terminy) mają przycisk `+ dodaj` z linią przerywaną i `×` do usunięcia,
   aktywne dopiero od drugiego wiersza.
 - Przycisk zapisu na końcu, pełna szerokość, `padding: 16px`, tekst mówiący co się stanie:
@@ -137,7 +150,7 @@ Nigdy nie zostawiaj gołej pustki. Karta z linią przerywaną, jedno zdanie i pr
 ```html
 <div style="border: 1px dashed #C6B8A5; border-radius: 4px; padding: 40px 28px; text-align: center; background: #F7F2EA">
   <div style="font-family: Newsreader, serif; font-size: 22px; margin-bottom: 8px">Jeszcze nic tu nie ma</div>
-  <p style="font-size: 13.5px; color: #8A7A69; margin: 0 0 20px; max-width: 42ch; margin-inline: auto">Pierwsze zamówienie pojawi się tutaj razem z adresem do wysyłki i sposobem płatności.</p>
+  <p style="font-size: 13.5px; color: #726456; margin: 0 0 20px; max-width: 42ch; margin-inline: auto">Pierwsze zamówienie pojawi się tutaj razem z adresem do wysyłki i sposobem płatności.</p>
   <button onClick="{{ akcja }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 13px 26px; font-size: 13.5px" style-hover="background: #24417E">Dodaj pierwszy produkt</button>
 </div>
 ```

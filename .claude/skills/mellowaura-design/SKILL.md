@@ -74,10 +74,10 @@ Zasady, od których nie ma odstępstw:
 - **H1 skaluje się płynnie:** `font-size: clamp(42px, 6.2vw, 84px)`, `line-height: 0.98`,
   `letter-spacing: -0.02em`. Nagłówek sekcji: `clamp(32px, 4.4vw, 52px)`, `line-height: 1.04`.
 - **Kursywa w brązie podkreśla jedno słowo w nagłówku**, nie całe zdanie:
-  `<em style="font-style: italic; color: #8C6440">jednej pary</em>`.
+  `<em style="font-style: italic; color: #855F3D">jednej pary</em>`.
 - **Nadtytuł (eyebrow)** — to sygnatura tej strony, powtarza się kilkadziesiąt razy:
-  `font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #8C6440`.
-- **Etykieta w karcie:** `font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: #8A7A69`.
+  `font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #855F3D`.
+- **Etykieta w karcie:** `font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: #726456`.
 - **Akapit prowadzący:** `17.5px / 1.68`, kolor `#5C5043`, szerokość `max-width: 46ch`.
   Tekst zwykły `14–15px / 1.6`. Nigdy nie puszczaj akapitu na całą szerokość 1280 px.
 - **`text-wrap: pretty`** na każdym nagłówku i akapicie prowadzącym — nie zostawia sierot.
@@ -93,7 +93,7 @@ Zasady, od których nie ma odstępstw:
 | `6px` | kafelki ze zdjęciem |
 | `3px` | miniatura wewnątrz karty, obrys focusu |
 
-Zero `box-shadow`. Głębię buduje obrys `1px solid #DCD0BE` i zmiana tła o jeden stopień.
+Zero `box-shadow` w spoczynku. Głębię buduje obrys `1px solid #DCD0BE` i zmiana tła o jeden stopień. Jedyny wyjątek: miękki cień na karcie produktu w stanie hover (sekcja „Ruch").
 
 ## Gotowe komponenty
 
@@ -113,7 +113,7 @@ Kopiuj i podmieniaj treść. Wszystkie hovery przez atrybut `style-hover` (forma
 ```html
 <div style="background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 28px 26px">
   <div style="font-family: Newsreader, serif; font-size: 25px; margin-bottom: 4px">Tytuł</div>
-  <p style="font-size: 13.5px; color: #8A7A69; margin: 0 0 22px">Zdanie wyjaśniające.</p>
+  <p style="font-size: 13.5px; color: #726456; margin: 0 0 22px">Zdanie wyjaśniające.</p>
 </div>
 ```
 
@@ -126,7 +126,7 @@ Kopiuj i podmieniaj treść. Wszystkie hovery przez atrybut `style-hover` (forma
 ```html
 <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 26px">
   <span style="width: 34px; height: 1px; background: #B98E64"></span>
-  <span style="font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #8C6440">home studio &middot; kraków</span>
+  <span style="font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #855F3D">home studio &middot; kraków</span>
 </div>
 ```
 
@@ -146,14 +146,24 @@ Kopiuj i podmieniaj treść. Wszystkie hovery przez atrybut `style-hover` (forma
 
 ## Ruch
 
-Cztery animacje, zdefiniowane raz w `<helmet>`, nie dokładaj piątej:
+Animacje zdefiniowane raz w `<helmet>` — używaj tych, nie dokładaj kolejnych:
 
 | Nazwa | Do czego |
 | --- | --- |
-| `maIn` | wejście widoku: `animation: maIn .4s ease both` |
-| `maUp` | wjazd treści od dołu o 14 px |
+| `maView` | wejście widoku: `animation: maView .55s cubic-bezier(.2,.7,.2,1) both` (fade + 10 px od dołu) |
+| `maUp` | wjazd karty lub bloku od dołu o 14 px; kaskada przez `animation-delay` |
+| `maReveal` | sekcja wyłania się przy przewijaniu: `animation: maReveal linear both; animation-timeline: view(); animation-range: entry 0% entry 38%` |
+| `maMarquee` | ciągły przesuw w poziomie (pasek haseł, pasek zdjęć pracowni); treść zdublowana, `translateX(-50%)` |
+| `maStamp` | litera „wbija się" w kubek w konfiguratorze |
+| `maBump` | licznik koszyka podskakuje po dodaniu |
 | `maSlide` | panel boczny, koszyk |
 | `maPulse` | element czekający na dane |
+| `maCheck` | znak ✓ przy potwierdzeniu |
+
+Zasady ruchu: miękko i wolno jak glina — przejścia 300–700 ms, `cubic-bezier(.2,.7,.2,1)`, nic nie odbija ani nie miga.
+Każdy przycisk ma `transition` na kolor i `style-active="transform: scale(.97)"`. Karty produktów: uniesienie o 4 px
+z miękkim cieniem `0 26px 50px -30px rgba(47,38,32,.5)` — to jedyny dopuszczony cień w projekcie, wyłącznie na hover.
+Po najechaniu na kartę zdjęcia z galerii przewijają się same (crossfade co 1,1 s); na telefonie zostaje okładka i kropki.
 
 Blok `@media (prefers-reduced-motion: reduce)` już jest — nie usuwaj go.
 
@@ -173,7 +183,7 @@ Blok `@media (prefers-reduced-motion: reduce)` już jest — nie usuwaj go.
 | Nie | Dlaczego |
 | --- | --- |
 | Białe tło `#fff` na płaszczyźnie | zimne, wypada ze świata ceramiki |
-| `box-shadow`, gradient, glassmorphism | ten projekt buduje głębię obrysem |
+| `box-shadow` w spoczynku, gradient, glassmorphism | ten projekt buduje głębię obrysem; cień tylko na hover karty |
 | Pogrubiony nagłówek szeryfowy | traci charakter pisma odręcznego |
 | Nowy odcień „bo pasuje" | paleta ma 20 pozycji, w niej jest odpowiedź |
 | Przycisk z rogiem innym niż `999px` | rozpada się spójność |
