@@ -9,3 +9,12 @@ __pycache__/
 # Śmieci systemowe
 .DS_Store
 Thumbs.db
+
+# Pliki robocze z eksportu Claude Design — zostają tylko lokalnie
+.thumbnail
+WYPCHNIJ.md
+
+# Klucze i hasła (Przelewy24, InPost, poczta) — nigdy do publicznego repozytorium
+.env
+.env.*
+!.env.example
