@@ -36,7 +36,7 @@
   <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">1. Warunek konieczny: osobne adresy</h2>
   <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">Prototyp przełącza widoki po stronie przeglądarki i aktualizuje <code>title</code>, <code>meta description</code>, <code>canonical</code> oraz <code>JSON-LD</code> przy każdej zmianie widoku. Do indeksowania to nie wystarcza — <strong style="font-weight: 500">każdy adres z tabeli w punkcie 2 musi być serwowany osobno</strong>, z kompletnym HTML-em w odpowiedzi serwera.</p>
   <ul style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px; padding-left: 20px">
-    <li style="margin-bottom: 5px">Zalecenie: generowanie statyczne albo renderowanie po stronie serwera (Astro, Next.js w trybie SSG/SSR, Eleventy).</li>
+    <li style="margin-bottom: 5px">Zalecenie: renderowanie po stronie serwera w Laravelu 13 z szablonami Blade. Wybór stosu i uzasadnienie: <code>Plan wdrozenia - Laravel krok po kroku.dc.html</code>, punkt 3.</li>
     <li style="margin-bottom: 5px">Każda strona: jeden <code>&lt;h1&gt;</code>, hierarchia <code>h2</code>/<code>h3</code> bez przeskoków, <code>lang="pl"</code> na <code>&lt;html&gt;</code>.</li>
     <li style="margin-bottom: 5px"><code>canonical</code> bezwzględny, bez parametrów; wersja z <code>www</code> i bez przekierowana na jedną, 301.</li>
     <li>Filtry w sklepie (kategoria, sortowanie) i filtry prezentowe: parametry zapytania z <code>canonical</code> na adres bazowy, żeby nie mnożyć duplikatów.</li>
