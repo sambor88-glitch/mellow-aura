@@ -8,31 +8,43 @@ description: Zdjęcia produktów i pracowni — kadrowanie do proporcji używany
 Sklep z ceramiką sprzedaje zdjęciem. Klient nie weźmie kubka do ręki, więc zdjęcie musi pokazać
 grubość ścianki, ślad palca w glinie i prawdziwy kolor szkliwa.
 
-## Stan na dziś — i co z tym zrobić
+## Format: WebP, i tak ma zostać
 
-Katalog `zdjecia/` ma 16 plików **PNG** o łącznej wadze **około 14 MB**.
-Najcięższy, `zestaw-flatlay.png`, to 2 MB przy wymiarach 867 × 920 px.
+Katalog `zdjecia/` to 16 plików **WebP** o łącznej wadze **1,2 MB**. Wcześniej były to PNG-i
+ważące 14,2 MB — konwersja ścięła 92%.
 
-To jest realny koszt: na telefonie w zasięgu LTE strona główna wciąga kilka megabajtów zanim
-cokolwiek się pokaże, a część osób wychodzi wcześniej.
+**Nie wracaj do PNG dla fotografii.** PNG powstał do grafik z płaskimi kolorami i przezroczystością;
+zdjęcie szkliwa to tysiące odcieni, na których jego kompresja bezstratna nie ma czego oszczędzać.
+Jedno zdjęcie potrafiło ważyć 2 MB tam, gdzie wystarczy 100 KB.
 
-**PNG to zły format dla fotografii.** PNG powstał do grafik z płaskimi kolorami i przezroczystością.
-Zdjęcie ceramiki to tysiące odcieni — kompresja PNG nie ma na nich czego oszczędzić.
+### Dokładanie nowego zdjęcia
 
-Przewalutowanie na WebP przy tej samej jakości daje **85–90% oszczędności**:
+Zdjęcie z aparatu albo telefonu przewalutuj przed wrzuceniem. Jeśli w systemie jest `cwebp`:
 
 ```bash
-# jeden plik
-cwebp -q 82 zdjecia/wazon-rzezbiony.png -o zdjecia/wazon-rzezbiony.webp
-
-# cały katalog
-for f in zdjecia/*.png; do cwebp -q 82 "$f" -o "${f%.png}.webp"; done
+cwebp -q 85 -m 6 nowe-zdjecie.png -o zdjecia/nowe-zdjecie.webp
 ```
 
-Jakość `82` jest granicą, poniżej której na szkliwie widać pasy. Po przewalutowaniu podmieniasz
-rozszerzenia w polach `img` i `gallery` w tablicy `PRODUCTS` oraz w `studioHero`.
+Jeśli nie ma, wystarczy Pillow (`pip install Pillow`):
 
-**Cel:** każde zdjęcie produktu poniżej **150 KB**, zdjęcie na całą szerokość poniżej **250 KB**.
+```python
+from PIL import Image
+im = Image.open('nowe-zdjecie.png').convert('RGB')   # alfa w tych zdjęciach jest nieużywana
+im.save('zdjecia/nowe-zdjecie.webp', 'WEBP', quality=85, method=6)
+```
+
+**Nie ustawiaj jakości na sztywno dla całej serii.** Przy stałej wartości 82 cztery zdjęcia
+z tego katalogu schodziły poniżej progu, od którego na gładkim szkliwie widać pasy. Zamiast tego
+dobieraj jakość per plik tak, żeby PSNR wobec oryginału wyniósł **co najmniej 40 dB** — dla tych
+16 zdjęć wyszły wartości od 70 do 93. Skrypt liczący PSNR to kilkanaście linii z Pillow
+(`ImageChops.difference` i histogram), a różnica w wadze całego katalogu to niecałe 270 KB.
+
+Po wrzuceniu pliku dopisz ścieżkę w polach `img` i `gallery` w tablicy `PRODUCTS`, a dla zdjęć
+pracowni w `studioHero`.
+
+**Cel wagowy:** zdjęcie produktu poniżej **150 KB**, zdjęcie na całą szerokość poniżej **250 KB**.
+Jeden plik ten próg przekracza — `zestaw-flatlay.webp` ma 313 KB, bo to flat-lay gęsty od drobnych
+faktur i zejście niżej kosztowałoby widoczną jakość. To świadomy wyjątek, nie niedopatrzenie.
 
 ## Wymiary
 
