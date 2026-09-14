@@ -15,7 +15,7 @@
   * { box-sizing: border-box; }
   html, body { margin: 0; }
   body { background: #F3EDE4; color: #2F2620; font-family: "Instrument Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
-  a { color: #8C6440; text-decoration: none; }
+  a { color: #855F3D; text-decoration: none; }
   a:hover { color: #24417E; }
   button { font-family: inherit; cursor: pointer; }
   input { font-family: inherit; }
@@ -27,7 +27,7 @@
 
   <div style="background: #EDE4D8; border-bottom: 1px solid #E2D7C7; padding: 12px 28px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: center">
     <span style="font-family: Newsreader, serif; font-size: 17px; letter-spacing: 0.16em; text-transform: uppercase">mellowaura</span>
-    <span style="font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #8C6440">wariant a &middot; koszyk krok po kroku</span>
+    <span style="font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #855F3D">wariant a &middot; koszyk krok po kroku</span>
   </div>
 
   <div style="max-width: 960px; margin: 0 auto; padding: 48px 28px 0">
@@ -49,7 +49,7 @@
               <img src="{{ c.img }}" alt="{{ c.name }}" style="width: 78px; height: 96px; object-fit: cover; border-radius: 3px; flex: 0 0 auto" />
               <div style="flex: 1 1 160px; min-width: 0">
                 <div style="font-family: Newsreader, serif; font-size: 19px; line-height: 1.25">{{ c.name }}</div>
-                <div style="font-size: 12.5px; color: #8A7A69; margin-top: 3px">{{ c.variant }}</div>
+                <div style="font-size: 12.5px; color: #726456; margin-top: 3px">{{ c.variant }}</div>
               </div>
               <div style="display: flex; align-items: center; border: 1px solid #DCD0BE; border-radius: 999px; flex: 0 0 auto">
                 <button onClick="{{ c.dec }}" style="background: transparent; border: 0; width: 34px; height: 34px; font-size: 16px; color: #6B5D4F">−</button>
@@ -66,7 +66,7 @@
         </div>
         <div style="display: flex; gap: 14px; flex-wrap: wrap; align-items: center">
           <button onClick="{{ next }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 16px 32px; font-size: 14.5px" style-hover="background: #24417E">Dalej — dostawa</button>
-          <span style="font-size: 13.5px; color: #8A7A69">Wysyłka i płatność w dwóch kolejnych krokach</span>
+          <span style="font-size: 13.5px; color: #726456">Wysyłka i płatność w dwóch kolejnych krokach</span>
         </div>
       </div>
     </sc-if>
@@ -89,12 +89,12 @@
                 <input placeholder="Miasto" style="flex: 1 1 150px; background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
               </div>
             </div>
-            <div style="font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #8A7A69; margin-bottom: 12px">Sposób dostawy</div>
+            <div style="font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #726456; margin-bottom: 12px">Sposób dostawy</div>
             <div style="display: grid; gap: 10px">
               <sc-for list="{{ ships }}" as="m" hint-placeholder-count="3">
                 <div onClick="{{ m.set }}" style="cursor: pointer; display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 4px; border: 1px solid {{ m.bd }}; background: {{ m.bg }}">
                   <span style="width: 16px; height: 16px; border-radius: 999px; border: 1px solid #A89684; display: grid; place-items: center; flex: 0 0 auto"><span style="width: 8px; height: 8px; border-radius: 999px; background: {{ m.dot }}"></span></span>
-                  <span style="flex: 1"><span style="display: block; font-size: 15px">{{ m.label }}</span><span style="display: block; font-size: 12.5px; color: #8A7A69; margin-top: 2px">{{ m.note }}</span></span>
+                  <span style="flex: 1"><span style="display: block; font-size: 15px">{{ m.label }}</span><span style="display: block; font-size: 12.5px; color: #726456; margin-top: 2px">{{ m.note }}</span></span>
                   <span style="font-size: 14px">{{ m.costLabel }}</span>
                 </div>
               </sc-for>
@@ -107,7 +107,7 @@
               <div style="display: flex; justify-content: space-between; font-size: 14px; color: #6B5D4F; margin-bottom: 14px"><span>Dostawa</span><span>{{ shipLabel }}</span></div>
               <div style="display: flex; justify-content: space-between; font-family: Newsreader, serif; font-size: 21px; padding-top: 14px; border-top: 1px solid #E2D7C7"><span>Razem</span><span>{{ totalLabel }}</span></div>
               <button onClick="{{ next }}" style="width: 100%; margin-top: 18px; background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px; font-size: 14.5px" style-hover="background: #24417E">Dalej — płatność</button>
-              <button onClick="{{ back }}" style="width: 100%; margin-top: 10px; background: transparent; color: #8A7A69; border: 0; padding: 8px; font-size: 13px">← Wróć do koszyka</button>
+              <button onClick="{{ back }}" style="width: 100%; margin-top: 10px; background: transparent; color: #726456; border: 0; padding: 8px; font-size: 13px">← Wróć do koszyka</button>
             </div>
           </div>
         </div>
@@ -123,7 +123,7 @@
               <sc-for list="{{ pays }}" as="m" hint-placeholder-count="4">
                 <div onClick="{{ m.set }}" style="cursor: pointer; display: flex; align-items: center; gap: 14px; padding: 17px 18px; border-radius: 4px; border: 1px solid {{ m.bd }}; background: {{ m.bg }}">
                   <span style="width: 16px; height: 16px; border-radius: 999px; border: 1px solid #A89684; display: grid; place-items: center; flex: 0 0 auto"><span style="width: 8px; height: 8px; border-radius: 999px; background: {{ m.dot }}"></span></span>
-                  <span style="flex: 1"><span style="display: block; font-size: 15px">{{ m.label }}</span><span style="display: block; font-size: 12.5px; color: #8A7A69; margin-top: 2px">{{ m.note }}</span></span>
+                  <span style="flex: 1"><span style="display: block; font-size: 15px">{{ m.label }}</span><span style="display: block; font-size: 12.5px; color: #726456; margin-top: 2px">{{ m.note }}</span></span>
                 </div>
               </sc-for>
             </div>
@@ -144,7 +144,7 @@
               <div style="display: flex; justify-content: space-between; font-size: 14px; color: #6B5D4F; margin-bottom: 14px"><span>Dostawa</span><span>{{ shipLabel }}</span></div>
               <div style="display: flex; justify-content: space-between; font-family: Newsreader, serif; font-size: 24px; padding-top: 14px; border-top: 1px solid #E2D7C7"><span>Razem</span><span>{{ totalLabel }}</span></div>
               <button onClick="{{ next }}" style="width: 100%; margin-top: 18px; background: #24417E; color: #F7F2EA; border: 0; border-radius: 999px; padding: 16px; font-size: 14.5px" style-hover="background: #2F2620">Płacę</button>
-              <button onClick="{{ back }}" style="width: 100%; margin-top: 10px; background: transparent; color: #8A7A69; border: 0; padding: 8px; font-size: 13px">← Wróć do dostawy</button>
+              <button onClick="{{ back }}" style="width: 100%; margin-top: 10px; background: transparent; color: #726456; border: 0; padding: 8px; font-size: 13px">← Wróć do dostawy</button>
             </div>
           </div>
         </div>
@@ -166,8 +166,8 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1000}}">
 const ITEMS = [
-  { id: 'kubki', name: 'Kubki z cytatem', variant: 'Królowa matka', price: 79, img: 'zdjecia/kubek-krolowa-matka.webp', qty: 2 },
-  { id: 'talerze', name: 'Talerze', variant: 'Odcisk roślinny', price: 140, img: 'zdjecia/talerz-niebieski-odcisk.webp', qty: 1 }
+  { id: 'kubki', name: 'Kubki z cytatem', variant: 'Królowa matka', price: 79, img: 'zdjecia/kubek-krolowa-matka.png', qty: 2 },
+  { id: 'talerze', name: 'Talerze', variant: 'Odcisk roślinny', price: 140, img: 'zdjecia/talerz-niebieski-odcisk.png', qty: 1 }
 ];
 const zl = n => n.toFixed(2).replace('.', ',') + ' zł';
 
@@ -180,7 +180,7 @@ class Component extends DCLogic {
     const free = sub >= 400;
     const cost = s.ship === 'odbior' ? 0 : free ? 0 : s.ship === 'kurier' ? 22 : 16;
     const setQty = (id, d) => this.setState({ cart: s.cart.map(c => c.id === id ? Object.assign({}, c, { qty: Math.max(1, c.qty + d) }) : c) });
-    const at = n => s.step === n ? '#2F2620' : '#A0907D';
+    const at = n => s.step === n ? '#2F2620' : '#736454';
 
     return {
       isS1: s.step === 1, isS2: s.step === 2, isS3: s.step === 3, isS4: s.step === 4,

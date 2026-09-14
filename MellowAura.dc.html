@@ -26,6 +26,12 @@
   @keyframes maIn { from { opacity: 0; } to { opacity: 1; } }
   @keyframes maSlide { from { transform: translateX(30px); opacity: 0; } to { transform: none; opacity: 1; } }
   @keyframes maPulse { 0%,100% { opacity: .35; } 50% { opacity: 1; } }
+  @keyframes maView { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes maReveal { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+  @keyframes maMarquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @keyframes maStamp { 0% { opacity: 0; transform: scale(1.6) translateY(-4px); } 60% { opacity: 1; transform: scale(.94); } 100% { opacity: 1; transform: none; } }
+  @keyframes maBump { 0% { transform: scale(1); } 40% { transform: scale(1.35); } 100% { transform: scale(1); } }
+  @keyframes maCheck { from { transform: scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
   :focus-visible { outline: 2px solid #24417E; outline-offset: 2px; border-radius: 3px; }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
@@ -42,16 +48,16 @@
         <span style="font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: #9A8978">ceramika &middot; rękodzieło &middot; kraków</span>
       </a>
       <nav style="display: flex; gap: 20px; flex-wrap: wrap; flex: 1 1 200px; min-width: 0; font-size: 13.5px; letter-spacing: 0.02em">
-        <a href="#/sklep" onClick="{{ goShop }}" style="color: #4A3E33" style-hover="color: #24417E">Sklep</a>
-        <a href="#/prezenty" onClick="{{ goGifts }}" style="color: #4A3E33" style-hover="color: #24417E">Prezenty</a>
-        <a href="#/warsztaty-ceramiczne-krakow" onClick="{{ goWorkshops }}" style="color: #4A3E33" style-hover="color: #24417E">Warsztaty</a>
-        <a href="#/o-mnie" onClick="{{ goAbout }}" style="color: #4A3E33" style-hover="color: #24417E">O mnie</a>
-        <a href="#/dziennik" onClick="{{ goJournal }}" style="color: #4A3E33" style-hover="color: #24417E">Dziennik</a>
-        <a href="#/kontakt" onClick="{{ goContact }}" style="color: #4A3E33" style-hover="color: #24417E">Kontakt</a>
+        <a href="#/sklep" onClick="{{ goShop }}" style="color: #4A3E33; transition: color .25s ease" style-hover="color: #24417E">Sklep</a>
+        <a href="#/prezenty" onClick="{{ goGifts }}" style="color: #4A3E33; transition: color .25s ease" style-hover="color: #24417E">Prezenty</a>
+        <a href="#/warsztaty-ceramiczne-krakow" onClick="{{ goWorkshops }}" style="color: #4A3E33; transition: color .25s ease" style-hover="color: #24417E">Warsztaty</a>
+        <a href="#/o-mnie" onClick="{{ goAbout }}" style="color: #4A3E33; transition: color .25s ease" style-hover="color: #24417E">O mnie</a>
+        <a href="#/dziennik" onClick="{{ goJournal }}" style="color: #4A3E33; transition: color .25s ease" style-hover="color: #24417E">Dziennik</a>
+        <a href="#/kontakt" onClick="{{ goContact }}" style="color: #4A3E33; transition: color .25s ease" style-hover="color: #24417E">Kontakt</a>
       </nav>
-      <button onClick="{{ openCart }}" style="display: flex; align-items: center; gap: 10px; background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 11px 20px; font-size: 13px; letter-spacing: 0.04em" style-hover="background: #24417E">
+      <button onClick="{{ openCart }}" style="display: flex; align-items: center; gap: 10px; background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 11px 20px; font-size: 13px; letter-spacing: 0.04em; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">
         <span>Koszyk</span>
-        <span style="min-width: 21px; height: 21px; border-radius: 999px; background: #D6A39C; color: #2F2620; display: grid; place-items: center; font-size: 11.5px; font-weight: 600; padding: 0 5px">{{ cartCount }}</span>
+        <span key="{{ cartCount }}" style="min-width: 21px; height: 21px; border-radius: 999px; background: #D6A39C; color: #2F2620; display: grid; place-items: center; font-size: 11.5px; font-weight: 600; padding: 0 5px; animation: maBump .45s cubic-bezier(.2,.8,.2,1) both">{{ cartCount }}</span>
       </button>
     </div>
   </div>
@@ -59,11 +65,11 @@
   <div style="flex: 1">
 
   <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
-  <div style="animation: maIn .4s ease both">
+  <div style="animation: maView .55s cubic-bezier(.2,.7,.2,1) both">
 
     <div style="max-width: 1280px; margin: 0 auto; padding: 0 28px">
       <div style="display: flex; flex-wrap: wrap; gap: 56px; align-items: center; padding: 72px 0 84px">
-        <div style="flex: 1 1 400px; min-width: 0">
+        <div style="flex: 1 1 400px; min-width: 0; animation: maUp .8s cubic-bezier(.2,.7,.2,1) both">
           <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 26px">
             <span style="width: 34px; height: 1px; background: #B98E64"></span>
             <span style="font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #855F3D">home studio &middot; kraków</span>
@@ -71,9 +77,9 @@
           <h1 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(42px, 6.2vw, 84px); line-height: 0.98; letter-spacing: -0.02em; margin: 0 0 28px; text-wrap: pretty">Glina i jedwab<br />z <em style="font-style: italic; color: #855F3D">jednej pary</em> rąk.</h1>
           <p style="font-size: 17.5px; line-height: 1.68; color: #5C5043; max-width: 46ch; margin: 0 0 36px; text-wrap: pretty">Ceramika formowana w dłoniach i jedwabne dodatki szyte z tkanin z drugiego obiegu — dwie dziedziny w jednej krakowskiej pracowni. Do tego kubki z napisem wbijanym stemplem, którego nie zetrze żadna zmywarka.</p>
           <div style="display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 44px">
-            <button onClick="{{ goMug }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 16px 32px; font-size: 14px; letter-spacing: 0.04em" style-hover="background: #24417E">Zaprojektuj kubek z napisem</button>
-            <button onClick="{{ goShop }}" style="background: transparent; color: #2F2620; border: 1px solid #C6B8A5; border-radius: 999px; padding: 16px 32px; font-size: 14px; letter-spacing: 0.04em" style-hover="border-color: #2F2620; background: #EDE4D8">Zobacz produkty</button>
-            <button onClick="{{ goWorkshops }}" style="background: transparent; color: #2F2620; border: 1px solid #C6B8A5; border-radius: 999px; padding: 16px 32px; font-size: 14px; letter-spacing: 0.04em" style-hover="border-color: #2F2620; background: #EDE4D8">Warsztaty</button>
+            <button onClick="{{ goMug }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 16px 32px; font-size: 14px; letter-spacing: 0.04em; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Zaprojektuj kubek z napisem</button>
+            <button onClick="{{ goShop }}" style="background: transparent; color: #2F2620; border: 1px solid #C6B8A5; border-radius: 999px; padding: 16px 32px; font-size: 14px; letter-spacing: 0.04em; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; background: #EDE4D8" style-active="transform: scale(.98)">Zobacz produkty</button>
+            <button onClick="{{ goWorkshops }}" style="background: transparent; color: #2F2620; border: 1px solid #C6B8A5; border-radius: 999px; padding: 16px 32px; font-size: 14px; letter-spacing: 0.04em; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; background: #EDE4D8" style-active="transform: scale(.98)">Warsztaty</button>
           </div>
           <div style="display: flex; flex-wrap: wrap; gap: 32px; padding-top: 28px; border-top: 1px solid #E2D7C7">
             <div><div style="font-family: Newsreader, serif; font-size: 30px; line-height: 1">100%</div><div style="font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: #726456; margin-top: 4px">ręczna robota</div></div>
@@ -81,11 +87,11 @@
             <div><div style="font-family: Newsreader, serif; font-size: 30px; line-height: 1">3–5 dni</div><div style="font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: #726456; margin-top: 4px">wysyłka zamówienia</div></div>
           </div>
         </div>
-        <div style="flex: 1 1 380px; min-width: 0; position: relative">
+        <div style="flex: 1 1 380px; min-width: 0; position: relative; animation: maUp 1s cubic-bezier(.2,.7,.2,1) both; animation-delay: .15s">
           <div onClick="{{ openHero }}" style="cursor: pointer; border-radius: 46% 54% 52% 48% / 50% 46% 54% 50%; overflow: hidden; box-shadow: 0 34px 80px -34px rgba(47, 38, 32, 0.45)">
-            <img src="{{ heroImg }}" alt="Ręcznie formowana ceramika z pracowni MellowAura" style="width: 100%; display: block; aspect-ratio: 1/1; object-fit: cover" />
+            <img src="{{ heroImg }}" alt="Ręcznie formowana ceramika z pracowni MellowAura" style="width: 100%; display: block; aspect-ratio: 1/1; object-fit: cover; transition: transform 1.4s cubic-bezier(.2,.7,.2,1)" style-hover="transform: scale(1.04)" />
           </div>
-          <div onClick="{{ openHero }}" style="cursor: pointer; position: absolute; bottom: -14px; left: -10px; background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 18px; padding: 14px 18px; box-shadow: 0 16px 40px -20px rgba(47, 38, 32, 0.4)" style-hover="border-color: #2F2620">
+          <div onClick="{{ openHero }}" style="cursor: pointer; position: absolute; bottom: -14px; left: -10px; background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 18px; padding: 14px 18px; box-shadow: 0 16px 40px -20px rgba(47, 38, 32, 0.4); transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620" style-active="transform: scale(.98)">
             <div style="font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: #A8813F">{{ heroBadge }}</div>
             <div style="font-family: Newsreader, serif; font-size: 19px; margin-top: 2px">{{ heroName }}</div>
             <div style="font-size: 13px; color: #6B5D4F">{{ heroPrice }}</div>
@@ -94,22 +100,31 @@
       </div>
     </div>
 
-    <div style="background: #EDE4D8; border-top: 1px solid #E2D7C7; border-bottom: 1px solid #E2D7C7; padding: 20px 0; overflow: hidden">
-      <div style="max-width: 1280px; margin: 0 auto; padding: 0 28px; display: flex; flex-wrap: wrap; gap: 14px 40px; justify-content: center; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: #7E6E5C">
-        <span>glina</span><span style="color: #C6B8A5">✦</span><span>jedwab</span><span style="color: #C6B8A5">✦</span><span>len</span><span style="color: #C6B8A5">✦</span><span>złoto 24k</span><span style="color: #C6B8A5">✦</span><span>less waste</span><span style="color: #C6B8A5">✦</span><span>unikat</span>
+    <div style="background: #EDE4D8; border-top: 1px solid #E2D7C7; border-bottom: 1px solid #E2D7C7; padding: 20px 0; overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent)">
+      <div aria-hidden="true" style="display: flex; width: max-content; gap: 40px; padding-right: 40px; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: #7E6E5C; animation: maMarquee 38s linear infinite">
+        <span>glina</span><span style="color: #C6B8A5">✦</span><span>jedwab</span><span style="color: #C6B8A5">✦</span><span>len</span><span style="color: #C6B8A5">✦</span><span>złoto 24k</span><span style="color: #C6B8A5">✦</span><span>less waste</span><span style="color: #C6B8A5">✦</span><span>unikat</span><span style="color: #C6B8A5">✦</span><span>kraków</span><span style="color: #C6B8A5">✦</span>
+        <span>glina</span><span style="color: #C6B8A5">✦</span><span>jedwab</span><span style="color: #C6B8A5">✦</span><span>len</span><span style="color: #C6B8A5">✦</span><span>złoto 24k</span><span style="color: #C6B8A5">✦</span><span>less waste</span><span style="color: #C6B8A5">✦</span><span>unikat</span><span style="color: #C6B8A5">✦</span><span>kraków</span><span style="color: #C6B8A5">✦</span>
       </div>
     </div>
 
-    <div style="max-width: 1280px; margin: 0 auto; padding: 84px 28px 0">
+    <div style="animation: maReveal linear both; animation-timeline: view(); animation-range: entry 0% entry 38%; max-width: 1280px; margin: 0 auto; padding: 84px 28px 0">
       <div style="display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 34px">
         <h2 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(30px, 3.6vw, 46px); margin: 0; letter-spacing: -0.01em">Co teraz jest w pracowni</h2>
         <a href="#/sklep" onClick="{{ goShop }}" style="font-size: 13.5px; letter-spacing: 0.06em; border-bottom: 1px solid #C6B8A5; padding-bottom: 3px">Wszystkie produkty →</a>
       </div>
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 26px">
         <sc-for list="{{ featured }}" as="p" hint-placeholder-count="4">
-          <div onClick="{{ p.open }}" style="cursor: pointer; animation: maUp .5s ease both">
-            <div style="position: relative; border-radius: 6px; overflow: hidden; background: #E6DCCD; margin-bottom: 14px">
-              <img src="{{ p.img }}" alt="{{ p.name }}" style="width: 100%; display: block; aspect-ratio: 4/5; object-fit: cover; transition: transform .7s cubic-bezier(.2,.7,.2,1)" style-hover="transform: scale(1.045)" />
+          <div onClick="{{ p.open }}" style="cursor: pointer; animation: maUp .6s ease both; animation-delay: {{ p.delay }}">
+            <div onMouseEnter="{{ p.enter }}" onMouseLeave="{{ p.leave }}" style="position: relative; border-radius: 6px; overflow: hidden; background: #E6DCCD; margin-bottom: 14px; transition: box-shadow .5s ease, transform .5s cubic-bezier(.2,.7,.2,1)" style-hover="box-shadow: 0 26px 50px -30px rgba(47,38,32,.5); transform: translateY(-4px)">
+              <img src="{{ p.img }}" alt="{{ p.name }}" style="width: 100%; display: block; aspect-ratio: 4/5; object-fit: cover" />
+              <sc-for list="{{ p.slides }}" as="sl" hint-placeholder-count="0">
+                <img src="{{ sl.src }}" alt="" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{ sl.op }}; transition: opacity .6s ease" />
+              </sc-for>
+              <sc-if value="{{ p.hasMany }}" hint-placeholder-val="{{ false }}">
+                <div style="position: absolute; left: 0; right: 0; bottom: 10px; display: flex; justify-content: center; gap: 5px; pointer-events: none">
+                  <sc-for list="{{ p.dots }}" as="d" hint-placeholder-count="0"><span style="width: 6px; height: 6px; border-radius: 999px; background: {{ d.bg }}; box-shadow: 0 0 0 1px rgba(47,38,32,.25); transition: background .3s ease"></span></sc-for>
+                </div>
+              </sc-if>
               <sc-if value="{{ p.hasOld }}" hint-placeholder-val="{{ false }}">
                 <span style="position: absolute; top: 12px; left: 12px; background: #24417E; color: #F7F2EA; font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; padding: 5px 10px; border-radius: 999px">promocja</span>
               </sc-if>
@@ -127,21 +142,21 @@
       </div>
     </div>
 
-    <div style="max-width: 1280px; margin: 0 auto; padding: 84px 28px 0">
+    <div style="animation: maReveal linear both; animation-timeline: view(); animation-range: entry 0% entry 38%; max-width: 1280px; margin: 0 auto; padding: 84px 28px 0">
       <div style="display: flex; flex-wrap: wrap; gap: 48px; align-items: center; background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; padding: 0; overflow: hidden">
         <div style="flex: 1 1 320px; min-width: 0; align-self: stretch">
           <img src="zdjecia/kasia-talerz-zloto.webp" alt="Kasia z talerzem zdobionym złotem" style="width: 100%; height: 100%; min-height: 380px; display: block; object-fit: cover" />
         </div>
         <div style="flex: 1 1 380px; min-width: 0; padding: 52px 52px 52px 4px">
           <div style="font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #855F3D; margin-bottom: 20px">Cześć, jestem Kasia</div>
-          <h2 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(28px, 3.4vw, 42px); line-height: 1.12; margin: 0 0 22px">Lubię łączyć surowość z miękkością, prostotę z symboliką.</h2>
-          <p style="font-size: 16.5px; line-height: 1.7; color: #5C5043; margin: 0 0 26px; text-wrap: pretty">Tworzę MellowAura — kameralną pracownię, w której powstają przedmioty z duszą. To miejsce, gdzie sztuka spotyka się z uważnością, a codzienność nabiera miękkich, zmysłowych kształtów.</p>
+          <h2 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(28px, 3.4vw, 42px); line-height: 1.12; margin: 0 0 22px">{{ tHomeKasiaH2 }}</h2>
+          <p style="font-size: 16.5px; line-height: 1.7; color: #5C5043; margin: 0 0 26px; text-wrap: pretty">{{ tHomeKasiaP }}</p>
           <a href="#/o-mnie" onClick="{{ goAbout }}" style="font-size: 13.5px; letter-spacing: 0.06em; border-bottom: 1px solid #C6B8A5; padding-bottom: 3px">Poznaj mnie bliżej →</a>
         </div>
       </div>
     </div>
 
-    <div style="max-width: 1280px; margin: 0 auto; padding: 84px 28px 0">
+    <div style="animation: maReveal linear both; animation-timeline: view(); animation-range: entry 0% entry 38%; max-width: 1280px; margin: 0 auto; padding: 84px 28px 0">
       <div style="display: flex; flex-wrap: wrap; gap: 0; background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; overflow: hidden">
         <div style="flex: 1 1 300px; min-width: 0; display: flex">
           <img src="zdjecia/kubek-cappuccino.webp" alt="Kubek malowany ręcznie" style="width: 50%; aspect-ratio: 1/1; object-fit: cover; display: block" />
@@ -152,14 +167,14 @@
           <h2 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(27px, 3.2vw, 38px); line-height: 1.14; margin: 0 0 16px">Kubek i scrunchie<br />w jednym odcieniu</h2>
           <p style="font-size: 16px; line-height: 1.66; color: #5C5043; margin: 0 0 24px; max-width: 46ch">Dobieram szkliwo do tkaniny, nie odwrotnie. Zestawu, w którym glina i jedwab mają ten sam kolor, nie kupisz w pracowni, która robi tylko jedno z dwóch.</p>
           <div style="display: flex; gap: 14px; flex-wrap: wrap">
-            <button onClick="{{ goBundles }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px 30px; font-size: 14px" style-hover="background: #24417E">Zobacz zestawy</button>
-            <button onClick="{{ goGifts }}" style="background: transparent; color: #2F2620; border: 1px solid #C6B8A5; border-radius: 999px; padding: 15px 30px; font-size: 14px" style-hover="border-color: #2F2620; background: #EDE4D8">Szukam prezentu</button>
+            <button onClick="{{ goBundles }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px 30px; font-size: 14px; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Zobacz zestawy</button>
+            <button onClick="{{ goGifts }}" style="background: transparent; color: #2F2620; border: 1px solid #C6B8A5; border-radius: 999px; padding: 15px 30px; font-size: 14px; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; background: #EDE4D8" style-active="transform: scale(.98)">Szukam prezentu</button>
           </div>
         </div>
       </div>
     </div>
 
-    <div style="max-width: 1280px; margin: 0 auto; padding: 84px 28px 0">
+    <div style="animation: maReveal linear both; animation-timeline: view(); animation-range: entry 0% entry 38%; max-width: 1280px; margin: 0 auto; padding: 84px 28px 0">
       <div style="font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #855F3D; margin-bottom: 14px">z Twojego</div>
       <h2 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(30px, 3.6vw, 46px); margin: 0 0 8px">Przyślij mi coś swojego</h2>
       <p style="font-size: 16.5px; color: #6B5D4F; margin: 0 0 30px; max-width: 58ch">Dwie usługi, których nie zamówisz w żadnej innej pracowni — bo wymagają i gliny, i igły.</p>
@@ -169,7 +184,7 @@
           <div style="flex: 1 1 180px; min-width: 0; padding: 26px 24px">
             <div style="font-family: Newsreader, serif; font-size: 25px; line-height: 1.16; margin-bottom: 8px">Z Twojej apaszki</div>
             <div style="font-size: 14.5px; line-height: 1.6; color: #6B5D4F">Apaszka po babci wraca jako opaska i dwie scrunchies. Resztki oddaję.</div>
-            <div style="font-size: 13.5px; color: #855F3D; margin-top: 12px">od 69,00 zł →</div>
+            <div style="font-size: 13.5px; color: #855F3D; margin-top: 12px">{{ scarfFromLabel }} →</div>
           </div>
         </div>
         <div onClick="{{ goImprint }}" style="cursor: pointer; display: flex; flex-wrap: wrap; gap: 0; background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; overflow: hidden; transition: transform .35s ease, box-shadow .35s ease" style-hover="transform: translateY(-4px); box-shadow: 0 22px 46px -28px rgba(47,38,32,.4)">
@@ -177,14 +192,14 @@
           <div style="flex: 1 1 180px; min-width: 0; padding: 26px 24px">
             <div style="font-family: Newsreader, serif; font-size: 25px; line-height: 1.16; margin-bottom: 8px">Odcisk Twojej rośliny</div>
             <div style="font-size: 14.5px; line-height: 1.6; color: #6B5D4F">Kwiat z bukietu ślubnego zostaje w glinie. Roślina znika, rysunek zostaje.</div>
-            <div style="font-size: 13.5px; color: #855F3D; margin-top: 12px">od 149,00 zł →</div>
+            <div style="font-size: 13.5px; color: #855F3D; margin-top: 12px">{{ imprintFromLabel }} →</div>
           </div>
         </div>
       </div>
     </div>
 
     <sc-if value="{{ hasReviews }}" hint-placeholder-val="{{ false }}">
-    <div style="max-width: 1280px; margin: 0 auto; padding: 84px 28px 0">
+    <div style="animation: maReveal linear both; animation-timeline: view(); animation-range: entry 0% entry 38%; max-width: 1280px; margin: 0 auto; padding: 84px 28px 0">
       <h2 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(30px, 3.6vw, 46px); margin: 0 0 32px">Co mówią po warsztatach</h2>
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px">
         <sc-for list="{{ reviews }}" as="r" hint-placeholder-count="3">
@@ -198,7 +213,13 @@
     </div>
     </sc-if>
 
-    <div style="max-width: 1280px; margin: 0 auto; padding: 84px 28px 0">
+    <div style="margin-top: 84px; overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)">
+      <div aria-hidden="true" style="display: flex; width: max-content; gap: 16px; padding-right: 16px; height: clamp(180px, 22vw, 300px); animation: maMarquee 70s linear infinite">
+        <img src="zdjecia/kasia-talerz-zloto.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/misa-laguna.webp" alt="" style="height: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/kubek-nie-powinnam.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/wazon-rzezbiony.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/podstawki-muszle-roz.webp" alt="" style="height: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/talerz-niebieski-odcisk.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/patera-czarna-kolce.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/zestaw-flatlay.webp" alt="" style="height: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; display: block" />
+        <img src="zdjecia/kasia-talerz-zloto.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/misa-laguna.webp" alt="" style="height: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/kubek-nie-powinnam.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/wazon-rzezbiony.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/podstawki-muszle-roz.webp" alt="" style="height: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/talerz-niebieski-odcisk.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/patera-czarna-kolce.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/zestaw-flatlay.webp" alt="" style="height: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; display: block" />
+      </div>
+    </div>
+    <div style="animation: maReveal linear both; animation-timeline: view(); animation-range: entry 0% entry 38%; max-width: 1280px; margin: 0 auto; padding: 56px 28px 0">
       <h2 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(30px, 3.6vw, 46px); margin: 0 0 8px">Zanurz dłonie w glinie</h2>
       <p style="font-size: 16.5px; color: #6B5D4F; margin: 0 0 34px; max-width: 58ch">Kameralne warsztaty w mojej pracowni. Ciepło, empatia, cierpliwość — i nauka słuchania siebie.</p>
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 22px">
@@ -214,13 +235,13 @@
     </div>
 
     <sc-if value="{{ showIg }}" hint-placeholder-val="{{ true }}">
-    <div style="max-width: 1280px; margin: 0 auto; padding: 84px 28px 0">
+    <div style="animation: maReveal linear both; animation-timeline: view(); animation-range: entry 0% entry 38%; max-width: 1280px; margin: 0 auto; padding: 84px 28px 0">
       <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: end; justify-content: space-between; margin-bottom: 26px">
         <div>
-          <div style="font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #855F3D; margin-bottom: 12px">@mellowaura.ceramika</div>
+          <div style="font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #855F3D; margin-bottom: 12px">{{ igHandle }}</div>
           <h2 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(30px, 3.6vw, 46px); margin: 0">Codzienność pracowni <span style="color: #855F3D">🪐</span></h2>
         </div>
-        <a href="https://www.instagram.com/mellowaura.ceramika/" target="_blank" rel="noopener" style="font-size: 13.5px; letter-spacing: 0.06em; border-bottom: 1px solid #C6B8A5; padding-bottom: 3px">Obserwuj na Instagramie →</a>
+        <a href="{{ igHref }}" target="_blank" rel="noopener" style="font-size: 13.5px; letter-spacing: 0.06em; border-bottom: 1px solid #C6B8A5; padding-bottom: 3px">Obserwuj na Instagramie →</a>
       </div>
       <div style="border: 1px solid #E2D7C7; border-radius: 4px; background: #FCF9F4; padding: 14px">
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 6px 14px; border-bottom: 1px solid #EDE4D8; margin-bottom: 14px">
@@ -241,23 +262,23 @@
     </div>
     </sc-if>
 
-    <div style="max-width: 1280px; margin: 0 auto; padding: 84px 28px 96px">
+    <div style="animation: maReveal linear both; animation-timeline: view(); animation-range: entry 0% entry 38%; max-width: 1280px; margin: 0 auto; padding: 84px 28px 96px">
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px">
-        <div onClick="{{ goCustom }}" style="cursor: pointer; background: #2F2620; color: #F3EDE4; border-radius: 4px; padding: 38px 32px; min-height: 230px; display: flex; flex-direction: column; justify-content: space-between" style-hover="background: #24417E">
+        <div onClick="{{ goCustom }}" style="cursor: pointer; background: #2F2620; color: #F3EDE4; border-radius: 4px; padding: 38px 32px; min-height: 230px; display: flex; flex-direction: column; justify-content: space-between; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">
           <div style="font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: #C6B8A5">na zamówienie</div>
           <div>
             <div style="font-family: Newsreader, serif; font-size: 29px; line-height: 1.15; margin-bottom: 10px">Zaprojektujmy to razem</div>
             <div style="font-size: 14.5px; line-height: 1.6; color: #D8CDBD">Serwis na prezent, chrzciny, wesele albo jedna rzecz, której nigdzie nie ma.</div>
           </div>
         </div>
-        <div onClick="{{ goB2B }}" style="cursor: pointer; background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; padding: 38px 32px; min-height: 230px; display: flex; flex-direction: column; justify-content: space-between" style-hover="border-color: #2F2620">
+        <div onClick="{{ goB2B }}" style="cursor: pointer; background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; padding: 38px 32px; min-height: 230px; display: flex; flex-direction: column; justify-content: space-between; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620" style-active="transform: scale(.98)">
           <div style="font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: #A8813F">dla lokali</div>
           <div>
             <div style="font-family: Newsreader, serif; font-size: 29px; line-height: 1.15; margin-bottom: 10px">Ceramika dla kawiarni i restauracji</div>
             <div style="font-size: 14.5px; line-height: 1.6; color: #6B5D4F">Powtarzalne formy, które wytrzymują zmywarkę i codzienny serwis.</div>
           </div>
         </div>
-        <div onClick="{{ goKiln }}" style="cursor: pointer; background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; padding: 38px 32px; min-height: 230px; display: flex; flex-direction: column; justify-content: space-between" style-hover="border-color: #2F2620">
+        <div onClick="{{ goKiln }}" style="cursor: pointer; background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; padding: 38px 32px; min-height: 230px; display: flex; flex-direction: column; justify-content: space-between; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620" style-active="transform: scale(.98)">
           <div style="font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: #A8813F">zaplecze</div>
           <div>
             <div style="font-family: Newsreader, serif; font-size: 29px; line-height: 1.15; margin-bottom: 10px">Wypalę Twoje prace</div>
@@ -271,17 +292,17 @@
   </sc-if>
 
   <sc-if value="{{ isShop }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width: 1280px; margin: 0 auto; padding: 56px 28px 96px; animation: maIn .4s ease both">
+  <div style="max-width: 1280px; margin: 0 auto; padding: 56px 28px 96px; animation: maView .55s cubic-bezier(.2,.7,.2,1) both">
     <div style="font-size: 12px; color: #736454; margin-bottom: 22px">Strona główna / <span style="color: #5C5043">Produkty</span></div>
     <h1 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(38px, 5vw, 66px); margin: 0 0 14px; letter-spacing: -0.02em">Sklep</h1>
     <p style="font-size: 16.5px; color: #6B5D4F; max-width: 58ch; margin: 0 0 26px">Wszystko, co stoi teraz na półce w pracowni. Ceramika jest wypalona i gotowa do wysyłki — jeśli czegoś nie ma, znaczy, że już pojechało do kogoś.</p>
     <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 40px">
-      <button onClick="{{ goMug }}" style="background: #EDE4D8; border: 1px solid #DCD0BE; border-radius: 999px; padding: 10px 18px; font-size: 13px; color: #2F2620" style-hover="border-color: #2F2620">Kubek z Twoim napisem →</button>
-      <button onClick="{{ goBundles }}" style="background: #EDE4D8; border: 1px solid #DCD0BE; border-radius: 999px; padding: 10px 18px; font-size: 13px; color: #2F2620" style-hover="border-color: #2F2620">Zestawy prezentowe →</button>
-      <button onClick="{{ goGifts }}" style="background: #EDE4D8; border: 1px solid #DCD0BE; border-radius: 999px; padding: 10px 18px; font-size: 13px; color: #2F2620" style-hover="border-color: #2F2620">Szukam prezentu →</button>
-      <button onClick="{{ goScarf }}" style="background: #EDE4D8; border: 1px solid #DCD0BE; border-radius: 999px; padding: 10px 18px; font-size: 13px; color: #2F2620" style-hover="border-color: #2F2620">Z Twojej apaszki →</button>
-      <button onClick="{{ goImprint }}" style="background: #EDE4D8; border: 1px solid #DCD0BE; border-radius: 999px; padding: 10px 18px; font-size: 13px; color: #2F2620" style-hover="border-color: #2F2620">Odcisk Twojej rośliny →</button>
-      <button onClick="{{ goCustom }}" style="background: #EDE4D8; border: 1px solid #DCD0BE; border-radius: 999px; padding: 10px 18px; font-size: 13px; color: #2F2620" style-hover="border-color: #2F2620">Zamówienie indywidualne →</button>
+      <button onClick="{{ goMug }}" style="background: #EDE4D8; border: 1px solid #DCD0BE; border-radius: 999px; padding: 10px 18px; font-size: 13px; color: #2F2620; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620" style-active="transform: scale(.98)">Kubek z Twoim napisem →</button>
+      <button onClick="{{ goBundles }}" style="background: #EDE4D8; border: 1px solid #DCD0BE; border-radius: 999px; padding: 10px 18px; font-size: 13px; color: #2F2620; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620" style-active="transform: scale(.98)">Zestawy prezentowe →</button>
+      <button onClick="{{ goGifts }}" style="background: #EDE4D8; border: 1px solid #DCD0BE; border-radius: 999px; padding: 10px 18px; font-size: 13px; color: #2F2620; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620" style-active="transform: scale(.98)">Szukam prezentu →</button>
+      <button onClick="{{ goScarf }}" style="background: #EDE4D8; border: 1px solid #DCD0BE; border-radius: 999px; padding: 10px 18px; font-size: 13px; color: #2F2620; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620" style-active="transform: scale(.98)">Z Twojej apaszki →</button>
+      <button onClick="{{ goImprint }}" style="background: #EDE4D8; border: 1px solid #DCD0BE; border-radius: 999px; padding: 10px 18px; font-size: 13px; color: #2F2620; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620" style-active="transform: scale(.98)">Odcisk Twojej rośliny →</button>
+      <button onClick="{{ goCustom }}" style="background: #EDE4D8; border: 1px solid #DCD0BE; border-radius: 999px; padding: 10px 18px; font-size: 13px; color: #2F2620; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620" style-active="transform: scale(.98)">Zamówienie indywidualne →</button>
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: space-between; padding-bottom: 20px; border-bottom: 1px solid #E2D7C7; margin-bottom: 34px">
       <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center">
@@ -312,9 +333,17 @@
     </sc-if>
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 30px 26px">
       <sc-for list="{{ shopItems }}" as="p" hint-placeholder-count="8">
-        <div style="animation: maUp .45s ease both">
-          <div onClick="{{ p.open }}" style="cursor: pointer; position: relative; border-radius: 6px; overflow: hidden; background: #E6DCCD; margin-bottom: 14px">
-            <img src="{{ p.img }}" alt="{{ p.name }}" style="width: 100%; display: block; aspect-ratio: 4/5; object-fit: cover; transition: transform .7s cubic-bezier(.2,.7,.2,1)" style-hover="transform: scale(1.045)" />
+        <div style="animation: maUp .55s ease both; animation-delay: {{ p.delay }}">
+          <div onClick="{{ p.open }}" onMouseEnter="{{ p.enter }}" onMouseLeave="{{ p.leave }}" style="cursor: pointer; position: relative; border-radius: 6px; overflow: hidden; background: #E6DCCD; margin-bottom: 14px; transition: box-shadow .5s ease, transform .5s cubic-bezier(.2,.7,.2,1)" style-hover="box-shadow: 0 26px 50px -30px rgba(47,38,32,.5); transform: translateY(-4px)">
+            <img src="{{ p.img }}" alt="{{ p.name }}" style="width: 100%; display: block; aspect-ratio: 4/5; object-fit: cover" />
+              <sc-for list="{{ p.slides }}" as="sl" hint-placeholder-count="0">
+                <img src="{{ sl.src }}" alt="" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{ sl.op }}; transition: opacity .6s ease" />
+              </sc-for>
+              <sc-if value="{{ p.hasMany }}" hint-placeholder-val="{{ false }}">
+                <div style="position: absolute; left: 0; right: 0; bottom: 10px; display: flex; justify-content: center; gap: 5px; pointer-events: none">
+                  <sc-for list="{{ p.dots }}" as="d" hint-placeholder-count="0"><span style="width: 6px; height: 6px; border-radius: 999px; background: {{ d.bg }}; box-shadow: 0 0 0 1px rgba(47,38,32,.25); transition: background .3s ease"></span></sc-for>
+                </div>
+              </sc-if>
             <sc-if value="{{ p.hasOld }}" hint-placeholder-val="{{ false }}">
               <span style="position: absolute; top: 12px; left: 12px; background: #24417E; color: #F7F2EA; font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; padding: 5px 10px; border-radius: 999px">promocja</span>
             </sc-if>
@@ -328,7 +357,7 @@
             </sc-if>
           </div>
           <div style="display: flex; gap: 10px; align-items: center">
-            <button onClick="{{ p.add }}" style="background: transparent; border: 1px solid #C6B8A5; border-radius: 999px; padding: 9px 18px; font-size: 13px; color: #2F2620" style-hover="background: #2F2620; color: #F7F2EA; border-color: #2F2620">Do koszyka</button>
+            <button onClick="{{ p.add }}" style="background: transparent; border: 1px solid #C6B8A5; border-radius: 999px; padding: 9px 18px; font-size: 13px; color: #2F2620; transition: background .3s ease, color .3s ease, border-color .3s ease, transform .15s ease" style-hover="background: #2F2620; color: #F7F2EA; border-color: #2F2620" style-active="transform: scale(.97)">Do koszyka</button>
             <sc-if value="{{ p.multi }}" hint-placeholder-val="{{ false }}">
               <span style="font-size: 12px; color: #736454">{{ p.variantCount }}</span>
             </sc-if>
@@ -341,7 +370,7 @@
   </sc-if>
 
   <sc-if value="{{ isProduct }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width: 1280px; margin: 0 auto; padding: 44px 28px 96px; animation: maIn .4s ease both">
+  <div style="max-width: 1280px; margin: 0 auto; padding: 44px 28px 96px; animation: maView .55s cubic-bezier(.2,.7,.2,1) both">
     <div style="font-size: 12px; color: #736454; margin-bottom: 28px"><a href="#/sklep" onClick="{{ goShop }}" style="color: #736454">Sklep</a> / <span style="color: #5C5043">{{ p.name }}</span></div>
     <div style="display: flex; flex-wrap: wrap; gap: 56px">
       <div style="flex: 1 1 400px; min-width: 0">
@@ -412,14 +441,14 @@
             <span style="min-width: 26px; text-align: center; font-size: 15px">{{ p.qty }}</span>
             <button onClick="{{ p.inc }}" style="background: transparent; border: 0; width: 44px; height: 46px; font-size: 18px; color: #6B5D4F">+</button>
           </div>
-          <button onClick="{{ p.addToCart }}" style="flex: 1 1 200px; background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 16px 30px; font-size: 14.5px; letter-spacing: 0.03em" style-hover="background: #24417E">Dodaj do koszyka &middot; {{ p.totalLabel }}</button>
+          <button onClick="{{ p.addToCart }}" style="flex: 1 1 200px; background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 16px 30px; font-size: 14.5px; letter-spacing: 0.03em; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Dodaj do koszyka &middot; {{ p.totalLabel }}</button>
         </div>
         <div style="display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: #6B5D4F; margin-bottom: 34px">
           <span style="background: #24417E; color: #fff; font-weight: 600; font-size: 10px; padding: 3px 7px; border-radius: 3px">BLIK</span>
           <span>zapłacisz w 10 sekund kodem z aplikacji banku</span>
         </div>
         <div style="border-top: 1px solid #E2D7C7; padding-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; font-size: 13.5px; color: #6B5D4F; line-height: 1.55">
-          <div><div style="color: #2F2620; margin-bottom: 4px">Wysyłka</div>3–5 dni roboczych, gratis od 400 zł</div>
+          <div><div style="color: #2F2620; margin-bottom: 4px">Wysyłka</div>3–5 dni roboczych, gratis od {{ freeFromLabel }}</div>
           <div><div style="color: #2F2620; margin-bottom: 4px">Certyfikat unikatu</div>W paczce karta z numerem, datą wypału i podpisem</div>
           <div><div style="color: #2F2620; margin-bottom: 4px">Pielęgnacja</div>Zmywarka tak, złoto tylko ręcznie</div>
           <div><div style="color: #2F2620; margin-bottom: 4px">Chcesz inaczej?</div>Napis, rozmiar, szkliwo — wszystko robię na zamówienie. <a href="#/zamowienia-indywidualne" onClick="{{ goCustom }}">Napisz, co wymyśliłaś</a></div>
@@ -444,7 +473,7 @@
   </sc-if>
 
   <sc-if value="{{ isCheckout }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width: 1000px; margin: 0 auto; padding: 56px 28px 96px; animation: maIn .4s ease both">
+  <div style="max-width: 1000px; margin: 0 auto; padding: 56px 28px 96px; animation: maView .55s cubic-bezier(.2,.7,.2,1) both">
 
     <sc-if value="{{ isStep3 }}" hint-placeholder-val="{{ false }}">
       <div style="text-align: center; padding: 40px 0 20px">
@@ -556,18 +585,18 @@
   </sc-if>
 
   <sc-if value="{{ isAbout }}" hint-placeholder-val="{{ false }}">
-  <div style="animation: maIn .4s ease both">
+  <div style="animation: maView .55s cubic-bezier(.2,.7,.2,1) both">
     <div style="max-width: 1280px; margin: 0 auto; padding: 56px 28px 0">
       <div style="display: flex; flex-wrap: wrap; gap: 56px; align-items: start">
         <div style="flex: 1 1 380px; min-width: 0">
           <div style="font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #855F3D; margin-bottom: 22px">o mnie</div>
           <h1 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(40px, 5.4vw, 74px); line-height: 1.02; letter-spacing: -0.02em; margin: 0 0 30px">Cześć,<br />jestem <em style="font-style: italic; color: #855F3D">Kasia</em></h1>
-          <p style="font-size: 18px; line-height: 1.72; color: #4A3E33; margin: 0 0 22px; text-wrap: pretty">Tworzę MellowAura – kameralną pracownię, w której powstają przedmioty z duszą. To miejsce, gdzie sztuka spotyka się z uważnością, a codzienność nabiera miękkich, zmysłowych kształtów.</p>
-          <p style="font-size: 16.5px; line-height: 1.75; color: #5C5043; margin: 0 0 22px; text-wrap: pretty">Zajmuję się ceramiką i rękodziełem tekstylnym – każda z tych dziedzin daje mi coś innego, ale łączy je to samo: praca w skupieniu, z dbałością o detale, fakturę i jakość materiału. W mojej pracowni powstają ręcznie formowane naczynia, autorskie formy użytkowe, ale także opaski, scrunchie i ozdoby do włosów, szyte z wyselekcjonowanych, naturalnych tkanin – takich jak jedwab, len czy bawełna.</p>
-          <p style="font-size: 16.5px; line-height: 1.75; color: #5C5043; margin: 0 0 34px; text-wrap: pretty">Lubię łączyć surowość z miękkością, prostotę z symboliką, dotyk z emocją. MellowAura to zaproszenie do spokoju i piękna – zaklętego w przedmiotach, które towarzyszą nam na co dzień.</p>
+          <p style="font-size: 18px; line-height: 1.72; color: #4A3E33; margin: 0 0 22px; text-wrap: pretty">{{ tAboutP1 }}</p>
+          <p style="font-size: 16.5px; line-height: 1.75; color: #5C5043; margin: 0 0 22px; text-wrap: pretty">{{ tAboutP2 }}</p>
+          <p style="font-size: 16.5px; line-height: 1.75; color: #5C5043; margin: 0 0 34px; text-wrap: pretty">{{ tAboutP3 }}</p>
           <div style="display: flex; gap: 14px; flex-wrap: wrap">
-            <button onClick="{{ goStudio }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px 30px; font-size: 14px" style-hover="background: #24417E">Zobacz jak tworzę</button>
-            <button onClick="{{ goContact }}" style="background: transparent; color: #2F2620; border: 1px solid #C6B8A5; border-radius: 999px; padding: 15px 30px; font-size: 14px" style-hover="border-color: #2F2620; background: #EDE4D8">Napisz do mnie</button>
+            <button onClick="{{ goStudio }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px 30px; font-size: 14px; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Zobacz jak tworzę</button>
+            <button onClick="{{ goContact }}" style="background: transparent; color: #2F2620; border: 1px solid #C6B8A5; border-radius: 999px; padding: 15px 30px; font-size: 14px; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; background: #EDE4D8" style-active="transform: scale(.98)">Napisz do mnie</button>
           </div>
         </div>
         <div style="flex: 1 1 340px; min-width: 0">
@@ -581,15 +610,14 @@
         </div>
       </div>
     </div>
-    <div style="max-width: 1280px; margin: 0 auto; padding: 84px 28px 0">
+    <div style="animation: maReveal linear both; animation-timeline: view(); animation-range: entry 0% entry 38%; max-width: 1280px; margin: 0 auto; padding: 84px 28px 0">
       <div style="display: flex; flex-wrap: wrap; gap: 1px; background: #E2D7C7; border: 1px solid #E2D7C7; border-radius: 4px; overflow: hidden">
-        <div style="flex: 1 1 220px; background: #FCF9F4; padding: 32px 26px"><div style="font-family: Newsreader, serif; font-size: 21px; margin-bottom: 8px">Glina</div><div style="font-size: 14.5px; line-height: 1.6; color: #6B5D4F">Kamionka i szamot piaskowy. Nierówne krawędzie zostawiam, bo tak wygląda ręka.</div></div>
-        <div style="flex: 1 1 220px; background: #FCF9F4; padding: 32px 26px"><div style="font-family: Newsreader, serif; font-size: 21px; margin-bottom: 8px">Jedwab</div><div style="font-size: 14.5px; line-height: 1.6; color: #6B5D4F">Z drugiego obiegu i z końcówek bel. Jedna apaszka to jedna opaska.</div></div>
-        <div style="flex: 1 1 220px; background: #FCF9F4; padding: 32px 26px"><div style="font-family: Newsreader, serif; font-size: 21px; margin-bottom: 8px">Złoto 24k</div><div style="font-size: 14.5px; line-height: 1.6; color: #6B5D4F">Prawdziwy metal, trzeci wypał. Dlatego złocone rzeczy myje się ręcznie.</div></div>
-        <div style="flex: 1 1 220px; background: #FCF9F4; padding: 32px 26px"><div style="font-family: Newsreader, serif; font-size: 21px; margin-bottom: 8px">Rośliny</div><div style="font-size: 14.5px; line-height: 1.6; color: #6B5D4F">Zbierane pod pracownią, odciskane w surowej glinie i wypalane na popiół.</div></div>
+        <sc-for list="{{ materials }}" as="m" hint-placeholder-count="4">
+          <div style="flex: 1 1 220px; background: #FCF9F4; padding: 32px 26px"><div style="font-family: Newsreader, serif; font-size: 21px; margin-bottom: 8px">{{ m.t }}</div><div style="font-size: 14.5px; line-height: 1.6; color: #6B5D4F">{{ m.d }}</div></div>
+        </sc-for>
       </div>
     </div>
-    <div style="max-width: 1280px; margin: 0 auto; padding: 84px 28px 96px">
+    <div style="animation: maReveal linear both; animation-timeline: view(); animation-range: entry 0% entry 38%; max-width: 1280px; margin: 0 auto; padding: 84px 28px 96px">
       <h2 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(30px, 3.6vw, 44px); margin: 0 0 6px">Niektóre z moich prac</h2>
       <p style="font-size: 16.5px; color: #6B5D4F; margin: 0 0 32px">Wszystko zrobione w zgodzie z naturą i kobiecą intuicją.</p>
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 26px">
@@ -608,7 +636,7 @@
   </sc-if>
 
   <sc-if value="{{ isStudio }}" hint-placeholder-val="{{ false }}">
-  <div style="animation: maIn .4s ease both">
+  <div style="animation: maView .55s cubic-bezier(.2,.7,.2,1) both">
     <div style="position: relative">
       <img src="{{ studioHeroImg }}" alt="Praca z gliną w pracowni MellowAura" style="width: 100%; height: clamp(320px, 46vh, 520px); object-fit: cover; display: block; filter: brightness(.82)" />
       <div style="position: absolute; inset: 0; display: flex; align-items: end; background: linear-gradient(to top, rgba(31,25,20,.72), rgba(31,25,20,.05))">
@@ -625,8 +653,8 @@
           <p style="font-size: 16.5px; line-height: 1.72; color: #5C5043; margin: 0 0 20px">Pracownia jest mała i taka ma zostać. Przy jednym stole siada najwyżej sześć osób, więc mogę podejść do każdej i poprawić rękę zamiast tłumaczyć z drugiego końca sali. Nie ma tu presji, że coś musi wyjść równo.</p>
           <p style="font-size: 16.5px; line-height: 1.72; color: #5C5043; margin: 0 0 32px">Dokładny adres podaję po zapisaniu się — to home studio, więc wpuszczam po jednej grupie naraz. Na miejscu jest herbata, fartuchy i muzyka, którą możesz zmienić.</p>
           <div style="display: flex; gap: 14px; flex-wrap: wrap">
-            <button onClick="{{ goWorkshops }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px 30px; font-size: 14px" style-hover="background: #24417E">Terminy i cennik</button>
-            <button onClick="{{ goKiln }}" style="background: transparent; color: #2F2620; border: 1px solid #C6B8A5; border-radius: 999px; padding: 15px 30px; font-size: 14px" style-hover="border-color: #2F2620; background: #EDE4D8">Wypalę Twoje prace</button>
+            <button onClick="{{ goWorkshops }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px 30px; font-size: 14px; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Terminy i cennik</button>
+            <button onClick="{{ goKiln }}" style="background: transparent; color: #2F2620; border: 1px solid #C6B8A5; border-radius: 999px; padding: 15px 30px; font-size: 14px; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; background: #EDE4D8" style-active="transform: scale(.98)">Wypalę Twoje prace</button>
           </div>
         </div>
         <div style="flex: 0 1 300px; min-width: 260px">
@@ -653,7 +681,7 @@
   </sc-if>
 
   <sc-if value="{{ isWorkshops }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width: 1280px; margin: 0 auto; padding: 56px 28px 96px; animation: maIn .4s ease both">
+  <div style="max-width: 1280px; margin: 0 auto; padding: 56px 28px 96px; animation: maView .55s cubic-bezier(.2,.7,.2,1) both">
     <div style="font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #855F3D; margin-bottom: 20px">warsztaty &middot; cennik &middot; terminy</div>
     <h1 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(38px, 5.2vw, 70px); line-height: 1.04; margin: 0 0 18px; letter-spacing: -0.02em">Zanurz dłonie<br />w glinie</h1>
     <p style="font-size: 17px; line-height: 1.7; color: #5C5043; max-width: 56ch; margin: 0 0 52px">Wszystkie ceny są za osobę i zawierają glinę, narzędzia, szkliwa i wypały. Nie musisz nic umieć ani nic przynosić.</p>
@@ -727,7 +755,7 @@
   </sc-if>
 
   <sc-if value="{{ isCustom }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width: 1280px; margin: 0 auto; padding: 56px 28px 96px; animation: maIn .4s ease both">
+  <div style="max-width: 1280px; margin: 0 auto; padding: 56px 28px 96px; animation: maView .55s cubic-bezier(.2,.7,.2,1) both">
     <div style="display: flex; flex-wrap: wrap; gap: 56px">
       <div style="flex: 1 1 420px; min-width: 0">
         <div style="font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #855F3D; margin-bottom: 20px">zamówienia indywidualne</div>
@@ -752,14 +780,9 @@
           <div style="display: grid; grid-template-columns: minmax(0, 1fr); gap: 13px">
             <input placeholder="Imię" style="background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
             <input placeholder="E-mail albo telefon" style="background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
-            <select style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px; color: #5C5043">
-              <option>Co to ma być? — wybierz</option>
-              <option>Kubek albo kilka kubków z tekstem</option>
-              <option>Serwis obiadowy / do kawy</option>
-              <option>Prezent okazjonalny (ślub, chrzciny, rocznica)</option>
-              <option>Forma dekoracyjna albo rzeźba</option>
-              <option>Tekstylia — opaski, scrunchies na zamówienie</option>
-              <option>Coś innego, opowiem w wiadomości</option>
+            <select value="{{ customKind }}" onChange="{{ onCustomKind }}" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px; color: #5C5043">
+              <option value="">Co to ma być? — wybierz</option>
+              <sc-for list="{{ customKinds }}" as="ck" hint-placeholder-count="6"><option value="{{ ck.label }}">{{ ck.label }}</option></sc-for>
             </select>
             <div style="display: flex; gap: 13px; flex-wrap: wrap">
               <input placeholder="Ile sztuk?" style="flex: 1 1 110px; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
@@ -768,12 +791,12 @@
             <input placeholder="Budżet, jaki masz w głowie" style="background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
             <textarea placeholder="Opowiedz o pomyśle — kolor, kształt, dla kogo, skąd inspiracja" rows="5" style="background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px; resize: vertical; line-height: 1.6" style-focus="border-color: #2F2620; outline: none"></textarea>
             <div style="border: 1px dashed #DCD0BE; border-radius: 4px; padding: 20px; text-align: center; font-size: 13.5px; color: #726456; background: #F7F2EA">Przeciągnij tu zdjęcia inspiracji<br /><span style="font-size: 12.5px; color: #736454">JPG, PNG, do 5 plików</span></div>
-            <button onClick="{{ sendForm }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 16px; font-size: 14.5px; margin-top: 4px" style-hover="background: #24417E">Wyślij brief</button>
+            <button onClick="{{ sendForm }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 16px; font-size: 14.5px; margin-top: 4px; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Wyślij brief</button>
           </div>
           <sc-if value="{{ isSent }}" hint-placeholder-val="{{ false }}">
             <div style="margin-top: 18px; background: #EDE4D8; border: 1px solid #C6B8A5; border-radius: 4px; padding: 16px; font-size: 14px; line-height: 1.6; color: #4A3E33">Mam Twój brief. Odpisuję zwykle tego samego dnia — jeśli nie, zajrzyj w spam.</div>
           </sc-if>
-          <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #EDE4D8; font-size: 13.5px; color: #6B5D4F; line-height: 1.6">Woli Ci się pisać na WhatsAppie? <a href="https://wa.me/48792569771" target="_blank" rel="noopener">+48 792 569 771</a></div>
+          <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #EDE4D8; font-size: 13.5px; color: #6B5D4F; line-height: 1.6">Woli Ci się pisać na WhatsAppie? <a href="{{ waHref }}" target="_blank" rel="noopener">{{ phone }}</a></div>
         </div>
       </div>
     </div>
@@ -781,7 +804,7 @@
   </sc-if>
 
   <sc-if value="{{ isB2B }}" hint-placeholder-val="{{ false }}">
-  <div style="animation: maIn .4s ease both">
+  <div style="animation: maView .55s cubic-bezier(.2,.7,.2,1) both">
     <div style="background: #2F2620; color: #E2D7C7">
       <div style="max-width: 1280px; margin: 0 auto; padding: 72px 28px; display: flex; flex-wrap: wrap; gap: 48px; align-items: center">
         <div style="flex: 1 1 400px; min-width: 0">
@@ -806,14 +829,14 @@
     <div style="max-width: 1280px; margin: 0 auto; padding: 44px 28px 96px">
       <div style="background: #EDE4D8; border-radius: 4px; padding: 44px 40px; display: flex; flex-wrap: wrap; gap: 30px; align-items: center; justify-content: space-between">
         <div style="flex: 1 1 340px"><div style="font-family: Newsreader, serif; font-size: clamp(24px, 3vw, 34px); line-height: 1.2; margin-bottom: 8px">Prowadzicie lokal w Krakowie?</div><div style="font-size: 15.5px; color: #5C5043">Przywiozę próbki i zostawię na tydzień do testów w serwisie.</div></div>
-        <button onClick="{{ goContact }}" style="flex: 0 0 auto; background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 16px 32px; font-size: 14.5px" style-hover="background: #24417E">Umów spotkanie</button>
+        <button onClick="{{ goContact }}" style="flex: 0 0 auto; background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 16px 32px; font-size: 14.5px; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Umów spotkanie</button>
       </div>
     </div>
   </div>
   </sc-if>
 
   <sc-if value="{{ isKiln }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width: 1280px; margin: 0 auto; padding: 56px 28px 96px; animation: maIn .4s ease both">
+  <div style="max-width: 1280px; margin: 0 auto; padding: 56px 28px 96px; animation: maView .55s cubic-bezier(.2,.7,.2,1) both">
     <div style="font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #855F3D; margin-bottom: 20px">wypały na zlecenie</div>
     <h1 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(36px, 5vw, 64px); line-height: 1.05; margin: 0 0 20px; letter-spacing: -0.02em">Wypalę Twoje prace</h1>
     <p style="font-size: 17px; line-height: 1.7; color: #5C5043; max-width: 56ch; margin: 0 0 48px">Lepisz w domu i nie masz pieca? Przywieź prace do pracowni. Pilnuję krzywej grzewczej i studzenia, więc nie pękają na szoku termicznym.</p>
@@ -825,7 +848,7 @@
             <div style="display: flex; justify-content: space-between; gap: 20px; padding: 20px 24px; border-bottom: 1px solid #EDE4D8"><div><div style="font-size: 16px">{{ k.name }}</div><div style="font-size: 13.5px; color: #726456; margin-top: 3px">{{ k.note }}</div></div><div style="font-size: 16px; white-space: nowrap">{{ k.priceLabel }}</div></div>
           </sc-for>
         </div>
-        <div style="font-size: 13px; color: #736454; margin-top: 14px; line-height: 1.6">Wsad zbieram raz w tygodniu, zwykle w czwartek. Prace odbierzesz po 5–7 dniach. Nie przyjmuję gliny nieznanego pochodzenia ani prac grubszych niż 2 cm w ściance.</div>
+        <div style="font-size: 13px; color: #736454; margin-top: 14px; line-height: 1.6">{{ tKilnNote }}</div>
       </div>
       <div style="flex: 0 1 320px; min-width: 280px">
         <div style="background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; padding: 30px 28px">
@@ -833,11 +856,14 @@
           <div style="display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px">
             <input placeholder="Imię" style="background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 13px 15px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
             <input placeholder="E-mail albo telefon" style="background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 13px 15px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
-            <select style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 13px 15px; font-size: 15px; color: #5C5043">
-              <option>Rodzaj wypału</option><option>Biskwitowy</option><option>Na ostro</option><option>Złoto</option><option>Nie wiem, doradź</option>
+            <select value="{{ kilnKind }}" onChange="{{ onKilnKind }}" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 13px 15px; font-size: 15px; color: #5C5043">
+              <option value="">Rodzaj wypału</option>
+              <sc-for list="{{ kilnKinds }}" as="kk" hint-placeholder-count="4">
+                <option value="{{ kk.label }}">{{ kk.label }}</option>
+              </sc-for>
             </select>
             <textarea placeholder="Ile prac, jakie rozmiary, jaka glina" rows="4" style="background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 13px 15px; font-size: 15px; resize: vertical; line-height: 1.6" style-focus="border-color: #2F2620; outline: none"></textarea>
-            <button onClick="{{ sendForm }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px; font-size: 14.5px" style-hover="background: #24417E">Wyślij zgłoszenie</button>
+            <button onClick="{{ sendForm }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px; font-size: 14.5px; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Wyślij zgłoszenie</button>
           </div>
         </div>
       </div>
@@ -846,7 +872,7 @@
   </sc-if>
 
   <sc-if value="{{ isJournal }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width: 1280px; margin: 0 auto; padding: 56px 28px 96px; animation: maIn .4s ease both">
+  <div style="max-width: 1280px; margin: 0 auto; padding: 56px 28px 96px; animation: maView .55s cubic-bezier(.2,.7,.2,1) both">
     <div style="font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #855F3D; margin-bottom: 20px">dziennik pracowni</div>
     <h1 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(38px, 5.2vw, 68px); line-height: 1.04; margin: 0 0 18px; letter-spacing: -0.02em">Co się dzieje<br />między wypałami</h1>
     <p style="font-size: 17px; line-height: 1.7; color: #5C5043; max-width: 54ch; margin: 0 0 40px">Wszystko w jednym miejscu: posty z Instagrama, dłuższe notatki z pracowni i relacje z targów — co wyszło, co pękło, gdzie mnie było widać.</p>
@@ -908,7 +934,7 @@
   </sc-if>
 
   <sc-if value="{{ isFaq }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width: 900px; margin: 0 auto; padding: 56px 28px 96px; animation: maIn .4s ease both">
+  <div style="max-width: 900px; margin: 0 auto; padding: 56px 28px 96px; animation: maView .55s cubic-bezier(.2,.7,.2,1) both">
     <div style="font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #855F3D; margin-bottom: 20px">wysyłka, płatności, pielęgnacja</div>
     <h1 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(38px, 5.2vw, 64px); line-height: 1.04; margin: 0 0 44px; letter-spacing: -0.02em">Częste pytania</h1>
     <div style="border-top: 1px solid #E2D7C7">
@@ -926,22 +952,22 @@
     </div>
     <div style="margin-top: 48px; background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; padding: 32px; display: flex; flex-wrap: wrap; gap: 24px; align-items: center; justify-content: space-between">
       <div><div style="font-family: Newsreader, serif; font-size: 24px; margin-bottom: 6px">Nie ma tu Twojego pytania?</div><div style="font-size: 15px; color: #6B5D4F">Napisz na WhatsAppie — to najszybsza droga do mnie.</div></div>
-      <button onClick="{{ goContact }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px 30px; font-size: 14px" style-hover="background: #24417E">Kontakt</button>
+      <button onClick="{{ goContact }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px 30px; font-size: 14px; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Kontakt</button>
     </div>
   </div>
   </sc-if>
 
   <sc-if value="{{ isContact }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width: 1280px; margin: 0 auto; padding: 56px 28px 96px; animation: maIn .4s ease both">
+  <div style="max-width: 1280px; margin: 0 auto; padding: 56px 28px 96px; animation: maView .55s cubic-bezier(.2,.7,.2,1) both">
     <div style="display: flex; flex-wrap: wrap; gap: 56px">
       <div style="flex: 1 1 360px; min-width: 0">
         <div style="font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #855F3D; margin-bottom: 20px">kontakt</div>
         <h1 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(38px, 5.2vw, 66px); line-height: 1.04; margin: 0 0 24px; letter-spacing: -0.02em">Napisz<br />do mnie</h1>
-        <p style="font-size: 17px; line-height: 1.7; color: #5C5043; max-width: 46ch; margin: 0 0 40px">Odpisuję zwykle tego samego dnia, chyba że stoję przy piecu. Wtedy wieczorem.</p>
+        <p style="font-size: 17px; line-height: 1.7; color: #5C5043; max-width: 46ch; margin: 0 0 40px">{{ tContactLead }}</p>
         <div style="display: grid; gap: 1px; background: #E2D7C7; border: 1px solid #E2D7C7; border-radius: 4px; overflow: hidden; margin-bottom: 32px">
-          <a href="https://wa.me/48792569771" target="_blank" rel="noopener" style="background: #FCF9F4; padding: 22px 24px; display: flex; justify-content: space-between; gap: 16px; align-items: center; color: #2F2620" style-hover="background: #EDE4D8"><span><span style="display: block; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #A8813F; margin-bottom: 5px">whatsapp &middot; najszybciej</span><span style="font-size: 17px">+48 792 569 771</span></span><span style="color: #855F3D">→</span></a>
-          <a href="https://www.instagram.com/mellowaura.ceramika/" target="_blank" rel="noopener" style="background: #FCF9F4; padding: 22px 24px; display: flex; justify-content: space-between; gap: 16px; align-items: center; color: #2F2620" style-hover="background: #EDE4D8"><span><span style="display: block; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #A8813F; margin-bottom: 5px">instagram &middot; dm</span><span style="font-size: 17px">@mellowaura.ceramika</span></span><span style="color: #855F3D">→</span></a>
-          <div style="background: #FCF9F4; padding: 22px 24px"><span style="display: block; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #A8813F; margin-bottom: 5px">pracownia</span><span style="font-size: 17px">Kraków, home studio</span><span style="display: block; font-size: 13.5px; color: #726456; margin-top: 4px">Dokładny adres podaję przy zapisie na warsztat lub odbiorze zamówienia.</span></div>
+          <a href="{{ waHref }}" target="_blank" rel="noopener" style="background: #FCF9F4; padding: 22px 24px; display: flex; justify-content: space-between; gap: 16px; align-items: center; color: #2F2620" style-hover="background: #EDE4D8"><span><span style="display: block; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #A8813F; margin-bottom: 5px">whatsapp &middot; najszybciej</span><span style="font-size: 17px">{{ phone }}</span></span><span style="color: #855F3D">→</span></a>
+          <a href="{{ igHref }}" target="_blank" rel="noopener" style="background: #FCF9F4; padding: 22px 24px; display: flex; justify-content: space-between; gap: 16px; align-items: center; color: #2F2620" style-hover="background: #EDE4D8"><span><span style="display: block; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #A8813F; margin-bottom: 5px">instagram &middot; dm</span><span style="font-size: 17px">{{ igHandle }}</span></span><span style="color: #855F3D">→</span></a>
+          <div style="background: #FCF9F4; padding: 22px 24px"><span style="display: block; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #A8813F; margin-bottom: 5px">pracownia</span><span style="font-size: 17px">{{ city }}</span><span style="display: block; font-size: 13.5px; color: #726456; margin-top: 4px">Dokładny adres podaję przy zapisie na warsztat lub odbiorze zamówienia.</span></div>
         </div>
         <img src="zdjecia/talerz-niebieski-odcisk.webp" alt="Talerz z odciskiem roślinnym" style="width: 100%; max-width: 420px; aspect-ratio: 4/3; object-fit: cover; border-radius: 4px; display: block" />
       </div>
@@ -950,17 +976,12 @@
           <div style="display: grid; grid-template-columns: minmax(0, 1fr); gap: 13px">
             <input placeholder="Imię" style="background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
             <input placeholder="E-mail" style="background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
-            <select style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px; color: #5C5043">
-              <option>W jakiej sprawie?</option>
-              <option>Zamówienie ze sklepu</option>
-              <option>Warsztaty i terminy</option>
-              <option>Zamówienie indywidualne</option>
-              <option>Kawiarnia / restauracja</option>
-              <option>Wypał moich prac</option>
-              <option>Współpraca albo prasa</option>
+            <select value="{{ contactKind }}" onChange="{{ onContactKind }}" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px; color: #5C5043">
+              <option value="">W jakiej sprawie?</option>
+              <sc-for list="{{ contactKinds }}" as="ck" hint-placeholder-count="6"><option value="{{ ck.label }}">{{ ck.label }}</option></sc-for>
             </select>
             <textarea placeholder="Twoja wiadomość" rows="6" style="background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px; resize: vertical; line-height: 1.6" style-focus="border-color: #2F2620; outline: none"></textarea>
-            <button onClick="{{ sendForm }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 16px; font-size: 14.5px" style-hover="background: #24417E">Wyślij wiadomość</button>
+            <button onClick="{{ sendForm }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 16px; font-size: 14.5px; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Wyślij wiadomość</button>
           </div>
           <sc-if value="{{ isSent }}" hint-placeholder-val="{{ false }}">
             <div style="margin-top: 18px; background: #EDE4D8; border: 1px solid #C6B8A5; border-radius: 4px; padding: 16px; font-size: 14px; line-height: 1.6; color: #4A3E33">Wiadomość poszła. Odpisuję zwykle tego samego dnia.</div>
@@ -972,7 +993,7 @@
   </sc-if>
 
   <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ false }}">
-  <div style="background: #EDE4D8; min-height: 70vh; animation: maIn .4s ease both">
+  <div style="background: #EDE4D8; min-height: 70vh; animation: maView .55s cubic-bezier(.2,.7,.2,1) both">
     <div style="max-width: 1280px; margin: 0 auto; padding: 44px 28px 96px">
       <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: end; justify-content: space-between; margin-bottom: 30px">
         <div>
@@ -987,7 +1008,7 @@
           <p style="font-size: 13.5px; line-height: 1.6; color: #726456; margin: 0 0 20px">Panel jest tylko dla Ciebie. W prototypie wystarczy dowolne hasło — przy wdrożeniu wchodzi tu prawdziwe logowanie i dwa poziomy uprawnień: właścicielka oraz osoba pomagająca przy zamówieniach, bez dostępu do cen i wypłat.</p>
           <div style="display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px">
             <input value="{{ pass }}" onChange="{{ onPass }}" type="password" placeholder="Hasło" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
-            <button onClick="{{ login }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px; font-size: 14.5px" style-hover="background: #24417E">Wejdź do panelu</button>
+            <button onClick="{{ login }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px; font-size: 14.5px; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Wejdź do panelu</button>
           </div>
         </div>
       </sc-if>
@@ -1007,14 +1028,24 @@
             <div style="font-family: Newsreader, serif; font-size: 25px; margin-bottom: 4px">Dodaj produkt</div>
             <p style="font-size: 13.5px; color: #726456; margin: 0 0 22px">Kubek, miska, talerz, wazon, scrunchie, kosmetyczka, piórnik — cokolwiek zrobisz.</p>
             <div style="display: grid; grid-template-columns: minmax(0, 1fr); gap: 13px">
-              <label style="display: block; border: 1px dashed #C6B8A5; border-radius: 4px; padding: 22px; text-align: center; background: #F7F2EA; cursor: pointer" style-hover="border-color: #2F2620; background: #EDE4D8">
+              <label style="display: block; border: 1px dashed #C6B8A5; border-radius: 4px; padding: 22px; text-align: center; background: #F7F2EA; cursor: pointer; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; background: #EDE4D8" style-active="transform: scale(.98)">
                 <sc-if value="{{ hasNfPhoto }}" hint-placeholder-val="{{ false }}">
                   <img src="{{ nfPhoto }}" alt="Podgląd wgranego zdjęcia" style="width: 100%; max-height: 210px; object-fit: cover; border-radius: 3px; display: block; margin-bottom: 12px" />
                 </sc-if>
-                <span style="display: block; font-size: 14px; color: #5C5043">Wybierz zdjęcie z telefonu albo komputera</span>
-                <span style="display: block; font-size: 12.5px; color: #736454; margin-top: 4px">JPG lub PNG, najlepiej kwadrat</span>
-                <input type="file" accept="image/*" onChange="{{ onPhoto }}" style="display: none" />
+                <span style="display: block; font-size: 14px; color: #5C5043">{{ nfPhotoCta }}</span>
+                <span style="display: block; font-size: 12.5px; color: #736454; margin-top: 4px">JPG lub PNG, kilka naraz — pierwsze będzie okładką</span>
+                <input type="file" accept="image/*" multiple="{{ true }}" onChange="{{ onPhoto }}" style="display: none" />
               </label>
+              <sc-if value="{{ hasNfPhoto }}" hint-placeholder-val="{{ false }}">
+                <div style="display: flex; flex-wrap: wrap; gap: 8px">
+                  <sc-for list="{{ nfPhotos }}" as="ph" hint-placeholder-count="1">
+                    <div style="position: relative; width: 58px; height: 70px; border-radius: 4px; overflow: hidden; border: 1px solid {{ ph.bd }}">
+                      <img src="{{ ph.src }}" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block" />
+                      <button onClick="{{ ph.del }}" aria-label="Usuń zdjęcie" style="position: absolute; top: 3px; right: 3px; width: 18px; height: 18px; border-radius: 999px; border: 0; background: rgba(47,38,32,.75); color: #F7F2EA; font-size: 11px; line-height: 1; padding: 0; display: grid; place-items: center" style-hover="background: #8C3A2E">×</button>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
               <input value="{{ nfName }}" onChange="{{ onNfName }}" placeholder="Nazwa — np. Miska z odciskiem paproci" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
               <select value="{{ nfCat }}" onChange="{{ onNfCat }}" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px; color: #2F2620">
                 <option>Ceramika</option><option>Rękodzieło</option><option>Warsztaty</option>
@@ -1034,7 +1065,7 @@
                   </sc-for>
                 </div>
                 <div style="display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-top: 12px">
-                  <button onClick="{{ addRow }}" style="background: transparent; border: 1px dashed #C6B8A5; border-radius: 999px; padding: 9px 16px; font-size: 13px; color: #5C5043" style-hover="border-color: #2F2620; border-style: solid">+ dodaj rozmiar</button>
+                  <button onClick="{{ addRow }}" style="background: transparent; border: 1px dashed #C6B8A5; border-radius: 999px; padding: 9px 16px; font-size: 13px; color: #5C5043; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; border-style: solid" style-active="transform: scale(.98)">+ dodaj rozmiar</button>
                   <span style="font-size: 12.5px; color: #736454">{{ sizeHint }}</span>
                 </div>
                 <div style="font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: #726456; margin: 20px 0 4px">Wymiary — nieobowiązkowe</div>
@@ -1050,7 +1081,7 @@
                 </div>
               </div>
               <textarea value="{{ nfDesc }}" onChange="{{ onNfDesc }}" rows="4" placeholder="Opis — z czego, jak duże, jak pielęgnować" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px; resize: vertical; line-height: 1.6" style-focus="border-color: #2F2620; outline: none"></textarea>
-              <button onClick="{{ publish }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 16px; font-size: 14.5px" style-hover="background: #24417E">Opublikuj w sklepie</button>
+              <button onClick="{{ publish }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 16px; font-size: 14.5px; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Opublikuj w sklepie</button>
             </div>
           </div>
         </div>
@@ -1062,7 +1093,7 @@
                 <img src="{{ nfPhoto }}" alt="Podgląd karty produktu" style="width: 100%; height: 100%; object-fit: cover; display: block" />
               </sc-if>
               <sc-if value="{{ noNfPhoto }}" hint-placeholder-val="{{ true }}">
-                <span style="font-size: 12.5px; color: #625648">tu wejdzie zdjęcie</span>
+                <span style="font-size: 12.5px; color: #736454">tu wejdzie zdjęcie</span>
               </sc-if>
             </div>
             <div style="font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: #736454; margin-bottom: 5px">{{ previewCat }}</div>
@@ -1107,11 +1138,31 @@
                   <input value="{{ r.stockVal }}" onChange="{{ r.onStock }}" style="width: 54px; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 9px 8px; font-size: 14px; text-align: right" style-focus="border-color: #2F2620; outline: none" />
                 </div>
                 <div style="flex: 0 0 auto; display: flex; flex-direction: column; gap: 2px">
-                  <button onClick="{{ r.up }}" title="wyżej" style="background: transparent; border: 1px solid #DCD0BE; border-radius: 3px; width: 24px; height: 17px; line-height: 1; font-size: 9px; color: #6B5D4F; padding: 0" style-hover="border-color: #2F2620">▲</button>
-                  <button onClick="{{ r.down }}" title="niżej" style="background: transparent; border: 1px solid #DCD0BE; border-radius: 3px; width: 24px; height: 17px; line-height: 1; font-size: 9px; color: #6B5D4F; padding: 0" style-hover="border-color: #2F2620">▼</button>
+                  <button onClick="{{ r.up }}" title="wyżej" style="background: transparent; border: 1px solid #DCD0BE; border-radius: 3px; width: 24px; height: 17px; line-height: 1; font-size: 9px; color: #6B5D4F; padding: 0; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620" style-active="transform: scale(.98)">▲</button>
+                  <button onClick="{{ r.down }}" title="niżej" style="background: transparent; border: 1px solid #DCD0BE; border-radius: 3px; width: 24px; height: 17px; line-height: 1; font-size: 9px; color: #6B5D4F; padding: 0; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620" style-active="transform: scale(.98)">▼</button>
                 </div>
-                <button onClick="{{ r.toggle }}" style="flex: 0 0 auto; background: transparent; border: 1px solid #DCD0BE; border-radius: 999px; padding: 8px 14px; font-size: 12.5px; color: #5C5043" style-hover="border-color: #2F2620">{{ r.toggleLabel }}</button>
+                <button onClick="{{ r.toggle }}" style="flex: 0 0 auto; background: transparent; border: 1px solid #DCD0BE; border-radius: 999px; padding: 8px 14px; font-size: 12.5px; color: #5C5043; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620" style-active="transform: scale(.98)">{{ r.toggleLabel }}</button>
                 <div style="flex: 1 1 100%; padding: 12px 0 2px; border-top: 1px dashed #EDE4D8">
+                  <div style="font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #736454; margin-bottom: 9px">{{ r.photoCount }}</div>
+                  <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 16px">
+                    <sc-for list="{{ r.photos }}" as="ph" hint-placeholder-count="1">
+                      <div style="position: relative; width: 64px; height: 76px; border-radius: 4px; overflow: hidden; background: #E6DCCD; border: 1px solid {{ ph.bd }}">
+                        <img src="{{ ph.src }}" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block" />
+                        <button onClick="{{ ph.del }}" aria-label="Usuń zdjęcie" style="position: absolute; top: 3px; right: 3px; width: 18px; height: 18px; border-radius: 999px; border: 0; background: rgba(47,38,32,.75); color: #F7F2EA; font-size: 11px; line-height: 1; padding: 0; display: grid; place-items: center" style-hover="background: #8C3A2E">×</button>
+                        <sc-if value="{{ ph.canLeft }}" hint-placeholder-val="{{ false }}">
+                          <button onClick="{{ ph.left }}" aria-label="Przesuń w lewo" style="position: absolute; bottom: 3px; left: 3px; width: 18px; height: 18px; border-radius: 999px; border: 0; background: rgba(252,249,244,.85); color: #2F2620; font-size: 10px; line-height: 1; padding: 0; display: grid; place-items: center">‹</button>
+                        </sc-if>
+                        <sc-if value="{{ ph.canRight }}" hint-placeholder-val="{{ false }}">
+                          <button onClick="{{ ph.right }}" aria-label="Przesuń w prawo" style="position: absolute; bottom: 3px; right: 3px; width: 18px; height: 18px; border-radius: 999px; border: 0; background: rgba(252,249,244,.85); color: #2F2620; font-size: 10px; line-height: 1; padding: 0; display: grid; place-items: center">›</button>
+                        </sc-if>
+                      </div>
+                    </sc-for>
+                    <label style="width: 64px; height: 76px; border-radius: 4px; border: 1px dashed #C6B8A5; background: #F7F2EA; cursor: pointer; display: grid; place-items: center; font-size: 20px; color: #A8813F; transition: border-color .3s ease, background .3s ease" style-hover="border-color: #2F2620; background: #EDE4D8">
+                      <span>+</span>
+                      <input type="file" accept="image/*" multiple="{{ true }}" onChange="{{ r.onPhotos }}" style="display: none" />
+                    </label>
+                    <span style="font-size: 12px; color: #736454; flex: 1 1 160px; line-height: 1.5">Pierwsze zdjęcie to okładka. Po najechaniu na kartę w sklepie zdjęcia przewijają się same.</span>
+                  </div>
                   <div style="font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #736454; margin-bottom: 9px">{{ r.sizeCount }}</div>
                   <div style="display: flex; flex-wrap: wrap; gap: 8px">
                     <sc-for list="{{ r.vRows }}" as="v" hint-placeholder-count="1">
@@ -1122,7 +1173,7 @@
                         <button onClick="{{ v.del }}" style="background: transparent; border: 0; color: #B0A190; font-size: 15px; line-height: 1; padding: 2px 5px" style-hover="color: #8C3A2E">×</button>
                       </div>
                     </sc-for>
-                    <button onClick="{{ r.addSize }}" style="flex: 0 0 auto; background: transparent; border: 1px dashed #C6B8A5; border-radius: 999px; padding: 7px 14px; font-size: 12.5px; color: #5C5043" style-hover="border-color: #2F2620; border-style: solid">+ rozmiar</button>
+                    <button onClick="{{ r.addSize }}" style="flex: 0 0 auto; background: transparent; border: 1px dashed #C6B8A5; border-radius: 999px; padding: 7px 14px; font-size: 12.5px; color: #5C5043; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; border-style: solid" style-active="transform: scale(.98)">+ rozmiar</button>
                   </div>
                   <div style="font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #736454; margin: 16px 0 9px">Na jaką okazję — pokaże się w „Szukam prezentu"</div>
                   <div style="display: flex; flex-wrap: wrap; gap: 7px">
@@ -1178,7 +1229,7 @@
           <div style="background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 26px 24px; margin-bottom: 22px">
             <div style="font-family: Newsreader, serif; font-size: 23px; margin-bottom: 4px">Zdjęcia z pracowni</div>
             <p style="font-size: 13.5px; color: #726456; margin: 0 0 16px">Trafiają na stronę „Pracownia". {{ studioCount }}</p>
-            <label style="display: block; border: 1px dashed #C6B8A5; border-radius: 4px; padding: 20px; text-align: center; background: #F7F2EA; cursor: pointer; margin-bottom: 16px" style-hover="border-color: #2F2620; background: #EDE4D8">
+            <label style="display: block; border: 1px dashed #C6B8A5; border-radius: 4px; padding: 20px; text-align: center; background: #F7F2EA; cursor: pointer; margin-bottom: 16px; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; background: #EDE4D8" style-active="transform: scale(.98)">
               <span style="display: block; font-size: 14px; color: #5C5043">Wybierz zdjęcia — możesz kilka naraz</span>
               <span style="display: block; font-size: 12.5px; color: #736454; margin-top: 4px">dłonie w glinie, wnętrze, stół, piec</span>
               <input type="file" accept="image/*" multiple="true" onChange="{{ onStudioPhotos }}" style="display: none" />
@@ -1207,7 +1258,7 @@
               <input value="{{ nsDate }}" onChange="{{ onNsDate }}" placeholder="Data — np. sob. 18 października" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 13px 15px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
               <input value="{{ nsTime }}" onChange="{{ onNsTime }}" placeholder="Godziny — np. 11:00 – 13:30" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 13px 15px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
               <input value="{{ nsLeft }}" onChange="{{ onNsLeft }}" placeholder="Ile miejsc" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 13px 15px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
-              <button onClick="{{ addSlot }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px; font-size: 14.5px" style-hover="background: #24417E">Dodaj do terminarza</button>
+              <button onClick="{{ addSlot }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px; font-size: 14.5px; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Dodaj do terminarza</button>
             </div>
           </div>
         </div>
@@ -1220,7 +1271,7 @@
           <div style="background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 28px 26px; margin-bottom: 22px">
             <div style="font-family: Newsreader, serif; font-size: 25px; margin-bottom: 4px">Zdjęcie kubka pod napisy</div>
             <p style="font-size: 13.5px; color: #726456; margin: 0 0 18px">Na tym zdjęciu klientka widzi swój tekst. Najlepiej Twój własny kubek, sfotografowany prosto z boku, na jednolitym tle — i <strong style="font-weight: 500">bez żadnego napisu</strong>, bo generowany tekst nałoży się na istniejący.</p>
-            <label style="display: block; border: 1px dashed #C6B8A5; border-radius: 4px; padding: 20px; text-align: center; background: #F7F2EA; cursor: pointer" style-hover="border-color: #2F2620; background: #EDE4D8">
+            <label style="display: block; border: 1px dashed #C6B8A5; border-radius: 4px; padding: 20px; text-align: center; background: #F7F2EA; cursor: pointer; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; background: #EDE4D8" style-active="transform: scale(.98)">
               <img src="{{ cfgImg }}" alt="Zdjęcie kubka w konfiguratorze" style="width: 100%; max-height: 240px; object-fit: cover; border-radius: 3px; display: block; margin-bottom: 12px" />
               <span style="display: block; font-size: 14px; color: #5C5043">Wgraj inne zdjęcie kubka</span>
               <input type="file" accept="image/*" onChange="{{ onCfgImg }}" style="display: none" />
@@ -1248,7 +1299,7 @@
                 </div>
               </sc-for>
             </div>
-            <button onClick="{{ addMugSize }}" style="margin-top: 12px; background: transparent; border: 1px dashed #C6B8A5; border-radius: 999px; padding: 9px 16px; font-size: 13px; color: #5C5043" style-hover="border-color: #2F2620; border-style: solid">+ dodaj rozmiar</button>
+            <button onClick="{{ addMugSize }}" style="margin-top: 12px; background: transparent; border: 1px dashed #C6B8A5; border-radius: 999px; padding: 9px 16px; font-size: 13px; color: #5C5043; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; border-style: solid" style-active="transform: scale(.98)">+ dodaj rozmiar</button>
             <div style="margin-top: 26px; padding-top: 22px; border-top: 1px solid #EDE4D8">
               <div style="font-family: Newsreader, serif; font-size: 21px; margin-bottom: 4px">Ile znaków wolno wpisać</div>
               <p style="font-size: 13.5px; color: #726456; margin: 0 0 16px">Tyle, ile realnie wbijesz stemplem na ściance. Powyżej limitu pole po prostu przestaje przyjmować litery.</p>
@@ -1320,7 +1371,7 @@
                           <span style="font-size: 12.5px; color: #726456">%</span>
                         </div>
                         <span style="font-size: 12.5px; color: #726456">{{ b.stateLabel }}</span>
-                        <button onClick="{{ b.toggle }}" style="margin-left: auto; background: transparent; border: 1px solid #DCD0BE; border-radius: 999px; padding: 8px 14px; font-size: 12.5px; color: #5C5043" style-hover="border-color: #2F2620">{{ b.toggleLabel }}</button>
+                        <button onClick="{{ b.toggle }}" style="margin-left: auto; background: transparent; border: 1px solid #DCD0BE; border-radius: 999px; padding: 8px 14px; font-size: 12.5px; color: #5C5043; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620" style-active="transform: scale(.98)">{{ b.toggleLabel }}</button>
                       </div>
                     </div>
                   </sc-for>
@@ -1347,7 +1398,7 @@
                     </div>
                   </sc-for>
                 </div>
-                <button onClick="{{ addScarfRow }}" style="margin-top: 12px; background: transparent; border: 1px dashed #C6B8A5; border-radius: 999px; padding: 9px 16px; font-size: 13px; color: #5C5043" style-hover="border-color: #2F2620; border-style: solid">+ dodaj pozycję</button>
+                <button onClick="{{ addScarfRow }}" style="margin-top: 12px; background: transparent; border: 1px dashed #C6B8A5; border-radius: 999px; padding: 9px 16px; font-size: 13px; color: #5C5043; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; border-style: solid" style-active="transform: scale(.98)">+ dodaj pozycję</button>
               </div>
             </sc-if>
 
@@ -1370,7 +1421,7 @@
                     </div>
                   </sc-for>
                 </div>
-                <button onClick="{{ addImprintRow }}" style="margin-top: 12px; background: transparent; border: 1px dashed #C6B8A5; border-radius: 999px; padding: 9px 16px; font-size: 13px; color: #5C5043" style-hover="border-color: #2F2620; border-style: solid">+ dodaj pozycję</button>
+                <button onClick="{{ addImprintRow }}" style="margin-top: 12px; background: transparent; border: 1px dashed #C6B8A5; border-radius: 999px; padding: 9px 16px; font-size: 13px; color: #5C5043; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; border-style: solid" style-active="transform: scale(.98)">+ dodaj pozycję</button>
               </div>
             </sc-if>
 
@@ -1415,6 +1466,126 @@
           </sc-for>
         </div>
         <div style="font-size: 13px; color: #726456; margin-top: 14px; line-height: 1.6">Zmiana ceny tutaj przestawia cennik na stronie „Wypały" natychmiast.</div>
+
+        <div style="font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #726456; margin: 34px 0 14px">Rodzaje wypału w formularzu „Zgłoś wsad"</div>
+        <div style="background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; overflow: hidden">
+          <sc-for list="{{ kilnKindsAdmin }}" as="kk" hint-placeholder-count="4">
+            <div style="display: flex; gap: 10px; align-items: center; padding: 12px 18px; border-bottom: 1px solid #EDE4D8">
+              <span style="font-size: 12px; color: #736454; min-width: 18px">{{ kk.no }}</span>
+              <input value="{{ kk.label }}" onChange="{{ kk.onLabel }}" style="flex: 1; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 9px 12px; font-size: 14px" style-focus="border-color: #2F2620; outline: none" />
+              <button onClick="{{ kk.up }}" aria-label="Wyżej" style="background: transparent; border: 1px solid #DCD0BE; border-radius: 999px; width: 30px; height: 30px; font-size: 12px; color: #6B5D4F; transition: border-color .3s ease" style-hover="border-color: #2F2620">↑</button>
+              <button onClick="{{ kk.down }}" aria-label="Niżej" style="background: transparent; border: 1px solid #DCD0BE; border-radius: 999px; width: 30px; height: 30px; font-size: 12px; color: #6B5D4F; transition: border-color .3s ease" style-hover="border-color: #2F2620">↓</button>
+              <button onClick="{{ kk.del }}" style="background: transparent; border: 0; color: #B0A190; font-size: 12.5px; padding: 4px 6px; transition: color .25s ease" style-hover="color: #8C3A2E">usuń</button>
+            </div>
+          </sc-for>
+          <div style="display: flex; gap: 10px; align-items: center; padding: 14px 18px; background: #F7F2EA">
+            <input value="{{ newKilnKind }}" onChange="{{ onNewKilnKind }}" placeholder="Nowy rodzaj, np. Wypał raku" style="flex: 1; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 9px 12px; font-size: 14px" style-focus="border-color: #2F2620; outline: none" />
+            <button onClick="{{ addKilnKind }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 10px 18px; font-size: 13px; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Dodaj</button>
+          </div>
+        </div>
+        <div style="font-size: 13px; color: #726456; margin-top: 14px; line-height: 1.6">Lista pojawia się w rozwijanym polu formularza na stronie „Wypały". Kolejność tutaj to kolejność na liście.</div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ tabU }}" hint-placeholder-val="{{ false }}">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 22px; align-items: start">
+        <div style="background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 22px 22px">
+          <div style="font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #726456; margin: 0 0 12px">Dostawa i opłaty</div>
+          <div style="display: grid; gap: 12px">
+            <sc-for list="{{ cfgMoney }}" as="f" hint-placeholder-count="4">
+              <label style="display: flex; align-items: center; justify-content: space-between; gap: 14px; font-size: 14px; color: #4A3E33"><span style="flex: 1; min-width: 0">{{ f.label }}</span><span style="display: flex; align-items: center; gap: 6px"><input value="{{ f.val }}" onChange="{{ f.onChange }}" style="width: 78px; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 9px 10px; font-size: 14px; text-align: right" style-focus="border-color: #2F2620; outline: none" /><span style="font-size: 13px; color: #726456">zł</span></span></label>
+            </sc-for>
+          </div>
+          <div style="font-size: 12.5px; color: #726456; margin-top: 14px; line-height: 1.6">Próg darmowej wysyłki ({{ freeFromLabel }}) ustawiasz w Tweaks. Zaliczka za warsztaty działa, gdy włączysz ją tam samo.</div>
+        </div>
+        <div style="background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 22px 22px">
+          <div style="font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #726456; margin: 0 0 12px">Dane pracowni</div>
+          <div style="display: grid; gap: 12px">
+            <sc-for list="{{ cfgText }}" as="f" hint-placeholder-count="5">
+              <label style="display: grid; gap: 5px; font-size: 12.5px; color: #726456"><span>{{ f.label }}</span><input value="{{ f.val }}" onChange="{{ f.onChange }}" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 10px 12px; font-size: 14px" style-focus="border-color: #2F2620; outline: none" /></label>
+            </sc-for>
+          </div>
+          <div style="font-size: 12.5px; color: #726456; margin-top: 14px; line-height: 1.6">Telefon i profile podmieniają się w stopce, na stronie kontaktu, w formularzach i w danych dla Google.</div>
+        </div>
+        <sc-for list="{{ formLists }}" as="fl" hint-placeholder-count="2">
+          <div style="background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 22px 22px">
+            <div style="font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #726456; margin: 0 0 12px">{{ fl.title }}</div>
+            <div style="display: grid; gap: 8px">
+              <sc-for list="{{ fl.rows }}" as="r" hint-placeholder-count="6">
+                <div style="display: flex; gap: 8px; align-items: center">
+                  <input value="{{ r.label }}" onChange="{{ r.onLabel }}" style="flex: 1; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 9px 12px; font-size: 14px" style-focus="border-color: #2F2620; outline: none" />
+                  <button onClick="{{ r.up }}" aria-label="Wyżej" style="background: transparent; border: 1px solid #DCD0BE; border-radius: 999px; width: 30px; height: 30px; font-size: 12px; color: #6B5D4F; transition: border-color .3s ease; flex: 0 0 auto" style-hover="border-color: #2F2620">↑</button><button onClick="{{ r.down }}" aria-label="Niżej" style="background: transparent; border: 1px solid #DCD0BE; border-radius: 999px; width: 30px; height: 30px; font-size: 12px; color: #6B5D4F; transition: border-color .3s ease; flex: 0 0 auto" style-hover="border-color: #2F2620">↓</button><button onClick="{{ r.del }}" style="background: transparent; border: 0; color: #B0A190; font-size: 12.5px; padding: 4px 6px; transition: color .25s ease; flex: 0 0 auto" style-hover="color: #8C3A2E">usuń</button>
+                </div>
+              </sc-for>
+              <div style="display: flex; gap: 8px; align-items: center; margin-top: 6px">
+                <input value="{{ fl.newVal }}" onChange="{{ fl.onNew }}" placeholder="Nowa pozycja" style="flex: 1; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 9px 12px; font-size: 14px" style-focus="border-color: #2F2620; outline: none" />
+                <button onClick="{{ fl.add }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 10px 18px; font-size: 13px; white-space: nowrap; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Dodaj</button>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+        <div style="background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 22px 22px">
+          <div style="font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #726456; margin: 0 0 12px">Przedziały budżetu w „Prezentach"</div>
+          <div style="display: grid; gap: 8px">
+            <sc-for list="{{ budgetRows }}" as="b" hint-placeholder-count="4">
+              <div style="display: flex; gap: 8px; align-items: center; font-size: 13px; color: #726456">
+                <span>od</span><input value="{{ b.min }}" onChange="{{ b.onMin }}" style="width: 70px; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 9px 10px; font-size: 14px; text-align: right" style-focus="border-color: #2F2620; outline: none" />
+                <span>do</span><input value="{{ b.max }}" onChange="{{ b.onMax }}" placeholder="∞" style="width: 70px; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 9px 10px; font-size: 14px; text-align: right" style-focus="border-color: #2F2620; outline: none" />
+                <span style="flex: 1; min-width: 0; color: #2F2620; font-size: 13.5px">{{ b.label }}</span><button onClick="{{ b.del }}" style="background: transparent; border: 0; color: #B0A190; font-size: 12.5px; padding: 4px 6px; transition: color .25s ease; flex: 0 0 auto" style-hover="color: #8C3A2E">usuń</button>
+              </div>
+            </sc-for>
+            <div style="margin-top: 6px"><button onClick="{{ addBudget }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 10px 18px; font-size: 13px; white-space: nowrap; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Dodaj przedział</button></div>
+          </div>
+          <div style="font-size: 12.5px; color: #726456; margin-top: 14px; line-height: 1.6">Puste „do" znaczy „powyżej". Nazwa przedziału buduje się sama.</div>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ tabT }}" hint-placeholder-val="{{ false }}">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 22px; align-items: start">
+        <div style="background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 22px 22px">
+          <div style="font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #726456; margin: 0 0 12px">Teksty na stronach</div>
+          <div style="display: grid; gap: 14px">
+            <sc-for list="{{ contentFields }}" as="f" hint-placeholder-count="6">
+              <label style="display: grid; gap: 5px; font-size: 12.5px; color: #726456"><span>{{ f.label }}</span><textarea value="{{ f.val }}" onChange="{{ f.onChange }}" rows="{{ f.rows }}" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 10px 12px; font-size: 14px; line-height: 1.55; resize: vertical; font-family: inherit" style-focus="border-color: #2F2620; outline: none"></textarea></label>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display: grid; gap: 22px">
+          <div style="background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 22px 22px">
+            <div style="font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #726456; margin: 0 0 12px">Częste pytania</div>
+            <div style="display: grid; gap: 14px">
+              <sc-for list="{{ faqAdmin }}" as="f" hint-placeholder-count="6">
+                <div style="border: 1px solid #EDE4D8; border-radius: 4px; padding: 12px; background: #F7F2EA; display: grid; gap: 8px">
+                  <div style="display: flex; gap: 8px; align-items: center">
+                    <input value="{{ f.q }}" onChange="{{ f.onQ }}" placeholder="Pytanie" style="flex: 1; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 9px 12px; font-size: 14px" style-focus="border-color: #2F2620; outline: none" />
+                    <button onClick="{{ f.up }}" aria-label="Wyżej" style="background: transparent; border: 1px solid #DCD0BE; border-radius: 999px; width: 30px; height: 30px; font-size: 12px; color: #6B5D4F; transition: border-color .3s ease; flex: 0 0 auto" style-hover="border-color: #2F2620">↑</button><button onClick="{{ f.down }}" aria-label="Niżej" style="background: transparent; border: 1px solid #DCD0BE; border-radius: 999px; width: 30px; height: 30px; font-size: 12px; color: #6B5D4F; transition: border-color .3s ease; flex: 0 0 auto" style-hover="border-color: #2F2620">↓</button><button onClick="{{ f.del }}" style="background: transparent; border: 0; color: #B0A190; font-size: 12.5px; padding: 4px 6px; transition: color .25s ease; flex: 0 0 auto" style-hover="color: #8C3A2E">usuń</button>
+                  </div>
+                  <textarea value="{{ f.a }}" onChange="{{ f.onA }}" placeholder="Odpowiedź" rows="3" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 10px 12px; font-size: 14px; line-height: 1.55; resize: vertical; font-family: inherit" style-focus="border-color: #2F2620; outline: none"></textarea>
+                </div>
+              </sc-for>
+              <div style="display: grid; gap: 8px; margin-top: 4px">
+                <input value="{{ newFaqQ }}" onChange="{{ onNewFaqQ }}" placeholder="Nowe pytanie" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 10px 12px; font-size: 14px" style-focus="border-color: #2F2620; outline: none" />
+                <textarea value="{{ newFaqA }}" onChange="{{ onNewFaqA }}" placeholder="Odpowiedź" rows="2" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 10px 12px; font-size: 14px; line-height: 1.55; resize: vertical; font-family: inherit" style-focus="border-color: #2F2620; outline: none"></textarea>
+                <div><button onClick="{{ addFaq }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 10px 18px; font-size: 13px; white-space: nowrap; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Dodaj pytanie</button></div>
+              </div>
+            </div>
+            <div style="font-size: 12.5px; color: #726456; margin-top: 14px; line-height: 1.6">Pierwsze trzy pytania trafiają też do danych strukturalnych dla Google.</div>
+          </div>
+          <div style="background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 22px 22px">
+            <div style="font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #726456; margin: 0 0 12px">Materiały — kafelki na „O mnie"</div>
+            <div style="display: grid; gap: 10px">
+              <sc-for list="{{ materialsAdmin }}" as="m" hint-placeholder-count="4">
+                <div style="display: grid; grid-template-columns: minmax(90px, 1fr) minmax(0, 2fr) auto; gap: 8px; align-items: start">
+                  <input value="{{ m.t }}" onChange="{{ m.onT }}" placeholder="Nazwa" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 10px 12px; font-size: 14px" style-focus="border-color: #2F2620; outline: none" />
+                  <textarea value="{{ m.d }}" onChange="{{ m.onD }}" placeholder="Jedno, dwa zdania" rows="2" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 10px 12px; font-size: 14px; line-height: 1.55; resize: vertical; font-family: inherit" style-focus="border-color: #2F2620; outline: none"></textarea>
+                  <button onClick="{{ m.del }}" style="background: transparent; border: 0; color: #B0A190; font-size: 12.5px; padding: 4px 6px; transition: color .25s ease; flex: 0 0 auto" style-hover="color: #8C3A2E">usuń</button>
+                </div>
+              </sc-for>
+              <div><button onClick="{{ addMaterial }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 10px 18px; font-size: 13px; white-space: nowrap; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Dodaj kafelek</button></div>
+            </div>
+          </div>
+        </div>
       </div>
       </sc-if>
 
@@ -1434,7 +1605,7 @@
                   <option>co godzinę</option><option>co 6 godzin</option><option>raz na dobę</option><option>tylko ręcznie</option>
                 </select>
               </div>
-              <button onClick="{{ loadFeed }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px; font-size: 14.5px" style-hover="background: #24417E">Zaciągnij posty teraz</button>
+              <button onClick="{{ loadFeed }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px; font-size: 14.5px; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Zaciągnij posty teraz</button>
             </div>
             <sc-if value="{{ feedIsDemo }}" hint-placeholder-val="{{ true }}">
               <div style="margin-top: 16px; background: #F7F2EA; border: 1px solid #EDE4D8; border-radius: 4px; padding: 16px; font-size: 13.5px; line-height: 1.6; color: #6B5D4F">Na stronie widać teraz <strong style="font-weight: 500">przykładowe wpisy</strong> z Twoich zdjęć — po wklejeniu adresu kanału podmienią się na prawdziwe posty.</div>
@@ -1460,7 +1631,7 @@
                 <input value="{{ nrWhat }}" onChange="{{ onNrWhat }}" placeholder="Czego dotyczy" style="flex: 1 1 130px; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 14.5px" style-focus="border-color: #2F2620; outline: none" />
               </div>
               <textarea value="{{ nrText }}" onChange="{{ onNrText }}" rows="3" placeholder="Treść opinii — wklej to, co dostałaś" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 14.5px; resize: vertical; line-height: 1.6" style-focus="border-color: #2F2620; outline: none"></textarea>
-              <button onClick="{{ addReview }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px; font-size: 14.5px" style-hover="background: #24417E">Dodaj opinię</button>
+              <button onClick="{{ addReview }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px; font-size: 14.5px; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Dodaj opinię</button>
             </div>
           </div>
 
@@ -1468,7 +1639,7 @@
             <div style="font-family: Newsreader, serif; font-size: 25px; margin-bottom: 4px">Notatka z pracowni</div>
             <p style="font-size: 13.5px; color: #726456; margin: 0 0 18px">Twój własny wpis — bez Instagrama. Dłuższy tekst, który ktoś przeczyta na spokojnie.</p>
             <div style="display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px">
-              <label style="display: block; border: 1px dashed #C6B8A5; border-radius: 4px; padding: 18px; text-align: center; background: #F7F2EA; cursor: pointer" style-hover="border-color: #2F2620; background: #EDE4D8">
+              <label style="display: block; border: 1px dashed #C6B8A5; border-radius: 4px; padding: 18px; text-align: center; background: #F7F2EA; cursor: pointer; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; background: #EDE4D8" style-active="transform: scale(.98)">
                 <sc-if value="{{ hasNnPhoto }}" hint-placeholder-val="{{ false }}">
                   <img src="{{ nnPhoto }}" alt="Zdjęcie do notatki" style="width: 100%; max-height: 160px; object-fit: cover; border-radius: 3px; display: block; margin-bottom: 10px" />
                 </sc-if>
@@ -1481,7 +1652,7 @@
                 <input value="{{ nnDate }}" onChange="{{ onNnDate }}" placeholder="Data" style="flex: 0 1 140px; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 14.5px" style-focus="border-color: #2F2620; outline: none" />
               </div>
               <textarea value="{{ nnText }}" onChange="{{ onNnText }}" rows="4" placeholder="Treść — co się stało, co wyszło, czego się nauczyłaś" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 14.5px; resize: vertical; line-height: 1.6" style-focus="border-color: #2F2620; outline: none"></textarea>
-              <button onClick="{{ addNote }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px; font-size: 14.5px" style-hover="background: #24417E">Opublikuj notatkę</button>
+              <button onClick="{{ addNote }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px; font-size: 14.5px; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Opublikuj notatkę</button>
             </div>
           </div>
 
@@ -1489,7 +1660,7 @@
             <div style="font-family: Newsreader, serif; font-size: 25px; margin-bottom: 4px">Targi i wydarzenia</div>
             <p style="font-size: 13.5px; color: #726456; margin: 0 0 18px">Nadchodzące trafiają do paska „Gdzie mnie spotkasz" na górze Dziennika, przeszłe — do kroniki jako relacja.</p>
             <div style="display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px">
-              <label style="display: block; border: 1px dashed #C6B8A5; border-radius: 4px; padding: 18px; text-align: center; background: #F7F2EA; cursor: pointer" style-hover="border-color: #2F2620; background: #EDE4D8">
+              <label style="display: block; border: 1px dashed #C6B8A5; border-radius: 4px; padding: 18px; text-align: center; background: #F7F2EA; cursor: pointer; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; background: #EDE4D8" style-active="transform: scale(.98)">
                 <sc-if value="{{ hasNePhoto }}" hint-placeholder-val="{{ false }}">
                   <img src="{{ nePhoto }}" alt="Zdjęcie z wydarzenia" style="width: 100%; max-height: 160px; object-fit: cover; border-radius: 3px; display: block; margin-bottom: 10px" />
                 </sc-if>
@@ -1507,7 +1678,7 @@
                 <input type="checkbox" checked="{{ nePast }}" onChange="{{ onNePast }}" style="accent-color: #2F2620" />
                 <span>To już było — wrzuć jako relację, nie zaproszenie</span>
               </label>
-              <button onClick="{{ addEvent }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px; font-size: 14.5px" style-hover="background: #24417E">Dodaj wydarzenie</button>
+              <button onClick="{{ addEvent }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px; font-size: 14.5px; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Dodaj wydarzenie</button>
             </div>
           </div>
 
@@ -1542,7 +1713,7 @@
                   </div>
                   <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
                     <span style="font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: #A8813F">{{ e.stateLabel }}</span>
-                    <button onClick="{{ e.toggle }}" style="background: transparent; border: 1px solid #DCD0BE; border-radius: 999px; padding: 7px 14px; font-size: 12.5px; color: #5C5043" style-hover="border-color: #2F2620">{{ e.toggleLabel }}</button>
+                    <button onClick="{{ e.toggle }}" style="background: transparent; border: 1px solid #DCD0BE; border-radius: 999px; padding: 7px 14px; font-size: 12.5px; color: #5C5043; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620" style-active="transform: scale(.98)">{{ e.toggleLabel }}</button>
                     <button onClick="{{ e.del }}" style="margin-left: auto; background: transparent; border: 1px solid #DCD0BE; border-radius: 999px; padding: 7px 14px; font-size: 12.5px; color: #726456" style-hover="border-color: #8C3A2E; color: #8C3A2E">Usuń</button>
                   </div>
                 </div>
@@ -1556,7 +1727,7 @@
             <div style="display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px">
               <input value="{{ manualLink }}" onChange="{{ onManualLink }}" placeholder="Link do posta na Instagramie" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 14.5px" style-focus="border-color: #2F2620; outline: none" />
               <textarea value="{{ manualCap }}" onChange="{{ onManualCap }}" rows="3" placeholder="Podpis — to, co ma przeczytać ktoś, kto nie ma Instagrama" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 14.5px; resize: vertical; line-height: 1.6" style-focus="border-color: #2F2620; outline: none"></textarea>
-              <button onClick="{{ addManual }}" style="background: transparent; color: #2F2620; border: 1px solid #C6B8A5; border-radius: 999px; padding: 14px; font-size: 14.5px" style-hover="border-color: #2F2620; background: #EDE4D8">Dodaj do kroniki</button>
+              <button onClick="{{ addManual }}" style="background: transparent; color: #2F2620; border: 1px solid #C6B8A5; border-radius: 999px; padding: 14px; font-size: 14.5px; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; background: #EDE4D8" style-active="transform: scale(.98)">Dodaj do kroniki</button>
             </div>
           </div>
         </div>
@@ -1592,19 +1763,24 @@
   </sc-if>
 
   <sc-if value="{{ isMug }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width: 1280px; margin: 0 auto; padding: 44px 28px 96px; animation: maIn .4s ease both">
+  <div style="max-width: 1280px; margin: 0 auto; padding: 44px 28px 96px; animation: maView .55s cubic-bezier(.2,.7,.2,1) both">
     <div style="font-size: 12px; color: #736454; margin-bottom: 26px">Strona główna / <span style="color: #5C5043">Kubek z napisem</span></div>
     <div style="display: flex; flex-wrap: wrap; gap: 56px">
       <div style="flex: 1 1 380px; min-width: 0">
         <div style="position: relative; border-radius: 6px; overflow: hidden; background: #E6DCCD">
           <img src="{{ mugImg }}" alt="Kubek z wbijanym w glinę napisem" style="width: 100%; display: block; aspect-ratio: 1/1; object-fit: cover" />
+          <div style="position: absolute; inset: 0; background: {{ glazeHex }}; opacity: .07; mix-blend-mode: multiply; transition: background .6s ease; pointer-events: none"></div>
           <div style="position: absolute; left: {{ mugTx }}%; top: {{ mugTy }}%; width: 60%; transform: translate(-50%, -50%) rotate({{ mugRot }}deg); text-align: center; font-size: clamp(15px, 2.3vw, 26px)">
             <sc-for list="{{ mugLines }}" as="ln" hint-placeholder-count="1">
-              <span style="display: block; font-size: {{ mugTs }}%; letter-spacing: 0.16em; line-height: 1.35; color: {{ inkHex }}; text-shadow: 0 1px 0 rgba(255,255,255,.35); word-break: break-word">{{ ln.t }}</span>
+              <span style="display: block; font-size: {{ mugTs }}%; letter-spacing: 0.16em; line-height: 1.35; color: {{ inkHex }}; text-shadow: 0 1px 0 rgba(255,255,255,.35); word-break: break-word; transition: color .5s ease">
+                <sc-for list="{{ ln.chars }}" as="ch" hint-placeholder-count="0">
+                  <span style="display: inline-block; white-space: pre; animation: maStamp .38s cubic-bezier(.2,.8,.2,1) both">{{ ch.c }}</span>
+                </sc-for>
+              </span>
             </sc-for>
           </div>
           <div style="position: absolute; right: 16px; bottom: 16px; display: flex; align-items: center; gap: 9px; background: rgba(252,249,244,.92); border-radius: 999px; padding: 7px 13px">
-            <span style="width: 15px; height: 15px; border-radius: 999px; background: {{ glazeHex }}"></span>
+            <span style="width: 15px; height: 15px; border-radius: 999px; background: {{ glazeHex }}; transition: background .6s ease"></span>
             <span style="font-size: 12px; color: #5C5043">wnętrze: {{ glazeName }}</span>
           </div>
         </div>
@@ -1620,7 +1796,7 @@
         <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; margin: 12px 0 30px; font-size: 12.5px; color: #726456">
           <span>{{ mugLineInfo }}</span>
           <span style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap">
-            <button onClick="{{ splitMug }}" style="background: transparent; border: 1px solid #DCD0BE; border-radius: 999px; padding: 6px 13px; font-size: 12px; color: #5C5043" style-hover="border-color: #2F2620">Podziel na linie</button>
+            <button onClick="{{ splitMug }}" style="background: transparent; border: 1px solid #DCD0BE; border-radius: 999px; padding: 6px 13px; font-size: 12px; color: #5C5043; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620" style-active="transform: scale(.98)">Podziel na linie</button>
             <span title="{{ mugRules }}">{{ mugCount }}</span>
           </span>
         </div>
@@ -1638,14 +1814,14 @@
         <div style="font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #726456; margin-bottom: 12px">Kolor wnętrza</div>
         <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 34px">
           <sc-for list="{{ glazes }}" as="g" hint-placeholder-count="5">
-            <button onClick="{{ g.set }}" title="{{ g.name }}" style="width: 42px; height: 42px; border-radius: 999px; padding: 0; background: {{ g.hex }}; border: 2px solid {{ g.ring }}; box-shadow: inset 0 0 0 2px #FCF9F4"></button>
+            <button onClick="{{ g.set }}" title="{{ g.name }}" style="width: 42px; height: 42px; border-radius: 999px; padding: 0; background: {{ g.hex }}; border: 2px solid {{ g.ring }}; box-shadow: inset 0 0 0 2px #FCF9F4; transition: border-color .3s ease, transform .3s cubic-bezier(.2,.8,.2,1)" style-hover="transform: scale(1.12)"></button>
           </sc-for>
         </div>
 
-        <button onClick="{{ addMug }}" style="width: 100%; background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 18px 30px; font-size: 15px; letter-spacing: 0.02em" style-hover="background: #24417E">Dodaj do koszyka &middot; {{ mugPriceLabel }}</button>
+        <button onClick="{{ addMug }}" style="width: 100%; background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 18px 30px; font-size: 15px; letter-spacing: 0.02em; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Dodaj do koszyka &middot; {{ mugPriceLabel }}</button>
         <div style="display: flex; align-items: center; gap: 10px; margin-top: 16px; font-size: 12.5px; color: #6B5D4F">
           <span style="background: #24417E; color: #fff; font-weight: 600; font-size: 10px; padding: 3px 7px; border-radius: 3px">BLIK</span>
-          <span>zapłacisz w 10 sekund &middot; wysyłka gratis od 400 zł</span>
+          <span>zapłacisz w 10 sekund &middot; wysyłka gratis od {{ freeFromLabel }}</span>
         </div>
         <div style="margin-top: 32px; padding-top: 26px; border-top: 1px solid #E2D7C7; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; font-size: 13.5px; color: #6B5D4F; line-height: 1.55">
           <div><div style="color: #2F2620; margin-bottom: 4px">Zamawiasz więcej?</div>Od sześciu kubków robię rabat — <a href="#/zamowienia-indywidualne" onClick="{{ goCustom }}">napisz do mnie</a></div>
@@ -1657,7 +1833,7 @@
   </sc-if>
 
   <sc-if value="{{ isGifts }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width: 1280px; margin: 0 auto; padding: 56px 28px 96px; animation: maIn .4s ease both">
+  <div style="max-width: 1280px; margin: 0 auto; padding: 56px 28px 96px; animation: maView .55s cubic-bezier(.2,.7,.2,1) both">
     <div style="font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #855F3D; margin-bottom: 20px">szukam prezentu</div>
     <h1 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(38px, 5.2vw, 68px); line-height: 1.04; margin: 0 0 18px; letter-spacing: -0.02em">Powiedz, dla kogo<br />i za ile</h1>
     <p style="font-size: 17px; line-height: 1.7; color: #5C5043; max-width: 54ch; margin: 0 0 40px">Dobiorę resztę. Wszystko pakuję w wióry i szary papier ze sznurkiem — możesz dopłacić do pudełka z kartką i wysłać prosto do obdarowanej osoby.</p>
@@ -1686,13 +1862,21 @@
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 30px 26px">
       <sc-for list="{{ giftItems }}" as="p" hint-placeholder-count="6">
         <div style="animation: maUp .45s ease both">
-          <div onClick="{{ p.open }}" style="cursor: pointer; border-radius: 6px; overflow: hidden; background: #E6DCCD; margin-bottom: 14px">
-            <img src="{{ p.img }}" alt="{{ p.name }}" style="width: 100%; display: block; aspect-ratio: 4/5; object-fit: cover; transition: transform .7s cubic-bezier(.2,.7,.2,1)" style-hover="transform: scale(1.045)" />
+          <div onClick="{{ p.open }}" onMouseEnter="{{ p.enter }}" onMouseLeave="{{ p.leave }}" style="cursor: pointer; position: relative; border-radius: 6px; overflow: hidden; background: #E6DCCD; margin-bottom: 14px; transition: box-shadow .5s ease, transform .5s cubic-bezier(.2,.7,.2,1)" style-hover="box-shadow: 0 26px 50px -30px rgba(47,38,32,.5); transform: translateY(-4px)">
+            <img src="{{ p.img }}" alt="{{ p.name }}" style="width: 100%; display: block; aspect-ratio: 4/5; object-fit: cover" />
+              <sc-for list="{{ p.slides }}" as="sl" hint-placeholder-count="0">
+                <img src="{{ sl.src }}" alt="" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{ sl.op }}; transition: opacity .6s ease" />
+              </sc-for>
+              <sc-if value="{{ p.hasMany }}" hint-placeholder-val="{{ false }}">
+                <div style="position: absolute; left: 0; right: 0; bottom: 10px; display: flex; justify-content: center; gap: 5px; pointer-events: none">
+                  <sc-for list="{{ p.dots }}" as="d" hint-placeholder-count="0"><span style="width: 6px; height: 6px; border-radius: 999px; background: {{ d.bg }}; box-shadow: 0 0 0 1px rgba(47,38,32,.25); transition: background .3s ease"></span></sc-for>
+                </div>
+              </sc-if>
           </div>
           <div style="font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: #736454; margin-bottom: 5px">{{ p.category }}</div>
           <div onClick="{{ p.open }}" style="cursor: pointer; font-family: Newsreader, serif; font-size: 20px; line-height: 1.25; margin-bottom: 6px">{{ p.name }}</div>
           <div style="font-size: 14px; color: #5C5043; margin-bottom: 12px">{{ p.priceLabel }}</div>
-          <button onClick="{{ p.add }}" style="background: transparent; border: 1px solid #C6B8A5; border-radius: 999px; padding: 9px 18px; font-size: 13px; color: #2F2620" style-hover="background: #2F2620; color: #F7F2EA; border-color: #2F2620">Do koszyka</button>
+          <button onClick="{{ p.add }}" style="background: transparent; border: 1px solid #C6B8A5; border-radius: 999px; padding: 9px 18px; font-size: 13px; color: #2F2620; transition: background .3s ease, color .3s ease, border-color .3s ease, transform .15s ease" style-hover="background: #2F2620; color: #F7F2EA; border-color: #2F2620" style-active="transform: scale(.97)">Do koszyka</button>
         </div>
       </sc-for>
     </div>
@@ -1707,7 +1891,7 @@
   </sc-if>
 
   <sc-if value="{{ isBundles }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width: 1280px; margin: 0 auto; padding: 56px 28px 96px; animation: maIn .4s ease both">
+  <div style="max-width: 1280px; margin: 0 auto; padding: 56px 28px 96px; animation: maView .55s cubic-bezier(.2,.7,.2,1) both">
     <div style="font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #855F3D; margin-bottom: 20px">zestawy prezentowe</div>
     <h1 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(38px, 5.2vw, 68px); line-height: 1.04; margin: 0 0 18px; letter-spacing: -0.02em; white-space: pre-line">{{ tBndH1 }}</h1>
     <p style="font-size: 17px; line-height: 1.7; color: #5C5043; max-width: 56ch; margin: 0 0 44px">{{ tBndLead }}</p>
@@ -1730,7 +1914,7 @@
               <span style="font-family: Newsreader, serif; font-size: 27px">{{ b.priceLabel }}</span>
               <span style="text-decoration: line-through; color: #736454; font-size: 15px">{{ b.fullLabel }}</span>
               <span style="font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: #F7F2EA; background: #24417E; border-radius: 999px; padding: 5px 12px">{{ b.saveLabel }}</span>
-              <button onClick="{{ b.add }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 14px 28px; font-size: 14px; margin-left: auto" style-hover="background: #24417E">Do koszyka</button>
+              <button onClick="{{ b.add }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 14px 28px; font-size: 14px; margin-left: auto; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Do koszyka</button>
             </div>
           </div>
         </div>
@@ -1741,13 +1925,13 @@
         <div style="font-family: Newsreader, serif; font-size: 26px; margin-bottom: 8px">{{ tWrapH }}</div>
         <div style="font-size: 15px; line-height: 1.62; color: #5C5043; max-width: 52ch">{{ tWrapLead }}</div>
       </div>
-      <button onClick="{{ toggleWrap }}" style="flex: 0 0 auto; background: #FCF9F4; border: 1px solid #C6B8A5; border-radius: 999px; padding: 14px 26px; font-size: 14px; color: #2F2620" style-hover="border-color: #2F2620">{{ wrapLabel }}</button>
+      <button onClick="{{ toggleWrap }}" style="flex: 0 0 auto; background: #FCF9F4; border: 1px solid #C6B8A5; border-radius: 999px; padding: 14px 26px; font-size: 14px; color: #2F2620; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620" style-active="transform: scale(.98)">{{ wrapLabel }}</button>
     </div>
   </div>
   </sc-if>
 
   <sc-if value="{{ isScarf }}" hint-placeholder-val="{{ false }}">
-  <div style="animation: maIn .4s ease both">
+  <div style="animation: maView .55s cubic-bezier(.2,.7,.2,1) both">
     <div style="max-width: 1280px; margin: 0 auto; padding: 56px 28px 0">
       <div style="display: flex; flex-wrap: wrap; gap: 56px; align-items: center">
         <div style="flex: 1 1 400px; min-width: 0">
@@ -1756,8 +1940,8 @@
           <p style="font-size: 17.5px; line-height: 1.68; color: #4A3E33; max-width: 46ch; margin: 0 0 20px; text-wrap: pretty">{{ tScarfLead }}</p>
           <p style="font-size: 16px; line-height: 1.7; color: #5C5043; max-width: 46ch; margin: 0 0 34px">{{ tScarfLead2 }}</p>
           <div style="display: flex; flex-wrap: wrap; gap: 14px">
-            <button onClick="{{ goContact }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 16px 32px; font-size: 14px" style-hover="background: #24417E">Napisz, co chcesz przysłać</button>
-            <button onClick="{{ goImprint }}" style="background: transparent; color: #2F2620; border: 1px solid #C6B8A5; border-radius: 999px; padding: 16px 32px; font-size: 14px" style-hover="border-color: #2F2620; background: #EDE4D8">Odcisk Twojej rośliny →</button>
+            <button onClick="{{ goContact }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 16px 32px; font-size: 14px; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Napisz, co chcesz przysłać</button>
+            <button onClick="{{ goImprint }}" style="background: transparent; color: #2F2620; border: 1px solid #C6B8A5; border-radius: 999px; padding: 16px 32px; font-size: 14px; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; background: #EDE4D8" style-active="transform: scale(.98)">Odcisk Twojej rośliny →</button>
           </div>
         </div>
         <div style="flex: 1 1 320px; min-width: 0">
@@ -1799,7 +1983,7 @@
   </sc-if>
 
   <sc-if value="{{ isImprint }}" hint-placeholder-val="{{ false }}">
-  <div style="animation: maIn .4s ease both">
+  <div style="animation: maView .55s cubic-bezier(.2,.7,.2,1) both">
     <div style="max-width: 1280px; margin: 0 auto; padding: 56px 28px 0">
       <div style="display: flex; flex-wrap: wrap; gap: 56px; align-items: center">
         <div style="flex: 1 1 400px; min-width: 0">
@@ -1808,8 +1992,8 @@
           <p style="font-size: 17.5px; line-height: 1.68; color: #4A3E33; max-width: 46ch; margin: 0 0 20px; text-wrap: pretty">{{ tImprintLead }}</p>
           <p style="font-size: 16px; line-height: 1.7; color: #5C5043; max-width: 46ch; margin: 0 0 34px">{{ tImprintLead2 }}</p>
           <div style="display: flex; flex-wrap: wrap; gap: 14px">
-            <button onClick="{{ goContact }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 16px 32px; font-size: 14px" style-hover="background: #24417E">Napisz, co chcesz odcisnąć</button>
-            <button onClick="{{ goScarf }}" style="background: transparent; color: #2F2620; border: 1px solid #C6B8A5; border-radius: 999px; padding: 16px 32px; font-size: 14px" style-hover="border-color: #2F2620; background: #EDE4D8">Z Twojej apaszki →</button>
+            <button onClick="{{ goContact }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 16px 32px; font-size: 14px; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Napisz, co chcesz odcisnąć</button>
+            <button onClick="{{ goScarf }}" style="background: transparent; color: #2F2620; border: 1px solid #C6B8A5; border-radius: 999px; padding: 16px 32px; font-size: 14px; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; background: #EDE4D8" style-active="transform: scale(.98)">Z Twojej apaszki →</button>
           </div>
         </div>
         <div style="flex: 1 1 320px; min-width: 0">
@@ -1857,7 +2041,7 @@
   </sc-if>
 
   <sc-if value="{{ isEntry }}" hint-placeholder-val="{{ false }}">
-  <div style="max-width: 820px; margin: 0 auto; padding: 48px 28px 96px; animation: maIn .4s ease both">
+  <div style="max-width: 820px; margin: 0 auto; padding: 48px 28px 96px; animation: maView .55s cubic-bezier(.2,.7,.2,1) both">
     <div style="font-size: 12px; color: #736454; margin-bottom: 28px"><a href="#/dziennik" onClick="{{ goJournal }}" style="color: #736454">Dziennik</a> / <span style="color: #5C5043">{{ entry.title }}</span></div>
     <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 16px; flex-wrap: wrap">
       <span style="font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #A8813F">{{ entry.tag }}</span>
@@ -1867,7 +2051,7 @@
     <img src="{{ entry.img }}" alt="{{ entry.title }}" style="width: 100%; aspect-ratio: 3/2; object-fit: cover; border-radius: 4px; display: block; margin-bottom: 32px" />
     <p style="font-family: Newsreader, serif; font-size: clamp(19px, 2.2vw, 24px); line-height: 1.6; color: #3A3027; margin: 0 0 24px; text-wrap: pretty">{{ entry.lead }}</p>
     <div style="font-size: 12.5px; color: #736454; padding: 18px 0 28px; border-bottom: 1px solid #E2D7C7; margin-bottom: 28px">Adres tego wpisu: <code style="background: #EDE4D8; padding: 2px 6px; border-radius: 3px">{{ entry.path }}</code></div>
-    <button onClick="{{ goJournal }}" style="background: transparent; border: 1px solid #C6B8A5; border-radius: 999px; padding: 14px 26px; font-size: 14px; color: #2F2620" style-hover="border-color: #2F2620; background: #EDE4D8">← Wszystkie wpisy</button>
+    <button onClick="{{ goJournal }}" style="background: transparent; border: 1px solid #C6B8A5; border-radius: 999px; padding: 14px 26px; font-size: 14px; color: #2F2620; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; background: #EDE4D8" style-active="transform: scale(.98)">← Wszystkie wpisy</button>
   </div>
   </sc-if>
 
@@ -1879,11 +2063,11 @@
     <div style="max-width: 1280px; margin: 0 auto; padding: 64px 28px 30px; display: flex; flex-wrap: wrap; gap: 48px">
       <div style="flex: 1 1 280px; min-width: 0">
         <div style="font-family: Newsreader, serif; font-size: 25px; letter-spacing: 0.16em; text-transform: uppercase; color: #F3EDE4; margin-bottom: 14px">mellowaura</div>
-        <p style="font-size: 14.5px; line-height: 1.7; margin: 0 0 20px; max-width: 34ch; color: #B8AB99">A little bit of magic. Home studio in Cracow. Ceramic &amp; jewelry. Less waste silk scrunchies.</p>
+        <p style="font-size: 14.5px; line-height: 1.7; margin: 0 0 20px; max-width: 34ch; color: #B8AB99">{{ tFooterTagline }}</p>
         <div style="display: flex; gap: 12px; flex-wrap: wrap">
-          <a href="https://www.instagram.com/mellowaura.ceramika/" target="_blank" rel="noopener" style="color: #F3EDE4; border: 1px solid #55483C; border-radius: 999px; padding: 9px 17px; font-size: 12.5px" style-hover="border-color: #D6A39C; color: #D6A39C">Instagram</a>
-          <a href="https://facebook.com/profile.php?id=61552376291595" target="_blank" rel="noopener" style="color: #F3EDE4; border: 1px solid #55483C; border-radius: 999px; padding: 9px 17px; font-size: 12.5px" style-hover="border-color: #D6A39C; color: #D6A39C">Facebook</a>
-          <a href="https://wa.me/48792569771" target="_blank" rel="noopener" style="color: #F3EDE4; border: 1px solid #55483C; border-radius: 999px; padding: 9px 17px; font-size: 12.5px" style-hover="border-color: #D6A39C; color: #D6A39C">WhatsApp</a>
+          <a href="{{ igHref }}" target="_blank" rel="noopener" style="color: #F3EDE4; border: 1px solid #55483C; border-radius: 999px; padding: 9px 17px; font-size: 12.5px" style-hover="border-color: #D6A39C; color: #D6A39C">Instagram</a>
+          <a href="{{ fbHref }}" target="_blank" rel="noopener" style="color: #F3EDE4; border: 1px solid #55483C; border-radius: 999px; padding: 9px 17px; font-size: 12.5px" style-hover="border-color: #D6A39C; color: #D6A39C">Facebook</a>
+          <a href="{{ waHref }}" target="_blank" rel="noopener" style="color: #F3EDE4; border: 1px solid #55483C; border-radius: 999px; padding: 9px 17px; font-size: 12.5px" style-hover="border-color: #D6A39C; color: #D6A39C">WhatsApp</a>
         </div>
       </div>
       <div style="flex: 0 1 170px">
@@ -1914,9 +2098,9 @@
       <div style="flex: 0 1 200px">
         <div style="font-size: 10.5px; letter-spacing: 0.24em; text-transform: uppercase; color: #9B8C7C; margin-bottom: 16px">Kontakt</div>
         <div style="display: flex; flex-direction: column; gap: 11px; font-size: 14.5px; color: #B8AB99">
-          <a href="https://wa.me/48792569771" target="_blank" rel="noopener" style="color: #D8CDBD" style-hover="color: #D6A39C">+48 792 569 771</a>
+          <a href="{{ waHref }}" target="_blank" rel="noopener" style="color: #D8CDBD" style-hover="color: #D6A39C">{{ phone }}</a>
           <a href="#/kontakt" onClick="{{ goContact }}" style="color: #D8CDBD" style-hover="color: #D6A39C">Napisz do mnie</a>
-          <span>Kraków, Polska</span>
+          <span>{{ cityShort }}</span>
           <span>Pracownia na zapisy</span>
         </div>
       </div>
@@ -1949,7 +2133,7 @@
             </div>
           </sc-if>
           <sc-for list="{{ cartItems }}" as="c" hint-placeholder-count="0">
-            <div style="display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid #EDE4D8">
+            <div style="display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid #EDE4D8; animation: maUp .35s ease both">
               <img src="{{ c.img }}" alt="{{ c.name }}" style="width: 74px; height: 92px; object-fit: cover; border-radius: 3px; flex: 0 0 auto" />
               <div style="flex: 1; min-width: 0">
                 <div style="font-family: Newsreader, serif; font-size: 17.5px; line-height: 1.25">{{ c.name }}</div>
@@ -1971,7 +2155,7 @@
           <div style="border-top: 1px solid #E2D7C7; padding: 22px 26px 26px; background: #F7F2EA">
             <sc-if value="{{ freeReached }}" hint-placeholder-val="{{ false }}">
               <div style="display: flex; align-items: center; gap: 9px; background: #EDF0E9; border: 1px solid #C7D2BC; border-radius: 4px; padding: 11px 14px; margin-bottom: 14px; font-size: 13px; color: #41563A">
-                <span aria-hidden="true">✓</span><span>Wysyłka gratis — próg osiągnięty</span>
+                <span aria-hidden="true" style="display: inline-block; animation: maCheck .4s cubic-bezier(.2,.8,.2,1) both">✓</span><span>Wysyłka gratis — próg osiągnięty</span>
               </div>
             </sc-if>
             <sc-if value="{{ freeNotReached }}" hint-placeholder-val="{{ true }}">
@@ -1985,7 +2169,7 @@
             <div style="display: flex; justify-content: space-between; font-size: 14.5px; color: #6B5D4F; margin-bottom: 8px"><span>Produkty</span><span>{{ subtotalLabel }}</span></div>
             <div style="display: flex; justify-content: space-between; font-size: 14.5px; color: #6B5D4F; margin-bottom: 14px"><span>Dostawa</span><span>{{ shippingHint }}</span></div>
             <div style="display: flex; justify-content: space-between; font-family: Newsreader, serif; font-size: 22px; padding-top: 14px; border-top: 1px solid #E2D7C7; margin-bottom: 18px"><span>Razem</span><span>{{ subtotalLabel }}</span></div>
-            <button onClick="{{ goCheckout }}" style="width: 100%; background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 16px; font-size: 14.5px; letter-spacing: 0.03em" style-hover="background: #24417E">Przejdź do zamówienia</button>
+            <button onClick="{{ goCheckout }}" style="width: 100%; background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 16px; font-size: 14.5px; letter-spacing: 0.03em; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Przejdź do zamówienia</button>
             <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 14px; font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: #726456">
               <span style="background: #24417E; color: #fff; font-weight: 600; font-size: 10px; letter-spacing: 0.08em; padding: 3px 7px; border-radius: 3px">BLIK</span>
               <span>Przelewy24</span><span>&middot;</span><span>karta</span>
@@ -2157,6 +2341,14 @@ const GLAZES = [
 ];
 
 const TEXTS = {
+  homeKasiaH2: 'Lubię łączyć surowość z miękkością, prostotę z symboliką.',
+  homeKasiaP: 'Tworzę MellowAura — kameralną pracownię, w której powstają przedmioty z duszą. To miejsce, gdzie sztuka spotyka się z uważnością, a codzienność nabiera miękkich, zmysłowych kształtów.',
+  aboutP1: 'Tworzę MellowAura – kameralną pracownię, w której powstają przedmioty z duszą. To miejsce, gdzie sztuka spotyka się z uważnością, a codzienność nabiera miękkich, zmysłowych kształtów.',
+  aboutP2: 'Zajmuję się ceramiką i rękodziełem tekstylnym – każda z tych dziedzin daje mi coś innego, ale łączy je to samo: praca w skupieniu, z dbałością o detale, fakturę i jakość materiału. W mojej pracowni powstają ręcznie formowane naczynia, autorskie formy użytkowe, ale także opaski, scrunchie i ozdoby do włosów, szyte z wyselekcjonowanych, naturalnych tkanin – takich jak jedwab, len czy bawełna.',
+  aboutP3: 'Lubię łączyć surowość z miękkością, prostotę z symboliką, dotyk z emocją. MellowAura to zaproszenie do spokoju i piękna – zaklętego w przedmiotach, które towarzyszą nam na co dzień.',
+  kilnNote: 'Wsad zbieram raz w tygodniu, zwykle w czwartek. Prace odbierzesz po 5–7 dniach. Nie przyjmuję gliny nieznanego pochodzenia ani prac grubszych niż 2 cm w ściance.',
+  contactLead: 'Odpisuję zwykle tego samego dnia, chyba że stoję przy piecu. Wtedy wieczorem.',
+  footerTagline: 'A little bit of magic. Home studio in Cracow. Ceramic & jewelry. Less waste silk scrunchies.',
   mugH1: 'Kubek, który mówi to,\nco myślisz',
   mugLead: 'Wbijam litery stemplem w surową jeszcze glinę — jedna po drugiej, bez nadruku i bez kalkomanii. Napis zostaje w ściance na zawsze, nie zetrze się w zmywarce.',
   mugNote: 'Podgląd jest orientacyjny — litery wbijam ręcznie, jedna po drugiej, więc linia nigdy nie jest idealnie równa. To właśnie w tym jest najlepsze.',
@@ -2173,6 +2365,31 @@ const TEXTS = {
   imprintLead2: 'Roślina spala się w piecu na popiół, a jej rysunek — każda żyłka i nierówność łodygi — zostaje w ściance na zawsze. Drugiego takiego odcisku nie zrobię nawet ja.',
   imprintNote: 'Nie gwarantuję, że odcisk wyjdzie z pierwszego podejścia — dlatego proszę o kilka sztuk rośliny. Jeśli żadna się nie odciśnie, oddaję całość wpłaty i mówię wprost, dlaczego.'
 };
+
+const FAQ_SEED = [
+  { q: 'Jak szybko wyślesz zamówienie?', a: 'Rzeczy, które są na stanie, pakuję w 3–5 dni roboczych. Ceramika jedzie w papierze, wiórach i podwójnym kartonie — do tej pory nic nie dotarło stłuczone. Zamówienia indywidualne to około 3 tygodnie, bo każda praca przechodzi przez dwa wypały.' },
+  { q: 'Czy mogę zapłacić BLIK-iem?', a: 'Tak, BLIK jest pierwszą opcją w koszyku — wpisujesz sześciocyfrowy kod z aplikacji banku i zamówienie jest opłacone od razu. Poza tym: Przelewy24, karta, Apple Pay, Google Pay i zwykły przelew.' },
+  { q: 'Ceramika do zmywarki i mikrofalówki?', a: 'Szkliwione naczynia bez złota myj spokojnie w zmywarce na krótkim programie. Wszystko ze złotą krawędzią — tylko ręcznie i nigdy w mikrofalówce, bo złoto to prawdziwy metal.' },
+  { q: 'Dlaczego mój kubek różni się od zdjęcia?', a: 'Bo nie jest odlewem. Szkliwo płynie inaczej w każdym wypale, glina inaczej chwyta kolor. Różnica w odcieniu, wielkości do pół centymetra i drobne nierówności to nie wada — to dowód, że to zrobiła ręka.' },
+  { q: 'Zwroty i wymiany', a: 'Masz 14 dni na odesłanie rzeczy kupionej w sklepie, w stanie nienaruszonym. Nie dotyczy to zamówień indywidualnych i kubków z Twoim tekstem, bo powstały tylko dla Ciebie.' },
+  { q: 'Wysyłasz za granicę?', a: 'Tak, do Unii Europejskiej. Napisz przed zamówieniem — policzę wysyłkę dla Twojego kraju i dobiorę opakowanie do dystansu.' }
+];
+const MATERIALS_SEED = [
+  { t: 'Glina', d: 'Kamionka i szamot piaskowy. Nierówne krawędzie zostawiam, bo tak wygląda ręka.' },
+  { t: 'Jedwab', d: 'Z drugiego obiegu i z końcówek bel. Jedna apaszka to jedna opaska.' },
+  { t: 'Złoto 24k', d: 'Prawdziwy metal, trzeci wypał. Dlatego złocone rzeczy myje się ręcznie.' },
+  { t: 'Rośliny', d: 'Zbierane pod pracownią, odciskane w surowej glinie i wypalane na popiół.' }
+];
+const CFG_SEED = {
+  shipLocker: '16', shipCourier: '22', wrapPrice: '12', deposit: '80',
+  phone: '+48 792 569 771', ig: 'mellowaura.ceramika', fb: 'https://facebook.com/profile.php?id=61552376291595',
+  city: 'Kraków, home studio', cityShort: 'Kraków, Polska'
+};
+const LISTS_SEED = {
+  custom: ['Kubek albo kilka kubków z tekstem', 'Serwis obiadowy / do kawy', 'Prezent okazjonalny (ślub, chrzciny, rocznica)', 'Forma dekoracyjna albo rzeźba', 'Tekstylia — opaski, scrunchies na zamówienie', 'Coś innego, opowiem w wiadomości'],
+  contact: ['Zamówienie ze sklepu', 'Warsztaty i terminy', 'Zamówienie indywidualne', 'Kawiarnia / restauracja', 'Wypał moich prac', 'Współpraca albo prasa']
+};
+const BUDGETS_SEED = [{ min: '0', max: '100' }, { min: '100', max: '200' }, { min: '200', max: '400' }, { min: '400', max: '' }];
 
 const SCARF_ROWS = [
   { l: 'Opaska szeroka, pikowana', note: 'z apaszki 65 × 65 cm zostaje zapas', p: '119', old: '' },
@@ -2282,8 +2499,15 @@ class Component extends DCLogic {
     cart: [], cartOpen: false, toast: '', step: 1, pay: 'blik', ship: 'paczkomat', blik: '',
     order: null, slot: null, booked: null, sent: null, faq: null, stamp: '', more: false,
     added: [], hidden: {},
-    nf: { name: '', cat: 'Ceramika', desc: '', photo: '', rows: [{ l: '', p: '' }], dims: {} },
+    nf: { name: '', cat: 'Ceramika', desc: '', photo: '', photos: [], rows: [{ l: '', p: '' }], dims: {} },
+    gals: {}, cardIdx: {},
     adminTab: 'produkty', prices: {}, vprices: {}, vlist: {}, names: {}, wsPrices: {}, kilnPrices: {},
+    kilnKinds: ['Biskwitowy', 'Na ostro', 'Złoto', 'Nie wiem, doradź'], newKilnKind: '', kilnKind: '',
+    cfg: Object.assign({}, CFG_SEED), lists: { custom: LISTS_SEED.custom.slice(), contact: LISTS_SEED.contact.slice() },
+    newList: { custom: '', contact: '' }, customKind: '', contactKind: '',
+    budgets: BUDGETS_SEED.map(b => Object.assign({}, b)),
+    faqList: FAQ_SEED.map(f => Object.assign({}, f)), newFaq: { q: '', a: '' },
+    materials: MATERIALS_SEED.map(m => Object.assign({}, m)),
     slots: SLOTS.map(x => Object.assign({}, x)),
     newSlot: { ws: 'lepienie', date: '', time: '', left: '4' },
     heroId: 'wazony', heroBadge: 'nowość', dims: {},
@@ -2475,6 +2699,54 @@ class Component extends DCLogic {
     this.setState({ vlist: Object.assign({}, this.state.vlist, { [p.id]: list }), variant: 0 });
   };
   wsPrice = (w) => { const o = this.state.wsPrices[w.id]; return (o === undefined || o === '' || isNaN(parseFloat(o))) ? w.price : parseFloat(o); };
+  setKilnKinds = (kilnKinds) => this.setState({ kilnKinds });
+  num = (v, d) => { const n = parseFloat(String(v).replace(',', '.')); return isNaN(n) ? d : n; };
+  cfgN = (k, d) => this.num(this.state.cfg[k], d);
+  setCfg2 = (k, v) => this.setState({ cfg: Object.assign({}, this.state.cfg, { [k]: v }) });
+  waDigits = () => this.state.cfg.phone.replace(/\D/g, '');
+  budLabel = (b) => { const mn = this.num(b.min, 0), mx = b.max === '' ? null : this.num(b.max, 0); return mx === null ? 'powyżej ' + mn + ' zł' : (mn <= 0 ? 'do ' + mx + ' zł' : mn + '–' + mx + ' zł'); };
+  budOk = (pr, bud) => {
+    if (bud === 'Każdy budżet') return true;
+    const b = this.state.budgets.find(x => this.budLabel(x) === bud);
+    if (!b) return true;
+    const mn = this.num(b.min, 0), mx = b.max === '' ? Infinity : this.num(b.max, Infinity);
+    return (mn <= 0 ? pr <= mx : pr > mn && pr <= mx);
+  };
+  mkList = (arr, set) => arr.map((label, i) => ({
+    label, no: String(i + 1),
+    onLabel: e => set(arr.map((x, j) => j === i ? e.target.value : x)),
+    up: () => { if (i === 0) return; const a = arr.slice(); [a[i - 1], a[i]] = [a[i], a[i - 1]]; set(a); },
+    down: () => { if (i === arr.length - 1) return; const a = arr.slice(); [a[i + 1], a[i]] = [a[i], a[i + 1]]; set(a); },
+    del: () => { if (arr.length <= 1) { this.toast('Zostaw choć jedną pozycję'); return; } set(arr.filter((x, j) => j !== i)); }
+  }));
+  setList = (k, arr) => this.setState({ lists: Object.assign({}, this.state.lists, { [k]: arr }) });
+  addToList = (k) => {
+    const v = this.state.newList[k].trim();
+    if (!v) { this.toast('Wpisz treść pozycji'); return; }
+    this.setState({ lists: Object.assign({}, this.state.lists, { [k]: this.state.lists[k].concat([v]) }), newList: Object.assign({}, this.state.newList, { [k]: '' }) });
+  };
+  setFaq = (faqList) => this.setState({ faqList });
+  addFaq = () => {
+    const f = this.state.newFaq;
+    if (!f.q.trim() || !f.a.trim()) { this.toast('Pytanie i odpowiedź — oba pola'); return; }
+    this.setState({ faqList: this.state.faqList.concat([{ q: f.q.trim(), a: f.a.trim() }]), newFaq: { q: '', a: '' } });
+    this.toast('Pytanie dodane do FAQ');
+  };
+  setMaterials = (materials) => this.setState({ materials });
+  addMaterial = () => this.setMaterials(this.state.materials.concat([{ t: '', d: '' }]));
+  addBudget = () => this.setState({ budgets: this.state.budgets.concat([{ min: '', max: '' }]) });
+  addKilnKind = () => {
+    const v = this.state.newKilnKind.trim();
+    if (!v) { this.toast('Wpisz nazwę rodzaju wypału'); return; }
+    if (this.state.kilnKinds.includes(v)) { this.toast('Taki rodzaj już jest na liście'); return; }
+    this.setState({ kilnKinds: this.state.kilnKinds.concat([v]), newKilnKind: '' });
+    this.toast('„' + v + '" dodane do formularza');
+  };
+  moveKilnKind = (i, d) => {
+    const a = this.state.kilnKinds.slice(); const j = i + d;
+    if (j < 0 || j >= a.length) return;
+    [a[i], a[j]] = [a[j], a[i]]; this.setKilnKinds(a);
+  };
   kilnP = (k) => { const o = this.state.kilnPrices[k.id]; return (o === undefined || o === '' || isNaN(parseFloat(o))) ? k.price : parseFloat(o); };
   setMap = (map, id, v) => this.setState({ [map]: Object.assign({}, this.state[map], { [id]: v }) });
 
@@ -2488,12 +2760,34 @@ class Component extends DCLogic {
 
   setNf = (k, v) => this.setState({ nf: Object.assign({}, this.state.nf, { [k]: v }) });
 
-  onPhoto = (e) => {
-    const f = e.target.files && e.target.files[0];
-    if (!f) return;
-    const r = new FileReader();
-    r.onload = () => this.setNf('photo', r.result);
-    r.readAsDataURL(f);
+  onPhoto = (e) => this.readImgs(e, list => {
+    const photos = (this.state.nf.photos || []).concat(list);
+    this.setState({ nf: Object.assign({}, this.state.nf, { photos, photo: photos[0] || '' }) });
+  });
+  readImgs = (e, cb) => {
+    const files = Array.from((e.target && e.target.files) || []).filter(f => /^image\//.test(f.type));
+    if (!files.length) return;
+    const out = new Array(files.length); let left = files.length;
+    files.forEach((f, i) => {
+      const r = new FileReader();
+      r.onload = () => { out[i] = r.result; if (--left === 0) cb(out.filter(Boolean)); };
+      r.readAsDataURL(f);
+    });
+    if (e.target) e.target.value = '';
+  };
+  setGal = (id, list) => this.setState({ gals: Object.assign({}, this.state.gals, { [id]: list }) });
+  cycleStart = (id, n) => {
+    if (n < 2) return;
+    this.cycleStop(id, true);
+    this._cyc = this._cyc || {};
+    this._cyc[id] = setInterval(() => {
+      const cur = this.state.cardIdx[id] || 0;
+      this.setState({ cardIdx: Object.assign({}, this.state.cardIdx, { [id]: (cur + 1) % n }) });
+    }, 1100);
+  };
+  cycleStop = (id, keep) => {
+    if (this._cyc && this._cyc[id]) { clearInterval(this._cyc[id]); delete this._cyc[id]; }
+    if (!keep && this.state.cardIdx[id]) this.setState({ cardIdx: Object.assign({}, this.state.cardIdx, { [id]: 0 }) });
   };
 
   setRow = (i, k, v) => {
@@ -2518,11 +2812,11 @@ class Component extends DCLogic {
       variants: filled.map(r => r.l.trim()),
       vp: filled.map(r => parseFloat(String(r.p).replace(',', '.')) || 0),
       dims: Object.assign({}, nf.dims),
-      gallery: nf.photo ? [nf.photo] : []
+      gallery: (nf.photos || []).slice()
     };
     this.setState({
       added: this.state.added.concat([item]),
-      nf: { name: '', cat: nf.cat, desc: '', photo: '', rows: [{ l: '', p: '' }], dims: {} }
+      nf: { name: '', cat: nf.cat, desc: '', photo: '', photos: [], rows: [{ l: '', p: '' }], dims: {} }
     });
     this.toast(item.name + ' — opublikowane w sklepie');
   };
@@ -2583,8 +2877,8 @@ class Component extends DCLogic {
       '@context': 'https://schema.org', '@type': 'LocalBusiness', '@id': 'https://mellow-aura.com/#pracownia',
       name: 'MellowAura', description: 'Pracownia ceramiki i jedwabnego rękodzieła Kasi Samborskiej.',
       address: { '@type': 'PostalAddress', addressLocality: 'Kraków', addressCountry: 'PL' },
-      telephone: '+48792569771', priceRange: '59–499 zł',
-      sameAs: ['https://www.instagram.com/mellowaura.ceramika/', 'https://facebook.com/profile.php?id=61552376291595']
+      telephone: '+' + this.waDigits(), priceRange: '59–499 zł',
+      sameAs: ['https://www.instagram.com/' + s.cfg.ig.replace(/^@/, '') + '/', s.cfg.fb]
     };
     const blocks = [biz];
     if (prod) {
@@ -2602,11 +2896,7 @@ class Component extends DCLogic {
     if (s.view === 'faq') {
       blocks.push({
         '@context': 'https://schema.org', '@type': 'FAQPage',
-        mainEntity: [
-          ['Jak szybko wyślesz zamówienie?', 'Rzeczy na stanie pakuję w 3–5 dni roboczych. Zamówienia indywidualne to około trzech tygodni.'],
-          ['Czy mogę zapłacić BLIK-iem?', 'Tak, BLIK jest pierwszą opcją w koszyku. Poza tym Przelewy24, karta, Apple Pay i Google Pay.'],
-          ['Ceramika do zmywarki i mikrofalówki?', 'Szkliwione naczynia bez złota myj w zmywarce na krótkim programie. Wszystko ze złotą krawędzią tylko ręcznie.']
-        ].map(q => ({ '@type': 'Question', name: q[0], acceptedAnswer: { '@type': 'Answer', text: q[1] } }))
+        mainEntity: s.faqList.slice(0, 3).map(q => ({ '@type': 'Question', name: q.q, acceptedAnswer: { '@type': 'Answer', text: q.a } }))
       });
     }
     if (s.view === 'workshops') {
@@ -2671,7 +2961,7 @@ class Component extends DCLogic {
     const sub = this.subtotal();
     if (this.state.ship === 'odbior') return 0;
     if (sub >= this.freeFrom()) return 0;
-    return this.state.ship === 'kurier' ? 22 : 16;
+    return this.state.ship === 'kurier' ? this.cfgN('shipCourier', 22) : this.cfgN('shipLocker', 16);
   };
   subtotal = () => {
     const all = PRODUCTS.concat(this.state.added);
@@ -2679,7 +2969,7 @@ class Component extends DCLogic {
       if (c.ovr) return s + c.ovr * c.qty;
       const p = all.find(x => x.id === c.id);
       return s + (p ? this.vprice(p, c.vi || 0) * c.qty : 0);
-    }, 0) + (this.state.wrap ? 12 : 0);
+    }, 0) + (this.state.wrap ? this.cfgN('wrapPrice', 12) : 0);
   };
 
   pay = () => {
@@ -2709,12 +2999,14 @@ class Component extends DCLogic {
   }
 
   componentWillUnmount() {
+    if (this._cyc) Object.keys(this._cyc).forEach(k => clearInterval(this._cyc[k]));
     if (typeof window !== 'undefined') window.removeEventListener('hashchange', this.onHash);
   }
 
   renderVals() {
     const s = this.state;
     const freeFrom = this.freeFrom();
+    const budOk = (pr) => this.budOk(pr, s.bud);
     const deposit = !!this.props.workshopDeposit;
     const nv = (view, before) => (e) => {
       if (e && e.preventDefault) e.preventDefault();
@@ -2738,6 +3030,11 @@ class Component extends DCLogic {
 
     const decorate = p => ({
       id: p.id, name: p.name, category: p.cat, img: p.img, desc: p.desc,
+      delay: '0s',
+      slides: (p.gallery.length > 1 ? p.gallery : []).map((src, i) => ({ src, op: (s.cardIdx[p.id] || 0) === i ? 1 : 0 })),
+      hasMany: p.gallery.length > 1,
+      dots: p.gallery.map((g, i) => ({ bg: (s.cardIdx[p.id] || 0) === i ? '#FCF9F4' : 'rgba(252,249,244,.45)' })),
+      enter: () => this.cycleStart(p.id, p.gallery.length), leave: () => this.cycleStop(p.id),
       priceLabel: this.vRange(p).min === this.vRange(p).max ? zl(this.price(p)) : 'od ' + zl(this.vRange(p).min),
       oldLabel: p.old ? zl(p.old) : '', hasOld: !!p.old,
       oneOff: !!p.stamp, stock: this.stockOf(p),
@@ -2747,7 +3044,11 @@ class Component extends DCLogic {
       open: () => this.openProduct(p.id), add: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.add(p.id, 0, 1); }
     });
 
-    let all = PRODUCTS.concat(s.added).map(p => s.names[p.id] ? Object.assign({}, p, { name: s.names[p.id] }) : p);
+    let all = PRODUCTS.concat(s.added).map(p => {
+      let q = s.names[p.id] ? Object.assign({}, p, { name: s.names[p.id] }) : p;
+      if (s.gals[p.id]) { const g = s.gals[p.id]; q = Object.assign({}, q, { gallery: g, img: g[0] || '', draft: p.draft && !g.length }); }
+      return q;
+    });
     if (s.ord.length) all = all.slice().sort((a, b) => {
       const ia = s.ord.indexOf(a.id), ib = s.ord.indexOf(b.id);
       return (ia < 0 ? 999 : ia) - (ib < 0 ? 999 : ib);
@@ -2836,8 +3137,8 @@ class Component extends DCLogic {
       set: () => this.setState({ pay: m.id }) }));
 
     const ships = [
-      { id: 'paczkomat', label: 'InPost Paczkomat', note: '1–2 dni robocze', cost: sub >= freeFrom ? 0 : 16 },
-      { id: 'kurier', label: 'Kurier InPost', note: 'Do rąk, 1 dzień', cost: sub >= freeFrom ? 0 : 22 },
+      { id: 'paczkomat', label: 'InPost Paczkomat', note: '1–2 dni robocze', cost: sub >= freeFrom ? 0 : this.cfgN('shipLocker', 16) },
+      { id: 'kurier', label: 'Kurier InPost', note: 'Do rąk, 1 dzień', cost: sub >= freeFrom ? 0 : this.cfgN('shipCourier', 22) },
       { id: 'odbior', label: 'Odbiór w pracowni', note: 'Kraków, po umówieniu', cost: 0 }
     ].map(m => ({ id: m.id, label: m.label, note: m.note, costLabel: m.cost === 0 ? 'gratis' : zl(m.cost),
       bd: s.ship === m.id ? '#2F2620' : '#DCD0BE', bg: s.ship === m.id ? '#EDE4D8' : '#FCF9F4',
@@ -2856,14 +3157,7 @@ class Component extends DCLogic {
     const chosen = s.slots.find(x => x.id === s.slot);
     const chosenW = chosen ? WORKSHOPS.find(x => x.id === chosen.ws) : null;
 
-    const faqs = [
-      { q: 'Jak szybko wyślesz zamówienie?', a: 'Rzeczy, które są na stanie, pakuję w 3–5 dni roboczych. Ceramika jedzie w papierze, wiórach i podwójnym kartonie — do tej pory nic nie dotarło stłuczone. Zamówienia indywidualne to około 3 tygodnie, bo każda praca przechodzi przez dwa wypały.' },
-      { q: 'Czy mogę zapłacić BLIK-iem?', a: 'Tak, BLIK jest pierwszą opcją w koszyku — wpisujesz sześciocyfrowy kod z aplikacji banku i zamówienie jest opłacone od razu. Poza tym: Przelewy24, karta, Apple Pay, Google Pay i zwykły przelew.' },
-      { q: 'Ceramika do zmywarki i mikrofalówki?', a: 'Szkliwione naczynia bez złota myj spokojnie w zmywarce na krótkim programie. Wszystko ze złotą krawędzią — tylko ręcznie i nigdy w mikrofalówce, bo złoto to prawdziwy metal.' },
-      { q: 'Dlaczego mój kubek różni się od zdjęcia?', a: 'Bo nie jest odlewem. Szkliwo płynie inaczej w każdym wypale, glina inaczej chwyta kolor. Różnica w odcieniu, wielkości do pół centymetra i drobne nierówności to nie wada — to dowód, że to zrobiła ręka.' },
-      { q: 'Zwroty i wymiany', a: 'Masz 14 dni na odesłanie rzeczy kupionej w sklepie, w stanie nienaruszonym. Nie dotyczy to zamówień indywidualnych i kubków z Twoim tekstem, bo powstały tylko dla Ciebie.' },
-      { q: 'Wysyłasz za granicę?', a: 'Tak, do Unii Europejskiej. Napisz przed zamówieniem — policzę wysyłkę dla Twojego kraju i dobiorę opakowanie do dystansu.' }
-    ].map((f, i) => ({ q: f.q, a: f.a, open: s.faq === i, sign: s.faq === i ? '−' : '+',
+    const faqs = s.faqList.map((f, i) => ({ q: f.q, a: f.a, open: s.faq === i, sign: s.faq === i ? '−' : '+',
       toggle: () => this.setState({ faq: s.faq === i ? null : i }) }));
 
     const journal = JOURNAL_SEED;
@@ -2912,7 +3206,7 @@ class Component extends DCLogic {
         toggle: () => this.editEvent(e.id, 'past', !e.past),
         del: () => this.delEvent(e.id)
       })),
-      featured: live.slice(0, 4).map(decorate),
+      featured: live.slice(0, 4).map((p, i) => Object.assign(decorate(p), { delay: (i * 0.09) + 's' })),
       heroImg: (hero && hero.img) || 'zdjecia/wazon-rzezbiony.webp',
       heroName: hero ? hero.name : '', heroPrice: hero ? heroPriceLabel : '',
       heroBadge: s.heroBadge, hasHero: !!hero,
@@ -2920,13 +3214,14 @@ class Component extends DCLogic {
       heroOptions: live.map(x => ({ id: x.id, name: x.name })),
       heroSel: s.heroId, onHeroSel: e => this.setState({ heroId: e.target.value }),
       onHeroBadge: e => this.setState({ heroBadge: e.target.value }),
-      shopItems: list.map(decorate), countLabel: list.length + ' z ' + live.length + ' produktów na półce',
+      shopItems: list.map((p, i) => Object.assign(decorate(p), { delay: (Math.min(i, 11) * 0.06) + 's' })), countLabel: list.length + ' z ' + live.length + ' produktów na półce',
       q: s.q, onQ: e => this.setState({ q: e.target.value }), hasQ: !!s.q.trim(),
       clearQ: () => this.setState({ q: '' }),
       shopEmpty: list.length === 0,
       zoom: s.zoom, hasZoom: !!s.zoom,
       openZoom: () => this.setState({ zoom: (p && p.gallery && p.gallery[s.gal]) || (p && p.img) || null }),
       closeZoom: () => this.setState({ zoom: null }),
+      freeFromLabel: freeFrom + ' zł',
       freeLeft: Math.max(0, freeFrom - sub),
       freeLeftLabel: zl(Math.max(0, freeFrom - sub)),
       freePct: String(Math.min(100, Math.round((sub / (freeFrom || 1)) * 100))),
@@ -2937,10 +3232,66 @@ class Component extends DCLogic {
       workshops: WORKSHOPS.map(w => ({ name: w.name, short: w.short, duration: w.duration, people: w.people,
         priceLabel: zl(this.wsPrice(w)), unit: '/ ' + w.unit, incl: w.incl.map(i => ({ t: i })) })),
       kilnRows: KILN.map(k => ({ name: k.name, note: k.note, priceLabel: zl(this.kilnP(k)) + ' ' + k.unit })),
+      kilnKinds: s.kilnKinds.map(label => ({ label })),
+      tabU: s.adminTab === 'ustawienia', tabT: s.adminTab === 'tresci',
+      phone: s.cfg.phone, waHref: 'https://wa.me/' + this.waDigits(),
+      igHandle: '@' + s.cfg.ig.replace(/^@/, ''), igHref: 'https://www.instagram.com/' + s.cfg.ig.replace(/^@/, '') + '/',
+      fbHref: s.cfg.fb, city: s.cfg.city, cityShort: s.cfg.cityShort,
+      tHomeKasiaH2: this.t('homeKasiaH2'), tHomeKasiaP: this.t('homeKasiaP'), tAboutP1: this.t('aboutP1'), tAboutP2: this.t('aboutP2'), tAboutP3: this.t('aboutP3'),
+      tKilnNote: this.t('kilnNote'), tContactLead: this.t('contactLead'), tFooterTagline: this.t('footerTagline'),
+      scarfFromLabel: 'od ' + zl(Math.min.apply(null, s.scarfRows.map(r => this.num(r.p, Infinity)))),
+      imprintFromLabel: 'od ' + zl(Math.min.apply(null, s.imprintRows.map(r => this.num(r.p, Infinity)))),
+      materials: s.materials.filter(m => m.t.trim() || m.d.trim()).map(m => ({ t: m.t, d: m.d })),
+      customKinds: s.lists.custom.map(label => ({ label })), contactKinds: s.lists.contact.map(label => ({ label })),
+      customKind: s.customKind, onCustomKind: e => this.setState({ customKind: e.target.value }),
+      contactKind: s.contactKind, onContactKind: e => this.setState({ contactKind: e.target.value }),
+      cfgMoney: [['shipLocker', 'InPost Paczkomat'], ['shipCourier', 'Kurier InPost'], ['wrapPrice', 'Pakowanie na prezent'], ['deposit', 'Zaliczka za warsztat']].map(f => ({
+        label: f[1], val: s.cfg[f[0]], onChange: e => this.setCfg2(f[0], e.target.value) })),
+      cfgText: [['phone', 'Telefon (WhatsApp)'], ['ig', 'Instagram — nazwa profilu'], ['fb', 'Facebook — adres strony'], ['city', 'Pracownia — jak pokazać na stronie kontaktu'], ['cityShort', 'Miasto w stopce']].map(f => ({
+        label: f[1], val: s.cfg[f[0]], onChange: e => this.setCfg2(f[0], e.target.value) })),
+      formLists: [['custom', 'Formularz „Zamówienia indywidualne" — co to ma być?'], ['contact', 'Formularz „Kontakt" — w jakiej sprawie?']].map(f => ({
+        title: f[1], rows: this.mkList(s.lists[f[0]], a => this.setList(f[0], a)),
+        newVal: s.newList[f[0]], onNew: e => this.setState({ newList: Object.assign({}, s.newList, { [f[0]]: e.target.value }) }), add: () => this.addToList(f[0]) })),
+      budgetRows: s.budgets.map((b, i) => ({
+        min: b.min, max: b.max, label: this.budLabel(b),
+        onMin: e => this.setState({ budgets: s.budgets.map((x, j) => j === i ? Object.assign({}, x, { min: e.target.value }) : x) }),
+        onMax: e => this.setState({ budgets: s.budgets.map((x, j) => j === i ? Object.assign({}, x, { max: e.target.value }) : x) }),
+        del: () => this.setState({ budgets: s.budgets.filter((x, j) => j !== i), bud: 'Każdy budżet' }) })),
+      addBudget: this.addBudget,
+      contentFields: [
+        ['homeKasiaH2', 'Główna — nagłówek sekcji „Cześć, jestem Kasia"', 2], ['homeKasiaP', 'Główna — akapit pod nagłówkiem', 3],
+        ['aboutP1', 'O mnie — akapit wstępny', 3], ['aboutP2', 'O mnie — akapit drugi', 5], ['aboutP3', 'O mnie — akapit trzeci', 3],
+        ['contactLead', 'Kontakt — zdanie pod nagłówkiem', 2], ['kilnNote', 'Wypały — notka pod cennikiem', 3], ['footerTagline', 'Stopka — hasło pod logo', 2]
+      ].map(f => ({ label: f[1], val: this.t(f[0]), rows: f[2], onChange: e => this.setTxt(f[0], e.target.value) })),
+      faqAdmin: s.faqList.map((f, i) => ({
+        q: f.q, a: f.a,
+        onQ: e => this.setFaq(s.faqList.map((x, j) => j === i ? Object.assign({}, x, { q: e.target.value }) : x)),
+        onA: e => this.setFaq(s.faqList.map((x, j) => j === i ? Object.assign({}, x, { a: e.target.value }) : x)),
+        up: () => { if (i === 0) return; const a = s.faqList.slice(); [a[i - 1], a[i]] = [a[i], a[i - 1]]; this.setFaq(a); },
+        down: () => { if (i === s.faqList.length - 1) return; const a = s.faqList.slice(); [a[i + 1], a[i]] = [a[i], a[i + 1]]; this.setFaq(a); },
+        del: () => { if (s.faqList.length <= 1) { this.toast('Zostaw choć jedno pytanie'); return; } this.setFaq(s.faqList.filter((x, j) => j !== i)); } })),
+      newFaqQ: s.newFaq.q, newFaqA: s.newFaq.a,
+      onNewFaqQ: e => this.setState({ newFaq: Object.assign({}, s.newFaq, { q: e.target.value }) }),
+      onNewFaqA: e => this.setState({ newFaq: Object.assign({}, s.newFaq, { a: e.target.value }) }),
+      addFaq: this.addFaq,
+      materialsAdmin: s.materials.map((m, i) => ({
+        t: m.t, d: m.d,
+        onT: e => this.setMaterials(s.materials.map((x, j) => j === i ? Object.assign({}, x, { t: e.target.value }) : x)),
+        onD: e => this.setMaterials(s.materials.map((x, j) => j === i ? Object.assign({}, x, { d: e.target.value }) : x)),
+        del: () => this.setMaterials(s.materials.filter((x, j) => j !== i)) })),
+      addMaterial: this.addMaterial,
+      kilnKind: s.kilnKind, onKilnKind: e => this.setState({ kilnKind: e.target.value }),
+      kilnKindsAdmin: s.kilnKinds.map((label, i) => ({
+        label, no: String(i + 1),
+        onLabel: e => this.setKilnKinds(s.kilnKinds.map((x, j) => j === i ? e.target.value : x)),
+        up: () => this.moveKilnKind(i, -1), down: () => this.moveKilnKind(i, 1),
+        del: () => { if (s.kilnKinds.length <= 1) { this.toast('Zostaw choć jeden rodzaj'); return; } this.setKilnKinds(s.kilnKinds.filter((x, j) => j !== i)); }
+      })),
+      newKilnKind: s.newKilnKind, onNewKilnKind: e => this.setState({ newKilnKind: e.target.value }), addKilnKind: this.addKilnKind,
       isAdmin: s.view === 'admin', goAdmin: nv('admin'),
       tabP: s.adminTab === 'produkty', tabW: s.adminTab === 'warsztaty', tabK: s.adminTab === 'wypaly',
       adminTabs: [
-        { label: 'Produkty', id: 'produkty' }, { label: 'Warsztaty i terminy', id: 'warsztaty' }, { label: 'Kubek z napisem', id: 'kubek' }, { label: 'Usługi i zestawy', id: 'uslugi' }, { label: 'Wypały', id: 'wypaly' }, { label: 'Dziennik i wydarzenia', id: 'instagram' }
+        { label: 'Produkty', id: 'produkty' }, { label: 'Warsztaty i terminy', id: 'warsztaty' }, { label: 'Kubek z napisem', id: 'kubek' }, { label: 'Usługi i zestawy', id: 'uslugi' }, { label: 'Wypały', id: 'wypaly' }, { label: 'Dziennik i wydarzenia', id: 'instagram' }, { label: 'Treści', id: 'tresci' }, { label: 'Ustawienia', id: 'ustawienia' }
       ].map(t => ({ label: t.label, bg: s.adminTab === t.id ? '#2F2620' : 'transparent',
         fg: s.adminTab === t.id ? '#F7F2EA' : '#5C5043', bd: s.adminTab === t.id ? '#2F2620' : '#C6B8A5',
         set: () => this.setState({ adminTab: t.id }) })),
@@ -2962,7 +3313,10 @@ class Component extends DCLogic {
       })),
       addRow: this.addRow,
       sizeHint: s.nf.rows.length === 1 ? 'Jedna cena — ten produkt nie ma rozmiarów' : s.nf.rows.length + ' rozmiary, każdy z własną ceną',
-      onPhoto: this.onPhoto, clearPhoto: () => this.setNf('photo', ''),
+      onPhoto: this.onPhoto, clearPhoto: () => this.setState({ nf: Object.assign({}, s.nf, { photo: '', photos: [] }) }),
+      nfPhotoCta: (s.nf.photos || []).length ? 'Dodaj kolejne zdjęcia' : 'Wybierz zdjęcia z telefonu albo komputera',
+      nfPhotos: (s.nf.photos || []).map((src, i) => ({ src, bd: i === 0 ? '#2F2620' : '#DCD0BE',
+        del: () => { const photos = s.nf.photos.filter((x, j) => j !== i); this.setState({ nf: Object.assign({}, s.nf, { photos, photo: photos[0] || '' }) }); } })),
       publish: this.publish,
       previewName: s.nf.name.trim() || 'Nazwa produktu',
       previewPrice: (function (rows) {
@@ -2974,6 +3328,14 @@ class Component extends DCLogic {
       previewCat: s.nf.cat,
       adminRows: all.map(pp => ({
         name: pp.name, cat: pp.cat, img: pp.img, hasImg: !!pp.img,
+        photoCount: pp.gallery.length === 0 ? 'Zdjęcia — jeszcze żadnego' : (pp.gallery.length === 1 ? 'Jedno zdjęcie' : pp.gallery.length + ' zdjęcia'),
+        photos: pp.gallery.map((src, i) => ({
+          src, bd: i === 0 ? '#2F2620' : '#DCD0BE', canLeft: i > 0, canRight: i < pp.gallery.length - 1,
+          del: () => this.setGal(pp.id, pp.gallery.filter((x, j) => j !== i)),
+          left: () => { const a = pp.gallery.slice(); [a[i - 1], a[i]] = [a[i], a[i - 1]]; this.setGal(pp.id, a); },
+          right: () => { const a = pp.gallery.slice(); [a[i + 1], a[i]] = [a[i], a[i + 1]]; this.setGal(pp.id, a); }
+        })),
+        onPhotos: e => this.readImgs(e, list => { this.setGal(pp.id, pp.gallery.concat(list)); this.toast(list.length === 1 ? 'Zdjęcie dodane' : list.length + ' zdjęcia dodane'); }),
         onName: e => this.setMap('names', pp.id, e.target.value),
         stockVal: s.stock[pp.id] !== undefined ? s.stock[pp.id] : String(this.stockOf(pp)),
         onStock: e => this.setMap('stock', pp.id, e.target.value.replace(/\D/g, '').slice(0, 3)),
@@ -3051,10 +3413,10 @@ class Component extends DCLogic {
       isCartEmpty: s.cart.length === 0, hasCart: s.cart.length > 0,
       showIg: this.props.showInstagramFeed !== false,
       depositNote: deposit
-        ? 'Rezerwację potwierdza zaliczka 80 zł opłacona BLIK-iem — odliczam ją od ceny warsztatu.'
+        ? 'Rezerwację potwierdza zaliczka ' + this.cfgN('deposit', 80) + ' zł opłacona BLIK-iem — odliczam ją od ceny warsztatu.'
         : 'Nie pobieram zaliczki online — potwierdzam termin wiadomością i wtedy wysyłam link do BLIK-a.',
       bookCta: deposit ? 'Rezerwuję i płacę zaliczkę' : 'Rezerwuję miejsce',
-      subtotalLabel: zl(sub), shippingHint: sub >= freeFrom ? 'gratis od ' + freeFrom + ' zł' : 'od 16,00 zł',
+      subtotalLabel: zl(sub), shippingHint: sub >= freeFrom ? 'gratis od ' + freeFrom + ' zł' : 'od ' + zl(Math.min(this.cfgN('shipLocker', 16), this.cfgN('shipCourier', 22))),
       shipLabel: ship === 0 ? 'gratis' : zl(ship), totalLabel: zl(sub + ship),
       step: s.step, isStep1: s.step === 1, isStep2: s.step === 2, isStep3: s.step === 3,
       toStep2: () => this.setState({ step: 2 }), toStep1: () => this.setState({ step: 1 }),
@@ -3079,7 +3441,7 @@ class Component extends DCLogic {
       glazeName: (GLAZES.find(g => g.id === s.glaze) || GLAZES[0]).name,
       glazeHex: (GLAZES.find(g => g.id === s.glaze) || GLAZES[0]).hex,
       mugText: s.mugText,
-      mugLines: (s.mugText.trim() ? s.mugText.split('\n') : ['TWÓJ NAPIS']).map(l => ({ t: l.toUpperCase() })),
+      mugLines: (s.mugText.trim() ? s.mugText.split('\n') : ['TWÓJ NAPIS']).map(l => ({ t: l.toUpperCase(), chars: Array.from(l.toUpperCase()).map(c => ({ c })) })),
       mugCount: s.mugText.split('\n').map(l => l.length + '/' + maxChars).join('  ·  '),
       mugLineInfo: s.mugText.split('\n').length === 1
         ? 'Enter przenosi wyraz do nowej linii'
@@ -3124,7 +3486,7 @@ class Component extends DCLogic {
         label: o, bg: s.occ === o ? '#2F2620' : 'transparent', fg: s.occ === o ? '#F7F2EA' : '#5C5043',
         bd: s.occ === o ? '#2F2620' : '#C6B8A5', set: () => this.setState({ occ: o })
       })),
-      buds: ['Każdy budżet', 'do 100 zł', '100–200 zł', '200–400 zł', 'powyżej 400 zł'].map(b => ({
+      buds: ['Każdy budżet'].concat(s.budgets.map(b => this.budLabel(b))).map(b => ({
         label: b, bg: s.bud === b ? '#2F2620' : 'transparent', fg: s.bud === b ? '#F7F2EA' : '#5C5043',
         bd: s.bud === b ? '#2F2620' : '#C6B8A5', set: () => this.setState({ bud: b })
       })),
@@ -3132,22 +3494,14 @@ class Component extends DCLogic {
         const tags = occOf(x.id);
         if (s.occ !== 'Wszystkie okazje' && tags.indexOf(s.occ) === -1) return false;
         const pr = this.vRange(x).min;
-        if (s.bud === 'do 100 zł') return pr <= 100;
-        if (s.bud === '100–200 zł') return pr > 100 && pr <= 200;
-        if (s.bud === '200–400 zł') return pr > 200 && pr <= 400;
-        if (s.bud === 'powyżej 400 zł') return pr > 400;
-        return true;
+        return budOk(pr);
       }).map(decorate),
       giftCount: (function (self) {
         const n = live.filter(x => {
           const tags = occOf(x.id);
           if (s.occ !== 'Wszystkie okazje' && tags.indexOf(s.occ) === -1) return false;
           const pr = self.vRange(x).min;
-          if (s.bud === 'do 100 zł') return pr <= 100;
-          if (s.bud === '100–200 zł') return pr > 100 && pr <= 200;
-          if (s.bud === '200–400 zł') return pr > 200 && pr <= 400;
-          if (s.bud === 'powyżej 400 zł') return pr > 400;
-          return true;
+          return budOk(pr);
         }).length;
         return n === 0 ? 'Nic nie pasuje do tych dwóch warunków — poluzuj budżet' : (n === 1 ? 'Jeden pomysł' : n + ' pomysłów');
       })(this),
@@ -3155,11 +3509,7 @@ class Component extends DCLogic {
         const tags = occOf(x.id);
         if (s.occ !== 'Wszystkie okazje' && tags.indexOf(s.occ) === -1) return false;
         const pr = this.vRange(x).min;
-        if (s.bud === 'do 100 zł') return pr <= 100;
-        if (s.bud === '100–200 zł') return pr > 100 && pr <= 200;
-        if (s.bud === '200–400 zł') return pr > 200 && pr <= 400;
-        if (s.bud === 'powyżej 400 zł') return pr > 400;
-        return true;
+        return budOk(pr);
       }).length === 0,
       bundles: BUNDLES.map((b, bi) => {
         const ov = s.bnd[bi] || { name: b.name, desc: b.desc, save: '10', hidden: false };
@@ -3231,7 +3581,7 @@ class Component extends DCLogic {
         ['mugH1', 'Kubek — nagłówek'], ['mugLead', 'Kubek — wstęp'], ['mugNote', 'Kubek — uwaga pod podglądem']
       ].map(f => ({ key: f[0], label: f[1], val: this.t(f[0]), group: f[0].indexOf('scarf') === 0 ? 'apaszka' : (f[0].indexOf('imprint') === 0 ? 'roslina' : (f[0].indexOf('mug') === 0 ? 'kubek' : 'zestawy')),
         onChange: e => this.setTxt(f[0], e.target.value) })).filter(f => f.group === (s.srvTab === 'zestawy' ? 'zestawy' : s.srvTab)),
-      wrap: s.wrap, wrapLabel: s.wrap ? 'Pakowanie na prezent dodane' : 'Zapakuj na prezent — 12,00 zł',
+      wrap: s.wrap, wrapLabel: s.wrap ? 'Pakowanie na prezent dodane' : 'Zapakuj na prezent — ' + zl(this.cfgN('wrapPrice', 12)),
       toggleWrap: () => this.setState({ wrap: !s.wrap }),
       reviews: s.reviews.map(r => ({ who: r.who, what: r.what, text: r.text, stars: '★★★★★'.slice(0, r.stars) })),
       hasReviews: s.reviews.length > 0, noReviews: s.reviews.length === 0,

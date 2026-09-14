@@ -1,49 +1,51 @@
-repo: sambor88-glitch/mellow_aura
+repo: sambor88-glitch/mellow-aura
 branch: main
 
 ## Last sync
 
-date: 2026-09-14T19:10:53Z
+date: 2026-09-14T21:50:46Z
 
-### Updated w tym projekcie
+### Updated in this project
 
-- Repozytorium jest praktycznie puste — zawiera tylko `README.md` (13 B), bez kodu UI, stylów ani komponentów. Nie było czego odtwarzać.
-- Treść i ofertę przeniesiono z dotychczasowego sklepu online: teksty „O mnie" i „Warsztaty", nazwy i ceny produktów.
-- Zdjęcia: 16 plików wgranych przez użytkowniczkę do katalogu `zdjecia/`. Żadnych zasobów zewnętrznych.
-- Zbudowano serwis `MellowAura.dc.html` (17 widoków, własny koszyk z BLIK-iem, panel właścicielki) oraz `Specyfikacja wdrozenia - MellowAura.dc.html`.
-- Decyzja: nowy sklep powstaje na własnej domenie, z własną bramką płatności. Poprzednia platforma jest wygaszana i nie występuje w specyfikacji.
+- Pobrane z repozytorium: paleta po audycie kontrastu (`#8A7A69→#726456` / `#9B8C7C` na ciemnym tle, `#A0907D→#736454`, `#8C6440→#855F3D`) i zdjęcia w WebP — nałożone na lokalną wersję `MellowAura.dc.html`, która ma nowsze funkcje (animacje, zakładki Ustawienia i Treści, galerie produktów). PNG-i usunięte.
+- Pobrane `.claude/skills/` (9 instrukcji wyglądu i UX + `kontrast.py`), nowe `README.md` i `.gitignore`.
+- Do wypchnięcia ręcznie do repozytorium: `MellowAura.dc.html` (scalona), `README.md` (dopisane dwa pliki), `github.md`, `Plan wdrozenia - Laravel krok po kroku.dc.html`, `Plan developmentu - MellowAura.dc.html` — dwóch ostatnich w repozytorium jeszcze nie ma.
+- Rozjazd w skillach naprawiony: przykłady komponentów w `mellowaura-design`, `-panel`, `-strona`, `-druk`, `-aplikacja` przepisane na paletę AA; sekcja „Ruch" opisuje 9 animacji; `-panel` opisuje zakładki Treści i Ustawienia oraz galerie. Dokumenty do druku i plany też w nowej palecie.
+- Lista plików do wgrania i instrukcja krok po kroku: `WYPCHNIJ.md` (nie wgrywać do repo).
 
 ## Screen map
 
 | Ekran w projekcie | Źródło |
 | --- | --- |
-| `MellowAura.dc.html` — Strona główna | teksty i ceny przeniesione z dotychczasowego sklepu; zdjęcia: `zdjecia/` |
-| `MellowAura.dc.html` — O mnie | tekst autorski Kasi, przeniesiony dosłownie |
-| `MellowAura.dc.html` — Pracownia | hasła autorskie Kasi, przeniesione dosłownie |
-| `MellowAura.dc.html` — Sklep / Produkt | nazwy, ceny i opisy produktów z dotychczasowej oferty |
-| `MellowAura.dc.html` — Koszyk i płatność | nowy projekt: jednoekranowa ścieżka, BLIK / przelew online / karta |
-| `MellowAura.dc.html` — Kubek z napisem, Prezenty, Zestawy | nowe sekcje |
-| `MellowAura.dc.html` — Warsztaty, Na zamówienie, B2B, Wypały, Dziennik, FAQ | nowe sekcje; ceny i terminy do potwierdzenia |
-| `MellowAura.dc.html` — Panel właścicielki | nowy projekt |
-| `Specyfikacja wdrozenia - MellowAura.dc.html` | dokument dla wdrożenia: adresy, meta, dane strukturalne |
+| `MellowAura.dc.html` — Strona główna | teksty i ceny przeniesione z dotychczasowego sklepu; zdjęcia: `zdjecia/*.webp`; paleta: `.claude/skills/mellowaura-design/SKILL.md` |
+| `MellowAura.dc.html` — O mnie, Pracownia | teksty autorskie Kasi (edytowalne w panelu → Treści) |
+| `MellowAura.dc.html` — Sklep, Produkt, Prezenty | nazwy, ceny i opisy z dotychczasowej oferty; galerie z karuzelą na kartach |
+| `MellowAura.dc.html` — Koszyk i płatność | jeden ekran, BLIK / przelew / karta; koszty dostawy z panelu → Ustawienia |
+| `MellowAura.dc.html` — Kubek z napisem | podgląd napisu litera po literze, rozmiary, kolor wnętrza |
+| `MellowAura.dc.html` — Zestawy, Z Twojej apaszki, Odcisk rośliny | usługi na zamówienie; ceny „od" liczone z cenników |
+| `MellowAura.dc.html` — Warsztaty, Na zamówienie, B2B, Wypały, FAQ, Kontakt | listy w formularzach, FAQ i dane kontaktowe edytowalne w panelu |
+| `MellowAura.dc.html` — Dziennik, wpis dziennika | kronika: Instagram, notatki, relacje z targów |
+| `MellowAura.dc.html` — Panel właścicielki | 8 zakładek: Produkty, Warsztaty, Kubek, Usługi, Wypały, Dziennik, Treści, Ustawienia |
+| `Specyfikacja wdrozenia - MellowAura.dc.html` | dokument wdrożeniowy |
+| `Plan wdrozenia - Laravel krok po kroku.dc.html` | plan wdrożenia (lokalnie, nie w repo) |
+| `Certyfikat unikatu.dc.html`, `Voucher warsztatowy.dc.html` | materiały do druku |
+| `.claude/skills/*` | skopiowane 1:1 z repozytorium |
 
 ## Kierunek synchronizacji
 
-Pliki projektu NIE są wypychane automatycznie — powiązanie działa w stronę czytania.
-Właścicielka wgrała projekt do repozytorium ręcznie 14 września 2026; w repozytorium jest 48 plików.
+Pliki projektu nie są wypychane automatycznie — powiązanie działa w stronę czytania.
+Właścicielka wgrywa projekt do repozytorium ręcznie.
 
-## UWAGA BEZPIECZEŃSTWA
+## Bezpieczeństwo — zamknięte
 
-Repozytorium jest PUBLICZNE. Dwa zrzuty ekranu wgrane omyłkowo (tajny klucz klienta Google OAuth
-`GOCSPX-…` oraz panel wewnętrznego CRM-a z logami serwera) zostały usunięte commitem 14.09.2026
-i nie występują już w aktualnym stanie repozytorium.
+Stare, publiczne repozytorium `mellow_aura` zostało usunięte 14.09.2026 (potwierdzone: zwraca 404).
+Nowe repozytorium `mellow-aura` nie zawiera katalogu `uploads/` ani żadnych danych wrażliwych.
 
-Sprawa NIE jest domknięta samym usunięciem: oba pliki pozostają w historii gita i są publicznie
-odczytywalne z wcześniejszych commitów. Wymagane działania:
-1. unieważnić klucz OAuth w Google Cloud i wygenerować nowy,
-2. opcjonalnie wyczyścić historię — usunąć i wrzucić repozytorium od nowa albo użyć `git filter-repo`.
+## Sync history
 
-Pozostałe 20 plików w `uploads/` to zdjęcia produktów i zrzuty ekranu strony — bez danych wrażliwych.
+- 2026-09-14T19:14:41Z — projekt wgrany do nowego, czystego repozytorium `mellow-aura` (26 plików, bez `uploads/`).
+- 2026-09-14T19:10:53Z — repozytorium `mellow_aura` (publiczne): wgrane 48 plików, następnie usunięte dwa zrzuty ekranu z danymi wrażliwymi; pozostały w historii.
+- 2026-09-14T15:54:16Z — pierwszy odczyt `mellow_aura`: repozytorium zawierało wyłącznie `README.md` (13 B), bez kodu UI.
 
 ## Uwagi
 

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300&family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<script src="./doc-page.js"></script>
+<style>
+  doc-page:not(:defined) { visibility: hidden; }
+  body { font-family: "Instrument Sans", system-ui, sans-serif; color: #2F2620; }
+  a { color: #24417E; }
+  a:hover { color: #855F3D; }
+</style>
+</helmet>
+
+<doc-page>
+
+  <div slot="header" style="display: flex; justify-content: space-between; align-items: baseline; font-size: 8pt; color: #726456; padding-bottom: 5px; border-bottom: 0.3mm solid #E2D7C7">
+    <span style="letter-spacing: 0.22em; text-transform: uppercase">mellowaura &middot; plan wdrożenia</span>
+    <span>Laravel na Forge &middot; wrzesień 2026</span>
+  </div>
+
+  <div style="max-width: 165mm">
+
+    <div style="font-size: 8pt; letter-spacing: 0.28em; text-transform: uppercase; color: #855F3D; margin-bottom: 6mm">dokument dla osoby kodującej</div>
+    <h1 style="font-family: Newsreader, serif; font-weight: 300; font-size: 30pt; line-height: 1.08; letter-spacing: -0.01em; margin: 0 0 6mm">Od makiety do sklepu,<br />który przyjmuje pieniądze</h1>
+    <p style="font-size: 11.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm">Plan pracy dla jednej osoby uczącej się Laravela w trakcie, z terminem na święta 2026. Zakłada, że serwer Forge już działa i że Laravel nie jest zupełnie obcy, bo stoją na nim dwa CRM-y.</p>
+    <p style="font-size: 11.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 10mm">Prototyp <strong style="font-weight: 500">MellowAura.dc.html</strong> jest specyfikacją wizualną: każdy ekran, każdy stan i każdy tekst są w nim rozstrzygnięte. Nie projektuj niczego od nowa — przenoś.</p>
+
+    <div style="background: #F7ECE9; border: 0.35mm solid #E0C3BC; border-radius: 1.5mm; padding: 7mm 8mm; margin-bottom: 10mm">
+      <div style="font-family: Newsreader, serif; font-size: 15pt; margin-bottom: 3mm">Najpierw zła wiadomość o terminie</div>
+      <p style="font-size: 10.5pt; line-height: 1.6; color: #5C5043; margin: 0 0 3mm">Dziś jest 14 września. Ruch prezentowy trzeba łapać od pierwszej połowy listopada, nie od Wigilii — czyli realny deadline to <strong style="font-weight: 500">10 listopada, za osiem tygodni</strong>. Zaznaczyłeś osiem obszarów jako „pierwsza wersja". Dla jednej osoby uczącej się w trakcie to około 300 godzin roboczych. W osiem tygodni, po pracy, zmieści się 120–160.</p>
+      <p style="font-size: 10.5pt; line-height: 1.6; color: #5C5043; margin: 0">Wyjście nie polega na szybszym kodowaniu, tylko na wybraniu tego, co zarabia w grudniu. Reszta wchodzi w styczniu i luty, gdy ruch siada.</p>
+    </div>
+
+    <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 0 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">1. Co wchodzi przed świętami, a co po</h2>
+
+    <div style="display: flex; gap: 6mm; margin-bottom: 4mm">
+      <div style="flex: 1; background: #EDF0E9; border-radius: 1.5mm; padding: 6mm">
+        <div style="font-size: 8pt; letter-spacing: 0.16em; text-transform: uppercase; color: #41563A; margin-bottom: 3mm">do 10 listopada</div>
+        <div style="font-size: 10pt; line-height: 1.75">
+          Sklep i płatności<br />
+          Konfigurator kubka<br />
+          Prezenty i zestawy<br />
+          Panel: produkty, stany, ceny<br />
+          Strony treściowe: o mnie, pracownia, FAQ, kontakt
+        </div>
+        <div style="font-size: 9pt; line-height: 1.55; color: #41563A; margin-top: 4mm">To jest sklep, który sprzedaje prezenty. Zamyka pętlę: ktoś wchodzi, wybiera, płaci, dostaje paczkę.</div>
+      </div>
+      <div style="flex: 1; background: #EDE4D8; border-radius: 1.5mm; padding: 6mm">
+        <div style="font-size: 8pt; letter-spacing: 0.16em; text-transform: uppercase; color: #855F3D; margin-bottom: 3mm">styczeń – luty</div>
+        <div style="font-size: 10pt; line-height: 1.75">
+          Zapisy na warsztaty z terminarzem<br />
+          Usługi na zamówienie<br />
+          Dziennik i wydarzenia<br />
+          B2B i wypały<br />
+          Panel: reszta zakładek
+        </div>
+        <div style="font-size: 9pt; line-height: 1.55; color: #6B5D4F; margin-top: 4mm">Do grudnia wystarczą statyczne strony z formularzem i telefonem. Warsztaty i tak rezerwuje się dziś przez WhatsApp — to działa.</div>
+      </div>
+    </div>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm"><strong style="font-weight: 500">Vouchery są wyjątkiem i muszą wejść w pierwszej fali.</strong> W grudniu to najlepiej sprzedający się produkt pracowni ceramicznej — prezent bez rozmiaru i bez ryzyka. Ale nie potrzebują kalendarza: sprzedajesz je jak zwykły produkt, a termin ustalacie potem. Voucher jako produkt to dwa dni pracy, zapisy z terminarzem to dwa tygodnie.</p>
+
+    <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">2. Zrób to w tym tygodniu, przed pisaniem kodu</h2>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm">Trzy rzeczy mają czas oczekiwania niezależny od Ciebie. Jeśli zaczniesz od kodu, w listopadzie okaże się, że sklep działa, ale nie przyjmuje płatności.</p>
+
+    <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; margin-bottom: 4mm">
+      <tr style="background: #EDE4D8">
+        <th style="text-align: left; padding: 3mm; font-weight: 500; width: 34%">Konto</th>
+        <th style="text-align: left; padding: 3mm; font-weight: 500; width: 22%">Czas oczekiwania</th>
+        <th style="text-align: left; padding: 3mm; font-weight: 500">Co potrzebne</th>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 3mm; vertical-align: top"><strong style="font-weight: 500">Przelewy24</strong> albo Tpay<br /><span style="color: #726456">BLIK, karta, Apple/Google Pay</span></td>
+        <td style="padding: 3mm; vertical-align: top">3–10 dni roboczych</td>
+        <td style="padding: 3mm; vertical-align: top">NIP, umowa, weryfikacja tożsamości, konto firmowe. Prowizja ok. 1,9% za BLIK. Oba mają paczkę do Laravela.</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 3mm; vertical-align: top"><strong style="font-weight: 500">InPost ShipX</strong><br /><span style="color: #726456">paczkomaty, etykiety</span></td>
+        <td style="padding: 3mm; vertical-align: top">2–5 dni</td>
+        <td style="padding: 3mm; vertical-align: top">Umowa z InPostem i klucz do API. Bez tego etykiety wypisujesz ręcznie — do przeżycia, ale nie w grudniu.</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 3mm; vertical-align: top"><strong style="font-weight: 500">Postmark</strong> albo Resend<br /><span style="color: #726456">maile transakcyjne</span></td>
+        <td style="padding: 3mm; vertical-align: top">1 dzień</td>
+        <td style="padding: 3mm; vertical-align: top">Dostęp do DNS domeny (SPF, DKIM). Nie wysyłaj potwierdzeń przez <code>mail()</code> z serwera — trafią do spamu.</td>
+      </tr>
+      <tr>
+        <td style="padding: 3mm; vertical-align: top"><strong style="font-weight: 500">Regulamin i polityka</strong></td>
+        <td style="padding: 3mm; vertical-align: top">tydzień, jeśli prawnik</td>
+        <td style="padding: 3mm; vertical-align: top">Musi zawierać wyłączenie prawa odstąpienia dla rzeczy na indywidualne zamówienie — inaczej każdy kubek z napisem podlega zwrotowi w 14 dni.</td>
+      </tr>
+    </table>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm">Do tego darmowe i natychmiastowe, więc zrób od razu: Search Console, Analytics 4, Profil Firmy Google (kluczowy dla frazy „warsztaty ceramiczne Kraków"), Merchant Center, konto Behold.so na kanał Instagrama.</p>
+
+    <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">3. Stos i dlaczego taki</h2>
+
+    <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; margin-bottom: 4mm">
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 2.5mm 3mm; width: 38%"><strong style="font-weight: 500">Laravel 11 + Blade</strong></td>
+        <td style="padding: 2.5mm 3mm">Renderowanie po stronie serwera. Google widzi gotowy HTML, więc dane strukturalne ze specyfikacji działają bez kombinowania.</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">Alpine.js, bez frameworka</strong></td>
+        <td style="padding: 2.5mm 3mm">Koszyk, filtry i podgląd napisu to kilkanaście interakcji. React albo Vue dodałyby build i podwoiły naukę.</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">MySQL</strong></td>
+        <td style="padding: 2.5mm 3mm">Jest na Forge, znasz go z CRM-ów. Przy 17 produktach wydajność nie jest tematem.</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">Panel własny na Blade</strong></td>
+        <td style="padding: 2.5mm 3mm">Nie Filament. Panel z prototypu jest prosty i mówi językiem Kasi — „szt. na półce", nie „inventory". Filament wymusiłby swój wygląd i swoje pojęcia.</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">Spatie: medialibrary, sitemap, schema-org</strong></td>
+        <td style="padding: 2.5mm 3mm">Zdjęcia z miniaturami, mapa strony i dane strukturalne. Trzy paczki zamiast trzech tygodni pisania.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">Cloudflare przed serwerem</strong></td>
+        <td style="padding: 2.5mm 3mm">Darmowy plan. Zdjęcia ceramiki są ciężkie, a szybkość wczytywania wpływa na pozycję w Google.</td>
+      </tr>
+    </table>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm"><strong style="font-weight: 500">Czego nie robić:</strong> nie przepisuj tego na Next.js ani Astro, choć są modniejsze — dodałbyś drugi język i drugi serwer do jednoosobowego projektu z terminem. I nie sięgaj po WooCommerce: wtyczki zrobiłyby koszyk, ale konfigurator kubka, stany po jednej sztuce i usługi na zamówienie trzeba by i tak napisać, tylko wewnątrz cudzego systemu.</p>
+
+    <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">4. Baza danych — pierwsza fala</h2>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm">Osiem tabel wystarczy do świąt. Nazwy pól po angielsku, treści po polsku.</p>
+
+    <div style="background: #FCF9F4; border: 0.3mm solid #E2D7C7; border-radius: 1.5mm; padding: 6mm 7mm; font-size: 9.5pt; line-height: 1.7; margin-bottom: 4mm">
+      <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">products</strong> — id, slug, name, category (ceramika / rekodzielo / warsztaty), description, dimensions (JSON, wszystkie wymiary opcjonalne), care_note, is_published, is_one_off, sort_order, stamp_enabled, occasions (JSON: dla_niej, rocznica, urodziny…)</div>
+      <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">product_variants</strong> — id, product_id, label („Mała 12 cm"), price_gross, compare_at_price (przekreślona cena), stock. <em style="font-style: italic">Stan trzymaj na wariancie, nie na produkcie</em> — unikat to wariant ze stanem 1.</div>
+      <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">media</strong> — obsługuje Spatie, nie pisz sam</div>
+      <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">orders</strong> — id, number (MA-2026-1047), status, email, phone, name, shipping_method, shipping_address (JSON), locker_code, total_gross, payment_status, payment_provider_id, note, invoice_nip</div>
+      <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">order_items</strong> — id, order_id, product_variant_id, quantity, unit_price_gross, <strong style="font-weight: 500">custom_text</strong>, <strong style="font-weight: 500">custom_glaze</strong>. Dwa ostatnie pola to napis i kolor z konfiguratora — kopiuj wartości, nie tylko klucze obce, bo cena i nazwa mogą się później zmienić.</div>
+      <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">bundles</strong> i <strong style="font-weight: 500">bundle_items</strong> — id, name, description, discount_percent, is_published. Cena liczona z wariantów minus rabat, tak jak w panelu.</div>
+      <div><strong style="font-weight: 500">settings</strong> — key, value (JSON). Tu trzymaj wszystko, co Kasia zmienia w panelu: próg darmowej wysyłki, limit znaków na kubku, kolory napisu, teksty sekcji, cenniki usług. Jedna tabela zamiast dwudziestu migracji.</div>
+    </div>
+
+    <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">5. Osiem tygodni, tydzień po tygodniu</h2>
+
+    <div style="font-size: 10pt; line-height: 1.6">
+      <div style="display: flex; gap: 5mm; padding: 4mm 0; border-bottom: 0.25mm solid #EDE4D8">
+        <div style="flex: 0 0 26mm"><strong style="font-weight: 500">Tydzień 1</strong><br /><span style="font-size: 9pt; color: #726456">15–21.09</span></div>
+        <div style="flex: 1">Wnioski o Przelewy24 i InPost — <strong style="font-weight: 500">pierwszego dnia</strong>. Nowa strona na Forge, repozytorium, staging na subdomenie, Laravel 11, migracje ośmiu tabel, seeder z 17 produktami przepisanymi z prototypu. Na koniec tygodnia w bazie siedzi prawdziwa oferta.</div>
+      </div>
+      <div style="display: flex; gap: 5mm; padding: 4mm 0; border-bottom: 0.25mm solid #EDE4D8">
+        <div style="flex: 0 0 26mm"><strong style="font-weight: 500">Tydzień 2</strong><br /><span style="font-size: 9pt; color: #726456">22–28.09</span></div>
+        <div style="flex: 1">Szablon strony, nagłówek, stopka, strona główna, sklep z filtrami i szukaniem, karta produktu. Przenoś styl z prototypu dosłownie — nie poprawiaj. Na koniec: da się przejść od strony głównej do karty produktu.</div>
+      </div>
+      <div style="display: flex; gap: 5mm; padding: 4mm 0; border-bottom: 0.25mm solid #EDE4D8">
+        <div style="flex: 0 0 26mm"><strong style="font-weight: 500">Tydzień 3</strong><br /><span style="font-size: 9pt; color: #726456">29.09–5.10</span></div>
+        <div style="flex: 1">Koszyk w sesji, pasek do darmowej wysyłki, ekran zakupu z prototypu (jeden ekran, nie trzy), walidacja. Płatność jeszcze udawana. Na koniec: zamówienie zapisuje się w bazie.</div>
+      </div>
+      <div style="display: flex; gap: 5mm; padding: 4mm 0; border-bottom: 0.25mm solid #EDE4D8">
+        <div style="flex: 0 0 26mm"><strong style="font-weight: 500">Tydzień 4</strong><br /><span style="font-size: 9pt; color: #726456">6–12.10</span></div>
+        <div style="flex: 1">Przelewy24: przekierowanie, powrót, <strong style="font-weight: 500">webhook</strong>. Zdejmowanie stanu w transakcji przy potwierdzeniu płatności, nie przy złożeniu zamówienia. Maile przez Postmark. Test na prawdziwych 1 zł. Na koniec: pieniądze wpływają.</div>
+      </div>
+      <div style="display: flex; gap: 5mm; padding: 4mm 0; border-bottom: 0.25mm solid #EDE4D8">
+        <div style="flex: 0 0 26mm"><strong style="font-weight: 500">Tydzień 5</strong><br /><span style="font-size: 9pt; color: #726456">13–19.10</span></div>
+        <div style="flex: 1">Panel: logowanie, produkty, warianty z cenami, stany, kolejność, przesyłanie zdjęć, tabela <code>settings</code>. Kasia musi móc dodać produkt bez Ciebie — to warunek, żeby ruszyć.</div>
+      </div>
+      <div style="display: flex; gap: 5mm; padding: 4mm 0; border-bottom: 0.25mm solid #EDE4D8">
+        <div style="flex: 0 0 26mm"><strong style="font-weight: 500">Tydzień 6</strong><br /><span style="font-size: 9pt; color: #726456">20–26.10</span></div>
+        <div style="flex: 1">Konfigurator kubka: podgląd napisu na zdjęciu w Alpine, łamanie linii, limit znaków, kolory z panelu, zapis do <code>custom_text</code>. Prezenty z filtrem okazja × budżet, zestawy, vouchery jako produkt z PDF-em po zakupie.</div>
+      </div>
+      <div style="display: flex; gap: 5mm; padding: 4mm 0; border-bottom: 0.25mm solid #EDE4D8">
+        <div style="flex: 0 0 26mm"><strong style="font-weight: 500">Tydzień 7</strong><br /><span style="font-size: 9pt; color: #726456">27.10–2.11</span></div>
+        <div style="flex: 1">Strony treściowe, FAQ, kontakt. Widget paczkomatu InPost. Wszystkie tytuły, opisy i dane strukturalne ze specyfikacji. Mapa strony, <code>robots.txt</code>, Search Console. Certyfikat unikatu do druku.</div>
+      </div>
+      <div style="display: flex; gap: 5mm; padding: 4mm 0">
+        <div style="flex: 0 0 26mm"><strong style="font-weight: 500">Tydzień 8</strong><br /><span style="font-size: 9pt; color: #726456">3–9.11</span></div>
+        <div style="flex: 1">Bufor — i nie usuwaj go. Kopie zapasowe, monitoring, kolejki na Forge, przejście całej ścieżki zakupu na telefonie, sprawdzenie na dwóch przeglądarkach, uzupełnienie treści przez Kasię, próbne zamówienie od początku do końca.</div>
+      </div>
+    </div>
+
+    <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">6. Cztery miejsca, w których łatwo się przewrócić</h2>
+
+    <div style="font-size: 10pt; line-height: 1.62">
+      <p style="margin: 0 0 3.5mm"><strong style="font-weight: 500">Stan zdejmowany w złym momencie.</strong> Jeśli odejmiesz sztukę przy kliknięciu „Płacę", porzucone koszyki wyzerują półkę. Odejmuj dopiero w webhooku potwierdzającym płatność, w transakcji z <code>lockForUpdate</code>. Przy unikatach po jednej sztuce dwie osoby naprawdę kupią to samo w tej samej minucie — w grudniu to pewne.</p>
+      <p style="margin: 0 0 3.5mm"><strong style="font-weight: 500">Webhook bez weryfikacji podpisu.</strong> Przelewy24 przysyła powiadomienie o płatności na publiczny adres. Bez sprawdzenia podpisu ktoś może je podrobić i dostać paczkę za darmo. Weryfikuj i loguj każde wywołanie.</p>
+      <p style="margin: 0 0 3.5mm"><strong style="font-weight: 500">Ceny w groszach albo w setnych.</strong> Trzymaj kwoty jako liczby całkowite w groszach (<code>unsignedInteger</code>) albo <code>decimal(10,2)</code>. Nigdy <code>float</code> — przy rabatach zestawów zaczną wychodzić grosze różnicy i nie da się tego pogodzić z księgowością.</p>
+      <p style="margin: 0"><strong style="font-weight: 500">Napis klienta bez oczyszczenia.</strong> <code>custom_text</code> idzie na kubek, ale też do maila i na kartę produkcyjną. Ogranicz długość po stronie serwera, nie tylko w przeglądarce, i oczyszczaj przy wyświetlaniu. To jedyne pole, w którym obcy człowiek pisze dowolny tekst.</p>
+    </div>
+
+    <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">7. Czego potrzebujesz od Kasi, żeby zacząć</h2>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm">To są rzeczy, których nie da się nadrobić kodem, a blokują start. Poproś o nie w tym tygodniu, bo część wymaga fotografowania.</p>
+
+    <div style="background: #EDE4D8; border-radius: 1.5mm; padding: 6mm 7mm; font-size: 10pt; line-height: 1.72">
+      <strong style="font-weight: 500">Zdjęcie kubka prosto z boku</strong>, bez napisu, na gładkiej ścianie — bez niego konfigurator wygląda na zepsuty<br />
+      <strong style="font-weight: 500">Zdjęcia biżuterii, misek, kosmetyczek i piórników</strong> — leżą w panelu jako szkice bez zdjęć<br />
+      <strong style="font-weight: 500">Potwierdzone ceny</strong> warsztatów, wypałów i obu usług na zamówienie<br />
+      <strong style="font-weight: 500">Trzy, cztery opinie</strong> uczestniczek z imieniem i miesiącem<br />
+      <strong style="font-weight: 500">Decyzja o adresie pracowni</strong> — dokładny adres czy tylko dzielnica<br />
+      <strong style="font-weight: 500">Dane do faktur</strong> i konto firmowe do Przelewy24<br />
+      <strong style="font-weight: 500">Realne czasy realizacji</strong> — ile trwa kubek z napisem, ile talerz z odciskiem
+    </div>
+
+    <div style="margin-top: 10mm; padding-top: 5mm; border-top: 0.3mm solid #E2D7C7; font-size: 9.5pt; line-height: 1.6; color: #726456">
+      Dokument towarzyszy plikowi <strong style="font-weight: 500">Specyfikacja wdrozenia - MellowAura.dc.html</strong>, w którym są adresy stron, tytuły, opisy, dane strukturalne i pełny zakres panelu. Prototyp <strong style="font-weight: 500">MellowAura.dc.html</strong> rozstrzyga wygląd i zachowanie każdego ekranu — otwórz go obok edytora i przenoś, zamiast wymyślać.
+    </div>
+
+  </div>
+
+</doc-page>
+
+</x-dc>
+</body>
+</html>
