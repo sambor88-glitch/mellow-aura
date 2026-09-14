@@ -126,6 +126,10 @@
         <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">Spatie: medialibrary, sitemap, schema-org</strong></td>
         <td style="padding: 2.5mm 3mm">Zdjęcia z miniaturami, mapa strony i dane strukturalne. Trzy paczki zamiast trzech tygodni pisania.</td>
       </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">Moduły, sesja i cache w plikach</strong></td>
+        <td style="padding: 2.5mm 3mm">Każdy obszar — katalog, koszyk, płatności, konfigurator kubka — to osobny moduł z własnymi trasami, widokami i migracjami. W styczniu dołożysz warsztaty, nie ruszając sklepu. Sesja i cache na dysku serwera: bez Redisa i bez tabel w bazie, przy jednym serwerze to wystarcza.</td>
+      </tr>
       <tr>
         <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">Cloudflare przed serwerem</strong></td>
         <td style="padding: 2.5mm 3mm">Darmowy plan. Zdjęcia ceramiki są ciężkie, a szybkość wczytywania wpływa na pozycję w Google.</td>
@@ -136,10 +140,10 @@
 
     <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">4. Baza danych — pierwsza fala</h2>
 
-    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm">Osiem tabel wystarczy do świąt. Nazwy pól po angielsku, treści po polsku.</p>
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm">Osiem tabel wystarczy do świąt. Cały kod po angielsku — nazwy tabel, pól i zapisane wartości; po polsku tylko to, co czytają ludzie. Sesja i cache siedzą w plikach, więc tabel <em style="font-style: italic">sessions</em> i <em style="font-style: italic">cache</em> nie zakładaj.</p>
 
     <div style="background: #FCF9F4; border: 0.3mm solid #E2D7C7; border-radius: 1.5mm; padding: 6mm 7mm; font-size: 9.5pt; line-height: 1.7; margin-bottom: 4mm">
-      <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">products</strong> — id, slug, name, category (ceramika / rekodzielo / warsztaty), description, dimensions (JSON, wszystkie wymiary opcjonalne), care_note, is_published, is_one_off, sort_order, stamp_enabled, occasions (JSON: dla_niej, rocznica, urodziny…)</div>
+      <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">products</strong> — id, slug, name, category (ceramics / crafts / workshops), description, dimensions (JSON, wszystkie wymiary opcjonalne), care_note, is_published, is_one_off, sort_order, stamp_enabled, occasions (JSON: for_her, anniversary, birthday…)</div>
       <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">product_variants</strong> — id, product_id, label („Mała 12 cm"), price_gross, compare_at_price (przekreślona cena), stock. <em style="font-style: italic">Stan trzymaj na wariancie, nie na produkcie</em> — unikat to wariant ze stanem 1.</div>
       <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">media</strong> — obsługuje Spatie, nie pisz sam</div>
       <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">orders</strong> — id, number (MA-2026-1047), status, email, phone, name, shipping_method, shipping_address (JSON), locker_code, total_gross, payment_status, payment_provider_id, note, invoice_nip</div>

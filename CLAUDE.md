@@ -21,6 +21,62 @@ Laravel 13 + Blade, Alpine.js, MySQL, własny panel na Blade (nie Filament), pac
 sitemap, schema-org. Serwer na Forge, przed nim Cloudflare. PHP 8.4 lokalnie i na serwerze.
 Bez Next.js, Astro i WooCommerce — uzasadnienie w planie, punkt 3.
 
+## Moduły
+
+Kod jest modularny: każdy obszar sklepu to osobny moduł w `app/Modules/<Name>`, w przestrzeni nazw
+`App\Modules\<Name>`. Bez paczek do modułów — zwykłe mechanizmy Laravela.
+
+```text
+app/Modules/Catalog/
+├── CatalogServiceProvider.php   # dziedziczy po Shared\ModuleServiceProvider; wpis w bootstrap/providers.php
+├── Actions/                     # jedna operacja biznesowa na klasę, np. DecrementStock
+├── Database/Factories/  Database/Migrations/  Database/Seeders/
+├── Events/  Listeners/
+├── Http/Controllers/Admin/      # ekrany panelu tego modułu
+├── Http/Requests/
+├── Models/
+├── resources/views/             # widoki pod przestrzenią catalog::
+└── routes/web.php  routes/admin.php
+```
+
+- `App\Modules\Shared\ModuleServiceProvider` sam wczytuje trasy, widoki i migracje modułu oraz wskazuje
+  Laravelowi fabryki modeli w `Database/Factories`. Provider modułu tylko po nim dziedziczy.
+- Katalogi z klasami PHP zawsze z wielkiej litery (`Database/Factories`, nie `database/factories`).
+  macOS nie rozróżnia wielkości liter, Linux na serwerze tak — zła nazwa działa lokalnie i psuje się dopiero na Forge.
+- Moduł zapisuje tylko do swoich tabel. Inny moduł zmienia jego dane wyłącznie przez jego akcje
+  (`Checkout` wywołuje `Catalog\Actions\DecrementStock`, nie pisze do `product_variants`).
+- Czytać cudze dane przez relację Eloquent wolno.
+- Zdarzenia służą do skutków ubocznych: maile, etykiety InPost, logi. Stanu magazynu nie zdejmuje się
+  w listenerze z kolejki — musi zejść w tej samej transakcji co potwierdzenie płatności.
+- Ekrany panelu należą do modułu, którego dotyczą. `Admin` daje tylko logowanie, układ panelu i menu.
+- Testy: `tests/Feature/<Name>` i `tests/Unit/<Name>`.
+
+Pierwsza fala: `Shared` (układ strony, komponenty Blade, formatowanie kwot, SEO), `Settings`, `Admin`,
+`Catalog`, `Cart`, `Checkout`, `Payments`, `Shipping`, `MugConfigurator`, `Gifts`, `Content`.
+Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
+
+## Sesja i cache w plikach
+
+- `SESSION_DRIVER=file` i `CACHE_STORE=file` w `.env` i w `.env.example` — Laravel 13 domyślnie ustawia `database`.
+- Pliki leżą w `storage/framework/sessions` i `storage/framework/cache/data`. Tabele `sessions`, `cache`
+  i `cache_locks` z domyślnych migracji usuń.
+- Nie używaj `Cache::tags()` — magazyn `file` nie obsługuje tagów. `Cache::lock()` działa.
+- To rozwiązanie na jeden serwer. Przy drugim serwerze albo load balancerze sesję i cache trzeba przenieść.
+- Na serwerze `artisan` uruchamiaj jako użytkownik `forge`, nie root — inaczej pliki sesji i cache
+  dostaną złego właściciela i strona zacznie zwracać błędy 500.
+
+## Język kodu
+
+- Cały kod po angielsku: klasy, metody, zmienne, tabele, kolumny, zapisane wartości (kategorie, okazje,
+  statusy), klucze ustawień, nazwy tras i widoków, komentarze, testy.
+- Po polsku zostaje tylko to, czego nie da się przetłumaczyć bez szkody:
+  - adresy URL ze specyfikacji (`/sklep`, `/warsztaty-ceramiczne-krakow`) — to frazy wpisywane w Google;
+  - teksty, które czytają klientki i Kasia w panelu (`mellowaura-teksty`);
+  - nazwy własne i pojęcia bez odpowiednika: BLIK, Paczkomat, NIP.
+- Trasa ma polski adres i angielską nazwę: `Route::get('/sklep', ...)->name('shop.index')`.
+- Wartość po angielsku, etykieta po polsku: `crafts` → „Rękodzieło”, `in_progress` → „W realizacji”.
+- Polskie nazwy z prototypu i z przykładów w skillach (`doKoszyka`, `zamowienia`, `cena`) tłumacz przy przenoszeniu.
+
 ## Zasady, których nie łamiemy
 
 - Stan magazynu zdejmuj dopiero w webhooku potwierdzającym płatność, w transakcji z `lockForUpdate`.
@@ -28,7 +84,6 @@ Bez Next.js, Astro i WooCommerce — uzasadnienie w planie, punkt 3.
 - Kwoty jako grosze w liczbach całkowitych albo `decimal(10,2)` — nigdy float.
 - Pozycja zamówienia kopiuje cenę, napis i kolor z konfiguratora, a nie tylko klucze obce.
 - `custom_text` (napis na kubku): limit długości po stronie serwera i escapowanie przy każdym wyświetleniu.
-- Teksty w interfejsie po polsku, głosem Kasi (`mellowaura-teksty`); nazwy w kodzie i w bazie po angielsku.
 
 ## Repozytorium
 
