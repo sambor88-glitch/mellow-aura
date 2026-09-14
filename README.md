@@ -11,7 +11,7 @@ Strona pracowni ceramiki i rękodzieła Katarzyny Samborskiej — Kraków.
 | `Certyfikat unikatu.dc.html` | Dwustronna karta A6 do wydruku, dołączana do każdej paczki |
 | `Voucher warsztatowy.dc.html` | Pozioma karta A4 — voucher na warsztat do wydruku |
 | `Zakup A - krok po kroku.dc.html`, `Zakup B - ekspres BLIK.dc.html` | Dwa warianty ścieżki zakupu; wybrany został wariant B i jest wbudowany w stronę |
-| `zdjecia/` | 16 zdjęć produktów i pracowni, przycięte i gotowe do użycia |
+| `zdjecia/` | 16 zdjęć produktów i pracowni w formacie WebP, przyciętych i gotowych do użycia |
 | `github.md` | Zapis powiązania z repozytorium i notatki o synchronizacji |
 | `support.js`, `doc-page.js` | Biblioteki potrzebne do otwarcia plików `.dc.html` |
 
