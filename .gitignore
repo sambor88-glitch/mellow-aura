@@ -1,0 +1,11 @@
+# Surowe zrzuty ekranu i pliki wgrywane roboczo.
+# Repozytorium jest publiczne — mogą tu trafić dane klientek albo klucze dostępowe.
+uploads/
+
+# Artefakty Pythona (skrypt kontrast.py)
+__pycache__/
+*.pyc
+
+# Śmieci systemowe
+.DS_Store
+Thumbs.db
