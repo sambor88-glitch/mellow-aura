@@ -39,8 +39,9 @@ Nazwy tokenów są opisowe — używaj ich w komentarzach i rozmowie, w kodzie w
 | `#2F2620` | nagłówki i treść główna |
 | `#5C5043` | akapity prowadzące, lead |
 | `#6B5D4F` | opisy pomocnicze |
-| `#8A7A69` | etykiety wersalikowe, podpisy, metadane — **w nowym kodzie `#726456`**, patrz sekcja o dostępności |
-| `#A0907D` | podpowiedzi pod polami — **w nowym kodzie `#736454`**, patrz sekcja o dostępności |
+| `#726456` | etykiety wersalikowe, podpisy, metadane |
+| `#9B8C7C` | to samo, ale **na ciemnym tle** — stopka, ciemne karty |
+| `#736454` | podpowiedzi pod polami, tekst najsłabszy |
 
 ### Linie i obrysy
 `#DCD0BE` obrys karty i pola · `#E2D7C7` linia rozdzielająca sekcje · `#C6B8A5` obrys przycisku
@@ -49,7 +50,7 @@ drugoplanowego i linia przerywana · `#E6DCCD` obrys najlżejszy, wewnątrz kart
 ### Akcenty — używaj oszczędnie
 | Hex | Rola | Zasada |
 | --- | --- | --- |
-| `#8C6440` | brąz — linki, nadtytuły wersalikowe, kursywa w nagłówku | najczęstszy akcent — **w nowym kodzie `#855F3D`** |
+| `#855F3D` | brąz — linki, nadtytuły wersalikowe, kursywa w nagłówku | najczęstszy akcent |
 | `#24417E` | granat — **każdy hover i focus** | nigdy jako tło dużej płaszczyzny |
 | `#D6A39C` | róż — licznik koszyka, zaznaczenie tekstu, znaczniki | maksymalnie dwa na ekran |
 | `#A8813F` | złoto — gwiazdki ocen, detal luksusowy | tylko drobnica |
@@ -159,11 +160,10 @@ Blok `@media (prefers-reduced-motion: reduce)` już jest — nie usuwaj go.
 ## Dostępność — to nie jest opcja
 
 - Focus: `outline: 2px solid #24417E; outline-offset: 2px`. Nie kasuj go „dla estetyki".
-- Kontrast — wartości policzone, nie na oko: `#2F2620` na `#F3EDE4` daje 12,72:1.
-  Ale **`#8A7A69` daje tylko 3,29–3,95, a `#A0907D` 2,46–2,95** i przy piśmie poniżej 24 px
-  żaden z nich nie spełnia normy 4,5:1. W nowych ekranach używaj zamienników:
-  **`#8A7A69` → `#726456`**, **`#A0907D` → `#736454`**, **`#8C6440` → `#855F3D`**
-  (ten sam ton, tylko ciemniejszy; kontrast co najmniej 4,51 w najgorszym przypadku).
+- Kontrast — wartości policzone, nie na oko. Paleta powyżej jest już poprawiona do normy AA:
+  najsłabszy dopuszczalny tekst to `#736454`, który daje 4,54 na najciemniejszym używanym tle.
+  Poprzednie odcienie `#8A7A69`, `#A0907D` i `#8C6440` nie przechodziły normy i **nie występują
+  już nigdzie w projekcie** — jeśli gdzieś je zobaczysz, to pomyłka do naprawienia.
   Każdy nowy kolor tekstu przepuść przez `kontrast.py` — szczegóły w skillu `mellowaura-dostepnosc`.
 - Każde `<img>` ma `alt` po polsku, opisujące przedmiot, nie plik.
 - Pole obok pola ma etykietę tekstową, nie sam `placeholder`.

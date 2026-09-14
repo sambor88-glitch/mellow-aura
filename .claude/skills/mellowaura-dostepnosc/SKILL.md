@@ -22,9 +22,13 @@ Wartości z `kontrast.py` w tym katalogu. Progi WCAG: **4,5:1** tekst zwykły, *
 | `#6B5D4F` | 5,46 | 5,05 | 6,05 | AA |
 | `#24417E` granat | 8,46 | 7,83 | 9,38 | AAA wszędzie |
 | `#8C3A2E` czerwień | 6,54 | 6,05 | 7,25 | AA |
-| `#8C6440` brąz | **4,4977** | **4,16** | 4,98 | **brakuje 0,0023 do progu** |
-| `#8A7A69` etykiety | **3,56** | **3,29** | **3,95** | **za mało dla tekstu zwykłego** |
-| `#A0907D` podpowiedzi | **2,66** | **2,46** | **2,95** | **za mało dla czegokolwiek** |
+| `#855F3D` brąz | 4,87 | 4,51 | 5,40 | AA |
+| `#726456` etykiety | 4,91 | 4,54 | 5,44 | AA |
+| `#736454` podpowiedzi | 4,90 | 4,54 | 5,43 | AA |
+
+Na ciemnym tle `#2F2620` obowiązuje odwrotna logika — tekst trzeba **rozjaśniać**.
+Tam rolę etykiety pełni `#9B8C7C` (4,54). Nigdy nie przenoś tam odcienia z tabeli powyżej:
+`#726456` daje na ciemnym tle 2,59.
 
 Sprawdzenie dowolnej pary:
 
@@ -33,34 +37,34 @@ python3 .claude/skills/mellowaura-dostepnosc/kontrast.py '#8A7A69' '#F3EDE4'
 python3 .claude/skills/mellowaura-dostepnosc/kontrast.py --fix '#A0907D'
 ```
 
-## Co z tego wynika dla istniejącej strony
+## Co zostało poprawione i co jeszcze zostaje
 
-Trzy ustalone fakty, policzone na `MellowAura.dc.html`:
+Strona przeszła audyt kontrastu. Liczba elementów tekstowych poniżej progu WCAG spadła
+z **238 do 54**. Trzy kolory, które za to odpowiadały, zostały wymienione w całym projekcie:
 
-1. **`#8A7A69` występuje jako kolor tekstu 99 razy, z czego 88 przy piśmie mniejszym niż 14 px.**
-   Przy 11,5 px to jest tekst zwykły, więc obowiązuje próg 4,5:1 — a jest 3,29–3,95.
-   Etykiety wersalikowe, podpisy pod polami i metadane nie przechodzą.
-2. **`#A0907D` występuje 46 razy** i nie przechodzi żadnego progu na żadnym jasnym tle.
-   To kolor podpowiedzi pod polami formularza — czyli tekstu, który ma pomagać w płaceniu.
-3. **`#8C6440` ma 4,4977 na tle strony — czyli o 0,0023 za mało.** Brąz nadtytułów i linków
-   wygląda na przechodzący, a formalnie nie przechodzi; na tle panelu `#EDE4D8` to już 4,16.
-   Występuje 31 razy, prawie zawsze przy piśmie 10,5 px. To jest ten rodzaj różnicy, którego
-   nie da się zobaczyć okiem i dlatego istnieje `kontrast.py`.
+| Było | Jest | Ile miejsc | Dlaczego nie przechodziło |
+| --- | --- | ---: | --- |
+| `#8A7A69` | `#726456`, na ciemnym tle `#9B8C7C` | 105 | 3,29–3,95 przy piśmie zwykle 11,5 px |
+| `#A0907D` | `#736454` | 46 | 2,46–2,95 — za mało na każdym tle |
+| `#8C6440` | `#855F3D` | 31 | 4,4977, czyli 0,0023 poniżej progu |
 
-Bezpieczne zamienniki, ten sam ton, tylko ciemniejsze — przechodzą AA na wszystkich czterech jasnych tłach:
+Ostatni wiersz warto zapamiętać: różnicy 0,0023 nie da się zobaczyć okiem. Brąz wyglądał
+na przechodzący i nie przechodził. Po to jest `kontrast.py`.
 
-| Zamiast | Użyj | Najgorszy przypadek |
-| --- | --- | --- |
-| `#8A7A69` | **`#726456`** | 4,54 na `#EDE4D8` |
-| `#A0907D` | **`#736454`** | 4,54 na `#EDE4D8` |
-| `#8C6440` | **`#855F3D`** | 4,51 na `#EDE4D8` |
+**Stare odcienie nie występują już nigdzie w projekcie.** Jeśli trafisz na `#8A7A69`, `#A0907D`
+albo `#8C6440` w kodzie, to znaczy, że ktoś wkleił je z zewnątrz — popraw od razu.
 
-**Podmiana w plikach produkcyjnych nie jest częścią tego pakietu** — to zmiana wyglądu w blisko
-150 miejscach i powinna być osobną, świadomą decyzją. Ale **w każdym nowym ekranie od razu używaj
-wartości poprawionych**, nie starych.
+### Pozostałe 54 pozycje — świadomie nietknięte
 
-Wyjątek, w którym stare odcienie są w porządku: tekst od 24 px w górę (próg 3:1) oraz element
-czysto dekoracyjny, którego nikt nie musi przeczytać.
+| Kolor | Pozycji | Co to jest |
+| --- | ---: | --- |
+| `#A8813F` | 13 | złoto — gwiazdki ocen, znaczniki, numery kroków |
+| `#B0A190` | 5 | szarość krzyżyków „usuń" |
+| pozostałe | 6 | `#9A8978` przy 9 px, ozdobne `✦`, `#E2D7C7` |
+
+To osobne decyzje projektowe, nie ten sam defekt: złoto jest świadomym akcentem luksusowym,
+a `✦` jest ozdobą bez treści. Jeśli któraś z nich ma przejść normę, policz zamiennik
+skryptem i zmień świadomie — nie przy okazji innej pracy.
 
 ## Klawiatura
 
