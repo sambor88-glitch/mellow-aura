@@ -39,8 +39,8 @@ Nazwy tokenów są opisowe — używaj ich w komentarzach i rozmowie, w kodzie w
 | `#2F2620` | nagłówki i treść główna |
 | `#5C5043` | akapity prowadzące, lead |
 | `#6B5D4F` | opisy pomocnicze |
-| `#8A7A69` | etykiety wersalikowe, podpisy, metadane |
-| `#A0907D` | podpowiedzi pod polami, tekst najsłabszy |
+| `#8A7A69` | etykiety wersalikowe, podpisy, metadane — **w nowym kodzie `#726456`**, patrz sekcja o dostępności |
+| `#A0907D` | podpowiedzi pod polami — **w nowym kodzie `#736454`**, patrz sekcja o dostępności |
 
 ### Linie i obrysy
 `#DCD0BE` obrys karty i pola · `#E2D7C7` linia rozdzielająca sekcje · `#C6B8A5` obrys przycisku
@@ -49,7 +49,7 @@ drugoplanowego i linia przerywana · `#E6DCCD` obrys najlżejszy, wewnątrz kart
 ### Akcenty — używaj oszczędnie
 | Hex | Rola | Zasada |
 | --- | --- | --- |
-| `#8C6440` | brąz — linki, nadtytuły wersalikowe, kursywa w nagłówku | najczęstszy akcent |
+| `#8C6440` | brąz — linki, nadtytuły wersalikowe, kursywa w nagłówku | najczęstszy akcent — **w nowym kodzie `#855F3D`** |
 | `#24417E` | granat — **każdy hover i focus** | nigdy jako tło dużej płaszczyzny |
 | `#D6A39C` | róż — licznik koszyka, zaznaczenie tekstu, znaczniki | maksymalnie dwa na ekran |
 | `#A8813F` | złoto — gwiazdki ocen, detal luksusowy | tylko drobnica |
@@ -159,8 +159,12 @@ Blok `@media (prefers-reduced-motion: reduce)` już jest — nie usuwaj go.
 ## Dostępność — to nie jest opcja
 
 - Focus: `outline: 2px solid #24417E; outline-offset: 2px`. Nie kasuj go „dla estetyki".
-- Kontrast: `#2F2620` na `#F3EDE4` daje 11:1. Najsłabszy dopuszczalny to `#A0907D` na `#F3EDE4`
-  i tylko dla tekstu pomocniczego. Nigdy nie stawiaj `#A0907D` na `#FCF9F4` w treści, którą trzeba przeczytać.
+- Kontrast — wartości policzone, nie na oko: `#2F2620` na `#F3EDE4` daje 12,72:1.
+  Ale **`#8A7A69` daje tylko 3,29–3,95, a `#A0907D` 2,46–2,95** i przy piśmie poniżej 24 px
+  żaden z nich nie spełnia normy 4,5:1. W nowych ekranach używaj zamienników:
+  **`#8A7A69` → `#726456`**, **`#A0907D` → `#736454`**, **`#8C6440` → `#855F3D`**
+  (ten sam ton, tylko ciemniejszy; kontrast co najmniej 4,51 w najgorszym przypadku).
+  Każdy nowy kolor tekstu przepuść przez `kontrast.py` — szczegóły w skillu `mellowaura-dostepnosc`.
 - Każde `<img>` ma `alt` po polsku, opisujące przedmiot, nie plik.
 - Pole obok pola ma etykietę tekstową, nie sam `placeholder`.
 
@@ -174,3 +178,9 @@ Blok `@media (prefers-reduced-motion: reduce)` już jest — nie usuwaj go.
 | Nowy odcień „bo pasuje" | paleta ma 20 pozycji, w niej jest odpowiedź |
 | Przycisk z rogiem innym niż `999px` | rozpada się spójność |
 | Ikony z zewnętrznej biblioteki | strona nie używa żadnej, znaki `&middot;` i `×` wystarczają |
+
+## Dokąd dalej
+
+Ten skill mówi, **jak to ma wyglądać**. O tym, czy działa i czy klient dojdzie do końca,
+mówią trzy pozostałe: `mellowaura-ux` (ścieżki i formularze), `mellowaura-teksty` (co jest napisane
+na przycisku) i `mellowaura-dostepnosc` (kontrast, klawiatura, czytniki ekranu).

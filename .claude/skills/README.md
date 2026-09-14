@@ -1,11 +1,17 @@
-# Skille graficzne MellowAury
+# Skille graficzne i UX MellowAury
 
-Sześć instrukcji, które Claude wczytuje sam, kiedy praca ich dotyczy. Nie trzeba ich uruchamiać
+Dziewięć instrukcji, które Claude wczytuje sam, kiedy praca ich dotyczy. Nie trzeba ich uruchamiać
 ani pamiętać ich nazw — wystarczy powiedzieć, co ma powstać.
 
 Po co to jest: bez nich każda nowa sekcja, ekran czy wydruk powstaje od zera i wygląda odrobinę
 inaczej niż reszta. Z nimi wszystko wychodzi z jednej pracowni — te same kolory, ten sam krój,
 te same przyciski, bez powtarzania za każdym razem, jak ma być.
+
+Pakiet dzieli się na dwie części. **Wygląd** pilnuje, żeby nowe ekrany były spójne z resztą.
+**UX** pilnuje, czy klient dojdzie do końca zakupu — to nie jest to samo i rozjeżdża się
+częściej, niż się wydaje.
+
+### Wygląd
 
 | Skill | Odpowiada za | Włącza się, gdy mówisz |
 | --- | --- | --- |
@@ -16,8 +22,23 @@ te same przyciski, bez powtarzania za każdym razem, jak ma być.
 | `mellowaura-druk` | certyfikaty, vouchery, metki, wizytówki | „do wydruku", „PDF do drukarni" |
 | `mellowaura-zdjecia` | zdjęcia produktów, waga plików, opisy | „dodaj zdjęcia", „wolno się ładuje" |
 
-`mellowaura-design` jest podstawą — pozostałe pięć się do niego odwołuje. Jeśli zmieniasz kolor
-albo krój pisma marki, zmieniasz go **tam**, a nie w sześciu miejscach.
+### UX i zachowanie
+
+| Skill | Odpowiada za | Włącza się, gdy mówisz |
+| --- | --- | --- |
+| `mellowaura-ux` | ścieżka zakupu, formularze, błędy, potwierdzenia | „ludzie nie kupują", „za dużo klikania" |
+| `mellowaura-teksty` | etykiety, komunikaty, opisy — głos właścicielki | „napisz to po ludzku", „co ma być na przycisku" |
+| `mellowaura-dostepnosc` | kontrast, klawiatura, czytniki ekranu, przepisy | „czy to czytelne", „WCAG", „dostępność" |
+
+`mellowaura-dostepnosc` ma przy sobie skrypt `kontrast.py` — liczy kontrast dowolnej pary kolorów
+i podaje poprawiony odcień, jeśli para nie przechodzi normy:
+
+```bash
+python3 .claude/skills/mellowaura-dostepnosc/kontrast.py --fix '#A0907D'
+```
+
+`mellowaura-design` jest podstawą dla wyglądu, `mellowaura-ux` dla zachowania. Jeśli zmieniasz kolor
+albo krój pisma marki, zmieniasz go **w `mellowaura-design`**, a nie w dziewięciu miejscach.
 
 ## Przykłady poleceń
 
@@ -25,6 +46,9 @@ albo krój pisma marki, zmieniasz go **tam**, a nie w sześciu miejscach.
 Dodaj podstronę „Prezenty firmowe" z formularzem zapytania dla kawiarni.
 Zrób w panelu zakładkę z zamówieniami: kto, co, za ile, na jakim etapie.
 Strona wolno się ładuje na telefonie — napraw to.
+Sprawdź, gdzie ludzie mogą się gubić w ścieżce zakupu.
+Ten komunikat błędu brzmi korporacyjnie. Napisz go po ludzku.
+Sprawdź kontrast na karcie produktu.
 Przygotuj metkę do zawieszenia przy kubku, A7, z kodem QR.
 Ten ekran wygląda obco na tle reszty. Popraw.
 ```

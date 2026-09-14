@@ -14,17 +14,19 @@ Strona pracowni ceramiki i rękodzieła Katarzyny Samborskiej — Kraków.
 | `zdjecia/` | 16 zdjęć produktów i pracowni, przycięte i gotowe do użycia |
 | `github.md` | Zapis powiązania z repozytorium i notatki o synchronizacji |
 | `support.js`, `doc-page.js` | Biblioteki potrzebne do otwarcia plików `.dc.html` |
-| `.claude/skills/` | Sześć instrukcji graficznych, z których Claude korzysta sam przy pracy nad stroną, panelem, telefonem i drukiem |
+| `.claude/skills/` | Dziewięć instrukcji — wygląd i UX — z których Claude korzysta sam przy pracy nad stroną, panelem, telefonem i drukiem |
 
 ## Jak to otworzyć
 
 Pliki `.dc.html` otwierają się bezpośrednio w przeglądarce — wystarczy kliknąć dwa razy. Muszą leżeć w tym samym katalogu co `support.js` (oraz `doc-page.js` dla certyfikatu, vouchera i specyfikacji).
 
-## Skille graficzne
+## Skille graficzne i UX
 
 W katalogu `.claude/skills/` leży system wizualny projektu spisany tak, żeby Claude trzymał się go
 bez przypominania: paleta, typografia, gotowe komponenty, wzorce ekranów panelu, zasady dla telefonu,
-formaty do druku i przygotowanie zdjęć. Uruchamiają się same — wystarczy napisać, co ma powstać.
+formaty do druku i przygotowanie zdjęć. Obok tego trzy instrukcje UX — ścieżka zakupu i zachowanie
+formularzy, teksty w interfejsie oraz dostępność wraz ze skryptem liczącym kontrast palety.
+Uruchamiają się same — wystarczy napisać, co ma powstać.
 Spis i przykłady poleceń: [`.claude/skills/README.md`](.claude/skills/README.md).
 
 ## Stan projektu
