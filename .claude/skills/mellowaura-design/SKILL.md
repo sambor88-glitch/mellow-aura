@@ -157,6 +157,7 @@ Animacje zdefiniowane raz w `<helmet>` — używaj tych, nie dokładaj kolejnych
 | `maStamp` | litera „wbija się" w kubek w konfiguratorze |
 | `maBump` | licznik koszyka podskakuje po dodaniu |
 | `maSlide` | panel boczny, koszyk |
+| `maIn` | przyciemnione tło pod koszykiem i pod powiększonym zdjęciem: `animation: maIn .3s ease both` — samo pojawienie się, bez przesunięcia |
 | `maPulse` | element czekający na dane |
 | `maCheck` | znak ✓ przy potwierdzeniu |
 
