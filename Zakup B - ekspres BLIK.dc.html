@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: #F3EDE4; color: #2F2620; font-family: "Instrument Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: #8C6440; text-decoration: none; }
+  a:hover { color: #24417E; }
+  button { font-family: inherit; cursor: pointer; }
+  input { font-family: inherit; }
+  @keyframes zbUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  @keyframes zbRing { 0%, 100% { box-shadow: 0 0 0 0 rgba(36,65,126,.28); } 50% { box-shadow: 0 0 0 9px rgba(36,65,126,0); } }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; padding: 0 0 60px">
+
+  <div style="background: #EDE4D8; border-bottom: 1px solid #E2D7C7; padding: 12px 28px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: center">
+    <span style="font-family: Newsreader, serif; font-size: 17px; letter-spacing: 0.16em; text-transform: uppercase">mellowaura</span>
+    <span style="font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #8C6440">wariant b &middot; ekspres blik</span>
+  </div>
+
+  <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width: 640px; margin: 0 auto; padding: 90px 28px; text-align: center; animation: zbUp .35s ease both">
+      <div style="width: 72px; height: 72px; border-radius: 999px; background: #EDE4D8; border: 1px solid #D6C8B4; display: grid; place-items: center; margin: 0 auto 24px; font-size: 28px; color: #5C7A4A">✓</div>
+      <h1 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(30px, 4vw, 44px); margin: 0 0 14px">Zapłacone w 14 sekund</h1>
+      <p style="font-size: 16.5px; line-height: 1.7; color: #5C5043; max-width: 44ch; margin: 0 auto 28px">Zamówienie MA-2026-1047 leci do pracowni. Paczkomat i adres mam z Twojego telefonu — potwierdzenie już w mailu.</p>
+      <button onClick="{{ reset }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px 30px; font-size: 14px">Przejdź jeszcze raz</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isForm }}" hint-placeholder-val="{{ true }}">
+  <div style="max-width: 1040px; margin: 0 auto; padding: 44px 28px 0">
+    <div style="display: flex; flex-wrap: wrap; gap: 40px">
+
+      <div style="flex: 1 1 380px; min-width: 0">
+        <h1 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(32px, 4.4vw, 48px); line-height: 1.06; margin: 0 0 10px">Jeden ekran<br />i gotowe</h1>
+        <p style="font-size: 15.5px; color: #6B5D4F; margin: 0 0 32px">Trzy pola, kod BLIK, koniec. Resztę danych dobiera InPost z Twojego numeru telefonu.</p>
+
+        <div style="background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; padding: 26px 24px; margin-bottom: 14px">
+          <div style="font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #A8813F; margin-bottom: 16px">tylko to, co konieczne</div>
+          <div style="display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px">
+            <input placeholder="Telefon — po nim znajdę Twój paczkomat" style="background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 15px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
+            <input placeholder="E-mail do potwierdzenia" style="background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 15px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
+            <input placeholder="Imię i nazwisko" style="background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 15px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
+          </div>
+          <div onClick="{{ toggleMore }}" style="cursor: pointer; margin-top: 16px; padding-top: 16px; border-top: 1px solid #EDE4D8; display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px; color: #8C6440">
+            <span>Inny adres, faktura na firmę, dopisek do paczki</span><span>{{ moreSign }}</span>
+          </div>
+          <sc-if value="{{ showMore }}" hint-placeholder-val="{{ false }}">
+            <div style="display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 14px; animation: zbUp .3s ease both">
+              <input placeholder="Ulica i numer" style="background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
+              <div style="display: flex; gap: 12px; flex-wrap: wrap">
+                <input placeholder="Kod pocztowy" style="flex: 0 1 130px; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
+                <input placeholder="Miasto" style="flex: 1 1 150px; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
+              </div>
+              <input placeholder="NIP do faktury" style="background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
+              <input placeholder="Dopisek — np. to prezent, dołóż kartkę" style="background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="display: flex; gap: 10px; flex-wrap: wrap">
+          <sc-for list="{{ ships }}" as="m" hint-placeholder-count="3">
+            <button onClick="{{ m.set }}" style="flex: 1 1 150px; text-align: left; border-radius: 4px; padding: 14px 16px; border: 1px solid {{ m.bd }}; background: {{ m.bg }}">
+              <span style="display: block; font-size: 14px; color: #2F2620">{{ m.label }}</span>
+              <span style="display: block; font-size: 12.5px; color: #8A7A69; margin-top: 3px">{{ m.note }} &middot; {{ m.costLabel }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="flex: 1 1 320px; min-width: 290px">
+        <div style="background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; padding: 26px 24px; position: sticky; top: 24px">
+          <div style="display: flex; gap: 12px; margin-bottom: 18px">
+            <sc-for list="{{ items }}" as="c" hint-placeholder-count="2">
+              <div style="flex: 1; min-width: 0">
+                <img src="{{ c.img }}" alt="{{ c.name }}" style="width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 3px; display: block" />
+                <div style="font-size: 12.5px; margin-top: 6px; line-height: 1.3">{{ c.name }}</div>
+                <div style="font-size: 12px; color: #8A7A69">{{ c.qty }} × {{ c.priceLabel }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 14px; color: #6B5D4F; margin-bottom: 7px"><span>Produkty</span><span>{{ subLabel }}</span></div>
+          <div style="display: flex; justify-content: space-between; font-size: 14px; color: #6B5D4F; margin-bottom: 14px"><span>Dostawa</span><span>{{ shipLabel }}</span></div>
+          <div style="display: flex; justify-content: space-between; font-family: Newsreader, serif; font-size: 26px; padding-top: 14px; border-top: 1px solid #E2D7C7; margin-bottom: 20px"><span>Razem</span><span>{{ totalLabel }}</span></div>
+
+          <div style="background: #F0F3FA; border: 1px solid #C9D4EA; border-radius: 4px; padding: 20px 18px; margin-bottom: 14px">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px">
+              <span style="background: #24417E; color: #fff; font-weight: 500; font-size: 12px; padding: 5px 10px; border-radius: 4px">BLIK</span>
+              <span style="font-size: 13.5px; color: #33456B">Kod z aplikacji banku</span>
+            </div>
+            <input value="{{ blik }}" onChange="{{ onBlik }}" placeholder="• • • • • •" inputMode="numeric" style="width: 100%; background: #fff; border: 1px solid {{ blikBorder }}; border-radius: 4px; padding: 16px; font-size: 25px; letter-spacing: 0.4em; text-align: center; color: #24417E; font-family: Newsreader, serif" style-focus="border-color: #24417E; outline: none" />
+            <div style="font-size: 12px; color: #5A6B8C; margin-top: 10px; text-align: center">{{ blikHint }}</div>
+          </div>
+
+          <button onClick="{{ pay }}" style="width: 100%; background: {{ payBg }}; color: #F7F2EA; border: 0; border-radius: 999px; padding: 17px; font-size: 15px; letter-spacing: 0.02em; animation: {{ payAnim }}" style-hover="background: #2F2620">{{ payLabel }}</button>
+          <div style="display: flex; justify-content: center; gap: 14px; margin-top: 14px; font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #8A7A69; flex-wrap: wrap">
+            <span>lub Apple Pay</span><span>&middot;</span><span>Google Pay</span><span>&middot;</span><span>Przelewy24</span>
+          </div>
+          <div style="font-size: 12px; color: #A0907D; text-align: center; margin-top: 12px; line-height: 1.5">Bez zakładania konta. Dane zapisuję tylko na czas realizacji.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1040}}">
+const ITEMS = [
+  { name: 'Kubki z cytatem', price: 79, img: 'zdjecia/kubek-krolowa-matka.png', qty: 2 },
+  { name: 'Talerze', price: 140, img: 'zdjecia/talerz-niebieski-odcisk.png', qty: 1 }
+];
+const zl = n => n.toFixed(2).replace('.', ',') + ' zł';
+
+class Component extends DCLogic {
+  state = { done: false, ship: 'paczkomat', blik: '', more: false };
+
+  renderVals() {
+    const s = this.state;
+    const sub = ITEMS.reduce((a, c) => a + c.price * c.qty, 0);
+    const free = sub >= 400;
+    const cost = s.ship === 'odbior' ? 0 : free ? 0 : s.ship === 'kurier' ? 22 : 16;
+    const total = sub + cost;
+    const ready = s.blik.length === 6;
+
+    return {
+      isForm: !s.done, isDone: s.done,
+      reset: () => this.setState({ done: false, blik: '', more: false }),
+      items: ITEMS.map(c => ({ name: c.name, img: c.img, qty: c.qty, priceLabel: zl(c.price) })),
+      subLabel: zl(sub), shipLabel: cost === 0 ? 'gratis' : zl(cost), totalLabel: zl(total),
+      ships: [
+        { id: 'paczkomat', label: 'Paczkomat', note: '1–2 dni', cost: free ? 0 : 16 },
+        { id: 'kurier', label: 'Kurier', note: 'do rąk', cost: free ? 0 : 22 },
+        { id: 'odbior', label: 'Odbiór', note: 'Kraków', cost: 0 }
+      ].map(m => ({ label: m.label, note: m.note, costLabel: m.cost === 0 ? 'gratis' : zl(m.cost),
+        bd: s.ship === m.id ? '#2F2620' : '#DCD0BE', bg: s.ship === m.id ? '#EDE4D8' : '#FCF9F4',
+        set: () => this.setState({ ship: m.id }) })),
+      blik: s.blik, onBlik: e => this.setState({ blik: e.target.value.replace(/\D/g, '').slice(0, 6) }),
+      blikBorder: ready ? '#24417E' : '#C9D4EA',
+      blikHint: ready ? 'Kod gotowy — potwierdzisz w aplikacji' : '6 cyfr, ważne 2 minuty',
+      payLabel: ready ? 'Płacę ' + zl(total) + ' BLIK-iem' : 'Wpisz kod BLIK, żeby zapłacić',
+      payBg: ready ? '#24417E' : '#A89684',
+      payAnim: ready ? 'zbRing 1.8s ease-in-out infinite' : 'none',
+      pay: () => { if (ready) this.setState({ done: true }); },
+      showMore: s.more, moreSign: s.more ? '−' : '+',
+      toggleMore: () => this.setState({ more: !s.more })
+    };
+  }
+}
+
+</script>
+</body>
+</html>

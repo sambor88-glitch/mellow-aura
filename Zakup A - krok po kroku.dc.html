@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: #F3EDE4; color: #2F2620; font-family: "Instrument Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: #8C6440; text-decoration: none; }
+  a:hover { color: #24417E; }
+  button { font-family: inherit; cursor: pointer; }
+  input { font-family: inherit; }
+  @keyframes zaUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; padding: 0 0 60px">
+
+  <div style="background: #EDE4D8; border-bottom: 1px solid #E2D7C7; padding: 12px 28px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: center">
+    <span style="font-family: Newsreader, serif; font-size: 17px; letter-spacing: 0.16em; text-transform: uppercase">mellowaura</span>
+    <span style="font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #8C6440">wariant a &middot; koszyk krok po kroku</span>
+  </div>
+
+  <div style="max-width: 960px; margin: 0 auto; padding: 48px 28px 0">
+
+    <div style="display: flex; gap: 10px; align-items: center; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 34px; flex-wrap: wrap">
+      <span style="color: {{ c1 }}">1 &middot; Koszyk</span><span style="width: 24px; height: 1px; background: #C6B8A5"></span>
+      <span style="color: {{ c2 }}">2 &middot; Dostawa</span><span style="width: 24px; height: 1px; background: #C6B8A5"></span>
+      <span style="color: {{ c3 }}">3 &middot; Płatność</span><span style="width: 24px; height: 1px; background: #C6B8A5"></span>
+      <span style="color: {{ c4 }}">4 &middot; Gotowe</span>
+    </div>
+
+    <sc-if value="{{ isS1 }}" hint-placeholder-val="{{ true }}">
+      <div style="animation: zaUp .35s ease both">
+        <h1 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(32px, 4.4vw, 46px); margin: 0 0 8px">Twój koszyk</h1>
+        <p style="font-size: 15.5px; color: #6B5D4F; margin: 0 0 30px">Sprawdź, czy wszystko się zgadza. Każda sztuka jest jedna.</p>
+        <div style="background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; overflow: hidden; margin-bottom: 22px">
+          <sc-for list="{{ items }}" as="c" hint-placeholder-count="2">
+            <div style="display: flex; gap: 18px; padding: 20px 22px; border-bottom: 1px solid #EDE4D8; align-items: center">
+              <img src="{{ c.img }}" alt="{{ c.name }}" style="width: 78px; height: 96px; object-fit: cover; border-radius: 3px; flex: 0 0 auto" />
+              <div style="flex: 1 1 160px; min-width: 0">
+                <div style="font-family: Newsreader, serif; font-size: 19px; line-height: 1.25">{{ c.name }}</div>
+                <div style="font-size: 12.5px; color: #8A7A69; margin-top: 3px">{{ c.variant }}</div>
+              </div>
+              <div style="display: flex; align-items: center; border: 1px solid #DCD0BE; border-radius: 999px; flex: 0 0 auto">
+                <button onClick="{{ c.dec }}" style="background: transparent; border: 0; width: 34px; height: 34px; font-size: 16px; color: #6B5D4F">−</button>
+                <span style="min-width: 20px; text-align: center; font-size: 14px">{{ c.qty }}</span>
+                <button onClick="{{ c.inc }}" style="background: transparent; border: 0; width: 34px; height: 34px; font-size: 16px; color: #6B5D4F">+</button>
+              </div>
+              <div style="flex: 0 0 auto; font-size: 15px; min-width: 88px; text-align: right">{{ c.lineLabel }}</div>
+            </div>
+          </sc-for>
+          <div style="padding: 20px 22px; display: flex; justify-content: space-between; gap: 20px; align-items: center; background: #F7F2EA">
+            <span style="font-size: 14.5px; color: #6B5D4F">Produkty</span>
+            <span style="font-family: Newsreader, serif; font-size: 23px">{{ subLabel }}</span>
+          </div>
+        </div>
+        <div style="display: flex; gap: 14px; flex-wrap: wrap; align-items: center">
+          <button onClick="{{ next }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 16px 32px; font-size: 14.5px" style-hover="background: #24417E">Dalej — dostawa</button>
+          <span style="font-size: 13.5px; color: #8A7A69">Wysyłka i płatność w dwóch kolejnych krokach</span>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isS2 }}" hint-placeholder-val="{{ false }}">
+      <div style="animation: zaUp .35s ease both">
+        <h1 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(32px, 4.4vw, 46px); margin: 0 0 30px">Gdzie mam to wysłać?</h1>
+        <div style="display: flex; flex-wrap: wrap; gap: 36px">
+          <div style="flex: 1 1 320px; min-width: 0">
+            <div style="display: grid; grid-template-columns: minmax(0, 1fr); gap: 13px; margin-bottom: 30px">
+              <div style="display: flex; gap: 13px; flex-wrap: wrap">
+                <input placeholder="Imię" style="flex: 1 1 130px; background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
+                <input placeholder="Nazwisko" style="flex: 1 1 130px; background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
+              </div>
+              <input placeholder="E-mail" style="background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
+              <input placeholder="Telefon" style="background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
+              <input placeholder="Ulica i numer" style="background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
+              <div style="display: flex; gap: 13px; flex-wrap: wrap">
+                <input placeholder="Kod pocztowy" style="flex: 0 1 130px; background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
+                <input placeholder="Miasto" style="flex: 1 1 150px; background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
+              </div>
+            </div>
+            <div style="font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #8A7A69; margin-bottom: 12px">Sposób dostawy</div>
+            <div style="display: grid; gap: 10px">
+              <sc-for list="{{ ships }}" as="m" hint-placeholder-count="3">
+                <div onClick="{{ m.set }}" style="cursor: pointer; display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 4px; border: 1px solid {{ m.bd }}; background: {{ m.bg }}">
+                  <span style="width: 16px; height: 16px; border-radius: 999px; border: 1px solid #A89684; display: grid; place-items: center; flex: 0 0 auto"><span style="width: 8px; height: 8px; border-radius: 999px; background: {{ m.dot }}"></span></span>
+                  <span style="flex: 1"><span style="display: block; font-size: 15px">{{ m.label }}</span><span style="display: block; font-size: 12.5px; color: #8A7A69; margin-top: 2px">{{ m.note }}</span></span>
+                  <span style="font-size: 14px">{{ m.costLabel }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="flex: 0 1 280px; min-width: 250px">
+            <div style="background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; padding: 24px">
+              <div style="font-family: Newsreader, serif; font-size: 19px; margin-bottom: 16px">Podsumowanie</div>
+              <div style="display: flex; justify-content: space-between; font-size: 14px; color: #6B5D4F; margin-bottom: 7px"><span>Produkty</span><span>{{ subLabel }}</span></div>
+              <div style="display: flex; justify-content: space-between; font-size: 14px; color: #6B5D4F; margin-bottom: 14px"><span>Dostawa</span><span>{{ shipLabel }}</span></div>
+              <div style="display: flex; justify-content: space-between; font-family: Newsreader, serif; font-size: 21px; padding-top: 14px; border-top: 1px solid #E2D7C7"><span>Razem</span><span>{{ totalLabel }}</span></div>
+              <button onClick="{{ next }}" style="width: 100%; margin-top: 18px; background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px; font-size: 14.5px" style-hover="background: #24417E">Dalej — płatność</button>
+              <button onClick="{{ back }}" style="width: 100%; margin-top: 10px; background: transparent; color: #8A7A69; border: 0; padding: 8px; font-size: 13px">← Wróć do koszyka</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isS3 }}" hint-placeholder-val="{{ false }}">
+      <div style="animation: zaUp .35s ease both">
+        <h1 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(32px, 4.4vw, 46px); margin: 0 0 30px">Jak chcesz zapłacić?</h1>
+        <div style="display: flex; flex-wrap: wrap; gap: 36px">
+          <div style="flex: 1 1 320px; min-width: 0">
+            <div style="display: grid; gap: 10px; margin-bottom: 24px">
+              <sc-for list="{{ pays }}" as="m" hint-placeholder-count="4">
+                <div onClick="{{ m.set }}" style="cursor: pointer; display: flex; align-items: center; gap: 14px; padding: 17px 18px; border-radius: 4px; border: 1px solid {{ m.bd }}; background: {{ m.bg }}">
+                  <span style="width: 16px; height: 16px; border-radius: 999px; border: 1px solid #A89684; display: grid; place-items: center; flex: 0 0 auto"><span style="width: 8px; height: 8px; border-radius: 999px; background: {{ m.dot }}"></span></span>
+                  <span style="flex: 1"><span style="display: block; font-size: 15px">{{ m.label }}</span><span style="display: block; font-size: 12.5px; color: #8A7A69; margin-top: 2px">{{ m.note }}</span></span>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ isBlik }}" hint-placeholder-val="{{ true }}">
+              <div style="background: #F0F3FA; border: 1px solid #C9D4EA; border-radius: 4px; padding: 24px">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px">
+                  <span style="background: #24417E; color: #fff; font-weight: 500; font-size: 12px; padding: 5px 10px; border-radius: 4px">BLIK</span>
+                  <span style="font-size: 14px; color: #33456B">Przepisz kod z aplikacji banku</span>
+                </div>
+                <input value="{{ blik }}" onChange="{{ onBlik }}" placeholder="• • • • • •" inputMode="numeric" style="width: 100%; background: #fff; border: 1px solid #C9D4EA; border-radius: 4px; padding: 17px; font-size: 26px; letter-spacing: 0.4em; text-align: center; color: #24417E; font-family: Newsreader, serif" style-focus="border-color: #24417E; outline: none" />
+              </div>
+            </sc-if>
+          </div>
+          <div style="flex: 0 1 280px; min-width: 250px">
+            <div style="background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; padding: 24px">
+              <div style="font-family: Newsreader, serif; font-size: 19px; margin-bottom: 16px">Do zapłaty</div>
+              <div style="display: flex; justify-content: space-between; font-size: 14px; color: #6B5D4F; margin-bottom: 7px"><span>Produkty</span><span>{{ subLabel }}</span></div>
+              <div style="display: flex; justify-content: space-between; font-size: 14px; color: #6B5D4F; margin-bottom: 14px"><span>Dostawa</span><span>{{ shipLabel }}</span></div>
+              <div style="display: flex; justify-content: space-between; font-family: Newsreader, serif; font-size: 24px; padding-top: 14px; border-top: 1px solid #E2D7C7"><span>Razem</span><span>{{ totalLabel }}</span></div>
+              <button onClick="{{ next }}" style="width: 100%; margin-top: 18px; background: #24417E; color: #F7F2EA; border: 0; border-radius: 999px; padding: 16px; font-size: 14.5px" style-hover="background: #2F2620">Płacę</button>
+              <button onClick="{{ back }}" style="width: 100%; margin-top: 10px; background: transparent; color: #8A7A69; border: 0; padding: 8px; font-size: 13px">← Wróć do dostawy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isS4 }}" hint-placeholder-val="{{ false }}">
+      <div style="text-align: center; padding: 30px 0; animation: zaUp .35s ease both">
+        <div style="width: 72px; height: 72px; border-radius: 999px; background: #EDE4D8; border: 1px solid #D6C8B4; display: grid; place-items: center; margin: 0 auto 24px; font-size: 28px; color: #5C7A4A">✓</div>
+        <h1 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(30px, 4vw, 44px); margin: 0 0 14px">Dziękuję. Pakuję.</h1>
+        <p style="font-size: 16.5px; line-height: 1.7; color: #5C5043; max-width: 44ch; margin: 0 auto 28px">Zamówienie MA-2026-1047 jest opłacone. Wysyłka w 3–5 dni roboczych, a przed nią dostaniesz zdjęcie zapakowanej paczki.</p>
+        <button onClick="{{ reset }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px 30px; font-size: 14px">Przejdź jeszcze raz</button>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1000}}">
+const ITEMS = [
+  { id: 'kubki', name: 'Kubki z cytatem', variant: 'Królowa matka', price: 79, img: 'zdjecia/kubek-krolowa-matka.png', qty: 2 },
+  { id: 'talerze', name: 'Talerze', variant: 'Odcisk roślinny', price: 140, img: 'zdjecia/talerz-niebieski-odcisk.png', qty: 1 }
+];
+const zl = n => n.toFixed(2).replace('.', ',') + ' zł';
+
+class Component extends DCLogic {
+  state = { step: 1, cart: ITEMS.map(i => Object.assign({}, i)), ship: 'paczkomat', pay: 'blik', blik: '' };
+
+  renderVals() {
+    const s = this.state;
+    const sub = s.cart.reduce((a, c) => a + c.price * c.qty, 0);
+    const free = sub >= 400;
+    const cost = s.ship === 'odbior' ? 0 : free ? 0 : s.ship === 'kurier' ? 22 : 16;
+    const setQty = (id, d) => this.setState({ cart: s.cart.map(c => c.id === id ? Object.assign({}, c, { qty: Math.max(1, c.qty + d) }) : c) });
+    const at = n => s.step === n ? '#2F2620' : '#A0907D';
+
+    return {
+      isS1: s.step === 1, isS2: s.step === 2, isS3: s.step === 3, isS4: s.step === 4,
+      c1: at(1), c2: at(2), c3: at(3), c4: at(4),
+      next: () => { if (s.step === 3 && s.pay === 'blik' && s.blik.length !== 6) return; this.setState({ step: s.step + 1 }); },
+      back: () => this.setState({ step: Math.max(1, s.step - 1) }),
+      reset: () => this.setState({ step: 1, blik: '' }),
+      items: s.cart.map(c => ({ name: c.name, variant: c.variant, img: c.img, qty: c.qty, lineLabel: zl(c.price * c.qty),
+        inc: () => setQty(c.id, 1), dec: () => setQty(c.id, -1) })),
+      subLabel: zl(sub), shipLabel: cost === 0 ? 'gratis' : zl(cost), totalLabel: zl(sub + cost),
+      ships: [
+        { id: 'paczkomat', label: 'InPost Paczkomat', note: '1–2 dni robocze', cost: free ? 0 : 16 },
+        { id: 'kurier', label: 'Kurier InPost', note: 'Do rąk, 1 dzień', cost: free ? 0 : 22 },
+        { id: 'odbior', label: 'Odbiór w pracowni', note: 'Kraków, po umówieniu', cost: 0 }
+      ].map(m => ({ label: m.label, note: m.note, costLabel: m.cost === 0 ? 'gratis' : zl(m.cost),
+        bd: s.ship === m.id ? '#2F2620' : '#DCD0BE', bg: s.ship === m.id ? '#EDE4D8' : '#FCF9F4',
+        dot: s.ship === m.id ? '#2F2620' : 'transparent', set: () => this.setState({ ship: m.id }) })),
+      pays: [
+        { id: 'blik', label: 'BLIK', note: 'Kod z aplikacji banku' },
+        { id: 'p24', label: 'Przelewy24', note: 'Przelew online z 380 banków' },
+        { id: 'karta', label: 'Karta', note: 'Visa, Mastercard, Apple Pay' },
+        { id: 'przelew', label: 'Przelew tradycyjny', note: 'Wysyłka po zaksięgowaniu' }
+      ].map(m => ({ label: m.label, note: m.note, bd: s.pay === m.id ? '#24417E' : '#DCD0BE',
+        bg: s.pay === m.id ? '#F0F3FA' : '#FCF9F4', dot: s.pay === m.id ? '#24417E' : 'transparent',
+        set: () => this.setState({ pay: m.id }) })),
+      isBlik: s.pay === 'blik', blik: s.blik,
+      onBlik: e => this.setState({ blik: e.target.value.replace(/\D/g, '').slice(0, 6) })
+    };
+  }
+}
+
+</script>
+</body>
+</html>
