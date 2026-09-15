@@ -28,9 +28,9 @@
                 <div class="min-w-0 flex-[1_1_340px]">
                     <div class="mb-[26px] rounded-[4px] border border-divider bg-cream px-[22px] py-6">
                         <div class="grid gap-[13px]">
-                            <x-checkout::field name="phone" label="Telefon" type="tel" autocomplete="tel" hint="Po nim znajdę Twój paczkomat" />
-                            <x-checkout::field name="email" label="E-mail" type="email" autocomplete="email" hint="Wyślę na niego potwierdzenie" />
-                            <x-checkout::field name="name" label="Imię i nazwisko" autocomplete="name" />
+                            <x-shared::field name="phone" label="Telefon" type="tel" autocomplete="tel" hint="Po nim znajdę Twój paczkomat" />
+                            <x-shared::field name="email" label="E-mail" type="email" autocomplete="email" hint="Wyślę na niego potwierdzenie" />
+                            <x-shared::field name="name" label="Imię i nazwisko" autocomplete="name" />
                         </div>
 
                         <details @if ($moreOpen) open @endif class="group mt-4 border-t border-sand-dark pt-4">
@@ -39,13 +39,13 @@
                                 <span aria-hidden="true" class="group-open:hidden">+</span><span aria-hidden="true" class="hidden group-open:inline">−</span>
                             </summary>
                             <div class="mt-3.5 grid animate-ma-up-quick gap-[13px]">
-                                <x-checkout::field name="street" label="Ulica i numer" autocomplete="street-address" />
+                                <x-shared::field name="street" label="Ulica i numer" autocomplete="street-address" />
                                 <div class="flex flex-wrap gap-[13px]">
-                                    <x-checkout::field name="postal_code" label="Kod pocztowy" autocomplete="postal-code" inputmode="numeric" placeholder="30-001" class="flex-[0_1_130px]" />
-                                    <x-checkout::field name="city" label="Miasto" autocomplete="address-level2" class="flex-[1_1_150px]" />
+                                    <x-shared::field name="postal_code" label="Kod pocztowy" autocomplete="postal-code" inputmode="numeric" placeholder="30-001" class="flex-[0_1_130px]" />
+                                    <x-shared::field name="city" label="Miasto" autocomplete="address-level2" class="flex-[1_1_150px]" />
                                 </div>
-                                <x-checkout::field name="invoice_nip" label="NIP do faktury" inputmode="numeric" />
-                                <x-checkout::field name="note" label="Dopisek do paczki" placeholder="np. to prezent, dołóż kartkę" />
+                                <x-shared::field name="invoice_nip" label="NIP do faktury" inputmode="numeric" />
+                                <x-shared::field name="note" label="Dopisek do paczki" placeholder="np. to prezent, dołóż kartkę" />
                             </div>
                         </details>
                     </div>
