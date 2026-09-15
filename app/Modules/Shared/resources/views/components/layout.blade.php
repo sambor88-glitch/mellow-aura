@@ -21,5 +21,7 @@
 
         <x-shared::footer />
     </div>
+
+    @includeIf('cart::drawer')
 </body>
 </html>

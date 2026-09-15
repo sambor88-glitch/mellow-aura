@@ -130,6 +130,44 @@
                     </div>
                 @endif
 
+                @if (Route::has('cart.store') && $variant->isInStock())
+                    @php($stampMax = (int) $settings->get('stamp_text_max_chars', 22))
+                    <form method="post" action="{{ route('cart.store') }}" x-data="{ quantity: 1, text: @js((string) old('custom_text')) }"
+                          x-on:submit.prevent="$store.cart.send($el)" class="mb-[26px]">
+                        @csrf
+                        <input type="hidden" name="variant_id" value="{{ $variant->id }}">
+                        <input type="hidden" name="quantity" value="1" x-bind:value="quantity">
+
+                        @if ($variant->takesCustomText())
+                            <div class="mb-[26px] animate-ma-up-quick rounded-[4px] border border-line bg-cream px-5 py-[22px]">
+                                <label for="custom-text" class="mb-3 block text-[11.5px] tracking-[0.16em] text-label uppercase">Co mam wbić w glinę?</label>
+                                <input id="custom-text" name="custom_text" x-model="text" maxlength="{{ $stampMax }}" required autocomplete="off"
+                                       placeholder="NA PRZYKŁAD: JESZCZE NIE TERAZ" aria-describedby="custom-text-hint"
+                                       class="w-full min-w-0 rounded-[4px] border border-line bg-white px-4 py-[15px] text-[17px] tracking-[0.12em] text-ink uppercase placeholder:text-hint focus:border-ink">
+                                <div id="custom-text-hint" class="mt-2.5 flex justify-between gap-3 text-[12.5px] text-label">
+                                    <span>Stempluję wielkimi literami, litera po literze</span>
+                                    <span x-text="text.length + ' / {{ $stampMax }}'">0 / {{ $stampMax }}</span>
+                                </div>
+                                @error('custom_text')
+                                    <p class="mt-2 text-[13px] text-error">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        @endif
+
+                        <div class="flex flex-wrap items-center gap-3.5">
+                            <div class="flex items-center rounded-full border border-line bg-cream">
+                                <button type="button" x-on:click="quantity = Math.max(1, quantity - 1)" aria-label="Mniej sztuk" class="h-[46px] w-11 text-[18px] text-muted">−</button>
+                                <span x-text="quantity" aria-live="polite" class="min-w-[26px] text-center text-[15px]">1</span>
+                                <button type="button" x-on:click="quantity++" @if ($variant->stock !== null) x-bind:disabled="quantity >= {{ $variant->stock }}" @endif
+                                        aria-label="Więcej sztuk" class="h-[46px] w-11 text-[18px] text-muted disabled:cursor-not-allowed disabled:text-line-strong">+</button>
+                            </div>
+                            <button type="submit" class="flex-[1_1_200px] rounded-full bg-ink px-[30px] py-4 text-[14.5px] tracking-[0.03em] text-linen transition duration-300 hover:bg-navy active:scale-[.97]">
+                                Dodaj do koszyka &middot; <span x-text="$store.cart.format({{ $variant->price_gross }} * quantity)">{{ Money::format($variant->price_gross) }}</span>
+                            </button>
+                        </div>
+                    </form>
+                @endif
+
                 <div class="mb-[34px] flex items-center gap-2.5 text-[12.5px] text-muted">
                     <span class="rounded-[3px] bg-navy px-[7px] py-[3px] text-[10px] font-semibold text-white">BLIK</span>
                     <span>zapłacisz w 10 sekund kodem z aplikacji banku</span>

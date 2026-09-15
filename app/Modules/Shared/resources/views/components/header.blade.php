@@ -22,5 +22,7 @@
                 @endif
             @endforeach
         </nav>
+        {{-- The cart module brings its own button. --}}
+        @includeIf('cart::button')
     </div>
 </div>

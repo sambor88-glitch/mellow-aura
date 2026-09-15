@@ -20,6 +20,8 @@ class ProductController extends Controller
 
         abort_if($variant === null, 404);
 
+        $variant->setRelation('product', $product);
+
         // Same category first, then the same group (ceramics, crafts, workshops).
         $related = Product::query()->live()
             ->whereKeyNot($product->getKey())

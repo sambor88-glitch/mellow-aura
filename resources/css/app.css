@@ -43,7 +43,12 @@
     --color-alert-line: #E0C3BC;
     --color-alert-text: #7A3A2E;
 
-    /* Backdrop under the zoomed photo and the cart drawer, used at 88% (mellowaura-aplikacja). Not in the skill palette yet. */
+    /* Free shipping reached, in the cart drawer from the prototype. Not in the skill palette yet. */
+    --color-success-soft: #EDF0E9;
+    --color-success-line: #C7D2BC;
+    --color-success-text: #41563A;
+
+    /* Backdrop under the zoomed photo (88%) and the cart drawer (44%). Not in the skill palette yet. */
     --color-scrim: #1F1914;
 
     /* Accents */
@@ -65,15 +70,23 @@
     --shadow-hero: 0 34px 80px -34px rgba(47, 38, 32, .45);
     --shadow-hero-badge: 0 16px 40px -20px rgba(47, 38, 32, .4);
 
+    /* Cart drawer and confirmation pill from the prototype, with the same caveat. */
+    --shadow-drawer: -20px 0 60px -20px rgba(31, 25, 20, .5);
+    --shadow-pill: 0 18px 40px -18px rgba(31, 25, 20, .7);
+
     --ease-clay: cubic-bezier(.2, .7, .2, 1);
 
     --animate-ma-view: maView .55s cubic-bezier(.2, .7, .2, 1) both;
     --animate-ma-up: maUp .55s ease both;
+    --animate-ma-up-quick: maUp .3s ease both;
     --animate-ma-hero-text: maUp .8s cubic-bezier(.2, .7, .2, 1) both;
     --animate-ma-hero-image: maUp 1s cubic-bezier(.2, .7, .2, 1) .15s both;
     --animate-ma-marquee: maMarquee 38s linear infinite;
     --animate-ma-strip: maMarquee 70s linear infinite;
     --animate-ma-in: maIn .25s ease both;
+    --animate-ma-slide: maSlide .34s cubic-bezier(.2, .8, .2, 1) both;
+    --animate-ma-bump: maBump .45s cubic-bezier(.2, .8, .2, 1) both;
+    --animate-ma-check: maCheck .4s cubic-bezier(.2, .8, .2, 1) both;
 
     @keyframes maView {
         from { opacity: 0; transform: translateY(10px); }
@@ -93,6 +106,22 @@
     @keyframes maIn {
         from { opacity: 0; }
         to { opacity: 1; }
+    }
+
+    @keyframes maSlide {
+        from { opacity: 0; transform: translateX(30px); }
+        to { opacity: 1; transform: none; }
+    }
+
+    @keyframes maBump {
+        0% { transform: scale(1); }
+        40% { transform: scale(1.35); }
+        100% { transform: scale(1); }
+    }
+
+    @keyframes maCheck {
+        from { opacity: 0; transform: scale(.4); }
+        to { opacity: 1; transform: none; }
     }
 }
 

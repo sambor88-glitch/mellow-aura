@@ -31,7 +31,7 @@ class ProductGalleryTest extends TestCase
             ->assertOk()
             ->assertSee('Powiększ fakturę')
             ->assertSeeInOrder([
-                '<dialog',
+                'aria-label="Powiększone zdjęcie"',
                 'alt="Kubek z piaskowej gliny z turkusowym wnętrzem"',
                 'alt="Kubek z napisem wbitym stemplem"',
                 'aria-label="Zamknij powiększenie"',
@@ -47,7 +47,7 @@ class ProductGalleryTest extends TestCase
         $this->get('/produkt/kubki')
             ->assertOk()
             ->assertDontSee('Powiększ fakturę')
-            ->assertDontSee('<dialog', false);
+            ->assertDontSee('Powiększone zdjęcie');
     }
 
     private function photo(Product $product, string $file, string $alt): void
