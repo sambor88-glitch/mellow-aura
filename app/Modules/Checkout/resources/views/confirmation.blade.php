@@ -8,6 +8,11 @@
                 Zamówienie <strong class="font-medium select-all">{{ $order->number }}</strong> jest opłacone. Dostaniesz maila z potwierdzeniem,
                 a ode mnie zdjęcie paczki przed wysłaniem — zawijam każdą sztukę osobno.
             </p>
+            @if ($order->hasShortage())
+                <p role="status" class="mx-auto mb-8 max-w-[48ch] rounded-[4px] border border-alert-line bg-alert px-5 py-4 text-[15px] leading-[1.6] text-alert-text">
+                    Ktoś kupił ostatnią sztukę chwilę przed Tobą. Napiszę do Ciebie, żeby ustalić, co dalej — mogę zrobić kolejną albo oddać pieniądze.
+                </p>
+            @endif
             <div class="mb-6 inline-flex min-w-[min(380px,100%)] flex-col gap-3.5 rounded-[4px] border border-divider bg-cream px-[30px] py-[26px] text-left">
                 <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">Zapłacone</span><span>{{ Money::format($order->total_gross) }}</span></div>
                 @if ($shippingLabel)

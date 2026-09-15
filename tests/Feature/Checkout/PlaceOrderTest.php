@@ -56,8 +56,9 @@ class PlaceOrderTest extends TestCase
         $this->assertSame([23900, 7900], $order->items()->orderBy('id')->pluck('unit_price_gross')->all());
         $this->assertSame('Wazony', $order->items()->orderBy('id')->value('product_name'));
 
-        // Stock comes off only when a real payment is confirmed (MA-52).
-        $this->assertSame(3, $vase->fresh()->stock);
+        // The confirmed payment took the vase off the shelf; the mug with the customer's text has no stock.
+        $this->assertSame(2, $vase->fresh()->stock);
+        $this->assertNull($mug->fresh()->stock);
 
         $this->get('/zamowienie/potwierdzenie')
             ->assertOk()

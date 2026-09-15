@@ -25,6 +25,14 @@ class Order extends Model
     }
 
     /**
+     * Some pieces were already gone from the shelf when the payment came in.
+     */
+    public function hasShortage(): bool
+    {
+        return $this->items()->where('missing_quantity', '>', 0)->exists();
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
