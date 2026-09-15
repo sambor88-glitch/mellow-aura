@@ -48,6 +48,12 @@
     --color-success-line: #C7D2BC;
     --color-success-text: #41563A;
 
+    /* BLIK box on the checkout screen from the prototype. Not in the skill palette yet. */
+    --color-navy-soft: #F0F3FA;
+    --color-navy-line: #C9D4EA;
+    --color-navy-text: #33456B;
+    --color-navy-hint: #5A6B8C;
+
     /* Backdrop under the zoomed photo (88%) and the cart drawer (44%). Not in the skill palette yet. */
     --color-scrim: #1F1914;
 

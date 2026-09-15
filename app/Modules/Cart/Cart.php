@@ -106,6 +106,11 @@ class Cart
         $this->session->forget(self::SESSION_KEY.'.'.$key);
     }
 
+    public function clear(): void
+    {
+        $this->session->forget(self::SESSION_KEY);
+    }
+
     private static function available(ProductVariant $variant): int
     {
         return min($variant->stock ?? self::MAX_QUANTITY, self::MAX_QUANTITY);

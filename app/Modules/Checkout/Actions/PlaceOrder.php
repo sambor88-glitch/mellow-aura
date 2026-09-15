@@ -1,0 +1,60 @@
+<?php
+
+namespace App\Modules\Checkout\Actions;
+
+use App\Modules\Cart\CartLine;
+use App\Modules\Checkout\Enums\OrderStatus;
+use App\Modules\Checkout\Enums\PaymentStatus;
+use App\Modules\Checkout\Models\Order;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+
+/**
+ * Saves the order with copies of what the customer saw — names, variant labels, prices and the text
+ * for the mug — so later changes in the shop never rewrite it. Stock is not touched here: it comes off
+ * only when the payment is confirmed.
+ */
+class PlaceOrder
+{
+    /**
+     * @param  Collection<string, CartLine>  $lines
+     * @param  array<string, mixed>  $data  validated checkout fields
+     */
+    public function __invoke(Collection $lines, array $data, int $shippingGross): Order
+    {
+        return DB::transaction(function () use ($lines, $data, $shippingGross) {
+            $address = array_filter(Arr::only($data, ['street', 'postal_code', 'city']));
+
+            $order = Order::create([
+                'status' => OrderStatus::New,
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'phone' => substr((string) preg_replace('/\D+/', '', $data['phone']), -9),
+                'shipping_method' => $data['shipping_method'],
+                'shipping_address' => $address ?: null,
+                'shipping_gross' => $shippingGross,
+                'total_gross' => $lines->sum(fn (CartLine $line) => $line->total()) + $shippingGross,
+                'payment_method' => $data['payment_method'],
+                'payment_status' => PaymentStatus::Pending,
+                'note' => $data['note'] ?? null,
+                'invoice_nip' => $data['invoice_nip'] ?? null,
+            ]);
+
+            $order->update(['number' => 'MA-'.$order->created_at->year.'-'.(1000 + $order->id)]);
+
+            foreach ($lines as $line) {
+                $order->items()->create([
+                    'product_variant_id' => $line->variant->id,
+                    'product_name' => $line->variant->product->name,
+                    'variant_label' => $line->variant->label,
+                    'quantity' => $line->quantity,
+                    'unit_price_gross' => $line->variant->price_gross,
+                    'custom_text' => $line->customText,
+                ]);
+            }
+
+            return $order;
+        });
+    }
+}
