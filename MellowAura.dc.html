@@ -2081,19 +2081,17 @@
     <sc-if value="{{ hasBaScarf }}" hint-placeholder-val="{{ false }}">
     <div style="max-width: 1280px; margin: 0 auto; padding: 72px 28px 0">
       <h2 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(28px, 3.4vw, 40px); margin: 0 0 8px">Przed i po</h2>
-      <p style="font-size: 15.5px; line-height: 1.6; color: #6B5D4F; margin: 0 0 26px; max-width: 52ch">Tkaniny, które do mnie przyszły, obok tego, co z nich uszyłam.</p>
+      <p style="font-size: 15.5px; line-height: 1.6; color: #6B5D4F; margin: 0 0 26px; max-width: 52ch">Tkaniny, które do mnie przyszły, obok tego, co z nich uszyłam. Przeciągnij uchwyt na zdjęciu, żeby zobaczyć zmianę.</p>
       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 26px">
         <sc-for list="{{ baScarf }}" as="b" hint-placeholder-count="2">
           <figure style="margin: 0; background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; overflow: hidden">
-            <div style="display: flex; gap: 1px; background: #E2D7C7">
-              <div style="position: relative; flex: 1 1 0; min-width: 0; background: #E6DCCD">
-                <img src="{{ b.before }}" alt="{{ b.altBefore }}" loading="lazy" style="width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block" />
-                <span style="position: absolute; top: 10px; left: 10px; background: rgba(252,249,244,.92); color: #2F2620; border-radius: 999px; padding: 4px 11px; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase">przed</span>
-              </div>
-              <div style="position: relative; flex: 1 1 0; min-width: 0; background: #E6DCCD">
-                <img src="{{ b.after }}" alt="{{ b.altAfter }}" loading="lazy" style="width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block" />
-                <span style="position: absolute; top: 10px; left: 10px; background: rgba(252,249,244,.92); color: #2F2620; border-radius: 999px; padding: 4px 11px; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase">po</span>
-              </div>
+            <div onPointerDown="{{ b.down }}" onPointerMove="{{ b.move }}" onPointerUp="{{ b.up }}" onPointerCancel="{{ b.up }}" style="position: relative; background: #E6DCCD; aspect-ratio: 4/5; overflow: hidden; touch-action: none; cursor: ew-resize; user-select: none">
+              <img src="{{ b.after }}" alt="{{ b.altAfter }}" loading="lazy" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block" />
+              <img src="{{ b.before }}" alt="{{ b.altBefore }}" loading="lazy" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; clip-path: inset(0 {{ b.clip }} 0 0)" />
+              <span style="position: absolute; top: 10px; left: 10px; background: rgba(252,249,244,.92); color: #2F2620; border-radius: 999px; padding: 4px 11px; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; opacity: {{ b.opBefore }}; transition: opacity .25s ease; pointer-events: none">przed</span>
+              <span style="position: absolute; top: 10px; right: 10px; background: rgba(252,249,244,.92); color: #2F2620; border-radius: 999px; padding: 4px 11px; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; opacity: {{ b.opAfter }}; transition: opacity .25s ease; pointer-events: none">po</span>
+              <div style="position: absolute; top: 0; bottom: 0; left: {{ b.pos }}; width: 2px; background: #FCF9F4; box-shadow: 0 0 0 1px rgba(47,38,32,.18); pointer-events: none"></div>
+              <div role="slider" tabindex="0" aria-label="Przeciągnij, żeby porównać przed i po" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ b.now }}" onKeyDown="{{ b.key }}" style="position: absolute; top: 50%; left: {{ b.pos }}; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 999px; background: #FCF9F4; box-shadow: 0 0 0 1px rgba(47,38,32,.18); display: grid; grid-auto-flow: column; place-items: center; gap: 2px; color: #2F2620; font-size: 13px; cursor: ew-resize" style-focus="box-shadow: 0 0 0 2px #2F2620; outline: none"><span aria-hidden="true">‹</span><span aria-hidden="true">›</span></div>
             </div>
             <sc-if value="{{ b.hasCap }}" hint-placeholder-val="{{ true }}"><figcaption style="padding: 14px 18px; font-size: 14px; line-height: 1.5; color: #5C5043">{{ b.cap }}</figcaption></sc-if>
           </figure>
@@ -2156,19 +2154,17 @@
     <sc-if value="{{ hasBaImprint }}" hint-placeholder-val="{{ false }}">
     <div style="max-width: 1280px; margin: 0 auto; padding: 72px 28px 0">
       <h2 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(28px, 3.4vw, 40px); margin: 0 0 8px">Przed i po</h2>
-      <p style="font-size: 15.5px; line-height: 1.6; color: #6B5D4F; margin: 0 0 26px; max-width: 52ch">Rośliny, które do mnie przyszły, obok ceramiki, na której zostawiły ślad.</p>
+      <p style="font-size: 15.5px; line-height: 1.6; color: #6B5D4F; margin: 0 0 26px; max-width: 52ch">Rośliny, które do mnie przyszły, obok ceramiki, na której zostawiły ślad. Przeciągnij uchwyt na zdjęciu, żeby zobaczyć zmianę.</p>
       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 26px">
         <sc-for list="{{ baImprint }}" as="b" hint-placeholder-count="2">
           <figure style="margin: 0; background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; overflow: hidden">
-            <div style="display: flex; gap: 1px; background: #E2D7C7">
-              <div style="position: relative; flex: 1 1 0; min-width: 0; background: #E6DCCD">
-                <img src="{{ b.before }}" alt="{{ b.altBefore }}" loading="lazy" style="width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block" />
-                <span style="position: absolute; top: 10px; left: 10px; background: rgba(252,249,244,.92); color: #2F2620; border-radius: 999px; padding: 4px 11px; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase">przed</span>
-              </div>
-              <div style="position: relative; flex: 1 1 0; min-width: 0; background: #E6DCCD">
-                <img src="{{ b.after }}" alt="{{ b.altAfter }}" loading="lazy" style="width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block" />
-                <span style="position: absolute; top: 10px; left: 10px; background: rgba(252,249,244,.92); color: #2F2620; border-radius: 999px; padding: 4px 11px; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase">po</span>
-              </div>
+            <div onPointerDown="{{ b.down }}" onPointerMove="{{ b.move }}" onPointerUp="{{ b.up }}" onPointerCancel="{{ b.up }}" style="position: relative; background: #E6DCCD; aspect-ratio: 4/5; overflow: hidden; touch-action: none; cursor: ew-resize; user-select: none">
+              <img src="{{ b.after }}" alt="{{ b.altAfter }}" loading="lazy" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block" />
+              <img src="{{ b.before }}" alt="{{ b.altBefore }}" loading="lazy" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; clip-path: inset(0 {{ b.clip }} 0 0)" />
+              <span style="position: absolute; top: 10px; left: 10px; background: rgba(252,249,244,.92); color: #2F2620; border-radius: 999px; padding: 4px 11px; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; opacity: {{ b.opBefore }}; transition: opacity .25s ease; pointer-events: none">przed</span>
+              <span style="position: absolute; top: 10px; right: 10px; background: rgba(252,249,244,.92); color: #2F2620; border-radius: 999px; padding: 4px 11px; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; opacity: {{ b.opAfter }}; transition: opacity .25s ease; pointer-events: none">po</span>
+              <div style="position: absolute; top: 0; bottom: 0; left: {{ b.pos }}; width: 2px; background: #FCF9F4; box-shadow: 0 0 0 1px rgba(47,38,32,.18); pointer-events: none"></div>
+              <div role="slider" tabindex="0" aria-label="Przeciągnij, żeby porównać przed i po" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ b.now }}" onKeyDown="{{ b.key }}" style="position: absolute; top: 50%; left: {{ b.pos }}; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 999px; background: #FCF9F4; box-shadow: 0 0 0 1px rgba(47,38,32,.18); display: grid; grid-auto-flow: column; place-items: center; gap: 2px; color: #2F2620; font-size: 13px; cursor: ew-resize" style-focus="box-shadow: 0 0 0 2px #2F2620; outline: none"><span aria-hidden="true">‹</span><span aria-hidden="true">›</span></div>
             </div>
             <sc-if value="{{ b.hasCap }}" hint-placeholder-val="{{ true }}"><figcaption style="padding: 14px 18px; font-size: 14px; line-height: 1.5; color: #5C5043">{{ b.cap }}</figcaption></sc-if>
           </figure>
@@ -2702,7 +2698,7 @@ class Component extends DCLogic {
     order: null, slot: null, booked: null, sent: null, faq: null, stamp: '', more: false, vFor: '', vNote: '',
     added: [], hidden: {},
     nf: { name: '', cat: 'Ceramika', type: '', desc: '', photo: '', photos: [], rows: [{ l: '', p: '' }], dims: {} },
-    gals: {}, cardIdx: {}, favs: [], sound: true, typeMap: {}, whoMap: {}, care: {}, ba: { scarf: [], imprint: [] },
+    gals: {}, cardIdx: {}, baPos: {}, favs: [], sound: true, typeMap: {}, whoMap: {}, care: {}, ba: { scarf: [], imprint: [] },
     adminTab: 'produkty', prices: {}, vprices: {}, vlist: {}, names: {}, wsPrices: {}, kilnPrices: {},
     kilnKinds: ['Biskwitowy', 'Na ostro', 'Złoto', 'Nie wiem, doradź'], newKilnKind: '', kilnKind: '',
     cfg: Object.assign({}, CFG_SEED), lists: { custom: LISTS_SEED.custom.slice(), contact: LISTS_SEED.contact.slice(), types: LISTS_SEED.types.slice(), who: LISTS_SEED.who.slice() },
@@ -2904,10 +2900,36 @@ class Component extends DCLogic {
       del: () => this.setBa(k, this.state.ba[k].filter((x, j) => j !== i))
     };
   });
-  baPublic = (k, beforeAlt, afterAlt) => this.state.ba[k].filter(b => b.before && b.after).map(b => ({
-    before: b.before, after: b.after, cap: b.cap.trim(), hasCap: !!b.cap.trim(),
-    altBefore: 'Przed: ' + (b.cap.trim() || beforeAlt), altAfter: 'Po: ' + (b.cap.trim() || afterAlt)
-  }));
+  baPublic = (k, beforeAlt, afterAlt) => this.state.ba[k].filter(b => b.before && b.after).map((b, i) => {
+    const key = k + ':' + i, pos = this.baPos(key);
+    return {
+      before: b.before, after: b.after, cap: b.cap.trim(), hasCap: !!b.cap.trim(),
+      altBefore: 'Przed: ' + (b.cap.trim() || beforeAlt), altAfter: 'Po: ' + (b.cap.trim() || afterAlt),
+      pos: pos + '%', clip: (100 - pos) + '%', now: Math.round(pos),
+      opBefore: pos > 14 ? 1 : 0, opAfter: pos < 86 ? 1 : 0,
+      down: e => this.baDown(key, e), move: e => this.baMove(key, e), up: () => { this._baKey = null; },
+      key: e => this.baKey(key, e)
+    };
+  });
+  baPos = (key) => { const v = this.state.baPos[key]; return v === undefined ? 50 : v; };
+  setBaPos = (key, v) => this.setState({ baPos: Object.assign({}, this.state.baPos, { [key]: Math.max(0, Math.min(100, v)) }) });
+  baAt = (key, e) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    if (r.width) this.setBaPos(key, ((e.clientX - r.left) / r.width) * 100);
+  };
+  baDown = (key, e) => {
+    this._baKey = key;
+    if (e.currentTarget.setPointerCapture && e.pointerId != null) { try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {} }
+    this.baAt(key, e);
+  };
+  baMove = (key, e) => { if (this._baKey === key) this.baAt(key, e); };
+  baKey = (key, e) => {
+    const step = e.shiftKey ? 12 : 4;
+    const d = e.key === 'ArrowLeft' ? -step : e.key === 'ArrowRight' ? step : e.key === 'Home' ? -100 : e.key === 'End' ? 100 : 0;
+    if (!d) return;
+    e.preventDefault();
+    this.setBaPos(key, this.baPos(key) + d);
+  };
   toggleFav = (id, e) => {
     if (e && e.stopPropagation) e.stopPropagation();
     const on = this.state.favs.indexOf(id) > -1;
