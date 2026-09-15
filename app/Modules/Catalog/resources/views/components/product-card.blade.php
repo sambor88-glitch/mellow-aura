@@ -7,7 +7,7 @@
 <a href="{{ route('product.show', $product) }}" class="group block animate-ma-up text-ink hover:text-ink" style="animation-delay: {{ $delay }}s">
     <div class="relative mb-3.5 overflow-hidden rounded-[6px] bg-line-soft transition-[box-shadow,transform] duration-500 ease-clay group-hover:-translate-y-1 group-hover:shadow-card-hover">
         @if ($image)
-            <img src="{{ $image->getUrl() }}" alt="{{ $image->getCustomProperty('alt') ?: $product->name }}" @unless ($eager) loading="lazy" @endunless class="block aspect-[4/5] w-full object-cover">
+            <img src="{{ $image->getAvailableUrl(['card']) }}" alt="{{ $image->getCustomProperty('alt') ?: $product->name }}" @unless ($eager) loading="lazy" @endunless class="block aspect-[4/5] w-full object-cover">
         @else
             <div class="aspect-[4/5] w-full"></div>
         @endif

@@ -16,7 +16,7 @@
         @endphp
         <div class="flex gap-3.5 border-b border-sand-dark py-4">
             @if ($photo)
-                <img src="{{ $photo->getUrl() }}" alt="{{ $photo->getCustomProperty('alt') ?: $product->name }}" class="h-[92px] w-[74px] flex-none rounded-[3px] object-cover">
+                <img src="{{ $photo->getAvailableUrl(['thumb']) }}" alt="{{ $photo->getCustomProperty('alt') ?: $product->name }}" class="h-[92px] w-[74px] flex-none rounded-[3px] object-cover">
             @else
                 <div class="h-[92px] w-[74px] flex-none rounded-[3px] bg-line-soft"></div>
             @endif

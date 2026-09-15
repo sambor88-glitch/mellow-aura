@@ -16,7 +16,7 @@
     $freeShipping = $settings->get('free_shipping_threshold');
 @endphp
 
-<x-shared::layout :title="Seo::title($product->name, $suffix)" :description="Seo::description($product->seo_description ?: $product->description)" :canonical="$canonical" type="product" :image="$images->first()?->getUrl()">
+<x-shared::layout :title="Seo::title($product->name, $suffix)" :description="Seo::description($product->seo_description ?: $product->description)" :canonical="$canonical" type="product" :image="$images->first()?->getAvailableUrl(['card'])">
     @isset($structuredData)
         <x-slot:head>{!! $structuredData !!}</x-slot:head>
     @endisset
@@ -36,7 +36,7 @@
                     <button type="button" x-ref="zoomTrigger" x-on:click="$refs.zoom.showModal()" title="Kliknij, żeby powiększyć"
                             class="relative block w-full cursor-zoom-in overflow-hidden rounded-[6px] bg-line-soft">
                         @foreach ($images as $index => $image)
-                            <img src="{{ $image->getUrl() }}" alt="{{ $image->getCustomProperty('alt') ?: $product->name }}"
+                            <img src="{{ $image->getAvailableUrl(['card']) }}" alt="{{ $image->getCustomProperty('alt') ?: $product->name }}"
                                  @if ($loop->first) fetchpriority="high" @else loading="lazy" x-cloak @endif
                                  x-show="active === {{ $index }}"
                                  class="block aspect-square w-full object-cover">
@@ -63,7 +63,7 @@
                                     x-bind:class="active === {{ $index }} ? 'border-ink' : 'border-divider'"
                                     aria-label="Pokaż zdjęcie {{ $loop->iteration }}"
                                     class="size-[74px] overflow-hidden rounded-[4px] border bg-transparent p-0">
-                                <img src="{{ $image->getUrl() }}" alt="" loading="lazy" class="block size-full object-cover">
+                                <img src="{{ $image->getAvailableUrl(['thumb']) }}" alt="" loading="lazy" class="block size-full object-cover">
                             </button>
                         @endforeach
                     </div>
@@ -208,7 +208,7 @@
                         <a href="{{ route('product.show', $item) }}" class="group block text-ink hover:text-ink">
                             <div class="mb-3 overflow-hidden rounded-[6px] bg-line-soft">
                                 @if ($cover)
-                                    <img src="{{ $cover->getUrl() }}" alt="{{ $cover->getCustomProperty('alt') ?: $item->name }}" loading="lazy" class="block aspect-[4/5] w-full object-cover transition-transform duration-600 group-hover:scale-[1.04]">
+                                    <img src="{{ $cover->getAvailableUrl(['card']) }}" alt="{{ $cover->getCustomProperty('alt') ?: $item->name }}" loading="lazy" class="block aspect-[4/5] w-full object-cover transition-transform duration-600 group-hover:scale-[1.04]">
                                 @else
                                     <div class="aspect-[4/5] w-full"></div>
                                 @endif

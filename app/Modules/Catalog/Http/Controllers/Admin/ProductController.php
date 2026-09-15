@@ -3,8 +3,10 @@
 namespace App\Modules\Catalog\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Catalog\Actions\AddProductPhotos;
 use App\Modules\Catalog\Actions\MoveProduct;
 use App\Modules\Catalog\Actions\SaveProduct;
+use App\Modules\Catalog\Http\Requests\Admin\PhotoRules;
 use App\Modules\Catalog\Http\Requests\Admin\SaveProductRequest;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
@@ -17,7 +19,7 @@ use Illuminate\View\View;
 
 /**
  * Products in the panel, like the prototype's „Produkty” tab: a form to add one, the home page hero,
- * and the whole offer with order, visibility and an edit form under each product.
+ * and the whole offer with order, visibility, photos and an edit form under each product.
  */
 class ProductController extends Controller
 {
@@ -32,12 +34,17 @@ class ProductController extends Controller
             'categories' => Category::query()->orderBy('sort_order')->get(),
             'heroSlug' => $settings->get('home_hero_product'),
             'heroBadge' => $settings->get('home_hero_badge'),
+            'photoLimits' => PhotoRules::limits(),
         ]);
     }
 
-    public function store(SaveProductRequest $request, SaveProduct $saveProduct): RedirectResponse
+    public function store(SaveProductRequest $request, SaveProduct $saveProduct, AddProductPhotos $addPhotos): RedirectResponse
     {
         $product = $saveProduct(null, $request->product());
+
+        if ($request->hasFile('photos')) {
+            $addPhotos($product, $request->file('photos'));
+        }
 
         return to_route('admin.products.index')
             ->with('panel_status', $product->name.' — '.($product->is_published ? 'opublikowane w sklepie' : 'zapisane jako ukryte'));

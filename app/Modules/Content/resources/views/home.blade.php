@@ -41,7 +41,7 @@
     title="MellowAura — ceramika i rękodzieło z jedwabiu, Kraków"
     description="Ręcznie formowana ceramika i jedwabne dodatki z drugiego obiegu. Kubki z wbijanym napisem, warsztaty w kameralnej pracowni w Krakowie. Płatność BLIK."
     :canonical="route('home')"
-    :image="$heroImage?->getUrl()"
+    :image="$heroImage?->getAvailableUrl(['card'])"
 >
     <div class="animate-ma-view pb-24">
         <div class="mx-auto max-w-[1280px] px-7">
@@ -76,7 +76,7 @@
                     <a href="{{ route('product.show', $hero) }}" class="group relative block min-w-0 flex-[1_1_380px] animate-ma-hero-image text-ink hover:text-ink">
                         <div class="overflow-hidden rounded-[46%_54%_52%_48%/50%_46%_54%_50%] bg-line-soft shadow-hero">
                             @if ($heroImage)
-                                <img src="{{ $heroImage->getUrl() }}" alt="Ręcznie formowana ceramika z pracowni MellowAura" fetchpriority="high" class="block aspect-square w-full object-cover transition-transform duration-[1.4s] ease-clay group-hover:scale-[1.04]">
+                                <img src="{{ $heroImage->getAvailableUrl(['card']) }}" alt="Ręcznie formowana ceramika z pracowni MellowAura" fetchpriority="high" class="block aspect-square w-full object-cover transition-transform duration-[1.4s] ease-clay group-hover:scale-[1.04]">
                             @else
                                 <div class="aspect-square w-full"></div>
                             @endif

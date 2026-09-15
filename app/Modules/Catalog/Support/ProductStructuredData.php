@@ -20,7 +20,7 @@ class ProductStructuredData
     public static function for(Product $product): string
     {
         $url = route('product.show', $product);
-        $images = $product->getMedia('images')->map(fn (Media $image) => $image->getUrl())->all();
+        $images = $product->getMedia('images')->map(fn (Media $image) => $image->getAvailableUrl(['card']))->all();
         $brand = Schema::brand()->name('MellowAura');
 
         $variants = $product->variants->map(function (ProductVariant $variant) use ($product, $url, $images, $brand) {

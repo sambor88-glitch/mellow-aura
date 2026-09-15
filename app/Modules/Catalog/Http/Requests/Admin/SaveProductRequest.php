@@ -50,6 +50,9 @@ class SaveProductRequest extends FormRequest
             'variants.*.label' => [count((array) $this->input('variants')) > 1 ? 'required' : 'nullable', 'string', 'max:60'],
             'variants.*.price' => ['required', 'regex:/^\d{1,5}([.,]\d{1,2})?$/'],
             'variants.*.stock' => ['nullable', 'integer', 'min:0', 'max:9999'],
+            'photo_alts' => ['nullable', 'array'],
+            'photo_alts.*' => ['nullable', 'string', 'max:160'],
+            ...PhotoRules::rules(required: false),
         ];
     }
 
@@ -84,13 +87,16 @@ class SaveProductRequest extends FormRequest
             'variants.*.stock.integer' => $stock,
             'variants.*.stock.min' => $stock,
             'variants.*.stock.max' => $stock,
+            'photo_alts.*.max' => 'Opis zdjęcia zmieszczę do :max znaków',
+            ...PhotoRules::messages(),
         ];
     }
 
     /**
-     * The validated form in the shape SaveProduct takes: prices in grosze, empty dimensions left out.
+     * The validated form in the shape SaveProduct takes: prices in grosze, empty dimensions left out,
+     * photo descriptions keyed by photo id.
      *
-     * @return array{name: string, category_id: int, description: ?string, care_note: ?string, is_published: bool, is_one_off: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, price_gross: int, stock: ?int}>}
+     * @return array{name: string, category_id: int, description: ?string, care_note: ?string, is_published: bool, is_one_off: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, price_gross: int, stock: ?int}>, photo_alts: array<int, string>}
      */
     public function product(): array
     {
@@ -115,6 +121,7 @@ class SaveProductRequest extends FormRequest
                 'price_gross' => Money::parse((string) $row['price']),
                 'stock' => isset($row['stock']) ? (int) $row['stock'] : null,
             ], $data['variants']),
+            'photo_alts' => array_map(fn (mixed $alt) => trim((string) $alt), (array) ($data['photo_alts'] ?? [])),
         ];
     }
 

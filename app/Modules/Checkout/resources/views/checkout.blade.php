@@ -121,7 +121,7 @@
                             @php($photo = $line->variant->product->getFirstMedia('images'))
                             <div class="mb-3.5 flex gap-3 border-b border-sand-dark pb-3.5">
                                 @if ($photo)
-                                    <img src="{{ $photo->getUrl() }}" alt="{{ $photo->getCustomProperty('alt') ?: $line->variant->product->name }}" class="h-16 w-[52px] flex-none rounded-[3px] object-cover">
+                                    <img src="{{ $photo->getAvailableUrl(['thumb']) }}" alt="{{ $photo->getCustomProperty('alt') ?: $line->variant->product->name }}" class="h-16 w-[52px] flex-none rounded-[3px] object-cover">
                                 @else
                                     <div class="h-16 w-[52px] flex-none rounded-[3px] bg-line-soft"></div>
                                 @endif

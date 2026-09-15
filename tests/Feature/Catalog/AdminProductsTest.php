@@ -81,6 +81,26 @@ class AdminProductsTest extends TestCase
         $this->get('/sklep')->assertSeeInOrder(['Miska z odciskiem paproci', 'Wazony']);
     }
 
+    public function test_new_products_go_to_the_top_one_after_another(): void
+    {
+        $this->product('Wazony', 1, [23900]);
+        $owner = User::factory()->create();
+
+        foreach (['Patery', 'Talerze'] as $name) {
+            $this->actingAs($owner)
+                ->post('/panel/produkty', [
+                    'form' => 'nowy-produkt',
+                    'name' => $name,
+                    'category_id' => $this->mugs->id,
+                    'is_published' => '1',
+                    'variants' => [['label' => '', 'price' => '99', 'stock' => '1']],
+                ])
+                ->assertRedirect('/panel/produkty');
+        }
+
+        $this->get('/sklep')->assertSeeInOrder(['Talerze', 'Patery', 'Wazony']);
+    }
+
     public function test_editing_records_a_new_price_and_removes_ticked_sizes(): void
     {
         $mug = $this->product('Kubki malowane', 1, [7900, 9900]);
