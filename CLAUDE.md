@@ -77,6 +77,16 @@ Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
 - Wartość po angielsku, etykieta po polsku: `crafts` → „Rękodzieło”, `in_progress` → „W realizacji”.
 - Polskie nazwy z prototypu i z przykładów w skillach (`doKoszyka`, `zamowienia`, `cena`) tłumacz przy przenoszeniu.
 
+## Treści i dane
+
+- Zdjęcia tylko Kasi — żadnych stockowych, także jako zaślepki. Brak zdjęcia to pusty stan, nie cudze zdjęcie.
+- Adres pracowni nigdy na stronie ani w danych strukturalnych. Na stronie opis lokalizacji z ustawień
+  („okolice Błoń Krakowskich”), dokładny adres tylko w mailu po zapisie na warsztat.
+- Każdy fakt i każda liczba — materiał, zmywarka, mikrofalówka, próg darmowej dostawy, e-mail — pochodzi z panelu,
+  nie jest wpisana na stałe w kodzie. Puste pole nie wyświetla się na stronie.
+- Żadnych wymyślonych opinii ani liczb opinii. Opinie dopiero z wizytówki Google.
+- Ceny z prototypu. Prywatnych danych kontaktowych nie wpisujemy do repozytorium — e-mail uzupełnia się w panelu.
+
 ## Zasady, których nie łamiemy
 
 - Stan magazynu zdejmuj dopiero w webhooku potwierdzającym płatność, w transakcji z `lockForUpdate`.
