@@ -4,19 +4,40 @@ namespace App\Modules\Catalog\Models;
 
 use App\Modules\Catalog\Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 #[Fillable([
     'slug', 'name', 'category_id', 'description', 'seo_description', 'dimensions', 'care_note',
     'is_published', 'is_one_off', 'sort_order', 'stamp_enabled', 'occasions', 'recipients',
 ])]
-class Product extends Model
+class Product extends Model implements HasMedia
 {
     /** @use HasFactory<ProductFactory> */
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('images')->acceptsMimeTypes(['image/webp', 'image/jpeg', 'image/png']);
+    }
+
+    /**
+     * Published products with at least one variant on the shelf or without stock tracking.
+     *
+     * @param  Builder<Product>  $query
+     */
+    #[Scope]
+    protected function live(Builder $query): void
+    {
+        $query->where('is_published', true)->whereHas('variants', fn (Builder $variants) => $variants
+            ->where(fn (Builder $stock) => $stock->whereNull('stock')->orWhere('stock', '>', 0)));
+    }
 
     /**
      * @return BelongsTo<Category, $this>

@@ -3,6 +3,7 @@
 namespace App\Modules\Shared;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -13,7 +14,8 @@ use ReflectionClass;
  * and is registered in bootstrap/providers.php.
  *
  * Loads, when present: routes/web.php, routes/admin.php (prefix /panel, name admin.*),
- * resources/views (namespace = snake-case module name), Database/Migrations,
+ * resources/views (namespace = snake-case module name), resources/views/components as
+ * anonymous Blade components (<x-module::name>), Database/Migrations,
  * and points model factories at Database/Factories.
  */
 abstract class ModuleServiceProvider extends ServiceProvider
@@ -37,6 +39,10 @@ abstract class ModuleServiceProvider extends ServiceProvider
 
         if (is_dir($dir.'/resources/views')) {
             $this->loadViewsFrom($dir.'/resources/views', $alias);
+        }
+
+        if (is_dir($dir.'/resources/views/components')) {
+            Blade::anonymousComponentPath($dir.'/resources/views/components', $alias);
         }
 
         if (is_dir($dir.'/Database/Migrations')) {

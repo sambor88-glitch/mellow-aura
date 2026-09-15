@@ -9,6 +9,7 @@ use Illuminate\Database\Seeder;
 /**
  * The offer from the prototype (catalog.json). It only adds what is missing,
  * so running it again never overwrites changes made in the panel.
+ * Photos are copied from zdjecia/, never moved.
  */
 class CatalogSeeder extends Seeder
 {
@@ -28,6 +29,15 @@ class CatalogSeeder extends Seeder
 
             foreach ($row['variants'] as $variant) {
                 $product->variants()->firstOrCreate(['label' => $variant['label']], $variant);
+            }
+
+            if ($product->getMedia('images')->isEmpty()) {
+                foreach ($row['images'] as $image) {
+                    $product->addMedia(base_path($image['path']))
+                        ->preservingOriginal()
+                        ->withCustomProperties(['alt' => $image['alt']])
+                        ->toMediaCollection('images');
+                }
             }
         }
     }

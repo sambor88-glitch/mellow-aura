@@ -9,11 +9,20 @@ use App\Modules\Catalog\Models\PriceHistory;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Tests\TestCase;
 
 class CatalogSeederTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Storage::fake('public');
+    }
 
     public function test_it_seeds_the_offer_from_the_prototype(): void
     {
@@ -25,6 +34,15 @@ class CatalogSeederTest extends TestCase
         $this->assertSame(50, ProductVariant::count());
         $this->assertSame(50, PriceHistory::count());
         $this->assertSame(0, ProductVariant::whereNotNull('compare_at_price')->count());
+    }
+
+    public function test_it_attaches_photos_and_leaves_the_originals_in_place(): void
+    {
+        $this->seed(CatalogSeeder::class);
+
+        $this->assertSame(21, Media::count());
+        $this->assertSame('Kubek malowany ręcznie', Product::where('slug', 'kubki-malowane')->firstOrFail()->getFirstMedia('images')->getCustomProperty('alt'));
+        $this->assertFileExists(base_path('zdjecia/kubek-cappuccino.webp'));
     }
 
     public function test_vouchers_are_not_stock_tracked_and_quote_mugs_are_one_offs(): void
@@ -56,5 +74,6 @@ class CatalogSeederTest extends TestCase
         $this->assertSame(25900, $variant->fresh()->price_gross);
         $this->assertSame(17, Product::count());
         $this->assertSame(50, ProductVariant::count());
+        $this->assertSame(21, Media::count());
     }
 }

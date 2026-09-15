@@ -3,7 +3,89 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
+/*
+ * Palette, type and motion from the mellowaura-design skill, the source of truth for colors.
+ * Tailwind's default colors are switched off, so no off-brand shade slips in.
+ */
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --color-*: initial;
+    --color-white: #fff;
+    --color-ink: #2F2620;
+    --color-sand-dark: #EDE4D8;
+    --color-sand: #F3EDE4;
+    --color-linen: #F7F2EA;
+    --color-cream: #FCF9F4;
+    --color-lead: #5C5043;
+    --color-muted: #6B5D4F;
+    --color-label: #726456;
+    --color-label-dark: #9B8C7C;
+    --color-hint: #736454;
+    --color-line: #DCD0BE;
+    --color-divider: #E2D7C7;
+    --color-line-strong: #C6B8A5;
+    --color-line-soft: #E6DCCD;
+    --color-brown: #855F3D;
+    --color-navy: #24417E;
+    --color-rose: #D6A39C;
+    --color-gold: #A8813F;
+    --color-dash: #B98E64;
+    --color-error: #8C3A2E;
+    --color-success: #5C7A4A;
+
+    --font-sans: 'Instrument Sans', system-ui, sans-serif;
+    --font-serif: Newsreader, serif;
+
+    --ease-clay: cubic-bezier(.2, .7, .2, 1);
+
+    --animate-ma-view: maView .55s cubic-bezier(.2, .7, .2, 1) both;
+    --animate-ma-up: maUp .55s ease both;
+
+    @keyframes maView {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: none; }
+    }
+
+    @keyframes maUp {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: none; }
+    }
+}
+
+@layer base {
+    body {
+        background: var(--color-sand);
+        color: var(--color-ink);
+        -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+        color: var(--color-brown);
+    }
+
+    a:hover {
+        color: var(--color-navy);
+    }
+
+    button {
+        cursor: pointer;
+    }
+
+    ::selection {
+        background: var(--color-rose);
+        color: var(--color-ink);
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--color-navy);
+        outline-offset: 2px;
+        border-radius: 3px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
 }
