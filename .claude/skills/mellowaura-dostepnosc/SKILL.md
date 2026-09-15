@@ -39,6 +39,17 @@ Na ciemnym tle `#2F2620` obowiązuje odwrotna logika — tekst trzeba **rozjaśn
 Nigdy nie przenoś tam odcienia z pierwszej tabeli: `#726456` daje na ciemnym tle 2,59.
 Obrysy `#55483C` i `#453A30` w stopce to linie, nie tekst, więc progu 4,5 nie mają.
 
+Obrys focusu też nie jest tekstem, ale ma własny próg **3:1** wobec tła wokół elementu
+(WCAG 1.4.11; kryterium 2.4.13 wymaga tych samych 3:1 między stanem z focusem i bez niego).
+
+| Obrys focusu | na `#2F2620` | na przyciemnieniu `#1F1914` 88% nad stroną | Werdykt |
+| --- | --- | --- | --- |
+| `#24417E` granat | 1,50 | 1,23–1,28 | znika — tylko na jasnym tle |
+| `#F7F2EA` len | 13,28 | 10,88–11,34 | focus na ciemnym tle |
+
+Przyciemnienie jest półprzezroczyste, więc liczy się kolor wynikowy: nad piaskiem to `#38322D`,
+nad białym fragmentem zdjęcia `#3A3530` — te wartości podaj do `kontrast.py`.
+
 Sprawdzenie dowolnej pary:
 
 ```bash
@@ -81,8 +92,14 @@ skryptem i zmień świadomie — nie przy okazji innej pracy.
 Cała ścieżka zakupu musi dać się przejść bez myszy — tak korzystają osoby niewidome
 i osoby z drżeniem rąk.
 
-- **Focus jest widoczny:** `outline: 2px solid #24417E; outline-offset: 2px`. Jest w `<helmet>`,
-  nigdy go nie kasuj — `outline: none` bez zamiennika to najczęstszy błąd dostępności w sklepach.
+- **Focus jest widoczny:** `outline: 2px solid #24417E; outline-offset: 2px`. Jest w `<helmet>`
+  i w `resources/css/app.css`, nigdy go nie kasuj — `outline: none` bez zamiennika to najczęstszy błąd
+  dostępności w sklepach.
+- **Na ciemnym tle obrys jest lniany `#F7F2EA`** — granat na atramencie znika. W aplikacji robi to klasa
+  `focus-on-dark` na ciemnej płaszczyźnie (stopka, przyciemnione tło pod powiększonym zdjęciem): wszystko
+  w środku dziedziczy jasny obrys. Liczy się tło wokół elementu, nie jego wypełnienie, więc atramentowy
+  przycisk na piasku zostaje przy granacie. Klasy nie dawaj rodzicowi jasnego panelu — kremowa szuflada
+  koszyka ma własne jasne tło i też zostaje przy granacie.
 - **Kolejność tabulatora zgodna z układem.** Nie używaj `tabindex` większego od zera.
 - **Szuflada koszyka przejmuje focus** po otwarciu i oddaje go z powrotem na przycisk koszyka
   po zamknięciu. Tabulator nie może uciekać na stronę pod spodem.
@@ -140,4 +157,4 @@ W `<meta name="viewport">` nigdy nie może pojawić się `user-scalable=no` ani 
 4. Każde zdjęcie ma sensowny `alt`?
 5. Każdy przycisk ze znakiem ma `aria-label`?
 6. Czy którakolwiek informacja istnieje wyłącznie jako kolor?
-7. Czy focus jest widoczny na każdym elemencie, także na ciemnym tle?
+7. Czy focus jest widoczny na każdym elemencie, także na ciemnym tle? Ciemna płaszczyzna ma klasę `focus-on-dark`?

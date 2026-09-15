@@ -30,7 +30,7 @@ w aplikacji Laravel te same wartości są tokenami w `resources/css/app.css` —
 | `#2F2620` | atrament | tło przycisku głównego, stopka, cały tekst podstawowy |
 | `#EDE4D8` | piasek ciemniejszy | tło panelu właścicielki, hover przycisku obrysowanego |
 | `#F3EDE4` | piasek — **tło strony** | `body`, sekcje pełnej szerokości |
-| `#F7F2EA` | len | tło wewnątrz kart, pasków pomocniczych, kolor tekstu na `#2F2620` |
+| `#F7F2EA` | len | tło wewnątrz kart, pasków pomocniczych, kolor tekstu i obrys focusu na `#2F2620` |
 | `#FCF9F4` | krem — **powierzchnia karty** | każda karta, która ma odstawać od tła |
 | `#fff` | biel | wyłącznie `input`, `textarea`, `select` |
 
@@ -52,7 +52,8 @@ w aplikacji Laravel te same wartości są tokenami w `resources/css/app.css` —
 | `#B8AB99` | akapit, dane kontaktowe | 6,57 |
 | `#9B8C7C` | etykiety wersalikowe, podpisy | 4,54 |
 
-Hover linku na ciemnym tle to róż `#D6A39C` (6,75), nie granat — granat na atramencie znika.
+Hover linku na ciemnym tle to róż `#D6A39C` (6,75), nie granat — granat na atramencie znika (1,50).
+Z tego samego powodu focus na ciemnym tle to len `#F7F2EA` (13,28) — patrz sekcja „Dostępność".
 
 ### Linie i obrysy
 `#DCD0BE` obrys karty i pola · `#E2D7C7` linia rozdzielająca sekcje · `#C6B8A5` obrys przycisku
@@ -64,7 +65,7 @@ Na ciemnym tle: `#55483C` obrys przycisku · `#453A30` linia rozdzielająca.
 | Hex | Rola | Zasada |
 | --- | --- | --- |
 | `#855F3D` | brąz — linki, nadtytuły wersalikowe, kursywa w nagłówku | najczęstszy akcent |
-| `#24417E` | granat — **każdy hover i focus** | nigdy jako tło dużej płaszczyzny |
+| `#24417E` | granat — **każdy hover i focus na jasnym tle** | nigdy jako tło dużej płaszczyzny; na ciemnym tle hover jest różem, focus lnem |
 | `#D6A39C` | róż — licznik koszyka, zaznaczenie tekstu, znaczniki | maksymalnie dwa na ekran |
 | `#A8813F` | złoto — gwiazdki ocen, detal luksusowy | tylko drobnica |
 | `#B98E64` | kreska 34×1 px przed nadtytułem | wyłącznie ten jeden element |
@@ -184,6 +185,12 @@ Blok `@media (prefers-reduced-motion: reduce)` już jest — nie usuwaj go.
 ## Dostępność — to nie jest opcja
 
 - Focus: `outline: 2px solid #24417E; outline-offset: 2px`. Nie kasuj go „dla estetyki".
+- **Focus na ciemnym tle to len `#F7F2EA`, nie granat.** Granat na atramencie ma 1,50:1 i znika, len ma 13,28:1.
+  Obrys stoi 2 px od krawędzi, więc kolor dobiera się do tła wokół elementu, nie do jego wypełnienia:
+  atramentowy przycisk albo karta na piasku mają obrys granatowy, link w stopce — lniany. W aplikacji
+  ciemna płaszczyzna (stopka, przyciemnione tło pod powiększonym zdjęciem) dostaje klasę `focus-on-dark`
+  i wszystko w środku dziedziczy jasny obrys. Kremowy panel szuflady koszyka stoi na własnym jasnym tle,
+  więc zostaje przy granacie — klasa nigdy nie idzie na rodzica jasnego panelu.
 - Kontrast — wartości policzone, nie na oko. Paleta powyżej jest już poprawiona do normy AA:
   najsłabszy dopuszczalny tekst to `#736454`, który daje 4,54 na najciemniejszym używanym tle,
   a na ciemnym tle `#9B8C7C` (4,54).
