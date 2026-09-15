@@ -4,6 +4,8 @@ namespace App\Modules\Catalog\Models;
 
 use App\Modules\Catalog\Database\Factories\ProductVariantFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,6 +33,21 @@ class ProductVariant extends Model
     }
 
     /**
+     * The lowest and highest price on the shelf in grosze, or null when nothing is for sale.
+     *
+     * @return array{int, int}|null
+     */
+    public static function priceRange(): ?array
+    {
+        $prices = static::query()->inStock()->whereRelation('product', 'is_published', true)
+            ->toBase()
+            ->selectRaw('min(price_gross) as lowest, max(price_gross) as highest')
+            ->first();
+
+        return $prices?->lowest === null ? null : [(int) $prices->lowest, (int) $prices->highest];
+    }
+
+    /**
      * @return BelongsTo<Product, $this>
      */
     public function product(): BelongsTo
@@ -49,6 +66,17 @@ class ProductVariant extends Model
     public function isInStock(): bool
     {
         return $this->stock === null || $this->stock > 0;
+    }
+
+    /**
+     * Variants in stock or without stock tracking.
+     *
+     * @param  Builder<ProductVariant>  $query
+     */
+    #[Scope]
+    protected function inStock(Builder $query): void
+    {
+        $query->where(fn (Builder $stock) => $stock->whereNull('stock')->orWhere('stock', '>', 0));
     }
 
     /**

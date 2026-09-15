@@ -59,10 +59,12 @@ class ProductPageTest extends TestCase
         $sold = ProductVariant::factory()->create(['product_id' => $product->id, 'label' => 'Królowa matka', 'price_gross' => 7900, 'stock' => 0]);
         ProductVariant::factory()->create(['product_id' => $product->id, 'label' => 'Twój tekst', 'price_gross' => 7900, 'stock' => null]);
 
-        $html = $this->get('/produkt/kubki-z-cytatem')->assertOk()->getContent();
+        $html = $this->get('/produkt/kubki-z-cytatem')
+            ->assertOk()
+            ->assertSee('<meta property="og:type" content="product">', false)
+            ->getContent();
 
-        preg_match_all('#<script type="application/ld\+json">(.*?)</script>#s', $html, $matches);
-        $blocks = collect($matches[1])->map(fn (string $json) => json_decode($json, true));
+        $blocks = $this->structuredData($html);
         $group = $blocks->firstWhere('@type', 'ProductGroup');
         $breadcrumbs = $blocks->firstWhere('@type', 'BreadcrumbList');
 

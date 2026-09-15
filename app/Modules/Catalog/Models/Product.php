@@ -36,8 +36,7 @@ class Product extends Model implements HasMedia
     #[Scope]
     protected function live(Builder $query): void
     {
-        $query->where('is_published', true)->whereHas('variants', fn (Builder $variants) => $variants
-            ->where(fn (Builder $stock) => $stock->whereNull('stock')->orWhere('stock', '>', 0)));
+        $query->where('is_published', true)->whereHas('variants', fn (Builder $variants) => $variants->inStock());
     }
 
     /**

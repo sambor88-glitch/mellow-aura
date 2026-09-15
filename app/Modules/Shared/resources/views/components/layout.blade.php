@@ -1,19 +1,10 @@
-@props(['title', 'description' => null, 'canonical' => null, 'noindex' => false])
+@props(['title', 'description' => null, 'canonical' => null, 'noindex' => false, 'type' => 'website', 'image' => null])
 <!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $title }}</title>
-    @if ($description)
-        <meta name="description" content="{{ $description }}">
-    @endif
-    @if ($canonical)
-        <link rel="canonical" href="{{ $canonical }}">
-    @endif
-    @if ($noindex)
-        <meta name="robots" content="noindex">
-    @endif
+    <x-shared::seo :$title :$description :$canonical :$noindex :$type :$image />
     @isset($head)
         {{ $head }}
     @endisset

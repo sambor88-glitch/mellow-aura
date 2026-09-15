@@ -41,6 +41,7 @@
     title="MellowAura — ceramika i rękodzieło z jedwabiu, Kraków"
     description="Ręcznie formowana ceramika i jedwabne dodatki z drugiego obiegu. Kubki z wbijanym napisem, warsztaty w kameralnej pracowni w Krakowie. Płatność BLIK."
     :canonical="route('home')"
+    :image="$heroImage?->getUrl()"
 >
     <div class="animate-ma-view pb-24">
         <div class="mx-auto max-w-[1280px] px-7">

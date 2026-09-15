@@ -16,7 +16,7 @@
     $freeShipping = $settings->get('free_shipping_threshold');
 @endphp
 
-<x-shared::layout :title="Seo::title($product->name, $suffix)" :description="Seo::description($product->seo_description ?: $product->description)" :canonical="$canonical">
+<x-shared::layout :title="Seo::title($product->name, $suffix)" :description="Seo::description($product->seo_description ?: $product->description)" :canonical="$canonical" type="product" :image="$images->first()?->getUrl()">
     @isset($structuredData)
         <x-slot:head>{!! $structuredData !!}</x-slot:head>
     @endisset

@@ -5,6 +5,7 @@ namespace App\Modules\Catalog\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
+use App\Modules\Shared\Support\BreadcrumbStructuredData;
 use Collator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -69,6 +70,12 @@ class ShopController extends Controller
             'sort' => $sort,
             'baseUrl' => $baseUrl,
             'clearSearchUrl' => $withQuery($baseUrl, ['sort' => $sort]),
+            // The same trail the page shows as links.
+            'structuredData' => $category ? BreadcrumbStructuredData::for([
+                ['Strona główna', url('/')],
+                ['Produkty', route('shop.index')],
+                [$category->name, $baseUrl],
+            ]) : null,
         ]);
     }
 

@@ -4,6 +4,7 @@ namespace App\Modules\Catalog\Support;
 
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
+use App\Modules\Shared\Support\BreadcrumbStructuredData;
 use App\Modules\Shared\Support\Money;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\SchemaOrg\ItemAvailability;
@@ -52,12 +53,10 @@ class ProductStructuredData
             $group->image($images);
         }
 
-        $breadcrumbs = Schema::breadcrumbList()->itemListElement([
-            Schema::listItem()->position(1)->name('Sklep')->item(route('shop.index')),
-            Schema::listItem()->position(2)->name($product->category->name)->item(route('shop.category', $product->category)),
-            Schema::listItem()->position(3)->name($product->name)->item($url),
+        return $group->toScript().BreadcrumbStructuredData::for([
+            ['Sklep', route('shop.index')],
+            [$product->category->name, route('shop.category', $product->category)],
+            [$product->name, $url],
         ]);
-
-        return $group->toScript().$breadcrumbs->toScript();
     }
 }

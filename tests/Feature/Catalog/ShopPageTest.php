@@ -60,6 +60,34 @@ class ShopPageTest extends TestCase
         $this->get('/sklep/nie-ma-takiej')->assertNotFound();
     }
 
+    public function test_a_category_page_links_its_breadcrumbs_and_describes_them_for_search_engines(): void
+    {
+        $silk = Category::factory()->create(['name' => 'Jedwab', 'slug' => 'jedwab']);
+        $this->product('Jedwabne opaski', $silk, [8900]);
+
+        $response = $this->get('/sklep/jedwab')
+            ->assertOk()
+            ->assertSeeInOrder(['aria-label="Okruszki"', 'href="'.url('/').'"', 'Strona główna', 'href="'.url('/sklep').'"', 'Produkty', 'Jedwab'], false);
+
+        $breadcrumbs = $this->structuredData($response->getContent())->firstWhere('@type', 'BreadcrumbList');
+
+        $this->assertSame(['Strona główna', 'Produkty', 'Jedwab'], array_column($breadcrumbs['itemListElement'], 'name'));
+        $this->assertSame(url('/sklep/jedwab'), $breadcrumbs['itemListElement'][2]['item']);
+    }
+
+    public function test_the_studio_markup_takes_its_price_range_from_what_is_on_the_shelf(): void
+    {
+        $category = Category::factory()->create();
+        $this->product('Scrunchies', $category, [5900]);
+        $this->product('Patery', $category, [32900, 49900]);
+        $this->product('Szkic miski', $category, [2900], ['is_published' => false]);
+        $this->product('Wazon sprzedany', $category, [89900], stock: 0);
+
+        $business = $this->structuredData($this->get('/sklep')->getContent())->firstWhere('@type', 'LocalBusiness');
+
+        $this->assertSame('59–499 zł', $business['priceRange']);
+    }
+
     public function test_search_filters_products_and_is_kept_out_of_the_index(): void
     {
         $category = Category::factory()->create();

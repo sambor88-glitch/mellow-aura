@@ -19,10 +19,15 @@
 @endphp
 
 <x-shared::layout :title="$title" :description="$description" :canonical="$baseUrl" :noindex="$search !== ''">
+    @isset($structuredData)
+        <x-slot:head>{!! $structuredData !!}</x-slot:head>
+    @endisset
+
     <div class="mx-auto max-w-[1280px] animate-ma-view px-7 pt-14 pb-24">
-        <div class="mb-[22px] text-[12px] text-hint">
-            Strona główna / @if ($category) Produkty / @endif<span class="text-lead">{{ $category->name ?? 'Produkty' }}</span>
-        </div>
+        <nav aria-label="Okruszki" class="mb-[22px] text-[12px] text-hint">
+            <a href="{{ url('/') }}" class="text-hint hover:text-navy">Strona główna</a>
+            / @if ($category) <a href="{{ route('shop.index') }}" class="text-hint hover:text-navy">Produkty</a> / @endif<span class="text-lead">{{ $category->name ?? 'Produkty' }}</span>
+        </nav>
 
         <h1 class="mb-3.5 font-serif text-[length:clamp(38px,5vw,66px)] leading-[normal] font-light tracking-[-0.02em]">{{ $category->name ?? 'Sklep' }}</h1>
 
