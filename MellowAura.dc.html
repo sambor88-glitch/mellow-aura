@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -2261,7 +2261,7 @@ const PRODUCTS = [
   { id: 'kosmetyczki', name: 'Kosmetyczki', cat: 'Rękodzieło', price: 129, old: null, img: '', draft: true,
     variants: ['Mała', 'Średnia', 'Duża'], vp: [99, 129, 159],
     desc: '', gallery: [] },
-  { id: 'pierniki', name: 'Piórniki', cat: 'Rękodzieło', price: 89, old: null, img: '', draft: true,
+  { id: 'piorniki', name: 'Piórniki', cat: 'Rękodzieło', price: 89, old: null, img: '', draft: true,
     variants: ['Mały płaski', 'Średni', 'Duży tubowy'], vp: [69, 89, 109],
     desc: '', gallery: [] }
 ];
@@ -2299,27 +2299,27 @@ const ROUTES = {
   shop: { path: '/sklep', title: 'Sklep — ceramika i rękodzieło handmade | MellowAura',
     desc: 'Kubki, talerze, wazony, patery, kadzielnice oraz jedwabne scrunchies i opaski. Każda sztuka jedna, wysyłka w 3–5 dni, BLIK.' },
   product: { path: '/produkt', title: 'Produkt | MellowAura', desc: 'Ręcznie robiona ceramika z pracowni w Krakowie.' },
-  mug: { path: '/kubek-z-napisem', title: 'Kubek z napisem na zamówienie — Twój tekst wbity w glinę | MellowAura',
+  mug: { path: '/kubek-z-napisem', title: 'Kubek z napisem na zamówienie — Twój tekst wbity w glinę',
     desc: 'Zaprojektuj kubek z własnym napisem: litery wbijane stemplem w glinę, trzy rozmiary, pięć kolorów szkliwa. Prezent, którego nie ma nikt inny. Kraków.' },
-  gifts: { path: '/prezenty', title: 'Szukam prezentu — ceramika handmade na każdą okazję | MellowAura',
+  gifts: { path: '/prezenty', title: 'Szukam prezentu — ceramika handmade na każdą okazję',
     desc: 'Prezent z ceramiki i jedwabiu: filtruj po okazji i budżecie. Pakowanie na prezent, kartka z życzeniami, wysyłka prosto do obdarowanej osoby.' },
-  bundles: { path: '/zestawy-prezentowe', title: 'Zestawy prezentowe — ceramika i jedwab w pudełku | MellowAura',
+  bundles: { path: '/zestawy-prezentowe', title: 'Zestawy prezentowe — ceramika i jedwab w pudełku',
     desc: 'Gotowe zestawy: kubek i scrunchie w jednym kolorze, talerz z filiżanką, kadzielnica z podstawką. Taniej niż osobno, zapakowane na prezent.' },
   scarf: { path: '/z-twojej-apaszki', title: 'Opaska z Twojej apaszki — szyję z Twojej tkaniny',
     desc: 'Przyślij apaszkę babci albo sukienkę, z której wyrosłaś. Uszyję z niej opaskę i scrunchies — rzecz, która zostaje w rodzinie zamiast leżeć w szafie.' },
   imprint: { path: '/odcisk-twojej-rosliny', title: 'Talerz z odciskiem Twojego kwiatu — pamiątka na lata',
     desc: 'Zasuszony kwiat z bukietu ślubnego albo z pożegnania odciskam w glinie i wypalam. Roślina znika w piecu, rysunek zostaje na zawsze.' },
-  workshops: { path: '/warsztaty-ceramiczne-krakow', title: 'Warsztaty ceramiczne Kraków — kameralnie, do 6 osób | MellowAura',
+  workshops: { path: '/warsztaty-ceramiczne-krakow', title: 'Warsztaty ceramiczne Kraków — kameralnie, do 6 osób',
     desc: 'Warsztaty ceramiczne w Krakowie: lepienie z ręki, szkliwienie, sesje 1:1, dla par i rodzin. Glina, narzędzia i dwa wypały w cenie. Terminy i cennik.' },
-  custom: { path: '/zamowienia-indywidualne', title: 'Zamówienia indywidualne — ceramika na zamówienie | MellowAura',
+  custom: { path: '/zamowienia-indywidualne', title: 'Zamówienia indywidualne — ceramika na zamówienie',
     desc: 'Serwis na wesele, kubek z Twoim napisem, forma dekoracyjna. Szkic i wycena w pięć dni, zaliczka BLIK-iem, realizacja około trzech tygodni.' },
-  kiln: { path: '/wypal-ceramiki-krakow', title: 'Wypał ceramiki Kraków — cennik wypałów na zlecenie | MellowAura',
+  kiln: { path: '/wypal-ceramiki-krakow', title: 'Wypał ceramiki Kraków — cennik wypałów na zlecenie',
     desc: 'Wypał biskwitowy i na ostro do 1240°C, wypał złota, cała półka na wyłączność. Cennik od 40 zł za litr. Wsad zbieram raz w tygodniu.' },
   b2b: { path: '/ceramika-dla-gastronomii', title: 'Ceramika dla kawiarni i restauracji | MellowAura',
     desc: 'Powtarzalne formy w ręcznej ceramice dla gastronomii: próbka przed serią, dosypka po stłuczkach, logo w spodzie, faktura z terminem 14 dni.' },
   about: { path: '/o-mnie', title: 'O mnie — Kasia Samborska, pracownia MellowAura | Kraków',
     desc: 'Poznaj Kasię — tworzy ceramikę i jedwabne rękodzieło w kameralnej pracowni w Krakowie, łącząc surowość z miękkością.' },
-  studio: { path: '/pracownia', title: 'Pracownia w Krakowie — ciepło, empatia, cierpliwość | MellowAura',
+  studio: { path: '/pracownia', title: 'Pracownia w Krakowie — ciepło, empatia, cierpliwość',
     desc: 'Kameralne home studio w Krakowie: jeden stół, do sześciu osób, dwa wypały w cenie warsztatu.' },
   entry: { path: '/dziennik/wpis', title: 'Wpis | Dziennik pracowni MellowAura', desc: 'Notatka z pracowni MellowAura.' },
   journal: { path: '/dziennik', title: 'Dziennik pracowni, targi i wydarzenia | MellowAura',
@@ -2854,9 +2854,21 @@ class Component extends DCLogic {
     const r = ROUTES[s.view] || ROUTES.home;
     const all = PRODUCTS.concat(s.added);
     const prod = s.view === 'product' ? all.find(x => x.id === s.pid) : null;
-    const title = prod ? prod.name + ' — ceramika handmade | MellowAura' : r.title;
-    const desc = prod ? String(prod.desc || '').slice(0, 155) : r.desc;
-    const path = prod ? '/produkt/' + prod.id : r.path;
+    const entry = s.view === 'entry' ? s.notes.concat(JOURNAL_SEED).find(j => this.slug(j.title) === s.jid) : null;
+    // Titles up to 60 characters (the brand suffix goes first), descriptions up to 155, cut at a word boundary.
+    const fit = (options) => options.find(t => t.length <= 60) || options[options.length - 1].slice(0, 60);
+    const clip = (text) => {
+      const t = String(text || '').replace(/\s+/g, ' ').trim();
+      if (t.length <= 155) return t;
+      const cut = t.lastIndexOf(' ', 154);
+      return t.slice(0, cut > 0 ? cut : 154) + '…';
+    };
+    const kind = prod ? ({ 'Ceramika': ' — ceramika handmade', 'Rękodzieło': ' — rękodzieło z jedwabiu' })[prod.cat] || '' : '';
+    const title = prod ? fit([prod.name + kind + ' | MellowAura', prod.name + kind, prod.name + ' | MellowAura', prod.name])
+      : entry ? fit([entry.title + ' | Dziennik MellowAura', entry.title + ' | MellowAura', entry.title])
+      : r.title;
+    const desc = prod ? (clip(prod.desc) || r.desc) : entry ? (clip(entry.lead) || r.desc) : r.desc;
+    const path = prod ? '/produkt/' + prod.id : entry ? '/dziennik/' + this.slug(entry.title) : r.path;
     document.title = title;
     const meta = (name, content, prop) => {
       const sel = prop ? '[property="' + name + '"]' : '[name="' + name + '"]';
@@ -2867,7 +2879,8 @@ class Component extends DCLogic {
     meta('description', desc);
     meta('og:title', title, true);
     meta('og:description', desc, true);
-    meta('og:type', prod ? 'product' : 'website', true);
+    meta('og:type', prod ? 'product' : entry ? 'article' : 'website', true);
+    meta('og:locale', 'pl_PL', true);
     let link = document.head.querySelector('link[rel="canonical"]');
     if (!link) { link = document.createElement('link'); link.setAttribute('rel', 'canonical'); document.head.appendChild(link); }
     link.setAttribute('href', 'https://mellow-aura.com' + path);
