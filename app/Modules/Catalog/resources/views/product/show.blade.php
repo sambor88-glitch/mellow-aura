@@ -30,16 +30,32 @@
 
         <div class="flex flex-wrap gap-14">
             <div class="min-w-0 flex-[1_1_400px]" x-data="{ active: 0 }">
-                <div class="relative overflow-hidden rounded-[6px] bg-line-soft">
-                    @forelse ($images as $index => $image)
-                        <img src="{{ $image->getUrl() }}" alt="{{ $image->getCustomProperty('alt') ?: $product->name }}"
-                             @if ($loop->first) fetchpriority="high" @else loading="lazy" x-cloak @endif
-                             x-show="active === {{ $index }}"
-                             class="block aspect-square w-full object-cover">
-                    @empty
-                        <div class="aspect-square w-full"></div>
-                    @endforelse
-                </div>
+                @if ($images->isEmpty())
+                    <div class="aspect-square w-full rounded-[6px] bg-line-soft"></div>
+                @else
+                    <button type="button" x-ref="zoomTrigger" x-on:click="$refs.zoom.showModal()" title="Kliknij, żeby powiększyć"
+                            class="relative block w-full cursor-zoom-in overflow-hidden rounded-[6px] bg-line-soft">
+                        @foreach ($images as $index => $image)
+                            <img src="{{ $image->getUrl() }}" alt="{{ $image->getCustomProperty('alt') ?: $product->name }}"
+                                 @if ($loop->first) fetchpriority="high" @else loading="lazy" x-cloak @endif
+                                 x-show="active === {{ $index }}"
+                                 class="block aspect-square w-full object-cover">
+                        @endforeach
+                        <span class="absolute right-3.5 bottom-3.5 rounded-full bg-cream/92 px-3.5 py-[7px] text-[12px] text-lead">Powiększ fakturę <span aria-hidden="true">⌕</span></span>
+                    </button>
+
+                    {{-- Esc, a click anywhere or the × closes the zoom, and focus goes back to the photo. --}}
+                    <dialog x-ref="zoom" x-on:click="$el.close()" x-on:keydown.escape="$el.close()" x-on:close="$refs.zoomTrigger.focus()" aria-label="Powiększone zdjęcie"
+                            class="fixed inset-0 size-full max-h-none max-w-none animate-ma-in cursor-zoom-out items-center justify-center bg-scrim/88 p-7 open:flex backdrop:bg-transparent">
+                        @foreach ($images as $index => $image)
+                            <img src="{{ $image->getUrl() }}" alt="{{ $image->getCustomProperty('alt') ?: $product->name }}" loading="lazy"
+                                 x-show="active === {{ $index }}"
+                                 class="size-full object-contain">
+                        @endforeach
+                        <button type="button" aria-label="Zamknij powiększenie"
+                                class="absolute top-5 right-6 px-2.5 py-1.5 text-[30px] leading-none text-divider hover:text-white focus-visible:outline-linen">×</button>
+                    </dialog>
+                @endif
                 @if ($images->count() > 1)
                     <div class="mt-3 flex flex-wrap gap-2.5">
                         @foreach ($images as $index => $image)
