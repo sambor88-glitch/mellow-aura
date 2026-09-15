@@ -108,12 +108,25 @@ Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
 
 ## Komendy
 
+Lokalnie wszystko działa w Dockerze (Laravel Sail), bo PHP na Macu to nie 8.4. Strona: http://localhost:8000,
+poczta z aplikacji: http://localhost:8025 (Mailpit).
+
 ```bash
-composer install && cp .env.example .env && php artisan key:generate   # pierwsze uruchomienie
-php artisan migrate                                                    # migracje
-php artisan serve                                                      # serwer lokalny, http://localhost:8000
-php artisan test                                                       # testy
+# pierwsze uruchomienie: vendor/ instaluje kontener z PHP 8.4
+docker run --rm -u "$(id -u):$(id -g)" -v "$(pwd):/var/www/html" -w /var/www/html \
+  -e COMPOSER_HOME=/tmp/composer laravelsail/php84-composer:latest composer install
+cp .env.example .env              # potem wartości dla Sail z komentarza na końcu pliku
+./vendor/bin/sail up -d           # PHP 8.4, MySQL 8.4 na porcie 3307, Mailpit
+./vendor/bin/sail artisan key:generate
+./vendor/bin/sail artisan migrate
+npm install && npm run dev        # Vite na Macu, nie w kontenerze
+./vendor/bin/sail test            # testy na bazie `testing` w kontenerze MySQL
+./vendor/bin/sail down            # zatrzymanie kontenerów
 ```
+
+- `compose.yaml` buduje `runtimes/8.4`, tak jak na Forge. Sail przy instalacji wybiera najnowsze PHP — nie zmieniaj na 8.5.
+- `npm` uruchamiaj tylko na Macu: `node_modules` z macOS nie działa w kontenerze z Linuksem.
+- Composer i Artisan tylko przez `./vendor/bin/sail`, żeby zależności liczyły się dla PHP 8.4.
 
 ## Gałęzie i środowiska
 
