@@ -21,7 +21,8 @@ Ceramika formowana w dłoniach i jedwab z drugiego obiegu. Stąd wynikają trzy 
 
 ## Paleta
 
-Nazwy tokenów są opisowe — używaj ich w komentarzach i rozmowie, w kodzie wpisujesz sam hex.
+Nazwy tokenów są opisowe — używaj ich w komentarzach i rozmowie. W prototypie `.dc.html` wpisujesz sam hex,
+w aplikacji Laravel te same wartości są tokenami w `resources/css/app.css` — zmieniaj oba miejsca naraz.
 
 ### Tła — od najciemniejszego do najjaśniejszego
 | Hex | Rola | Gdzie |
@@ -33,19 +34,31 @@ Nazwy tokenów są opisowe — używaj ich w komentarzach i rozmowie, w kodzie w
 | `#FCF9F4` | krem — **powierzchnia karty** | każda karta, która ma odstawać od tła |
 | `#fff` | biel | wyłącznie `input`, `textarea`, `select` |
 
-### Tekst — cztery poziomy, nie więcej
+### Tekst na jasnym tle
 | Hex | Rola |
 | --- | --- |
 | `#2F2620` | nagłówki i treść główna |
+| `#4A3E33` | grafit — linki menu w nagłówku, mocniejszy tekst w treści |
 | `#5C5043` | akapity prowadzące, lead |
 | `#6B5D4F` | opisy pomocnicze |
 | `#726456` | etykiety wersalikowe, podpisy, metadane |
-| `#9B8C7C` | to samo, ale **na ciemnym tle** — stopka, ciemne karty |
 | `#736454` | podpowiedzi pod polami, tekst najsłabszy |
+
+### Tekst na ciemnym tle `#2F2620` — stopka, ciemne karty
+| Hex | Rola | Kontrast |
+| --- | --- | --- |
+| `#F3EDE4` | logo i nagłówki | 12,72 |
+| `#D8CDBD` | tekst i linki | 9,43 |
+| `#B8AB99` | akapit, dane kontaktowe | 6,57 |
+| `#9B8C7C` | etykiety wersalikowe, podpisy | 4,54 |
+
+Hover linku na ciemnym tle to róż `#D6A39C` (6,75), nie granat — granat na atramencie znika.
 
 ### Linie i obrysy
 `#DCD0BE` obrys karty i pola · `#E2D7C7` linia rozdzielająca sekcje · `#C6B8A5` obrys przycisku
 drugoplanowego i linia przerywana · `#E6DCCD` obrys najlżejszy, wewnątrz kart
+
+Na ciemnym tle: `#55483C` obrys przycisku · `#453A30` linia rozdzielająca.
 
 ### Akcenty — używaj oszczędnie
 | Hex | Rola | Zasada |
@@ -172,8 +185,9 @@ Blok `@media (prefers-reduced-motion: reduce)` już jest — nie usuwaj go.
 
 - Focus: `outline: 2px solid #24417E; outline-offset: 2px`. Nie kasuj go „dla estetyki".
 - Kontrast — wartości policzone, nie na oko. Paleta powyżej jest już poprawiona do normy AA:
-  najsłabszy dopuszczalny tekst to `#736454`, który daje 4,54 na najciemniejszym używanym tle.
-  Poprzednie odcienie `#8A7A69`, `#A0907D` i `#8C6440` nie przechodziły normy i **nie występują
+  najsłabszy dopuszczalny tekst to `#736454`, który daje 4,54 na najciemniejszym używanym tle,
+  a na ciemnym tle `#9B8C7C` (4,54).
+  Poprzednie odcienie `#8A7A69`, `#A0907D`, `#8C6440` i `#9A8978` nie przechodziły normy i **nie występują
   już nigdzie w projekcie** — jeśli gdzieś je zobaczysz, to pomyłka do naprawienia.
   Każdy nowy kolor tekstu przepuść przez `kontrast.py` — szczegóły w skillu `mellowaura-dostepnosc`.
 - Każde `<img>` ma `alt` po polsku, opisujące przedmiot, nie plik.
@@ -186,7 +200,7 @@ Blok `@media (prefers-reduced-motion: reduce)` już jest — nie usuwaj go.
 | Białe tło `#fff` na płaszczyźnie | zimne, wypada ze świata ceramiki |
 | `box-shadow` w spoczynku, gradient, glassmorphism | ten projekt buduje głębię obrysem; cień tylko na hover karty |
 | Pogrubiony nagłówek szeryfowy | traci charakter pisma odręcznego |
-| Nowy odcień „bo pasuje" | paleta ma 20 pozycji, w niej jest odpowiedź |
+| Nowy odcień „bo pasuje" | paleta ma 27 pozycji, w niej jest odpowiedź |
 | Przycisk z rogiem innym niż `999px` | rozpada się spójność |
 | Ikony z zewnętrznej biblioteki | strona nie używa żadnej, znaki `&middot;` i `×` wystarczają |
 

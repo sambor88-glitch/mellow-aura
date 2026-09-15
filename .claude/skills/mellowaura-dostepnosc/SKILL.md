@@ -27,8 +27,17 @@ Wartości z `kontrast.py` w tym katalogu. Progi WCAG: **4,5:1** tekst zwykły, *
 | `#736454` podpowiedzi | 4,90 | 4,54 | 5,43 | AA |
 
 Na ciemnym tle `#2F2620` obowiązuje odwrotna logika — tekst trzeba **rozjaśniać**.
-Tam rolę etykiety pełni `#9B8C7C` (4,54). Nigdy nie przenoś tam odcienia z tabeli powyżej:
-`#726456` daje na ciemnym tle 2,59.
+
+| Kolor tekstu na `#2F2620` | Kontrast | Werdykt |
+| --- | --- | --- |
+| `#F3EDE4` piasek — logo | 12,72 | AAA |
+| `#D8CDBD` tekst i linki w stopce | 9,43 | AAA |
+| `#D6A39C` róż — hover linku | 6,75 | AA |
+| `#B8AB99` akapit w stopce | 6,57 | AA |
+| `#9B8C7C` etykiety | 4,54 | AA |
+
+Nigdy nie przenoś tam odcienia z pierwszej tabeli: `#726456` daje na ciemnym tle 2,59.
+Obrysy `#55483C` i `#453A30` w stopce to linie, nie tekst, więc progu 4,5 nie mają.
 
 Sprawdzenie dowolnej pary:
 
@@ -40,21 +49,22 @@ python3 .claude/skills/mellowaura-dostepnosc/kontrast.py --fix '#A0907D'
 ## Co zostało poprawione i co jeszcze zostaje
 
 Strona przeszła audyt kontrastu. Liczba elementów tekstowych poniżej progu WCAG spadła
-z **238 do 54**. Trzy kolory, które za to odpowiadały, zostały wymienione w całym projekcie:
+z **238 do 53**. Cztery kolory, które za to odpowiadały, zostały wymienione w całym projekcie:
 
 | Było | Jest | Ile miejsc | Dlaczego nie przechodziło |
 | --- | --- | ---: | --- |
 | `#8A7A69` | `#726456`, na ciemnym tle `#9B8C7C` | 105 | 3,29–3,95 przy piśmie zwykle 11,5 px |
 | `#A0907D` | `#736454` | 46 | 2,46–2,95 — za mało na każdym tle |
 | `#8C6440` | `#855F3D` | 31 | 4,4977, czyli 0,0023 poniżej progu |
+| `#9A8978` | `#726456` | 1 | 2,90 — podtytuł pod logo, 9 px (poprawiony 15.09.2026) |
 
-Ostatni wiersz warto zapamiętać: różnicy 0,0023 nie da się zobaczyć okiem. Brąz wyglądał
+Wiersz z brązem warto zapamiętać: różnicy 0,0023 nie da się zobaczyć okiem. Brąz wyglądał
 na przechodzący i nie przechodził. Po to jest `kontrast.py`.
 
-**Stare odcienie nie występują już nigdzie w projekcie.** Jeśli trafisz na `#8A7A69`, `#A0907D`
-albo `#8C6440` w kodzie, to znaczy, że ktoś wkleił je z zewnątrz — popraw od razu.
+**Stare odcienie nie występują już nigdzie w projekcie.** Jeśli trafisz na `#8A7A69`, `#A0907D`,
+`#8C6440` albo `#9A8978` w kodzie, to znaczy, że ktoś wkleił je z zewnątrz — popraw od razu.
 
-### Pozostałe 54 pozycje — świadomie nietknięte
+### Pozostałe 53 pozycje — świadomie nietknięte
 
 | Kolor | Pozycji | Co to jest |
 | --- | ---: | --- |
