@@ -14,6 +14,9 @@
     @if ($noindex)
         <meta name="robots" content="noindex">
     @endif
+    @isset($head)
+        {{ $head }}
+    @endisset
     @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>

@@ -3,6 +3,7 @@
 namespace App\Modules\Catalog\Models;
 
 use App\Modules\Catalog\Database\Factories\ProductFactory;
+use App\Modules\Catalog\Enums\Dimension;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -37,6 +38,23 @@ class Product extends Model implements HasMedia
     {
         $query->where('is_published', true)->whereHas('variants', fn (Builder $variants) => $variants
             ->where(fn (Builder $stock) => $stock->whereNull('stock')->orWhere('stock', '>', 0)));
+    }
+
+    /**
+     * Filled dimensions in panel order, e.g. ['Wysokość' => '24 cm'].
+     *
+     * @return array<string, string>
+     */
+    public function dimensionLabels(): array
+    {
+        $values = $this->dimensions ?? [];
+
+        return collect(Dimension::cases())
+            ->filter(fn (Dimension $dimension) => trim((string) ($values[$dimension->value] ?? '')) !== '')
+            ->mapWithKeys(fn (Dimension $dimension) => [
+                $dimension->label() => trim((string) $values[$dimension->value]).' '.$dimension->unit(),
+            ])
+            ->all();
     }
 
     /**

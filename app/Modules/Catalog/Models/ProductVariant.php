@@ -46,6 +46,36 @@ class ProductVariant extends Model
         return $this->hasMany(PriceHistory::class);
     }
 
+    public function isInStock(): bool
+    {
+        return $this->stock === null || $this->stock > 0;
+    }
+
+    /**
+     * The lowest price in effect during the 30 days before the current price took effect
+     * (Omnibus). Null when there is no discount or no earlier price to compare with,
+     * in which case the crossed-out price must not be shown.
+     */
+    public function lowestPriceBeforeDiscount(): ?int
+    {
+        if ($this->compare_at_price === null) {
+            return null;
+        }
+
+        $history = $this->priceHistory()->orderBy('valid_from')->orderBy('id')->get();
+        $current = $history->pop();
+
+        if ($current === null || $history->isEmpty()) {
+            return null;
+        }
+
+        $windowStart = $current->valid_from->copy()->subDays(30);
+        $inEffectAtStart = $history->filter(fn (PriceHistory $row) => $row->valid_from->lt($windowStart))->last();
+        $changedInWindow = $history->filter(fn (PriceHistory $row) => $row->valid_from->gte($windowStart));
+
+        return $changedInWindow->push($inEffectAtStart)->filter()->min('price_gross');
+    }
+
     private function recordPrice(): void
     {
         $this->priceHistory()->create([

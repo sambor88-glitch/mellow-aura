@@ -23,7 +23,7 @@ class ShopPageTest extends TestCase
     public function test_the_shop_lists_published_products_that_are_on_the_shelf(): void
     {
         $mugs = Category::factory()->create(['name' => 'Kubki i filiżanki', 'slug' => 'kubki-i-filizanki']);
-        $this->product('Kubki malowane ręcznie', $mugs, [6900, 7900]);
+        $painted = $this->product('Kubki malowane ręcznie', $mugs, [6900, 7900]);
         $this->product('Voucher kwotowy', $mugs, [15000], stock: null);
         $this->product('Szkic miski', $mugs, [8900], ['is_published' => false]);
         $this->product('Wazon sprzedany', $mugs, [29900], stock: 0);
@@ -33,6 +33,7 @@ class ShopPageTest extends TestCase
             ->assertSee('<title>Sklep — ceramika i rękodzieło handmade | MellowAura</title>', false)
             ->assertSee('<link rel="canonical" href="'.url('/sklep').'">', false)
             ->assertSee('Kubki malowane ręcznie')
+            ->assertSee('href="'.route('product.show', $painted).'"', false)
             ->assertSee('od 69,00 zł')
             ->assertSee('2 warianty')
             ->assertSee('Voucher kwotowy')

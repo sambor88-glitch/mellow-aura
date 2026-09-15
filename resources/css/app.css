@@ -38,6 +38,11 @@
     --color-line-dark: #55483C;
     --color-divider-dark: #453A30;
 
+    /* Low-stock notice from the prototype. Not in the skill palette yet. */
+    --color-alert: #F7ECE9;
+    --color-alert-line: #E0C3BC;
+    --color-alert-text: #7A3A2E;
+
     /* Accents */
     --color-brown: #855F3D;
     --color-navy: #24417E;
@@ -86,6 +91,10 @@
 
     button {
         cursor: pointer;
+    }
+
+    [x-cloak] {
+        display: none !important;
     }
 
     ::selection {
