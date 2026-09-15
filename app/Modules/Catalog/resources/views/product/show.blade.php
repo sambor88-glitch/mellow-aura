@@ -46,14 +46,14 @@
 
                     {{-- Esc, a click anywhere or the × closes the zoom, and focus goes back to the photo. --}}
                     <dialog x-ref="zoom" x-on:click="$el.close()" x-on:keydown.escape="$el.close()" x-on:close="$refs.zoomTrigger.focus()" aria-label="Powiększone zdjęcie"
-                            class="fixed inset-0 size-full max-h-none max-w-none animate-ma-in cursor-zoom-out items-center justify-center bg-scrim/88 p-7 open:flex backdrop:bg-transparent">
+                            class="focus-on-dark fixed inset-0 size-full max-h-none max-w-none animate-ma-in cursor-zoom-out items-center justify-center bg-scrim/88 p-7 open:flex backdrop:bg-transparent">
                         @foreach ($images as $index => $image)
                             <img src="{{ $image->getUrl() }}" alt="{{ $image->getCustomProperty('alt') ?: $product->name }}" loading="lazy"
                                  x-show="active === {{ $index }}"
                                  class="size-full object-contain">
                         @endforeach
                         <button type="button" aria-label="Zamknij powiększenie"
-                                class="absolute top-5 right-6 px-2.5 py-1.5 text-[30px] leading-none text-divider hover:text-white focus-visible:outline-linen">×</button>
+                                class="absolute top-5 right-6 px-2.5 py-1.5 text-[30px] leading-none text-divider hover:text-white">×</button>
                     </dialog>
                 @endif
                 @if ($images->count() > 1)

@@ -142,10 +142,18 @@
     }
 
     :focus-visible {
-        outline: 2px solid var(--color-navy);
+        outline: 2px solid var(--focus-color, var(--color-navy));
         outline-offset: 2px;
         border-radius: 3px;
     }
+}
+
+/*
+ * Navy focus disappears on ink (1.5:1), so a dark surface such as the footer gives everything inside a linen outline (13.3:1).
+ * Put it on the dark surface itself, never on the parent of a light panel.
+ */
+@utility focus-on-dark {
+    --focus-color: var(--color-linen);
 }
 
 @media (prefers-reduced-motion: reduce) {

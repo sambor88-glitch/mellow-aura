@@ -34,7 +34,7 @@
         'WhatsApp' => $whatsApp,
     ]);
 @endphp
-<footer class="mt-auto bg-ink text-on-dark">
+<footer class="focus-on-dark mt-auto bg-ink text-on-dark">
     <div class="mx-auto flex max-w-[1280px] flex-wrap gap-12 px-7 pt-16 pb-[30px]">
         <div class="min-w-0 flex-[1_1_280px]">
             <div class="mb-3.5 font-serif text-[25px] tracking-[0.16em] text-sand uppercase">mellowaura</div>
