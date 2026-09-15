@@ -1,7 +1,7 @@
 # MellowAura
 
-Sklep i strona pracowni ceramiki Kasi Samborskiej z Krakowa. W repozytorium jest na razie prototyp
-i dokumentacja — kodu aplikacji jeszcze nie ma.
+Sklep i strona pracowni ceramiki Kasi Samborskiej z Krakowa. W repozytorium jest prototyp, dokumentacja
+i szkielet aplikacji Laravel 13 (katalogi `app/`, `config/`, `public/` itd.). Serwer serwuje wyłącznie `public/`.
 
 ## Źródła prawdy
 
@@ -108,4 +108,15 @@ Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
 
 ## Komendy
 
-Do uzupełnienia po założeniu projektu Laravela: serwer lokalny, testy, migracje.
+```bash
+composer install && cp .env.example .env && php artisan key:generate   # pierwsze uruchomienie
+php artisan migrate                                                    # migracje
+php artisan serve                                                      # serwer lokalny, http://localhost:8000
+php artisan test                                                       # testy
+```
+
+## Gałęzie i środowiska
+
+- `dev` → staging na Forge (`*.on-forge.com`), auto-deploy po każdym pushu, `APP_ENV=staging`, `APP_NOINDEX=true`, dostęp za hasłem.
+- `main` → produkcja `mellow-aura.com` (strona produkcyjna powstaje przy starcie), `APP_NOINDEX=false`.
+- Pracujesz na `dev`; do `main` scalasz dopiero przetestowane zmiany.
