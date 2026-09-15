@@ -84,6 +84,10 @@ Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
 - Kwoty jako grosze w liczbach całkowitych albo `decimal(10,2)` — nigdy float.
 - Pozycja zamówienia kopiuje cenę, napis i kolor z konfiguratora, a nie tylko klucze obce.
 - `custom_text` (napis na kubku): limit długości po stronie serwera i escapowanie przy każdym wyświetleniu.
+- Przy cenie przekreślonej pokazuj najniższą cenę z 30 dni przed obniżką, liczoną z `price_history`.
+- Staging za hasłem i z `X-Robots-Tag: noindex`. Tytuł do 60 znaków, opis do 155, ucinany na granicy słowa.
+  Przejścia między stronami to linki `<a href>`, nie `onClick`.
+- Bez `AggregateRating` dla samej MellowAury — Google nie pokazuje gwiazdek za opinie o własnej firmie.
 
 ## Repozytorium
 
