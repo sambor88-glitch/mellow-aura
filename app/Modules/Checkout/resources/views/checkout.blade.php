@@ -127,7 +127,7 @@
                                 @endif
                                 <div class="min-w-0 flex-1">
                                     <div class="text-[14px] leading-[1.3]">{{ $line->variant->product->name }}</div>
-                                    <div class="mt-0.5 text-[12px] [overflow-wrap:anywhere] text-label">{{ $line->customText !== null ? '„'.$line->customText.'”' : $line->variant->label }} &middot; {{ $line->quantity }} szt.</div>
+                                    <div class="mt-0.5 text-[12px] [overflow-wrap:anywhere] text-label">{{ collect([$line->customText !== null ? '„'.$line->customText.'”' : $line->variant->label, $line->quantity.' szt.'])->filter()->join(' · ') }}</div>
                                 </div>
                                 <div class="text-[13.5px] whitespace-nowrap">{{ Money::format($line->total()) }}</div>
                             </div>

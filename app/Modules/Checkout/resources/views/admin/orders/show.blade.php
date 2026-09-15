@@ -16,7 +16,7 @@
                         <div class="flex flex-wrap justify-between gap-3">
                             <div class="min-w-0">
                                 <div class="text-[15px]">{{ $item->product_name }}</div>
-                                <div class="mt-0.5 text-[13px] text-label">{{ $item->variant_label }} &middot; {{ $item->quantity }} szt. &middot; {{ Money::format($item->unit_price_gross) }} za sztukę</div>
+                                <div class="mt-0.5 text-[13px] text-label">{{ collect([$item->variant_label, $item->quantity.' szt.', Money::format($item->unit_price_gross).' za sztukę'])->filter()->join(' · ') }}</div>
                             </div>
                             <div class="font-serif text-[18px] tabular-nums">{{ Money::format($item->total()) }}</div>
                         </div>

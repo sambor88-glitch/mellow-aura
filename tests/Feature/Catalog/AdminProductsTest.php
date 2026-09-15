@@ -1,0 +1,199 @@
+<?php
+
+namespace Tests\Feature\Catalog;
+
+use App\Models\User;
+use App\Modules\Catalog\Enums\CategoryGroup;
+use App\Modules\Catalog\Models\Category;
+use App\Modules\Catalog\Models\PriceHistory;
+use App\Modules\Catalog\Models\Product;
+use App\Modules\Catalog\Models\ProductVariant;
+use App\Modules\Settings\Models\Setting;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class AdminProductsTest extends TestCase
+{
+    use RefreshDatabase;
+
+    private Category $mugs;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->withoutVite();
+        $this->mugs = Category::factory()->create(['name' => 'Kubki i filiżanki', 'slug' => 'kubki-i-filizanki', 'group' => CategoryGroup::Ceramics]);
+    }
+
+    public function test_guests_are_sent_to_the_login(): void
+    {
+        $this->get('/panel/produkty')->assertRedirect('/panel/logowanie');
+        $this->post('/panel/produkty')->assertRedirect('/panel/logowanie');
+    }
+
+    public function test_the_list_shows_every_product_with_its_state(): void
+    {
+        $this->product('Wazony', 1, [23900, 29900]);
+        $this->product('Szkic miski', 2, [8900], ['is_published' => false]);
+
+        $this->actingAs(User::factory()->create())
+            ->get('/panel/produkty')
+            ->assertOk()
+            ->assertSee('Dodaj produkt')
+            ->assertSeeInOrder(['Wszystko, co masz w ofercie', 'Wazony', 'widoczny w sklepie', 'od 239,00 zł', 'Szkic miski', 'ukryty w sklepie', '89,00 zł']);
+    }
+
+    public function test_adding_a_product_publishes_it_with_sizes_prices_and_details(): void
+    {
+        $this->product('Wazony', 1, [23900]);
+
+        $this->actingAs(User::factory()->create())
+            ->post('/panel/produkty', [
+                'form' => 'nowy-produkt',
+                'name' => 'Miska z odciskiem paproci',
+                'category_id' => $this->mugs->id,
+                'description' => 'Miska z gliny z odciskiem liścia.',
+                'care_note' => 'Zmywarka tak',
+                'dimensions' => ['diameter_cm' => '12,5', 'height_cm' => ''],
+                'occasions' => ['birthday'],
+                'recipients' => ['for_her'],
+                'is_published' => '1',
+                'variants' => [
+                    ['label' => 'Mała 12 cm', 'price' => '89', 'stock' => '2'],
+                    ['label' => 'Duża 18 cm', 'price' => '129,9', 'stock' => ''],
+                    ['label' => '', 'price' => '', 'stock' => ''],
+                ],
+            ])
+            ->assertRedirect('/panel/produkty')
+            ->assertSessionHas('panel_status', 'Miska z odciskiem paproci — opublikowane w sklepie');
+
+        $bowl = Product::where('slug', 'miska-z-odciskiem-paproci')->firstOrFail();
+        $this->assertSame(['diameter_cm' => '12,5'], $bowl->dimensions);
+        $this->assertSame([['birthday'], ['for_her']], [$bowl->occasions, $bowl->recipients]);
+        $this->assertTrue($bowl->is_published);
+        $this->assertSame(
+            [['Mała 12 cm', 8900, 2], ['Duża 18 cm', 12990, null]],
+            $bowl->variants()->orderBy('id')->get()->map(fn (ProductVariant $variant) => [$variant->label, $variant->price_gross, $variant->stock])->all(),
+        );
+        $this->assertSame(3, PriceHistory::count());
+
+        $this->get('/sklep')->assertSeeInOrder(['Miska z odciskiem paproci', 'Wazony']);
+    }
+
+    public function test_editing_records_a_new_price_and_removes_ticked_sizes(): void
+    {
+        $mug = $this->product('Kubki malowane', 1, [7900, 9900]);
+        [$small, $large] = $mug->variants()->orderBy('id')->get()->all();
+
+        $this->actingAs(User::factory()->create())
+            ->put('/panel/produkty/'.$mug->id, [
+                'form' => 'produkt-'.$mug->id,
+                'name' => 'Kubki malowane ręcznie',
+                'category_id' => $this->mugs->id,
+                'is_published' => '1',
+                'variants' => [
+                    ['id' => $small->id, 'label' => 'Mały 200 ml', 'price' => '84,50', 'stock' => '1'],
+                    ['id' => $large->id, 'label' => 'Duży', 'price' => '99', 'stock' => '', 'remove' => '1'],
+                    ['label' => 'Średni 300 ml', 'price' => '89', 'stock' => ''],
+                ],
+            ])
+            ->assertRedirect('/panel/produkty#produkt-'.$mug->id);
+
+        $mug->refresh();
+        $this->assertSame(['Kubki malowane ręcznie', 'kubki-malowane'], [$mug->name, $mug->slug]);
+        $this->assertSame(
+            [['Mały 200 ml', 8450, 1], ['Średni 300 ml', 8900, null]],
+            $mug->variants()->orderBy('id')->get()->map(fn (ProductVariant $variant) => [$variant->label, $variant->price_gross, $variant->stock])->all(),
+        );
+        $this->assertSame([7900, 8450], $small->priceHistory()->orderBy('id')->pluck('price_gross')->all());
+        $this->assertNull(ProductVariant::find($large->id));
+    }
+
+    public function test_one_price_needs_no_size_name_and_mistakes_come_back_to_their_product(): void
+    {
+        $mug = $this->product('Kubki malowane', 1, [7900]);
+        $owner = User::factory()->create();
+
+        $this->actingAs($owner)
+            ->post('/panel/produkty', [
+                'form' => 'nowy-produkt',
+                'name' => 'Kadzielnica',
+                'category_id' => $this->mugs->id,
+                'is_published' => '1',
+                'variants' => [['label' => '', 'price' => '59', 'stock' => '1']],
+            ])
+            ->assertRedirect('/panel/produkty');
+        $this->assertSame('', Product::where('slug', 'kadzielnica')->firstOrFail()->variants()->value('label'));
+
+        $this->actingAs($owner)
+            ->put('/panel/produkty/'.$mug->id, [
+                'form' => 'produkt-'.$mug->id,
+                'name' => 'Kubki',
+                'category_id' => $this->mugs->id,
+                'variants' => [
+                    ['label' => '', 'price' => '79', 'stock' => ''],
+                    ['label' => 'Duży', 'price' => '79 zł', 'stock' => ''],
+                ],
+            ])
+            ->assertRedirect('/panel/produkty#produkt-'.$mug->id)
+            ->assertSessionHasErrorsIn('produkt-'.$mug->id, [
+                'variants.0.label' => 'Nazwij każdy rozmiar — np. Mały 12 cm',
+                'variants.1.price' => 'Wpisz cenę, np. 79 albo 79,90',
+            ]);
+
+        $this->assertSame('Kubki malowane', $mug->fresh()->name);
+    }
+
+    public function test_arrows_set_the_order_and_hiding_takes_a_product_off_the_shop(): void
+    {
+        $vases = $this->product('Wazony', 1, [23900]);
+        $this->product('Patery', 2, [32900]);
+        $plates = $this->product('Talerze', 3, [8900]);
+        $owner = User::factory()->create();
+
+        $this->actingAs($owner)->post('/panel/produkty/'.$plates->id.'/przesun', ['kierunek' => 'wyzej'])->assertRedirect();
+        $this->get('/sklep')->assertSeeInOrder(['Wazony', 'Talerze', 'Patery']);
+
+        $this->actingAs($owner)
+            ->post('/panel/produkty/'.$vases->id.'/widocznosc')
+            ->assertSessionHas('panel_status', 'Wazony — ukryte w sklepie');
+        $this->get('/sklep')->assertDontSee('Wazony');
+    }
+
+    public function test_the_home_page_hero_is_chosen_here(): void
+    {
+        $this->product('Wazony', 1, [23900]);
+        $this->product('Patery', 2, [32900]);
+
+        $this->actingAs(User::factory()->create())
+            ->put('/panel/produkty/strona-glowna', ['home_hero_product' => 'patery', 'home_hero_badge' => 'ostatnie sztuki'])
+            ->assertRedirect('/panel/produkty');
+
+        $this->assertSame('patery', Setting::find('home_hero_product')->value);
+        $this->get('/')->assertOk()->assertSee('ostatnie sztuki');
+    }
+
+    /**
+     * @param  list<int>  $prices
+     * @param  array<string, mixed>  $attributes
+     */
+    private function product(string $name, int $sortOrder, array $prices, array $attributes = []): Product
+    {
+        $product = Product::factory()->create([
+            'name' => $name,
+            'slug' => str($name)->slug()->toString(),
+            'category_id' => $this->mugs->id,
+            'sort_order' => $sortOrder,
+            'description' => null,
+            'is_published' => true,
+            ...$attributes,
+        ]);
+
+        foreach ($prices as $price) {
+            ProductVariant::factory()->create(['product_id' => $product->id, 'price_gross' => $price, 'stock' => 2]);
+        }
+
+        return $product;
+    }
+}

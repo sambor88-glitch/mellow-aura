@@ -25,7 +25,7 @@ class ProductStructuredData
 
         $variants = $product->variants->map(function (ProductVariant $variant) use ($product, $url, $images, $brand) {
             $item = Schema::product()
-                ->name($product->name.' — '.$variant->label)
+                ->name($variant->label === '' ? $product->name : $product->name.' — '.$variant->label)
                 ->sku($product->slug.'-'.$variant->id)
                 ->brand($brand)
                 ->offers(Schema::offer()

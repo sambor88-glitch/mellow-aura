@@ -21,4 +21,12 @@ class Settings
 
         return $value === null || $value === '' || $value === [] ? $default : $value;
     }
+
+    /**
+     * Forgets the values read so far, so a setting saved a moment ago shows up.
+     */
+    public function refresh(): void
+    {
+        $this->values = null;
+    }
 }

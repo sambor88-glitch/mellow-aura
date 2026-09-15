@@ -1,9 +1,12 @@
-@props(['name', 'label', 'type' => 'text', 'hint' => null])
-@php($error = $errors->first($name))
+@props(['name', 'label', 'type' => 'text', 'hint' => null, 'value' => null, 'bag' => 'default', 'id' => null])
+@php
+    $id ??= $name;
+    $error = $errors->getBag($bag)->first($name);
+@endphp
 <div {{ $attributes->only('class')->merge(['class' => 'min-w-0']) }}>
-    <label for="{{ $name }}" class="mb-1.5 block text-[13.5px] text-graphite">{{ $label }}</label>
-    <input id="{{ $name }}" name="{{ $name }}" type="{{ $type }}" value="{{ old($name) }}"
-           @if ($error || $hint) aria-describedby="{{ $name }}-note" @endif
+    <label for="{{ $id }}" class="mb-1.5 block text-[13.5px] text-graphite">{{ $label }}</label>
+    <input id="{{ $id }}" name="{{ $name }}" type="{{ $type }}" value="{{ $value ?? old($name) }}"
+           @if ($error || $hint) aria-describedby="{{ $id }}-note" @endif
            @if ($error) aria-invalid="true" @endif
            {{ $attributes->except('class') }}
            @class([
@@ -12,8 +15,8 @@
                'border-line' => ! $error,
            ])>
     @if ($error)
-        <p id="{{ $name }}-note" class="mt-1.5 text-[13px] text-error">{{ $error }}</p>
+        <p id="{{ $id }}-note" class="mt-1.5 text-[13px] text-error">{{ $error }}</p>
     @elseif ($hint)
-        <p id="{{ $name }}-note" class="mt-1.5 text-[12.5px] text-hint">{{ $hint }}</p>
+        <p id="{{ $id }}-note" class="mt-1.5 text-[12.5px] text-hint">{{ $hint }}</p>
     @endif
 </div>

@@ -56,5 +56,10 @@
             </main>
         </div>
     </div>
+
+    @if (session('panel_status'))
+        <div role="status" x-data x-init="setTimeout(() => $el.remove(), 2600)"
+             class="fixed bottom-[26px] left-1/2 z-120 w-max max-w-[calc(100%-32px)] -translate-x-1/2 animate-ma-up-quick rounded-full bg-ink px-6 py-3.5 text-center text-[14px] text-sand shadow-pill">{{ session('panel_status') }}</div>
+    @endif
 </body>
 </html>

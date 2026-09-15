@@ -46,7 +46,7 @@
                     </div>
                     <div class="min-w-0 flex-[1_1_200px]">
                         <div class="text-[14.5px] text-ink">{{ $order->name }}</div>
-                        <div class="mt-0.5 text-[12.5px] text-label">{{ $order->items->map(fn ($item) => $item->product_name.' ('.$item->variant_label.') × '.$item->quantity)->join(', ') }}</div>
+                        <div class="mt-0.5 text-[12.5px] text-label">{{ $order->items->map(fn ($item) => $item->product_name.($item->variant_label === '' ? '' : ' ('.$item->variant_label.')').' × '.$item->quantity)->join(', ') }}</div>
                     </div>
                     <div class="flex-none font-serif text-[19px] tabular-nums">{{ Money::format($order->total_gross) }}</div>
                     <span class="flex-none rounded-full px-3 py-[5px] text-[11.5px] {{ $chipClass }}">{{ $chip }}</span>
