@@ -50,7 +50,8 @@
           Konfigurator kubka<br />
           Prezenty i zestawy<br />
           Panel: produkty, stany, ceny<br />
-          Strony treściowe: o mnie, pracownia, FAQ, kontakt
+          Strony treściowe: o mnie, pracownia, FAQ, kontakt<br />
+          Warsztaty i wypał: strony z cennikiem i telefonem
         </div>
         <div style="font-size: 9pt; line-height: 1.55; color: #41563A; margin-top: 4mm">To jest sklep, który sprzedaje prezenty. Zamyka pętlę: ktoś wchodzi, wybiera, płaci, dostaje paczkę.</div>
       </div>
@@ -60,7 +61,7 @@
           Zapisy na warsztaty z terminarzem<br />
           Usługi na zamówienie<br />
           Dziennik i wydarzenia<br />
-          B2B i wypały<br />
+          B2B i zgłoszenia do wypału<br />
           Panel: reszta zakładek
         </div>
         <div style="font-size: 9pt; line-height: 1.55; color: #6B5D4F; margin-top: 4mm">Do grudnia wystarczą statyczne strony z formularzem i telefonem. Warsztaty i tak rezerwuje się dziś przez WhatsApp — to działa.</div>
@@ -140,11 +141,12 @@
 
     <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">4. Baza danych — pierwsza fala</h2>
 
-    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm">Osiem tabel wystarczy do świąt. Cały kod po angielsku — nazwy tabel, pól i zapisane wartości; po polsku tylko to, co czytają ludzie. Sesja i cache siedzą w plikach, więc tabel <em style="font-style: italic">sessions</em> i <em style="font-style: italic">cache</em> nie zakładaj.</p>
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm">Dziewięć tabel wystarczy do świąt. Cały kod po angielsku — nazwy tabel, pól i zapisane wartości; po polsku tylko to, co czytają ludzie. Sesja i cache siedzą w plikach, więc tabel <em style="font-style: italic">sessions</em> i <em style="font-style: italic">cache</em> nie zakładaj.</p>
 
     <div style="background: #FCF9F4; border: 0.3mm solid #E2D7C7; border-radius: 1.5mm; padding: 6mm 7mm; font-size: 9.5pt; line-height: 1.7; margin-bottom: 4mm">
       <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">products</strong> — id, slug, name, category (ceramics / crafts / workshops), description, dimensions (JSON, wszystkie wymiary opcjonalne), care_note, is_published, is_one_off, sort_order, stamp_enabled, occasions (JSON: for_her, anniversary, birthday…)</div>
       <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">product_variants</strong> — id, product_id, label („Mała 12 cm"), price_gross, compare_at_price (przekreślona cena), stock. <em style="font-style: italic">Stan trzymaj na wariancie, nie na produkcie</em> — unikat to wariant ze stanem 1.</div>
+      <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">price_history</strong> — id, product_variant_id, price_gross, valid_from. Każda zmiana ceny to nowy wiersz. Przy cenie przekreślonej sklep musi pokazać najniższą cenę z 30 dni przed obniżką — bez tej tabeli nie ma jej skąd wziąć.</div>
       <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">media</strong> — obsługuje Spatie, nie pisz sam</div>
       <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">orders</strong> — id, number (MA-2026-1047), status, email, phone, name, shipping_method, shipping_address (JSON), locker_code, total_gross, payment_status, payment_provider_id, note, invoice_nip</div>
       <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">order_items</strong> — id, order_id, product_variant_id, quantity, unit_price_gross, <strong style="font-weight: 500">custom_text</strong>, <strong style="font-weight: 500">custom_glaze</strong>. Dwa ostatnie pola to napis i kolor z konfiguratora — kopiuj wartości, nie tylko klucze obce, bo cena i nazwa mogą się później zmienić.</div>
@@ -157,11 +159,11 @@
     <div style="font-size: 10pt; line-height: 1.6">
       <div style="display: flex; gap: 5mm; padding: 4mm 0; border-bottom: 0.25mm solid #EDE4D8">
         <div style="flex: 0 0 26mm"><strong style="font-weight: 500">Tydzień 1</strong><br /><span style="font-size: 9pt; color: #726456">15–21.09</span></div>
-        <div style="flex: 1">Wnioski o Przelewy24 i InPost — <strong style="font-weight: 500">pierwszego dnia</strong>. Nowa strona na Forge, repozytorium, staging na subdomenie, Laravel 13 na PHP 8.4, migracje ośmiu tabel, seeder z 17 produktami przepisanymi z prototypu. Na koniec tygodnia w bazie siedzi prawdziwa oferta.</div>
+        <div style="flex: 1">Wnioski o Przelewy24 i InPost — <strong style="font-weight: 500">pierwszego dnia</strong>. Nowa strona na Forge, repozytorium, staging na subdomenie za hasłem i z nagłówkiem <code>X-Robots-Tag: noindex</code>, Laravel 13 na PHP 8.4, migracje dziewięciu tabel, seeder z 17 produktami przepisanymi z prototypu. Na koniec tygodnia w bazie siedzi prawdziwa oferta.</div>
       </div>
       <div style="display: flex; gap: 5mm; padding: 4mm 0; border-bottom: 0.25mm solid #EDE4D8">
         <div style="flex: 0 0 26mm"><strong style="font-weight: 500">Tydzień 2</strong><br /><span style="font-size: 9pt; color: #726456">22–28.09</span></div>
-        <div style="flex: 1">Szablon strony, nagłówek, stopka, strona główna, sklep z filtrami i szukaniem, karta produktu. Przenoś styl z prototypu dosłownie — nie poprawiaj. Na koniec: da się przejść od strony głównej do karty produktu.</div>
+        <div style="flex: 1">Szablon strony, nagłówek, stopka, strona główna, sklep z filtrami i szukaniem, karta produktu. Od razu komponent SEO w szablonie: tytuł, opis, canonical i JSON-LD składane z danych, a nie dopisywane na końcu. Search Console i Bing Webmaster Tools dla domeny. Przenoś styl z prototypu dosłownie — nie poprawiaj. Na koniec: da się przejść od strony głównej do karty produktu.</div>
       </div>
       <div style="display: flex; gap: 5mm; padding: 4mm 0; border-bottom: 0.25mm solid #EDE4D8">
         <div style="flex: 0 0 26mm"><strong style="font-weight: 500">Tydzień 3</strong><br /><span style="font-size: 9pt; color: #726456">29.09–5.10</span></div>
@@ -181,7 +183,7 @@
       </div>
       <div style="display: flex; gap: 5mm; padding: 4mm 0; border-bottom: 0.25mm solid #EDE4D8">
         <div style="flex: 0 0 26mm"><strong style="font-weight: 500">Tydzień 7</strong><br /><span style="font-size: 9pt; color: #726456">27.10–2.11</span></div>
-        <div style="flex: 1">Strony treściowe, FAQ, kontakt. Widget paczkomatu InPost. Wszystkie tytuły, opisy i dane strukturalne ze specyfikacji. Mapa strony, <code>robots.txt</code>, Search Console. Certyfikat unikatu do druku.</div>
+        <div style="flex: 1">Strony treściowe, warsztaty i wypał z cennikiem, FAQ, kontakt. Widget paczkomatu InPost. Tytuły, opisy i dane strukturalne dla wszystkich stron ze specyfikacji. Mapa strony, <code>robots.txt</code>, przekierowania starych adresów, jeśli są w indeksie. Certyfikat unikatu do druku.</div>
       </div>
       <div style="display: flex; gap: 5mm; padding: 4mm 0">
         <div style="flex: 0 0 26mm"><strong style="font-weight: 500">Tydzień 8</strong><br /><span style="font-size: 9pt; color: #726456">3–9.11</span></div>
@@ -189,13 +191,14 @@
       </div>
     </div>
 
-    <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">6. Cztery miejsca, w których łatwo się przewrócić</h2>
+    <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">6. Pięć miejsc, w których łatwo się przewrócić</h2>
 
     <div style="font-size: 10pt; line-height: 1.62">
       <p style="margin: 0 0 3.5mm"><strong style="font-weight: 500">Stan zdejmowany w złym momencie.</strong> Jeśli odejmiesz sztukę przy kliknięciu „Płacę", porzucone koszyki wyzerują półkę. Odejmuj dopiero w webhooku potwierdzającym płatność, w transakcji z <code>lockForUpdate</code>. Przy unikatach po jednej sztuce dwie osoby naprawdę kupią to samo w tej samej minucie — w grudniu to pewne.</p>
       <p style="margin: 0 0 3.5mm"><strong style="font-weight: 500">Webhook bez weryfikacji podpisu.</strong> Przelewy24 przysyła powiadomienie o płatności na publiczny adres. Bez sprawdzenia podpisu ktoś może je podrobić i dostać paczkę za darmo. Weryfikuj i loguj każde wywołanie.</p>
       <p style="margin: 0 0 3.5mm"><strong style="font-weight: 500">Ceny w groszach albo w setnych.</strong> Trzymaj kwoty jako liczby całkowite w groszach (<code>unsignedInteger</code>) albo <code>decimal(10,2)</code>. Nigdy <code>float</code> — przy rabatach zestawów zaczną wychodzić grosze różnicy i nie da się tego pogodzić z księgowością.</p>
-      <p style="margin: 0"><strong style="font-weight: 500">Napis klienta bez oczyszczenia.</strong> <code>custom_text</code> idzie na kubek, ale też do maila i na kartę produkcyjną. Ogranicz długość po stronie serwera, nie tylko w przeglądarce, i oczyszczaj przy wyświetlaniu. To jedyne pole, w którym obcy człowiek pisze dowolny tekst.</p>
+      <p style="margin: 0 0 3.5mm"><strong style="font-weight: 500">Napis klienta bez oczyszczenia.</strong> <code>custom_text</code> idzie na kubek, ale też do maila i na kartę produkcyjną. Ogranicz długość po stronie serwera, nie tylko w przeglądarce, i oczyszczaj przy wyświetlaniu. To jedyne pole, w którym obcy człowiek pisze dowolny tekst.</p>
+      <p style="margin: 0"><strong style="font-weight: 500">Obniżka bez najniższej ceny z 30 dni.</strong> Prototyp przekreśla ceny przy czterech produktach. Przy każdej obniżce, także w Black Friday, obok nowej ceny musi stać najniższa cena z 30 dni przed obniżką — UOKiK karze za jej brak. Sklep liczy ją z tabeli <code>price_history</code>.</p>
     </div>
 
     <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">7. Czego potrzebujesz od Kasi, żeby zacząć</h2>
@@ -207,7 +210,7 @@
       <strong style="font-weight: 500">Zdjęcia biżuterii, misek, kosmetyczek i piórników</strong> — leżą w panelu jako szkice bez zdjęć<br />
       <strong style="font-weight: 500">Potwierdzone ceny</strong> warsztatów, wypałów i obu usług na zamówienie<br />
       <strong style="font-weight: 500">Trzy, cztery opinie</strong> uczestniczek z imieniem i miesiącem<br />
-      <strong style="font-weight: 500">Decyzja o adresie pracowni</strong> — dokładny adres czy tylko dzielnica<br />
+      <strong style="font-weight: 500">Decyzja o adresie pracowni</strong> — dokładny adres czy tylko dzielnica, przed założeniem Profilu Firmy, bo od niej zależy jego rodzaj<br />
       <strong style="font-weight: 500">Dane do faktur</strong> i konto firmowe do Przelewy24<br />
       <strong style="font-weight: 500">Realne czasy realizacji</strong> — ile trwa kubek z napisem, ile talerz z odciskiem
     </div>
