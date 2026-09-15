@@ -8,7 +8,7 @@
     $variantsLabel = in_array($variants % 10, [2, 3, 4], true) && ! in_array($variants % 100, [12, 13, 14], true) ? 'warianty' : 'wariantów';
 @endphp
 <div class="animate-ma-up" style="animation-delay: {{ $delay }}s">
-    <div class="relative mb-3.5 overflow-hidden rounded-[6px] bg-line-soft transition-[box-shadow,transform] duration-500 ease-clay hover:-translate-y-1 hover:shadow-[0_26px_50px_-30px_rgba(47,38,32,.5)]">
+    <div class="relative mb-3.5 overflow-hidden rounded-[6px] bg-line-soft transition-[box-shadow,transform] duration-500 ease-clay hover:-translate-y-1 hover:shadow-card-hover">
         @if ($image)
             <img src="{{ $image->getUrl() }}" alt="{{ $image->getCustomProperty('alt') ?: $product->name }}" @unless ($eager) loading="lazy" @endunless class="block aspect-[4/5] w-full object-cover">
         @else

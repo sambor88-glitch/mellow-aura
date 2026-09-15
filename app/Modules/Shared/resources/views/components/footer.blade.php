@@ -34,17 +34,17 @@
         'WhatsApp' => $whatsApp,
     ]);
 @endphp
-<footer class="mt-auto bg-ink text-[#D8CDBD]">
+<footer class="mt-auto bg-ink text-on-dark">
     <div class="mx-auto flex max-w-[1280px] flex-wrap gap-12 px-7 pt-16 pb-[30px]">
         <div class="min-w-0 flex-[1_1_280px]">
             <div class="mb-3.5 font-serif text-[25px] tracking-[0.16em] text-sand uppercase">mellowaura</div>
             @if ($tagline)
-                <p lang="en" class="mb-5 max-w-[34ch] text-[14.5px] leading-[1.7] text-[#B8AB99]">{{ $tagline }}</p>
+                <p lang="en" class="mb-5 max-w-[34ch] text-[14.5px] leading-[1.7] text-on-dark-muted">{{ $tagline }}</p>
             @endif
             @if ($social)
                 <div class="flex flex-wrap gap-3">
                     @foreach ($social as $label => $href)
-                        <a href="{{ $href }}" target="_blank" rel="noopener" class="rounded-full border border-[#55483C] px-[17px] py-[9px] text-[12.5px] text-sand hover:border-rose hover:text-rose">{{ $label }}</a>
+                        <a href="{{ $href }}" target="_blank" rel="noopener" class="rounded-full border border-line-dark px-[17px] py-[9px] text-[12.5px] text-sand hover:border-rose hover:text-rose">{{ $label }}</a>
                     @endforeach
                 </div>
             @endif
@@ -55,7 +55,7 @@
                 <div class="mb-4 text-[10.5px] tracking-[0.24em] text-label-dark uppercase">Sklep</div>
                 <div class="flex flex-col gap-[11px] text-[14.5px]">
                     @foreach ($shopLinks as [$label, $href])
-                        <a href="{{ $href }}" class="text-[#D8CDBD] hover:text-rose">{{ $label }}</a>
+                        <a href="{{ $href }}" class="text-on-dark hover:text-rose">{{ $label }}</a>
                     @endforeach
                 </div>
             </div>
@@ -66,7 +66,7 @@
                 <div class="mb-4 text-[10.5px] tracking-[0.24em] text-label-dark uppercase">Pracownia</div>
                 <div class="flex flex-col gap-[11px] text-[14.5px]">
                     @foreach ($studioLinks as [$label, $href])
-                        <a href="{{ $href }}" class="text-[#D8CDBD] hover:text-rose">{{ $label }}</a>
+                        <a href="{{ $href }}" class="text-on-dark hover:text-rose">{{ $label }}</a>
                     @endforeach
                     @if (Route::has('admin.dashboard'))
                         <a href="{{ route('admin.dashboard') }}" class="text-label-dark hover:text-rose">Mój panel</a>
@@ -77,15 +77,15 @@
 
         <div class="flex-[0_1_200px]">
             <div class="mb-4 text-[10.5px] tracking-[0.24em] text-label-dark uppercase">Kontakt</div>
-            <div class="flex flex-col gap-[11px] text-[14.5px] text-[#B8AB99]">
+            <div class="flex flex-col gap-[11px] text-[14.5px] text-on-dark-muted">
                 @if ($whatsApp)
-                    <a href="{{ $whatsApp }}" target="_blank" rel="noopener" class="text-[#D8CDBD] hover:text-rose">{{ $phone }}</a>
+                    <a href="{{ $whatsApp }}" target="_blank" rel="noopener" class="text-on-dark hover:text-rose">{{ $phone }}</a>
                 @endif
                 @if ($email)
-                    <a href="mailto:{{ $email }}" class="text-[#D8CDBD] [overflow-wrap:anywhere] hover:text-rose">{{ $email }}</a>
+                    <a href="mailto:{{ $email }}" class="text-on-dark [overflow-wrap:anywhere] hover:text-rose">{{ $email }}</a>
                 @endif
                 @if (Route::has('content.contact'))
-                    <a href="{{ route('content.contact') }}" class="text-[#D8CDBD] hover:text-rose">Napisz do mnie</a>
+                    <a href="{{ route('content.contact') }}" class="text-on-dark hover:text-rose">Napisz do mnie</a>
                 @endif
                 @if ($city)
                     <span>{{ $city }}</span>
@@ -95,7 +95,7 @@
         </div>
     </div>
 
-    <div class="mx-auto flex max-w-[1280px] flex-wrap justify-between gap-x-7 gap-y-4 border-t border-[#453A30] px-7 pt-[22px] pb-10 text-[12.5px] text-label-dark">
+    <div class="mx-auto flex max-w-[1280px] flex-wrap justify-between gap-x-7 gap-y-4 border-t border-divider-dark px-7 pt-[22px] pb-10 text-[12.5px] text-label-dark">
         <span>© {{ now()->year }} MellowAura &middot; Katarzyna Samborska</span>
         <div class="flex flex-wrap gap-[22px]">
             @if (Route::has('content.faq'))

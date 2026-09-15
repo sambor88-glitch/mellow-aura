@@ -4,26 +4,41 @@
 @source '../../storage/framework/views/*.php';
 
 /*
- * Palette, type and motion from the mellowaura-design skill, the source of truth for colors.
+ * Palette, type and motion mirror the mellowaura-design skill: change a color there and here at once.
  * Tailwind's default colors are switched off, so no off-brand shade slips in.
  */
 @theme {
     --color-*: initial;
     --color-white: #fff;
+
+    /* Backgrounds */
     --color-ink: #2F2620;
     --color-sand-dark: #EDE4D8;
     --color-sand: #F3EDE4;
     --color-linen: #F7F2EA;
     --color-cream: #FCF9F4;
+
+    /* Text on light backgrounds */
+    --color-graphite: #4A3E33;
     --color-lead: #5C5043;
     --color-muted: #6B5D4F;
     --color-label: #726456;
-    --color-label-dark: #9B8C7C;
     --color-hint: #736454;
+
+    /* Text on ink */
+    --color-on-dark: #D8CDBD;
+    --color-on-dark-muted: #B8AB99;
+    --color-label-dark: #9B8C7C;
+
+    /* Lines */
     --color-line: #DCD0BE;
     --color-divider: #E2D7C7;
     --color-line-strong: #C6B8A5;
     --color-line-soft: #E6DCCD;
+    --color-line-dark: #55483C;
+    --color-divider-dark: #453A30;
+
+    /* Accents */
     --color-brown: #855F3D;
     --color-navy: #24417E;
     --color-rose: #D6A39C;
@@ -34,6 +49,9 @@
 
     --font-sans: 'Instrument Sans', system-ui, sans-serif;
     --font-serif: Newsreader, serif;
+
+    /* The only shadow in the design: a product card on hover. */
+    --shadow-card-hover: 0 26px 50px -30px rgba(47, 38, 32, .5);
 
     --ease-clay: cubic-bezier(.2, .7, .2, 1);
 
