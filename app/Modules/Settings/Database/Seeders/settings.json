@@ -1,0 +1,635 @@
+[
+    {
+        "key": "free_shipping_threshold",
+        "value": 40000
+    },
+    {
+        "key": "shipping_methods",
+        "value": [
+            {
+                "code": "parcel_locker",
+                "label": "InPost Paczkomat",
+                "note": "1–2 dni robocze",
+                "price_gross": 1600
+            },
+            {
+                "code": "courier",
+                "label": "Kurier InPost",
+                "note": "Do rąk, 1 dzień",
+                "price_gross": 2200
+            },
+            {
+                "code": "studio_pickup",
+                "label": "Odbiór w pracowni",
+                "note": "Kraków, po umówieniu",
+                "price_gross": 0
+            }
+        ]
+    },
+    {
+        "key": "gift_wrap_price",
+        "value": 1200
+    },
+    {
+        "key": "workshop_deposit_amount",
+        "value": 8000
+    },
+    {
+        "key": "workshop_deposit_enabled",
+        "value": false
+    },
+    {
+        "key": "contact_phone",
+        "value": null
+    },
+    {
+        "key": "contact_email",
+        "value": null
+    },
+    {
+        "key": "instagram_handle",
+        "value": null
+    },
+    {
+        "key": "facebook_url",
+        "value": null
+    },
+    {
+        "key": "google_business_profile_url",
+        "value": null
+    },
+    {
+        "key": "location_description",
+        "value": "Kraków, okolice Błoń Krakowskich"
+    },
+    {
+        "key": "footer_city",
+        "value": "Kraków, Polska"
+    },
+    {
+        "key": "studio_address",
+        "value": null
+    },
+    {
+        "key": "parcel_locker_code",
+        "value": null
+    },
+    {
+        "key": "home_hero_product",
+        "value": "wazony"
+    },
+    {
+        "key": "home_hero_badge",
+        "value": "nowość"
+    },
+    {
+        "key": "default_payment_method",
+        "value": "blik"
+    },
+    {
+        "key": "home_show_instagram_feed",
+        "value": true
+    },
+    {
+        "key": "studio_hero_image",
+        "value": "zdjecia/zestaw-flatlay.webp"
+    },
+    {
+        "key": "instagram_feed_url",
+        "value": null
+    },
+    {
+        "key": "instagram_feed_refresh",
+        "value": "every_6_hours"
+    },
+    {
+        "key": "instagram_feed_hashtag",
+        "value": null
+    },
+    {
+        "key": "mug_configurator_image",
+        "value": "zdjecia/kubek-cappuccino.webp"
+    },
+    {
+        "key": "mug_text_position",
+        "value": {
+            "x_percent": 70,
+            "y_percent": 74,
+            "size_percent": 62,
+            "rotation_deg": -2
+        }
+    },
+    {
+        "key": "mug_max_chars_per_line",
+        "value": 16
+    },
+    {
+        "key": "mug_max_lines",
+        "value": 3
+    },
+    {
+        "key": "mug_sizes",
+        "value": [
+            {
+                "label": "Mały",
+                "capacity_ml": 200,
+                "price_gross": 6900
+            },
+            {
+                "label": "Średni",
+                "capacity_ml": 300,
+                "price_gross": 7900
+            },
+            {
+                "label": "Duży",
+                "capacity_ml": 400,
+                "price_gross": 9500
+            }
+        ]
+    },
+    {
+        "key": "mug_ink_color",
+        "value": "graphite"
+    },
+    {
+        "key": "mug_ink_colors",
+        "value": [
+            {
+                "code": "graphite",
+                "name": "Grafit",
+                "hex": "#2F2620"
+            },
+            {
+                "code": "brick_red",
+                "name": "Ceglany",
+                "hex": "#A8382B"
+            },
+            {
+                "code": "cobalt",
+                "name": "Kobalt",
+                "hex": "#24417E"
+            },
+            {
+                "code": "bottle_green",
+                "name": "Butelkowa zieleń",
+                "hex": "#24553F"
+            },
+            {
+                "code": "gold_24k",
+                "name": "Złoto 24k",
+                "hex": "#A8813F"
+            },
+            {
+                "code": "white",
+                "name": "Biały",
+                "hex": "#FFFFFF"
+            }
+        ]
+    },
+    {
+        "key": "mug_glazes",
+        "value": [
+            {
+                "code": "turquoise",
+                "name": "Turkus",
+                "hex": "#2E7A85"
+            },
+            {
+                "code": "cobalt",
+                "name": "Kobalt",
+                "hex": "#24417E"
+            },
+            {
+                "code": "brick_red",
+                "name": "Ceglany",
+                "hex": "#A8382B"
+            },
+            {
+                "code": "graphite",
+                "name": "Grafit",
+                "hex": "#2F2620"
+            },
+            {
+                "code": "powder_pink",
+                "name": "Pudrowy róż",
+                "hex": "#D6A39C"
+            }
+        ]
+    },
+    {
+        "key": "stamp_text_max_chars",
+        "value": 22
+    },
+    {
+        "key": "voucher_recipient_name_max_chars",
+        "value": 40
+    },
+    {
+        "key": "voucher_dedication_max_chars",
+        "value": 180
+    },
+    {
+        "key": "voucher_validity_months",
+        "value": 12
+    },
+    {
+        "key": "care_rule_ceramics",
+        "value": "Zmywarka tak, złoto tylko ręcznie"
+    },
+    {
+        "key": "custom_order_form_options",
+        "value": [
+            "Kubek albo kilka kubków z tekstem",
+            "Serwis obiadowy / do kawy",
+            "Prezent okazjonalny (ślub, chrzciny, rocznica)",
+            "Forma dekoracyjna albo rzeźba",
+            "Tekstylia — opaski, scrunchies na zamówienie",
+            "Coś innego, opowiem w wiadomości"
+        ]
+    },
+    {
+        "key": "contact_form_topics",
+        "value": [
+            "Zamówienie ze sklepu",
+            "Warsztaty i terminy",
+            "Zamówienie indywidualne",
+            "Kawiarnia / restauracja",
+            "Wypał moich prac",
+            "Współpraca albo prasa"
+        ]
+    },
+    {
+        "key": "kiln_form_kinds",
+        "value": [
+            "Biskwitowy",
+            "Na ostro",
+            "Złoto",
+            "Nie wiem, doradź"
+        ]
+    },
+    {
+        "key": "gift_budget_ranges",
+        "value": [
+            {
+                "min_gross": 0,
+                "max_gross": 10000
+            },
+            {
+                "min_gross": 10000,
+                "max_gross": 20000
+            },
+            {
+                "min_gross": 20000,
+                "max_gross": 40000
+            },
+            {
+                "min_gross": 40000,
+                "max_gross": null
+            }
+        ]
+    },
+    {
+        "key": "material_tiles",
+        "value": [
+            {
+                "title": "Glina",
+                "text": "Kamionka i szamot piaskowy. Nierówne krawędzie zostawiam, bo tak wygląda ręka."
+            },
+            {
+                "title": "Jedwab",
+                "text": "Z drugiego obiegu i z końcówek bel. Jedna apaszka to jedna opaska."
+            },
+            {
+                "title": "Złoto 24k",
+                "text": "Prawdziwy metal, trzeci wypał. Dlatego złocone rzeczy myje się ręcznie."
+            },
+            {
+                "title": "Rośliny",
+                "text": "Zbierane pod pracownią, odciskane w surowej glinie i wypalane na popiół."
+            },
+            {
+                "title": "Temperatura wypału",
+                "text": null
+            },
+            {
+                "title": "Zmywarka",
+                "text": null
+            },
+            {
+                "title": "Mikrofalówka",
+                "text": null
+            },
+            {
+                "title": "Atest szkliw",
+                "text": null
+            },
+            {
+                "title": "Pakowanie",
+                "text": null
+            }
+        ]
+    },
+    {
+        "key": "faq_items",
+        "value": [
+            {
+                "question": "Jak szybko wyślesz zamówienie?",
+                "answer": "Rzeczy, które są na stanie, pakuję w 3–5 dni roboczych. Ceramika jedzie w papierze, wiórach i podwójnym kartonie — do tej pory nic nie dotarło stłuczone. Zamówienia indywidualne to około 3 tygodnie, bo każda praca przechodzi przez dwa wypały."
+            },
+            {
+                "question": "Czy mogę zapłacić BLIK-iem?",
+                "answer": "Tak, BLIK jest pierwszą opcją w koszyku — wpisujesz sześciocyfrowy kod z aplikacji banku i zamówienie jest opłacone od razu. Poza tym: Przelewy24, karta, Apple Pay, Google Pay i zwykły przelew."
+            },
+            {
+                "question": "Ceramika do zmywarki i mikrofalówki?",
+                "answer": "Szkliwione naczynia bez złota myj spokojnie w zmywarce na krótkim programie. Wszystko ze złotą krawędzią — tylko ręcznie i nigdy w mikrofalówce, bo złoto to prawdziwy metal."
+            },
+            {
+                "question": "Dlaczego mój kubek różni się od zdjęcia?",
+                "answer": "Bo nie jest odlewem. Szkliwo płynie inaczej w każdym wypale, glina inaczej chwyta kolor. Różnica w odcieniu, wielkości do pół centymetra i drobne nierówności to nie wada — to dowód, że to zrobiła ręka."
+            },
+            {
+                "question": "Zwroty i wymiany",
+                "answer": "Masz 14 dni na odesłanie rzeczy kupionej w sklepie, w stanie nienaruszonym. Nie dotyczy to zamówień indywidualnych i kubków z Twoim tekstem, bo powstały tylko dla Ciebie."
+            },
+            {
+                "question": "Wysyłasz za granicę?",
+                "answer": "Tak, do Unii Europejskiej. Napisz przed zamówieniem — policzę wysyłkę dla Twojego kraju i dobiorę opakowanie do dystansu."
+            }
+        ]
+    },
+    {
+        "key": "text_home_kasia_heading",
+        "value": "Lubię łączyć surowość z miękkością, prostotę z symboliką."
+    },
+    {
+        "key": "text_home_kasia_paragraph",
+        "value": "Tworzę MellowAura — kameralną pracownię, w której powstają przedmioty z duszą. To miejsce, gdzie sztuka spotyka się z uważnością, a codzienność nabiera miękkich, zmysłowych kształtów."
+    },
+    {
+        "key": "text_about_paragraph_1",
+        "value": "Tworzę MellowAura – kameralną pracownię, w której powstają przedmioty z duszą. To miejsce, gdzie sztuka spotyka się z uważnością, a codzienność nabiera miękkich, zmysłowych kształtów."
+    },
+    {
+        "key": "text_about_paragraph_2",
+        "value": "Zajmuję się ceramiką i rękodziełem tekstylnym – każda z tych dziedzin daje mi coś innego, ale łączy je to samo: praca w skupieniu, z dbałością o detale, fakturę i jakość materiału. W mojej pracowni powstają ręcznie formowane naczynia, autorskie formy użytkowe, ale także opaski, scrunchie i ozdoby do włosów, szyte z wyselekcjonowanych, naturalnych tkanin – takich jak jedwab, len czy bawełna."
+    },
+    {
+        "key": "text_about_paragraph_3",
+        "value": "Lubię łączyć surowość z miękkością, prostotę z symboliką, dotyk z emocją. MellowAura to zaproszenie do spokoju i piękna – zaklętego w przedmiotach, które towarzyszą nam na co dzień."
+    },
+    {
+        "key": "text_kiln_note",
+        "value": "Wsad zbieram raz w tygodniu, zwykle w czwartek. Prace odbierzesz po 5–7 dniach. Nie przyjmuję gliny nieznanego pochodzenia ani prac grubszych niż 2 cm w ściance."
+    },
+    {
+        "key": "text_contact_lead",
+        "value": "Odpisuję zwykle tego samego dnia, chyba że stoję przy piecu. Wtedy wieczorem."
+    },
+    {
+        "key": "text_footer_tagline",
+        "value": "A little bit of magic. Home studio in Cracow. Ceramic & jewelry. Less waste silk scrunchies."
+    },
+    {
+        "key": "text_mug_heading",
+        "value": "Kubek, który mówi to,\nco myślisz"
+    },
+    {
+        "key": "text_mug_lead",
+        "value": "Wbijam litery stemplem w surową jeszcze glinę — jedna po drugiej, bez nadruku i bez kalkomanii. Napis zostaje w ściance na zawsze, nie zetrze się w zmywarce."
+    },
+    {
+        "key": "text_mug_note",
+        "value": "Podgląd jest orientacyjny — litery wbijam ręcznie, jedna po drugiej, więc linia nigdy nie jest idealnie równa. To właśnie w tym jest najlepsze."
+    },
+    {
+        "key": "text_bundles_heading",
+        "value": "Glina i jedwab\nw jednym pudełku"
+    },
+    {
+        "key": "text_bundles_lead",
+        "value": "Zestawy, których nie znajdziesz w innej pracowni — bo mało kto robi jednocześnie ceramikę i rękodzieło tekstylne. Dobieram odcień szkliwa do tkaniny, nie odwrotnie."
+    },
+    {
+        "key": "text_gift_wrap_heading",
+        "value": "Pakowanie na prezent"
+    },
+    {
+        "key": "text_gift_wrap_lead",
+        "value": "Szare pudełko, wióry, sznurek i ręcznie pisana kartka z Twoim tekstem. Mogę wysłać prosto do obdarowanej osoby — bez paragonu w środku."
+    },
+    {
+        "key": "text_scarf_heading",
+        "value": "Apaszka babci\nnie musi leżeć\nw szafie"
+    },
+    {
+        "key": "text_scarf_lead",
+        "value": "Przyślij mi tkaninę, która coś dla Ciebie znaczy — jedwabną apaszkę po mamie, sukienkę z pierwszej pracy, koszulę, której nie da się już nosić. Uszyję z niej opaskę i scrunchies."
+    },
+    {
+        "key": "text_scarf_lead_2",
+        "value": "Szyję z tkanin z drugiego obiegu od początku — tylko zwykle wybieram je sama. Tu wybierasz Ty, a rzecz zostaje w rodzinie zamiast na strychu."
+    },
+    {
+        "key": "text_scarf_note",
+        "value": "Wysyłka tkaniny do mnie na Twój koszt, odesłanie gotowej rzeczy na mój. Nie przyjmuję tkanin zniszczonych przez mole ani przepalonych żelazkiem — napiszę, jeśli tak będzie, i odeślę bez opłaty."
+    },
+    {
+        "key": "text_imprint_heading",
+        "value": "Kwiat z bukietu\nzostanie w glinie"
+    },
+    {
+        "key": "text_imprint_lead",
+        "value": "Przyślij zasuszoną roślinę — kwiat z bukietu ślubnego, gałązkę z wieńca, listek z pierwszego wspólnego mieszkania. Odciskam ją w surowej glinie i wypalam."
+    },
+    {
+        "key": "text_imprint_lead_2",
+        "value": "Roślina spala się w piecu na popiół, a jej rysunek — każda żyłka i nierówność łodygi — zostaje w ściance na zawsze. Drugiego takiego odcisku nie zrobię nawet ja."
+    },
+    {
+        "key": "text_imprint_note",
+        "value": "Nie gwarantuję, że odcisk wyjdzie z pierwszego podejścia — dlatego proszę o kilka sztuk rośliny. Jeśli żadna się nie odciśnie, oddaję całość wpłaty i mówię wprost, dlaczego."
+    },
+    {
+        "key": "scarf_service_prices",
+        "value": [
+            {
+                "label": "Opaska szeroka, pikowana",
+                "note": "z apaszki 65 × 65 cm zostaje zapas",
+                "price_gross": 11900,
+                "compare_at_price": null
+            },
+            {
+                "label": "Scrunchie, rozmiar do wyboru",
+                "note": "z resztek po opasce wychodzą dwie",
+                "price_gross": 6900,
+                "compare_at_price": null
+            },
+            {
+                "label": "Zestaw: opaska i dwie scrunchies",
+                "note": "wszystko, co da się wykroić z jednej sztuki",
+                "price_gross": 19900,
+                "compare_at_price": 23900
+            }
+        ]
+    },
+    {
+        "key": "imprint_service_prices",
+        "value": [
+            {
+                "label": "Talerzyk deserowy 18 cm",
+                "note": "jedna gałązka albo drobny kwiat",
+                "price_gross": 14900,
+                "compare_at_price": null
+            },
+            {
+                "label": "Talerz obiadowy 24 cm",
+                "note": "miejsce na trzy, cztery rośliny",
+                "price_gross": 18900,
+                "compare_at_price": null
+            },
+            {
+                "label": "Patera 30 cm",
+                "note": "cały bukiet rozłożony na płasko",
+                "price_gross": 27900,
+                "compare_at_price": null
+            },
+            {
+                "label": "Para talerzy na rocznicę",
+                "note": "ten sam bukiet, dwa różne odciski",
+                "price_gross": 32900,
+                "compare_at_price": null
+            }
+        ]
+    },
+    {
+        "key": "kiln_prices",
+        "value": [
+            {
+                "code": "bisque_firing",
+                "label": "Wypał biskwitowy do 1000°C",
+                "note": "liczony od litra zajętego miejsca",
+                "price_gross": 4000,
+                "unit": "litre",
+                "unit_label": "/ l"
+            },
+            {
+                "code": "glaze_firing",
+                "label": "Wypał na ostro do 1240°C",
+                "note": "prace poszkliwione przez Ciebie",
+                "price_gross": 6000,
+                "unit": "litre",
+                "unit_label": "/ l"
+            },
+            {
+                "code": "gold_firing",
+                "label": "Wypał złota, trzeci wypał",
+                "note": "750°C, osobny wsad",
+                "price_gross": 3500,
+                "unit": "piece",
+                "unit_label": "/ szt."
+            },
+            {
+                "code": "private_shelf",
+                "label": "Cała półka na wyłączność",
+                "note": "gdy nie chcesz sąsiadów w piecu",
+                "price_gross": 18000,
+                "unit": null,
+                "unit_label": null
+            },
+            {
+                "code": "glazing_service",
+                "label": "Szkliwienie przeze mnie",
+                "note": "wybierasz kolor z próbnika",
+                "price_gross": 2500,
+                "unit": "piece",
+                "unit_label": "/ szt."
+            }
+        ]
+    },
+    {
+        "key": "workshop_types",
+        "value": [
+            {
+                "code": "hand_building",
+                "name": "Lepienie z ręki",
+                "duration_label": "2,5 godziny",
+                "group_label": "grupa do 6 osób",
+                "price_gross": 22000,
+                "unit": "person",
+                "unit_label": "os.",
+                "summary": "Pierwszy raz w glinie: płat, wałek, szczypanie. Wychodzisz z dwiema swoimi rzeczami.",
+                "includes": [
+                    "Glina i wszystkie narzędzia",
+                    "Dwa wypały",
+                    "Szkliwienie na następnym spotkaniu",
+                    "Herbata i coś słodkiego"
+                ]
+            },
+            {
+                "code": "glazing",
+                "name": "Szkliwienie i malowanie",
+                "duration_label": "2 godziny",
+                "group_label": "grupa do 8 osób",
+                "price_gross": 16000,
+                "unit": "person",
+                "unit_label": "os.",
+                "summary": "Biskwit czeka gotowy — Ty decydujesz o kolorze, warstwie i złocie.",
+                "includes": [
+                    "Gotowe formy do wyboru",
+                    "Szkliwa, angoby, złoto 24k",
+                    "Wypał na ostro",
+                    "Odbiór po 3 tygodniach"
+                ]
+            },
+            {
+                "code": "private_session",
+                "name": "Sesja indywidualna 1:1",
+                "duration_label": "3 godziny",
+                "group_label": "tylko Ty i ja",
+                "price_gross": 42000,
+                "unit": "person",
+                "unit_label": "os.",
+                "summary": "Pracownia na wyłączność i temat, który sama wybierasz — koło, rzeźba, serwis.",
+                "includes": [
+                    "Pracownia tylko dla Ciebie",
+                    "Program ustalany mailem",
+                    "Materiały bez limitu",
+                    "Wszystkie wypały"
+                ]
+            },
+            {
+                "code": "couples",
+                "name": "Warsztat dla pary",
+                "duration_label": "3 godziny",
+                "group_label": "dwie osoby",
+                "price_gross": 39000,
+                "unit": "couple",
+                "unit_label": "para",
+                "summary": "Dwa kubki, cztery dłonie i jeden wieczór bez telefonu. Popularny prezent na rocznicę.",
+                "includes": [
+                    "Dwa stanowiska obok siebie",
+                    "Glina i narzędzia",
+                    "Dwa wypały dla obu osób",
+                    "Wino albo herbata"
+                ]
+            },
+            {
+                "code": "parent_and_child",
+                "name": "Rodzinnie z dzieckiem",
+                "duration_label": "1,5 godziny",
+                "group_label": "od 6 lat",
+                "price_gross": 26000,
+                "unit": "adult_with_child",
+                "unit_label": "dorosły + dziecko",
+                "summary": "Krótko, konkretnie i bez presji — tyle, ile wytrzyma uwaga sześciolatka.",
+                "includes": [
+                    "Stanowisko dla dwojga",
+                    "Miękka glina i stemple",
+                    "Jeden wypał",
+                    "Fartuchy w rozmiarze dziecka"
+                ]
+            }
+        ]
+    }
+]
