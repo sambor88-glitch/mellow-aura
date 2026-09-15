@@ -27,7 +27,7 @@
   </div>
   <div slot="footer" style="display: flex; justify-content: space-between; padding-top: 8px; border-top: 1px solid #E2D7C7; font-size: 8.5pt; color: #726456">
     <span>Katarzyna Samborska &middot; MellowAura, Kraków</span>
-    <span>Wersja 1.0 &middot; wrzesień 2026</span>
+    <span>Wersja 1.1 &middot; wrzesień 2026</span>
   </div>
 
   <h1 style="font-family: Newsreader, serif; font-weight: 300; font-size: 28pt; line-height: 1.1; margin: 0 0 10px">Specyfikacja wdrożenia strony MellowAura</h1>
@@ -39,11 +39,13 @@
     <li style="margin-bottom: 5px">Zalecenie: renderowanie po stronie serwera w Laravelu 13 z szablonami Blade. Wybór stosu i uzasadnienie: <code>Plan wdrozenia - Laravel krok po kroku.dc.html</code>, punkt 3.</li>
     <li style="margin-bottom: 5px">Każda strona: jeden <code>&lt;h1&gt;</code>, hierarchia <code>h2</code>/<code>h3</code> bez przeskoków, <code>lang="pl"</code> na <code>&lt;html&gt;</code>.</li>
     <li style="margin-bottom: 5px"><code>canonical</code> bezwzględny, bez parametrów; wersja z <code>www</code> i bez przekierowana na jedną, 301.</li>
-    <li>Filtry w sklepie (kategoria, sortowanie) i filtry prezentowe: parametry zapytania z <code>canonical</code> na adres bazowy, żeby nie mnożyć duplikatów.</li>
+    <li style="margin-bottom: 5px">Kategorie sklepu jako osobne adresy, <code>/sklep/ceramika</code> i <code>/sklep/rekodzielo</code>, z własnym tytułem i opisem. Sortowanie, budżet i okazja w filtrach to parametry zapytania z <code>canonical</code> na adres bazowy; wyszukiwanie <code>?q=</code> z <code>noindex</code>.</li>
+    <li style="margin-bottom: 5px">Statusy: nieznany adres zwraca prawdziwe 404. Sprzedany unikat zostaje pod swoim adresem z kodem 200 i <code>OutOfStock</code>, usunięty produkt dostaje 301 na kategorię albo 410.</li>
+    <li>Staging za hasłem i z nagłówkiem <code>X-Robots-Tag: noindex</code> od pierwszego dnia — inaczej trafi do indeksu obok właściwej strony.</li>
   </ul>
 
   <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">2. Mapa adresów, tytułów i opisów</h2>
-  <p style="font-size: 10.5pt; line-height: 1.6; color: #6B5D4F; margin: 0 0 14px">Tytuły do 60 znaków, opisy do 155 znaków — wartości poniżej mieszczą się w limitach i są już zaszyte w prototypie. Domena docelowa w przykładach: <code>mellow-aura.com</code>.</p>
+  <p style="font-size: 10.5pt; line-height: 1.6; color: #6B5D4F; margin: 0 0 14px">Tytuły do 60 znaków, opisy do 155 znaków — wartości poniżej mieszczą się w limitach i są już zaszyte w prototypie. W szablonach z nawiasami klamrowymi najpierw odpada sufiks marki, a opis ucina się na granicy słowa. Domena docelowa w przykładach: <code>mellow-aura.com</code>.</p>
   <table style="width: 100%; border-collapse: collapse; font-size: 9pt; line-height: 1.45">
     <thead>
       <tr style="background: #F3EDE4">
@@ -65,8 +67,8 @@
       </tr>
       <tr>
         <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><code>/produkt/{slug}</code></td>
-        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">{Nazwa produktu} — ceramika handmade | MellowAura</td>
-        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Pierwsze 155 znaków opisu produktu z panelu. Slug z nazwy, bez polskich znaków. H1 = nazwa produktu.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">{Nazwa produktu} — ceramika handmade | MellowAura; przy jedwabiu „rękodzieło z jedwabiu”, przy voucherach sama nazwa z marką</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Pole „opis dla Google” z panelu; gdy puste — początek opisu produktu ucięty na granicy słowa do 155 znaków. Slug z nazwy, bez polskich znaków. H1 = nazwa produktu w liczbie pojedynczej i z cechą („Talerz z odciskiem rośliny”, nie „Talerze”).</td>
       </tr>
       <tr style="background: #FCF9F4">
         <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><code>/kubek-z-napisem</code></td>
@@ -82,6 +84,26 @@
         <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><code>/zestawy-prezentowe</code></td>
         <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Zestawy prezentowe — ceramika i jedwab w pudełku</td>
         <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Gotowe zestawy: kubek i scrunchie w jednym kolorze, talerz z filiżanką, kadzielnica z podstawką. Taniej niż osobno, zapakowane na prezent.<br /><em style="color: #726456">H1: Glina i jedwab w jednym pudełku</em></td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><code>/z-twojej-apaszki</code></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Opaska z Twojej apaszki — szyję z Twojej tkaniny</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Przyślij apaszkę babci albo sukienkę, z której wyrosłaś. Uszyję z niej opaskę i scrunchies — rzecz, która zostaje w rodzinie zamiast leżeć w szafie.<br /><em style="color: #726456">H1: Apaszka babci nie musi leżeć w szafie</em></td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><code>/odcisk-twojej-rosliny</code></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Talerz z odciskiem Twojego kwiatu — pamiątka na lata</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Zasuszony kwiat z bukietu ślubnego albo z pożegnania odciskam w glinie i wypalam. Roślina znika w piecu, rysunek zostaje na zawsze.<br /><em style="color: #726456">H1: Kwiat z bukietu zostanie w glinie</em></td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><code>/voucher-na-warsztaty-ceramiczne</code></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Voucher na warsztaty ceramiczne w Krakowie | MellowAura</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Propozycja, opis do napisania: vouchery na lepienie, warsztat dla pary i kwotowy na jednej stronie — PDF od ręki, ważne rok. Dziś link „Vouchery” prowadzi na <code>/sklep</code>.<br /><em style="color: #726456">H1 z frazą, np. „Voucher na warsztaty ceramiczne w Krakowie”</em></td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><code>/sklep/ceramika<br />/sklep/rekodzielo</code></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Do napisania — do 60 znaków, z nazwą kategorii</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Do napisania — krótki wstęp nad listą i opis do 155 znaków. Dziś linki kategorii prowadzą na <code>/sklep</code> z parametrem, który kieruje canonical na adres bazowy.</td>
       </tr>
       <tr>
         <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><code>/warsztaty-ceramiczne-krakow</code></td>
@@ -120,8 +142,8 @@
       </tr>
       <tr style="background: #FCF9F4">
         <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><code>/dziennik/{slug}</code></td>
-        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">{Tytuł notatki} | Dziennik pracowni MellowAura</td>
-        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Pierwsze 155 znaków treści notatki. Wymaga osobnych adresów dla wpisów — dziś prototyp ich nie ma.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">{Tytuł notatki} | Dziennik MellowAura</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Początek treści notatki ucięty na granicy słowa do 155 znaków. Prototyp składa już tytuł, opis i adres z tytułu wpisu. Dopóki wpisy mają po zdaniu–dwa, <code>/dziennik</code> i wpisy z <code>noindex</code>.</td>
       </tr>
       <tr>
         <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><code>/wysylka-i-pielegnacja</code></td>
@@ -147,7 +169,7 @@
   </table>
 
   <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">3. Dane strukturalne (JSON-LD)</h2>
-  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">Implementacja referencyjna znajduje się w metodzie <code>seo()</code> w prototypie. Wymagane typy i miejsca:</p>
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">Metoda <code>seo()</code> w prototypie to szkic — wdrożenie trzyma się tej tabeli. Kolejność wierszy to priorytet; stan wyników Google na wrzesień 2026:</p>
   <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; line-height: 1.45">
     <thead>
       <tr style="background: #F3EDE4">
@@ -157,14 +179,14 @@
       </tr>
     </thead>
     <tbody>
-      <tr><td style="padding: 8px; border: 1px solid #E2D7C7"><code>LocalBusiness</code></td><td style="padding: 8px; border: 1px solid #E2D7C7">każda strona</td><td style="padding: 8px; border: 1px solid #E2D7C7">Kraków, telefon, widełki cen, profile w <code>sameAs</code>. Dodać dokładny adres i godziny, gdy Kasia zdecyduje się je podać.</td></tr>
-      <tr style="background: #FCF9F4"><td style="padding: 8px; border: 1px solid #E2D7C7"><code>Product</code> + <code>AggregateOffer</code></td><td style="padding: 8px; border: 1px solid #E2D7C7">karty produktów</td><td style="padding: 8px; border: 1px solid #E2D7C7">Widełki z cen wariantów, <code>availability</code>, <code>itemCondition</code>, <code>brand</code>. Przy unikatach po 1 szt. ustawiać <code>InStock</code> / <code>OutOfStock</code> ze stanu magazynowego.</td></tr>
-      <tr><td style="padding: 8px; border: 1px solid #E2D7C7"><code>FAQPage</code></td><td style="padding: 8px; border: 1px solid #E2D7C7">/wysylka-i-pielegnacja</td><td style="padding: 8px; border: 1px solid #E2D7C7">Daje rozwijane odpowiedzi w wynikach. Treść pytań musi być identyczna z widoczną na stronie.</td></tr>
-      <tr style="background: #FCF9F4"><td style="padding: 8px; border: 1px solid #E2D7C7"><code>Course</code> + <code>CourseInstance</code></td><td style="padding: 8px; border: 1px solid #E2D7C7">/warsztaty-ceramiczne-krakow</td><td style="padding: 8px; border: 1px solid #E2D7C7">Jedna instancja na termin z panelu, z ceną i lokalizacją. Terminy przeszłe usuwać.</td></tr>
-      <tr><td style="padding: 8px; border: 1px solid #E2D7C7"><code>Event</code></td><td style="padding: 8px; border: 1px solid #E2D7C7">/dziennik</td><td style="padding: 8px; border: 1px solid #E2D7C7">Targi nadchodzące z panelu. Wymaga <code>startDate</code> w formacie ISO — dziś panel przyjmuje datę jako tekst, do zmiany na wybór z kalendarza.</td></tr>
-      <tr style="background: #FCF9F4"><td style="padding: 8px; border: 1px solid #E2D7C7"><code>BreadcrumbList</code></td><td style="padding: 8px; border: 1px solid #E2D7C7">produkty, dziennik</td><td style="padding: 8px; border: 1px solid #E2D7C7">Do dodania przy wdrożeniu — prototyp ma okruszki wizualnie, bez znaczników.</td></tr>
-      <tr><td style="padding: 8px; border: 1px solid #E2D7C7"><code>Article</code></td><td style="padding: 8px; border: 1px solid #E2D7C7">wpisy dziennika</td><td style="padding: 8px; border: 1px solid #E2D7C7">Po nadaniu wpisom osobnych adresów. <code>datePublished</code>, <code>author</code>, <code>image</code>.</td></tr>
-      <tr style="background: #FCF9F4"><td style="padding: 8px; border: 1px solid #E2D7C7"><code>Review</code> / <code>AggregateRating</code></td><td style="padding: 8px; border: 1px solid #E2D7C7">gdy pojawią się opinie</td><td style="padding: 8px; border: 1px solid #E2D7C7">Tylko dla opinii prawdziwych, zebranych od klientek. Google karze za oznaczanie opinii, których nie ma na stronie.</td></tr>
+      <tr><td style="padding: 8px; border: 1px solid #E2D7C7"><code>Organization</code> / <code>LocalBusiness</code></td><td style="padding: 8px; border: 1px solid #E2D7C7">każda strona</td><td style="padding: 8px; border: 1px solid #E2D7C7"><code>@id</code>, <code>url</code>, <code>logo</code>, telefon, profile w <code>sameAs</code>, <code>founder</code> jako <code>Person</code>. Adres i godziny dopiero po decyzji o adresie pracowni. <code>priceRange</code> liczony z bazy, nie wpisany na stałe.</td></tr>
+      <tr style="background: #FCF9F4"><td style="padding: 8px; border: 1px solid #E2D7C7"><code>ProductGroup</code> + <code>Product</code> + <code>Offer</code></td><td style="padding: 8px; border: 1px solid #E2D7C7">karty produktów</td><td style="padding: 8px; border: 1px solid #E2D7C7">Każdy wariant jako <code>Product</code> z własnym <code>Offer</code>: cena, <code>availability</code> ze stanu (<code>InStock</code> / <code>OutOfStock</code>), <code>url</code>, <code>image</code>, <code>itemCondition</code>, <code>brand</code>. Zasady zwrotów i wysyłki: <code>MerchantReturnPolicy</code>, <code>OfferShippingDetails</code>. Te same dane w feedzie Merchant Center — bez <code>Offer</code> i zdjęcia produkt nie trafi do bezpłatnych wyników w Zakupach Google; <code>AggregateOffer</code> daje tylko zwykły fragment.</td></tr>
+      <tr><td style="padding: 8px; border: 1px solid #E2D7C7"><code>BreadcrumbList</code></td><td style="padding: 8px; border: 1px solid #E2D7C7">produkty, kategorie, dziennik</td><td style="padding: 8px; border: 1px solid #E2D7C7">Okruszki jako linki na stronie i w znacznikach — prototyp ma je tylko wizualnie.</td></tr>
+      <tr style="background: #FCF9F4"><td style="padding: 8px; border: 1px solid #E2D7C7"><code>Article</code></td><td style="padding: 8px; border: 1px solid #E2D7C7">wpisy dziennika</td><td style="padding: 8px; border: 1px solid #E2D7C7">Po wejściu dziennika: <code>headline</code>, <code>datePublished</code>, <code>author</code> jako <code>Person</code>, <code>image</code>.</td></tr>
+      <tr><td style="padding: 8px; border: 1px solid #E2D7C7"><code>Review</code></td><td style="padding: 8px; border: 1px solid #E2D7C7">gdy pojawią się opinie</td><td style="padding: 8px; border: 1px solid #E2D7C7">Tylko prawdziwe opinie widoczne na stronie. Bez <code>AggregateRating</code> dla samej MellowAury — Google nie pokazuje gwiazdek za opinie o własnej firmie.</td></tr>
+      <tr style="background: #FCF9F4"><td style="padding: 8px; border: 1px solid #E2D7C7"><code>Event</code></td><td style="padding: 8px; border: 1px solid #E2D7C7">/dziennik</td><td style="padding: 8px; border: 1px solid #E2D7C7">Opcjonalnie. Tylko z <code>startDate</code> w formacie ISO i pełnym adresem miejsca — dziś panel przyjmuje datę jako tekst. Najpierw sprawdzić, czy wyniki wydarzeń działają w Polsce.</td></tr>
+      <tr><td style="padding: 8px; border: 1px solid #E2D7C7"><code>FAQPage</code></td><td style="padding: 8px; border: 1px solid #E2D7C7">/wysylka-i-pielegnacja</td><td style="padding: 8px; border: 1px solid #E2D7C7">Opcjonalnie. Google wycofał wyniki rozszerzone FAQ w maju 2026. Jeśli znacznik zostaje, treść identyczna z widoczną na stronie.</td></tr>
+      <tr style="background: #FCF9F4"><td style="padding: 8px; border: 1px solid #E2D7C7"><code>Course</code> + <code>CourseInstance</code></td><td style="padding: 8px; border: 1px solid #E2D7C7">/warsztaty-ceramiczne-krakow</td><td style="padding: 8px; border: 1px solid #E2D7C7">Opcjonalnie. Google wycofał wyniki kursów w 2025. Terminy warsztatów liczą się w treści strony i w Profilu Firmy.</td></tr>
     </tbody>
   </table>
 
@@ -193,7 +215,8 @@
     <li style="margin-bottom: 6px"><strong style="font-weight: 500">Wydajność</strong> — LCP poniżej 2,5 s na łączu mobilnym, CLS poniżej 0,1. Kroje pisma: Newsreader i Instrument Sans, wczytywane z <code>display=swap</code> i podpięte lokalnie, nie z CDN Google (RODO).</li>
     <li style="margin-bottom: 6px"><strong style="font-weight: 500">Dostępność</strong> — kontrast tekstu minimum 4,5:1, cele dotykowe od 44 px, pełna obsługa klawiaturą w konfiguratorze i koszyku.</li>
     <li style="margin-bottom: 6px"><strong style="font-weight: 500">RODO</strong> — banner zgód przed uruchomieniem GA4 i pikseli, polityka prywatności, regulamin sklepu, informacja o prawie odstąpienia w 14 dni z wyłączeniem rzeczy wykonanych na indywidualne zamówienie.</li>
-    <li><strong style="font-weight: 500">Pliki</strong> — <code>sitemap.xml</code> generowany z listy adresów i produktów, <code>robots.txt</code> z wykluczeniem <code>/panel</code> i <code>/zamowienie</code>, weryfikacja w Google Search Console.</li>
+    <li style="margin-bottom: 6px"><strong style="font-weight: 500">Obniżki</strong> — przy cenie przekreślonej najniższa cena z 30 dni przed obniżką, także w Black Friday. Baza trzyma historię cen wariantów (<code>price_history</code> w planie wdrożenia).</li>
+    <li><strong style="font-weight: 500">Pliki</strong> — <code>sitemap.xml</code> generowany z listy adresów i produktów, <code>robots.txt</code> wyklucza tylko <code>/panel</code>; <code>/zamowienie</code> dostaje nagłówek <code>X-Robots-Tag: noindex</code>, bo blokada w <code>robots.txt</code> ukryłaby go przed Google. Weryfikacja w Google Search Console i Bing Webmaster Tools.</li>
   </ul>
 
   <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">7. Czego prototyp jeszcze nie ma</h2>
@@ -207,9 +230,10 @@
     <li style="margin-bottom: 5px"><strong style="font-weight: 500">Logowanie z prawdziwym hasłem.</strong> Prototyp przyjmuje dowolne. Potrzebne konto, reset hasła i dwa poziomy uprawnień.</li>
     <li style="margin-bottom: 5px"><strong style="font-weight: 500">Kalendarz przy terminach warsztatów.</strong> Dziś data jest tekstem; znacznik <code>Event</code> i <code>CourseInstance</code> wymagają formatu ISO, więc potrzebny wybór z kalendarza.</li>
     <li style="margin-bottom: 5px"><strong style="font-weight: 500">Numeracja.</strong> Numer zamówienia, vouchera i certyfikatu unikatu powinny nadawać się automatycznie i być zapisane w bazie.</li>
-    <li><strong style="font-weight: 500">Wersja angielska.</strong> Zdecydowano na polski; jeśli dojdzie angielski, potrzebne <code>hreflang</code> i tłumaczenia meta.</li>
+    <li style="margin-bottom: 5px"><strong style="font-weight: 500">Wersja angielska.</strong> Zdecydowano na polski; jeśli dojdzie angielski, potrzebne <code>hreflang</code> i tłumaczenia meta.</li>
+    <li><strong style="font-weight: 500">Stary sklep.</strong> <code>mellow-aura.com</code> prowadzi dziś do sklepu w SumUp (<code>mellowaura.sumupstore.com</code>). Przed przełączeniem domeny spisać stare adresy z panelu SumUp, przygotować przekierowania dla tych, które są w indeksie, i dodać w starym sklepie link do nowego.</li>
   </ul>
-  <p style="font-size: 10.5pt; line-height: 1.62; margin: 0"><strong style="font-weight: 500">Po stronie Kasi, przed startem:</strong> zdjęcie kubka prosto z boku na gładkim tle do konfiguratora, zdjęcia biżuterii, misek, kosmetyczek i piórników (leżą w panelu jako szkice), pierwsze prawdziwe opinie, potwierdzenie cen warsztatów, wypałów i obu usług na zamówienie, prawdziwe nazwy i daty targów oraz decyzja, czy podaje dokładny adres pracowni.</p>
+  <p style="font-size: 10.5pt; line-height: 1.62; margin: 0"><strong style="font-weight: 500">Po stronie Kasi, przed startem:</strong> zdjęcie kubka prosto z boku na gładkim tle do konfiguratora, zdjęcia biżuterii, misek, kosmetyczek i piórników (leżą w panelu jako szkice), pierwsze prawdziwe opinie, potwierdzenie cen warsztatów, wypałów i obu usług na zamówienie, prawdziwe nazwy i daty targów oraz decyzja, czy podaje dokładny adres pracowni — od niej zależy rodzaj Profilu Firmy.</p>
 </doc-page>
 
 </x-dc>
