@@ -1,4 +1,4 @@
-@props(['product', 'delay' => 0, 'eager' => false])
+@props(['product', 'delay' => 0, 'eager' => false, 'withVariantCount' => true])
 @php
     $image = $product->getFirstMedia('images');
     $variants = $product->variants->count();
@@ -17,7 +17,7 @@
     <div class="mb-3 flex items-baseline gap-[9px] text-[14px] text-lead">
         <span><x-catalog::price-label :product="$product" /></span>
     </div>
-    @if ($variants > 1)
+    @if ($withVariantCount && $variants > 1)
         <div class="text-[12px] text-hint">{{ $variants }} {{ $variantsLabel }}</div>
     @endif
 </a>

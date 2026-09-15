@@ -10,13 +10,13 @@ class NoIndexTest extends TestCase
     {
         config(['app.noindex' => true]);
 
-        $this->get('/')->assertHeader('X-Robots-Tag', 'noindex, nofollow');
+        $this->get('/up')->assertHeader('X-Robots-Tag', 'noindex, nofollow');
     }
 
     public function test_responses_have_no_noindex_header_when_disabled(): void
     {
         config(['app.noindex' => false]);
 
-        $this->get('/')->assertHeaderMissing('X-Robots-Tag');
+        $this->get('/up')->assertHeaderMissing('X-Robots-Tag');
     }
 }

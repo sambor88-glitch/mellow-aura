@@ -58,10 +58,18 @@
     /* The only shadow in the design: a product card on hover. */
     --shadow-card-hover: 0 26px 50px -30px rgba(47, 38, 32, .5);
 
+    /* Home page hero shadows from the prototype. The skill allows only the card hover shadow yet. */
+    --shadow-hero: 0 34px 80px -34px rgba(47, 38, 32, .45);
+    --shadow-hero-badge: 0 16px 40px -20px rgba(47, 38, 32, .4);
+
     --ease-clay: cubic-bezier(.2, .7, .2, 1);
 
     --animate-ma-view: maView .55s cubic-bezier(.2, .7, .2, 1) both;
     --animate-ma-up: maUp .55s ease both;
+    --animate-ma-hero-text: maUp .8s cubic-bezier(.2, .7, .2, 1) both;
+    --animate-ma-hero-image: maUp 1s cubic-bezier(.2, .7, .2, 1) .15s both;
+    --animate-ma-marquee: maMarquee 38s linear infinite;
+    --animate-ma-strip: maMarquee 70s linear infinite;
 
     @keyframes maView {
         from { opacity: 0; transform: translateY(10px); }
@@ -72,6 +80,23 @@
         from { opacity: 0; transform: translateY(14px); }
         to { opacity: 1; transform: none; }
     }
+
+    @keyframes maMarquee {
+        from { transform: translateX(0); }
+        to { transform: translateX(-50%); }
+    }
+}
+
+@keyframes maReveal {
+    from { opacity: 0; transform: translateY(28px); }
+    to { opacity: 1; transform: none; }
+}
+
+/* A section fades in as it scrolls into view. Browsers without scroll timelines show it right away. */
+@utility ma-reveal {
+    animation: maReveal linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 38%;
 }
 
 @layer base {
@@ -114,5 +139,9 @@
         animation-duration: .01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: .01ms !important;
+    }
+
+    .ma-reveal {
+        animation: none;
     }
 }

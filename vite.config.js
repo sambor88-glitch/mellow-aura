@@ -7,6 +7,8 @@ export default defineConfig({
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.js'],
+            // Photos from zdjecia/ that Blade sections use through Vite::asset().
+            assets: ['zdjecia/*.webp'],
             refresh: true,
             fonts: [
                 bunny('Instrument Sans', {
