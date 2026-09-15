@@ -45,6 +45,19 @@ class CatalogSeederTest extends TestCase
         $this->assertFileExists(base_path('zdjecia/kubek-cappuccino.webp'));
     }
 
+    public function test_running_it_again_restores_a_photo_whose_file_is_missing(): void
+    {
+        $this->seed(CatalogSeeder::class);
+        $lost = Product::where('slug', 'wazony')->firstOrFail()->getFirstMedia('images');
+        Storage::disk('public')->delete($lost->getPathRelativeToRoot());
+
+        $this->seed(CatalogSeeder::class);
+
+        $restored = Product::where('slug', 'wazony')->firstOrFail()->getFirstMedia('images');
+        $this->assertTrue(Storage::disk('public')->exists($restored->getPathRelativeToRoot()));
+        $this->assertSame(21, Media::count());
+    }
+
     public function test_vouchers_are_not_stock_tracked_and_quote_mugs_are_one_offs(): void
     {
         $this->seed(CatalogSeeder::class);

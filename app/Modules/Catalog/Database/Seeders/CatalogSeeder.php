@@ -5,6 +5,7 @@ namespace App\Modules\Catalog\Database\Seeders;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * The offer from the prototype (catalog.json). It only adds what is missing,
@@ -31,13 +32,20 @@ class CatalogSeeder extends Seeder
                 $product->variants()->firstOrCreate(['label' => $variant['label']], $variant);
             }
 
-            if ($product->getMedia('images')->isEmpty()) {
-                foreach ($row['images'] as $image) {
-                    $product->addMedia(base_path($image['path']))
-                        ->preservingOriginal()
-                        ->withCustomProperties(['alt' => $image['alt']])
-                        ->toMediaCollection('images');
+            foreach ($row['images'] as $image) {
+                $existing = $product->getMedia('images')->firstWhere('file_name', basename($image['path']));
+
+                if ($existing && Storage::disk($existing->disk)->exists($existing->getPathRelativeToRoot())) {
+                    continue;
                 }
+
+                // The record outlived its file (e.g. a server without shared storage), so add the photo again.
+                $existing?->delete();
+
+                $product->addMedia(base_path($image['path']))
+                    ->preservingOriginal()
+                    ->withCustomProperties(['alt' => $image['alt']])
+                    ->toMediaCollection('images');
             }
         }
     }
