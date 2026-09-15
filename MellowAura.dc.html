@@ -55,10 +55,18 @@
         <a href="#/dziennik" onClick="{{ goJournal }}" style="color: #4A3E33; transition: color .25s ease" style-hover="color: #24417E">Dziennik</a>
         <a href="#/kontakt" onClick="{{ goContact }}" style="color: #4A3E33; transition: color .25s ease" style-hover="color: #24417E">Kontakt</a>
       </nav>
+      <div style="display: flex; align-items: center; margin-left: auto">
+      <sc-if value="{{ hasFavs }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ openFavs }}" aria-label="{{ favsLabel }}" style="display: flex; align-items: center; gap: 8px; min-height: 44px; margin-right: 10px; background: transparent; color: #2F2620; border: 1px solid #C6B8A5; border-radius: 999px; padding: 10px 14px; font-size: 13px; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; background: #EDE4D8" style-active="transform: scale(.97)">
+        <span aria-hidden="true" style="font-size: 16px; line-height: 1">♥</span>
+        <span aria-hidden="true">{{ favCount }}</span>
+      </button>
+      </sc-if>
       <button onClick="{{ openCart }}" style="display: flex; align-items: center; gap: 10px; background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 11px 20px; font-size: 13px; letter-spacing: 0.04em; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">
         <span>Koszyk</span>
         <span key="{{ cartCount }}" style="min-width: 21px; height: 21px; border-radius: 999px; background: #D6A39C; color: #2F2620; display: grid; place-items: center; font-size: 11.5px; font-weight: 600; padding: 0 5px; animation: maBump .45s cubic-bezier(.2,.8,.2,1) both">{{ cartCount }}</span>
       </button>
+      </div>
     </div>
   </div>
 
@@ -117,6 +125,7 @@
           <div onClick="{{ p.open }}" style="cursor: pointer; animation: maUp .6s ease both; animation-delay: {{ p.delay }}">
             <div onMouseEnter="{{ p.enter }}" onMouseLeave="{{ p.leave }}" style="position: relative; border-radius: 6px; overflow: hidden; background: #E6DCCD; margin-bottom: 14px; transition: box-shadow .5s ease, transform .5s cubic-bezier(.2,.7,.2,1)" style-hover="box-shadow: 0 26px 50px -30px rgba(47,38,32,.5); transform: translateY(-4px)">
               <img src="{{ p.img }}" alt="{{ p.name }}" style="width: 100%; display: block; aspect-ratio: 4/5; object-fit: cover" />
+              <button onClick="{{ p.toggleFav }}" aria-label="{{ p.favLabel }}" aria-pressed="{{ p.favPressed }}" style="position: absolute; top: 10px; right: 10px; z-index: 2; width: 44px; height: 44px; border-radius: 999px; border: 0; background: rgba(252,249,244,.92); color: #2F2620; font-size: 19px; line-height: 1; display: grid; place-items: center; padding: 0; transition: color .25s ease, transform .15s ease" style-hover="color: #24417E" style-active="transform: scale(.92)">{{ p.favIcon }}</button>
               <sc-for list="{{ p.slides }}" as="sl" hint-placeholder-count="0">
                 <img src="{{ sl.src }}" alt="" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{ sl.op }}; transition: opacity .6s ease" />
               </sc-for>
@@ -336,6 +345,7 @@
         <div style="animation: maUp .55s ease both; animation-delay: {{ p.delay }}">
           <div onClick="{{ p.open }}" onMouseEnter="{{ p.enter }}" onMouseLeave="{{ p.leave }}" style="cursor: pointer; position: relative; border-radius: 6px; overflow: hidden; background: #E6DCCD; margin-bottom: 14px; transition: box-shadow .5s ease, transform .5s cubic-bezier(.2,.7,.2,1)" style-hover="box-shadow: 0 26px 50px -30px rgba(47,38,32,.5); transform: translateY(-4px)">
             <img src="{{ p.img }}" alt="{{ p.name }}" style="width: 100%; display: block; aspect-ratio: 4/5; object-fit: cover" />
+            <button onClick="{{ p.toggleFav }}" aria-label="{{ p.favLabel }}" aria-pressed="{{ p.favPressed }}" style="position: absolute; top: 10px; right: 10px; z-index: 2; width: 44px; height: 44px; border-radius: 999px; border: 0; background: rgba(252,249,244,.92); color: #2F2620; font-size: 19px; line-height: 1; display: grid; place-items: center; padding: 0; transition: color .25s ease, transform .15s ease" style-hover="color: #24417E" style-active="transform: scale(.92)">{{ p.favIcon }}</button>
               <sc-for list="{{ p.slides }}" as="sl" hint-placeholder-count="0">
                 <img src="{{ sl.src }}" alt="" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{ sl.op }}; transition: opacity .6s ease" />
               </sc-for>
@@ -423,6 +433,25 @@
             </div>
           </div>
         </sc-if>
+        <sc-if value="{{ p.isVoucher }}" hint-placeholder-val="{{ false }}">
+          <div style="background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 22px 20px; margin-bottom: 26px">
+            <div style="font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #726456; margin-bottom: 14px">Dla kogo ten voucher?</div>
+            <label for="voucher-for" style="display: block; font-size: 13.5px; color: #4A3E33; margin-bottom: 6px">Imię na voucherze</label>
+            <input id="voucher-for" value="{{ p.vFor }}" onChange="{{ p.onVFor }}" placeholder="np. Ania" autocomplete="off" aria-describedby="voucher-for-hint" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 13px 15px; font-size: 16px; color: #2F2620" style-focus="border-color: #2F2620; outline: none" />
+            <div id="voucher-for-hint" style="display: flex; justify-content: space-between; gap: 12px; margin: 8px 0 16px; font-size: 12.5px; color: #736454"><span>Nieobowiązkowe — puste pole nie pokaże się na voucherze</span><span style="flex: 0 0 auto; white-space: nowrap">{{ p.vForCount }}</span></div>
+            <label for="voucher-note" style="display: block; font-size: 13.5px; color: #4A3E33; margin-bottom: 6px">Dedykacja</label>
+            <textarea id="voucher-note" value="{{ p.vNote }}" onChange="{{ p.onVNote }}" rows="3" placeholder="Kilka słów od Ciebie" aria-describedby="voucher-note-hint" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 13px 15px; font-size: 16px; line-height: 1.55; color: #2F2620; resize: vertical; font-family: inherit" style-focus="border-color: #2F2620; outline: none"></textarea>
+            <div id="voucher-note-hint" style="display: flex; justify-content: space-between; gap: 12px; margin-top: 8px; font-size: 12.5px; color: #736454"><span>Trafi na voucher w PDF, który dostaniesz mailem</span><span style="flex: 0 0 auto; white-space: nowrap">{{ p.vNoteCount }}</span></div>
+            <div style="font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #726456; margin: 22px 0 10px">Tak będzie wyglądał</div>
+            <div style="background: #F3EDE4; border: 1px solid #E2D7C7; border-radius: 4px; padding: 28px 22px; text-align: center">
+              <div style="font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #855F3D; margin-bottom: 14px">mellowaura &middot; voucher</div>
+              <div style="font-family: Newsreader, serif; font-weight: 300; font-size: 24px; line-height: 1.2; margin-bottom: 10px; text-wrap: balance">{{ p.name }}</div>
+              <div style="font-family: Newsreader, serif; font-style: italic; font-size: 21px; color: #855F3D; margin-bottom: 12px; overflow-wrap: anywhere">{{ p.vPreviewFor }}</div>
+              <p style="font-size: 14.5px; line-height: 1.6; color: #5C5043; margin: 0 auto 16px; max-width: 36ch; white-space: pre-line; overflow-wrap: anywhere">{{ p.vPreviewNote }}</p>
+              <div style="font-size: 12px; color: #726456">Ważny do {{ p.vUntil }}</div>
+            </div>
+          </div>
+        </sc-if>
         <sc-if value="{{ p.oneOff }}" hint-placeholder-val="{{ false }}">
           <div style="display: flex; align-items: center; gap: 10px; background: #EDE4D8; border-radius: 4px; padding: 13px 16px; margin-bottom: 22px; font-size: 13.5px; color: #4A3E33">
             <span style="width: 7px; height: 7px; border-radius: 999px; background: #8C3A2E; flex: 0 0 auto"></span>
@@ -442,6 +471,7 @@
             <button onClick="{{ p.inc }}" style="background: transparent; border: 0; width: 44px; height: 46px; font-size: 18px; color: #6B5D4F">+</button>
           </div>
           <button onClick="{{ p.addToCart }}" style="flex: 1 1 200px; background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 16px 30px; font-size: 14.5px; letter-spacing: 0.03em; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Dodaj do koszyka &middot; {{ p.totalLabel }}</button>
+          <button onClick="{{ p.toggleFav }}" aria-label="{{ p.favLabel }}" aria-pressed="{{ p.favPressed }}" style="flex: 0 0 auto; width: 50px; height: 50px; border-radius: 999px; background: transparent; border: 1px solid #C6B8A5; color: #2F2620; font-size: 20px; line-height: 1; display: grid; place-items: center; padding: 0; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; background: #EDE4D8" style-active="transform: scale(.95)">{{ p.favIcon }}</button>
         </div>
         <div style="display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: #6B5D4F; margin-bottom: 34px">
           <span style="background: #24417E; color: #fff; font-weight: 600; font-size: 10px; padding: 3px 7px; border-radius: 3px">BLIK</span>
@@ -450,7 +480,7 @@
         <div style="border-top: 1px solid #E2D7C7; padding-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; font-size: 13.5px; color: #6B5D4F; line-height: 1.55">
           <div><div style="color: #2F2620; margin-bottom: 4px">Wysyłka</div>3–5 dni roboczych, gratis od {{ freeFromLabel }}</div>
           <div><div style="color: #2F2620; margin-bottom: 4px">Certyfikat unikatu</div>W paczce karta z numerem, datą wypału i podpisem</div>
-          <div><div style="color: #2F2620; margin-bottom: 4px">Pielęgnacja</div>Zmywarka tak, złoto tylko ręcznie</div>
+          <sc-if value="{{ p.hasCare }}" hint-placeholder-val="{{ true }}"><div><div style="color: #2F2620; margin-bottom: 4px">Pielęgnacja</div>{{ p.care }}</div></sc-if>
           <div><div style="color: #2F2620; margin-bottom: 4px">Chcesz inaczej?</div>Napis, rozmiar, szkliwo — wszystko robię na zamówienie. <a href="#/zamowienia-indywidualne" onClick="{{ goCustom }}">Napisz, co wymyśliłaś</a></div>
         </div>
       </div>
@@ -744,6 +774,7 @@
             </div>
             <button onClick="{{ bookSlot }}" style="width: 100%; background: #D6A39C; color: #2F2620; border: 0; border-radius: 999px; padding: 15px; font-size: 14.5px" style-hover="background: #F3EDE4">{{ bookCta }}</button>
             <div style="font-size: 12.5px; color: #9B8C7C; margin-top: 14px; line-height: 1.55">{{ depositNote }}</div>
+            <div style="font-size: 12.5px; color: #9B8C7C; margin-top: 8px; line-height: 1.55">{{ studioNote }}</div>
           </div>
           <sc-if value="{{ isBooked }}" hint-placeholder-val="{{ false }}">
             <div style="background: #3A3027; border: 1px solid #5C7A4A; border-radius: 4px; padding: 18px; margin-top: 16px; font-size: 14px; line-height: 1.6; color: #D8CDBD">Mam Twoją rezerwację. Odpisuję w ciągu dnia — jeśli termin okaże się zajęty, podam dwa najbliższe.</div>
@@ -967,6 +998,7 @@
         <div style="display: grid; gap: 1px; background: #E2D7C7; border: 1px solid #E2D7C7; border-radius: 4px; overflow: hidden; margin-bottom: 32px">
           <a href="{{ waHref }}" target="_blank" rel="noopener" style="background: #FCF9F4; padding: 22px 24px; display: flex; justify-content: space-between; gap: 16px; align-items: center; color: #2F2620" style-hover="background: #EDE4D8"><span><span style="display: block; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #A8813F; margin-bottom: 5px">whatsapp &middot; najszybciej</span><span style="font-size: 17px">{{ phone }}</span></span><span style="color: #855F3D">→</span></a>
           <a href="{{ igHref }}" target="_blank" rel="noopener" style="background: #FCF9F4; padding: 22px 24px; display: flex; justify-content: space-between; gap: 16px; align-items: center; color: #2F2620" style-hover="background: #EDE4D8"><span><span style="display: block; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #A8813F; margin-bottom: 5px">instagram &middot; dm</span><span style="font-size: 17px">{{ igHandle }}</span></span><span style="color: #855F3D">→</span></a>
+          <sc-if value="{{ hasEmail }}" hint-placeholder-val="{{ false }}"><a href="{{ mailHref }}" style="background: #FCF9F4; padding: 22px 24px; display: flex; justify-content: space-between; gap: 16px; align-items: center; color: #2F2620" style-hover="background: #EDE4D8"><span style="min-width: 0"><span style="display: block; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #A8813F; margin-bottom: 5px">e-mail</span><span style="font-size: 17px; overflow-wrap: anywhere">{{ email }}</span></span><span style="color: #855F3D">→</span></a></sc-if>
           <div style="background: #FCF9F4; padding: 22px 24px"><span style="display: block; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #A8813F; margin-bottom: 5px">pracownia</span><span style="font-size: 17px">{{ city }}</span><span style="display: block; font-size: 13.5px; color: #726456; margin-top: 4px">Dokładny adres podaję przy zapisie na warsztat lub odbiorze zamówienia.</span></div>
         </div>
         <img src="zdjecia/talerz-niebieski-odcisk.webp" alt="Talerz z odciskiem roślinnym" style="width: 100%; max-width: 420px; aspect-ratio: 4/3; object-fit: cover; border-radius: 4px; display: block" />
@@ -1049,6 +1081,10 @@
               <input value="{{ nfName }}" onChange="{{ onNfName }}" placeholder="Nazwa — np. Miska z odciskiem paproci" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px" style-focus="border-color: #2F2620; outline: none" />
               <select value="{{ nfCat }}" onChange="{{ onNfCat }}" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px; color: #2F2620">
                 <option>Ceramika</option><option>Rękodzieło</option><option>Warsztaty</option>
+              </select>
+              <select value="{{ nfType }}" onChange="{{ onNfType }}" aria-label="Rodzaj — kategoria w sklepie" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 14px 16px; font-size: 15px; color: #2F2620">
+                <option value="">Rodzaj — kategoria w sklepie</option>
+                <sc-for list="{{ typeOptions }}" as="to" hint-placeholder-count="8"><option value="{{ to.label }}">{{ to.label }}</option></sc-for>
               </select>
               <div style="border: 1px solid #EDE4D8; border-radius: 4px; padding: 16px; background: #F7F2EA">
                 <div style="font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: #726456; margin-bottom: 12px">Rozmiary i ceny</div>
@@ -1175,12 +1211,29 @@
                     </sc-for>
                     <button onClick="{{ r.addSize }}" style="flex: 0 0 auto; background: transparent; border: 1px dashed #C6B8A5; border-radius: 999px; padding: 7px 14px; font-size: 12.5px; color: #5C5043; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; border-style: solid" style-active="transform: scale(.98)">+ rozmiar</button>
                   </div>
+                  <div style="font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #736454; margin: 16px 0 9px">Rodzaj — kategoria w sklepie</div>
+                  <div style="display: flex; flex-wrap: wrap; gap: 7px">
+                    <sc-for list="{{ r.typeChips }}" as="o" hint-placeholder-count="8">
+                      <button onClick="{{ o.set }}" aria-pressed="{{ o.pressed }}" style="border-radius: 999px; padding: 6px 13px; font-size: 12px; background: {{ o.bg }}; color: {{ o.fg }}; border: 1px solid {{ o.bd }}">{{ o.label }}</button>
+                    </sc-for>
+                  </div>
                   <div style="font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #736454; margin: 16px 0 9px">Na jaką okazję — pokaże się w „Szukam prezentu"</div>
                   <div style="display: flex; flex-wrap: wrap; gap: 7px">
                     <sc-for list="{{ r.occChips }}" as="o" hint-placeholder-count="7">
                       <button onClick="{{ o.set }}" style="border-radius: 999px; padding: 6px 13px; font-size: 12px; background: {{ o.bg }}; color: {{ o.fg }}; border: 1px solid {{ o.bd }}">{{ o.label }}</button>
                     </sc-for>
                   </div>
+                  <div style="font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #736454; margin: 16px 0 9px">Dla kogo — też w „Szukam prezentu”</div>
+                  <div style="display: flex; flex-wrap: wrap; gap: 7px">
+                    <sc-for list="{{ r.whoChips }}" as="o" hint-placeholder-count="3">
+                      <button onClick="{{ o.set }}" aria-pressed="{{ o.pressed }}" style="border-radius: 999px; padding: 6px 13px; font-size: 12px; background: {{ o.bg }}; color: {{ o.fg }}; border: 1px solid {{ o.bd }}">{{ o.label }}</button>
+                    </sc-for>
+                  </div>
+                  <label style="display: grid; gap: 6px; margin-top: 16px">
+                    <span style="font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #736454">Pielęgnacja — zdanie na karcie produktu</span>
+                    <input value="{{ r.careVal }}" onChange="{{ r.onCare }}" placeholder="np. Zmywarka tak, złoto tylko ręcznie" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 9px 12px; font-size: 13.5px" style-focus="border-color: #2F2620; outline: none" />
+                    <span style="font-size: 12px; color: #736454">Puste pole nie pokaże się na stronie</span>
+                  </label>
                   <div style="font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #736454; margin: 16px 0 9px">Wymiary — wpisz tylko te, które mają sens</div>
                   <div style="display: flex; flex-wrap: wrap; gap: 8px">
                     <sc-for list="{{ r.dimRows }}" as="d" hint-placeholder-count="6">
@@ -1399,6 +1452,34 @@
                   </sc-for>
                 </div>
                 <button onClick="{{ addScarfRow }}" style="margin-top: 12px; background: transparent; border: 1px dashed #C6B8A5; border-radius: 999px; padding: 9px 16px; font-size: 13px; color: #5C5043; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; border-style: solid" style-active="transform: scale(.98)">+ dodaj pozycję</button>
+                <div style="border-top: 1px solid #EDE4D8; margin-top: 24px; padding-top: 20px">
+                  <div style="font-family: Newsreader, serif; font-size: 22px; margin-bottom: 4px">Przed i po</div>
+                  <p style="font-size: 13.5px; color: #726456; margin: 0 0 16px">Zdjęcie tkaniny, którą dostałaś, obok tego, co z niej uszyłaś. Para pokaże się na stronie, gdy dodasz oba zdjęcia.</p>
+                  <div style="display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px">
+                    <sc-for list="{{ baScarfEdit }}" as="b" hint-placeholder-count="1">
+                      <div style="border: 1px solid #EDE4D8; border-radius: 4px; padding: 14px; background: #F7F2EA">
+                        <div style="display: flex; gap: 10px; margin-bottom: 10px">
+                          <label style="position: relative; flex: 1 1 0; min-width: 0; aspect-ratio: 4/5; border: 1px dashed #C6B8A5; border-radius: 4px; background: #FCF9F4; cursor: pointer; display: grid; place-items: center; overflow: hidden; transition: border-color .3s ease" style-hover="border-color: #2F2620">
+                            <sc-if value="{{ b.hasBefore }}" hint-placeholder-val="{{ false }}"><img src="{{ b.before }}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover" /></sc-if>
+                            <span style="position: relative; background: rgba(252,249,244,.92); border-radius: 999px; padding: 5px 11px; font-size: 12px; color: #2F2620">{{ b.beforeCta }}</span>
+                            <input type="file" accept="image/*" onChange="{{ b.onBefore }}" style="display: none" />
+                          </label>
+                          <label style="position: relative; flex: 1 1 0; min-width: 0; aspect-ratio: 4/5; border: 1px dashed #C6B8A5; border-radius: 4px; background: #FCF9F4; cursor: pointer; display: grid; place-items: center; overflow: hidden; transition: border-color .3s ease" style-hover="border-color: #2F2620">
+                            <sc-if value="{{ b.hasAfter }}" hint-placeholder-val="{{ false }}"><img src="{{ b.after }}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover" /></sc-if>
+                            <span style="position: relative; background: rgba(252,249,244,.92); border-radius: 999px; padding: 5px 11px; font-size: 12px; color: #2F2620">{{ b.afterCta }}</span>
+                            <input type="file" accept="image/*" onChange="{{ b.onAfter }}" style="display: none" />
+                          </label>
+                        </div>
+                        <input value="{{ b.cap }}" onChange="{{ b.onCap }}" placeholder="Podpis, np. apaszka babci z lat 70." aria-label="Podpis pod parą zdjęć" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 10px 12px; font-size: 13.5px" style-focus="border-color: #2F2620; outline: none" />
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 8px">
+                          <span style="font-size: 12px; color: #736454">{{ b.stateLabel }}</span>
+                          <button onClick="{{ b.del }}" aria-label="Usuń tę parę zdjęć" style="background: transparent; border: 0; color: #B0A190; font-size: 12.5px; padding: 4px 6px; transition: color .25s ease" style-hover="color: #8C3A2E">usuń</button>
+                        </div>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <button onClick="{{ addBaScarf }}" style="margin-top: 12px; background: transparent; border: 1px dashed #C6B8A5; border-radius: 999px; padding: 9px 16px; font-size: 13px; color: #5C5043; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; border-style: solid" style-active="transform: scale(.98)">+ dodaj parę zdjęć</button>
+                </div>
               </div>
             </sc-if>
 
@@ -1422,6 +1503,34 @@
                   </sc-for>
                 </div>
                 <button onClick="{{ addImprintRow }}" style="margin-top: 12px; background: transparent; border: 1px dashed #C6B8A5; border-radius: 999px; padding: 9px 16px; font-size: 13px; color: #5C5043; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; border-style: solid" style-active="transform: scale(.98)">+ dodaj pozycję</button>
+                <div style="border-top: 1px solid #EDE4D8; margin-top: 24px; padding-top: 20px">
+                  <div style="font-family: Newsreader, serif; font-size: 22px; margin-bottom: 4px">Przed i po</div>
+                  <p style="font-size: 13.5px; color: #726456; margin: 0 0 16px">Zdjęcie przysłanej rośliny obok gotowej ceramiki. Para pokaże się na stronie, gdy dodasz oba zdjęcia.</p>
+                  <div style="display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px">
+                    <sc-for list="{{ baImprintEdit }}" as="b" hint-placeholder-count="1">
+                      <div style="border: 1px solid #EDE4D8; border-radius: 4px; padding: 14px; background: #F7F2EA">
+                        <div style="display: flex; gap: 10px; margin-bottom: 10px">
+                          <label style="position: relative; flex: 1 1 0; min-width: 0; aspect-ratio: 4/5; border: 1px dashed #C6B8A5; border-radius: 4px; background: #FCF9F4; cursor: pointer; display: grid; place-items: center; overflow: hidden; transition: border-color .3s ease" style-hover="border-color: #2F2620">
+                            <sc-if value="{{ b.hasBefore }}" hint-placeholder-val="{{ false }}"><img src="{{ b.before }}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover" /></sc-if>
+                            <span style="position: relative; background: rgba(252,249,244,.92); border-radius: 999px; padding: 5px 11px; font-size: 12px; color: #2F2620">{{ b.beforeCta }}</span>
+                            <input type="file" accept="image/*" onChange="{{ b.onBefore }}" style="display: none" />
+                          </label>
+                          <label style="position: relative; flex: 1 1 0; min-width: 0; aspect-ratio: 4/5; border: 1px dashed #C6B8A5; border-radius: 4px; background: #FCF9F4; cursor: pointer; display: grid; place-items: center; overflow: hidden; transition: border-color .3s ease" style-hover="border-color: #2F2620">
+                            <sc-if value="{{ b.hasAfter }}" hint-placeholder-val="{{ false }}"><img src="{{ b.after }}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover" /></sc-if>
+                            <span style="position: relative; background: rgba(252,249,244,.92); border-radius: 999px; padding: 5px 11px; font-size: 12px; color: #2F2620">{{ b.afterCta }}</span>
+                            <input type="file" accept="image/*" onChange="{{ b.onAfter }}" style="display: none" />
+                          </label>
+                        </div>
+                        <input value="{{ b.cap }}" onChange="{{ b.onCap }}" placeholder="Podpis, np. bukiet ślubny, talerz 24 cm" aria-label="Podpis pod parą zdjęć" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 10px 12px; font-size: 13.5px" style-focus="border-color: #2F2620; outline: none" />
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 8px">
+                          <span style="font-size: 12px; color: #736454">{{ b.stateLabel }}</span>
+                          <button onClick="{{ b.del }}" aria-label="Usuń tę parę zdjęć" style="background: transparent; border: 0; color: #B0A190; font-size: 12.5px; padding: 4px 6px; transition: color .25s ease" style-hover="color: #8C3A2E">usuń</button>
+                        </div>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <button onClick="{{ addBaImprint }}" style="margin-top: 12px; background: transparent; border: 1px dashed #C6B8A5; border-radius: 999px; padding: 9px 16px; font-size: 13px; color: #5C5043; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; border-style: solid" style-active="transform: scale(.98)">+ dodaj parę zdjęć</button>
+                </div>
               </div>
             </sc-if>
 
@@ -1496,7 +1605,11 @@
               <label style="display: flex; align-items: center; justify-content: space-between; gap: 14px; font-size: 14px; color: #4A3E33"><span style="flex: 1; min-width: 0">{{ f.label }}</span><span style="display: flex; align-items: center; gap: 6px"><input value="{{ f.val }}" onChange="{{ f.onChange }}" style="width: 78px; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 9px 10px; font-size: 14px; text-align: right" style-focus="border-color: #2F2620; outline: none" /><span style="font-size: 13px; color: #726456">zł</span></span></label>
             </sc-for>
           </div>
-          <div style="font-size: 12.5px; color: #726456; margin-top: 14px; line-height: 1.6">Próg darmowej wysyłki ({{ freeFromLabel }}) ustawiasz w Tweaks. Zaliczka za warsztaty działa, gdy włączysz ją tam samo.</div>
+          <div style="font-size: 12.5px; color: #726456; margin-top: 14px; line-height: 1.6">Próg darmowej wysyłki od razu zmienia pasek w koszyku i dopiski „gratis od” na stronie.</div>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 14px; margin-top: 16px; padding-top: 14px; border-top: 1px solid #EDE4D8">
+            <span style="flex: 1 1 180px; min-width: 0; font-size: 14px; color: #4A3E33">{{ depositStateLabel }}</span>
+            <button onClick="{{ toggleDeposit }}" style="flex: 0 0 auto; background: transparent; border: 1px solid #C6B8A5; border-radius: 999px; padding: 9px 16px; font-size: 13px; color: #2F2620; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; background: #EDE4D8" style-active="transform: scale(.98)">{{ depositToggleLabel }}</button>
+          </div>
         </div>
         <div style="background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 22px 22px">
           <div style="font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #726456; margin: 0 0 12px">Dane pracowni</div>
@@ -1505,7 +1618,7 @@
               <label style="display: grid; gap: 5px; font-size: 12.5px; color: #726456"><span>{{ f.label }}</span><input value="{{ f.val }}" onChange="{{ f.onChange }}" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 10px 12px; font-size: 14px" style-focus="border-color: #2F2620; outline: none" /></label>
             </sc-for>
           </div>
-          <div style="font-size: 12.5px; color: #726456; margin-top: 14px; line-height: 1.6">Telefon i profile podmieniają się w stopce, na stronie kontaktu, w formularzach i w danych dla Google.</div>
+          <div style="font-size: 12.5px; color: #726456; margin-top: 14px; line-height: 1.6">Telefon, e-mail i profile podmieniają się w stopce, na stronie kontaktu, w formularzach i w danych dla Google. Dokładny adres nie pokazuje się nigdzie na stronie — trafia tylko do maila po zapisie na warsztat.</div>
         </div>
         <sc-for list="{{ formLists }}" as="fl" hint-placeholder-count="2">
           <div style="background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 22px 22px">
@@ -1796,6 +1909,7 @@
         <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; margin: 12px 0 30px; font-size: 12.5px; color: #726456">
           <span>{{ mugLineInfo }}</span>
           <span style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap">
+            <button onClick="{{ toggleSound }}" style="background: transparent; border: 1px solid #DCD0BE; border-radius: 999px; padding: 6px 13px; font-size: 12px; color: #5C5043; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620" style-active="transform: scale(.98)">{{ soundLabel }}</button>
             <button onClick="{{ splitMug }}" style="background: transparent; border: 1px solid #DCD0BE; border-radius: 999px; padding: 6px 13px; font-size: 12px; color: #5C5043; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620" style-active="transform: scale(.98)">Podziel na linie</button>
             <span title="{{ mugRules }}">{{ mugCount }}</span>
           </span>
@@ -1838,6 +1952,12 @@
     <h1 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(38px, 5.2vw, 68px); line-height: 1.04; margin: 0 0 18px; letter-spacing: -0.02em">Powiedz, dla kogo<br />i za ile</h1>
     <p style="font-size: 17px; line-height: 1.7; color: #5C5043; max-width: 54ch; margin: 0 0 40px">Dobiorę resztę. Wszystko pakuję w wióry i szary papier ze sznurkiem — możesz dopłacić do pudełka z kartką i wysłać prosto do obdarowanej osoby.</p>
     <div style="background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; padding: 26px 24px; margin-bottom: 38px">
+      <div style="font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #726456; margin-bottom: 12px">Dla kogo</div>
+      <div style="display: flex; gap: 9px; flex-wrap: wrap; margin-bottom: 22px">
+        <sc-for list="{{ whos }}" as="w" hint-placeholder-count="4">
+          <button onClick="{{ w.set }}" style="border-radius: 999px; padding: 9px 17px; font-size: 13px; background: {{ w.bg }}; color: {{ w.fg }}; border: 1px solid {{ w.bd }}">{{ w.label }}</button>
+        </sc-for>
+      </div>
       <div style="font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #726456; margin-bottom: 12px">Okazja</div>
       <div style="display: flex; gap: 9px; flex-wrap: wrap; margin-bottom: 22px">
         <sc-for list="{{ occs }}" as="o" hint-placeholder-count="8">
@@ -1854,7 +1974,7 @@
     <div style="font-size: 13.5px; color: #726456; margin-bottom: 24px">{{ giftCount }}</div>
     <sc-if value="{{ giftEmpty }}" hint-placeholder-val="{{ false }}">
       <div style="background: #EDE4D8; border-radius: 4px; padding: 44px 36px; text-align: center">
-        <div style="font-family: Newsreader, serif; font-size: 26px; margin-bottom: 8px">Nic nie pasuje do tych dwóch warunków</div>
+        <div style="font-family: Newsreader, serif; font-size: 26px; margin-bottom: 8px">Nic nie pasuje do tych warunków</div>
         <p style="font-size: 15.5px; color: #5C5043; margin: 0 0 22px">Poluzuj budżet albo napisz do mnie — zrobię coś na zamówienie w Twojej kwocie.</p>
         <button onClick="{{ goCustom }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 14px 28px; font-size: 14px">Napisz, czego szukasz</button>
       </div>
@@ -1864,6 +1984,7 @@
         <div style="animation: maUp .45s ease both">
           <div onClick="{{ p.open }}" onMouseEnter="{{ p.enter }}" onMouseLeave="{{ p.leave }}" style="cursor: pointer; position: relative; border-radius: 6px; overflow: hidden; background: #E6DCCD; margin-bottom: 14px; transition: box-shadow .5s ease, transform .5s cubic-bezier(.2,.7,.2,1)" style-hover="box-shadow: 0 26px 50px -30px rgba(47,38,32,.5); transform: translateY(-4px)">
             <img src="{{ p.img }}" alt="{{ p.name }}" style="width: 100%; display: block; aspect-ratio: 4/5; object-fit: cover" />
+            <button onClick="{{ p.toggleFav }}" aria-label="{{ p.favLabel }}" aria-pressed="{{ p.favPressed }}" style="position: absolute; top: 10px; right: 10px; z-index: 2; width: 44px; height: 44px; border-radius: 999px; border: 0; background: rgba(252,249,244,.92); color: #2F2620; font-size: 19px; line-height: 1; display: grid; place-items: center; padding: 0; transition: color .25s ease, transform .15s ease" style-hover="color: #24417E" style-active="transform: scale(.92)">{{ p.favIcon }}</button>
               <sc-for list="{{ p.slides }}" as="sl" hint-placeholder-count="0">
                 <img src="{{ sl.src }}" alt="" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{ sl.op }}; transition: opacity .6s ease" />
               </sc-for>
@@ -1952,11 +2073,34 @@
     <div style="max-width: 1280px; margin: 0 auto; padding: 72px 28px 0">
       <div style="display: flex; flex-wrap: wrap; gap: 1px; background: #E2D7C7; border: 1px solid #E2D7C7; border-radius: 4px; overflow: hidden">
         <div style="flex: 1 1 230px; background: #FCF9F4; padding: 30px 26px"><div style="font-family: Newsreader, serif; font-size: 20px; color: #A8813F; margin-bottom: 8px">01</div><div style="font-size: 16px; margin-bottom: 6px">Wysyłasz zdjęcie tkaniny</div><div style="font-size: 14.5px; line-height: 1.6; color: #6B5D4F">Powiem od razu, czy da się z niej szyć — cienki jedwab i dzianina zachowują się inaczej.</div></div>
-        <div style="flex: 1 1 230px; background: #FCF9F4; padding: 30px 26px"><div style="font-family: Newsreader, serif; font-size: 20px; color: #A8813F; margin-bottom: 8px">02</div><div style="font-size: 16px; margin-bottom: 6px">Przysyłasz tkaninę</div><div style="font-size: 14.5px; line-height: 1.6; color: #6B5D4F">Paczkomatem, na adres, który podam. Nie tnę niczego, dopóki nie zatwierdzisz układu wzoru.</div></div>
+        <div style="flex: 1 1 230px; background: #FCF9F4; padding: 30px 26px"><div style="font-family: Newsreader, serif; font-size: 20px; color: #A8813F; margin-bottom: 8px">02</div><div style="font-size: 16px; margin-bottom: 6px">Przysyłasz tkaninę</div><div style="font-size: 14.5px; line-height: 1.6; color: #6B5D4F">{{ lockerNote }} Nie tnę niczego, dopóki nie zatwierdzisz układu wzoru.</div></div>
         <div style="flex: 1 1 230px; background: #FCF9F4; padding: 30px 26px"><div style="font-family: Newsreader, serif; font-size: 20px; color: #A8813F; margin-bottom: 8px">03</div><div style="font-size: 16px; margin-bottom: 6px">Zatwierdzasz krój</div><div style="font-size: 14.5px; line-height: 1.6; color: #6B5D4F">Pokazuję na zdjęciu, którym fragmentem wzoru pójdzie opaska. Decyzja jest Twoja.</div></div>
         <div style="flex: 1 1 230px; background: #FCF9F4; padding: 30px 26px"><div style="font-family: Newsreader, serif; font-size: 20px; color: #A8813F; margin-bottom: 8px">04</div><div style="font-size: 16px; margin-bottom: 6px">Szyję i odsyłam</div><div style="font-size: 14.5px; line-height: 1.6; color: #6B5D4F">Dwa tygodnie. W paczce wraca też to, czego nie użyłam — resztki są Twoje.</div></div>
       </div>
     </div>
+    <sc-if value="{{ hasBaScarf }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 72px 28px 0">
+      <h2 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(28px, 3.4vw, 40px); margin: 0 0 8px">Przed i po</h2>
+      <p style="font-size: 15.5px; line-height: 1.6; color: #6B5D4F; margin: 0 0 26px; max-width: 52ch">Tkaniny, które do mnie przyszły, obok tego, co z nich uszyłam.</p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 26px">
+        <sc-for list="{{ baScarf }}" as="b" hint-placeholder-count="2">
+          <figure style="margin: 0; background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; overflow: hidden">
+            <div style="display: flex; gap: 1px; background: #E2D7C7">
+              <div style="position: relative; flex: 1 1 0; min-width: 0; background: #E6DCCD">
+                <img src="{{ b.before }}" alt="{{ b.altBefore }}" loading="lazy" style="width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block" />
+                <span style="position: absolute; top: 10px; left: 10px; background: rgba(252,249,244,.92); color: #2F2620; border-radius: 999px; padding: 4px 11px; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase">przed</span>
+              </div>
+              <div style="position: relative; flex: 1 1 0; min-width: 0; background: #E6DCCD">
+                <img src="{{ b.after }}" alt="{{ b.altAfter }}" loading="lazy" style="width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block" />
+                <span style="position: absolute; top: 10px; left: 10px; background: rgba(252,249,244,.92); color: #2F2620; border-radius: 999px; padding: 4px 11px; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase">po</span>
+              </div>
+            </div>
+            <sc-if value="{{ b.hasCap }}" hint-placeholder-val="{{ true }}"><figcaption style="padding: 14px 18px; font-size: 14px; line-height: 1.5; color: #5C5043">{{ b.cap }}</figcaption></sc-if>
+          </figure>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
     <div style="max-width: 1280px; margin: 0 auto; padding: 56px 28px 96px">
       <div style="display: flex; flex-wrap: wrap; gap: 44px">
         <div style="flex: 1 1 400px; min-width: 0">
@@ -2004,11 +2148,34 @@
     <div style="max-width: 1280px; margin: 0 auto; padding: 72px 28px 0">
       <div style="display: flex; flex-wrap: wrap; gap: 1px; background: #E2D7C7; border: 1px solid #E2D7C7; border-radius: 4px; overflow: hidden">
         <div style="flex: 1 1 230px; background: #FCF9F4; padding: 30px 26px"><div style="font-family: Newsreader, serif; font-size: 20px; color: #A8813F; margin-bottom: 8px">01</div><div style="font-size: 16px; margin-bottom: 6px">Suszysz roślinę płasko</div><div style="font-size: 14.5px; line-height: 1.6; color: #6B5D4F">Między kartkami książki, dwa tygodnie. Napiszę, jak to zrobić, żeby nie skruszała.</div></div>
-        <div style="flex: 1 1 230px; background: #FCF9F4; padding: 30px 26px"><div style="font-family: Newsreader, serif; font-size: 20px; color: #A8813F; margin-bottom: 8px">02</div><div style="font-size: 16px; margin-bottom: 6px">Wysyłasz w kopercie</div><div style="font-size: 14.5px; line-height: 1.6; color: #6B5D4F">Najlepiej dwie lub trzy sztuki — nie każda znosi odcisk i chcę mieć zapas.</div></div>
-        <div style="flex: 1 1 230px; background: #FCF9F4; padding: 30px 26px"><div style="font-family: Newsreader, serif; font-size: 20px; color: #A8813F; margin-bottom: 8px">03</div><div style="font-size: 16px; margin-bottom: 6px">Odciskam i szkliwię</div><div style="font-size: 14.5px; line-height: 1.6; color: #6B5D4F">Wybierasz kolor: kobalt, jak na zdjęciu, albo naturalna glina z przezroczystym szkliwem.</div></div>
+        <div style="flex: 1 1 230px; background: #FCF9F4; padding: 30px 26px"><div style="font-family: Newsreader, serif; font-size: 20px; color: #A8813F; margin-bottom: 8px">02</div><div style="font-size: 16px; margin-bottom: 6px">Wysyłasz do Paczkomatu</div><div style="font-size: 14.5px; line-height: 1.6; color: #6B5D4F">{{ lockerNote }} Najlepiej dwie lub trzy sztuki — nie każda znosi odcisk i chcę mieć zapas.</div></div>
+        <div style="flex: 1 1 230px; background: #FCF9F4; padding: 30px 26px"><div style="font-family: Newsreader, serif; font-size: 20px; color: #A8813F; margin-bottom: 8px">03</div><div style="font-size: 16px; margin-bottom: 6px">Odciskam i szkliwię</div><div style="font-size: 14.5px; line-height: 1.6; color: #6B5D4F">Zanim odcisnę, wysyłam Ci na WhatsAppie zdjęcie ułożonej rośliny do zatwierdzenia. Wybierasz kolor: kobalt, jak na zdjęciu, albo naturalna glina z przezroczystym szkliwem.</div></div>
         <div style="flex: 1 1 230px; background: #FCF9F4; padding: 30px 26px"><div style="font-family: Newsreader, serif; font-size: 20px; color: #A8813F; margin-bottom: 8px">04</div><div style="font-size: 16px; margin-bottom: 6px">Dwa wypały i wysyłka</div><div style="font-size: 14.5px; line-height: 1.6; color: #6B5D4F">Trzy tygodnie. W paczce karta z datą wypału i nazwą rośliny, jeśli ją znasz.</div></div>
       </div>
     </div>
+    <sc-if value="{{ hasBaImprint }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 72px 28px 0">
+      <h2 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(28px, 3.4vw, 40px); margin: 0 0 8px">Przed i po</h2>
+      <p style="font-size: 15.5px; line-height: 1.6; color: #6B5D4F; margin: 0 0 26px; max-width: 52ch">Rośliny, które do mnie przyszły, obok ceramiki, na której zostawiły ślad.</p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 26px">
+        <sc-for list="{{ baImprint }}" as="b" hint-placeholder-count="2">
+          <figure style="margin: 0; background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; overflow: hidden">
+            <div style="display: flex; gap: 1px; background: #E2D7C7">
+              <div style="position: relative; flex: 1 1 0; min-width: 0; background: #E6DCCD">
+                <img src="{{ b.before }}" alt="{{ b.altBefore }}" loading="lazy" style="width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block" />
+                <span style="position: absolute; top: 10px; left: 10px; background: rgba(252,249,244,.92); color: #2F2620; border-radius: 999px; padding: 4px 11px; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase">przed</span>
+              </div>
+              <div style="position: relative; flex: 1 1 0; min-width: 0; background: #E6DCCD">
+                <img src="{{ b.after }}" alt="{{ b.altAfter }}" loading="lazy" style="width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block" />
+                <span style="position: absolute; top: 10px; left: 10px; background: rgba(252,249,244,.92); color: #2F2620; border-radius: 999px; padding: 4px 11px; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase">po</span>
+              </div>
+            </div>
+            <sc-if value="{{ b.hasCap }}" hint-placeholder-val="{{ true }}"><figcaption style="padding: 14px 18px; font-size: 14px; line-height: 1.5; color: #5C5043">{{ b.cap }}</figcaption></sc-if>
+          </figure>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
     <div style="max-width: 1280px; margin: 0 auto; padding: 56px 28px 96px">
       <div style="display: flex; flex-wrap: wrap; gap: 44px">
         <div style="flex: 1 1 400px; min-width: 0">
@@ -2099,6 +2266,7 @@
         <div style="font-size: 10.5px; letter-spacing: 0.24em; text-transform: uppercase; color: #9B8C7C; margin-bottom: 16px">Kontakt</div>
         <div style="display: flex; flex-direction: column; gap: 11px; font-size: 14.5px; color: #B8AB99">
           <a href="{{ waHref }}" target="_blank" rel="noopener" style="color: #D8CDBD" style-hover="color: #D6A39C">{{ phone }}</a>
+          <sc-if value="{{ hasEmail }}" hint-placeholder-val="{{ false }}"><a href="{{ mailHref }}" style="color: #D8CDBD; overflow-wrap: anywhere" style-hover="color: #D6A39C">{{ email }}</a></sc-if>
           <a href="#/kontakt" onClick="{{ goContact }}" style="color: #D8CDBD" style-hover="color: #D6A39C">Napisz do mnie</a>
           <span>{{ cityShort }}</span>
           <span>Pracownia na zapisy</span>
@@ -2194,7 +2362,7 @@
 </div>
 
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1280}, &quot;freeShippingFrom&quot;: {&quot;editor&quot;: &quot;int&quot;, &quot;default&quot;: 400, &quot;tsType&quot;: &quot;number&quot;, &quot;min&quot;: 0, &quot;max&quot;: 1000, &quot;step&quot;: 50, &quot;unit&quot;: &quot;zł&quot;, &quot;section&quot;: &quot;Sklep&quot;, &quot;label&quot;: &quot;Darmowa wysyłka od&quot;}, &quot;defaultPayment&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;blik&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;blik&quot;, &quot;p24&quot;, &quot;karta&quot;, &quot;przelew&quot;], &quot;section&quot;: &quot;Sklep&quot;, &quot;label&quot;: &quot;Domyślna płatność&quot;}, &quot;showInstagramFeed&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Strona główna&quot;, &quot;label&quot;: &quot;Sekcja Instagram na stronie głównej&quot;}, &quot;workshopDeposit&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Warsztaty&quot;, &quot;label&quot;: &quot;Zaliczka online przy rezerwacji&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1280}, &quot;defaultPayment&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;blik&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;blik&quot;, &quot;p24&quot;, &quot;karta&quot;, &quot;przelew&quot;], &quot;section&quot;: &quot;Sklep&quot;, &quot;label&quot;: &quot;Domyślna płatność&quot;}, &quot;showInstagramFeed&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Strona główna&quot;, &quot;label&quot;: &quot;Sekcja Instagram na stronie głównej&quot;}}">
 const PRODUCTS = [
   { id: 'wazony', name: 'Wazony', cat: 'Ceramika', price: 299, old: 315, img: 'zdjecia/wazon-rzezbiony.webp',
     variants: ['Niski 16 cm', 'Średni 20 cm', 'Wysoki 24 cm'], vp: [239, 269, 299],
@@ -2378,16 +2546,23 @@ const MATERIALS_SEED = [
   { t: 'Glina', d: 'Kamionka i szamot piaskowy. Nierówne krawędzie zostawiam, bo tak wygląda ręka.' },
   { t: 'Jedwab', d: 'Z drugiego obiegu i z końcówek bel. Jedna apaszka to jedna opaska.' },
   { t: 'Złoto 24k', d: 'Prawdziwy metal, trzeci wypał. Dlatego złocone rzeczy myje się ręcznie.' },
-  { t: 'Rośliny', d: 'Zbierane pod pracownią, odciskane w surowej glinie i wypalane na popiół.' }
+  { t: 'Rośliny', d: 'Zbierane pod pracownią, odciskane w surowej glinie i wypalane na popiół.' },
+  { t: 'Temperatura wypału', d: '' },
+  { t: 'Zmywarka', d: '' },
+  { t: 'Mikrofalówka', d: '' },
+  { t: 'Atest szkliw', d: '' },
+  { t: 'Pakowanie', d: '' }
 ];
 const CFG_SEED = {
-  shipLocker: '16', shipCourier: '22', wrapPrice: '12', deposit: '80',
-  phone: '+48 792 569 771', ig: 'mellowaura.ceramika', fb: 'https://facebook.com/profile.php?id=61552376291595',
-  city: 'Kraków, home studio', cityShort: 'Kraków, Polska'
+  freeFrom: '400', shipLocker: '16', shipCourier: '22', wrapPrice: '12', deposit: '80', depositOn: false,
+  phone: '+48 792 569 771', email: '', ig: 'mellowaura.ceramika', fb: 'https://facebook.com/profile.php?id=61552376291595', gbp: '',
+  city: 'Kraków, okolice Błoń Krakowskich', cityShort: 'Kraków, Polska', studioAddress: '', locker: ''
 };
 const LISTS_SEED = {
   custom: ['Kubek albo kilka kubków z tekstem', 'Serwis obiadowy / do kawy', 'Prezent okazjonalny (ślub, chrzciny, rocznica)', 'Forma dekoracyjna albo rzeźba', 'Tekstylia — opaski, scrunchies na zamówienie', 'Coś innego, opowiem w wiadomości'],
-  contact: ['Zamówienie ze sklepu', 'Warsztaty i terminy', 'Zamówienie indywidualne', 'Kawiarnia / restauracja', 'Wypał moich prac', 'Współpraca albo prasa']
+  contact: ['Zamówienie ze sklepu', 'Warsztaty i terminy', 'Zamówienie indywidualne', 'Kawiarnia / restauracja', 'Wypał moich prac', 'Współpraca albo prasa'],
+  types: ['Kubki i filiżanki', 'Talerze i miski', 'Wazony i patery', 'Kadzielnice i podstawki', 'Biżuteria', 'Jedwab', 'Kosmetyczki i piórniki', 'Vouchery'],
+  who: ['Dla niej', 'Dla niego / taty', 'Dla pary']
 };
 const BUDGETS_SEED = [{ min: '0', max: '100' }, { min: '100', max: '200' }, { min: '200', max: '400' }, { min: '400', max: '' }];
 
@@ -2429,6 +2604,33 @@ const OCC = {
   'voucher-para': ['Rocznica', 'Święta', 'Ślub'],
   'voucher-kwotowy': ['Urodziny', 'Święta', 'Dla siebie']
 };
+
+const TYPE_OF = {
+  'wazony': 'Wazony i patery', 'patery': 'Wazony i patery', 'talerze': 'Talerze i miski', 'miski': 'Talerze i miski',
+  'zestaw-4-filizanek': 'Kubki i filiżanki', 'kubki-z-cytatem': 'Kubki i filiżanki', 'kubki-malowane': 'Kubki i filiżanki',
+  'kadzielnice': 'Kadzielnice i podstawki', 'podstawki-pod-bizuterie': 'Kadzielnice i podstawki', 'bizuteria': 'Biżuteria',
+  'scrunchies': 'Jedwab', 'jedwabne-opaski': 'Jedwab', 'kosmetyczki': 'Kosmetyczki i piórniki', 'piorniki': 'Kosmetyczki i piórniki',
+  'voucher-lepienie': 'Vouchery', 'voucher-para': 'Vouchery', 'voucher-kwotowy': 'Vouchery'
+};
+
+const WHO = {
+  'kubki-z-cytatem': ['Dla niej', 'Dla niego / taty'],
+  'kubki-malowane': ['Dla niej', 'Dla niego / taty'],
+  'zestaw-4-filizanek': ['Dla pary'],
+  'talerze': ['Dla pary'],
+  'wazony': ['Dla niej'],
+  'patery': ['Dla pary'],
+  'bizuteria': ['Dla niej'],
+  'podstawki-pod-bizuterie': ['Dla niej'],
+  'kadzielnice': ['Dla niej', 'Dla niego / taty'],
+  'scrunchies': ['Dla niej'],
+  'jedwabne-opaski': ['Dla niej'],
+  'voucher-lepienie': ['Dla niej', 'Dla niego / taty'],
+  'voucher-para': ['Dla pary'],
+  'voucher-kwotowy': ['Dla niej', 'Dla niego / taty', 'Dla pary']
+};
+
+const CARE_CERAMIC = 'Zmywarka tak, złoto tylko ręcznie';
 
 const BUNDLES = [
   { id: 'b1', name: 'Kubek i scrunchie w jednym kolorze', ids: ['kubki-malowane', 'scrunchies'],
@@ -2497,14 +2699,14 @@ class Component extends DCLogic {
   state = {
     view: 'home', cat: 'Wszystkie', sort: 'Polecane', pid: null, gal: 0, variant: 0, qty: 1,
     cart: [], cartOpen: false, toast: '', step: 1, pay: 'blik', ship: 'paczkomat', blik: '',
-    order: null, slot: null, booked: null, sent: null, faq: null, stamp: '', more: false,
+    order: null, slot: null, booked: null, sent: null, faq: null, stamp: '', more: false, vFor: '', vNote: '',
     added: [], hidden: {},
-    nf: { name: '', cat: 'Ceramika', desc: '', photo: '', photos: [], rows: [{ l: '', p: '' }], dims: {} },
-    gals: {}, cardIdx: {},
+    nf: { name: '', cat: 'Ceramika', type: '', desc: '', photo: '', photos: [], rows: [{ l: '', p: '' }], dims: {} },
+    gals: {}, cardIdx: {}, favs: [], sound: true, typeMap: {}, whoMap: {}, care: {}, ba: { scarf: [], imprint: [] },
     adminTab: 'produkty', prices: {}, vprices: {}, vlist: {}, names: {}, wsPrices: {}, kilnPrices: {},
     kilnKinds: ['Biskwitowy', 'Na ostro', 'Złoto', 'Nie wiem, doradź'], newKilnKind: '', kilnKind: '',
-    cfg: Object.assign({}, CFG_SEED), lists: { custom: LISTS_SEED.custom.slice(), contact: LISTS_SEED.contact.slice() },
-    newList: { custom: '', contact: '' }, customKind: '', contactKind: '',
+    cfg: Object.assign({}, CFG_SEED), lists: { custom: LISTS_SEED.custom.slice(), contact: LISTS_SEED.contact.slice(), types: LISTS_SEED.types.slice(), who: LISTS_SEED.who.slice() },
+    newList: { custom: '', contact: '', types: '', who: '' }, customKind: '', contactKind: '',
     budgets: BUDGETS_SEED.map(b => Object.assign({}, b)),
     faqList: FAQ_SEED.map(f => Object.assign({}, f)), newFaq: { q: '', a: '' },
     materials: MATERIALS_SEED.map(m => Object.assign({}, m)),
@@ -2520,7 +2722,7 @@ class Component extends DCLogic {
     scarfRows: SCARF_ROWS.map(x => Object.assign({}, x)),
     imprintRows: IMPRINT_ROWS.map(x => Object.assign({}, x)),
     bnd: BUNDLES.map(b => ({ id: b.id, name: b.name, desc: b.desc, save: '10', hidden: false })),
-    occ: 'Wszystkie okazje', bud: 'Każdy budżet', glaze: 'turkus', mugSize: 1, mugText: '', wrap: false, ink: 'grafit',
+    occ: 'Wszystkie okazje', who: 'Dla każdego', bud: 'Każdy budżet', glaze: 'turkus', mugSize: 1, mugText: '', wrap: false, ink: 'grafit',
     occMap: {},
     mugCfg: {
       img: 'zdjecia/kubek-cappuccino.webp', tx: 70, ty: 74, ts: 62, rot: -2, maxChars: 16, maxLines: 3,
@@ -2679,6 +2881,71 @@ class Component extends DCLogic {
     const next = cur.indexOf(o) > -1 ? cur.filter(x => x !== o) : cur.concat([o]);
     this.setState({ occMap: Object.assign({}, this.state.occMap, { [id]: next }) });
   };
+  typeOf = (id) => (this.state.typeMap[id] !== undefined ? this.state.typeMap[id] : (TYPE_OF[id] || ''));
+  whoOf = (id) => this.state.whoMap[id] || WHO[id] || [];
+  toggleWho = (id, w) => {
+    const cur = this.whoOf(id);
+    const next = cur.indexOf(w) > -1 ? cur.filter(x => x !== w) : cur.concat([w]);
+    this.setState({ whoMap: Object.assign({}, this.state.whoMap, { [id]: next }) });
+  };
+  careOf = (p) => (this.state.care[p.id] !== undefined ? this.state.care[p.id] : (p.cat === 'Ceramika' ? CARE_CERAMIC : ''));
+  setBa = (k, list) => this.setState({ ba: Object.assign({}, this.state.ba, { [k]: list }) });
+  addBa = (k) => this.setBa(k, this.state.ba[k].concat([{ before: '', after: '', cap: '' }]));
+  baEdit = (k) => this.state.ba[k].map((b, i) => {
+    const put = (field, v) => this.setBa(k, this.state.ba[k].map((x, j) => j === i ? Object.assign({}, x, { [field]: v }) : x));
+    return {
+      before: b.before, after: b.after, cap: b.cap,
+      hasBefore: !!b.before, hasAfter: !!b.after,
+      beforeCta: b.before ? 'Zmień zdjęcie przed' : '+ zdjęcie przed', afterCta: b.after ? 'Zmień zdjęcie po' : '+ zdjęcie po',
+      onBefore: e => this.readImg(e, src => put('before', src)),
+      onAfter: e => this.readImg(e, src => put('after', src)),
+      onCap: e => put('cap', e.target.value.slice(0, 80)),
+      stateLabel: b.before && b.after ? 'widać na stronie' : 'dodaj oba zdjęcia, żeby para się pokazała',
+      del: () => this.setBa(k, this.state.ba[k].filter((x, j) => j !== i))
+    };
+  });
+  baPublic = (k, beforeAlt, afterAlt) => this.state.ba[k].filter(b => b.before && b.after).map(b => ({
+    before: b.before, after: b.after, cap: b.cap.trim(), hasCap: !!b.cap.trim(),
+    altBefore: 'Przed: ' + (b.cap.trim() || beforeAlt), altAfter: 'Po: ' + (b.cap.trim() || afterAlt)
+  }));
+  toggleFav = (id, e) => {
+    if (e && e.stopPropagation) e.stopPropagation();
+    const on = this.state.favs.indexOf(id) > -1;
+    const favs = on ? this.state.favs.filter(x => x !== id) : this.state.favs.concat([id]);
+    this.setState({ favs });
+    try { window.localStorage.setItem('ma-favs', JSON.stringify(favs)); } catch (err) {}
+    this.toast(on ? 'Usunięte z ulubionych' : 'Zapisane w ulubionych — znajdziesz je w nagłówku');
+  };
+  playStamp = () => {
+    if (!this.state.sound || typeof window === 'undefined') return;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    try {
+      const ac = this._ac = this._ac || new AC();
+      if (ac.state === 'suspended') ac.resume();
+      const t = ac.currentTime;
+      // A dull thump: a falling sine for the stamp and a short burst of muffled noise for the clay.
+      const osc = ac.createOscillator(), og = ac.createGain();
+      osc.frequency.setValueAtTime(140, t);
+      osc.frequency.exponentialRampToValueAtTime(50, t + 0.09);
+      og.gain.setValueAtTime(0.0001, t);
+      og.gain.exponentialRampToValueAtTime(0.32, t + 0.004);
+      og.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+      osc.connect(og); og.connect(ac.destination);
+      osc.start(t); osc.stop(t + 0.13);
+      const len = Math.floor(ac.sampleRate * 0.035), buf = ac.createBuffer(1, len, ac.sampleRate), ch = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) ch[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2);
+      const noise = ac.createBufferSource(), lp = ac.createBiquadFilter(), ng = ac.createGain();
+      noise.buffer = buf; lp.type = 'lowpass'; lp.frequency.value = 850; ng.gain.value = 0.22;
+      noise.connect(lp); lp.connect(ng); ng.connect(ac.destination);
+      noise.start(t);
+    } catch (err) {}
+  };
+  toggleSound = () => {
+    const sound = !this.state.sound;
+    this.setState({ sound });
+    try { window.localStorage.setItem('ma-sound', sound ? 'on' : 'off'); } catch (err) {}
+  };
 
   setDim = (id, k, v) => {
     const cur = this.state.dims[id] || {};
@@ -2719,7 +2986,33 @@ class Component extends DCLogic {
     down: () => { if (i === arr.length - 1) return; const a = arr.slice(); [a[i + 1], a[i]] = [a[i], a[i + 1]]; set(a); },
     del: () => { if (arr.length <= 1) { this.toast('Zostaw choć jedną pozycję'); return; } set(arr.filter((x, j) => j !== i)); }
   }));
-  setList = (k, arr) => this.setState({ lists: Object.assign({}, this.state.lists, { [k]: arr }) });
+  setList = (k, arr) => {
+    const old = this.state.lists[k] || [];
+    const next = { lists: Object.assign({}, this.state.lists, { [k]: arr }) };
+    const changed = old.length === arr.length ? arr.map((x, j) => (x !== old[j] ? j : -1)).filter(j => j > -1) : [];
+    // Editing a type or recipient label renames it: products tagged with the old name follow the new one.
+    if ((k === 'types' || k === 'who') && changed.length === 1) {
+      const i = changed[0], was = this._was || (this._was = {});
+      const from = old[i] || was[k + i], to = arr[i];
+      if (!to) was[k + i] = from;
+      else if (from) {
+        delete was[k + i];
+        const ids = PRODUCTS.concat(this.state.added).map(p => p.id);
+        if (k === 'types') {
+          const typeMap = Object.assign({}, this.state.typeMap);
+          ids.forEach(id => { if (this.typeOf(id) === from) typeMap[id] = to; });
+          next.typeMap = typeMap;
+          if (this.state.cat === from) next.cat = to;
+        } else {
+          const whoMap = Object.assign({}, this.state.whoMap);
+          ids.forEach(id => { const w = this.whoOf(id); if (w.indexOf(from) > -1) whoMap[id] = w.map(x => (x === from ? to : x)); });
+          next.whoMap = whoMap;
+          if (this.state.who === from) next.who = to;
+        }
+      }
+    }
+    this.setState(next);
+  };
   addToList = (k) => {
     const v = this.state.newList[k].trim();
     if (!v) { this.toast('Wpisz treść pozycji'); return; }
@@ -2816,7 +3109,8 @@ class Component extends DCLogic {
     };
     this.setState({
       added: this.state.added.concat([item]),
-      nf: { name: '', cat: nf.cat, desc: '', photo: '', photos: [], rows: [{ l: '', p: '' }], dims: {} }
+      typeMap: Object.assign({}, this.state.typeMap, { [item.id]: nf.type || '' }),
+      nf: { name: '', cat: nf.cat, type: nf.type, desc: '', photo: '', photos: [], rows: [{ l: '', p: '' }], dims: {} }
     });
     this.toast(item.name + ' — opublikowane w sklepie');
   };
@@ -2836,7 +3130,7 @@ class Component extends DCLogic {
     if (!h || h === '/') { if (this.state.view !== 'home') this.setState({ view: 'home', cartOpen: false }); return; }
     if (h.indexOf('/produkt/') === 0) {
       const id = h.slice(9);
-      if (this.state.pid !== id || this.state.view !== 'product') this.setState({ view: 'product', pid: id, gal: 0, variant: 0, qty: 1, cartOpen: false });
+      if (this.state.pid !== id || this.state.view !== 'product') this.setState({ view: 'product', pid: id, gal: 0, variant: 0, qty: 1, vFor: '', vNote: '', cartOpen: false });
       return;
     }
     if (h.indexOf('/dziennik/') === 0) {
@@ -2889,16 +3183,17 @@ class Component extends DCLogic {
     const biz = {
       '@context': 'https://schema.org', '@type': 'LocalBusiness', '@id': 'https://mellow-aura.com/#pracownia',
       name: 'MellowAura', description: 'Pracownia ceramiki i jedwabnego rękodzieła Kasi Samborskiej.',
-      address: { '@type': 'PostalAddress', addressLocality: 'Kraków', addressCountry: 'PL' },
+      address: { '@type': 'PostalAddress', addressLocality: 'Kraków', addressCountry: 'PL' }, areaServed: 'Kraków',
       telephone: '+' + this.waDigits(), priceRange: '59–499 zł',
-      sameAs: ['https://www.instagram.com/' + s.cfg.ig.replace(/^@/, '') + '/', s.cfg.fb]
+      sameAs: ['https://www.instagram.com/' + s.cfg.ig.replace(/^@/, '') + '/', s.cfg.fb, (s.cfg.gbp || '').trim()].filter(Boolean)
     };
+    if ((s.cfg.email || '').trim()) biz.email = s.cfg.email.trim();
     const blocks = [biz];
     if (prod) {
       const rng = this.vRange(prod);
       blocks.push({
         '@context': 'https://schema.org', '@type': 'Product', name: prod.name,
-        description: String(prod.desc || ''), category: prod.cat, brand: { '@type': 'Brand', name: 'MellowAura' },
+        description: String(prod.desc || ''), category: this.typeOf(prod.id) || prod.cat, brand: { '@type': 'Brand', name: 'MellowAura' },
         offers: {
           '@type': 'AggregateOffer', priceCurrency: 'PLN',
           lowPrice: rng.min, highPrice: rng.max, offerCount: this.vlist(prod).length,
@@ -2942,7 +3237,7 @@ class Component extends DCLogic {
   toast = (msg) => { this.setState({ toast: msg }); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ toast: '' }), 2600); };
 
   openProduct = (id) => {
-    this.setState({ view: 'product', pid: id, gal: 0, variant: 0, qty: 1, cartOpen: false });
+    this.setState({ view: 'product', pid: id, gal: 0, variant: 0, qty: 1, vFor: '', vNote: '', cartOpen: false });
     if (typeof window !== 'undefined') {
       window.scrollTo(0, 0);
       this._skip = true;
@@ -2950,11 +3245,12 @@ class Component extends DCLogic {
     }
   };
 
-  add = (id, variantIdx, qty, stamp) => {
+  add = (id, variantIdx, qty, stamp, note) => {
     const p = PRODUCTS.concat(this.state.added).find(x => x.id === id);
     const vi = variantIdx || 0;
     let variant = this.vlist(p)[vi];
     if (stamp) variant = '„' + stamp + '"';
+    if (note) variant = variant + ' · ' + note;
     const key = id + '|' + variant;
     const cart = this.state.cart.slice();
     const found = cart.find(c => c.key === key);
@@ -2969,7 +3265,7 @@ class Component extends DCLogic {
     this.setState({ cart });
   };
 
-  freeFrom = () => this.props.freeShippingFrom ?? 400;
+  freeFrom = () => this.cfgN('freeFrom', 400);
   shipCost = () => {
     const sub = this.subtotal();
     if (this.state.ship === 'odbior') return 0;
@@ -3008,6 +3304,11 @@ class Component extends DCLogic {
     if (typeof window !== 'undefined') {
       window.addEventListener('hashchange', this.onHash);
       if (window.location.hash) this.onHash();
+      try {
+        const favs = JSON.parse(window.localStorage.getItem('ma-favs') || '[]');
+        if (Array.isArray(favs) && favs.length) this.setState({ favs });
+        if (window.localStorage.getItem('ma-sound') === 'off') this.setState({ sound: false });
+      } catch (err) {}
     }
   }
 
@@ -3020,7 +3321,7 @@ class Component extends DCLogic {
     const s = this.state;
     const freeFrom = this.freeFrom();
     const budOk = (pr) => this.budOk(pr, s.bud);
-    const deposit = !!this.props.workshopDeposit;
+    const deposit = !!s.cfg.depositOn;
     const nv = (view, before) => (e) => {
       if (e && e.preventDefault) e.preventDefault();
       if (before) before();
@@ -3033,7 +3334,8 @@ class Component extends DCLogic {
       goFaq: nv('faq'), goContact: nv('contact'),
       goShopCeramika: nv('shop', () => this.setState({ cat: 'Ceramika' })),
       goShopTekstylia: nv('shop', () => this.setState({ cat: 'Rękodzieło' })),
-      goShopWarsztaty: nv('shop', () => this.setState({ cat: 'Warsztaty' })),
+      goShopWarsztaty: nv('shop', () => this.setState({ cat: 'Vouchery' })),
+      openFavs: () => { this.setState({ cat: 'Ulubione', q: '' }); this.go('shop'); },
       goShopFromCart: nv('shop'),
       goMug: nv('mug'), goGifts: nv('gifts'), goBundles: nv('bundles'),
       goScarf: nv('scarf'), goImprint: nv('imprint'),
@@ -3042,7 +3344,10 @@ class Component extends DCLogic {
     };
 
     const decorate = p => ({
-      id: p.id, name: p.name, category: p.cat, img: p.img, desc: p.desc,
+      id: p.id, name: p.name, category: this.typeOf(p.id) || p.cat, img: p.img, desc: p.desc,
+      favIcon: s.favs.indexOf(p.id) > -1 ? '♥' : '♡', favPressed: s.favs.indexOf(p.id) > -1 ? 'true' : 'false',
+      favLabel: (s.favs.indexOf(p.id) > -1 ? 'Usuń z ulubionych: ' : 'Dodaj do ulubionych: ') + p.name,
+      toggleFav: (e) => this.toggleFav(p.id, e),
       delay: '0s',
       slides: (p.gallery.length > 1 ? p.gallery : []).map((src, i) => ({ src, op: (s.cardIdx[p.id] || 0) === i ? 1 : 0 })),
       hasMany: p.gallery.length > 1,
@@ -3068,14 +3373,18 @@ class Component extends DCLogic {
     });
     const live = all.filter(p => !p.draft && !s.hidden[p.id] && this.stockOf(p) > 0);
     const qq = s.q.trim().toLowerCase();
-    let list = live.filter(p => s.cat === 'Wszystkie' || p.cat === s.cat)
+    const inCat = (c) => (p) => c === 'Wszystkie' || (c === 'Ulubione' ? s.favs.indexOf(p.id) > -1 : (this.typeOf(p.id) === c || p.cat === c));
+    let list = live.filter(inCat(s.cat))
       .filter(p => !qq || (p.name + ' ' + (p.desc || '')).toLowerCase().indexOf(qq) > -1);
     if (s.sort === 'Cena rosnąco') list = list.slice().sort((a, b) => a.price - b.price);
     if (s.sort === 'Cena malejąco') list = list.slice().sort((a, b) => b.price - a.price);
     if (s.sort === 'Nazwa A–Z') list = list.slice().sort((a, b) => a.name.localeCompare(b.name, 'pl'));
 
-    const cats = ['Wszystkie', 'Ceramika', 'Rękodzieło', 'Warsztaty'].map(c => ({
-      label: c + ' (' + live.filter(p => c === 'Wszystkie' || p.cat === c).length + ')',
+    const catNames = ['Wszystkie'].concat(s.lists.types.filter(c => c && (c === s.cat || live.some(inCat(c)))));
+    if (s.favs.length || s.cat === 'Ulubione') catNames.push('Ulubione');
+    if (catNames.indexOf(s.cat) === -1) catNames.push(s.cat);
+    const cats = catNames.map(c => ({
+      label: c + ' (' + live.filter(inCat(c)).length + ')',
       bg: s.cat === c ? '#2F2620' : 'transparent', fg: s.cat === c ? '#F7F2EA' : '#5C5043',
       bd: s.cat === c ? '#2F2620' : '#C6B8A5', set: () => this.setState({ cat: c })
     }));
@@ -3089,13 +3398,18 @@ class Component extends DCLogic {
     const mugSz = s.mugCfg.sizes[s.mugSize] || s.mugCfg.sizes[0] || { p: 0 };
     const mugPrice = parseFloat(String(mugSz.p).replace(',', '.')) || 0;
     const occOf = (id) => s.occMap[id] || OCC[id] || [];
+    const giftList = live.filter(x => {
+      if (s.occ !== 'Wszystkie okazje' && occOf(x.id).indexOf(s.occ) === -1) return false;
+      if (s.who !== 'Dla każdego' && this.whoOf(x.id).indexOf(s.who) === -1) return false;
+      return budOk(this.vRange(x).min);
+    });
 
     const hero = live.find(x => x.id === s.heroId) || live[0];
     const heroPriceLabel = hero ? (this.vRange(hero).min === this.vRange(hero).max ? zl(this.price(hero)) : 'od ' + zl(this.vRange(hero).min)) : '';
 
     const p = all.find(x => x.id === s.pid);
     const detail = p ? {
-      name: p.name, category: p.cat, desc: p.desc, priceLabel: zl(this.vprice(p, s.variant)),
+      name: p.name, category: this.typeOf(p.id) || p.cat, desc: p.desc, priceLabel: zl(this.vprice(p, s.variant)),
       oldLabel: p.old ? zl(p.old) : '', hasOld: !!p.old, img: p.gallery[s.gal] || p.img,
       thumbs: p.gallery.map((g, i) => ({ img: g, bd: i === s.gal ? '#2F2620' : '#E2D7C7', set: () => this.setState({ gal: i }) })),
       variants: this.vlist(p).map((v, i) => ({
@@ -3120,7 +3434,8 @@ class Component extends DCLogic {
       addToCart: () => {
         const wantsStamp = p.stamp && this.vlist(p)[s.variant] === 'Twój tekst';
         if (wantsStamp && !s.stamp.trim()) { this.toast('Napisz, co mam wbić w glinę'); return; }
-        this.add(p.id, s.variant, s.qty, wantsStamp ? s.stamp.trim() : null);
+        const note = p.cat === 'Warsztaty' ? [s.vFor.trim() ? 'dla: ' + s.vFor.trim() : '', s.vNote.trim() ? 'dedykacja: „' + s.vNote.trim() + '”' : ''].filter(Boolean).join(' · ') : '';
+        this.add(p.id, s.variant, s.qty, wantsStamp ? s.stamp.trim() : null, note);
         this.setState({ cartOpen: true });
       },
       totalLabel: zl(this.vprice(p, s.variant) * s.qty),
@@ -3128,7 +3443,20 @@ class Component extends DCLogic {
       stampable: !!p.stamp, stamp: s.stamp,
       stampCount: s.stamp.length + ' / 22',
       onStamp: (e) => this.setState({ stamp: e.target.value.slice(0, 22) }),
-      related: live.filter(x => x.cat === p.cat && x.id !== p.id).slice(0, 4).map(decorate)
+      related: live.filter(x => x.id !== p.id && this.typeOf(x.id) && this.typeOf(x.id) === this.typeOf(p.id))
+        .concat(live.filter(x => x.id !== p.id && x.cat === p.cat && !(this.typeOf(x.id) && this.typeOf(x.id) === this.typeOf(p.id))))
+        .slice(0, 4).map(decorate),
+      care: this.careOf(p), hasCare: !!this.careOf(p).trim(),
+      favIcon: s.favs.indexOf(p.id) > -1 ? '♥' : '♡', favPressed: s.favs.indexOf(p.id) > -1 ? 'true' : 'false',
+      favLabel: s.favs.indexOf(p.id) > -1 ? 'Usuń z ulubionych' : 'Dodaj do ulubionych',
+      toggleFav: (e) => this.toggleFav(p.id, e),
+      isVoucher: p.cat === 'Warsztaty', vFor: s.vFor, vNote: s.vNote,
+      onVFor: e => this.setState({ vFor: e.target.value.slice(0, 40) }),
+      onVNote: e => this.setState({ vNote: e.target.value.slice(0, 180) }),
+      vForCount: s.vFor.length + ' / 40', vNoteCount: s.vNote.length + ' / 180',
+      vPreviewFor: s.vFor.trim() || 'Imię osoby, która go dostanie',
+      vPreviewNote: s.vNote.trim() || 'Tu pojawi się Twoja dedykacja.',
+      vUntil: (() => { const d = new Date(); d.setFullYear(d.getFullYear() + 1); return d.toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' }); })()
     } : null;
 
     const cartItems = s.cart.map(c => {
@@ -3250,19 +3578,30 @@ class Component extends DCLogic {
       phone: s.cfg.phone, waHref: 'https://wa.me/' + this.waDigits(),
       igHandle: '@' + s.cfg.ig.replace(/^@/, ''), igHref: 'https://www.instagram.com/' + s.cfg.ig.replace(/^@/, '') + '/',
       fbHref: s.cfg.fb, city: s.cfg.city, cityShort: s.cfg.cityShort,
+      email: (s.cfg.email || '').trim(), hasEmail: !!(s.cfg.email || '').trim(), mailHref: 'mailto:' + (s.cfg.email || '').trim(),
+      lockerNote: (s.cfg.locker || '').trim() ? 'Do mojego Paczkomatu ' + s.cfg.locker.trim() + '.' : 'Do mojego Paczkomatu — kod podam w wiadomości.',
+      favCount: s.favs.length, hasFavs: s.favs.length > 0, favsLabel: 'Ulubione: ' + s.favs.length,
+      soundLabel: s.sound ? 'Wycisz stempel' : 'Włącz dźwięk stempla', toggleSound: this.toggleSound,
+      depositStateLabel: deposit ? 'Zaliczka za warsztat — pobieram przy zapisie' : 'Zaliczka za warsztat — nie pobieram',
+      depositToggleLabel: deposit ? 'Wyłącz zaliczkę' : 'Włącz zaliczkę', toggleDeposit: () => this.setCfg2('depositOn', !deposit),
+      baScarf: this.baPublic('scarf', 'tkanina przysłana do przeróbki', 'rzecz uszyta z tej tkaniny'),
+      baImprint: this.baPublic('imprint', 'roślina przysłana do odcisku', 'ceramika z odciskiem tej rośliny'),
+      hasBaScarf: s.ba.scarf.some(b => b.before && b.after), hasBaImprint: s.ba.imprint.some(b => b.before && b.after),
+      baScarfEdit: this.baEdit('scarf'), baImprintEdit: this.baEdit('imprint'),
+      addBaScarf: () => this.addBa('scarf'), addBaImprint: () => this.addBa('imprint'),
       tHomeKasiaH2: this.t('homeKasiaH2'), tHomeKasiaP: this.t('homeKasiaP'), tAboutP1: this.t('aboutP1'), tAboutP2: this.t('aboutP2'), tAboutP3: this.t('aboutP3'),
       tKilnNote: this.t('kilnNote'), tContactLead: this.t('contactLead'), tFooterTagline: this.t('footerTagline'),
       scarfFromLabel: 'od ' + zl(Math.min.apply(null, s.scarfRows.map(r => this.num(r.p, Infinity)))),
       imprintFromLabel: 'od ' + zl(Math.min.apply(null, s.imprintRows.map(r => this.num(r.p, Infinity)))),
-      materials: s.materials.filter(m => m.t.trim() || m.d.trim()).map(m => ({ t: m.t, d: m.d })),
+      materials: s.materials.filter(m => m.t.trim() && m.d.trim()).map(m => ({ t: m.t, d: m.d })),
       customKinds: s.lists.custom.map(label => ({ label })), contactKinds: s.lists.contact.map(label => ({ label })),
       customKind: s.customKind, onCustomKind: e => this.setState({ customKind: e.target.value }),
       contactKind: s.contactKind, onContactKind: e => this.setState({ contactKind: e.target.value }),
-      cfgMoney: [['shipLocker', 'InPost Paczkomat'], ['shipCourier', 'Kurier InPost'], ['wrapPrice', 'Pakowanie na prezent'], ['deposit', 'Zaliczka za warsztat']].map(f => ({
+      cfgMoney: [['freeFrom', 'Darmowa wysyłka od'], ['shipLocker', 'InPost Paczkomat'], ['shipCourier', 'Kurier InPost'], ['wrapPrice', 'Pakowanie na prezent'], ['deposit', 'Zaliczka za warsztat']].map(f => ({
         label: f[1], val: s.cfg[f[0]], onChange: e => this.setCfg2(f[0], e.target.value) })),
-      cfgText: [['phone', 'Telefon (WhatsApp)'], ['ig', 'Instagram — nazwa profilu'], ['fb', 'Facebook — adres strony'], ['city', 'Pracownia — jak pokazać na stronie kontaktu'], ['cityShort', 'Miasto w stopce']].map(f => ({
+      cfgText: [['phone', 'Telefon (WhatsApp)'], ['email', 'E-mail — puste pole nie pokaże się na stronie'], ['ig', 'Instagram — nazwa profilu'], ['fb', 'Facebook — adres strony'], ['gbp', 'Wizytówka Google — link, gdy już będzie'], ['city', 'Pracownia — okolica na stronie, bez adresu'], ['studioAddress', 'Dokładny adres — tylko do maila po zapisie'], ['locker', 'Twój Paczkomat — kod dla przesyłek od klientów'], ['cityShort', 'Miasto w stopce']].map(f => ({
         label: f[1], val: s.cfg[f[0]], onChange: e => this.setCfg2(f[0], e.target.value) })),
-      formLists: [['custom', 'Formularz „Zamówienia indywidualne" — co to ma być?'], ['contact', 'Formularz „Kontakt" — w jakiej sprawie?']].map(f => ({
+      formLists: [['custom', 'Formularz „Zamówienia indywidualne" — co to ma być?'], ['contact', 'Formularz „Kontakt" — w jakiej sprawie?'], ['types', 'Rodzaje produktów — kategorie w sklepie'], ['who', 'Dla kogo — grupa w „Szukam prezentu”']].map(f => ({
         title: f[1], rows: this.mkList(s.lists[f[0]], a => this.setList(f[0], a)),
         newVal: s.newList[f[0]], onNew: e => this.setState({ newList: Object.assign({}, s.newList, { [f[0]]: e.target.value }) }), add: () => this.addToList(f[0]) })),
       budgetRows: s.budgets.map((b, i) => ({
@@ -3312,6 +3651,7 @@ class Component extends DCLogic {
       nfPhoto: s.nf.photo, hasNfPhoto: !!s.nf.photo, noNfPhoto: !s.nf.photo,
       onNfName: e => this.setNf('name', e.target.value),
       onNfCat: e => this.setNf('cat', e.target.value),
+      nfType: s.nf.type, onNfType: e => this.setNf('type', e.target.value), typeOptions: s.lists.types.filter(Boolean).map(label => ({ label })),
       onNfDesc: e => this.setNf('desc', e.target.value),
       nfDims: DIMS.map(d => ({
         label: d.l, unit: d.u, val: s.nf.dims[d.k] || '',
@@ -3338,7 +3678,7 @@ class Component extends DCLogic {
         const mn = Math.min.apply(null, nums), mx = Math.max.apply(null, nums);
         return mn === mx ? zl(mn) : 'od ' + zl(mn);
       })(s.nf.rows),
-      previewCat: s.nf.cat,
+      previewCat: s.nf.type || s.nf.cat,
       adminRows: all.map(pp => ({
         name: pp.name, cat: pp.cat, img: pp.img, hasImg: !!pp.img,
         photoCount: pp.gallery.length === 0 ? 'Zdjęcia — jeszcze żadnego' : (pp.gallery.length === 1 ? 'Jedno zdjęcie' : pp.gallery.length + ' zdjęcia'),
@@ -3362,6 +3702,17 @@ class Component extends DCLogic {
         toggleLabel: s.hidden[pp.id] ? 'Pokaż' : 'Ukryj',
         toggle: () => this.setMap('hidden', pp.id, !s.hidden[pp.id]),
         sizeCount: this.vlist(pp).length === 1 ? 'jeden rozmiar' : this.vlist(pp).length + ' rozmiary',
+        typeChips: s.lists.types.filter(Boolean).map(c => {
+          const on = this.typeOf(pp.id) === c;
+          return { label: c, pressed: on ? 'true' : 'false', bg: on ? '#2F2620' : 'transparent', fg: on ? '#F7F2EA' : '#726456',
+            bd: on ? '#2F2620' : '#DCD0BE', set: () => this.setMap('typeMap', pp.id, on ? '' : c) };
+        }),
+        whoChips: s.lists.who.filter(Boolean).map(w => {
+          const on = this.whoOf(pp.id).indexOf(w) > -1;
+          return { label: w, pressed: on ? 'true' : 'false', bg: on ? '#2F2620' : 'transparent', fg: on ? '#F7F2EA' : '#726456',
+            bd: on ? '#2F2620' : '#DCD0BE', set: () => this.toggleWho(pp.id, w) };
+        }),
+        careVal: this.careOf(pp), onCare: e => this.setMap('care', pp.id, e.target.value.slice(0, 90)),
         occChips: ['Urodziny', 'Dzień Matki', 'Ślub', 'Parapetówka', 'Rocznica', 'Święta', 'Dla siebie'].map(o => {
           const on = occOf(pp.id).indexOf(o) > -1;
           return { label: o, bg: on ? '#2F2620' : 'transparent', fg: on ? '#F7F2EA' : '#726456',
@@ -3429,6 +3780,7 @@ class Component extends DCLogic {
         ? 'Rezerwację potwierdza zaliczka ' + this.cfgN('deposit', 80) + ' zł opłacona BLIK-iem — odliczam ją od ceny warsztatu.'
         : 'Nie pobieram zaliczki online — potwierdzam termin wiadomością i wtedy wysyłam link do BLIK-a.',
       bookCta: deposit ? 'Rezerwuję i płacę zaliczkę' : 'Rezerwuję miejsce',
+      studioNote: ((s.cfg.city || '').trim() ? 'Pracownia: ' + s.cfg.city.trim() + '. ' : '') + 'Dokładny adres wysyłam mailem razem z potwierdzeniem.',
       subtotalLabel: zl(sub), shippingHint: sub >= freeFrom ? 'gratis od ' + freeFrom + ' zł' : 'od ' + zl(Math.min(this.cfgN('shipLocker', 16), this.cfgN('shipCourier', 22))),
       shipLabel: ship === 0 ? 'gratis' : zl(ship), totalLabel: zl(sub + ship),
       step: s.step, isStep1: s.step === 1, isStep2: s.step === 2, isStep3: s.step === 3,
@@ -3462,7 +3814,9 @@ class Component extends DCLogic {
       mugRules: 'do ' + maxLines + (maxLines === 1 ? ' linii' : ' linii') + ' po ' + maxChars + ' znaków',
       onMugText: e => {
         const lines = String(e.target.value).split('\n').slice(0, maxLines).map(l => l.slice(0, maxChars));
-        this.setState({ mugText: lines.join('\n') });
+        const next = lines.join('\n');
+        if (next.replace(/\s/g, '').length > s.mugText.replace(/\s/g, '').length) this.playStamp();
+        this.setState({ mugText: next });
       },
       splitMug: () => {
         const words = s.mugText.replace(/\n/g, ' ').split(/\s+/).filter(Boolean);
@@ -3499,31 +3853,18 @@ class Component extends DCLogic {
         label: o, bg: s.occ === o ? '#2F2620' : 'transparent', fg: s.occ === o ? '#F7F2EA' : '#5C5043',
         bd: s.occ === o ? '#2F2620' : '#C6B8A5', set: () => this.setState({ occ: o })
       })),
+      whos: ['Dla każdego'].concat(s.lists.who.filter(Boolean)).map(w => ({
+        label: w, bg: s.who === w ? '#2F2620' : 'transparent', fg: s.who === w ? '#F7F2EA' : '#5C5043',
+        bd: s.who === w ? '#2F2620' : '#C6B8A5', set: () => this.setState({ who: w })
+      })),
       buds: ['Każdy budżet'].concat(s.budgets.map(b => this.budLabel(b))).map(b => ({
         label: b, bg: s.bud === b ? '#2F2620' : 'transparent', fg: s.bud === b ? '#F7F2EA' : '#5C5043',
         bd: s.bud === b ? '#2F2620' : '#C6B8A5', set: () => this.setState({ bud: b })
       })),
-      giftItems: live.filter(x => {
-        const tags = occOf(x.id);
-        if (s.occ !== 'Wszystkie okazje' && tags.indexOf(s.occ) === -1) return false;
-        const pr = this.vRange(x).min;
-        return budOk(pr);
-      }).map(decorate),
-      giftCount: (function (self) {
-        const n = live.filter(x => {
-          const tags = occOf(x.id);
-          if (s.occ !== 'Wszystkie okazje' && tags.indexOf(s.occ) === -1) return false;
-          const pr = self.vRange(x).min;
-          return budOk(pr);
-        }).length;
-        return n === 0 ? 'Nic nie pasuje do tych dwóch warunków — poluzuj budżet' : (n === 1 ? 'Jeden pomysł' : n + ' pomysłów');
-      })(this),
-      giftEmpty: live.filter(x => {
-        const tags = occOf(x.id);
-        if (s.occ !== 'Wszystkie okazje' && tags.indexOf(s.occ) === -1) return false;
-        const pr = this.vRange(x).min;
-        return budOk(pr);
-      }).length === 0,
+      giftItems: giftList.map(decorate),
+      giftCount: giftList.length === 0 ? 'Nic nie pasuje do tych warunków — poluzuj budżet albo zmień okazję'
+        : (giftList.length === 1 ? 'Jeden pomysł' : giftList.length + ([2, 3, 4].indexOf(giftList.length % 10) > -1 && [12, 13, 14].indexOf(giftList.length % 100) === -1 ? ' pomysły' : ' pomysłów')),
+      giftEmpty: giftList.length === 0,
       bundles: BUNDLES.map((b, bi) => {
         const ov = s.bnd[bi] || { name: b.name, desc: b.desc, save: '10', hidden: false };
         const parts = b.ids.map(id => all.find(x => x.id === id)).filter(Boolean);
