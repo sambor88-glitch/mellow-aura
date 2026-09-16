@@ -52,6 +52,8 @@ class PlaceOrder
                     'unit_price_gross' => $item->unitPrice,
                     'custom_text' => $item->customText,
                     'custom_glaze' => $item->customGlaze,
+                    'recipient_name' => $item->recipientName,
+                    'dedication' => $item->dedication,
                 ]);
             }
 

@@ -16,5 +16,7 @@ final readonly class LineItem
         public int $unitPrice,
         public ?string $customText = null,
         public ?string $customGlaze = null,
+        public ?string $recipientName = null,
+        public ?string $dedication = null,
     ) {}
 }

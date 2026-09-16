@@ -34,6 +34,8 @@
                 @endforeach
             </section>
 
+            @includeIf('gifts::admin.order-vouchers', ['order' => $order, 'card' => $card])
+
             <section class="{{ $card }}">
                 <h2 class="mb-4 font-serif text-[23px]">Dostawa</h2>
                 <dl class="grid gap-3 text-[14px]">

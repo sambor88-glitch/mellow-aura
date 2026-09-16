@@ -154,6 +154,11 @@
                             </div>
                         @endif
 
+                        {{-- A voucher asks for the name and dedication to print; the Gifts module brings the fields. --}}
+                        @if ($product->isVoucher())
+                            @includeIf('gifts::product.voucher-fields', ['product' => $product])
+                        @endif
+
                         <div class="flex flex-wrap items-center gap-3.5">
                             <div class="flex items-center rounded-full border border-line bg-cream">
                                 <button type="button" x-on:click="quantity = Math.max(1, quantity - 1)" aria-label="Mniej sztuk" class="h-[46px] w-11 text-[18px] text-muted">−</button>

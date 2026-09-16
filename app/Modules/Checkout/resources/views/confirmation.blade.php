@@ -8,6 +8,7 @@
                 Zamówienie <strong class="font-medium select-all">{{ $order->number }}</strong> jest opłacone. Dostaniesz maila z potwierdzeniem,
                 a ode mnie zdjęcie paczki przed wysłaniem — zawijam każdą sztukę osobno.
             </p>
+            @includeIf('gifts::checkout.vouchers', ['order' => $order])
             @if ($order->hasShortage())
                 <p role="status" class="mx-auto mb-8 max-w-[48ch] rounded-[4px] border border-alert-line bg-alert px-5 py-4 text-[15px] leading-[1.6] text-alert-text">
                     Ktoś kupił ostatnią sztukę chwilę przed Tobą. Napiszę do Ciebie, żeby ustalić, co dalej — mogę zrobić kolejną albo oddać pieniądze.

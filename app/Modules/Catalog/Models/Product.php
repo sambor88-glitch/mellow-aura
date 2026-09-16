@@ -3,6 +3,7 @@
 namespace App\Modules\Catalog\Models;
 
 use App\Modules\Catalog\Database\Factories\ProductFactory;
+use App\Modules\Catalog\Enums\CategoryGroup;
 use App\Modules\Catalog\Enums\Dimension;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -49,6 +50,15 @@ class Product extends Model implements HasMedia
     protected function live(Builder $query): void
     {
         $query->where('is_published', true)->whereHas('variants', fn (Builder $variants) => $variants->inStock());
+    }
+
+    /**
+     * A voucher for a workshop or an amount: bought like a product, and issued with its own code
+     * once the payment comes in.
+     */
+    public function isVoucher(): bool
+    {
+        return $this->category?->group === CategoryGroup::Workshops;
     }
 
     /**

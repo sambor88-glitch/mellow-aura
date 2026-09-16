@@ -7,16 +7,17 @@ use App\Modules\Checkout\Enums\OrderStatus;
 use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Events\OrderPaid;
 use App\Modules\Checkout\Models\Order;
+use App\Modules\Gifts\Actions\IssueVouchers;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Marks an order as paid and takes its pieces off the shelf, in one transaction and exactly once,
- * however many times the confirmation arrives. The payment webhook will call it too (MA-51).
+ * Marks an order as paid, takes its pieces off the shelf and issues its vouchers, in one transaction
+ * and exactly once, however many times the confirmation arrives. The payment webhook will call it too (MA-51).
  * A piece that someone else bought first stays on the order as missing, and the order is still paid.
  */
 class MarkOrderPaid
 {
-    public function __construct(private DecrementStock $decrementStock) {}
+    public function __construct(private DecrementStock $decrementStock, private IssueVouchers $issueVouchers) {}
 
     public function __invoke(Order $order, string $providerId): Order
     {
@@ -44,6 +45,8 @@ class MarkOrderPaid
                 'payment_provider_id' => $providerId,
                 'paid_at' => now(),
             ]);
+
+            ($this->issueVouchers)($order);
 
             OrderPaid::dispatch($order);
 

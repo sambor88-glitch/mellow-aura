@@ -233,6 +233,10 @@
         "value": 12
     },
     {
+        "key": "text_voucher_how_to_use",
+        "value": "napisz do mnie na WhatsApp albo mailem i podaj numer vouchera — razem ustalimy termin. Jeśli żaden nie pasuje, znajdziemy nowy."
+    },
+    {
         "key": "care_rule_ceramics",
         "value": "Zmywarka tak, złoto tylko ręcznie"
     },
