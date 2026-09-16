@@ -7,6 +7,7 @@ use App\Modules\Settings\Actions\SaveSettings;
 use App\Modules\Settings\Http\Requests\Admin\SaveAnalyticsRequest;
 use App\Modules\Settings\Http\Requests\Admin\SaveCompanyDetailsRequest;
 use App\Modules\Settings\Http\Requests\Admin\SaveMaterialTilesRequest;
+use App\Modules\Settings\Http\Requests\Admin\SaveProductCardRequest;
 use App\Modules\Settings\Http\Requests\Admin\SaveShippingRequest;
 use App\Modules\Settings\Http\Requests\Admin\SaveStudioDetailsRequest;
 use App\Modules\Settings\Settings;
@@ -15,7 +16,7 @@ use Illuminate\View\View;
 
 /**
  * The panel's „Ustawienia”, like the prototype: delivery and fees, the studio's details, the company's details
- * for the terms of sale and the material tiles. Each card saves on its own, so a mistake in one does not hold back the others. The workshop
+ * for the terms of sale, the sentences shared by product pages and the material tiles. Each card saves on its own, so a mistake in one does not hold back the others. The workshop
  * deposit joins the page together with workshop booking.
  */
 class SettingsController extends Controller
@@ -31,6 +32,7 @@ class SettingsController extends Controller
                 ->values(),
             'studio' => collect(SaveStudioDetailsRequest::KEYS)->mapWithKeys(fn (string $key) => [$key => $settings->get($key)])->all(),
             'company' => collect(SaveCompanyDetailsRequest::KEYS)->mapWithKeys(fn (string $key) => [$key => $settings->get($key)])->all(),
+            'productCard' => collect(SaveProductCardRequest::KEYS)->mapWithKeys(fn (string $key) => [$key => $settings->get($key)])->all(),
             'tiles' => array_values((array) $settings->get('material_tiles', [])),
             'analyticsId' => $settings->get('google_analytics_id'),
         ]);
@@ -61,6 +63,15 @@ class SettingsController extends Controller
         return to_route('admin.settings.edit')
             ->withFragment('firma')
             ->with('panel_status', 'Dane firmy zapisane. Regulamin i stopka już je pokazują.');
+    }
+
+    public function productCard(SaveProductCardRequest $request, SaveSettings $saveSettings): RedirectResponse
+    {
+        $saveSettings($request->settings());
+
+        return to_route('admin.settings.edit')
+            ->withFragment('karta-produktu')
+            ->with('panel_status', 'Zapisane. Karty produktów i regulamin już to pokazują.');
     }
 
     public function analytics(SaveAnalyticsRequest $request, SaveSettings $saveSettings): RedirectResponse

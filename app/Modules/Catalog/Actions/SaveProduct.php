@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 class SaveProduct
 {
     /**
-     * @param  array{name: string, category_id: int, description: ?string, care_note: ?string, is_published: bool, is_one_off: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, price_gross: int, stock: ?int}>, photo_alts?: array<int, string>}  $data
+     * @param  array{name: string, category_id: int, description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, is_published: bool, is_one_off: bool, is_exact_piece: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, price_gross: int, stock: ?int}>, photo_alts?: array<int, string>}  $data
      */
     public function __invoke(?Product $product, array $data): Product
     {
@@ -24,8 +24,13 @@ class SaveProduct
                 'category_id' => $data['category_id'],
                 'description' => $data['description'],
                 'care_note' => $data['care_note'],
+                'food_contact' => $data['food_contact'],
+                'deviation' => $data['deviation'],
+                'size_tolerance' => $data['size_tolerance'],
+                'safety_warnings' => $data['safety_warnings'],
                 'is_published' => $data['is_published'],
                 'is_one_off' => $data['is_one_off'],
+                'is_exact_piece' => $data['is_exact_piece'],
                 'dimensions' => $data['dimensions'] ?: null,
                 'occasions' => $data['occasions'],
                 'recipients' => $data['recipients'],

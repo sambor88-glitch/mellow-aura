@@ -5,6 +5,7 @@ namespace App\Modules\Catalog\Models;
 use App\Modules\Catalog\Database\Factories\ProductFactory;
 use App\Modules\Catalog\Enums\CategoryGroup;
 use App\Modules\Catalog\Enums\Dimension;
+use App\Modules\Catalog\Enums\FoodContact;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,7 +20,8 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 #[Fillable([
     'slug', 'name', 'category_id', 'description', 'seo_description', 'dimensions', 'care_note',
-    'is_published', 'is_one_off', 'sort_order', 'stamp_enabled', 'occasions', 'recipients',
+    'food_contact', 'deviation', 'size_tolerance', 'safety_warnings',
+    'is_published', 'is_one_off', 'is_exact_piece', 'sort_order', 'stamp_enabled', 'occasions', 'recipients',
 ])]
 class Product extends Model implements HasMedia
 {
@@ -103,8 +105,10 @@ class Product extends Model implements HasMedia
     {
         return [
             'dimensions' => 'array',
+            'food_contact' => FoodContact::class,
             'is_published' => 'boolean',
             'is_one_off' => 'boolean',
+            'is_exact_piece' => 'boolean',
             'sort_order' => 'integer',
             'stamp_enabled' => 'boolean',
             'occasions' => 'array',

@@ -1,7 +1,9 @@
 @use('App\Modules\Catalog\Enums\Dimension')
+@use('App\Modules\Catalog\Enums\FoodContact')
 @use('App\Modules\Catalog\Enums\Occasion')
 @use('App\Modules\Catalog\Enums\Recipient')
 @use('App\Modules\Shared\Support\Money')
+@inject('settings', 'App\Modules\Settings\Settings')
 @php
     // Several forms share one page, so old input and errors only count for the form they came from.
     $bag = $errors->getBag($formKey);
@@ -24,6 +26,9 @@
     $recipients = (array) $old('recipients', $product?->recipients ?? []);
     $published = $mine ? (bool) old('is_published') : ($product?->is_published ?? true);
     $oneOff = $mine ? (bool) old('is_one_off') : (bool) $product?->is_one_off;
+    $exactPiece = $mine ? (bool) old('is_exact_piece') : (bool) $product?->is_exact_piece;
+    $foodContact = (string) $old('food_contact', $product?->food_contact?->value);
+    $defaultTolerance = $settings->get('size_tolerance');
 
     $input = 'min-w-0 rounded-[4px] border bg-white text-[15px] text-ink placeholder:text-hint focus:border-ink';
     $legend = 'mb-2.5 text-[11px] tracking-[0.14em] text-hint uppercase';
@@ -145,6 +150,48 @@
 
     <x-shared::field name="care_note" :id="$formKey.'-care'" label="Pielęgnacja — zdanie na karcie produktu" :value="$old('care_note', $product?->care_note)" :bag="$formKey"
                      placeholder="np. Zmywarka tak, złoto tylko ręcznie" hint="Puste pole nie pokaże się na stronie" />
+
+    <fieldset class="rounded-[4px] border border-sand-dark bg-linen px-4 pt-3 pb-4">
+        <legend class="{{ $legend }} mb-0 px-1">Zanim ktoś kupi — tego wymaga regulamin i prawo</legend>
+        <div class="grid gap-3">
+            <div class="min-w-0">
+                <label for="{{ $formKey }}-food" class="mb-1.5 block text-[13.5px] text-graphite">Kontakt z żywnością</label>
+                <select id="{{ $formKey }}-food" name="food_contact" aria-describedby="{{ $formKey }}-food-note"
+                        @class([$input, 'w-full px-4 py-[13px]', 'border-error' => $bag->has('food_contact'), 'border-line' => ! $bag->has('food_contact')])>
+                    <option value="">Nie podaję</option>
+                    @foreach (FoodContact::cases() as $option)
+                        <option value="{{ $option->value }}" @selected($foodContact === $option->value)>{{ $option->option() }}</option>
+                    @endforeach
+                </select>
+                @if ($bag->has('food_contact'))
+                    <p id="{{ $formKey }}-food-note" class="mt-1.5 text-[13px] text-error">{{ $bag->first('food_contact') }}</p>
+                @else
+                    <p id="{{ $formKey }}-food-note" class="mt-1.5 text-[12.5px] text-hint">„Tak” wybierz dopiero po badaniach szkliwa i wpisie do sanepidu. „Nie podaję” — nic nie pokaże się na stronie.</p>
+                @endif
+            </div>
+            <x-shared::field name="deviation" :id="$formKey.'-deviation'" label="Cecha do osobnego potwierdzenia" :value="$old('deviation', $product?->deviation)" :bag="$formKey" maxlength="160"
+                             placeholder="np. Nie do zmywarki ani mikrofalówki — złota krawędź"
+                             hint="Tylko to, czego nikt by się nie spodziewał. Klientka potwierdzi to osobnym polem przy zamówieniu." />
+            <x-shared::field name="size_tolerance" :id="$formKey.'-tolerance'" label="Dopuszczalna różnica wymiarów" :value="$old('size_tolerance', $product?->size_tolerance)" :bag="$formKey" maxlength="60"
+                             :placeholder="$defaultTolerance ? 'jak w Ustawieniach: '.$defaultTolerance : 'np. 0,5 cm'"
+                             :hint="$defaultTolerance ? 'Puste pole — obowiązuje różnica z Ustawień: '.$defaultTolerance.'.' : 'Puste pole nie pokaże się na stronie.'" />
+            <div class="min-w-0">
+                <label for="{{ $formKey }}-warnings" class="mb-1.5 block text-[13.5px] text-graphite">Ostrzeżenia — na karcie produktu i na certyfikacie</label>
+                <textarea id="{{ $formKey }}-warnings" name="safety_warnings" rows="2" maxlength="400" aria-describedby="{{ $formKey }}-warnings-note"
+                          placeholder="np. Nie stawiaj na ogniu ani na płycie grzewczej."
+                          @class([$input, 'w-full resize-y px-4 py-[13px] leading-[1.6]', 'border-error' => $bag->has('safety_warnings'), 'border-line' => ! $bag->has('safety_warnings')])>{{ $old('safety_warnings', $product?->safety_warnings) }}</textarea>
+                @if ($bag->has('safety_warnings'))
+                    <p id="{{ $formKey }}-warnings-note" class="mt-1.5 text-[13px] text-error">{{ $bag->first('safety_warnings') }}</p>
+                @else
+                    <p id="{{ $formKey }}-warnings-note" class="mt-1.5 text-[12.5px] text-hint">Krótko, po polsku. Obok pokażą się dane producenta z Ustawień → Dane firmy.</p>
+                @endif
+            </div>
+            <label class="flex min-h-11 items-start gap-2.5 text-[14px] text-graphite">
+                <input type="checkbox" name="is_exact_piece" value="1" @checked($exactPiece) class="mt-[3px] size-4 flex-none accent-ink">
+                <span>Ta sztuka — zdjęcia pokazują dokładnie rzecz, którą wyślę<span class="mt-0.5 block text-[12.5px] text-hint">Bez zaznaczenia strona napisze, że zdjęcia pokazują przykładową sztukę.</span></span>
+            </label>
+        </div>
+    </fieldset>
 
     @if ($product?->getMedia('images')->isNotEmpty())
         <fieldset>

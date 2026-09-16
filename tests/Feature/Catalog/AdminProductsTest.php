@@ -4,6 +4,7 @@ namespace Tests\Feature\Catalog;
 
 use App\Models\User;
 use App\Modules\Catalog\Enums\CategoryGroup;
+use App\Modules\Catalog\Enums\FoodContact;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\PriceHistory;
 use App\Modules\Catalog\Models\Product;
@@ -55,6 +56,11 @@ class AdminProductsTest extends TestCase
                 'category_id' => $this->mugs->id,
                 'description' => 'Miska z gliny z odciskiem liścia.',
                 'care_note' => 'Zmywarka tak',
+                'food_contact' => 'not_suitable',
+                'deviation' => 'Nie do zmywarki — złota krawędź',
+                'size_tolerance' => '1 cm',
+                'safety_warnings' => 'Nie stawiaj na ogniu.',
+                'is_exact_piece' => '1',
                 'dimensions' => ['diameter_cm' => '12,5', 'height_cm' => ''],
                 'occasions' => ['birthday'],
                 'recipients' => ['for_her'],
@@ -70,6 +76,10 @@ class AdminProductsTest extends TestCase
 
         $bowl = Product::where('slug', 'miska-z-odciskiem-paproci')->firstOrFail();
         $this->assertSame(['diameter_cm' => '12,5'], $bowl->dimensions);
+        $this->assertSame(
+            [FoodContact::NotSuitable, 'Nie do zmywarki — złota krawędź', '1 cm', 'Nie stawiaj na ogniu.', true, false],
+            [$bowl->food_contact, $bowl->deviation, $bowl->size_tolerance, $bowl->safety_warnings, $bowl->is_exact_piece, $bowl->is_one_off],
+        );
         $this->assertSame([['birthday'], ['for_her']], [$bowl->occasions, $bowl->recipients]);
         $this->assertTrue($bowl->is_published);
         $this->assertSame(
@@ -151,6 +161,7 @@ class AdminProductsTest extends TestCase
                 'form' => 'produkt-'.$mug->id,
                 'name' => 'Kubki',
                 'category_id' => $this->mugs->id,
+                'food_contact' => 'maybe',
                 'variants' => [
                     ['label' => '', 'price' => '79', 'stock' => ''],
                     ['label' => 'Duży', 'price' => '79 zł', 'stock' => ''],
@@ -160,9 +171,21 @@ class AdminProductsTest extends TestCase
             ->assertSessionHasErrorsIn('produkt-'.$mug->id, [
                 'variants.0.label' => 'Nazwij każdy rozmiar — np. Mały 12 cm',
                 'variants.1.price' => 'Wpisz cenę, np. 79 albo 79,90',
+                'food_contact' => 'Wybierz z listy, czy to naczynie do jedzenia',
             ]);
 
         $this->assertSame('Kubki malowane', $mug->fresh()->name);
+    }
+
+    public function test_the_form_asks_what_the_terms_need_and_names_the_tolerance_from_the_settings(): void
+    {
+        Setting::create(['key' => 'size_tolerance', 'value' => '0,5 cm']);
+        $this->product('Talerze', 1, [8900], ['food_contact' => FoodContact::Suitable, 'deviation' => 'Nie do mikrofalówki', 'is_exact_piece' => true]);
+
+        $this->actingAs(User::factory()->create())
+            ->get('/panel/produkty')
+            ->assertOk()
+            ->assertSeeInOrder(['Zanim ktoś kupi', 'Kontakt z żywnością', '<option value="suitable" selected>Tak — do jedzenia i picia</option>', 'value="Nie do mikrofalówki"', 'placeholder="jak w Ustawieniach: 0,5 cm"', 'Puste pole — obowiązuje różnica z Ustawień: 0,5 cm.', 'Ostrzeżenia', 'name="is_exact_piece" value="1" checked'], false);
     }
 
     public function test_arrows_set_the_order_and_hiding_takes_a_product_off_the_shop(): void

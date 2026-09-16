@@ -26,7 +26,7 @@
     $button = 'mt-[18px] min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]';
     $tileInput = 'w-full min-w-0 rounded-[4px] border bg-white px-3 py-2.5 text-[14px] text-ink placeholder:text-hint focus:border-ink';
 @endphp
-<x-admin::layout title="Ustawienia" lead="Dostawa, dane pracowni i firmy, statystyki i kafelki o materiale. Zmiany widać na stronie od razu.">
+<x-admin::layout title="Ustawienia" lead="Dostawa, dane pracowni i firmy, karta produktu, statystyki i kafelki o materiale. Zmiany widać na stronie od razu.">
     <div class="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] items-start gap-[22px]">
         <form id="dostawa" method="post" action="{{ route('admin.settings.shipping') }}" novalidate class="{{ $card }}">
             @csrf
@@ -141,6 +141,25 @@
         </div>
         <p class="{{ $hint }}">Nie wpisuj tu adresu domowej pracowni — pokazujemy tylko adres z CEIDG. Puste pole zostaje w regulaminie jako miejsce do uzupełnienia.</p>
         <button class="{{ $button }}">Zapisz dane firmy</button>
+    </form>
+
+    <form id="karta-produktu" method="post" action="{{ route('admin.settings.product-card') }}" novalidate class="{{ $card }} mt-[22px]">
+        @csrf
+        @method('PUT')
+        <h2 class="{{ $heading }}">Karta produktu — wspólne dla wszystkich</h2>
+        @if ($errors->hasBag('karta-produktu'))
+            <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+        @endif
+        <p class="mb-3.5 max-w-[70ch] text-[13.5px] leading-[1.6] text-label">Pokażą się na karcie każdego produktu, który nie ma własnych. Własne wpisujesz w Produktach.</p>
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-3">
+            <x-shared::field name="size_tolerance" id="karta-produktu-roznica" bag="karta-produktu" label="Dopuszczalna różnica wymiarów"
+                             :value="old('size_tolerance', $productCard['size_tolerance'])" placeholder="np. 0,5 cm"
+                             hint="Przy wymiarach: „mogą różnić się do 0,5 cm”. Tę samą wartość podaje regulamin w §4." />
+            <x-shared::field name="care_rule_ceramics" id="karta-produktu-pielegnacja" bag="karta-produktu" label="Pielęgnacja ceramiki"
+                             :value="old('care_rule_ceramics', $productCard['care_rule_ceramics'])" placeholder="np. Zmywarka tak, złoto tylko ręcznie"
+                             hint="Dla ceramiki bez własnego zdania o pielęgnacji" />
+        </div>
+        <button class="{{ $button }}">Zapisz kartę produktu</button>
     </form>
 
     <form id="statystyki" method="post" action="{{ route('admin.settings.analytics') }}" novalidate class="{{ $card }} mt-[22px]">

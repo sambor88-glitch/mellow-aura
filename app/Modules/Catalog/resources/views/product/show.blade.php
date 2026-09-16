@@ -15,6 +15,11 @@
     $dimensions = $product->dimensionLabels();
     $care = $product->care_note ?: ($product->category->group === CategoryGroup::Ceramics ? $settings->get('care_rule_ceramics') : null);
     $freeShipping = $settings->get('free_shipping_threshold');
+    // A voucher is not a thing in a parcel: no dimensions note, certificate or producer details.
+    $isGoods = ! $product->isVoucher();
+    $tolerance = $product->size_tolerance ?: $settings->get('size_tolerance');
+    // The product safety rules (GPSR) want the maker's name, postal address and e-mail on every product page.
+    $producer = collect(['company_name', 'company_address', 'contact_email'])->mapWithKeys(fn (string $key) => [$key => $settings->get($key)])->filter();
 @endphp
 
 <x-shared::layout :title="Seo::title($product->name, $suffix)" :description="Seo::description($product->seo_description ?: $product->description)" :canonical="$canonical" type="product" :image="$images->first()?->getAvailableUrl(['card'])">
@@ -57,6 +62,16 @@
                                 class="absolute top-5 right-6 px-2.5 py-1.5 text-[30px] leading-none text-divider hover:text-white">×</button>
                     </dialog>
                 @endif
+                @if ($isGoods && $images->isNotEmpty())
+                    @if ($product->is_exact_piece)
+                        <p class="mt-3 flex flex-wrap items-center gap-2.5 text-[13.5px] text-graphite">
+                            <span class="rounded-full bg-rose px-3 py-[5px] text-[11.5px] tracking-[0.06em] text-ink">ta sztuka</span>
+                            <span>Na zdjęciach jest dokładnie rzecz, którą dostaniesz.</span>
+                        </p>
+                    @else
+                        <p class="mt-3 text-[12.5px] text-hint">Zdjęcia pokazują przykładową sztukę — każdą robię ręcznie, więc Twoja będzie trochę inna.</p>
+                    @endif
+                @endif
                 @if ($images->count() > 1)
                     <div class="mt-3 flex flex-wrap gap-2.5">
                         @foreach ($images as $index => $image)
@@ -93,11 +108,19 @@
                     <p class="mb-[26px] text-[16.5px] leading-[1.72] text-pretty text-lead">{{ $product->description }}</p>
                 @endif
 
-                @if ($dimensions)
-                    <div class="mb-[30px] flex flex-wrap gap-2">
-                        @foreach ($dimensions as $label => $value)
-                            <span class="flex items-baseline gap-2 rounded-[4px] bg-sand-dark px-[13px] py-2 text-[13px]"><span class="text-label">{{ $label }}</span><span class="text-ink">{{ $value }}</span></span>
-                        @endforeach
+                @if ($dimensions || $product->food_contact)
+                    <div class="mb-[30px]">
+                        <div class="flex flex-wrap gap-2">
+                            @foreach ($dimensions as $label => $value)
+                                <span class="flex items-baseline gap-2 rounded-[4px] bg-sand-dark px-[13px] py-2 text-[13px]"><span class="text-label">{{ $label }}</span><span class="text-ink">{{ $value }}</span></span>
+                            @endforeach
+                            @if ($product->food_contact)
+                                <span class="rounded-[4px] bg-sand-dark px-[13px] py-2 text-[13px] text-ink">{{ $product->food_contact->label() }}</span>
+                            @endif
+                        </div>
+                        @if ($dimensions && $tolerance && $isGoods)
+                            <p class="mt-2.5 text-[12.5px] text-hint">Ręczna robota — wymiary mogą różnić się do {{ $tolerance }}.</p>
+                        @endif
                     </div>
                 @endif
 
@@ -117,10 +140,16 @@
                     </div>
                 @endif
 
-                @if ($product->is_one_off)
+                @if ($product->is_one_off && $product->stamp_enabled)
                     <div class="mb-[22px] flex items-center gap-2.5 rounded-[4px] bg-sand-dark px-4 py-[13px] text-[13.5px] text-graphite">
                         <span class="size-[7px] flex-none rounded-full bg-error"></span>
                         <span>Każdy kubek jest jeden — po 1 sztuce z każdego napisu. Kolejny zrobię na zamówienie.</span>
+                    </div>
+                @endif
+
+                @if ($product->deviation)
+                    <div class="mb-5 rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] leading-[1.55] text-alert-text">
+                        <span class="font-medium">Zwróć uwagę:</span> {{ rtrim($product->deviation, '. ') }}. Przy zamówieniu poproszę, żebyś to potwierdziła osobnym polem.
                     </div>
                 @endif
 
@@ -187,24 +216,53 @@
                             {{ Str::ucfirst($shippingNote) }}
                         </div>
                     @endif
-                    <div>
-                        <div class="mb-1 text-ink">Certyfikat unikatu</div>
-                        W paczce karta z numerem, datą wypału i podpisem
-                    </div>
+                    @if ($isGoods)
+                        <div>
+                            <div class="mb-1 text-ink">Certyfikat unikatu</div>
+                            {{ $product->category->group === CategoryGroup::Ceramics ? 'W paczce karta z numerem, datą wypału i podpisem' : 'W paczce karta z numerem i podpisem' }}
+                        </div>
+                    @endif
                     @if ($care)
                         <div>
                             <div class="mb-1 text-ink">Pielęgnacja</div>
                             {{ $care }}
                         </div>
                     @endif
-                    <div>
-                        <div class="mb-1 text-ink">Chcesz inaczej?</div>
-                        Napis, rozmiar, szkliwo — wszystko robię na zamówienie.
-                        @if (Route::has('custom-orders.index'))
-                            <a href="{{ route('custom-orders.index') }}">Napisz, co wymyśliłaś</a>
+                    @if ($isGoods)
+                        <div>
+                            <div class="mb-1 text-ink">Chcesz inaczej?</div>
+                            Napis, rozmiar, szkliwo — wszystko robię na zamówienie.
+                            @if (Route::has('custom-orders.index'))
+                                <a href="{{ route('custom-orders.index') }}">Napisz, co wymyśliłaś</a>
+                            @endif
+                        </div>
+                    @endif
+                </div>
+
+                @if ($isGoods && ($product->safety_warnings || $producer->isNotEmpty()))
+                    <div class="mt-6 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-5 border-t border-divider pt-6 text-[13px] leading-[1.6] text-muted">
+                        @if ($product->safety_warnings)
+                            <div>
+                                <div class="mb-1 text-ink">Ostrzeżenia</div>
+                                <p class="whitespace-pre-line">{{ $product->safety_warnings }}</p>
+                            </div>
+                        @endif
+                        @if ($producer->isNotEmpty())
+                            <div>
+                                <div class="mb-1 text-ink">Producent</div>
+                                @foreach ($producer as $key => $value)
+                                    <div class="[overflow-wrap:anywhere]">
+                                        @if ($key === 'contact_email')
+                                            <a href="mailto:{{ $value }}">{{ $value }}</a>
+                                        @else
+                                            {{ $value }}
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
                         @endif
                     </div>
-                </div>
+                @endif
             </div>
         </div>
 

@@ -302,6 +302,10 @@
         }
     },
     {
+        "key": "size_tolerance",
+        "value": "0,5 cm"
+    },
+    {
         "key": "care_rule_ceramics",
         "value": "Zmywarka tak, złoto tylko ręcznie"
     },

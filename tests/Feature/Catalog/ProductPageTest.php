@@ -3,11 +3,13 @@
 namespace Tests\Feature\Catalog;
 
 use App\Modules\Catalog\Enums\CategoryGroup;
+use App\Modules\Catalog\Enums\FoodContact;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
 use App\Modules\Settings\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ProductPageTest extends TestCase
@@ -128,6 +130,65 @@ class ProductPageTest extends TestCase
         $this->assertSame('390.00', $offer['price']);
         $this->assertArrayNotHasKey('shippingDetails', $offer);
         $this->assertArrayNotHasKey('hasMerchantReturnPolicy', $offer);
+    }
+
+    public function test_the_page_says_what_the_terms_and_the_safety_rules_require(): void
+    {
+        Storage::fake('public');
+        Setting::create(['key' => 'size_tolerance', 'value' => '0,5 cm']);
+        Setting::create(['key' => 'company_name', 'value' => 'MellowAura Katarzyna Samborska']);
+        Setting::create(['key' => 'company_address', 'value' => 'ul. Wirtualna 1, 30-001 Kraków']);
+        Setting::create(['key' => 'contact_email', 'value' => 'kasia@mellow-aura.com']);
+        $plates = Category::factory()->create(['group' => CategoryGroup::Ceramics]);
+        $plate = Product::factory()->create([
+            'slug' => 'talerz-ze-zlotem',
+            'category_id' => $plates->id,
+            'dimensions' => ['diameter_cm' => '24'],
+            'food_contact' => FoodContact::NotSuitable,
+            'deviation' => 'Nie do zmywarki ani mikrofalówki — złota krawędź.',
+            'safety_warnings' => 'Nie stawiaj na ogniu.',
+            'is_exact_piece' => true,
+        ]);
+        ProductVariant::factory()->create(['product_id' => $plate->id, 'stock' => 2]);
+        $plate->addMedia(base_path('zdjecia/talerz-niebieski-odcisk.webp'))->preservingOriginal()->toMediaCollection('images');
+
+        $this->get('/produkt/talerz-ze-zlotem')
+            ->assertOk()
+            ->assertSeeInOrder(['ta sztuka', 'Na zdjęciach jest dokładnie rzecz, którą dostaniesz.'])
+            ->assertSeeInOrder(['Średnica', '24 cm', 'Nie do kontaktu z żywnością', 'Ręczna robota — wymiary mogą różnić się do 0,5 cm.'])
+            ->assertSeeInOrder(['Zwróć uwagę:', 'Nie do zmywarki ani mikrofalówki — złota krawędź. Przy zamówieniu poproszę, żebyś to potwierdziła osobnym polem.'])
+            ->assertSee('W paczce karta z numerem, datą wypału i podpisem')
+            ->assertSeeInOrder(['Ostrzeżenia', 'Nie stawiaj na ogniu.', 'Producent', 'MellowAura Katarzyna Samborska', 'ul. Wirtualna 1, 30-001 Kraków', 'href="mailto:kasia@mellow-aura.com"'], false);
+
+        $plate->update(['is_exact_piece' => false]);
+        $this->get('/produkt/talerz-ze-zlotem')
+            ->assertSee('Zdjęcia pokazują przykładową sztukę — każdą robię ręcznie, więc Twoja będzie trochę inna.')
+            ->assertDontSee('Na zdjęciach jest dokładnie rzecz');
+
+        // Silk has its own tolerance and no firing date; without photos there is nothing to say about them.
+        $silk = Category::factory()->create(['group' => CategoryGroup::Crafts]);
+        $scrunchie = Product::factory()->create(['slug' => 'scrunchie', 'category_id' => $silk->id, 'dimensions' => ['circumference_cm' => '18'], 'size_tolerance' => '1 cm']);
+        ProductVariant::factory()->create(['product_id' => $scrunchie->id, 'stock' => 3]);
+
+        $this->get('/produkt/scrunchie')
+            ->assertSee('wymiary mogą różnić się do 1 cm.')
+            ->assertSee('W paczce karta z numerem i podpisem')
+            ->assertDontSee('Zdjęcia pokazują przykładową sztukę')
+            ->assertDontSee('Zwróć uwagę:')
+            ->assertDontSee('kontaktu z żywnością')
+            ->assertSee('Producent');
+
+        // A voucher is no parcel: no certificate, no custom order box and no producer.
+        $vouchers = Category::factory()->create(['group' => CategoryGroup::Workshops]);
+        $voucher = Product::factory()->create(['slug' => 'voucher', 'category_id' => $vouchers->id, 'dimensions' => ['width_cm' => '21']]);
+        ProductVariant::factory()->create(['product_id' => $voucher->id, 'stock' => null]);
+
+        $this->get('/produkt/voucher')
+            ->assertOk()
+            ->assertDontSee('Certyfikat unikatu')
+            ->assertDontSee('Chcesz inaczej?')
+            ->assertDontSee('Producent')
+            ->assertDontSee('mogą różnić się');
     }
 
     public function test_drafts_and_unknown_products_are_not_found(): void

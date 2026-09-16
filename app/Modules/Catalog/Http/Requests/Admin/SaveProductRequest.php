@@ -3,6 +3,7 @@
 namespace App\Modules\Catalog\Http\Requests\Admin;
 
 use App\Modules\Catalog\Enums\Dimension;
+use App\Modules\Catalog\Enums\FoodContact;
 use App\Modules\Catalog\Enums\Occasion;
 use App\Modules\Catalog\Enums\Recipient;
 use App\Modules\Shared\Support\Money;
@@ -38,6 +39,10 @@ class SaveProductRequest extends FormRequest
             'category_id' => ['required', 'integer', Rule::exists('categories', 'id')],
             'description' => ['nullable', 'string', 'max:2000'],
             'care_note' => ['nullable', 'string', 'max:200'],
+            'food_contact' => ['nullable', Rule::enum(FoodContact::class)],
+            'deviation' => ['nullable', 'string', 'max:160'],
+            'size_tolerance' => ['nullable', 'string', 'max:60'],
+            'safety_warnings' => ['nullable', 'string', 'max:400'],
             'dimensions' => ['nullable', 'array'],
             'dimensions.*' => ['nullable', 'string', 'max:20', 'regex:/^[\d\s.,x×-]+$/u'],
             'occasions' => ['nullable', 'array'],
@@ -74,6 +79,10 @@ class SaveProductRequest extends FormRequest
             'category_id.exists' => $category,
             'description.max' => 'Opis zmieszczę do :max znaków',
             'care_note.max' => 'Zdanie o pielęgnacji zmieszczę do :max znaków',
+            'food_contact.enum' => 'Wybierz z listy, czy to naczynie do jedzenia',
+            'deviation.max' => 'Tę cechę zmieszczę do :max znaków — napisz ją krócej',
+            'size_tolerance.max' => 'Różnicę wymiarów zmieszczę do :max znaków, np. 0,5 cm',
+            'safety_warnings.max' => 'Ostrzeżenia zmieszczę do :max znaków',
             'dimensions.*.max' => $dimension,
             'dimensions.*.regex' => $dimension,
             'occasions.*.enum' => 'Wybierz okazję z listy',
@@ -96,7 +105,7 @@ class SaveProductRequest extends FormRequest
      * The validated form in the shape SaveProduct takes: prices in grosze, empty dimensions left out,
      * photo descriptions keyed by photo id.
      *
-     * @return array{name: string, category_id: int, description: ?string, care_note: ?string, is_published: bool, is_one_off: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, price_gross: int, stock: ?int}>, photo_alts: array<int, string>}
+     * @return array{name: string, category_id: int, description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, is_published: bool, is_one_off: bool, is_exact_piece: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, price_gross: int, stock: ?int}>, photo_alts: array<int, string>}
      */
     public function product(): array
     {
@@ -107,8 +116,13 @@ class SaveProductRequest extends FormRequest
             'category_id' => (int) $data['category_id'],
             'description' => $data['description'] ?? null,
             'care_note' => $data['care_note'] ?? null,
+            'food_contact' => $data['food_contact'] ?? null,
+            'deviation' => $data['deviation'] ?? null,
+            'size_tolerance' => $data['size_tolerance'] ?? null,
+            'safety_warnings' => $data['safety_warnings'] ?? null,
             'is_published' => $this->boolean('is_published'),
             'is_one_off' => $this->boolean('is_one_off'),
+            'is_exact_piece' => $this->boolean('is_exact_piece'),
             'dimensions' => array_filter(
                 Arr::only((array) ($data['dimensions'] ?? []), array_column(Dimension::cases(), 'value')),
                 fn (mixed $value) => filled($value),

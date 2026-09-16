@@ -89,6 +89,24 @@ class AdminSettingsTest extends TestCase
         $this->assertNull(Setting::find('dispatch_days_max')->value);
     }
 
+    public function test_the_shared_product_card_sentences_are_saved_and_the_terms_name_the_tolerance(): void
+    {
+        $this->actingAs($this->owner)
+            ->get('/panel/ustawienia')
+            ->assertSeeInOrder(['Karta produktu — wspólne dla wszystkich', 'value="0,5 cm"', 'value="Zmywarka tak, złoto tylko ręcznie"'], false);
+
+        $this->put('/panel/ustawienia/karta-produktu', ['size_tolerance' => ' 1 cm ', 'care_rule_ceramics' => ''])
+            ->assertRedirect('/panel/ustawienia#karta-produktu')
+            ->assertSessionHas('panel_status', 'Zapisane. Karty produktów i regulamin już to pokazują.');
+
+        $this->assertSame('1 cm', Setting::find('size_tolerance')->value);
+        $this->assertNull(Setting::find('care_rule_ceramics')->value);
+        $this->get('/regulamin')->assertSee('różnice wymiarów i pojemności do 1 cm względem wartości podanych na karcie Produktu');
+
+        $this->put('/panel/ustawienia/karta-produktu', ['size_tolerance' => str_repeat('a', 61)])
+            ->assertSessionHasErrorsIn('karta-produktu', ['size_tolerance' => 'Różnicę wymiarów zmieszczę do 60 znaków, np. 0,5 cm']);
+    }
+
     public function test_company_details_are_tidied_up_and_the_nip_shows_in_the_footer(): void
     {
         $this->actingAs($this->owner)
