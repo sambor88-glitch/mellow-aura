@@ -407,6 +407,14 @@
         "value": "Podgląd jest orientacyjny — litery wbijam ręcznie, jedna po drugiej, więc linia nigdy nie jest idealnie równa. To właśnie w tym jest najlepsze."
     },
     {
+        "key": "text_gifts_lead",
+        "value": "Dobiorę resztę. Wszystko pakuję w wióry i szary papier ze sznurkiem — możesz dopłacić do pudełka z kartką i wysłać prosto do obdarowanej osoby."
+    },
+    {
+        "key": "text_gifts_voucher_note",
+        "value": "Voucher kwotowy działa i na warsztaty, i na wszystko ze sklepu."
+    },
+    {
         "key": "text_bundles_heading",
         "value": "Glina i jedwab\nw jednym pudełku"
     },

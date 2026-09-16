@@ -8,6 +8,7 @@ use App\Modules\Catalog\Models\Product;
 use App\Modules\Gifts\Actions\SaveBundle;
 use App\Modules\Gifts\Http\Requests\Admin\SaveBundleRequest;
 use App\Modules\Gifts\Http\Requests\Admin\SaveBundleTextsRequest;
+use App\Modules\Gifts\Http\Requests\Admin\SaveGiftFinderRequest;
 use App\Modules\Gifts\Http\Requests\Admin\SaveVoucherSettingsRequest;
 use App\Modules\Gifts\Models\Bundle;
 use App\Modules\Settings\Actions\SaveSettings;
@@ -17,7 +18,7 @@ use Illuminate\View\View;
 
 /**
  * „Prezenty i zestawy” in the panel: the gift sets with their parts and discounts, the sentences on
- * their page and the voucher settings. Each card saves on its own.
+ * their page, the budgets in „Szukam prezentu” and the voucher settings. Each card saves on its own.
  */
 class GiftsController extends Controller
 {
@@ -33,6 +34,15 @@ class GiftsController extends Controller
                 ->orderBy('id')
                 ->get(),
             'texts' => collect(SaveBundleTextsRequest::KEYS)->mapWithKeys(fn (string $key) => [$key => $settings->get($key)])->all(),
+            'budgets' => collect((array) $settings->get('gift_budget_ranges', []))
+                ->filter(fn (mixed $range) => is_array($range))
+                ->map(fn (array $range) => [
+                    'min' => is_numeric($range['min_gross'] ?? null) ? intdiv((int) $range['min_gross'], 100) : null,
+                    'max' => is_numeric($range['max_gross'] ?? null) ? intdiv((int) $range['max_gross'], 100) : null,
+                ])
+                ->values()
+                ->all(),
+            'finderTexts' => ['text_gifts_lead' => $settings->get('text_gifts_lead'), 'text_gifts_voucher_note' => $settings->get('text_gifts_voucher_note')],
             'voucherSettings' => [
                 'voucher_validity_months' => $settings->get('voucher_validity_months', 12),
                 'voucher_recipient_name_max_chars' => $settings->get('voucher_recipient_name_max_chars', 40),
@@ -65,6 +75,13 @@ class GiftsController extends Controller
         $saveSettings($request->settings());
 
         return to_route('admin.gifts.edit')->withFragment('teksty')->with('panel_status', 'Teksty zapisane. Klienci już je widzą.');
+    }
+
+    public function giftFinder(SaveGiftFinderRequest $request, SaveSettings $saveSettings): RedirectResponse
+    {
+        $saveSettings($request->settings());
+
+        return to_route('admin.gifts.edit')->withFragment('szukam-prezentu')->with('panel_status', 'Zapisane. „Szukam prezentu” już tak wygląda.');
     }
 
     public function vouchers(SaveVoucherSettingsRequest $request, SaveSettings $saveSettings): RedirectResponse

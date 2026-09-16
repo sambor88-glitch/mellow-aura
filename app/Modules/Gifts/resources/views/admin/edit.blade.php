@@ -6,6 +6,11 @@
     $input = 'w-full min-w-0 rounded-[4px] border bg-white px-3.5 py-3 text-[14.5px] text-ink placeholder:text-hint focus:border-ink';
     $button = 'mt-[18px] min-h-11 w-full rounded-full bg-ink p-4 text-[14px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]';
     $textErrors = $errors->getBag('teksty');
+    $finderErrors = $errors->getBag('szukam-prezentu');
+    $budgetRows = array_values((array) old('budgets', $budgets));
+    // One empty row for a new range; left empty, it is not saved.
+    $budgetRows = [...$budgetRows, ['min' => '', 'max' => '']];
+    $savedBudgets = count((array) old('budgets', $budgets));
     $voucherErrors = $errors->getBag('vouchery');
 
     $textFields = [
@@ -20,7 +25,7 @@
         ['voucher_dedication_max_chars', 'Dedykacja — najwyżej', 'znaków'],
     ];
 @endphp
-<x-admin::layout title="Prezenty i zestawy" lead="Zestawy z rabatem, teksty ich strony i vouchery. Zmiany widać na stronie od razu.">
+<x-admin::layout title="Prezenty i zestawy" lead="Zestawy z rabatem, „Szukam prezentu” i vouchery. Zmiany widać na stronie od razu.">
     <div class="flex flex-wrap items-start gap-[26px]">
         <div class="grid min-w-0 flex-[1_1_420px] gap-[22px]">
             <section class="{{ $card }}">
@@ -72,6 +77,57 @@
                 </div>
                 <p class="mt-3.5 text-[12.5px] leading-[1.6] text-hint">Puste zdanie nie pokaże się na stronie. Cenę pakowania zmieniasz w Ustawieniach, razem z dostawą.</p>
                 <button class="{{ $button }}">Zapisz teksty na stronie</button>
+            </form>
+
+            <form id="szukam-prezentu" method="post" action="{{ route('admin.gifts.finder') }}" novalidate class="{{ $card }}">
+                @csrf
+                @method('PUT')
+                <h2 class="{{ $heading }}">Szukam prezentu</h2>
+                <p class="{{ $intro }}">Przedziały budżetu to przyciski na stronie. Produkt trafia do przedziału według swojej najniższej ceny. Okazje i „dla kogo” zaznaczasz przy każdym produkcie.</p>
+                @if ($finderErrors->any())
+                    <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+                @endif
+                <fieldset>
+                    <legend class="mb-2 text-[11.5px] tracking-[0.1em] text-label uppercase">Budżet</legend>
+                    <div class="grid gap-2">
+                        @foreach ($budgetRows as $index => $row)
+                            <div class="flex flex-wrap items-center gap-2 text-[13.5px] text-label">
+                                <span>od</span>
+                                <input name="budgets[{{ $index }}][min]" value="{{ $row['min'] ?? '' }}" inputmode="numeric" aria-label="Przedział {{ $index + 1 }} — od, zł"
+                                       @class(['min-h-11 w-[76px] min-w-0 rounded-[4px] border bg-white px-2.5 text-right text-[14px] text-ink focus:border-ink', 'border-error' => $finderErrors->has('budgets.'.$index.'.min'), 'border-line' => ! $finderErrors->has('budgets.'.$index.'.min')])>
+                                <span>do</span>
+                                <input name="budgets[{{ $index }}][max]" value="{{ $row['max'] ?? '' }}" inputmode="numeric" aria-label="Przedział {{ $index + 1 }} — do, zł" placeholder="—"
+                                       @class(['min-h-11 w-[76px] min-w-0 rounded-[4px] border bg-white px-2.5 text-right text-[14px] text-ink focus:border-ink', 'border-error' => $finderErrors->has('budgets.'.$index.'.max'), 'border-line' => ! $finderErrors->has('budgets.'.$index.'.max')])>
+                                <span>zł</span>
+                                @if ($index < $savedBudgets)
+                                    <label class="ml-auto flex min-h-11 items-center gap-1.5 text-[12.5px]">
+                                        <input type="checkbox" name="budgets[{{ $index }}][remove]" value="1" class="size-4 accent-error"> usuń
+                                    </label>
+                                @endif
+                            </div>
+                            @foreach (['min', 'max'] as $field)
+                                @if ($finderErrors->has('budgets.'.$index.'.'.$field))
+                                    <p class="text-[13px] text-error">{{ $finderErrors->first('budgets.'.$index.'.'.$field) }}</p>
+                                @endif
+                            @endforeach
+                        @endforeach
+                    </div>
+                    <p class="mt-2.5 text-[12.5px] leading-[1.5] text-hint">Puste „do” to przedział bez górnej granicy — na stronie „powyżej 400 zł”. W pusty wiersz wpisz nowy przedział.</p>
+                </fieldset>
+                <div class="mt-4 grid gap-3.5">
+                    <div class="min-w-0">
+                        <label for="szukam-lead" class="mb-1.5 block text-[11.5px] tracking-[0.1em] text-label uppercase">Zdanie pod nagłówkiem</label>
+                        <textarea id="szukam-lead" name="text_gifts_lead" rows="3" maxlength="400"
+                                  @class([$input, 'resize-y leading-[1.55]', 'border-error' => $finderErrors->has('text_gifts_lead'), 'border-line' => ! $finderErrors->has('text_gifts_lead')])>{{ old('text_gifts_lead', $finderTexts['text_gifts_lead']) }}</textarea>
+                    </div>
+                    <div class="min-w-0">
+                        <label for="szukam-voucher" class="mb-1.5 block text-[11.5px] tracking-[0.1em] text-label uppercase">Pod listą — o voucherach</label>
+                        <textarea id="szukam-voucher" name="text_gifts_voucher_note" rows="2" maxlength="200"
+                                  @class([$input, 'resize-y leading-[1.55]', 'border-error' => $finderErrors->has('text_gifts_voucher_note'), 'border-line' => ! $finderErrors->has('text_gifts_voucher_note')])>{{ old('text_gifts_voucher_note', $finderTexts['text_gifts_voucher_note']) }}</textarea>
+                        <p class="mt-1.5 text-[12.5px] text-hint">Ważność vouchera dopisze się sama, z karty „Vouchery”.</p>
+                    </div>
+                </div>
+                <button class="{{ $button }}">Zapisz „Szukam prezentu”</button>
             </form>
 
             <form id="vouchery" method="post" action="{{ route('admin.gifts.vouchers') }}" novalidate class="{{ $card }}">
