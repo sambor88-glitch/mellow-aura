@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <x-shared::seo :$title :$description :$canonical :$noindex :$type :$image />
+    @includeIf('consent::head')
     @isset($head)
         {{ $head }}
     @endisset
@@ -23,5 +24,6 @@
     </div>
 
     @includeIf('cart::drawer')
+    @includeIf('consent::banner')
 </body>
 </html>

@@ -4,6 +4,7 @@ namespace App\Modules\Settings\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Settings\Actions\SaveSettings;
+use App\Modules\Settings\Http\Requests\Admin\SaveAnalyticsRequest;
 use App\Modules\Settings\Http\Requests\Admin\SaveCompanyDetailsRequest;
 use App\Modules\Settings\Http\Requests\Admin\SaveMaterialTilesRequest;
 use App\Modules\Settings\Http\Requests\Admin\SaveShippingRequest;
@@ -30,6 +31,7 @@ class SettingsController extends Controller
             'studio' => collect(SaveStudioDetailsRequest::KEYS)->mapWithKeys(fn (string $key) => [$key => $settings->get($key)])->all(),
             'company' => collect(SaveCompanyDetailsRequest::KEYS)->mapWithKeys(fn (string $key) => [$key => $settings->get($key)])->all(),
             'tiles' => array_values((array) $settings->get('material_tiles', [])),
+            'analyticsId' => $settings->get('google_analytics_id'),
         ]);
     }
 
@@ -58,6 +60,15 @@ class SettingsController extends Controller
         return to_route('admin.settings.edit')
             ->withFragment('firma')
             ->with('panel_status', 'Dane firmy zapisane. Regulamin i stopka już je pokazują.');
+    }
+
+    public function analytics(SaveAnalyticsRequest $request, SaveSettings $saveSettings): RedirectResponse
+    {
+        $saveSettings($request->settings());
+
+        return to_route('admin.settings.edit')
+            ->withFragment('statystyki')
+            ->with('panel_status', $request->settings()['google_analytics_id'] ? 'Zapisane. Statystyki ruszą po zgodzie w okienku.' : 'Statystyki i okienko zgód wyłączone');
     }
 
     public function materials(SaveMaterialTilesRequest $request, SaveSettings $saveSettings): RedirectResponse

@@ -52,7 +52,7 @@ app/Modules/Catalog/
 - Testy: `tests/Feature/<Name>` i `tests/Unit/<Name>`.
 
 Pierwsza fala: `Shared` (układ strony, komponenty Blade, formatowanie kwot, SEO), `Settings`, `Admin`,
-`Catalog`, `Cart`, `Checkout`, `Payments`, `Shipping`, `MugConfigurator`, `Gifts`, `Content`.
+`Catalog`, `Cart`, `Checkout`, `Payments`, `Shipping`, `MugConfigurator`, `Gifts`, `Content`, `Consent` (zgody na cookies i Google Analytics).
 Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
 
 ## Sesja i cache w plikach

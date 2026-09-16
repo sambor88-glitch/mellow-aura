@@ -105,6 +105,10 @@
             @foreach (array_filter([$link('Regulamin', 'content.terms'), $link('Polityka prywatności', 'content.privacy'), $link('Odstąp od umowy tutaj', 'withdrawal.create')]) as [$label, $href])
                 <a href="{{ $href }}" class="text-label-dark hover:text-rose">{{ $label }}</a>
             @endforeach
+            @if (Route::has('consent.edit'))
+                {{-- With the banner on the page, the link opens it in place. --}}
+                <a href="{{ route('consent.edit') }}" data-consent-open class="text-label-dark hover:text-rose">Ustawienia cookies</a>
+            @endif
             <span>BLIK &middot; Przelewy24 &middot; karta</span>
         </div>
     </div>

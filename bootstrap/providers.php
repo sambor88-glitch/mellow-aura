@@ -4,6 +4,7 @@ use App\Modules\Admin\AdminServiceProvider;
 use App\Modules\Cart\CartServiceProvider;
 use App\Modules\Catalog\CatalogServiceProvider;
 use App\Modules\Checkout\CheckoutServiceProvider;
+use App\Modules\Consent\ConsentServiceProvider;
 use App\Modules\Content\ContentServiceProvider;
 use App\Modules\Gifts\GiftsServiceProvider;
 use App\Modules\MugConfigurator\MugConfiguratorServiceProvider;
@@ -22,4 +23,5 @@ return [
     GiftsServiceProvider::class,
     MugConfiguratorServiceProvider::class,
     ContentServiceProvider::class,
+    ConsentServiceProvider::class,
 ];

@@ -118,6 +118,13 @@ final class LegalDocument
             return Route::has($route) ? '<a href="'.e(route($route)).'">'.e(route($route)).'</a>' : null;
         }
 
+        // Google names its second cookie after the measurement ID without „G-”.
+        if ($key === 'analytics:cookie_suffix') {
+            $id = $settings->get('google_analytics_id');
+
+            return is_string($id) && str_starts_with($id, 'G-') ? e(substr($id, 2)) : null;
+        }
+
         if ($key === 'document:effective_from') {
             return $this->effectiveFrom() ? e($this->effectiveFrom()->translatedFormat('j F Y')) : null;
         }

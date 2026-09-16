@@ -26,7 +26,7 @@
     $button = 'mt-[18px] min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]';
     $tileInput = 'w-full min-w-0 rounded-[4px] border bg-white px-3 py-2.5 text-[14px] text-ink placeholder:text-hint focus:border-ink';
 @endphp
-<x-admin::layout title="Ustawienia" lead="Dostawa, dane pracowni i firmy oraz kafelki o materiale. Zmiany widać na stronie od razu.">
+<x-admin::layout title="Ustawienia" lead="Dostawa, dane pracowni i firmy, statystyki i kafelki o materiale. Zmiany widać na stronie od razu.">
     <div class="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] items-start gap-[22px]">
         <form id="dostawa" method="post" action="{{ route('admin.settings.shipping') }}" novalidate class="{{ $card }}">
             @csrf
@@ -122,6 +122,21 @@
         </div>
         <p class="{{ $hint }}">Nie wpisuj tu adresu domowej pracowni — pokazujemy tylko adres z CEIDG. Puste pole zostaje w regulaminie jako miejsce do uzupełnienia.</p>
         <button class="{{ $button }}">Zapisz dane firmy</button>
+    </form>
+
+    <form id="statystyki" method="post" action="{{ route('admin.settings.analytics') }}" novalidate class="{{ $card }} mt-[22px]">
+        @csrf
+        @method('PUT')
+        <h2 class="{{ $heading }}">Statystyki — Google Analytics</h2>
+        <p class="mb-3.5 max-w-[70ch] text-[13.5px] leading-[1.6] text-label">
+            Po wpisaniu identyfikatora strona pokaże okienko zgód na pliki cookies. Analytics ruszy tylko u osób, które się zgodzą — bez zgody żaden skrypt Google się nie wczyta.
+        </p>
+        <div class="max-w-[420px]">
+            <x-shared::field name="google_analytics_id" id="statystyki-id" bag="statystyki" label="Identyfikator pomiaru GA4"
+                             :value="old('google_analytics_id', $analyticsId)" placeholder="np. G-AB12CD34EF" autocapitalize="characters"
+                             hint="Google Analytics → Administracja → Strumienie danych. Puste pole wyłącza statystyki i okienko." />
+        </div>
+        <button class="{{ $button }}">Zapisz statystyki</button>
     </form>
 
     <form id="materialy" method="post" action="{{ route('admin.settings.materials') }}" novalidate class="{{ $card }} mt-[22px]">
