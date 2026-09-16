@@ -118,16 +118,15 @@
                     <div class="rounded-[4px] border border-divider bg-cream p-6">
                         <h2 class="mb-[18px] font-serif text-[20px]">Twoje zamówienie</h2>
                         @foreach ($lines as $line)
-                            @php($photo = $line->variant->product->getFirstMedia('images'))
                             <div class="mb-3.5 flex gap-3 border-b border-sand-dark pb-3.5">
-                                @if ($photo)
-                                    <img src="{{ $photo->getAvailableUrl(['thumb']) }}" alt="{{ $photo->getCustomProperty('alt') ?: $line->variant->product->name }}" class="h-16 w-[52px] flex-none rounded-[3px] object-cover">
+                                @if ($thumbnail = $line->thumbnailUrl())
+                                    <img src="{{ $thumbnail }}" alt="{{ $line->thumbnailAlt() }}" class="h-16 w-[52px] flex-none rounded-[3px] object-cover">
                                 @else
                                     <div class="h-16 w-[52px] flex-none rounded-[3px] bg-line-soft"></div>
                                 @endif
                                 <div class="min-w-0 flex-1">
-                                    <div class="text-[14px] leading-[1.3]">{{ $line->variant->product->name }}</div>
-                                    <div class="mt-0.5 text-[12px] [overflow-wrap:anywhere] text-label">{{ collect([$line->customText !== null ? '„'.$line->customText.'”' : $line->variant->label, $line->quantity.' szt.'])->filter()->join(' · ') }}</div>
+                                    <div class="text-[14px] leading-[1.3]">{{ $line->name() }}</div>
+                                    <div class="mt-0.5 text-[12px] [overflow-wrap:anywhere] text-label">{{ collect([$line->details(), $line->quantity.' szt.'])->filter()->join(' · ') }}</div>
                                 </div>
                                 <div class="text-[13.5px] whitespace-nowrap">{{ Money::format($line->total()) }}</div>
                             </div>

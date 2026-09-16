@@ -10,33 +10,29 @@
 @endphp
 <div class="min-h-0 flex-1 overflow-y-auto px-[26px] py-[22px]">
     @forelse ($lines as $line)
-        @php
-            $product = $line->variant->product;
-            $photo = $product->getFirstMedia('images');
-        @endphp
         <div class="flex gap-3.5 border-b border-sand-dark py-4">
-            @if ($photo)
-                <img src="{{ $photo->getAvailableUrl(['thumb']) }}" alt="{{ $photo->getCustomProperty('alt') ?: $product->name }}" class="h-[92px] w-[74px] flex-none rounded-[3px] object-cover">
+            @if ($thumbnail = $line->thumbnailUrl())
+                <img src="{{ $thumbnail }}" alt="{{ $line->thumbnailAlt() }}" class="h-[92px] w-[74px] flex-none rounded-[3px] object-cover">
             @else
                 <div class="h-[92px] w-[74px] flex-none rounded-[3px] bg-line-soft"></div>
             @endif
             <div class="min-w-0 flex-1">
-                <div class="font-serif text-[17.5px] leading-[1.25]">{{ $product->name }}</div>
-                <div class="mt-[3px] mb-2.5 text-[12.5px] [overflow-wrap:anywhere] text-label">{{ $line->customText !== null ? '„'.$line->customText.'”' : $line->variant->label }}</div>
+                <div class="font-serif text-[17.5px] leading-[1.25]">{{ $line->name() }}</div>
+                <div class="mt-[3px] mb-2.5 text-[12.5px] [overflow-wrap:anywhere] text-label">{{ $line->details() }}</div>
                 <div class="flex items-center gap-3.5">
                     <div class="flex items-center rounded-full border border-line">
                         <form method="post" action="{{ route('cart.update', $line->key) }}" x-on:submit.prevent="$store.cart.send($el)">
                             @csrf
                             @method('PATCH')
                             <input type="hidden" name="quantity" value="{{ $line->quantity - 1 }}">
-                            <button data-focus="{{ $line->key }}-less" aria-label="Mniej: {{ $product->name }}" class="relative size-7 text-[15px] text-muted after:absolute after:-inset-2">−</button>
+                            <button data-focus="{{ $line->key }}-less" aria-label="Mniej: {{ $line->name() }}" class="relative size-7 text-[15px] text-muted after:absolute after:-inset-2">−</button>
                         </form>
                         <span class="min-w-[18px] text-center text-[13.5px]">{{ $line->quantity }}</span>
                         <form method="post" action="{{ route('cart.update', $line->key) }}" x-on:submit.prevent="$store.cart.send($el)">
                             @csrf
                             @method('PATCH')
                             <input type="hidden" name="quantity" value="{{ $line->quantity + 1 }}">
-                            <button data-focus="{{ $line->key }}-more" aria-label="Więcej: {{ $product->name }}" class="relative size-7 text-[15px] text-muted after:absolute after:-inset-2">+</button>
+                            <button data-focus="{{ $line->key }}-more" aria-label="Więcej: {{ $line->name() }}" class="relative size-7 text-[15px] text-muted after:absolute after:-inset-2">+</button>
                         </form>
                     </div>
                     <span class="text-[14px]">{{ Money::format($line->total()) }}</span>
@@ -45,7 +41,7 @@
             <form method="post" action="{{ route('cart.destroy', $line->key) }}" x-on:submit.prevent="$store.cart.send($el)" class="self-start">
                 @csrf
                 @method('DELETE')
-                <button data-focus="{{ $line->key }}-remove" aria-label="Usuń z koszyka: {{ $product->name }}" class="relative p-0.5 text-[12px] text-hint after:absolute after:-inset-3 hover:text-error">usuń</button>
+                <button data-focus="{{ $line->key }}-remove" aria-label="Usuń z koszyka: {{ $line->name() }}" class="relative p-0.5 text-[12px] text-hint after:absolute after:-inset-3 hover:text-error">usuń</button>
             </form>
         </div>
     @empty

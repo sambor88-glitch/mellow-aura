@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Checkout;
 
-use App\Modules\Cart\CartLine;
+use App\Modules\Cart\Lines\ProductLine;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
@@ -177,7 +177,7 @@ class OrderEmailsTest extends TestCase
      */
     private function placeOrder(ProductVariant $variant, array $data = [], ?string $customText = null): Order
     {
-        $line = new CartLine('v'.$variant->id, $variant->load('product'), 1, $customText);
+        $line = new ProductLine('v'.$variant->id, 1, $variant->load('product'), $customText);
 
         return app(PlaceOrder::class)(collect([$line->key => $line]), [
             'name' => 'Anna Nowak', 'email' => 'ania@example.com', 'phone' => '600100200',

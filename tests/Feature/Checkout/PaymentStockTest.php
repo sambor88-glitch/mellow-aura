@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Checkout;
 
-use App\Modules\Cart\CartLine;
+use App\Modules\Cart\Lines\ProductLine;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
@@ -54,7 +54,7 @@ class PaymentStockTest extends TestCase
     public function test_when_two_people_pay_for_the_last_piece_the_second_order_is_paid_but_marked_short(): void
     {
         $mug = $this->variant(stock: 1);
-        $lines = collect(['v'.$mug->id => new CartLine('v'.$mug->id, $mug->load('product'), 1, null)]);
+        $lines = collect(['v'.$mug->id => new ProductLine('v'.$mug->id, 1, $mug->load('product'))]);
         $data = ['name' => 'Anna Nowak', 'email' => 'ania@example.com', 'phone' => '600100200', 'shipping_method' => 'parcel_locker', 'payment_method' => 'blik'];
 
         // Both checkouts started while the piece was still on the shelf.

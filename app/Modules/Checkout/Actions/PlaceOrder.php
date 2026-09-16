@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Saves the order with copies of what the customer saw — names, variant labels, prices and the text
- * for the mug — so later changes in the shop never rewrite it. Stock is not touched here: it comes off
- * only when the payment is confirmed.
+ * for the mug — so later changes in the shop never rewrite it. Each cart line says which items it becomes.
+ * Stock is not touched here: it comes off only when the payment is confirmed.
  */
 class PlaceOrder
 {
@@ -43,14 +43,15 @@ class PlaceOrder
 
             $order->update(['number' => 'MA-'.$order->created_at->year.'-'.(1000 + $order->id)]);
 
-            foreach ($lines as $line) {
+            foreach ($lines->flatMap(fn (CartLine $line) => $line->orderItems()) as $item) {
                 $order->items()->create([
-                    'product_variant_id' => $line->variant->id,
-                    'product_name' => $line->variant->product->name,
-                    'variant_label' => $line->variant->label,
-                    'quantity' => $line->quantity,
-                    'unit_price_gross' => $line->variant->price_gross,
-                    'custom_text' => $line->customText,
+                    'product_variant_id' => $item->variantId,
+                    'product_name' => $item->name,
+                    'variant_label' => $item->label,
+                    'quantity' => $item->quantity,
+                    'unit_price_gross' => $item->unitPrice,
+                    'custom_text' => $item->customText,
+                    'custom_glaze' => $item->customGlaze,
                 ]);
             }
 
