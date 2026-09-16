@@ -21,8 +21,12 @@
                             <div class="font-serif text-[18px] tabular-nums">{{ Money::format($item->total()) }}</div>
                         </div>
                         @if ($item->custom_text !== null)
+                            {{-- A mug from the configurator keeps one line of the text per row, as it goes on the clay. --}}
                             <div class="mt-2.5 rounded-[4px] bg-linen px-3.5 py-2.5 text-[14px]">
-                                <span class="text-label">Napis do wbicia:</span> <span class="tracking-[0.08em] [overflow-wrap:anywhere]">„{{ $item->custom_text }}”</span>
+                                <span class="text-label">Napis do wbicia:</span> <span class="tracking-[0.08em] whitespace-pre-line [overflow-wrap:anywhere]">„{{ $item->custom_text }}”</span>
+                                @if ($item->custom_glaze !== null)
+                                    <div class="mt-1"><span class="text-label">Kolor wnętrza:</span> {{ $item->custom_glaze }}</div>
+                                @endif
                             </div>
                         @endif
                         @if ($item->missing_quantity > 0)

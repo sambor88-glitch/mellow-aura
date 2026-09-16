@@ -7,10 +7,10 @@
                 <div style="font-size: 15px; color: #2F2620;">{{ $item->product_name }}</div>
                 <div style="font-size: 13px; color: #726456;">{{ $item->variant_label }}@if ($item->quantity > 1) · {{ $item->quantity }} × {{ Money::format($item->unit_price_gross) }}@endif</div>
                 @if ($item->custom_text)
-                    <div style="font-size: 13px; color: #5C5043;">Napis: „{{ $item->custom_text }}”</div>
+                    <div style="font-size: 13px; color: #5C5043;">Napis: „{{ str_replace("\n", ' / ', $item->custom_text) }}”</div>
                 @endif
                 @if ($item->custom_glaze)
-                    <div style="font-size: 13px; color: #5C5043;">Szkliwo: {{ $item->custom_glaze }}</div>
+                    <div style="font-size: 13px; color: #5C5043;">Kolor wnętrza: {{ $item->custom_glaze }}</div>
                 @endif
             </td>
             <td align="right" style="padding: 12px 0 12px 16px; border-top: 1px solid #E2D7C7; vertical-align: top; white-space: nowrap; font-size: 15px; color: #2F2620;">{{ Money::format($item->total()) }}</td>

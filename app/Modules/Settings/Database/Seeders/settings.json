@@ -415,6 +415,18 @@
         "value": "Voucher kwotowy działa i na warsztaty, i na wszystko ze sklepu."
     },
     {
+        "key": "text_mug_lead_time",
+        "value": "gotowe w 3 tygodnie"
+    },
+    {
+        "key": "text_mug_bulk_order",
+        "value": "Od sześciu kubków robię rabat — napisz do mnie."
+    },
+    {
+        "key": "text_mug_refusals",
+        "value": "Mowy nienawiści i cudzych znaków firmowych. Resztę tak."
+    },
+    {
         "key": "text_bundles_heading",
         "value": "Glina i jedwab\nw jednym pudełku"
     },

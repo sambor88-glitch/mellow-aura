@@ -6,6 +6,7 @@ use App\Modules\Catalog\CatalogServiceProvider;
 use App\Modules\Checkout\CheckoutServiceProvider;
 use App\Modules\Content\ContentServiceProvider;
 use App\Modules\Gifts\GiftsServiceProvider;
+use App\Modules\MugConfigurator\MugConfiguratorServiceProvider;
 use App\Modules\Settings\SettingsServiceProvider;
 use App\Modules\Shared\SharedServiceProvider;
 use App\Providers\AppServiceProvider;
@@ -19,5 +20,6 @@ return [
     CartServiceProvider::class,
     CheckoutServiceProvider::class,
     GiftsServiceProvider::class,
+    MugConfiguratorServiceProvider::class,
     ContentServiceProvider::class,
 ];

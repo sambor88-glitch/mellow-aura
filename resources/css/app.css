@@ -93,6 +93,7 @@
     --animate-ma-slide: maSlide .34s cubic-bezier(.2, .8, .2, 1) both;
     --animate-ma-bump: maBump .45s cubic-bezier(.2, .8, .2, 1) both;
     --animate-ma-check: maCheck .4s cubic-bezier(.2, .8, .2, 1) both;
+    --animate-ma-stamp: maStamp .38s cubic-bezier(.2, .8, .2, 1) both;
 
     @keyframes maView {
         from { opacity: 0; transform: translateY(10px); }
@@ -128,6 +129,13 @@
     @keyframes maCheck {
         from { opacity: 0; transform: scale(.4); }
         to { opacity: 1; transform: none; }
+    }
+
+    /* A letter going into the clay in the mug configurator. */
+    @keyframes maStamp {
+        0% { opacity: 0; transform: scale(1.6) translateY(-4px); }
+        60% { opacity: 1; transform: scale(.94); }
+        100% { opacity: 1; transform: none; }
     }
 }
 
