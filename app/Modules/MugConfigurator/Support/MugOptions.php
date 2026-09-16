@@ -3,9 +3,8 @@
 namespace App\Modules\MugConfigurator\Support;
 
 use App\Modules\Settings\Settings;
+use App\Modules\Shared\Support\SitePhoto;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Vite;
 
 /**
  * The mug configurator's settings from the panel, tidied up: sizes with prices, the glazes a customer picks,
@@ -96,18 +95,9 @@ class MugOptions
         return (string) $this->settings->get('mug_configurator_image', self::DEFAULT_PHOTO);
     }
 
-    /**
-     * A photo from zdjecia/ comes with the site's build; a photo uploaded in the panel lives on the public disk.
-     */
     public function photoUrl(): ?string
     {
-        $path = $this->photoPath();
-
-        if (str_starts_with($path, 'zdjecia/')) {
-            return is_file(base_path($path)) ? Vite::asset($path) : null;
-        }
-
-        return Storage::disk('public')->exists($path) ? Storage::disk('public')->url($path) : null;
+        return SitePhoto::url($this->photoPath());
     }
 
     /**

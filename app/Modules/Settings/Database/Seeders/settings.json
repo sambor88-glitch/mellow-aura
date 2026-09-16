@@ -415,6 +415,88 @@
         "value": "Lubię łączyć surowość z miękkością, prostotę z symboliką, dotyk z emocją. MellowAura to zaproszenie do spokoju i piękna – zaklętego w przedmiotach, które towarzyszą nam na co dzień."
     },
     {
+        "key": "text_studio_lead",
+        "value": "Warsztaty, które uczą nie tylko ceramiki – ale też uważności i słuchania siebie. Zanurz dłonie w glinie – poczuj spokój, radość i twórczy flow."
+    },
+    {
+        "key": "text_studio_paragraph_1",
+        "value": "Pracownia jest mała i taka ma zostać. Przy jednym stole siada najwyżej sześć osób, więc mogę podejść do każdej i poprawić rękę zamiast tłumaczyć z drugiego końca sali. Nie ma tu presji, że coś musi wyjść równo."
+    },
+    {
+        "key": "text_studio_paragraph_2",
+        "value": "Dokładny adres podaję po zapisaniu się — to home studio, więc wpuszczam po jednej grupie naraz. Na miejscu jest herbata, fartuchy i muzyka, którą możesz zmienić."
+    },
+    {
+        "key": "studio_facts",
+        "value": [
+            {
+                "title": "Do 6 osób",
+                "text": "Przy jednym stole, bez tłoku."
+            },
+            {
+                "title": "Od 6 lat",
+                "text": "Dzieci z osobą dorosłą."
+            },
+            {
+                "title": "Dwa wypały w cenie",
+                "text": "Prace do odbioru po ~3 tygodniach."
+            },
+            {
+                "title": "Wysyłka prac",
+                "text": "Jeśli nie możesz przyjechać — wyślę."
+            }
+        ]
+    },
+    {
+        "key": "studio_gallery",
+        "value": [
+            {
+                "path": "zdjecia/kubek-ochujeje.webp",
+                "alt": "Kubek z wbijanym tekstem"
+            },
+            {
+                "path": "zdjecia/zestaw-filizanka-talerz.webp",
+                "alt": "Filiżanka z talerzykiem"
+            },
+            {
+                "path": "zdjecia/podstawki-muszle-roz.webp",
+                "alt": "Różowe podstawki w kształcie muszli"
+            },
+            {
+                "path": "zdjecia/kasia-talerz-zloto.webp",
+                "alt": "Kasia z talerzem zdobionym złotem"
+            },
+            {
+                "path": "zdjecia/patera-czarna-kolce.webp",
+                "alt": "Czarna patera z kolcami"
+            },
+            {
+                "path": "zdjecia/kubek-cappuccino.webp",
+                "alt": "Kubek malowany ręcznie"
+            },
+            {
+                "path": "zdjecia/kadzielnica-pszczoly.webp",
+                "alt": "Kadzielnica ze złoconym kołnierzem"
+            },
+            {
+                "path": "zdjecia/talerz-niebieski-odcisk.webp",
+                "alt": "Talerz z odciskiem rośliny"
+            },
+            {
+                "path": "zdjecia/scrunchies-fiolet.webp",
+                "alt": "Jedwabne scrunchies"
+            },
+            {
+                "path": "zdjecia/kubek-nie-powinnam.webp",
+                "alt": "Kubek z wbijanym napisem w dłoni"
+            },
+            {
+                "path": "zdjecia/zestaw-flatlay.webp",
+                "alt": "Filiżanka na talerzyku z malowaną lawendą"
+            }
+        ]
+    },
+    {
         "key": "text_kiln_note",
         "value": "Wsad zbieram raz w tygodniu, zwykle w czwartek. Prace odbierzesz po 5–7 dniach. Nie przyjmuję gliny nieznanego pochodzenia ani prac grubszych niż 2 cm w ściance."
     },
