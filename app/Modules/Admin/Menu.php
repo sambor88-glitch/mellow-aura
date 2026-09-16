@@ -24,7 +24,7 @@ class Menu
             ['label' => 'Warsztaty', 'route' => 'admin.workshops.edit', 'active' => 'admin.workshops.*', 'description' => 'Cennik warsztatów na stronie. Zapisy i terminy dojdą po świętach.'],
             ['label' => 'Wypały', 'route' => 'admin.firing.edit', 'active' => 'admin.firing.*', 'description' => 'Cennik wypałów na zlecenie i notka o wsadzie.'],
             ['label' => 'Usługi', 'route' => 'admin.services.edit', 'active' => 'admin.services.*', 'description' => 'Apaszka i odcisk rośliny: zdjęcia przed i po, teksty, cennik i kroki.'],
-            ['label' => 'Treści', 'route' => 'admin.content.edit', 'active' => 'admin.content.*', 'description' => 'Teksty na stronach, częste pytania, fakty o pracowni i sprawy w formularzu kontaktowym.'],
+            ['label' => 'Treści', 'route' => 'admin.content.edit', 'active' => 'admin.content.*', 'description' => 'Teksty na stronach, częste pytania, fakty o pracowni, zamówienia indywidualne, karty dla lokali i sprawy w formularzu.'],
             ['label' => 'Ustawienia', 'route' => 'admin.settings.edit', 'active' => 'admin.settings.*', 'description' => 'E-mail, próg darmowej wysyłki i kod Paczkomatu.'],
         ], fn (array $section) => Route::has($section['route'])));
     }

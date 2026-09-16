@@ -10,6 +10,7 @@ use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
 use App\Modules\Gifts\Support\BudgetRanges;
+use App\Modules\Gifts\Support\VoucherValidity;
 use App\Modules\Settings\Settings;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -64,21 +65,7 @@ class GiftFinderController extends Controller
                 ->sortBy('price_gross')
                 ->first()]),
             'voucherCategory' => $voucherCategory,
-            'voucherValidity' => self::validity((int) $settings->get('voucher_validity_months', 12)),
+            'voucherValidity' => VoucherValidity::label((int) $settings->get('voucher_validity_months', 12)),
         ]);
-    }
-
-    /**
-     * „rok”, „2 lata”, „6 miesięcy” — how long a voucher is valid, for the sentence under the list.
-     */
-    private static function validity(int $months): string
-    {
-        $plural = fn (int $count, string $one, string $few, string $many) => $count === 1 ? $one : (
-            in_array($count % 10, [2, 3, 4], true) && ! in_array($count % 100, [12, 13, 14], true) ? $count.' '.$few : $count.' '.$many
-        );
-
-        return $months > 0 && $months % 12 === 0
-            ? $plural(intdiv($months, 12), 'rok', 'lata', 'lat')
-            : $plural(max(1, $months), 'miesiąc', 'miesiące', 'miesięcy');
     }
 }

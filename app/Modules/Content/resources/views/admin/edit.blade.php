@@ -16,6 +16,8 @@
     $lists = [
         ['id' => 'czeste-pytania', 'name' => 'faq', 'fields' => ['question', 'answer'], 'rows' => $questions, 'route' => 'admin.content.faq'],
         ['id' => 'pracownia', 'name' => 'facts', 'fields' => ['title', 'text'], 'rows' => $facts, 'route' => 'admin.content.facts'],
+        ['id' => 'zamowienia-indywidualne', 'name' => 'steps', 'fields' => ['title', 'text'], 'rows' => $customOrderSteps, 'route' => 'admin.content.custom-order-steps'],
+        ['id' => 'gastronomia', 'name' => 'b2b', 'fields' => ['title', 'text'], 'rows' => $b2bFacts, 'route' => 'admin.content.b2b-facts'],
         ['id' => 'kontakt', 'name' => 'topics', 'fields' => ['label'], 'rows' => $topics, 'route' => 'admin.content.topics'],
     ];
 
@@ -27,9 +29,9 @@
     $button = 'mt-[18px] min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]';
     $input = 'w-full min-w-0 rounded-[4px] border bg-white px-3 py-2.5 text-[15px] text-ink placeholder:text-hint focus:border-ink';
 @endphp
-<x-admin::layout title="Treści" lead="Każde zdanie na stronach „O mnie”, „Pracownia”, „Kontakt” i w częstych pytaniach. Zmiany widać na stronie od razu.">
+<x-admin::layout title="Treści" lead="Każde zdanie na stronach „O mnie”, „Pracownia”, „Zamówienia indywidualne”, „Dla kawiarni i restauracji”, „Kontakt” i w częstych pytaniach. Zmiany widać na stronie od razu.">
     <nav aria-label="Karty na tej stronie" class="mb-[22px] flex flex-wrap gap-2.5 text-[13px]">
-        @foreach (['teksty' => 'Teksty na stronach', 'czeste-pytania' => 'Częste pytania', 'pracownia' => 'Pracownia — dobrze wiedzieć', 'kontakt' => 'Sprawy w formularzu'] as $id => $label)
+        @foreach (['teksty' => 'Teksty na stronach', 'czeste-pytania' => 'Częste pytania', 'pracownia' => 'Pracownia — dobrze wiedzieć', 'zamowienia-indywidualne' => 'Zamówienia indywidualne — kroki', 'gastronomia' => 'Dla lokali — karty', 'kontakt' => 'Sprawy w formularzu'] as $id => $label)
             <a href="#{{ $id }}" class="rounded-full border border-line-strong px-4 py-2 text-lead hover:border-ink hover:bg-sand hover:text-ink">{{ $label }}</a>
         @endforeach
     </nav>
@@ -90,6 +92,14 @@
                         <h2 class="{{ $heading }}">Pracownia — dobrze wiedzieć</h2>
                         <p class="{{ $intro }}">Karta obok opisu na stronie <a href="{{ route('content.studio') }}" target="_blank" rel="noopener">„Pracownia”</a>: krótki fakt i jedno zdanie pod nim.</p>
                         @break
+                    @case('steps')
+                        <h2 class="{{ $heading }}">Zamówienia indywidualne — kroki</h2>
+                        <p class="{{ $intro }}">Numerowane kroki na stronie <a href="{{ route('custom-orders.index') }}" target="_blank" rel="noopener">„Zamówienia indywidualne”</a>, od pierwszej wiadomości do paczki.</p>
+                        @break
+                    @case('b2b')
+                        <h2 class="{{ $heading }}">Dla kawiarni i restauracji — karty</h2>
+                        <p class="{{ $intro }}">Karty pod zdjęciem na stronie <a href="{{ route('content.b2b') }}" target="_blank" rel="noopener">„Dla kawiarni i restauracji”</a>. Z ich nagłówków składa się też opis strony w Google.</p>
+                        @break
                     @default
                         <h2 class="{{ $heading }}">Sprawy w formularzu kontaktowym</h2>
                         <p class="{{ $intro }}">Lista „W jakiej sprawie?” na stronie <a href="{{ route('content.contact') }}" target="_blank" rel="noopener">„Kontakt”</a>. Bez żadnej sprawy pole zniknie z formularza.</p>
@@ -117,6 +127,26 @@
                                         <textarea name="{{ $name }}[answer]" rows="3" maxlength="1500"
                                                   aria-label="Odpowiedź na pytanie {{ $index + 1 }}" placeholder="Odpowiedź — dwa, trzy zdania"
                                                   @class([$input, 'resize-y leading-[1.6]', 'border-error' => $has('answer'), 'border-line' => ! $has('answer')])>{{ $row['answer'] ?? '' }}</textarea>
+                                    </div>
+                                    @break
+                                @case('steps')
+                                    <div class="grid gap-2">
+                                        <input name="{{ $name }}[title]" value="{{ $row['title'] ?? '' }}" maxlength="60"
+                                               aria-label="Krok {{ $index + 1 }} — nazwa" placeholder="{{ $new ? 'Nowy krok' : 'Nazwa kroku' }}"
+                                               @class([$input, 'border-error' => $has('title'), 'border-line' => ! $has('title')])>
+                                        <textarea name="{{ $name }}[text]" rows="2" maxlength="240"
+                                                  aria-label="Krok {{ $index + 1 }} — opis" placeholder="Jedno, dwa zdania"
+                                                  @class([$input, 'resize-y leading-[1.55]', 'border-error' => $has('text'), 'border-line' => ! $has('text')])>{{ $row['text'] ?? '' }}</textarea>
+                                    </div>
+                                    @break
+                                @case('b2b')
+                                    <div class="grid gap-2">
+                                        <input name="{{ $name }}[title]" value="{{ $row['title'] ?? '' }}" maxlength="40"
+                                               aria-label="Karta {{ $index + 1 }} — nagłówek" placeholder="{{ $new ? 'Nowa karta, np. Próbka przed serią' : 'Nagłówek' }}"
+                                               @class([$input, 'border-error' => $has('title'), 'border-line' => ! $has('title')])>
+                                        <textarea name="{{ $name }}[text]" rows="2" maxlength="200"
+                                                  aria-label="Karta {{ $index + 1 }} — zdanie" placeholder="Jedno, dwa zdania"
+                                                  @class([$input, 'resize-y leading-[1.55]', 'border-error' => $has('text'), 'border-line' => ! $has('text')])>{{ $row['text'] ?? '' }}</textarea>
                                     </div>
                                     @break
                                 @case('facts')
@@ -151,7 +181,7 @@
                     <p class="mt-1.5 text-[13px] text-error">{{ $bag->first($list['name']) }}</p>
                 @endif
                 <p class="{{ $hint }}">W puste wiersze na dole wpisz nowe. Strzałki zapisują całą kartę i przestawiają wiersz o jedno miejsce.</p>
-                <button class="{{ $button }}">{{ ['faq' => 'Zapisz częste pytania', 'facts' => 'Zapisz fakty o pracowni', 'topics' => 'Zapisz sprawy w formularzu'][$list['name']] }}</button>
+                <button class="{{ $button }}">{{ ['faq' => 'Zapisz częste pytania', 'facts' => 'Zapisz fakty o pracowni', 'steps' => 'Zapisz kroki zamówienia', 'b2b' => 'Zapisz karty dla lokali', 'topics' => 'Zapisz sprawy w formularzu'][$list['name']] }}</button>
             </form>
         @endforeach
     </div>

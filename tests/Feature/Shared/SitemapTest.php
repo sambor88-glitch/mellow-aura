@@ -41,8 +41,12 @@ class SitemapTest extends TestCase
         $this->assertStringContainsString('<loc>'.route('product.show', $sold).'</loc>', $xml);
         $this->assertStringNotContainsString('/produkt/kosmetyczki', $xml);
 
-        foreach (['/zamowienie', '/panel', '/ustawienia-cookies', '/odstapienie-od-umowy', '/voucher/'] as $private) {
-            $this->assertStringNotContainsString(url($private), $xml, $private);
+        foreach (['/zamowienie<', '/panel', '/ustawienia-cookies', '/odstapienie-od-umowy', '/voucher/'] as $private) {
+            $this->assertStringNotContainsString(url('/').$private, $xml, $private);
+        }
+
+        foreach (['custom-orders.index', 'content.b2b', 'vouchers.index'] as $route) {
+            $this->assertStringContainsString('<loc>'.route($route).'</loc>', $xml, $route);
         }
     }
 

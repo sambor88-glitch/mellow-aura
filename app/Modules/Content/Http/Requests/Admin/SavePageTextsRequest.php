@@ -26,6 +26,14 @@ class SavePageTextsRequest extends FormRequest
             'text_studio_paragraph_1' => ['Pierwszy akapit', 4, 700],
             'text_studio_paragraph_2' => ['Drugi akapit', 4, 700],
         ]],
+        ['title' => 'Zamówienia indywidualne', 'route' => 'custom-orders.index', 'fields' => [
+            'text_custom_orders_lead' => ['Zdanie pod „Zaprojektujmy to razem”', 3, 400],
+        ]],
+        ['title' => 'Dla kawiarni i restauracji', 'route' => 'content.b2b', 'fields' => [
+            'text_b2b_lead' => ['Zdanie pod nagłówkiem', 3, 400],
+            'text_b2b_cta_heading' => ['Pytanie w ramce na dole strony', 2, 120],
+            'text_b2b_cta' => ['Zdanie pod pytaniem', 2, 300],
+        ]],
         ['title' => 'Kontakt', 'route' => 'content.contact', 'fields' => [
             'text_contact_lead' => ['Zdanie pod „Napisz do mnie”', 2, 300],
         ]],

@@ -5,7 +5,8 @@ namespace App\Modules\Gifts\Http\Requests\Admin;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * How long a voucher is valid, how much fits on it, and the sentence on the PDF about using it.
+ * How long a voucher is valid, how much fits on it, the sentence on the PDF about using it and the one
+ * under the heading of the vouchers page.
  * The name limit stops at 60, because the voucher keeps no more.
  */
 class SaveVoucherSettingsRequest extends FormRequest
@@ -28,6 +29,7 @@ class SaveVoucherSettingsRequest extends FormRequest
             'voucher_recipient_name_max_chars' => ['required', 'integer', 'min:10', 'max:60'],
             'voucher_dedication_max_chars' => ['required', 'integer', 'min:20', 'max:500'],
             'text_voucher_how_to_use' => ['nullable', 'string', 'max:400'],
+            'text_vouchers_lead' => ['nullable', 'string', 'max:400'],
         ];
     }
 
@@ -41,6 +43,7 @@ class SaveVoucherSettingsRequest extends FormRequest
             'voucher_recipient_name_max_chars.*' => 'Wpisz liczbę znaków od 10 do 60',
             'voucher_dedication_max_chars.*' => 'Wpisz liczbę znaków od 20 do 500',
             'text_voucher_how_to_use.max' => 'Ten tekst zmieszczę do :max znaków',
+            'text_vouchers_lead.max' => 'Ten tekst zmieszczę do :max znaków',
         ];
     }
 
@@ -54,6 +57,7 @@ class SaveVoucherSettingsRequest extends FormRequest
             'voucher_recipient_name_max_chars' => (int) $this->validated('voucher_recipient_name_max_chars'),
             'voucher_dedication_max_chars' => (int) $this->validated('voucher_dedication_max_chars'),
             'text_voucher_how_to_use' => filled($text = $this->validated('text_voucher_how_to_use')) ? trim($text) : null,
+            'text_vouchers_lead' => filled($lead = $this->validated('text_vouchers_lead')) ? str_replace("\r\n", "\n", trim($lead)) : null,
         ];
     }
 

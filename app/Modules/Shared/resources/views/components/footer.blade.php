@@ -8,7 +8,7 @@
         $link('Kubek z napisem', 'mug.index'),
         $link('Szukam prezentu', 'gifts.index'),
         $link('Zestawy prezentowe', 'bundles.index'),
-        $link('Vouchery na warsztaty', 'shop.category', 'vouchery'),
+        $link('Vouchery na warsztaty', 'vouchers.index') ?? $link('Vouchery na warsztaty', 'shop.category', 'vouchery'),
         $link('Wysyłka i zwroty', 'content.faq'),
     ]);
 

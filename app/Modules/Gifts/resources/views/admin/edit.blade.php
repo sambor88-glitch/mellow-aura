@@ -160,6 +160,17 @@
                         </div>
                     @endforeach
                     <div class="min-w-0">
+                        <div class="mb-1.5 flex flex-wrap items-baseline justify-between gap-x-4">
+                            <label for="vouchery-strona" class="text-[13.5px] text-graphite">Zdanie pod nagłówkiem na stronie voucherów</label>
+                            <a href="{{ route('vouchers.index') }}" target="_blank" rel="noopener" class="text-[13px]">Zobacz stronę →</a>
+                        </div>
+                        <textarea id="vouchery-strona" name="text_vouchers_lead" rows="3" maxlength="400"
+                                  @class([$input, 'resize-y leading-[1.55]', 'border-error' => $voucherErrors->has('text_vouchers_lead'), 'border-line' => ! $voucherErrors->has('text_vouchers_lead')])>{{ old('text_vouchers_lead', $voucherSettings['text_vouchers_lead']) }}</textarea>
+                        @if ($voucherErrors->has('text_vouchers_lead'))
+                            <p class="mt-1.5 text-[13px] text-error">{{ $voucherErrors->first('text_vouchers_lead') }}</p>
+                        @endif
+                    </div>
+                    <div class="min-w-0">
                         <label for="vouchery-jak" class="mb-1.5 block text-[13.5px] text-graphite">Jak go wykorzystać — zdanie na dole vouchera</label>
                         <textarea id="vouchery-jak" name="text_voucher_how_to_use" rows="3" maxlength="400"
                                   @class([$input, 'resize-y leading-[1.55]', 'border-error' => $voucherErrors->has('text_voucher_how_to_use'), 'border-line' => ! $voucherErrors->has('text_voucher_how_to_use')])>{{ old('text_voucher_how_to_use', $voucherSettings['text_voucher_how_to_use']) }}</textarea>

@@ -2,7 +2,7 @@
 @php
     // The topic name matches the contact form's list from the panel; if it is renamed, the form simply opens without it.
     $contactUrl = route('content.contact', ['temat' => 'Warsztaty i terminy']);
-    $vouchersUrl = Route::has('shop.category') ? route('shop.category', 'vouchery') : null;
+    $vouchersUrl = Route::has('vouchers.index') ? route('vouchers.index') : null;
     $chip = 'rounded-full bg-sand-dark px-[11px] py-[5px] text-[11.5px] tracking-[0.1em] text-muted uppercase';
 @endphp
 

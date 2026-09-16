@@ -82,7 +82,7 @@ class GiftFinderTest extends TestCase
 
         $this->get('/prezenty?occasion=anniversary')
             ->assertOk()
-            ->assertSeeInOrder(['Nic nie pasuje do tych warunków', 'Poluzuj budżet albo napisz do mnie', 'Pokaż wszystkie pomysły'])
+            ->assertSeeInOrder(['Nic nie pasuje do tych warunków', 'Poluzuj budżet albo napisz do mnie', 'href="'.route('custom-orders.index').'"', 'Napisz, czego szukasz'], false)
             ->assertSee('href="'.route('gifts.index').'"', false);
     }
 
@@ -111,7 +111,7 @@ class GiftFinderTest extends TestCase
 
         $this->get('/prezenty')
             ->assertSeeInOrder(['Nie wiesz, co wybrać?', 'Voucher kwotowy działa i na warsztaty, i na wszystko ze sklepu. Ważny rok.', 'Zobacz vouchery'])
-            ->assertSee('href="'.route('shop.category', $vouchers).'"', false);
+            ->assertSee('href="'.route('vouchers.index').'"', false);
 
         Setting::query()->where('key', 'voucher_validity_months')->update(['value' => json_encode(6)]);
         app(Settings::class)->refresh();

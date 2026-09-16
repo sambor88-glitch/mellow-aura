@@ -50,6 +50,7 @@ class GiftsController extends Controller
                 'voucher_recipient_name_max_chars' => $settings->get('voucher_recipient_name_max_chars', 40),
                 'voucher_dedication_max_chars' => $settings->get('voucher_dedication_max_chars', 180),
                 'text_voucher_how_to_use' => $settings->get('text_voucher_how_to_use'),
+                'text_vouchers_lead' => $settings->get('text_vouchers_lead'),
             ],
             'voucherProducts' => Product::query()
                 ->whereRelation('category', 'group', CategoryGroup::Workshops->value)

@@ -273,6 +273,10 @@
         "value": "napisz do mnie na WhatsApp albo mailem i podaj numer vouchera — razem ustalimy termin. Jeśli żaden nie pasuje, znajdziemy nowy."
     },
     {
+        "key": "text_vouchers_lead",
+        "value": "Prezent bez rozmiaru. Voucher w PDF przychodzi mailem zaraz po opłaceniu — z imieniem, dedykacją i numerem. Termin obdarowana osoba wybiera sama."
+    },
+    {
         "key": "voucher_workshop_notes",
         "value": {
             "voucher-lepienie": {
@@ -710,6 +714,64 @@
                 "text": "Cztery, pięć tygodni. W paczce karta z datą wypału i nazwą rośliny, jeśli ją znasz."
             }
         ]
+    },
+    {
+        "key": "text_custom_orders_lead",
+        "value": "Serwis na wesele, kubek z tekstem, którego nikt inny nie zrozumie, patera pod tort na chrzciny. Opowiedz mi, co masz w głowie — wycenę i szkic dostaniesz w ciągu pięciu dni."
+    },
+    {
+        "key": "custom_order_steps",
+        "value": [
+            {
+                "title": "Piszesz, czego szukasz",
+                "text": "Zdjęcia inspiracji, ilość, kolor, termin. Im więcej detali, tym trafniejsza wycena."
+            },
+            {
+                "title": "Dostajesz szkic i cenę",
+                "text": "Do pięciu dni roboczych. Jeśli coś jest technicznie niemożliwe, powiem to od razu."
+            },
+            {
+                "title": "Zaliczka BLIK-iem",
+                "text": "Resztę płacisz po zobaczeniu zdjęć gotowej pracy, przed wysyłką."
+            },
+            {
+                "title": "Lepienie, dwa wypały, wysyłka",
+                "text": "Około czterech tygodni. Przy dużych serwisach dłużej — termin podam w wycenie."
+            }
+        ]
+    },
+    {
+        "key": "text_b2b_lead",
+        "value": "Ręczna ceramika w powtarzalnej formie: ten sam kształt i szkliwo w kolejnych dostawach, ale każda sztuka nadal swoja. Testuję wytrzymałość w zmywarce gastronomicznej przed pierwszą dużą partią."
+    },
+    {
+        "key": "b2b_facts",
+        "value": [
+            {
+                "title": "Minimum 12 sztuk",
+                "text": "Od dwunastu robi się sens ustawiać formę i mieszać szkliwo pod jeden odcień."
+            },
+            {
+                "title": "Próbka przed serią",
+                "text": "Jedna sztuka do zatwierdzenia, potem cała partia. Koszt próbki odliczam od zamówienia."
+            },
+            {
+                "title": "Dosypka po stłuczkach",
+                "text": "Trzymam recepturę szkliwa i formę, więc dokładkę zrobię nawet po roku."
+            },
+            {
+                "title": "Logo lub sygnatura",
+                "text": "Wbijana w spód albo malowana na krawędzi. Faktura i przelew z terminem 14 dni."
+            }
+        ]
+    },
+    {
+        "key": "text_b2b_cta_heading",
+        "value": "Prowadzicie lokal w Krakowie?"
+    },
+    {
+        "key": "text_b2b_cta",
+        "value": "Przywiozę próbki i zostawię na tydzień do testów w serwisie."
     },
     {
         "key": "kiln_prices",
