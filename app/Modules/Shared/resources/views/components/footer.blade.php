@@ -9,7 +9,7 @@
         $link('Szukam prezentu', 'gifts.index'),
         $link('Zestawy prezentowe', 'bundles.index'),
         $link('Vouchery na warsztaty', 'shop.category', 'vouchery'),
-        $link('Wysyłka i zwroty', 'content.shipping'),
+        $link('Wysyłka i zwroty', 'content.faq'),
     ]);
 
     $studioLinks = array_filter([
