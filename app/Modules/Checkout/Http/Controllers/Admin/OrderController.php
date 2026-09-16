@@ -21,7 +21,7 @@ class OrderController extends Controller
         $paid = fn () => Order::query()->where('payment_status', PaymentStatus::Paid);
 
         $orders = ($unpaid ? Order::query()->where('payment_status', '!=', PaymentStatus::Paid) : $paid())
-            ->with('items')
+            ->with(['items', 'withdrawals'])
             ->latest('id')
             ->paginate(30)
             ->withQueryString();
@@ -41,7 +41,7 @@ class OrderController extends Controller
     public function show(Order $order, ShippingMethods $shipping): View
     {
         return view('checkout::admin.orders.show', [
-            'order' => $order->load('items'),
+            'order' => $order->load(['items', 'withdrawals']),
             'shippingLabel' => $shipping->all()->get($order->shipping_method)['label'] ?? $order->shipping_method,
         ]);
     }

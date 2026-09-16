@@ -9,6 +9,24 @@
 
     <div class="flex flex-wrap gap-[26px]">
         <div class="grid min-w-0 flex-[1_1_340px] content-start gap-[26px]">
+            @foreach ($order->withdrawals as $withdrawal)
+                <section @class(['rounded-[4px] border px-[26px] py-6', 'border-alert-line bg-alert text-alert-text' => $withdrawal->handled_at === null, 'border-line bg-linen text-lead' => $withdrawal->handled_at !== null])>
+                    <h2 class="mb-1.5 font-serif text-[21px]">Odstąpienie od umowy — {{ $withdrawal->scope->label() }}</h2>
+                    <p class="text-[14px] leading-[1.6]">
+                        Oświadczenie przyszło {{ $withdrawal->submittedAtLabel() }} przez formularz na stronie.
+                        @if ($withdrawal->handled_at === null)
+                            Pieniądze trzeba zwrócić do {{ $withdrawal->submitted_at->copy()->addDays(14)->translatedFormat('j F') }}.
+                        @else
+                            Załatwione {{ $withdrawal->handled_at->format('j.m.Y') }}.
+                        @endif
+                    </p>
+                    @if ($withdrawal->items !== null)
+                        <p class="mt-2 text-[14px] whitespace-pre-line [overflow-wrap:anywhere]">Rzeczy: {{ $withdrawal->items }}</p>
+                    @endif
+                    <a href="{{ route('admin.withdrawals.index') }}" class="mt-2.5 inline-block text-[13.5px]">Wszystkie odstąpienia →</a>
+                </section>
+            @endforeach
+
             <section class="{{ $card }}">
                 <h2 class="mb-2 font-serif text-[23px]">Pozycje</h2>
                 @foreach ($order->items as $item)

@@ -39,6 +39,11 @@
             Możesz też napisać na WhatsAppie: {{ $contactPhone }}.
         @endif
     </p>
+    @if (Route::has('withdrawal.create'))
+        <p style="margin: 12px 0 0; font-size: 13.5px; color: #5C5043;">
+            Odstąpienie od umowy zgłosisz przez formularz: <a href="{{ route('withdrawal.create', ['zamowienie' => $order->number]) }}" style="color: #855F3D;">Odstąp od umowy tutaj</a>.
+        </p>
+    @endif
     <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">Kasia</p>
 
     <x-slot:footer>

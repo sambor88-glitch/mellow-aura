@@ -25,6 +25,14 @@ class Order extends Model
     }
 
     /**
+     * @return HasMany<Withdrawal, $this>
+     */
+    public function withdrawals(): HasMany
+    {
+        return $this->hasMany(Withdrawal::class);
+    }
+
+    /**
      * Some pieces were already gone from the shelf when the payment came in.
      */
     public function hasShortage(): bool

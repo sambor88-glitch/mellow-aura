@@ -24,6 +24,10 @@ Masz pytanie o zamówienie? Napisz do mnie przez stronę sklepu i podaj numer {!
 @if ($contactPhone)
 Możesz też napisać na WhatsAppie: {!! $contactPhone !!}.
 @endif
+@if (Route::has('withdrawal.create'))
+
+Odstąpienie od umowy zgłosisz przez formularz „Odstąp od umowy tutaj”: {!! route('withdrawal.create', ['zamowienie' => $order->number]) !!}
+@endif
 
 Kasia
 

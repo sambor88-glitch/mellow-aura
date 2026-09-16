@@ -102,7 +102,7 @@
             @if (Route::has('content.faq'))
                 <a href="{{ route('content.faq') }}" class="text-label-dark hover:text-rose">FAQ</a>
             @endif
-            @foreach (array_filter([$link('Regulamin', 'content.terms'), $link('Polityka prywatności', 'content.privacy')]) as [$label, $href])
+            @foreach (array_filter([$link('Regulamin', 'content.terms'), $link('Polityka prywatności', 'content.privacy'), $link('Odstąp od umowy tutaj', 'withdrawal.create')]) as [$label, $href])
                 <a href="{{ $href }}" class="text-label-dark hover:text-rose">{{ $label }}</a>
             @endforeach
             <span>BLIK &middot; Przelewy24 &middot; karta</span>

@@ -46,6 +46,9 @@
                     @endif
                     Jak odstąpić od umowy i złożyć reklamację, piszę w&nbsp;<a href="{{ route('content.terms') }}#regulamin-12-prawo-odstapienia-od-umowy">regulaminie, w&nbsp;§12 i&nbsp;§13</a>.
                 </p>
+                @if (Route::has('withdrawal.create'))
+                    <a href="{{ route('withdrawal.create') }}" class="mt-5 inline-block rounded-full border border-line-strong px-[26px] py-[13px] text-[14px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark hover:text-ink active:scale-[.98]">Odstąp od umowy tutaj</a>
+                @endif
             </section>
         @endif
 

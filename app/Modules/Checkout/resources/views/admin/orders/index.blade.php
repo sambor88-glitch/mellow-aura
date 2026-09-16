@@ -35,6 +35,7 @@
                     [$chip, $chipClass] = match (true) {
                         $order->payment_status === PaymentStatus::Failed => ['Nieudana płatność', 'bg-alert text-error'],
                         $order->payment_status === PaymentStatus::Pending => ['Czeka na płatność', 'bg-linen text-label'],
+                        $order->withdrawals->whereNull('handled_at')->isNotEmpty() => ['Odstąpienie od umowy', 'bg-alert text-error'],
                         $order->items->contains(fn ($item) => $item->missing_quantity > 0) => ['Problem: brak sztuki', 'bg-alert text-error'],
                         default => [$order->status->label(), 'bg-sand-dark text-lead'],
                     };
