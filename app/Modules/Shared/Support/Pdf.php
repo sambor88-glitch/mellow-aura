@@ -7,9 +7,9 @@ use Dompdf\Options;
 use Illuminate\Support\Facades\File;
 
 /**
- * A4 PDFs in the site's typefaces, rendered in PHP so the server needs no browser. A template gets the fonts
- * directory as $fonts and loads the faces with @include('shared::pdf.fonts'). dompdf knows no flexbox or grid,
- * so columns are tables.
+ * PDFs in the site's typefaces, A4 unless a document asks for another paper size, rendered in PHP so the server
+ * needs no browser. A template gets the fonts directory as $fonts and loads the faces with the Blade include
+ * of shared::pdf.fonts. dompdf knows no flexbox or grid, so columns are tables.
  */
 class Pdf
 {
@@ -18,7 +18,7 @@ class Pdf
         return resource_path('fonts');
     }
 
-    public static function render(string $html, string $orientation = 'portrait'): string
+    public static function render(string $html, string $orientation = 'portrait', string $paper = 'a4'): string
     {
         // dompdf keeps the measurements of each typeface here after the first document.
         File::ensureDirectoryExists($fontCache = storage_path('app/fonts'));
@@ -32,7 +32,7 @@ class Pdf
             'defaultFont' => 'Instrument Sans',
         ]));
 
-        $dompdf->setPaper('a4', $orientation);
+        $dompdf->setPaper($paper, $orientation);
         $dompdf->loadHtml($html, 'UTF-8');
         $dompdf->render();
 

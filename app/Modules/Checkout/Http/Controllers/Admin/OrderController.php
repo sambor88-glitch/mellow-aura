@@ -41,7 +41,7 @@ class OrderController extends Controller
     public function show(Order $order, ShippingMethods $shipping): View
     {
         return view('checkout::admin.orders.show', [
-            'order' => $order->load(['items', 'withdrawals']),
+            'order' => $order->load(['items.variant.product.category', 'items.certificates', 'withdrawals']),
             'shippingLabel' => $shipping->all()->get($order->shipping_method)['label'] ?? $order->shipping_method,
         ]);
     }

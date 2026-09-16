@@ -1,3 +1,4 @@
+@use('App\Modules\Checkout\Enums\PaymentStatus')
 @use('App\Modules\Shared\Support\Money')
 @php
     $card = 'rounded-[4px] border border-line bg-cream px-[26px] py-7';
@@ -28,7 +29,13 @@
             @endforeach
 
             <section class="{{ $card }}">
-                <h2 class="mb-2 font-serif text-[23px]">Pozycje</h2>
+                <div class="mb-2 flex flex-wrap items-center justify-between gap-3">
+                    <h2 class="font-serif text-[23px]">Pozycje</h2>
+                    @if ($order->payment_status === PaymentStatus::Paid && $order->items->contains(fn ($item) => $item->getsCertificate()))
+                        <a href="{{ route('admin.orders.certificates', $order) }}" target="_blank" rel="noopener"
+                           class="inline-flex min-h-11 items-center rounded-full border border-line-strong px-5 text-[13.5px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark hover:text-ink">Certyfikaty do druku</a>
+                    @endif
+                </div>
                 @foreach ($order->items as $item)
                     <div class="border-b border-sand-dark py-3.5 last:border-b-0">
                         <div class="flex flex-wrap justify-between gap-3">
@@ -46,6 +53,9 @@
                                     <div class="mt-1"><span class="text-label">Kolor wnętrza:</span> {{ $item->custom_glaze }}</div>
                                 @endif
                             </div>
+                        @endif
+                        @if ($item->certificates->isNotEmpty())
+                            <p class="mt-2 text-[13px] text-label">Certyfikat: <span class="text-ink tabular-nums">{{ $item->certificates->sortBy('piece')->pluck('number')->join(', ') }}</span></p>
                         @endif
                         @if ($item->accepted_deviation !== null)
                             <p class="mt-2.5 text-[13px] text-label">Klientka zaakceptowała osobnym polem: <span class="text-ink">{{ $item->accepted_deviation }}</span></p>
