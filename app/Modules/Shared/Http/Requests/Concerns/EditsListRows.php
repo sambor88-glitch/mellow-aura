@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Content\Http\Requests\Admin\Concerns;
+namespace App\Modules\Shared\Http\Requests\Concerns;
 
 /**
  * A list edited in rows: every row has a „usuń” box, a few empty rows at the end take new entries,

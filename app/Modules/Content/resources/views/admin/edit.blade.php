@@ -26,7 +26,6 @@
     $hint = 'mt-3.5 text-[12.5px] leading-[1.6] text-label';
     $button = 'mt-[18px] min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]';
     $input = 'w-full min-w-0 rounded-[4px] border bg-white px-3 py-2.5 text-[15px] text-ink placeholder:text-hint focus:border-ink';
-    $arrow = 'grid size-11 place-items-center rounded-full border border-line-strong text-[16px] text-ink hover:border-ink hover:bg-sand-dark';
 @endphp
 <x-admin::layout title="Treści" lead="Każde zdanie na stronach „O mnie”, „Pracownia”, „Kontakt” i w częstych pytaniach. Zmiany widać na stronie od razu.">
     <nav aria-label="Karty na tej stronie" class="mb-[22px] flex flex-wrap gap-2.5 text-[13px]">
@@ -143,17 +142,7 @@
                             @endforeach
 
                             @unless ($new)
-                                <div class="mt-2 flex flex-wrap items-center gap-2">
-                                    @if ($index > 0)
-                                        <button name="move" value="{{ $index }}:up" aria-label="Przesuń wyżej: {{ $rowLabel }}" class="{{ $arrow }}">↑</button>
-                                    @endif
-                                    @if ($index < $filled - 1)
-                                        <button name="move" value="{{ $index }}:down" aria-label="Przesuń niżej: {{ $rowLabel }}" class="{{ $arrow }}">↓</button>
-                                    @endif
-                                    <label class="ml-auto flex min-h-11 items-center gap-1.5 text-[12.5px] text-label">
-                                        <input type="checkbox" name="{{ $name }}[remove]" value="1" @checked($row['remove'] ?? false) class="size-4 accent-error"> usuń
-                                    </label>
-                                </div>
+                                <x-shared::admin.row-actions :name="$name" :index="$index" :last="$filled - 1" :label="$rowLabel" :removed="(bool) ($row['remove'] ?? false)" />
                             @endunless
                         </div>
                     @endforeach

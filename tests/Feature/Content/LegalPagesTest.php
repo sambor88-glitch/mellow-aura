@@ -47,7 +47,8 @@ class LegalPagesTest extends TestCase
         $this->assertStringContainsString('e-mail: <a href="mailto:kasia@example.com">kasia@example.com</a>', $html);
         $this->assertStringContainsString('Voucher jest ważny 12 miesięcy', $html);
         $this->assertStringContainsString('na stronie <a href="'.route('content.privacy').'">', $html);
-        $this->assertStringContainsString('<mark>adres strony z warsztatami</mark>', $html);
+        $this->assertStringContainsString('są podane na stronie <a href="'.route('workshops.index').'">', $html);
+        $this->assertStringContainsString('<mark>REGON</mark>', $html);
         $this->assertStringNotContainsString('data-fill', $html);
     }
 

@@ -522,6 +522,10 @@
         "value": "Wsad zbieram raz w tygodniu, zwykle w czwartek. Prace odbierzesz po 5–7 dniach. Nie przyjmuję gliny nieznanego pochodzenia ani prac grubszych niż 2 cm w ściance."
     },
     {
+        "key": "text_workshops_lead",
+        "value": "Ceny zawierają glinę, narzędzia, szkliwa i wypały. Nie musisz nic umieć ani nic przynosić."
+    },
+    {
         "key": "text_contact_lead",
         "value": "Odpisuję zwykle tego samego dnia, chyba że stoję przy piecu. Wtedy wieczorem."
     },

@@ -10,6 +10,7 @@ use App\Modules\Gifts\GiftsServiceProvider;
 use App\Modules\MugConfigurator\MugConfiguratorServiceProvider;
 use App\Modules\Settings\SettingsServiceProvider;
 use App\Modules\Shared\SharedServiceProvider;
+use App\Modules\Workshops\WorkshopsServiceProvider;
 use App\Providers\AppServiceProvider;
 
 return [
@@ -24,4 +25,5 @@ return [
     MugConfiguratorServiceProvider::class,
     ContentServiceProvider::class,
     ConsentServiceProvider::class,
+    WorkshopsServiceProvider::class,
 ];

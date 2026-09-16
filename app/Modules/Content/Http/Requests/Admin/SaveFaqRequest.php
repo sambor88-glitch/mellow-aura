@@ -2,7 +2,7 @@
 
 namespace App\Modules\Content\Http\Requests\Admin;
 
-use App\Modules\Content\Http\Requests\Admin\Concerns\EditsListRows;
+use App\Modules\Shared\Http\Requests\Concerns\EditsListRows;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**

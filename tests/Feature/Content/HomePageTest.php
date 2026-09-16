@@ -7,7 +7,6 @@ use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
 use App\Modules\Settings\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 class HomePageTest extends TestCase
@@ -49,22 +48,17 @@ class HomePageTest extends TestCase
             ->assertSee('Lubię łączyć surowość z miękkością.');
     }
 
-    public function test_sections_leading_to_missing_pages_appear_once_the_page_has_a_route(): void
+    public function test_the_workshops_section_shows_the_prices_and_leads_to_their_page(): void
     {
         Setting::create(['key' => 'workshop_types', 'value' => [
             ['name' => 'Lepienie z ręki', 'duration_label' => '2,5 godziny', 'summary' => 'Pierwszy raz w glinie.', 'price_gross' => 22000, 'unit_label' => 'os.'],
         ]]);
 
-        $this->get('/')->assertOk()->assertDontSee('Zanurz dłonie w glinie');
-
-        Route::get('/warsztaty-ceramiczne-krakow', fn () => '')->name('workshops.index');
-        Route::getRoutes()->refreshNameLookups();
-
         $this->get('/')
             ->assertOk()
             ->assertSee('Zanurz dłonie w glinie')
             ->assertSee('od 220,00 zł / os.')
-            ->assertSee('href="'.url('/warsztaty-ceramiczne-krakow').'"', false);
+            ->assertSee('href="'.route('workshops.index').'"', false);
     }
 
     public function test_an_empty_shop_does_not_break_the_home_page(): void

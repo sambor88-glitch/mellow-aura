@@ -7,6 +7,8 @@
     $email = $settings->get('contact_email');
     $location = $settings->get('location_description');
     $topics = (array) $settings->get('contact_form_topics', []);
+    // A link such as /kontakt?temat=Wypał moich prac picks the topic in advance.
+    $chosenTopic = old('topic', in_array(request()->query('temat'), $topics, true) ? request()->query('temat') : null);
     $company = collect(['company_name', 'company_nip', 'company_regon', 'company_address'])->mapWithKeys(fn (string $key) => [$key => $settings->get($key)]);
 
     $description = match (true) {
@@ -91,7 +93,7 @@
                                         ])>
                                     <option value="">Wybierz, jeśli chcesz</option>
                                     @foreach ($topics as $topic)
-                                        <option value="{{ $topic }}" @selected(old('topic') === $topic)>{{ $topic }}</option>
+                                        <option value="{{ $topic }}" @selected($chosenTopic === $topic)>{{ $topic }}</option>
                                     @endforeach
                                 </select>
                                 @error('topic')

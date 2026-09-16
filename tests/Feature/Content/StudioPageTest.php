@@ -5,7 +5,6 @@ namespace Tests\Feature\Content;
 use App\Modules\Settings\Database\Seeders\SettingsSeeder;
 use App\Modules\Settings\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 class StudioPageTest extends TestCase
@@ -60,19 +59,10 @@ class StudioPageTest extends TestCase
             ->assertSee('alt="Misa w kolorze laguny"', false);
     }
 
-    public function test_the_button_asks_about_workshops_until_their_page_exists(): void
+    public function test_the_button_leads_to_the_workshops_price_list(): void
     {
         $this->get('/pracownia')
-            ->assertSee('href="'.route('content.contact').'"', false)
-            ->assertSee('Zapytaj o warsztaty')
-            ->assertDontSee('Wypalę Twoje prace');
-
-        Route::get('/warsztaty-ceramiczne-krakow', fn () => '')->name('workshops.index');
-        Route::get('/wypal-ceramiki-krakow', fn () => '')->name('firing.index');
-        Route::getRoutes()->refreshNameLookups();
-
-        $this->get('/pracownia')
-            ->assertSeeInOrder(['href="'.url('/warsztaty-ceramiczne-krakow').'"', 'Terminy i cennik', 'href="'.url('/wypal-ceramiki-krakow').'"', 'Wypalę Twoje prace'], false)
+            ->assertSeeInOrder(['href="'.route('workshops.index').'"', 'Terminy i cennik'], false)
             ->assertDontSee('Zapytaj o warsztaty');
     }
 
