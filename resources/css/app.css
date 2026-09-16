@@ -54,6 +54,10 @@
     --color-navy-text: #33456B;
     --color-navy-hint: #5A6B8C;
 
+    /* The navy card on /odcisk-twojej-rosliny from the prototype. Not in the skill palette yet. */
+    --color-navy-pale: #D9E1F0;
+    --color-navy-muted: #AFC0DC;
+
     /* Backdrop under the zoomed photo (88%) and the cart drawer (44%). Not in the skill palette yet. */
     --color-scrim: #1F1914;
 

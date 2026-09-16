@@ -641,6 +641,27 @@
         ]
     },
     {
+        "key": "scarf_steps",
+        "value": [
+            {
+                "title": "Wysyłasz zdjęcie tkaniny",
+                "text": "Powiem od razu, czy da się z niej szyć — cienki jedwab i dzianina zachowują się inaczej."
+            },
+            {
+                "title": "Przysyłasz tkaninę",
+                "text": "Nie tnę niczego, dopóki nie zatwierdzisz układu wzoru."
+            },
+            {
+                "title": "Zatwierdzasz krój",
+                "text": "Pokazuję na zdjęciu, którym fragmentem wzoru pójdzie opaska. Decyzja jest Twoja."
+            },
+            {
+                "title": "Szyję i odsyłam",
+                "text": "Dwa tygodnie. W paczce wraca też to, czego nie użyłam — resztki są Twoje."
+            }
+        ]
+    },
+    {
         "key": "imprint_service_prices",
         "value": [
             {
@@ -666,6 +687,27 @@
                 "note": "ten sam bukiet, dwa różne odciski",
                 "price_gross": 32900,
                 "compare_at_price": null
+            }
+        ]
+    },
+    {
+        "key": "imprint_steps",
+        "value": [
+            {
+                "title": "Suszysz roślinę płasko",
+                "text": "Między kartkami książki, dwa tygodnie. Napiszę, jak to zrobić, żeby nie skruszała."
+            },
+            {
+                "title": "Wysyłasz do Paczkomatu",
+                "text": "Najlepiej dwie lub trzy sztuki — nie każda znosi odcisk i chcę mieć zapas."
+            },
+            {
+                "title": "Odciskam i szkliwię",
+                "text": "Zanim odcisnę, wysyłam Ci na WhatsAppie zdjęcie ułożonej rośliny do zatwierdzenia. Wybierasz kolor: kobalt, jak na zdjęciu, albo naturalna glina z przezroczystym szkliwem."
+            },
+            {
+                "title": "Dwa wypały i wysyłka",
+                "text": "Trzy tygodnie. W paczce karta z datą wypału i nazwą rośliny, jeśli ją znasz."
             }
         ]
     },
