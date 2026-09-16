@@ -14,7 +14,7 @@
                 <td style="padding: 12px 0; border-top: 1px solid #E2D7C7; vertical-align: top;">
                     <div style="font-size: 15px; color: #2F2620;">{{ $voucher->orderItem?->product_name }}</div>
                     <div style="font-size: 13px; color: #726456;">
-                        {{ collect([$voucher->orderItem?->variant_label, $voucher->recipient_name ? 'dla: '.$voucher->recipient_name : null, 'ważny do '.$voucher->valid_until->translatedFormat('j F Y')])->filter()->join(' · ') }}
+                        {{ collect([$voucher->orderItem?->variant_label, $voucher->recipient_name ? 'dla: '.$voucher->recipient_name : null, $voucher->sender_name ? 'od: '.$voucher->sender_name : null, 'ważny do '.$voucher->valid_until->translatedFormat('j F Y')])->filter()->join(' · ') }}
                     </div>
                 </td>
                 <td align="right" style="padding: 12px 0 12px 16px; border-top: 1px solid #E2D7C7; vertical-align: top; white-space: nowrap; font-family: Georgia, 'Times New Roman', serif; font-size: 17px; letter-spacing: 1px; color: #2F2620;">{{ $voucher->code }}</td>
@@ -23,7 +23,7 @@
     </table>
 
     <p style="margin: 0 0 4px; color: #5C5043;">
-        Numer vouchera wystarczy, żeby go wykorzystać.
+        Numer vouchera wystarczy, żeby go wykorzystać{{ $contactPhone ? ' — termin ustalisz na WhatsAppie: '.$contactPhone : '' }}.
         @if ($contactEmail)
             Pytanie? Odpisz na tego maila — trafi prosto do mnie.
         @endif

@@ -12,6 +12,7 @@ use App\Modules\Checkout\Mail\OrderConfirmed;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Gifts\Mail\VouchersIssued;
 use App\Modules\Gifts\Models\Voucher;
+use App\Modules\Gifts\Support\VoucherPdf;
 use App\Modules\Settings\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
@@ -43,7 +44,7 @@ class VoucherTest extends TestCase
         $this->get('/produkt/voucher-na-warsztat')
             ->assertOk()
             ->assertSee('name="type" value="voucher"', false)
-            ->assertSeeInOrder(['Dla kogo ten voucher?', 'Imię na voucherze', 'Dedykacja', 'Tak będzie wyglądał', 'Voucher na warsztat', 'Ważny do 20 listopada 2027']);
+            ->assertSeeInOrder(['Dla kogo ten voucher?', 'Imię na voucherze', 'Od kogo', 'name="sender_name"', 'Dedykacja', 'Tak będzie wyglądał', 'Voucher na warsztat', 'Ważny do 20 listopada 2027'], false);
 
         $vase = ProductVariant::factory()->for(Product::factory()->state(['slug' => 'wazony']))->create(['stock' => 3]);
 
@@ -73,6 +74,15 @@ class VoucherTest extends TestCase
         $this->postJson('/koszyk', ['type' => 'voucher', 'variant_id' => $voucher->id, 'recipient_name' => str_repeat('a', 41)])
             ->assertUnprocessable()
             ->assertJson(['message' => 'Imię na voucherze zmieszczę do 40 znaków']);
+        $this->postJson('/koszyk', ['type' => 'voucher', 'variant_id' => $voucher->id, 'sender_name' => str_repeat('a', 41)])
+            ->assertUnprocessable()
+            ->assertJson(['message' => 'Podpis „od kogo” zmieszczę do 40 znaków']);
+
+        // The same name from someone else is another voucher.
+        $content = $this->postJson('/koszyk', ['type' => 'voucher', 'variant_id' => $voucher->id, 'recipient_name' => 'Ola', 'sender_name' => '  Kasia   i Tomek '])
+            ->assertJson(['count' => 4])
+            ->json('content');
+        $this->assertStringContainsString('Dla dwóch osób · dla: Ola · od: Kasia i Tomek', $content);
     }
 
     public function test_paying_issues_one_voucher_per_piece_and_mails_them_without_prices(): void
@@ -80,7 +90,7 @@ class VoucherTest extends TestCase
         Mail::fake();
         $voucher = $this->voucherVariant();
         $vase = ProductVariant::factory()->for(Product::factory()->state(['name' => 'Wazony']))->create(['price_gross' => 23900, 'stock' => 3]);
-        $this->postJson('/koszyk', ['type' => 'voucher', 'variant_id' => $voucher->id, 'quantity' => 2, 'recipient_name' => 'Ania', 'dedication' => 'Sto lat!']);
+        $this->postJson('/koszyk', ['type' => 'voucher', 'variant_id' => $voucher->id, 'quantity' => 2, 'recipient_name' => 'Ania', 'sender_name' => 'Kasia', 'dedication' => 'Sto lat!']);
         $this->postJson('/koszyk', ['variant_id' => $vase->id]);
 
         $this->post('/zamowienie', $this->form(['expected_total' => 109500]))->assertRedirect('/zamowienie/potwierdzenie');
@@ -90,6 +100,8 @@ class VoucherTest extends TestCase
         $this->assertCount(2, $vouchers);
         $this->assertNotSame($vouchers[0]->code, $vouchers[1]->code);
         $this->assertSame(['Ania', 'Ania'], $vouchers->pluck('recipient_name')->all());
+        $this->assertSame(['Kasia', 'Kasia'], $vouchers->pluck('sender_name')->all());
+        $this->assertSame('Kasia', $order->items()->where('recipient_name', 'Ania')->value('sender_name'));
         $this->assertSame('Sto lat!', $vouchers[0]->dedication);
         $this->assertSame('2027-11-20', $vouchers[0]->valid_until->toDateString());
         $this->assertSame($order->items()->where('recipient_name', 'Ania')->value('id'), $vouchers[0]->order_item_id);
@@ -101,15 +113,15 @@ class VoucherTest extends TestCase
 
         $mail = new VouchersIssued($order, $vouchers->load('orderItem'));
         $mail->assertHasSubject('Vouchery z MellowAury');
-        $mail->assertSeeInOrderInHtml(['Twoje vouchery', 'Voucher na warsztat', 'dla: Ania', 'ważny do 20 listopada 2027', $vouchers[0]->code]);
+        $mail->assertSeeInOrderInHtml(['Twoje vouchery', 'Voucher na warsztat', 'dla: Ania', 'od: Kasia', 'ważny do 20 listopada 2027', $vouchers[0]->code]);
         $mail->assertDontSeeInHtml('420,00 zł');
-        $mail->assertSeeInText($vouchers[1]->code.': Voucher na warsztat, Dla dwóch osób, dla: Ania, ważny do 20 listopada 2027');
+        $mail->assertSeeInText($vouchers[1]->code.': Voucher na warsztat, Dla dwóch osób, dla: Ania, od: Kasia, ważny do 20 listopada 2027');
         $this->assertCount(2, $mail->attachments());
 
         // The order confirmation names the codes too, next to the order.
         $confirmation = new OrderConfirmed($order->load('items'));
-        $confirmation->assertSeeInOrderInHtml(['Vouchery', $vouchers[0]->code, 'dla: Ania', 'ważny do 20 listopada 2027', $vouchers[1]->code, 'PDF-y voucherów wysłałam osobnym mailem']);
-        $confirmation->assertSeeInText($vouchers[0]->code.' · dla: Ania · ważny do 20 listopada 2027');
+        $confirmation->assertSeeInOrderInHtml(['Vouchery', $vouchers[0]->code, 'dla: Ania', 'od: Kasia', 'ważny do 20 listopada 2027', $vouchers[1]->code, 'PDF-y voucherów wysłałam osobnym mailem']);
+        $confirmation->assertSeeInText($vouchers[0]->code.' · dla: Ania · od: Kasia · ważny do 20 listopada 2027');
     }
 
     public function test_the_confirmation_page_links_to_each_pdf_with_a_signed_address(): void
@@ -152,6 +164,37 @@ class VoucherTest extends TestCase
             ->assertSeeInOrder(['Vouchery', $issued->code, 'Voucher na warsztat · dla: Ania · ważny do 20 listopada 2027', '„Sto lat!”', 'Pobierz PDF']);
 
         $this->get('/panel/vouchery/'.$issued->id)->assertOk()->assertHeader('Content-Type', 'application/pdf');
+    }
+
+    public function test_the_printed_voucher_names_both_people_describes_the_workshop_and_gives_the_whatsapp_number(): void
+    {
+        Mail::fake();
+        Setting::create(['key' => 'contact_phone', 'value' => '+48 600 100 200']);
+        Setting::create(['key' => 'text_voucher_how_to_use', 'value' => 'napisz do mnie i podaj numer vouchera.']);
+        Setting::create(['key' => 'voucher_workshop_notes', 'value' => ['voucher-na-warsztat' => [
+            'expect' => 'Trzy godziny przy jednym stole.',
+            'takeaway' => 'Dwa kubki po dwóch wypałach.',
+        ]]]);
+        $voucher = $this->voucherVariant();
+        $this->postJson('/koszyk', ['type' => 'voucher', 'variant_id' => $voucher->id, 'recipient_name' => 'Nia', 'sender_name' => 'Kasia i Tomek']);
+        $this->post('/zamowienie', $this->form(['expected_total' => 43600]));
+
+        $html = app(VoucherPdf::class)->html(Voucher::sole());
+
+        $this->assertMatchesRegularExpression('#<div class="label">Dla</div>\s*<div class="name">Nia</div>#', $html);
+        $this->assertMatchesRegularExpression('#<div class="label">Od</div>\s*<div class="name">Kasia i Tomek</div>#', $html);
+        $this->assertStringNotContainsString('Szczegóły', $html);
+        $this->assertStringNotContainsString('Dla dwóch osób', $html);
+        $this->assertMatchesRegularExpression('#Czego się spodziewać</div>\s*<div>Trzy godziny przy jednym stole.</div>#', $html);
+        $this->assertMatchesRegularExpression('#Z czym wyjdziecie</div>\s*<div>Dwa kubki po dwóch wypałach.</div>#', $html);
+        $this->assertStringNotContainsString('Co będziecie robili', $html);
+        $this->assertMatchesRegularExpression('#Jak go wykorzystać:</strong> napisz do mnie i podaj numer vouchera.\s*<strong>WhatsApp: \+48 600 100 200</strong>#', $html);
+        $this->assertStringContainsString('www.mellow-aura.com', $html);
+        $this->assertStringNotContainsString('localhost', $html);
+
+        // Without a name the voucher keeps a line to write it by hand.
+        $unnamed = Voucher::factory()->create(['recipient_name' => null, 'sender_name' => null]);
+        $this->assertMatchesRegularExpression('#<div class="label">Od</div>\s*<div class="blank"></div>#', app(VoucherPdf::class)->html($unnamed));
     }
 
     private function voucherVariant(): ProductVariant

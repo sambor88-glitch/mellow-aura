@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * A voucher issued for a paid order item: one per piece, each with its own code.
  */
-#[Fillable(['code', 'order_item_id', 'recipient_name', 'dedication', 'valid_until', 'redeemed_at'])]
+#[Fillable(['code', 'order_item_id', 'recipient_name', 'sender_name', 'dedication', 'valid_until', 'redeemed_at'])]
 class Voucher extends Model
 {
     /** @use HasFactory<VoucherFactory> */

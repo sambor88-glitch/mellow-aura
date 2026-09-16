@@ -128,6 +128,32 @@ class AdminGiftsTest extends TestCase
         $this->assertSame([6, 30, 240, 'napisz do mnie'], collect(['voucher_validity_months', 'voucher_recipient_name_max_chars', 'voucher_dedication_max_chars', 'text_voucher_how_to_use'])->map(fn (string $key) => Setting::find($key)->value)->all());
     }
 
+    public function test_each_voucher_gets_its_own_short_workshop_description(): void
+    {
+        $workshops = Category::factory()->create(['group' => CategoryGroup::Workshops]);
+        Product::factory()->create(['name' => 'Voucher — warsztat dla pary', 'slug' => 'voucher-para', 'category_id' => $workshops->id]);
+        Product::factory()->create(['name' => 'Voucher kwotowy', 'slug' => 'voucher-kwotowy', 'category_id' => $workshops->id]);
+        Setting::create(['key' => 'voucher_workshop_notes', 'value' => ['voucher-para' => ['expect' => 'Trzy godziny we dwoje.']]]);
+
+        $this->actingAs($this->owner)
+            ->get('/panel/prezenty')
+            ->assertOk()
+            ->assertSeeInOrder(['Opis warsztatu na voucherze', 'Voucher — warsztat dla pary', 'Czego się spodziewać', 'Trzy godziny we dwoje.', 'Jak się przygotować', 'Voucher kwotowy', 'Zapisz opisy na voucherach']);
+
+        $this->put('/panel/prezenty/vouchery/opis-warsztatu', ['notes' => ['voucher-para' => ['expect' => str_repeat('a', 161)]]])
+            ->assertSessionHasErrorsIn('opis-warsztatu', ['notes.voucher-para.expect' => 'Zmieszczę do 160 znaków — jedno, dwa krótkie zdania']);
+
+        $this->put('/panel/prezenty/vouchery/opis-warsztatu', ['notes' => [
+            'voucher-para' => ['expect' => ' Trzy godziny. ', 'activities' => 'Dwa kubki.', 'takeaway' => '', 'preparation' => ''],
+            'voucher-kwotowy' => ['expect' => '', 'activities' => '', 'takeaway' => '', 'preparation' => ''],
+            'nie-ma-takiego' => ['expect' => 'Obcy wpis'],
+        ]])
+            ->assertRedirect('/panel/prezenty#opis-warsztatu')
+            ->assertSessionHas('panel_status', 'Zapisane. Vouchery w PDF już mają ten opis.');
+
+        $this->assertEquals(['voucher-para' => ['expect' => 'Trzy godziny.', 'activities' => 'Dwa kubki.']], Setting::find('voucher_workshop_notes')->value);
+    }
+
     private function variant(string $product, string $label, int $price): ProductVariant
     {
         return ProductVariant::factory()->for(Product::factory()->state(['name' => $product]))->create(['label' => $label, 'price_gross' => $price, 'stock' => 3]);

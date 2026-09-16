@@ -168,9 +168,48 @@
                         @endif
                     </div>
                 </div>
-                <p class="mt-3.5 text-[12.5px] leading-[1.6] text-hint">Pod zdaniem stoją telefon, e-mail i Instagram z Ustawień — puste pola się nie pokażą.</p>
+                <p class="mt-3.5 text-[12.5px] leading-[1.6] text-hint">
+                    Obok zdania stoi numer WhatsApp z <a href="{{ route('admin.settings.edit') }}#pracownia">Ustawień → Dane pracowni</a> — ten sam co w stopce i na stronie kontaktu.
+                    @unless ($hasWhatsApp)
+                        Teraz jest pusty, więc na voucherze go nie ma.
+                    @endunless
+                    Pod spodem e-mail, adres strony i Instagram.
+                </p>
                 <button class="{{ $button }}">Zapisz vouchery</button>
             </form>
+
+            @if ($voucherProducts->isNotEmpty())
+                @php($noteErrors = $errors->getBag('opis-warsztatu'))
+                <form id="opis-warsztatu" method="post" action="{{ route('admin.gifts.voucher-notes') }}" novalidate class="{{ $card }}">
+                    @csrf
+                    @method('PUT')
+                    <h2 class="{{ $heading }}">Opis warsztatu na voucherze</h2>
+                    <p class="{{ $intro }}">Cztery krótkie punkty pod dedykacją, osobno dla każdego vouchera. Puste pole nie pokaże się na voucherze — przy voucherze kwotowym zostaw wszystkie puste.</p>
+                    @if ($noteErrors->any())
+                        <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+                    @endif
+                    <div class="grid gap-5">
+                        @foreach ($voucherProducts as $product)
+                            <fieldset class="grid gap-3 border-t border-sand-dark pt-4 first:border-t-0 first:pt-0">
+                                <legend class="float-left mb-1 w-full font-serif text-[19px]">{{ $product->name }}</legend>
+                                @foreach (['expect' => 'Czego się spodziewać', 'activities' => 'Co będziecie robili', 'takeaway' => 'Z czym wyjdziecie', 'preparation' => 'Jak się przygotować'] as $field => $label)
+                                    @php($key = 'notes.'.$product->slug.'.'.$field)
+                                    <div class="min-w-0">
+                                        <label for="opis-{{ $product->id }}-{{ $field }}" class="mb-1.5 block text-[13.5px] text-graphite">{{ $label }}</label>
+                                        <textarea id="opis-{{ $product->id }}-{{ $field }}" name="notes[{{ $product->slug }}][{{ $field }}]" rows="2" maxlength="{{ \App\Modules\Gifts\Http\Requests\Admin\SaveVoucherNotesRequest::MAX }}"
+                                                  @if ($noteErrors->has($key)) aria-invalid="true" aria-describedby="opis-{{ $product->id }}-{{ $field }}-error" @endif
+                                                  @class([$input, 'resize-y leading-[1.55]', 'border-error' => $noteErrors->has($key), 'border-line' => ! $noteErrors->has($key)])>{{ old('notes.'.$product->slug.'.'.$field, $voucherNotes[$product->slug][$field] ?? '') }}</textarea>
+                                        @if ($noteErrors->has($key))
+                                            <p id="opis-{{ $product->id }}-{{ $field }}-error" class="mt-1.5 text-[13px] text-error">{{ $noteErrors->first($key) }}</p>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </fieldset>
+                        @endforeach
+                    </div>
+                    <button class="{{ $button }}">Zapisz opisy na voucherach</button>
+                </form>
+            @endif
         </div>
     </div>
 </x-admin::layout>

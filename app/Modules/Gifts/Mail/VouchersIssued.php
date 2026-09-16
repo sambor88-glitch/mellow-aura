@@ -39,7 +39,7 @@ class VouchersIssued extends Mailable
         return new Content(
             view: 'gifts::mail.vouchers',
             text: 'gifts::mail.vouchers-text',
-            with: ['contactEmail' => app(Settings::class)->get('contact_email')],
+            with: ['contactEmail' => app(Settings::class)->get('contact_email'), 'contactPhone' => app(Settings::class)->get('contact_phone')],
         );
     }
 

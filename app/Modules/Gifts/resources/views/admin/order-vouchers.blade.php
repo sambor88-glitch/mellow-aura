@@ -14,7 +14,7 @@
                 <div class="min-w-0">
                     <div class="font-serif text-[18px] tracking-[0.06em] select-all">{{ $voucher->code }}</div>
                     <div class="mt-0.5 text-[13px] text-label">
-                        {{ collect([$voucher->orderItem?->product_name, $voucher->recipient_name ? 'dla: '.$voucher->recipient_name : null, 'ważny do '.$voucher->valid_until->translatedFormat('j F Y')])->filter()->join(' · ') }}
+                        {{ collect([$voucher->orderItem?->product_name, $voucher->recipient_name ? 'dla: '.$voucher->recipient_name : null, $voucher->sender_name ? 'od: '.$voucher->sender_name : null, 'ważny do '.$voucher->valid_until->translatedFormat('j F Y')])->filter()->join(' · ') }}
                     </div>
                     @if ($voucher->dedication)
                         <div class="mt-1.5 text-[13.5px] whitespace-pre-line text-lead [overflow-wrap:anywhere]">„{{ $voucher->dedication }}”</div>

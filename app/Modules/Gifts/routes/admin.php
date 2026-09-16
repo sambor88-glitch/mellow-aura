@@ -9,6 +9,7 @@ Route::post('/prezenty/zestawy', [GiftsController::class, 'storeBundle'])->name(
 Route::put('/prezenty/zestawy/{bundle}', [GiftsController::class, 'updateBundle'])->whereNumber('bundle')->name('gifts.bundles.update');
 Route::put('/prezenty/teksty', [GiftsController::class, 'texts'])->name('gifts.texts');
 Route::put('/prezenty/vouchery', [GiftsController::class, 'vouchers'])->name('gifts.vouchers');
+Route::put('/prezenty/vouchery/opis-warsztatu', [GiftsController::class, 'voucherNotes'])->name('gifts.voucher-notes');
 Route::put('/prezenty/szukam-prezentu', [GiftsController::class, 'giftFinder'])->name('gifts.finder');
 
 Route::get('/vouchery/{voucher}', VoucherPdfController::class)->whereNumber('voucher')->name('vouchers.pdf');

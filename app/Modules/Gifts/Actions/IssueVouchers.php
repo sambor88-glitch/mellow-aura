@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 
 /**
  * Issues the vouchers of a paid order: one for every voucher piece paid for, each with its own code and
- * the name and dedication from the order, valid for the months set in the panel from the day of payment.
+ * the names and dedication from the order, valid for the months set in the panel from the day of payment.
  * Checkout calls it inside the payment transaction, so a paid order never lacks its vouchers.
  * Calling it again issues nothing new.
  */
@@ -39,6 +39,7 @@ class IssueVouchers
                     'code' => $this->unusedCode(),
                     'order_item_id' => $item->id,
                     'recipient_name' => $item->recipient_name,
+                    'sender_name' => $item->sender_name,
                     'dedication' => $item->dedication,
                     'valid_until' => $validUntil,
                 ]));

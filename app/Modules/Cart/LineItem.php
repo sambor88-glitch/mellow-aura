@@ -19,5 +19,6 @@ final readonly class LineItem
         public ?string $customGlaze = null,
         public ?string $recipientName = null,
         public ?string $dedication = null,
+        public ?string $senderName = null,
     ) {}
 }

@@ -9,6 +9,7 @@ use App\Modules\Gifts\Actions\SaveBundle;
 use App\Modules\Gifts\Http\Requests\Admin\SaveBundleRequest;
 use App\Modules\Gifts\Http\Requests\Admin\SaveBundleTextsRequest;
 use App\Modules\Gifts\Http\Requests\Admin\SaveGiftFinderRequest;
+use App\Modules\Gifts\Http\Requests\Admin\SaveVoucherNotesRequest;
 use App\Modules\Gifts\Http\Requests\Admin\SaveVoucherSettingsRequest;
 use App\Modules\Gifts\Models\Bundle;
 use App\Modules\Settings\Actions\SaveSettings;
@@ -18,7 +19,8 @@ use Illuminate\View\View;
 
 /**
  * „Prezenty i zestawy” in the panel: the gift sets with their parts and discounts, the sentences on
- * their page, the budgets in „Szukam prezentu” and the voucher settings. Each card saves on its own.
+ * their page, the budgets in „Szukam prezentu”, the voucher settings and the workshop description on each
+ * voucher. Each card saves on its own.
  */
 class GiftsController extends Controller
 {
@@ -49,6 +51,13 @@ class GiftsController extends Controller
                 'voucher_dedication_max_chars' => $settings->get('voucher_dedication_max_chars', 180),
                 'text_voucher_how_to_use' => $settings->get('text_voucher_how_to_use'),
             ],
+            'voucherProducts' => Product::query()
+                ->whereRelation('category', 'group', CategoryGroup::Workshops->value)
+                ->orderBy('sort_order')
+                ->orderBy('id')
+                ->get(['id', 'name', 'slug']),
+            'voucherNotes' => (array) $settings->get('voucher_workshop_notes', []),
+            'hasWhatsApp' => filled($settings->get('contact_phone')),
         ]);
     }
 
@@ -89,5 +98,12 @@ class GiftsController extends Controller
         $saveSettings($request->settings());
 
         return to_route('admin.gifts.edit')->withFragment('vouchery')->with('panel_status', 'Zapisane. Nowe vouchery już tak wyglądają.');
+    }
+
+    public function voucherNotes(SaveVoucherNotesRequest $request, SaveSettings $saveSettings): RedirectResponse
+    {
+        $saveSettings($request->settings());
+
+        return to_route('admin.gifts.edit')->withFragment('opis-warsztatu')->with('panel_status', 'Zapisane. Vouchery w PDF już mają ten opis.');
     }
 }

@@ -57,6 +57,7 @@ class PlaceOrder
                     'custom_glaze' => $item->customGlaze,
                     'recipient_name' => $item->recipientName,
                     'dedication' => $item->dedication,
+                    'sender_name' => $item->senderName,
                 ]);
             }
 

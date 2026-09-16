@@ -273,6 +273,23 @@
         "value": "napisz do mnie na WhatsApp albo mailem i podaj numer vouchera — razem ustalimy termin. Jeśli żaden nie pasuje, znajdziemy nowy."
     },
     {
+        "key": "voucher_workshop_notes",
+        "value": {
+            "voucher-lepienie": {
+                "expect": "Dwie i pół godziny przy stole w mojej pracowni, w grupie do sześciu osób.",
+                "activities": "Pierwszy raz w glinie: płat, wałek i szczypanie.",
+                "takeaway": "Dwie własne rzeczy z gliny — po szkliwieniu na następnym spotkaniu i dwóch wypałach.",
+                "preparation": "Nie musisz nic umieć ani nic przynosić. Glina, narzędzia, herbata i coś słodkiego czekają na miejscu."
+            },
+            "voucher-para": {
+                "expect": "Trzy godziny, dwa stanowiska obok siebie i jeden wieczór bez telefonu.",
+                "activities": "Każde z Was lepi swój kubek — cztery dłonie, dwa kubki.",
+                "takeaway": "Dwa kubki do codziennego użytku, po dwóch wypałach.",
+                "preparation": "Nie musicie nic umieć ani nic przynosić. Glina, narzędzia i wino albo herbata czekają na miejscu."
+            }
+        }
+    },
+    {
         "key": "care_rule_ceramics",
         "value": "Zmywarka tak, złoto tylko ręcznie"
     },
