@@ -2,8 +2,10 @@
  * The one-screen checkout keeps the delivery cost and the pay button in step with the customer's
  * choices. The server counts everything again; these numbers are only what the screen shows.
  */
-export default ({ accepted, payment, shipping, subtotal, freeFrom, prices }) => ({
+export default ({ accepted, deviations, payment, shipping, subtotal, freeFrom, prices }) => ({
     accepted,
+    // A product with a feature nobody would expect has its own checkbox, keyed by the cart line.
+    deviations: { ...deviations },
     payment,
     shipping,
     blik: '',
@@ -17,8 +19,12 @@ export default ({ accepted, payment, shipping, subtotal, freeFrom, prices }) => 
         return subtotal + this.shippingCost;
     },
 
+    get deviationsAccepted() {
+        return Object.values(this.deviations).every(Boolean);
+    },
+
     get ready() {
-        return this.accepted && (this.payment !== 'blik' || this.blik.length === 6);
+        return this.accepted && this.deviationsAccepted && (this.payment !== 'blik' || this.blik.length === 6);
     },
 
     // What the pay button says: the amount, or what is still missing.
@@ -29,6 +35,10 @@ export default ({ accepted, payment, shipping, subtotal, freeFrom, prices }) => 
 
         if (this.payment === 'blik' && this.blik.length !== 6) {
             return 'Wpisz kod BLIK, żeby zapłacić';
+        }
+
+        if (!this.deviationsAccepted) {
+            return 'Zaznacz „Akceptuję” przy produkcie';
         }
 
         return this.accepted ? 'Płacę ' + this.$store.cart.format(this.total) : 'Zaakceptuj regulamin, żeby zapłacić';
@@ -49,6 +59,14 @@ export default ({ accepted, payment, shipping, subtotal, freeFrom, prices }) => 
             event.preventDefault();
             this.$store.cart.say('Wpisz 6-cyfrowy kod z aplikacji banku');
             this.$refs.blik.focus();
+
+            return;
+        }
+
+        if (!this.deviationsAccepted) {
+            event.preventDefault();
+            this.$store.cart.say('Zaznacz „Akceptuję” przy produkcie, żeby zapłacić');
+            this.$el.querySelector('[data-deviation]:not(:checked)')?.focus();
 
             return;
         }

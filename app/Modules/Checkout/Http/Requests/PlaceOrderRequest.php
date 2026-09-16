@@ -2,15 +2,19 @@
 
 namespace App\Modules\Checkout\Http\Requests;
 
+use App\Modules\Cart\Cart;
+use App\Modules\Cart\CartLine;
 use App\Modules\Checkout\Enums\PaymentMethod;
 use App\Modules\Checkout\Support\ShippingMethods;
 use App\Modules\Shared\Support\Nip;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 
 /**
- * Three fields, delivery, payment and accepting the terms are required. The address, NIP and note are
+ * Three fields, delivery, payment and accepting the terms are required, and so is accepting each unexpected
+ * feature of a product in the cart (terms §4.5). The address, NIP and note are
  * optional, but an address has to be whole and a NIP has to add up.
  */
 class PlaceOrderRequest extends FormRequest
@@ -42,6 +46,7 @@ class PlaceOrderRequest extends FormRequest
             'blik_code' => ['exclude_unless:payment_method,blik', 'required', 'digits:6'],
             'expected_total' => ['required', 'integer'],
             'accept_terms' => ['accepted'],
+            ...$this->deviationKeys()->mapWithKeys(fn (string $key) => ['accept_deviations.'.$key => ['accepted']])->all(),
         ];
     }
 
@@ -73,7 +78,23 @@ class PlaceOrderRequest extends FormRequest
             'blik_code.required' => 'Wpisz 6-cyfrowy kod z aplikacji banku',
             'blik_code.digits' => 'Wpisz 6-cyfrowy kod z aplikacji banku',
             'accept_terms.accepted' => 'Zaznacz akceptację regulaminu — bez niej nie mogę przyjąć zamówienia',
+            ...$this->deviationKeys()->mapWithKeys(fn (string $key) => [
+                'accept_deviations.'.$key.'.accepted' => 'Zaznacz, że akceptujesz tę cechę — bez tego nie mogę przyjąć zamówienia',
+            ])->all(),
         ];
+    }
+
+    /**
+     * The cart lines whose pieces have a feature to accept.
+     *
+     * @return Collection<int, string>
+     */
+    private function deviationKeys(): Collection
+    {
+        return $this->container->make(Cart::class)->lines()
+            ->filter(fn (CartLine $line) => $line->deviations() !== [])
+            ->keys()
+            ->values();
     }
 
     protected function prepareForValidation(): void

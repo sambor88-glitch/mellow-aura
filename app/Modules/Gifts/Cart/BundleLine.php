@@ -43,6 +43,15 @@ class BundleLine extends CartLine
             ->join(' + ');
     }
 
+    public function deviations(): array
+    {
+        return $this->bundle->items
+            ->map(fn (BundleItem $item) => $item->variant->product)
+            ->filter(fn ($product) => filled($product->deviation))
+            ->mapWithKeys(fn ($product) => [$product->name => $product->deviation])
+            ->all();
+    }
+
     public function thumbnailUrl(): ?string
     {
         return $this->bundle->items->first()?->variant->product->getFirstMedia('images')?->getAvailableUrl(['thumb']);
@@ -88,6 +97,7 @@ class BundleLine extends CartLine
             label: collect([$item->variant->label, 'z zestawu „'.$this->bundle->name.'”'])->filter()->join(' · '),
             quantity: $this->quantity,
             unitPrice: $shares[$index],
+            deviation: $item->variant->product->deviation ?: null,
         ))->all();
     }
 }

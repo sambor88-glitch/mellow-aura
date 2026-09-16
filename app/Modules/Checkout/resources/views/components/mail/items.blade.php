@@ -12,6 +12,9 @@
                 @if ($item->custom_glaze)
                     <div style="font-size: 13px; color: #5C5043;">Kolor wnętrza: {{ $item->custom_glaze }}</div>
                 @endif
+                @if ($item->accepted_deviation)
+                    <div style="font-size: 13px; color: #5C5043;">Zaakceptowana cecha: {{ $item->accepted_deviation }}</div>
+                @endif
             </td>
             <td align="right" style="padding: 12px 0 12px 16px; border-top: 1px solid #E2D7C7; vertical-align: top; white-space: nowrap; font-size: 15px; color: #2F2620;">{{ Money::format($item->total()) }}</td>
         </tr>

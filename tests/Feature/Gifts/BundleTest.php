@@ -4,6 +4,7 @@ namespace Tests\Feature\Gifts;
 
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
+use App\Modules\Gifts\Cart\BundleLine;
 use App\Modules\Gifts\Models\Bundle;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -30,6 +31,16 @@ class BundleTest extends TestCase
         $this->assertCount(3, $shares);
         $this->assertSame(16800, array_sum($shares));
         $this->assertSame([6703, 5854], array_slice($shares, 0, 2));
+    }
+
+    public function test_a_part_with_a_feature_to_accept_brings_it_to_the_set_and_its_order_item(): void
+    {
+        $bundle = $this->bundle([7900, 6900]);
+        $bundle->items[1]->variant->product->update(['name' => 'Talerz ze złotem', 'deviation' => 'Nie do zmywarki']);
+        $line = new BundleLine(BundleLine::keyFor($bundle), 1, $bundle->load('items.variant.product'));
+
+        $this->assertSame(['Talerz ze złotem' => 'Nie do zmywarki'], $line->deviations());
+        $this->assertSame([null, 'Nie do zmywarki'], array_map(fn ($item) => $item->deviation, $line->orderItems()));
     }
 
     public function test_a_set_shows_only_when_it_is_published_and_every_part_is_on_sale(): void

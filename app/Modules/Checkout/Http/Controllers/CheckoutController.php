@@ -43,6 +43,10 @@ class CheckoutController extends Controller
             'selectedPayment' => $selectedPayment,
             'config' => [
                 'accepted' => (bool) old('accept_terms'),
+                // One checkbox per line with a feature to accept, ticked again after a mistake elsewhere in the form.
+                'deviations' => $lines->filter(fn (CartLine $line) => $line->deviations() !== [])
+                    ->map(fn (CartLine $line, string $key) => (bool) old('accept_deviations.'.$key))
+                    ->all(),
                 'payment' => $selectedPayment,
                 'shipping' => $selectedShipping,
                 'subtotal' => $subtotal,

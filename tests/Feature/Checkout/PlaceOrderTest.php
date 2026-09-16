@@ -100,6 +100,32 @@ class PlaceOrderTest extends TestCase
         $this->get('/zamowienie')->assertSee('Nic tu jeszcze nie ma');
     }
 
+    public function test_a_feature_nobody_expects_is_accepted_on_its_own_and_kept_with_the_item(): void
+    {
+        $plate = $this->variant('Talerz ze złotem', 'Duży', 23900, stock: 3, product: ['deviation' => 'Nie do zmywarki ani mikrofalówki — złota krawędź.']);
+        $this->postJson('/koszyk', ['variant_id' => $plate->id]);
+        $field = 'accept_deviations[v'.$plate->id.']';
+
+        $this->get('/zamowienie')
+            ->assertSeeInOrder(['Talerz ze złotem', 'name="'.$field.'"', 'Akceptuję: nie do zmywarki ani mikrofalówki — złota krawędź', 'Akceptuję <a'], false);
+
+        $this->from('/zamowienie')
+            ->followingRedirects()
+            ->post('/zamowienie', $this->form())
+            ->assertSee('Zaznacz, że akceptujesz tę cechę — bez tego nie mogę przyjąć zamówienia');
+        $this->assertSame(0, Order::count());
+
+        $this->post('/zamowienie', [...$this->form(), 'accept_deviations' => ['v'.$plate->id => '1']])
+            ->assertRedirect('/zamowienie/potwierdzenie');
+
+        $order = Order::with('items')->sole();
+        $this->assertSame('Nie do zmywarki ani mikrofalówki — złota krawędź.', $order->items->sole()->accepted_deviation);
+
+        $this->actingAs(User::factory()->create())
+            ->get('/panel/zamowienia/'.$order->number)
+            ->assertSeeInOrder(['Talerz ze złotem', 'Klientka zaakceptowała osobnym polem:', 'Nie do zmywarki ani mikrofalówki — złota krawędź.']);
+    }
+
     public function test_missing_details_come_back_with_hints_and_the_cart_stays(): void
     {
         $this->postJson('/koszyk', ['variant_id' => $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3)->id]);

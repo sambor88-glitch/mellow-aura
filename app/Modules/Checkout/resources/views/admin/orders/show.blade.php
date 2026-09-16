@@ -47,6 +47,9 @@
                                 @endif
                             </div>
                         @endif
+                        @if ($item->accepted_deviation !== null)
+                            <p class="mt-2.5 text-[13px] text-label">Klientka zaakceptowała osobnym polem: <span class="text-ink">{{ $item->accepted_deviation }}</span></p>
+                        @endif
                         @if ($item->missing_quantity > 0)
                             <p class="mt-2.5 rounded-[4px] border border-alert-line bg-alert px-3.5 py-2.5 text-[13.5px] text-alert-text">
                                 Brakuje {{ $item->missing_quantity }} szt. — ktoś kupił ostatnią sztukę chwilę wcześniej. Napisz do klientki, czy zrobisz kolejną, czy oddasz pieniądze.

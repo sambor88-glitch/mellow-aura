@@ -56,6 +56,13 @@ class ProductLine extends CartLine
         return $this->variant->product->getFirstMedia('images')?->getCustomProperty('alt') ?: $this->name();
     }
 
+    public function deviations(): array
+    {
+        $deviation = $this->variant->product->deviation;
+
+        return filled($deviation) ? [$this->name() => $deviation] : [];
+    }
+
     public function limit(): int
     {
         return min($this->variant->stock ?? Cart::MAX_QUANTITY, Cart::MAX_QUANTITY);
@@ -90,6 +97,7 @@ class ProductLine extends CartLine
             quantity: $this->quantity,
             unitPrice: $this->unitPrice(),
             customText: $this->customText,
+            deviation: $this->variant->product->deviation ?: null,
         )];
     }
 }

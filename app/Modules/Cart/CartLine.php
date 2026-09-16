@@ -58,6 +58,17 @@ abstract class CartLine
         return $this->name();
     }
 
+    /**
+     * Features of the pieces in this line nobody would expect, e.g. „nie do zmywarki”, keyed by the product they
+     * belong to. The terms want the customer to accept them with a separate checkbox at checkout.
+     *
+     * @return array<string, string>
+     */
+    public function deviations(): array
+    {
+        return [];
+    }
+
     public function total(): int
     {
         return $this->unitPrice() * $this->quantity;

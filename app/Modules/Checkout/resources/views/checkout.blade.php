@@ -118,17 +118,34 @@
                     <div class="rounded-[4px] border border-divider bg-cream p-6">
                         <h2 class="mb-[18px] font-serif text-[20px]">Twoje zamówienie</h2>
                         @foreach ($lines as $line)
-                            <div class="mb-3.5 flex gap-3 border-b border-sand-dark pb-3.5">
-                                @if ($thumbnail = $line->thumbnailUrl())
-                                    <img src="{{ $thumbnail }}" alt="{{ $line->thumbnailAlt() }}" class="h-16 w-[52px] flex-none rounded-[3px] object-cover">
-                                @else
-                                    <div class="h-16 w-[52px] flex-none rounded-[3px] bg-line-soft"></div>
-                                @endif
-                                <div class="min-w-0 flex-1">
-                                    <div class="text-[14px] leading-[1.3]">{{ $line->name() }}</div>
-                                    <div class="mt-0.5 text-[12px] [overflow-wrap:anywhere] text-label">{{ collect([$line->details(), $line->quantity.' szt.'])->filter()->join(' · ') }}</div>
+                            <div class="mb-3.5 border-b border-sand-dark pb-3.5">
+                                <div class="flex gap-3">
+                                    @if ($thumbnail = $line->thumbnailUrl())
+                                        <img src="{{ $thumbnail }}" alt="{{ $line->thumbnailAlt() }}" class="h-16 w-[52px] flex-none rounded-[3px] object-cover">
+                                    @else
+                                        <div class="h-16 w-[52px] flex-none rounded-[3px] bg-line-soft"></div>
+                                    @endif
+                                    <div class="min-w-0 flex-1">
+                                        <div class="text-[14px] leading-[1.3]">{{ $line->name() }}</div>
+                                        <div class="mt-0.5 text-[12px] [overflow-wrap:anywhere] text-label">{{ collect([$line->details(), $line->quantity.' szt.'])->filter()->join(' · ') }}</div>
+                                    </div>
+                                    <div class="text-[13.5px] whitespace-nowrap">{{ Money::format($line->total()) }}</div>
                                 </div>
-                                <div class="text-[13.5px] whitespace-nowrap">{{ Money::format($line->total()) }}</div>
+                                {{-- Terms §4.5: a feature nobody would expect is accepted on its own, next to the product. --}}
+                                @if ($deviations = $line->deviations())
+                                    @php
+                                        $field = 'accept_deviations.'.$line->key;
+                                    @endphp
+                                    <label class="mt-2.5 flex cursor-pointer items-start gap-2.5 rounded-[4px] bg-alert px-3 py-2.5 text-[13px] leading-[1.45] text-alert-text">
+                                        <input type="checkbox" name="accept_deviations[{{ $line->key }}]" value="1" data-deviation x-model="deviations[@js($line->key)]" @checked(old($field))
+                                               @error($field) aria-invalid="true" aria-describedby="{{ Str::slug($field) }}-error" @enderror
+                                               class="mt-0.5 size-4 flex-none accent-ink">
+                                        <span>Akceptuję: {{ collect($deviations)->map(fn (string $text, string $name) => ($name === $line->name() ? '' : $name.' — ').Str::lcfirst(rtrim($text, '. ')))->join('; ') }}</span>
+                                    </label>
+                                    @error($field)
+                                        <p id="{{ Str::slug($field) }}-error" class="mt-1.5 text-[13px] text-error">{{ $message }}</p>
+                                    @enderror
+                                @endif
                             </div>
                         @endforeach
                         <div class="mb-[7px] flex justify-between text-[14px] text-muted"><span>Produkty</span><span>{{ Money::format($subtotal) }}</span></div>

@@ -11,8 +11,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Saves the order with copies of what the customer saw — names, variant labels, prices and the text
- * for the mug — so later changes in the shop never rewrite it. Each cart line says which items it becomes.
+ * Saves the order with copies of what the customer saw — names, variant labels, prices, the text
+ * for the mug and the features accepted with their own checkbox — so later changes in the shop never rewrite it. Each cart line says which items it becomes.
  * Stock is not touched here: it comes off only when the payment is confirmed.
  */
 class PlaceOrder
@@ -55,6 +55,8 @@ class PlaceOrder
                     'unit_price_gross' => $item->unitPrice,
                     'custom_text' => $item->customText,
                     'custom_glaze' => $item->customGlaze,
+                    // The checkout only lets an order through once each such feature is accepted.
+                    'accepted_deviation' => $item->deviation,
                     'recipient_name' => $item->recipientName,
                     'dedication' => $item->dedication,
                     'sender_name' => $item->senderName,

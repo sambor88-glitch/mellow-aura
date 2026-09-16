@@ -7,6 +7,9 @@
 @if ($item->custom_glaze)
   Kolor wnętrza: {!! $item->custom_glaze !!}
 @endif
+@if ($item->accepted_deviation)
+  Zaakceptowana cecha: {!! $item->accepted_deviation !!}
+@endif
 @endforeach
 
 Produkty: {{ Money::format($subtotal) }}
