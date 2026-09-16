@@ -6,6 +6,7 @@ use App\Modules\Catalog\CatalogServiceProvider;
 use App\Modules\Checkout\CheckoutServiceProvider;
 use App\Modules\Consent\ConsentServiceProvider;
 use App\Modules\Content\ContentServiceProvider;
+use App\Modules\Firing\FiringServiceProvider;
 use App\Modules\Gifts\GiftsServiceProvider;
 use App\Modules\MugConfigurator\MugConfiguratorServiceProvider;
 use App\Modules\Settings\SettingsServiceProvider;
@@ -26,4 +27,5 @@ return [
     ContentServiceProvider::class,
     ConsentServiceProvider::class,
     WorkshopsServiceProvider::class,
+    FiringServiceProvider::class,
 ];

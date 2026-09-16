@@ -518,6 +518,10 @@
         ]
     },
     {
+        "key": "text_kiln_lead",
+        "value": "Lepisz w domu i nie masz pieca? Przywieź prace do pracowni. Pilnuję krzywej grzewczej i studzenia, więc nie pękają na szoku termicznym."
+    },
+    {
         "key": "text_kiln_note",
         "value": "Wsad zbieram raz w tygodniu, zwykle w czwartek. Prace odbierzesz po 5–7 dniach. Nie przyjmuję gliny nieznanego pochodzenia ani prac grubszych niż 2 cm w ściance."
     },

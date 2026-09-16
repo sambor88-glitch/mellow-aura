@@ -59,10 +59,10 @@ class StudioPageTest extends TestCase
             ->assertSee('alt="Misa w kolorze laguny"', false);
     }
 
-    public function test_the_button_leads_to_the_workshops_price_list(): void
+    public function test_the_buttons_lead_to_the_workshops_and_firing_price_lists(): void
     {
         $this->get('/pracownia')
-            ->assertSeeInOrder(['href="'.route('workshops.index').'"', 'Terminy i cennik'], false)
+            ->assertSeeInOrder(['href="'.route('workshops.index').'"', 'Terminy i cennik', 'href="'.route('firing.index').'"', 'Wypalę Twoje prace'], false)
             ->assertDontSee('Zapytaj o warsztaty');
     }
 
