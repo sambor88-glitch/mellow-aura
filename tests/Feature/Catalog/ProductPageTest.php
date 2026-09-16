@@ -123,7 +123,8 @@ class ProductPageTest extends TestCase
         $offer = $this->structuredData($this->get('/produkt/patera')->getContent())->firstWhere('@type', 'ProductGroup')['hasVariant'][0]['offers'];
         $this->assertSame(['0.00', '0.00'], array_column(array_column($offer['shippingDetails'], 'shippingRate'), 'value'));
 
-        $offer = $this->structuredData($this->get('/produkt/voucher-para')->getContent())->firstWhere('@type', 'ProductGroup')['hasVariant'][0]['offers'];
+        $response = $this->get('/produkt/voucher-para')->assertDontSee('3–5 dni roboczych');
+        $offer = $this->structuredData($response->getContent())->firstWhere('@type', 'ProductGroup')['hasVariant'][0]['offers'];
         $this->assertSame('390.00', $offer['price']);
         $this->assertArrayNotHasKey('shippingDetails', $offer);
         $this->assertArrayNotHasKey('hasMerchantReturnPolicy', $offer);

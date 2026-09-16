@@ -180,7 +180,8 @@
                 </div>
 
                 <div class="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-5 border-t border-divider pt-6 text-[13.5px] leading-[1.55] text-muted">
-                    @if ($shippingNote = collect([DispatchTime::label($settings), $freeShipping ? 'gratis od '.Money::format((int) $freeShipping) : null])->filter()->join(', '))
+                    {{-- A voucher doesn't wait days for a parcel: its PDF comes by e-mail once it is paid. --}}
+                    @if (! $product->isVoucher() && ($shippingNote = collect([DispatchTime::label($settings), $freeShipping ? 'gratis od '.Money::format((int) $freeShipping) : null])->filter()->join(', ')))
                         <div>
                             <div class="mb-1 text-ink">Wysyłka</div>
                             {{ Str::ucfirst($shippingNote) }}

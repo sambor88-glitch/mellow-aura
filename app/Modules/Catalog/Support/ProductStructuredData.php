@@ -2,7 +2,6 @@
 
 namespace App\Modules\Catalog\Support;
 
-use App\Modules\Catalog\Enums\CategoryGroup;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
 use App\Modules\Settings\Settings;
@@ -36,7 +35,7 @@ class ProductStructuredData
         $images = $product->getMedia('images')->map(fn (Media $image) => $image->getAvailableUrl(['card']))->all();
         $brand = Schema::brand()->name('MellowAura');
         // A voucher is a workshop given as a gift and goes out as a PDF or a printed card, so it gets no parcel prices or return rules.
-        $shipped = $product->category->group !== CategoryGroup::Workshops;
+        $shipped = ! $product->isVoucher();
 
         $variants = $product->variants->map(function (ProductVariant $variant) use ($product, $url, $images, $brand, $settings, $shipped) {
             $variant->setRelation('product', $product);
