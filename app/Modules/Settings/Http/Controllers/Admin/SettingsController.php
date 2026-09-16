@@ -4,6 +4,7 @@ namespace App\Modules\Settings\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Settings\Actions\SaveSettings;
+use App\Modules\Settings\Http\Requests\Admin\SaveCompanyDetailsRequest;
 use App\Modules\Settings\Http\Requests\Admin\SaveMaterialTilesRequest;
 use App\Modules\Settings\Http\Requests\Admin\SaveShippingRequest;
 use App\Modules\Settings\Http\Requests\Admin\SaveStudioDetailsRequest;
@@ -12,8 +13,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 /**
- * The panel's „Ustawienia”, like the prototype: delivery and fees, the studio's details and the material
- * tiles. Each card saves on its own, so a mistake in one does not hold back the others. The workshop
+ * The panel's „Ustawienia”, like the prototype: delivery and fees, the studio's details, the company's details
+ * for the terms of sale and the material tiles. Each card saves on its own, so a mistake in one does not hold back the others. The workshop
  * deposit joins the page together with workshop booking.
  */
 class SettingsController extends Controller
@@ -27,6 +28,7 @@ class SettingsController extends Controller
                 ->filter(fn (mixed $method) => is_array($method) && filled($method['code'] ?? null))
                 ->values(),
             'studio' => collect(SaveStudioDetailsRequest::KEYS)->mapWithKeys(fn (string $key) => [$key => $settings->get($key)])->all(),
+            'company' => collect(SaveCompanyDetailsRequest::KEYS)->mapWithKeys(fn (string $key) => [$key => $settings->get($key)])->all(),
             'tiles' => array_values((array) $settings->get('material_tiles', [])),
         ]);
     }
@@ -47,6 +49,15 @@ class SettingsController extends Controller
         return to_route('admin.settings.edit')
             ->withFragment('pracownia')
             ->with('panel_status', 'Dane pracowni zapisane');
+    }
+
+    public function company(SaveCompanyDetailsRequest $request, SaveSettings $saveSettings): RedirectResponse
+    {
+        $saveSettings($request->settings());
+
+        return to_route('admin.settings.edit')
+            ->withFragment('firma')
+            ->with('panel_status', 'Dane firmy zapisane. Regulamin i stopka już je pokazują.');
     }
 
     public function materials(SaveMaterialTilesRequest $request, SaveSettings $saveSettings): RedirectResponse

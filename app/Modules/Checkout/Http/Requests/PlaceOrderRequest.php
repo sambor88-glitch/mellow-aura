@@ -4,6 +4,7 @@ namespace App\Modules\Checkout\Http\Requests;
 
 use App\Modules\Checkout\Enums\PaymentMethod;
 use App\Modules\Checkout\Support\ShippingMethods;
+use App\Modules\Shared\Support\Nip;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -81,15 +82,9 @@ class PlaceOrderRequest extends FormRequest
         ]);
     }
 
-    /**
-     * The tenth digit of a NIP is the weighted sum of the first nine, modulo 11.
-     */
     private function checksum(string $attribute, mixed $value, Closure $fail): void
     {
-        $digits = array_map(intval(...), str_split((string) $value));
-        $sum = array_sum(array_map(fn (int $weight, int $digit) => $weight * $digit, [6, 5, 7, 2, 3, 4, 5, 6, 7], array_slice($digits, 0, 9)));
-
-        if ($sum % 11 !== $digits[9]) {
+        if (! Nip::isValid($value)) {
             $fail('Ten NIP się nie zgadza — sprawdź cyfry');
         }
     }

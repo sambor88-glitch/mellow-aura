@@ -75,6 +75,38 @@
         "value": null
     },
     {
+        "key": "company_name",
+        "value": null
+    },
+    {
+        "key": "company_nip",
+        "value": null
+    },
+    {
+        "key": "company_regon",
+        "value": null
+    },
+    {
+        "key": "company_address",
+        "value": null
+    },
+    {
+        "key": "return_address",
+        "value": null
+    },
+    {
+        "key": "company_bank_account",
+        "value": null
+    },
+    {
+        "key": "company_vat_note",
+        "value": null
+    },
+    {
+        "key": "payment_operator",
+        "value": null
+    },
+    {
         "key": "home_hero_product",
         "value": "wazony"
     },

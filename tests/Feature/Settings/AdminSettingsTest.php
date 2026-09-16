@@ -64,6 +64,39 @@ class AdminSettingsTest extends TestCase
         $this->assertSame(1200, Setting::find('gift_wrap_price')->value);
     }
 
+    public function test_company_details_are_tidied_up_and_the_nip_shows_in_the_footer(): void
+    {
+        $this->actingAs($this->owner)
+            ->get('/panel/ustawienia')
+            ->assertSeeInOrder(['Dane firmy — do regulaminu i dla operatora płatności', 'Firma z CEIDG', 'NIP', 'REGON', 'Adres firmy i do doręczeń', 'Adres do zwrotów albo Paczkomat']);
+
+        $this->put('/panel/ustawienia/firma', [
+            'company_name' => ' MellowAura Katarzyna Samborska ',
+            'company_nip' => '111-111-11-11',
+            'company_regon' => '123 456 789',
+            'company_address' => 'ul. Wirtualna 1, 00-001 Warszawa',
+            'return_address' => 'Paczkomat KRA01M',
+            'company_bank_account' => 'PL 61 1090 1014 0000 0712 1981 2874',
+            'company_vat_note' => '',
+            'payment_operator' => 'PayPro S.A. (Przelewy24)',
+        ])
+            ->assertRedirect('/panel/ustawienia#firma')
+            ->assertSessionHas('panel_status', 'Dane firmy zapisane. Regulamin i stopka już je pokazują.');
+
+        $this->assertSame(
+            ['MellowAura Katarzyna Samborska', '1111111111', '123456789', '61 1090 1014 0000 0712 1981 2874', null],
+            collect(['company_name', 'company_nip', 'company_regon', 'company_bank_account', 'company_vat_note'])->map(fn (string $key) => Setting::find($key)->value)->all(),
+        );
+        $this->get('/sklep')->assertSee('Katarzyna Samborska · NIP 1111111111');
+
+        $this->put('/panel/ustawienia/firma', ['company_nip' => '1234567890', 'company_regon' => '12345', 'company_bank_account' => '12 3456'])
+            ->assertSessionHasErrorsIn('firma', [
+                'company_nip' => 'Ten NIP się nie zgadza — sprawdź cyfry z CEIDG',
+                'company_regon' => 'REGON ma 9 albo 14 cyfr',
+                'company_bank_account' => 'Numer rachunku ma 26 cyfr — sprawdź, czy żadna nie uciekła',
+            ]);
+    }
+
     public function test_gift_wrapping_gets_its_price_here_and_an_empty_price_turns_it_off(): void
     {
         $this->actingAs($this->owner)

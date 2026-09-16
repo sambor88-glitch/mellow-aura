@@ -26,6 +26,7 @@
     $phone = $settings->get('contact_phone');
     $email = $settings->get('contact_email');
     $city = $settings->get('footer_city');
+    $nip = $settings->get('company_nip');
     $whatsApp = $phone ? 'https://wa.me/'.preg_replace('/\D+/', '', $phone) : null;
 
     $social = array_filter([
@@ -96,7 +97,7 @@
     </div>
 
     <div class="mx-auto flex max-w-[1280px] flex-wrap justify-between gap-x-7 gap-y-4 border-t border-divider-dark px-7 pt-[22px] pb-10 text-[12.5px] text-label-dark">
-        <span>© {{ now()->year }} MellowAura &middot; Katarzyna Samborska</span>
+        <span>© {{ now()->year }} MellowAura &middot; Katarzyna Samborska{{ $nip ? ' · NIP '.$nip : '' }}</span>
         <div class="flex flex-wrap gap-[22px]">
             @if (Route::has('content.faq'))
                 <a href="{{ route('content.faq') }}" class="text-label-dark hover:text-rose">FAQ</a>

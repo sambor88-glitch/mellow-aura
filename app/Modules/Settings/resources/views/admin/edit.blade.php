@@ -26,7 +26,7 @@
     $button = 'mt-[18px] min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]';
     $tileInput = 'w-full min-w-0 rounded-[4px] border bg-white px-3 py-2.5 text-[14px] text-ink placeholder:text-hint focus:border-ink';
 @endphp
-<x-admin::layout title="Ustawienia" lead="Dostawa, dane pracowni i kafelki o materiale. Zmiany widać na stronie od razu.">
+<x-admin::layout title="Ustawienia" lead="Dostawa, dane pracowni i firmy oraz kafelki o materiale. Zmiany widać na stronie od razu.">
     <div class="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] items-start gap-[22px]">
         <form id="dostawa" method="post" action="{{ route('admin.settings.shipping') }}" novalidate class="{{ $card }}">
             @csrf
@@ -93,6 +93,36 @@
             <button class="{{ $button }}">Zapisz dane pracowni</button>
         </form>
     </div>
+
+    <form id="firma" method="post" action="{{ route('admin.settings.company') }}" novalidate class="{{ $card }} mt-[22px]">
+        @csrf
+        @method('PUT')
+        <h2 class="{{ $heading }}">Dane firmy — do regulaminu i dla operatora płatności</h2>
+        @if ($errors->hasBag('firma'))
+            <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+        @endif
+        <p class="mb-3.5 text-[13.5px] leading-[1.6] text-label">Wpisz je tak, jak są w CEIDG. Regulamin, polityka prywatności, strona kontaktu i stopka biorą je stąd. Operator płatności sprawdza, czy NIP na stronie zgadza się z wnioskiem.</p>
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-3">
+            <x-shared::field name="company_name" id="firma-nazwa" bag="firma" label="Firma z CEIDG"
+                             :value="old('company_name', $company['company_name'])" placeholder="np. MellowAura Katarzyna Samborska" />
+            <x-shared::field name="company_nip" id="firma-nip" bag="firma" label="NIP" inputmode="numeric"
+                             :value="old('company_nip', $company['company_nip'])" />
+            <x-shared::field name="company_regon" id="firma-regon" bag="firma" label="REGON" inputmode="numeric"
+                             :value="old('company_regon', $company['company_regon'])" />
+            <x-shared::field name="company_bank_account" id="firma-rachunek" bag="firma" label="Numer rachunku do przelewów" inputmode="numeric"
+                             :value="old('company_bank_account', $company['company_bank_account'])" placeholder="26 cyfr" />
+            <x-shared::field name="company_address" id="firma-adres" bag="firma" label="Adres firmy i do doręczeń"
+                             :value="old('company_address', $company['company_address'])" hint="Ten z CEIDG, np. wirtualnego biura — pokaże się publicznie" />
+            <x-shared::field name="return_address" id="firma-zwroty" bag="firma" label="Adres do zwrotów albo Paczkomat"
+                             :value="old('return_address', $company['return_address'])" hint="Tu klientki odsyłają rzeczy po odstąpieniu od umowy" />
+            <x-shared::field name="payment_operator" id="firma-operator" bag="firma" label="Operator płatności — pełna nazwa"
+                             :value="old('payment_operator', $company['payment_operator'])" placeholder="np. PayPro S.A. (Przelewy24)" />
+            <x-shared::field name="company_vat_note" id="firma-vat" bag="firma" label="Informacja o VAT"
+                             :value="old('company_vat_note', $company['company_vat_note'])" hint="Zdanie od księgowej, np. o zwolnieniu z VAT" />
+        </div>
+        <p class="{{ $hint }}">Nie wpisuj tu adresu domowej pracowni — pokazujemy tylko adres z CEIDG. Puste pole zostaje w regulaminie jako miejsce do uzupełnienia.</p>
+        <button class="{{ $button }}">Zapisz dane firmy</button>
+    </form>
 
     <form id="materialy" method="post" action="{{ route('admin.settings.materials') }}" novalidate class="{{ $card }} mt-[22px]">
         @csrf
