@@ -29,6 +29,8 @@
     <p style="margin: 0; color: #5C5043;">{{ $delivery }}</p>
     <p style="margin: 0 0 22px; color: #5C5043;">{{ $order->name }} · {{ $order->phone }}</p>
 
+    @includeIf('gifts::mail.order-vouchers', ['order' => $order])
+
     <p style="margin: 0 0 4px; color: #5C5043;">
         @if ($contactEmail)
             Masz pytanie o zamówienie? Odpisz na tego maila — trafi prosto do mnie.
@@ -39,11 +41,12 @@
             Możesz też napisać na WhatsAppie: {{ $contactPhone }}.
         @endif
     </p>
-    @if (Route::has('withdrawal.create'))
-        <p style="margin: 12px 0 0; font-size: 13.5px; color: #5C5043;">
-            Odstąpienie od umowy zgłosisz przez formularz: <a href="{{ route('withdrawal.create', ['zamowienie' => $order->number]) }}" style="color: #855F3D;">Odstąp od umowy tutaj</a>.
-        </p>
-    @endif
+    <p style="margin: 12px 0 0; font-size: 13.5px; color: #5C5043;">
+        W załącznikach jest regulamin sklepu{{ $order->terms_version ? ' ('.$order->terms_version.')' : '' }} i wzór formularza odstąpienia od umowy.
+        @if (Route::has('withdrawal.create'))
+            Odstąpienie zgłosisz najprościej online: <a href="{{ route('withdrawal.create', ['zamowienie' => $order->number]) }}" style="color: #855F3D;">Odstąp od umowy tutaj</a>.
+        @endif
+    </p>
     <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">Kasia</p>
 
     <x-slot:footer>

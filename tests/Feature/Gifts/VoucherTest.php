@@ -8,6 +8,7 @@ use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
 use App\Modules\Checkout\Actions\MarkOrderPaid;
+use App\Modules\Checkout\Mail\OrderConfirmed;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Gifts\Mail\VouchersIssued;
 use App\Modules\Gifts\Models\Voucher;
@@ -104,6 +105,11 @@ class VoucherTest extends TestCase
         $mail->assertDontSeeInHtml('420,00 zł');
         $mail->assertSeeInText($vouchers[1]->code.': Voucher na warsztat, Dla dwóch osób, dla: Ania, ważny do 20 listopada 2027');
         $this->assertCount(2, $mail->attachments());
+
+        // The order confirmation names the codes too, next to the order.
+        $confirmation = new OrderConfirmed($order->load('items'));
+        $confirmation->assertSeeInOrderInHtml(['Vouchery', $vouchers[0]->code, 'dla: Ania', 'ważny do 20 listopada 2027', $vouchers[1]->code, 'PDF-y voucherów wysłałam osobnym mailem']);
+        $confirmation->assertSeeInText($vouchers[0]->code.' · dla: Ania · ważny do 20 listopada 2027');
     }
 
     public function test_the_confirmation_page_links_to_each_pdf_with_a_signed_address(): void

@@ -14,8 +14,10 @@ use App\Modules\Checkout\Mail\OrderConfirmed;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Settings\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Support\Facades\Exceptions;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 use Tests\TestCase;
 
@@ -60,6 +62,23 @@ class OrderEmailsTest extends TestCase
         $mail->assertDontSeeInHtml('Ktoś kupił ostatnią sztukę');
         $mail->assertSeeInText('Napis: „JESZCZE NIE TERAZ”');
         $mail->assertSeeInText('Razem: 334,00 zł');
+        $mail->assertSeeInHtml('W załącznikach jest regulamin sklepu (wersja 0.2 z 16 września 2026) i wzór formularza odstąpienia od umowy.');
+    }
+
+    public function test_the_confirmation_carries_the_terms_and_the_withdrawal_form_as_pdfs(): void
+    {
+        Storage::fake('local');
+        Mail::fake();
+        $this->postJson('/koszyk', ['variant_id' => $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3)->id]);
+        $this->post('/zamowienie', $this->form())->assertRedirect('/zamowienie/potwierdzenie');
+
+        $attachments = collect((new OrderConfirmed(Order::sole()))->attachments());
+
+        $this->assertSame(['MellowAura-regulamin.pdf', 'MellowAura-formularz-odstapienia.pdf'], $attachments->map(fn (Attachment $attachment) => $attachment->as)->all());
+        $attachments->each(function (Attachment $attachment) {
+            $this->assertSame('application/pdf', $attachment->mime);
+            $this->assertStringStartsWith('%PDF-', $attachment->attachWith(fn () => null, fn (\Closure $data) => $data()));
+        });
     }
 
     public function test_kasia_gets_everything_needed_to_pack_and_can_reply_to_the_customer(): void

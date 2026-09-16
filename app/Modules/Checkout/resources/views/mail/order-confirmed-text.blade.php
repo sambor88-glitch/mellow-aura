@@ -15,6 +15,7 @@ DOSTAWA
 {!! $shippingLabel !!}
 {!! $delivery !!}
 {!! $order->name !!} · {!! $order->phone !!}
+@includeIf('gifts::mail.order-vouchers-text', ['order' => $order])
 
 @if ($contactEmail)
 Masz pytanie o zamówienie? Odpisz na tego maila — trafi prosto do mnie.
@@ -24,9 +25,10 @@ Masz pytanie o zamówienie? Napisz do mnie przez stronę sklepu i podaj numer {!
 @if ($contactPhone)
 Możesz też napisać na WhatsAppie: {!! $contactPhone !!}.
 @endif
-@if (Route::has('withdrawal.create'))
 
-Odstąpienie od umowy zgłosisz przez formularz „Odstąp od umowy tutaj”: {!! route('withdrawal.create', ['zamowienie' => $order->number]) !!}
+W załącznikach jest regulamin sklepu{!! $order->terms_version ? ' ('.$order->terms_version.')' : '' !!} i wzór formularza odstąpienia od umowy.
+@if (Route::has('withdrawal.create'))
+Odstąpienie zgłosisz najprościej online, przez formularz „Odstąp od umowy tutaj”: {!! route('withdrawal.create', ['zamowienie' => $order->number]) !!}
 @endif
 
 Kasia

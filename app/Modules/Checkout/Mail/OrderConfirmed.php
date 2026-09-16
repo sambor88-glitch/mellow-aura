@@ -4,15 +4,18 @@ namespace App\Modules\Checkout\Mail;
 
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Checkout\Support\OrderSummary;
+use App\Modules\Content\Support\LegalPdf;
 use App\Modules\Settings\Settings;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Address;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
 /**
  * The customer's confirmation once the payment is in: what was bought, for how much,
- * where it goes and what happens next. Replies reach Kasia's contact address.
+ * where it goes and what happens next. The terms of sale and the model withdrawal form come
+ * attached, so the contract is confirmed on a durable medium. Replies reach Kasia's contact address.
  */
 class OrderConfirmed extends Mailable
 {
@@ -26,6 +29,19 @@ class OrderConfirmed extends Mailable
             subject: 'Zamówienie '.$this->order->number.' jest opłacone',
             replyTo: $contact ? [new Address($contact, 'Kasia z MellowAury')] : [],
         );
+    }
+
+    /**
+     * @return list<Attachment>
+     */
+    public function attachments(): array
+    {
+        $pdf = app(LegalPdf::class);
+
+        return [
+            Attachment::fromData(fn () => $pdf->terms(), 'MellowAura-regulamin.pdf')->withMime('application/pdf'),
+            Attachment::fromData(fn () => $pdf->withdrawalForm($this->order->number, $this->order->created_at), 'MellowAura-formularz-odstapienia.pdf')->withMime('application/pdf'),
+        ];
     }
 
     public function content(): Content
