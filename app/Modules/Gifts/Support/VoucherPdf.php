@@ -25,14 +25,16 @@ class VoucherPdf
 
     public function html(Voucher $voucher): string
     {
-        $voucher->loadMissing('orderItem.variant.product');
+        $voucher->loadMissing('orderItem.variant.product.variants');
         $notes = (array) $this->settings->get('voucher_workshop_notes', []);
-        $slug = $voucher->orderItem?->variant?->product?->slug;
+        $item = $voucher->orderItem;
+        $product = $item?->variant?->product;
 
         return view('gifts::pdf.voucher', [
             'voucher' => $voucher,
+            'kind' => collect([$item?->product_name ?? 'voucher', $this->showsValue($voucher) ? $item->variant_label : null])->filter()->join(' · '),
             'fonts' => Pdf::fonts(),
-            'notes' => is_array($notes[$slug] ?? null) ? $notes[$slug] : [],
+            'notes' => is_array($notes[$product?->slug] ?? null) ? $notes[$product->slug] : [],
             'howToUse' => $this->settings->get('text_voucher_how_to_use'),
             'whatsApp' => $this->settings->get('contact_phone'),
             'contact' => array_values(array_filter([
@@ -41,6 +43,17 @@ class VoucherPdf
                 ($handle = $this->settings->get('instagram_handle')) ? '@'.ltrim($handle, '@') : null,
             ])),
         ])->render();
+    }
+
+    /**
+     * A size that changes the price says what the voucher is worth — „250 zł”, „Dla dwóch osób” — so it is printed.
+     * Sizes at one price only say how the voucher is delivered („PDF do wydruku”), which the printout doesn't need.
+     */
+    private function showsValue(Voucher $voucher): bool
+    {
+        $variants = $voucher->orderItem?->variant?->product?->variants;
+
+        return filled($voucher->orderItem?->variant_label) && $variants !== null && $variants->pluck('price_gross')->unique()->count() > 1;
     }
 
     public static function filename(Voucher $voucher): string

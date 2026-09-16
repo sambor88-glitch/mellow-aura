@@ -197,6 +197,29 @@ class VoucherTest extends TestCase
         $this->assertMatchesRegularExpression('#<div class="label">Od</div>\s*<div class="blank"></div>#', app(VoucherPdf::class)->html($unnamed));
     }
 
+    public function test_the_printed_voucher_says_the_amount_or_the_number_of_people_but_not_how_it_is_delivered(): void
+    {
+        $workshops = Category::factory()->create(['group' => CategoryGroup::Workshops]);
+        $amount = Product::factory()->create(['name' => 'Voucher kwotowy', 'category_id' => $workshops->id]);
+        ProductVariant::factory()->create(['product_id' => $amount->id, 'label' => '150 zł', 'price_gross' => 15000, 'stock' => null]);
+        $twoFifty = ProductVariant::factory()->create(['product_id' => $amount->id, 'label' => '250 zł', 'price_gross' => 25000, 'stock' => null]);
+        $couple = Product::factory()->create(['name' => 'Voucher — warsztat dla pary', 'category_id' => $workshops->id]);
+        $printed = ProductVariant::factory()->create(['product_id' => $couple->id, 'label' => 'PDF do wydruku', 'price_gross' => 39000, 'stock' => null]);
+        ProductVariant::factory()->create(['product_id' => $couple->id, 'label' => 'Wysyłka pocztą', 'price_gross' => 39000, 'stock' => null]);
+
+        $this->postJson('/koszyk', ['type' => 'voucher', 'variant_id' => $twoFifty->id, 'recipient_name' => 'Nia']);
+        $this->postJson('/koszyk', ['type' => 'voucher', 'variant_id' => $printed->id, 'recipient_name' => 'Ola']);
+        Mail::fake();
+        $this->post('/zamowienie', $this->form(['expected_total' => 65600]));
+
+        [$first, $second] = Voucher::query()->orderBy('id')->get()->all();
+        $pdf = app(VoucherPdf::class);
+
+        $this->assertStringContainsString('<div class="eyebrow">Voucher kwotowy · 250 zł</div>', $pdf->html($first));
+        $this->assertStringContainsString('<div class="eyebrow">Voucher — warsztat dla pary</div>', $pdf->html($second));
+        $this->assertStringNotContainsString('PDF do wydruku', $pdf->html($second));
+    }
+
     private function voucherVariant(): ProductVariant
     {
         $product = Product::factory()->create([

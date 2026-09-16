@@ -2,7 +2,6 @@
     // Laid out like "Voucher warsztatowy.dc.html". dompdf knows no flexbox, so the columns are tables
     // and the bands sit at fixed places on the A4 sheet. With a workshop description the main band
     // moves up and the headline gets smaller, so the four notes fit above the footer.
-    $item = $voucher->orderItem;
     $noteLabels = [
         'expect' => 'Czego się spodziewać',
         'activities' => 'Co będziecie robili',
@@ -65,7 +64,7 @@
         <table>
             <tr>
                 <td>
-                    <div class="eyebrow">{{ $item?->product_name ?? 'voucher' }}</div>
+                    <div class="eyebrow">{{ $kind }}</div>
                     <div @class(['headline', 'compact' => $notes->isNotEmpty()])>Dzień, w którym<br>ulepisz coś<br><em>swojego</em></div>
                     @if ($voucher->dedication)
                         <div @class(['dedication', 'compact' => $notes->isNotEmpty()])>{!! nl2br(e($voucher->dedication)) !!}</div>
