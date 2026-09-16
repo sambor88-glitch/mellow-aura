@@ -3,6 +3,7 @@
 namespace App\Modules\Catalog\Models;
 
 use App\Modules\Catalog\Database\Factories\ProductVariantFactory;
+use App\Modules\Shared\Support\LowestPrice;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -95,22 +96,11 @@ class ProductVariant extends Model
      */
     public function lowestPriceBeforeDiscount(): ?int
     {
-        if ($this->compare_at_price === null) {
+        if ($this->compare_at_price === null || $this->compare_at_price <= $this->price_gross) {
             return null;
         }
 
-        $history = $this->priceHistory()->orderBy('valid_from')->orderBy('id')->get();
-        $current = $history->pop();
-
-        if ($current === null || $history->isEmpty()) {
-            return null;
-        }
-
-        $windowStart = $current->valid_from->copy()->subDays(30);
-        $inEffectAtStart = $history->filter(fn (PriceHistory $row) => $row->valid_from->lt($windowStart))->last();
-        $changedInWindow = $history->filter(fn (PriceHistory $row) => $row->valid_from->gte($windowStart));
-
-        return $changedInWindow->push($inEffectAtStart)->filter()->min('price_gross');
+        return LowestPrice::beforeCurrent($this->priceHistory()->orderBy('valid_from')->orderBy('id')->get());
     }
 
     private function recordPrice(): void

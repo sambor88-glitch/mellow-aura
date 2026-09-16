@@ -4,18 +4,19 @@ namespace App\Modules\Content\Http\Requests\Admin;
 
 use App\Modules\Content\Enums\Service;
 use App\Modules\Shared\Http\Requests\Concerns\EditsListRows;
+use App\Modules\Shared\Rules\PriceBeforeReduction;
 use App\Modules\Shared\Support\Money;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * A service's price list. There is no „było” price: a crossed-out price needs the lowest price from 30 days,
- * and services don't keep a price history.
+ * A service's price list. A price before a reduction shows crossed out only once the price is lower and the history
+ * knows the lowest price from the 30 days before the reduction.
  */
 class SaveServicePricesRequest extends FormRequest
 {
     use EditsListRows;
 
-    public const FIELDS = ['label', 'price', 'note'];
+    public const FIELDS = ['label', 'price', 'note', 'compare_at'];
 
     private const PRICE = '/^\d{1,5}([.,]\d{1,2})?$/';
 
@@ -43,6 +44,7 @@ class SaveServicePricesRequest extends FormRequest
             'prices' => ['nullable', 'array', 'max:12'],
             'prices.*.label' => $row(['nullable', 'string', 'max:80', 'required_with:prices.*.price']),
             'prices.*.price' => $row(['nullable', 'regex:'.self::PRICE, 'required_with:prices.*.label']),
+            'prices.*.compare_at' => $row(['nullable', new PriceBeforeReduction]),
             'prices.*.note' => $row(['nullable', 'string', 'max:120']),
         ];
     }
@@ -63,7 +65,7 @@ class SaveServicePricesRequest extends FormRequest
     }
 
     /**
-     * @return array<string, list<array{label: ?string, note: ?string, price_gross: int}>>
+     * @return array<string, list<array{label: ?string, note: ?string, price_gross: int, compare_at_price: ?int}>>
      */
     public function settings(): array
     {
@@ -72,6 +74,7 @@ class SaveServicePricesRequest extends FormRequest
                 'label' => $row['label'],
                 'note' => $row['note'],
                 'price_gross' => Money::parse((string) $row['price']),
+                'compare_at_price' => $row['compare_at'] === null ? null : Money::parse($row['compare_at']),
             ], $this->listRows('prices', self::FIELDS)),
         ];
     }

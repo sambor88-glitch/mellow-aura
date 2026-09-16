@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 class SaveProduct
 {
     /**
-     * @param  array{name: string, category_id: int, description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, is_published: bool, is_one_off: bool, is_exact_piece: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, price_gross: int, stock: ?int}>, photo_alts?: array<int, string>}  $data
+     * @param  array{name: string, category_id: int, description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, is_published: bool, is_one_off: bool, is_exact_piece: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, price_gross: int, compare_at_price: ?int, stock: ?int}>, photo_alts?: array<int, string>}  $data
      */
     public function __invoke(?Product $product, array $data): Product
     {
@@ -54,7 +54,7 @@ class SaveProduct
             $kept = [];
 
             foreach ($data['variants'] as $row) {
-                $values = ['label' => $row['label'], 'price_gross' => $row['price_gross'], 'stock' => $row['stock']];
+                $values = ['label' => $row['label'], 'price_gross' => $row['price_gross'], 'compare_at_price' => $row['compare_at_price'] ?? null, 'stock' => $row['stock']];
                 $variant = $row['id'] === null ? null : $existing->get($row['id']);
 
                 if ($variant !== null) {

@@ -177,6 +177,26 @@ class AdminProductsTest extends TestCase
         $this->assertSame('Kubki malowane', $mug->fresh()->name);
     }
 
+    public function test_a_size_can_be_reduced_with_its_price_before_the_reduction(): void
+    {
+        $vase = $this->product('Wazony', 1, [23900]);
+        $size = $vase->variants()->sole();
+        $owner = User::factory()->create();
+        $form = fn (array $row) => ['form' => 'produkt-'.$vase->id, 'name' => 'Wazony', 'category_id' => $this->mugs->id, 'is_published' => '1', 'variants' => [['id' => $size->id, 'label' => '', 'stock' => '', ...$row]]];
+
+        $this->actingAs($owner)
+            ->put('/panel/produkty/'.$vase->id, $form(['price' => '199', 'compare_at' => '199']))
+            ->assertSessionHasErrorsIn('produkt-'.$vase->id, ['variants.0.compare_at' => 'Cena przed obniżką musi być wyższa niż obecna — albo zostaw puste pole']);
+
+        $this->put('/panel/produkty/'.$vase->id, $form(['price' => '199', 'compare_at' => '239']))
+            ->assertRedirect('/panel/produkty#produkt-'.$vase->id)
+            ->assertSessionHas('panel_status', 'Zapisane. Klienci już to widzą.');
+
+        $this->assertSame([19900, 23900], [$size->fresh()->price_gross, $size->fresh()->compare_at_price]);
+        $this->get('/produkt/wazony')->assertSeeInOrder(['199,00 zł', '239,00 zł', 'Najniższa cena z 30 dni przed obniżką: 239,00 zł']);
+        $this->get('/panel/produkty')->assertSee('value="239"', false);
+    }
+
     public function test_the_form_asks_what_the_terms_need_and_names_the_tolerance_from_the_settings(): void
     {
         Setting::create(['key' => 'size_tolerance', 'value' => '0,5 cm']);

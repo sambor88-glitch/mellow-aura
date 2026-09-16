@@ -23,7 +23,7 @@
 
         return [$rows->count(), [...$rows->all(), array_fill_keys($fields, '')]];
     };
-    [$filledPrices, $priceRows] = $listRows('prices', $prices, ['label', 'price', 'note']);
+    [$filledPrices, $priceRows] = $listRows('prices', $prices, ['label', 'price', 'note', 'compare_at']);
     [$filledSteps, $stepRows] = $listRows('steps', $steps, ['title', 'text']);
     // Blade can't mix @php(...) with @php blocks in one view, so every bag is picked here.
     $pairErrors = $errors->getBag('przed-i-po');
@@ -211,7 +211,7 @@
             @method('PUT')
             <button tabindex="-1" aria-hidden="true" class="sr-only">Zapisz</button>
             <h2 class="{{ $heading }} mb-1.5">Cennik</h2>
-            <p class="{{ $intro }}">Pozycja bez nazwy albo ceny nie pokaże się na stronie. Przekreślonej ceny nie pokazuję — przy promocji prawo wymaga najniższej ceny z 30 dni.</p>
+            <p class="{{ $intro }}">Pozycja bez nazwy albo ceny nie pokaże się na stronie. „Przed obniżką” wpisz tylko przy promocji: strona przekreśli tę cenę, gdy obniżysz cenę, i sama poda najniższą cenę z 30 dni.</p>
             @if ($priceErrors->any())
                 <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
             @endif
@@ -229,9 +229,11 @@
                             <input name="prices[{{ $index }}][price]" value="{{ $row['price'] ?? '' }}" inputmode="decimal" aria-label="Pozycja {{ $index + 1 }} — cena w zł" placeholder="cena, zł"
                                    @class([$input, 'text-right tabular-nums', 'border-error' => $has('price'), 'border-line' => ! $has('price')])>
                             <input name="prices[{{ $index }}][note]" value="{{ $row['note'] ?? '' }}" maxlength="120" aria-label="Pozycja {{ $index + 1 }} — dopisek" placeholder="dopisek pod nazwą"
-                                   @class([$input, 'sm:col-span-2', 'border-error' => $has('note'), 'border-line' => ! $has('note')])>
+                                   @class([$input, 'border-error' => $has('note'), 'border-line' => ! $has('note')])>
+                            <input name="prices[{{ $index }}][compare_at]" value="{{ $row['compare_at'] ?? '' }}" inputmode="decimal" aria-label="Pozycja {{ $index + 1 }} — cena przed obniżką w zł" placeholder="przed obniżką"
+                                   @class([$input, 'text-right tabular-nums', 'border-error' => $has('compare_at'), 'border-line' => ! $has('compare_at')])>
                         </div>
-                        @foreach (['label', 'price', 'note'] as $name)
+                        @foreach (['label', 'price', 'note', 'compare_at'] as $name)
                             @if ($has($name))
                                 <p class="mt-1.5 text-[13px] text-error">{{ $priceErrors->first('prices.'.$index.'.'.$name) }}</p>
                             @endif

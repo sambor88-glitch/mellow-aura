@@ -4,9 +4,11 @@ namespace App\Modules\Firing\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Firing\Http\Requests\Admin\SaveKilnPricesRequest;
+use App\Modules\Firing\Support\KilnPrices;
 use App\Modules\Settings\Actions\SaveSettings;
 use App\Modules\Settings\Settings;
 use App\Modules\Shared\Support\Money;
+use App\Modules\Shared\Support\OfferPrices;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -25,6 +27,7 @@ class KilnPricesController extends Controller
                 ->map(fn (array $row) => [
                     'label' => $row['label'] ?? '',
                     'price' => is_numeric($row['price_gross'] ?? null) ? Money::input((int) $row['price_gross']) : '',
+                    'compare_at' => is_numeric($row['compare_at_price'] ?? null) ? Money::input((int) $row['compare_at_price']) : '',
                     'unit_label' => $row['unit_label'] ?? '',
                     'note' => $row['note'] ?? '',
                     'code' => $row['code'] ?? '',
@@ -35,9 +38,11 @@ class KilnPricesController extends Controller
         ]);
     }
 
-    public function update(SaveKilnPricesRequest $request, SaveSettings $saveSettings): RedirectResponse
+    public function update(SaveKilnPricesRequest $request, Settings $settings, SaveSettings $saveSettings, OfferPrices $offerPrices): RedirectResponse
     {
-        $saveSettings($request->settings());
+        $before = KilnPrices::prices((array) $settings->get(KilnPrices::LIST, []));
+        $saveSettings($values = $request->settings());
+        $offerPrices->record(KilnPrices::LIST, $before, KilnPrices::prices($values[KilnPrices::LIST]));
 
         return to_route('admin.firing.edit')
             ->withFragment('cennik')

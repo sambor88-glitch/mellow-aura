@@ -5,6 +5,7 @@ namespace App\Modules\Content\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Content\Enums\Service;
 use App\Modules\Content\Models\ServiceExample;
+use App\Modules\Content\Support\ServicePrices;
 use App\Modules\Settings\Settings;
 use Illuminate\View\View;
 
@@ -14,17 +15,17 @@ use Illuminate\View\View;
  */
 class ServicePageController extends Controller
 {
-    public function scarf(Settings $settings): View
+    public function scarf(Settings $settings, ServicePrices $prices): View
     {
-        return $this->show(Service::Scarf, $settings);
+        return $this->show(Service::Scarf, $settings, $prices);
     }
 
-    public function imprint(Settings $settings): View
+    public function imprint(Settings $settings, ServicePrices $prices): View
     {
-        return $this->show(Service::Imprint, $settings);
+        return $this->show(Service::Imprint, $settings, $prices);
     }
 
-    private function show(Service $service, Settings $settings): View
+    private function show(Service $service, Settings $settings, ServicePrices $prices): View
     {
         return view('content::services.show', [
             'service' => $service,
@@ -32,10 +33,7 @@ class ServicePageController extends Controller
             'lead' => $settings->get($service->setting('lead')),
             'lead2' => $settings->get($service->setting('lead_2')),
             'note' => $settings->get($service->setting('note')),
-            // No crossed-out price: a price before a promotion would need the lowest price from 30 days, which services don't track yet.
-            'prices' => collect((array) $settings->get($service->setting('prices'), []))
-                ->filter(fn (mixed $row) => is_array($row) && filled($row['label'] ?? null) && is_numeric($row['price_gross'] ?? null))
-                ->values(),
+            'prices' => $prices->for($service),
             'steps' => collect((array) $settings->get($service->setting('steps'), []))
                 ->filter(fn (mixed $step) => is_array($step) && filled($step['title'] ?? null))
                 ->values(),

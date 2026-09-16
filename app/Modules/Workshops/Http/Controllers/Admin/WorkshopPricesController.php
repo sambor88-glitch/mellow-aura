@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Modules\Settings\Actions\SaveSettings;
 use App\Modules\Settings\Settings;
 use App\Modules\Shared\Support\Money;
+use App\Modules\Shared\Support\OfferPrices;
 use App\Modules\Workshops\Http\Requests\Admin\SaveWorkshopTypesRequest;
+use App\Modules\Workshops\Support\WorkshopTypes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -24,6 +26,7 @@ class WorkshopPricesController extends Controller
                 ->map(fn (array $type) => [
                     'name' => $type['name'] ?? '',
                     'price' => is_numeric($type['price_gross'] ?? null) ? Money::input((int) $type['price_gross']) : '',
+                    'compare_at' => is_numeric($type['compare_at_price'] ?? null) ? Money::input((int) $type['compare_at_price']) : '',
                     'unit_label' => $type['unit_label'] ?? '',
                     'duration_label' => $type['duration_label'] ?? '',
                     'group_label' => $type['group_label'] ?? '',
@@ -37,9 +40,11 @@ class WorkshopPricesController extends Controller
         ]);
     }
 
-    public function update(SaveWorkshopTypesRequest $request, SaveSettings $saveSettings): RedirectResponse
+    public function update(SaveWorkshopTypesRequest $request, Settings $settings, SaveSettings $saveSettings, OfferPrices $offerPrices): RedirectResponse
     {
-        $saveSettings($request->settings());
+        $before = WorkshopTypes::prices((array) $settings->get(WorkshopTypes::LIST, []));
+        $saveSettings($values = $request->settings());
+        $offerPrices->record(WorkshopTypes::LIST, $before, WorkshopTypes::prices($values[WorkshopTypes::LIST]));
 
         return to_route('admin.workshops.edit')
             ->withFragment('cennik')

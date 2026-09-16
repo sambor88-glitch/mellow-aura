@@ -33,7 +33,7 @@
 
 <x-shared::layout :title="$page['title']" :description="$page['description']" :canonical="route($service->route())">
     {{-- For Google the service is named like the page title: „Opaska z Twojej apaszki”. --}}
-    <x-slot:head>{!! ServiceStructuredData::for(Str::before($page['title'], ' — '), route($service->route()), $lead, $prices->map(fn (array $row) => [$row['label'], (int) $row['price_gross']])) !!}</x-slot:head>
+    <x-slot:head>{!! ServiceStructuredData::for(Str::before($page['title'], ' — '), route($service->route()), $lead, $prices->map(fn (array $row) => [$row['label'], $row['price_gross']])) !!}</x-slot:head>
     <div class="animate-ma-view pb-24">
         <div class="mx-auto max-w-[1280px] px-7 pt-14">
             <div class="flex flex-wrap items-center gap-14">
@@ -120,7 +120,10 @@
                                             <div class="mt-[3px] text-[13.5px] text-label">{{ $price['note'] }}</div>
                                         @endif
                                     </div>
-                                    <div class="flex-none text-[16px] whitespace-nowrap tabular-nums">{{ Money::format((int) $price['price_gross']) }}</div>
+                                    <div class="flex-none text-right text-[16px] whitespace-nowrap tabular-nums">
+                                        {{ Money::format($price['price_gross']) }}
+                                        <x-shared::price-before-reduction :was="$price['was']" :lowest="$price['lowest']" class="mt-1 ml-auto max-w-[20ch] whitespace-normal" />
+                                    </div>
                                 </div>
                             @endforeach
                         </div>

@@ -30,6 +30,7 @@
                                 @endif
                             </div>
                         </div>
+                        <x-shared::price-before-reduction :was="$workshop['was']" :lowest="$workshop['lowest']" class="-mt-1.5 mb-3.5 text-right" />
                         @if ($workshop['duration_label'] || $workshop['group_label'])
                             <div class="mb-4 flex flex-wrap gap-2">
                                 @foreach (array_filter([$workshop['duration_label'], $workshop['group_label']]) as $fact)

@@ -73,7 +73,12 @@
                             <input id="{{ $id }}-duration" name="{{ $name }}[duration_label]" value="{{ $row['duration_label'] ?? '' }}" maxlength="30" placeholder="2,5 godziny"
                                    @class([$input, 'border-error' => $has('duration_label'), 'border-line' => ! $has('duration_label')])>
                         </div>
-                        <div class="min-w-0 sm:col-span-2">
+                        <div class="min-w-0">
+                            <label for="{{ $id }}-compare" class="{{ $label }}">Przed obniżką, zł</label>
+                            <input id="{{ $id }}-compare" name="{{ $name }}[compare_at]" value="{{ $row['compare_at'] ?? '' }}" inputmode="decimal" placeholder="—"
+                                   @class([$input, 'text-right tabular-nums', 'border-error' => $has('compare_at'), 'border-line' => ! $has('compare_at')])>
+                        </div>
+                        <div class="min-w-0">
                             <label for="{{ $id }}-group" class="{{ $label }}">Grupa</label>
                             <input id="{{ $id }}-group" name="{{ $name }}[group_label]" value="{{ $row['group_label'] ?? '' }}" maxlength="40" placeholder="grupa do 6 osób"
                                    @class([$input, 'border-error' => $has('group_label'), 'border-line' => ! $has('group_label')])>
@@ -103,7 +108,7 @@
         @if ($bag->has('workshops'))
             <p class="mt-1.5 text-[13px] text-error">{{ $bag->first('workshops') }}</p>
         @endif
-        <p class="mt-3.5 text-[12.5px] leading-[1.6] text-label">W pusty wiersz na dole wpisz nowy warsztat. Strzałki zapisują cały cennik i przestawiają warsztat o jedno miejsce.</p>
+        <p class="mt-3.5 text-[12.5px] leading-[1.6] text-label">W pusty wiersz na dole wpisz nowy warsztat. Strzałki zapisują cały cennik i przestawiają warsztat o jedno miejsce. „Przed obniżką” wpisz tylko przy promocji: strona przekreśli tę cenę, gdy obniżysz cenę, i sama poda najniższą cenę z 30 dni.</p>
         <button class="mt-[18px] min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]">Zapisz cennik warsztatów</button>
     </form>
 </x-admin::layout>

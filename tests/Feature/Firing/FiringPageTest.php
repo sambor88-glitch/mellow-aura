@@ -47,6 +47,18 @@ class FiringPageTest extends TestCase
         ], array_map(fn (array $offer) => [$offer['itemOffered']['name'], $offer['price'], $offer['priceSpecification']['unitText'] ?? null], $service['hasOfferCatalog']['itemListElement']));
     }
 
+    public function test_a_reduced_firing_price_shows_the_lowest_price_from_30_days(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->put('/panel/wypaly', ['prices' => [
+                ['label' => 'Wypał biskwitowy do 1000°C', 'price' => '35', 'unit_label' => '/ l', 'code' => 'bisque_firing', 'unit' => 'litre', 'compare_at' => '45'],
+            ]])
+            ->assertRedirect('/panel/wypaly#cennik');
+
+        $this->get('/wypal-ceramiki-krakow')
+            ->assertSeeInOrder(['Wypał biskwitowy do 1000°C', '35,00 zł / l', '45,00 zł', 'Najniższa cena z 30 dni przed obniżką: 40,00 zł']);
+    }
+
     public function test_the_panel_saves_the_price_list_and_the_sentences(): void
     {
         $this->get('/panel/wypaly')->assertRedirect('/panel/logowanie');
@@ -72,8 +84,8 @@ class FiringPageTest extends TestCase
         $this->assertSame('Nie masz pieca?', Setting::find('text_kiln_lead')->value);
         $this->assertNull(Setting::find('text_kiln_note')->value);
         $this->assertEquals([
-            ['code' => 'bisque_firing', 'label' => 'Wypał biskwitowy', 'note' => null, 'price_gross' => 4500, 'unit' => 'litre', 'unit_label' => '/ l'],
-            ['code' => 'wypal_raku', 'label' => 'Wypał raku', 'note' => 'w ogrodzie', 'price_gross' => 9050, 'unit' => null, 'unit_label' => null],
+            ['code' => 'bisque_firing', 'label' => 'Wypał biskwitowy', 'note' => null, 'price_gross' => 4500, 'compare_at_price' => null, 'unit' => 'litre', 'unit_label' => '/ l'],
+            ['code' => 'wypal_raku', 'label' => 'Wypał raku', 'note' => 'w ogrodzie', 'price_gross' => 9050, 'compare_at_price' => null, 'unit' => null, 'unit_label' => null],
         ], Setting::find('kiln_prices')->value);
 
         $this->followingRedirects()

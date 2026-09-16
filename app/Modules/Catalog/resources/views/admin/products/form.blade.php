@@ -16,10 +16,11 @@
             'id' => $variant->id,
             'label' => $variant->label,
             'price' => Money::input($variant->price_gross),
+            'compare_at' => $variant->compare_at_price === null ? '' : Money::input($variant->compare_at_price),
             'stock' => $variant->stock,
         ])->all() ?? []);
     // Spare rows for new sizes; left empty, they are not saved.
-    $rows = [...$rows, ...array_fill(0, max(1, 3 - count($rows)), ['id' => null, 'label' => '', 'price' => '', 'stock' => ''])];
+    $rows = [...$rows, ...array_fill(0, max(1, 3 - count($rows)), ['id' => null, 'label' => '', 'price' => '', 'compare_at' => '', 'stock' => ''])];
 
     $dimensions = (array) $old('dimensions', $product?->dimensions ?? []);
     $occasions = (array) $old('occasions', $product?->occasions ?? []);
@@ -106,6 +107,10 @@
                         <span class="text-[13px] text-label">zł</span>
                     </span>
                     <span class="flex items-center gap-1.5">
+                        <input name="variants[{{ $index }}][compare_at]" value="{{ $row['compare_at'] ?? '' }}" inputmode="decimal" aria-label="Cena przed obniżką, rozmiar {{ $index + 1 }}" placeholder="przed obniżką"
+                               @class([$input, 'w-[118px] px-3 py-2.5 text-right', 'border-error' => $bag->has('variants.'.$index.'.compare_at'), 'border-line' => ! $bag->has('variants.'.$index.'.compare_at')])>
+                    </span>
+                    <span class="flex items-center gap-1.5">
                         <input name="variants[{{ $index }}][stock]" value="{{ $row['stock'] ?? '' }}" inputmode="numeric" aria-label="Sztuk na półce, rozmiar {{ $index + 1 }}" placeholder="—"
                                @class([$input, 'w-[64px] px-2.5 py-2.5 text-right', 'border-error' => $bag->has('variants.'.$index.'.stock'), 'border-line' => ! $bag->has('variants.'.$index.'.stock')])>
                         <span class="text-[12.5px] text-label">szt.</span>
@@ -116,11 +121,11 @@
                         </label>
                     @endif
                 </div>
-                {!! $error('variants.'.$index.'.label') !!}{!! $error('variants.'.$index.'.price') !!}{!! $error('variants.'.$index.'.stock') !!}
+                {!! $error('variants.'.$index.'.label') !!}{!! $error('variants.'.$index.'.price') !!}{!! $error('variants.'.$index.'.compare_at') !!}{!! $error('variants.'.$index.'.stock') !!}
             @endforeach
         </div>
         {!! $error('variants') !!}
-        <p class="mt-2.5 text-[12.5px] leading-[1.5] text-hint">Puste wiersze się nie zapiszą. Jedna cena nie potrzebuje nazwy rozmiaru. Pole „szt.” zostaw puste, jeśli nie liczysz sztuk — przy zerze produkt sam znika ze sklepu.</p>
+        <p class="mt-2.5 text-[12.5px] leading-[1.5] text-hint">Puste wiersze się nie zapiszą. Jedna cena nie potrzebuje nazwy rozmiaru. Pole „szt.” zostaw puste, jeśli nie liczysz sztuk — przy zerze produkt sam znika ze sklepu. „Przed obniżką” wpisz tylko przy promocji: karta produktu przekreśli tę cenę, gdy obniżysz cenę, i sama poda najniższą cenę z 30 dni.</p>
     </fieldset>
 
     <fieldset>

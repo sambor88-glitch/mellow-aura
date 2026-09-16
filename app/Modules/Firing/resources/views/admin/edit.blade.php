@@ -70,10 +70,15 @@
                             <input id="{{ $id }}-unit" name="{{ $name }}[unit_label]" value="{{ $row['unit_label'] ?? '' }}" maxlength="20" placeholder="/ l"
                                    @class([$input, 'border-error' => $has('unit_label'), 'border-line' => ! $has('unit_label')])>
                         </div>
-                        <div class="min-w-0 sm:col-span-3">
+                        <div class="min-w-0">
                             <label for="{{ $id }}-note" class="{{ $label }}">Dopisek pod nazwą</label>
                             <input id="{{ $id }}-note" name="{{ $name }}[note]" value="{{ $row['note'] ?? '' }}" maxlength="120" placeholder="np. liczony od litra zajętego miejsca"
                                    @class([$input, 'border-error' => $has('note'), 'border-line' => ! $has('note')])>
+                        </div>
+                        <div class="min-w-0">
+                            <label for="{{ $id }}-compare" class="{{ $label }}">Przed obniżką, zł</label>
+                            <input id="{{ $id }}-compare" name="{{ $name }}[compare_at]" value="{{ $row['compare_at'] ?? '' }}" inputmode="decimal" placeholder="—"
+                                   @class([$input, 'text-right tabular-nums', 'border-error' => $has('compare_at'), 'border-line' => ! $has('compare_at')])>
                         </div>
                     </div>
                     @foreach ($fields as $field)
@@ -90,7 +95,7 @@
         @if ($bag->has('prices'))
             <p class="mt-1.5 text-[13px] text-error">{{ $bag->first('prices') }}</p>
         @endif
-        <p class="mt-3.5 text-[12.5px] leading-[1.6] text-label">W pusty wiersz na dole wpisz nową usługę. Strzałki zapisują cały cennik i przestawiają pozycję o jedno miejsce.</p>
+        <p class="mt-3.5 text-[12.5px] leading-[1.6] text-label">W pusty wiersz na dole wpisz nową usługę. Strzałki zapisują cały cennik i przestawiają pozycję o jedno miejsce. „Przed obniżką” wpisz tylko przy promocji: strona przekreśli tę cenę, gdy obniżysz cenę, i sama poda najniższą cenę z 30 dni.</p>
         <button class="mt-[18px] min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]">Zapisz cennik wypałów</button>
     </form>
 </x-admin::layout>

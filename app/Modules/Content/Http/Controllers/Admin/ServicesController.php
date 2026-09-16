@@ -9,9 +9,11 @@ use App\Modules\Content\Http\Requests\Admin\SaveServicePricesRequest;
 use App\Modules\Content\Http\Requests\Admin\SaveServiceStepsRequest;
 use App\Modules\Content\Http\Requests\Admin\SaveServiceTextsRequest;
 use App\Modules\Content\Models\ServiceExample;
+use App\Modules\Content\Support\ServicePrices;
 use App\Modules\Settings\Actions\SaveSettings;
 use App\Modules\Settings\Settings;
 use App\Modules\Shared\Support\Money;
+use App\Modules\Shared\Support\OfferPrices;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -33,8 +35,13 @@ class ServicesController extends Controller
         return view('content::admin.services', [
             'service' => $current,
             'texts' => collect(array_keys(SaveServiceTextsRequest::FIELDS))->mapWithKeys(fn (string $field) => [$field => $settings->get($current->setting($field))])->all(),
-            'prices' => collect($rows('prices', ['label', 'price_gross', 'note']))
-                ->map(fn (array $row) => ['label' => $row['label'], 'price' => is_numeric($row['price_gross']) ? Money::input((int) $row['price_gross']) : '', 'note' => $row['note']])
+            'prices' => collect($rows('prices', ['label', 'price_gross', 'note', 'compare_at_price']))
+                ->map(fn (array $row) => [
+                    'label' => $row['label'],
+                    'price' => is_numeric($row['price_gross']) ? Money::input((int) $row['price_gross']) : '',
+                    'note' => $row['note'],
+                    'compare_at' => is_numeric($row['compare_at_price']) ? Money::input((int) $row['compare_at_price']) : '',
+                ])
                 ->all(),
             'steps' => $rows('steps', ['title', 'text']),
             'examples' => ServiceExample::query()->where('service', $current)->ordered()->with('media')->get(),
@@ -49,9 +56,12 @@ class ServicesController extends Controller
         return $this->back($request->service(), 'teksty', 'Teksty zapisane. Klienci już je widzą.');
     }
 
-    public function prices(SaveServicePricesRequest $request, SaveSettings $saveSettings): RedirectResponse
+    public function prices(SaveServicePricesRequest $request, Settings $settings, SaveSettings $saveSettings, OfferPrices $offerPrices): RedirectResponse
     {
-        $saveSettings($request->settings());
+        $list = $request->service()->setting('prices');
+        $before = ServicePrices::prices((array) $settings->get($list, []));
+        $saveSettings($values = $request->settings());
+        $offerPrices->record($list, $before, ServicePrices::prices($values[$list]));
 
         return $this->back($request->service(), 'cennik', $request->moved() ? 'Kolejność zmieniona. Klienci już ją widzą.' : 'Cennik zapisany');
     }

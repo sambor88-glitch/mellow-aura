@@ -35,7 +35,10 @@
                                             <div class="mt-[3px] text-[13.5px] text-label">{{ $price['note'] }}</div>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-5 text-right align-top text-[16px] whitespace-nowrap tabular-nums">{{ Money::format($price['price_gross']) }}{{ $price['unit_label'] ? ' '.$price['unit_label'] : '' }}</td>
+                                    <td class="px-6 py-5 text-right align-top text-[16px] whitespace-nowrap tabular-nums">
+                                        {{ Money::format($price['price_gross']) }}{{ $price['unit_label'] ? ' '.$price['unit_label'] : '' }}
+                                        <x-shared::price-before-reduction :was="$price['was']" :lowest="$price['lowest']" class="mt-1 ml-auto max-w-[22ch] whitespace-normal" />
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

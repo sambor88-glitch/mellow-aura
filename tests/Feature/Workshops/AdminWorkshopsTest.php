@@ -57,12 +57,38 @@ class AdminWorkshopsTest extends TestCase
         $types = Setting::find('workshop_types')->value;
         $this->assertSame(['Lepienie z ręki', 'Koło garncarskie'], array_column($types, 'name'));
         $this->assertEquals([
-            'code' => 'hand_building', 'name' => 'Lepienie z ręki', 'duration_label' => '2,5 godziny', 'group_label' => null, 'price_gross' => 23050,
+            'code' => 'hand_building', 'name' => 'Lepienie z ręki', 'duration_label' => '2,5 godziny', 'group_label' => null, 'price_gross' => 23050, 'compare_at_price' => null,
             'unit' => 'person', 'unit_label' => 'os.', 'summary' => 'Płat i wałek.', 'includes' => ['Glina', 'Dwa wypały'],
         ], $types[0]);
         $this->assertSame(['kolo_garncarskie', 30000], [$types[1]['code'], $types[1]['price_gross']]);
 
         $this->get('/warsztaty-ceramiczne-krakow')->assertSeeInOrder(['Lepienie z ręki', '230,50 zł', 'Koło garncarskie', '300,00 zł'])->assertDontSee('Szkliwienie');
+    }
+
+    public function test_a_reduced_workshop_shows_the_lowest_price_from_the_30_days_before(): void
+    {
+        $this->travelTo(now()->setDate(2026, 11, 2)->setTime(10, 0));
+        $row = ['name' => 'Lepienie z ręki', 'unit_label' => 'os.', 'code' => 'hand_building', 'unit' => 'person'];
+
+        // A price before the reduction lower than the price itself is explained on its row.
+        $this->actingAs($this->owner)
+            ->put('/panel/warsztaty', ['workshops' => [[...$row, 'price' => '180', 'compare_at' => '150']]])
+            ->assertSessionHasErrorsIn('warsztaty', ['workshops.0.compare_at' => 'Cena przed obniżką musi być wyższa niż obecna — albo zostaw puste pole']);
+
+        // The seeded 220 zł goes into the history first, so the reduction to 180 zł already has a price to compare with.
+        $this->put('/panel/warsztaty', ['workshops' => [[...$row, 'price' => '180', 'compare_at' => '240']]])
+            ->assertRedirect('/panel/warsztaty#cennik');
+        $this->assertSame(18000, Setting::find('workshop_types')->value[0]['price_gross']);
+        $this->assertSame(24000, Setting::find('workshop_types')->value[0]['compare_at_price']);
+
+        $this->get('/warsztaty-ceramiczne-krakow')
+            ->assertSeeInOrder(['Lepienie z ręki', '180,00 zł', 'Cena przed obniżką: ', '240,00 zł', 'Najniższa cena z 30 dni przed obniżką: 220,00 zł'], false);
+
+        $this->actingAs($this->owner)->get('/panel/warsztaty')->assertSeeInOrder(['value="180"', 'Przed obniżką, zł', 'value="240"'], false);
+
+        // Without the reduction nothing is crossed out any more.
+        $this->put('/panel/warsztaty', ['workshops' => [[...$row, 'price' => '220', 'compare_at' => '']]]);
+        $this->get('/warsztaty-ceramiczne-krakow')->assertDontSee('Najniższa cena z 30 dni');
     }
 
     public function test_a_price_without_a_name_and_a_bad_price_are_explained_on_their_row(): void

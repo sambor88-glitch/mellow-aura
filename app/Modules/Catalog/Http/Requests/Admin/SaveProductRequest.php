@@ -6,6 +6,7 @@ use App\Modules\Catalog\Enums\Dimension;
 use App\Modules\Catalog\Enums\FoodContact;
 use App\Modules\Catalog\Enums\Occasion;
 use App\Modules\Catalog\Enums\Recipient;
+use App\Modules\Shared\Rules\PriceBeforeReduction;
 use App\Modules\Shared\Support\Money;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Arr;
@@ -54,6 +55,7 @@ class SaveProductRequest extends FormRequest
             // One price needs no size name; several sizes do.
             'variants.*.label' => [count((array) $this->input('variants')) > 1 ? 'required' : 'nullable', 'string', 'max:60'],
             'variants.*.price' => ['required', 'regex:/^\d{1,5}([.,]\d{1,2})?$/'],
+            'variants.*.compare_at' => ['nullable', new PriceBeforeReduction],
             'variants.*.stock' => ['nullable', 'integer', 'min:0', 'max:9999'],
             'photo_alts' => ['nullable', 'array'],
             'photo_alts.*' => ['nullable', 'string', 'max:160'],
@@ -105,7 +107,7 @@ class SaveProductRequest extends FormRequest
      * The validated form in the shape SaveProduct takes: prices in grosze, empty dimensions left out,
      * photo descriptions keyed by photo id.
      *
-     * @return array{name: string, category_id: int, description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, is_published: bool, is_one_off: bool, is_exact_piece: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, price_gross: int, stock: ?int}>, photo_alts: array<int, string>}
+     * @return array{name: string, category_id: int, description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, is_published: bool, is_one_off: bool, is_exact_piece: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, price_gross: int, compare_at_price: ?int, stock: ?int}>, photo_alts: array<int, string>}
      */
     public function product(): array
     {
@@ -133,6 +135,7 @@ class SaveProductRequest extends FormRequest
                 'id' => isset($row['id']) ? (int) $row['id'] : null,
                 'label' => trim((string) ($row['label'] ?? '')),
                 'price_gross' => Money::parse((string) $row['price']),
+                'compare_at_price' => filled($row['compare_at'] ?? null) ? Money::parse((string) $row['compare_at']) : null,
                 'stock' => isset($row['stock']) ? (int) $row['stock'] : null,
             ], $data['variants']),
             'photo_alts' => array_map(fn (mixed $alt) => trim((string) $alt), (array) ($data['photo_alts'] ?? [])),
@@ -146,7 +149,7 @@ class SaveProductRequest extends FormRequest
         $variants = collect((array) $this->input('variants', []))
             ->filter(fn (mixed $row) => is_array($row) && ! ($row['remove'] ?? false))
             // A row left empty is a spare slot for another size.
-            ->reject(fn (array $row) => blank($row['id'] ?? null) && blank($row['label'] ?? null) && blank($row['price'] ?? null) && blank($row['stock'] ?? null))
+            ->reject(fn (array $row) => blank($row['id'] ?? null) && blank($row['label'] ?? null) && blank($row['price'] ?? null) && blank($row['compare_at'] ?? null) && blank($row['stock'] ?? null))
             ->values()
             ->all();
 

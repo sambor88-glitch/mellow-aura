@@ -3,6 +3,7 @@
 namespace App\Modules\Workshops\Http\Requests\Admin;
 
 use App\Modules\Shared\Http\Requests\Concerns\EditsListRows;
+use App\Modules\Shared\Rules\PriceBeforeReduction;
 use App\Modules\Shared\Support\Money;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
@@ -15,7 +16,7 @@ class SaveWorkshopTypesRequest extends FormRequest
 {
     use EditsListRows;
 
-    public const FIELDS = ['name', 'price', 'unit_label', 'duration_label', 'group_label', 'summary', 'includes', 'code', 'unit'];
+    public const FIELDS = ['name', 'price', 'compare_at', 'unit_label', 'duration_label', 'group_label', 'summary', 'includes', 'code', 'unit'];
 
     private const PRICE = '/^\d{1,5}([.,]\d{1,2})?$/';
 
@@ -39,6 +40,7 @@ class SaveWorkshopTypesRequest extends FormRequest
             'workshops' => ['nullable', 'array', 'max:12'],
             'workshops.*.name' => $row(['nullable', 'string', 'max:60', 'required_with:workshops.*.price']),
             'workshops.*.price' => $row(['nullable', 'regex:'.self::PRICE, 'required_with:workshops.*.name']),
+            'workshops.*.compare_at' => $row(['nullable', new PriceBeforeReduction]),
             'workshops.*.unit_label' => $row(['nullable', 'string', 'max:30']),
             'workshops.*.duration_label' => $row(['nullable', 'string', 'max:30']),
             'workshops.*.group_label' => $row(['nullable', 'string', 'max:40']),
@@ -82,6 +84,7 @@ class SaveWorkshopTypesRequest extends FormRequest
                 'duration_label' => $row['duration_label'],
                 'group_label' => $row['group_label'],
                 'price_gross' => Money::parse((string) $row['price']),
+                'compare_at_price' => $row['compare_at'] === null ? null : Money::parse($row['compare_at']),
                 'unit' => $row['unit'],
                 'unit_label' => $row['unit_label'],
                 'summary' => $row['summary'],

@@ -3,6 +3,7 @@
 namespace App\Modules\Firing\Http\Requests\Admin;
 
 use App\Modules\Shared\Http\Requests\Concerns\EditsListRows;
+use App\Modules\Shared\Rules\PriceBeforeReduction;
 use App\Modules\Shared\Support\Money;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
@@ -15,7 +16,7 @@ class SaveKilnPricesRequest extends FormRequest
 {
     use EditsListRows;
 
-    public const FIELDS = ['label', 'price', 'unit_label', 'note', 'code', 'unit'];
+    public const FIELDS = ['label', 'price', 'compare_at', 'unit_label', 'note', 'code', 'unit'];
 
     private const PRICE = '/^\d{1,5}([.,]\d{1,2})?$/';
 
@@ -40,6 +41,7 @@ class SaveKilnPricesRequest extends FormRequest
             'prices' => ['nullable', 'array', 'max:15'],
             'prices.*.label' => $row(['nullable', 'string', 'max:80', 'required_with:prices.*.price']),
             'prices.*.price' => $row(['nullable', 'regex:'.self::PRICE, 'required_with:prices.*.label']),
+            'prices.*.compare_at' => $row(['nullable', new PriceBeforeReduction]),
             'prices.*.unit_label' => $row(['nullable', 'string', 'max:20']),
             'prices.*.note' => $row(['nullable', 'string', 'max:120']),
             'prices.*.code' => ['nullable', 'string', 'max:60'],
@@ -78,6 +80,7 @@ class SaveKilnPricesRequest extends FormRequest
                 'label' => $row['label'],
                 'note' => $row['note'],
                 'price_gross' => Money::parse((string) $row['price']),
+                'compare_at_price' => $row['compare_at'] === null ? null : Money::parse($row['compare_at']),
                 'unit' => $row['unit'],
                 'unit_label' => $row['unit_label'],
             ], $this->listRows('prices', self::FIELDS)),
