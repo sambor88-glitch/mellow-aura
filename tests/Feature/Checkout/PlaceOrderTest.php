@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Checkout;
 
+use App\Models\User;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
@@ -27,6 +28,33 @@ class PlaceOrderTest extends TestCase
             ['code' => 'parcel_locker', 'label' => 'InPost Paczkomat', 'price_gross' => 1600],
             ['code' => 'studio_pickup', 'label' => 'Odbiór w pracowni', 'price_gross' => 0],
         ]]);
+    }
+
+    public function test_the_order_needs_the_terms_accepted_and_keeps_their_version_and_time(): void
+    {
+        $this->travelTo(now()->setDate(2026, 11, 20)->setTime(17, 40));
+        $vase = $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3);
+        $this->postJson('/koszyk', ['variant_id' => $vase->id]);
+
+        $this->get('/zamowienie')
+            ->assertSee('name="accept_terms"', false)
+            ->assertSee('href="'.route('content.terms').'"', false);
+
+        $this->from('/zamowienie')
+            ->followingRedirects()
+            ->post('/zamowienie', [...$this->form(['expected_total' => 25500]), 'accept_terms' => ''])
+            ->assertSee('Zaznacz akceptację regulaminu — bez niej nie mogę przyjąć zamówienia');
+        $this->assertSame(0, Order::count());
+
+        $this->post('/zamowienie', $this->form(['expected_total' => 25500]))->assertRedirect('/zamowienie/potwierdzenie');
+
+        $order = Order::sole();
+        $this->assertSame('wersja 0.2 z 16 września 2026', $order->terms_version);
+        $this->assertSame('2026-11-20 17:40', $order->terms_accepted_at->format('Y-m-d H:i'));
+
+        $this->actingAs(User::factory()->create())
+            ->get('/panel/zamowienia/'.$order->number)
+            ->assertSee('Regulamin zaakceptowany: wersja 0.2 z 16 września 2026, 20.11.2026, 17:40');
     }
 
     public function test_paying_saves_the_order_with_copies_of_names_prices_and_the_mug_text(): void
@@ -166,7 +194,7 @@ class PlaceOrderTest extends TestCase
             'name' => 'Anna Nowak',
             'shipping_method' => 'parcel_locker',
             'payment_method' => 'blik',
-            'blik_code' => '123456',
+            'blik_code' => '123456', 'accept_terms' => '1',
             'expected_total' => 25500,
             ...$overrides,
         ];

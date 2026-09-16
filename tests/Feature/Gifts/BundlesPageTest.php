@@ -152,7 +152,7 @@ class BundlesPageTest extends TestCase
             'name' => 'Anna Nowak',
             'shipping_method' => 'parcel_locker',
             'payment_method' => 'blik',
-            'blik_code' => '123456',
+            'blik_code' => '123456', 'accept_terms' => '1',
             ...$overrides,
         ];
     }

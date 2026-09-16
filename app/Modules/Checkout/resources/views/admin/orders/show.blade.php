@@ -67,6 +67,11 @@
                     <div>{{ $order->name }}</div>
                     <a href="mailto:{{ $order->email }}" class="[overflow-wrap:anywhere]">{{ $order->email }}</a>
                     <a href="tel:+48{{ $order->phone }}" class="tabular-nums">{{ trim(chunk_split($order->phone, 3, ' ')) }}</a>
+                    @if ($order->terms_version)
+                        <p class="mt-2 border-t border-divider pt-2.5 text-[12.5px] leading-[1.5] text-label">
+                            Regulamin zaakceptowany: {{ $order->terms_version }}, {{ $order->terms_accepted_at?->format('j.m.Y, H:i') }}
+                        </p>
+                    @endif
                 </div>
             </section>
 

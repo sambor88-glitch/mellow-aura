@@ -39,6 +39,8 @@ class PlaceOrder
                 'payment_status' => PaymentStatus::Pending,
                 'note' => $data['note'] ?? null,
                 'invoice_nip' => $data['invoice_nip'] ?? null,
+                'terms_version' => $data['terms_version'] ?? null,
+                'terms_accepted_at' => isset($data['terms_version']) ? now() : null,
             ]);
 
             $order->update(['number' => 'MA-'.$order->created_at->year.'-'.(1000 + $order->id)]);

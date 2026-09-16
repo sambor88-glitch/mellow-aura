@@ -145,9 +145,24 @@
                             <p role="alert" class="mt-4 rounded-[4px] border border-alert-line bg-alert px-3.5 py-3 text-[13.5px] text-alert-text">{{ session('checkout_notice') }}</p>
                         @endif
 
+                        @if (Route::has('content.terms'))
+                            <label class="mt-5 flex cursor-pointer items-start gap-2.5 text-[13.5px] leading-[1.5] text-graphite">
+                                <input type="checkbox" name="accept_terms" value="1" x-ref="terms" x-model="accepted" @checked(old('accept_terms'))
+                                       @error('accept_terms') aria-invalid="true" aria-describedby="accept-terms-error" @enderror
+                                       class="mt-[3px] size-4 flex-none accent-ink">
+                                <span>Akceptuję <a href="{{ route('content.terms') }}" target="_blank" rel="noopener">regulamin sklepu</a></span>
+                            </label>
+                            @error('accept_terms')
+                                <p id="accept-terms-error" class="mt-1.5 text-[13px] text-error">{{ $message }}</p>
+                            @enderror
+                            @if (Route::has('content.privacy'))
+                                <p class="mt-2 text-[12px] leading-[1.5] text-hint">Dane zapisuję tylko na czas realizacji — szczegóły w <a href="{{ route('content.privacy') }}" target="_blank" rel="noopener">polityce prywatności</a>.</p>
+                            @endif
+                        @endif
+
                         <button type="submit" x-bind:class="ready || 'bg-label!'"
                                 class="mt-5 w-full rounded-full bg-navy p-[17px] text-[15px] tracking-[0.02em] text-linen transition duration-300 hover:bg-ink active:scale-[.97]">
-                            <span x-text="submitting ? 'Płacę…' : (ready ? 'Płacę ' + $store.cart.format(total) : 'Wpisz kod BLIK, żeby zapłacić')">Płacę {{ Money::format($subtotal + $shippingGross) }}</span>
+                            <span x-text="label">Płacę {{ Money::format($subtotal + $shippingGross) }}</span>
                         </button>
                         <div class="mt-3.5 flex flex-wrap justify-center gap-3 text-[11.5px] tracking-[0.08em] text-label uppercase">
                             <span>Apple Pay</span><span>&middot;</span><span>Google Pay</span><span>&middot;</span><span>Przelewy24</span>

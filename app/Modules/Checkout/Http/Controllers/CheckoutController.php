@@ -11,6 +11,7 @@ use App\Modules\Checkout\Enums\PaymentMethod;
 use App\Modules\Checkout\Http\Requests\PlaceOrderRequest;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Checkout\Support\ShippingMethods;
+use App\Modules\Content\Support\LegalDocument;
 use App\Modules\Settings\Settings;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -41,6 +42,7 @@ class CheckoutController extends Controller
             'selectedShipping' => $selectedShipping,
             'selectedPayment' => $selectedPayment,
             'config' => [
+                'accepted' => (bool) old('accept_terms'),
                 'payment' => $selectedPayment,
                 'shipping' => $selectedShipping,
                 'subtotal' => $subtotal,
@@ -67,7 +69,8 @@ class CheckoutController extends Controller
             return back()->withInput()->with('checkout_notice', 'W koszyku coś się zmieniło — sprawdź sumę i zapłać jeszcze raz');
         }
 
-        $order = $placeOrder($lines, $data, $shippingGross);
+        // The version on the site at the moment of ordering is the one the customer accepted.
+        $order = $placeOrder($lines, [...$data, 'terms_version' => LegalDocument::terms()->versionLabel()], $shippingGross);
 
         // A failed payment never empties the cart.
         if (! $simulatePayment($order, $data['blik_code'] ?? null)) {

@@ -10,8 +10,8 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
- * Three fields, delivery and payment are required. The address, NIP and note are optional,
- * but an address has to be whole and a NIP has to add up.
+ * Three fields, delivery, payment and accepting the terms are required. The address, NIP and note are
+ * optional, but an address has to be whole and a NIP has to add up.
  */
 class PlaceOrderRequest extends FormRequest
 {
@@ -41,6 +41,7 @@ class PlaceOrderRequest extends FormRequest
             'payment_method' => ['required', Rule::enum(PaymentMethod::class)],
             'blik_code' => ['exclude_unless:payment_method,blik', 'required', 'digits:6'],
             'expected_total' => ['required', 'integer'],
+            'accept_terms' => ['accepted'],
         ];
     }
 
@@ -71,6 +72,7 @@ class PlaceOrderRequest extends FormRequest
             'payment_method.enum' => 'Wybierz, jak chcesz zapłacić',
             'blik_code.required' => 'Wpisz 6-cyfrowy kod z aplikacji banku',
             'blik_code.digits' => 'Wpisz 6-cyfrowy kod z aplikacji banku',
+            'accept_terms.accepted' => 'Zaznacz akceptację regulaminu — bez niej nie mogę przyjąć zamówienia',
         ];
     }
 

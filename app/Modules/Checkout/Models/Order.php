@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable([
     'number', 'status', 'name', 'email', 'phone', 'shipping_method', 'shipping_address', 'locker_code',
     'shipping_gross', 'total_gross', 'payment_method', 'payment_status', 'payment_provider_id', 'paid_at',
-    'note', 'invoice_nip',
+    'note', 'invoice_nip', 'terms_version', 'terms_accepted_at',
 ])]
 class Order extends Model
 {
@@ -47,6 +47,7 @@ class Order extends Model
             'payment_method' => PaymentMethod::class,
             'payment_status' => PaymentStatus::class,
             'paid_at' => 'datetime',
+            'terms_accepted_at' => 'datetime',
         ];
     }
 }

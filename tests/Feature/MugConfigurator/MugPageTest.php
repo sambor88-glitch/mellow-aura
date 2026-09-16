@@ -87,7 +87,7 @@ class MugPageTest extends TestCase
 
         $this->post('/zamowienie', [
             'phone' => '600 100 200', 'email' => 'ania@example.com', 'name' => 'Anna Nowak',
-            'shipping_method' => 'parcel_locker', 'payment_method' => 'blik', 'blik_code' => '123456', 'expected_total' => 2 * 7900 + 1600,
+            'shipping_method' => 'parcel_locker', 'payment_method' => 'blik', 'blik_code' => '123456', 'accept_terms' => '1', 'expected_total' => 2 * 7900 + 1600,
         ])->assertRedirect('/zamowienie/potwierdzenie');
 
         $order = Order::sole();
