@@ -199,6 +199,8 @@
                             <button type="submit" class="flex-[1_1_200px] rounded-full bg-ink px-[30px] py-4 text-[14.5px] tracking-[0.03em] text-linen transition duration-300 hover:bg-navy active:scale-[.97]">
                                 Dodaj do koszyka &middot; <span x-text="$store.cart.format({{ $variant->price_gross }} * quantity)">{{ Money::format($variant->price_gross) }}</span>
                             </button>
+                            <x-catalog::favorite-button :product="$product"
+                                                        class="size-[50px] flex-none rounded-full border border-line-strong text-[20px] hover:border-ink hover:bg-sand-dark" />
                         </div>
                     </form>
                 @endif

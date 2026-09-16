@@ -43,6 +43,24 @@ class ShopPageTest extends TestCase
             ->assertSee('2 z 2 produktów na półce');
     }
 
+    public function test_hearts_save_favourites_in_the_browser_and_the_shop_filters_its_own_cards(): void
+    {
+        $vases = Category::factory()->create(['name' => 'Wazony', 'slug' => 'wazony']);
+        $vase = $this->product('Wazon rzeźbiony', $vases, [23900]);
+
+        $this->get('/sklep')
+            ->assertOk()
+            // The header link and the chip only show once something is saved; the list never goes to the server.
+            ->assertSee('href="'.route('shop.index').'#ulubione" x-data x-cloak x-show="$store.favorites.count > 0"', false)
+            ->assertSee('x-on:click.prevent="$store.favorites.toggle('.$vase->id.')"', false)
+            ->assertSee('x-bind:aria-label="($store.favorites.has('.$vase->id.') ? \'Usuń z ulubionych: \' : \'Dodaj do ulubionych: \') + \'Wazon rzeźbiony\'"', false)
+            ->assertSee('x-show="! favorites || $store.favorites.has('.$vase->id.')"', false)
+            ->assertSeeInOrder(['href="#ulubione"', '♥ Ulubione'], false)
+            ->assertSee('Lista zostaje tylko w tej przeglądarce');
+
+        $this->get('/produkt/'.$vase->slug)->assertSee('x-on:click.prevent="$store.favorites.toggle('.$vase->id.')"', false);
+    }
+
     public function test_a_category_page_shows_only_its_products(): void
     {
         $mugs = Category::factory()->create(['name' => 'Kubki i filiżanki', 'slug' => 'kubki-i-filizanki']);

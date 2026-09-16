@@ -3,6 +3,7 @@ import beforeAfter from './before-after';
 import cart from './cart';
 import checkout from './checkout';
 import consentBanner from './consent';
+import favorites from './favorites';
 import mugConfigurator from './mug';
 import pairUpload from './pair-upload';
 import photoPicker from './photos';
@@ -10,6 +11,7 @@ import photoPicker from './photos';
 window.Alpine = Alpine;
 
 Alpine.store('cart', cart);
+Alpine.store('favorites', favorites);
 Alpine.data('beforeAfter', beforeAfter);
 Alpine.data('checkout', checkout);
 Alpine.data('consentBanner', consentBanner);

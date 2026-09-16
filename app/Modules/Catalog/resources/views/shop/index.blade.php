@@ -33,20 +33,26 @@
         <x-slot:head>{!! $structuredData !!}</x-slot:head>
     @endisset
 
-    <div class="mx-auto max-w-[1280px] animate-ma-view px-7 pt-14 pb-24">
+    {{-- #ulubione shows only the cards saved with a heart; the list stays in the browser (see resources/js/favorites.js). --}}
+    <div x-data="{ favorites: location.hash === '#ulubione', ids: @js($products->pluck('id')), get savedHere() { return this.ids.filter((id) => $store.favorites.has(id)).length } }"
+         x-on:hashchange.window="favorites = location.hash === '#ulubione'"
+         class="mx-auto max-w-[1280px] animate-ma-view px-7 pt-14 pb-24">
         <nav aria-label="Okruszki" class="mb-[22px] text-[12px] text-hint">
             <a href="{{ url('/') }}" class="text-hint hover:text-navy">Strona główna</a>
             / @if ($category) <a href="{{ route('shop.index') }}" class="text-hint hover:text-navy">Produkty</a> / @endif<span class="text-lead">{{ $category->name ?? 'Produkty' }}</span>
         </nav>
 
-        <h1 class="mb-3.5 font-serif text-[length:clamp(38px,5vw,66px)] leading-[normal] font-light tracking-[-0.02em]">{{ $category->name ?? 'Sklep' }}</h1>
+        <h1 class="mb-3.5 font-serif text-[length:clamp(38px,5vw,66px)] leading-[normal] font-light tracking-[-0.02em]">
+            <span x-show="! favorites">{{ $category->name ?? 'Sklep' }}</span><span x-cloak x-show="favorites">Ulubione</span>
+        </h1>
 
+        <p x-cloak x-show="favorites" class="mb-[26px] max-w-[58ch] text-[16.5px] text-muted">Rzeczy zapisane sercem. Lista zostaje tylko w tej przeglądarce — nie wysyłam jej nigdzie.</p>
         @unless ($category)
-            <p class="mb-[26px] max-w-[58ch] text-[16.5px] text-muted">Wszystko, co stoi teraz na półce w pracowni. Ceramika jest wypalona i gotowa do wysyłki — jeśli czegoś nie ma, znaczy, że już pojechało do kogoś.</p>
+            <p x-show="! favorites" class="mb-[26px] max-w-[58ch] text-[16.5px] text-muted">Wszystko, co stoi teraz na półce w pracowni. Ceramika jest wypalona i gotowa do wysyłki — jeśli czegoś nie ma, znaczy, że już pojechało do kogoś.</p>
         @endunless
 
         @if ($shortcuts)
-            <div class="mb-10 flex flex-wrap gap-2.5">
+            <div x-show="! favorites" class="mb-10 flex flex-wrap gap-2.5">
                 @foreach ($shortcuts as [$label, $route])
                     <a href="{{ route($route) }}" class="rounded-full border border-line bg-sand-dark px-[18px] py-2.5 text-[13px] text-ink transition-[border-color,background-color,transform] duration-300 hover:border-ink hover:text-ink active:scale-[.98]">{{ $label }}</a>
                 @endforeach
@@ -67,12 +73,15 @@
                 </form>
 
                 @foreach ($chips as $chip)
-                    <a href="{{ $chip['url'] }}" @if ($chip['active']) aria-current="page" @endif @class([
+                    <a href="{{ $chip['url'] }}" @if ($chip['active']) aria-current="page" x-bind:aria-current="favorites ? 'false' : 'page'" x-bind:class="favorites && 'border-line-strong! bg-transparent! text-lead!'" @endif @class([
                         'rounded-full border px-5 py-2.5 text-[13.5px] tracking-[0.03em]',
                         'border-ink bg-ink text-linen hover:text-linen' => $chip['active'],
                         'border-line-strong text-lead hover:text-navy' => ! $chip['active'],
                     ])>{{ $chip['label'] }}</a>
                 @endforeach
+                <a href="#ulubione" x-cloak x-show="$store.favorites.count > 0 || favorites" x-bind:aria-current="favorites ? 'page' : 'false'"
+                   x-bind:class="favorites ? 'border-ink bg-ink text-linen hover:text-linen' : 'border-line-strong text-lead hover:text-navy'"
+                   class="rounded-full border px-5 py-2.5 text-[13.5px] tracking-[0.03em]">♥ Ulubione (<span x-text="savedHere"></span>)</a>
             </div>
 
             <div class="flex flex-wrap items-center gap-1.5">
@@ -97,12 +106,20 @@
             </div>
         @endif
 
+        <div x-cloak x-show="favorites && savedHere === 0" class="rounded-[4px] bg-sand-dark px-9 py-11 text-center">
+            <div class="mb-2 font-serif text-[26px]">Tu jeszcze nic nie ma</div>
+            <p class="mb-[22px] text-[15.5px] text-lead">Kliknij serce przy produkcie, a zapiszę go tutaj. Rzeczy, których już nie ma na półce, tu się nie pokazują.</p>
+            <a href="{{ $baseUrl }}" class="inline-block rounded-full bg-ink px-7 py-3.5 text-[14px] text-linen hover:bg-navy hover:text-linen">Zobacz, co jest w pracowni</a>
+        </div>
+
         <div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-x-[26px] gap-y-[30px]">
             @foreach ($products as $product)
-                <x-catalog::product-card :product="$product" :delay="min($loop->index, 11) * 0.06" :eager="$loop->index < 4" />
+                <div x-show="! favorites || $store.favorites.has({{ $product->id }})" class="min-w-0">
+                    <x-catalog::product-card :product="$product" :delay="min($loop->index, 11) * 0.06" :eager="$loop->index < 4" />
+                </div>
             @endforeach
         </div>
 
-        <div class="mt-11 text-[13px] text-hint">{{ $products->count() }} z {{ $liveCount }} produktów na półce</div>
+        <div x-show="! favorites" class="mt-11 text-[13px] text-hint">{{ $products->count() }} z {{ $liveCount }} produktów na półce</div>
     </div>
 </x-shared::layout>

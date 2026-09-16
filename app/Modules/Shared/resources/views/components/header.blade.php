@@ -22,7 +22,10 @@
                 @endif
             @endforeach
         </nav>
-        {{-- The cart module brings its own button. --}}
-        @includeIf('cart::button')
+        {{-- The catalogue brings the favourites link and the cart module its own button. --}}
+        <div class="ml-auto flex items-center gap-2.5">
+            @includeIf('catalog::favorites.header-link')
+            @includeIf('cart::button')
+        </div>
     </div>
 </div>
