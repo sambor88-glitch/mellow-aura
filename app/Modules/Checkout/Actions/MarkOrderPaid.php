@@ -5,6 +5,7 @@ namespace App\Modules\Checkout\Actions;
 use App\Modules\Catalog\Actions\DecrementStock;
 use App\Modules\Checkout\Enums\OrderStatus;
 use App\Modules\Checkout\Enums\PaymentStatus;
+use App\Modules\Checkout\Events\OrderPaid;
 use App\Modules\Checkout\Models\Order;
 use Illuminate\Support\Facades\DB;
 
@@ -43,6 +44,8 @@ class MarkOrderPaid
                 'payment_provider_id' => $providerId,
                 'paid_at' => now(),
             ]);
+
+            OrderPaid::dispatch($order);
 
             return $order;
         });
