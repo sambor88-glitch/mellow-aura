@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Modules\Catalog\Database\Seeders\CatalogSeeder;
+use App\Modules\Gifts\Database\Seeders\GiftsSeeder;
 use App\Modules\Settings\Database\Seeders\SettingsSeeder;
 use Illuminate\Database\Seeder;
 
@@ -19,6 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             SettingsSeeder::class,
             CatalogSeeder::class,
+            GiftsSeeder::class,
         ]);
     }
 }

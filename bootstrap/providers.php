@@ -5,6 +5,7 @@ use App\Modules\Cart\CartServiceProvider;
 use App\Modules\Catalog\CatalogServiceProvider;
 use App\Modules\Checkout\CheckoutServiceProvider;
 use App\Modules\Content\ContentServiceProvider;
+use App\Modules\Gifts\GiftsServiceProvider;
 use App\Modules\Settings\SettingsServiceProvider;
 use App\Modules\Shared\SharedServiceProvider;
 use App\Providers\AppServiceProvider;
@@ -17,5 +18,6 @@ return [
     CatalogServiceProvider::class,
     CartServiceProvider::class,
     CheckoutServiceProvider::class,
+    GiftsServiceProvider::class,
     ContentServiceProvider::class,
 ];
