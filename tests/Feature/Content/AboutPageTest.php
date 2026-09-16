@@ -40,7 +40,7 @@ class AboutPageTest extends TestCase
             ->assertSeeInOrder(['Tworzę MellowAura – kameralną pracownię', 'Zajmuję się ceramiką i rękodziełem tekstylnym'])
             ->assertDontSee('Lubię łączyć surowość z miękkością, prostotę z symboliką')
             ->assertSee('href="'.route('content.contact').'"', false)
-            ->assertSeeInOrder(['<dt class="mb-2 font-serif text-[21px]">Glina</dt>', 'Kamionka i szamot piaskowy', 'Rośliny'], false)
+            ->assertSeeInOrder(['<dt class="mb-2 font-serif text-[21px]">Glina</dt>', 'Nierówne krawędzie zostawiam', 'Rośliny'], false)
             ->assertDontSee('Temperatura wypału')
             ->assertSeeInOrder(['Niektóre z moich prac', 'Wazony', 'Patery', 'Talerze', 'Kadzielnice'])
             ->assertDontSee('Scrunchies');

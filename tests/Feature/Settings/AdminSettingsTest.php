@@ -37,7 +37,7 @@ class AdminSettingsTest extends TestCase
             ->assertSee('href="'.route('admin.settings.edit').'"', false)
             ->assertSeeInOrder(['Dostawa i opłaty', 'Darmowa wysyłka od', 'value="400"', 'InPost Paczkomat', 'value="16"', 'Pakowanie na prezent', 'value="12"'], false)
             ->assertSeeInOrder(['Dane pracowni', 'value="Kraków, okolice Błoń Krakowskich"', 'Dokładny adres'], false)
-            ->assertSeeInOrder(['kafelki na „O mnie”', 'value="Glina"', 'Kamionka i szamot piaskowy'], false);
+            ->assertSeeInOrder(['kafelki na „O mnie”', 'value="Glina"', 'Nierówne krawędzie zostawiam'], false);
     }
 
     public function test_delivery_prices_and_the_free_shipping_threshold_are_saved(): void

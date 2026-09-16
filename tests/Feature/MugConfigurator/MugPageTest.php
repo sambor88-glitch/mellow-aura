@@ -32,7 +32,7 @@ class MugPageTest extends TestCase
             ->assertSee('<title>Kubek z napisem na zamówienie — Twój tekst wbity w glinę</title>', false)
             ->assertSee('<link rel="canonical" href="'.route('mug.index').'">', false)
             ->assertSeeInOrder(['Strona główna', 'Kubek z napisem'])
-            ->assertSeeInOrder(['na zamówienie', 'gotowe w 3 tygodnie', "Kubek, który mówi to,\nco myślisz", 'Wbijam litery stemplem'])
+            ->assertSeeInOrder(['na zamówienie', 'gotowe w 4 tygodnie', "Kubek, który mówi to,\nco myślisz", 'Wbijam litery stemplem'])
             ->assertSeeInOrder(['Twój napis', 'name="text"', 'Wycisz stempel', 'Podziel na linie'], false)
             ->assertSeeInOrder(['Rozmiar', 'Mały 200 ml', '69,00 zł', 'value="Średni" x-model="size" checked', 'Średni 300 ml', '79,00 zł', 'Duży 400 ml', '95,00 zł'], false)
             ->assertSeeInOrder(['Kolor wnętrza', 'value="turquoise" x-model="glaze" checked', 'Turkus', 'Kobalt', 'Ceglany', 'Grafit', 'Pudrowy róż'], false)

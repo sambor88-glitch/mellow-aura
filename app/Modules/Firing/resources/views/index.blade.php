@@ -2,11 +2,12 @@
 @php
     // The topic name matches the contact form's list from the panel; if it is renamed, the form simply opens without it.
     $contactUrl = route('content.contact', ['temat' => 'Wypał moich prac']);
+    // The lowest price per litre comes from the panel, like every number on the page.
+    $fromPerLitre = $prices->where('unit', 'litre')->min('price_gross');
+    $description = 'Wypał biskwitowy i na ostro do 1240°C, wypał złota, cała półka na wyłączność.'.($fromPerLitre ? ' Cennik od '.Money::input($fromPerLitre).' zł za litr.' : '');
 @endphp
 
-<x-shared::layout title="Wypał ceramiki Kraków — cennik wypałów na zlecenie"
-                  description="Wypał biskwitowy i na ostro do 1240°C, wypał złota, cała półka na wyłączność. Cennik od 40 zł za litr. Wsad zbieram raz w tygodniu."
-                  :canonical="route('firing.index')">
+<x-shared::layout title="Wypał ceramiki Kraków — cennik wypałów na zlecenie" :description="$description" :canonical="route('firing.index')">
     <div class="mx-auto max-w-[1280px] animate-ma-view px-7 pt-14 pb-24">
         <div class="mb-5 text-[10.5px] tracking-[0.3em] text-brown uppercase">wypały na zlecenie</div>
         <h1 class="mb-5 font-serif text-[length:clamp(36px,5vw,64px)] leading-[1.05] font-light tracking-[-0.02em]">Wypalę Twoje prace</h1>

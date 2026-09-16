@@ -350,11 +350,11 @@
         "value": [
             {
                 "title": "Glina",
-                "text": "Kamionka i szamot piaskowy. Nierówne krawędzie zostawiam, bo tak wygląda ręka."
+                "text": "Nierówne krawędzie zostawiam, bo tak wygląda ręka."
             },
             {
                 "title": "Jedwab",
-                "text": "Z drugiego obiegu i z końcówek bel. Jedna apaszka to jedna opaska."
+                "text": "Z drugiego obiegu."
             },
             {
                 "title": "Złoto 24k",
@@ -391,7 +391,7 @@
         "value": [
             {
                 "question": "Jak szybko wyślesz zamówienie?",
-                "answer": "Rzeczy, które są na stanie, pakuję w 3–5 dni roboczych. Ceramika jedzie w papierze, wiórach i podwójnym kartonie — do tej pory nic nie dotarło stłuczone. Zamówienia indywidualne to około 3 tygodnie, bo każda praca przechodzi przez dwa wypały."
+                "answer": "Rzeczy, które są na stanie, pakuję w 3–5 dni roboczych. Zamówienia indywidualne to około 4 tygodnie, bo każda praca przechodzi przez dwa wypały."
             },
             {
                 "question": "Czy mogę zapłacić BLIK-iem?",
@@ -455,12 +455,12 @@
                 "text": "Przy jednym stole, bez tłoku."
             },
             {
-                "title": "Od 6 lat",
+                "title": "Od 5 lat",
                 "text": "Dzieci z osobą dorosłą."
             },
             {
                 "title": "Dwa wypały w cenie",
-                "text": "Prace do odbioru po ~3 tygodniach."
+                "text": "Prace do odbioru po ~4 tygodniach."
             },
             {
                 "title": "Wysyłka prac",
@@ -523,7 +523,7 @@
     },
     {
         "key": "text_kiln_note",
-        "value": "Wsad zbieram raz w tygodniu, zwykle w czwartek. Prace odbierzesz po 5–7 dniach. Nie przyjmuję gliny nieznanego pochodzenia ani prac grubszych niż 2 cm w ściance."
+        "value": null
     },
     {
         "key": "text_workshops_lead",
@@ -559,7 +559,7 @@
     },
     {
         "key": "text_mug_lead_time",
-        "value": "gotowe w 3 tygodnie"
+        "value": "gotowe w 4 tygodnie"
     },
     {
         "key": "text_mug_bulk_order",
@@ -707,7 +707,7 @@
             },
             {
                 "title": "Dwa wypały i wysyłka",
-                "text": "Trzy tygodnie. W paczce karta z datą wypału i nazwą rośliny, jeśli ją znasz."
+                "text": "Cztery, pięć tygodni. W paczce karta z datą wypału i nazwą rośliny, jeśli ją znasz."
             }
         ]
     },
@@ -779,7 +779,7 @@
                 "code": "glazing",
                 "name": "Szkliwienie i malowanie",
                 "duration_label": "2 godziny",
-                "group_label": "grupa do 8 osób",
+                "group_label": "grupa do 6 osób",
                 "price_gross": 16000,
                 "unit": "person",
                 "unit_label": "os.",
@@ -788,7 +788,7 @@
                     "Gotowe formy do wyboru",
                     "Szkliwa, angoby, złoto 24k",
                     "Wypał na ostro",
-                    "Odbiór po 3 tygodniach"
+                    "Odbiór po 4 tygodniach"
                 ]
             },
             {
@@ -827,11 +827,11 @@
                 "code": "parent_and_child",
                 "name": "Rodzinnie z dzieckiem",
                 "duration_label": "1,5 godziny",
-                "group_label": "od 6 lat",
+                "group_label": "od 5 lat, do 3 par",
                 "price_gross": 26000,
                 "unit": "adult_with_child",
                 "unit_label": "dorosły + dziecko",
-                "summary": "Krótko, konkretnie i bez presji — tyle, ile wytrzyma uwaga sześciolatka.",
+                "summary": "Krótko, konkretnie i bez presji — tyle, ile wytrzyma uwaga pięciolatka.",
                 "includes": [
                     "Stanowisko dla dwojga",
                     "Miękka glina i stemple",

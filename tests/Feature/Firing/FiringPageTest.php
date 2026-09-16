@@ -23,10 +23,12 @@ class FiringPageTest extends TestCase
     public function test_the_page_shows_the_price_list_from_the_panel_and_how_to_report_a_batch(): void
     {
         Setting::query()->where('key', 'contact_phone')->update(['value' => json_encode('+48 600 100 200')]);
+        Setting::query()->where('key', 'text_kiln_note')->update(['value' => json_encode('Wsad zbieram raz w tygodniu, zwykle w czwartek.')]);
 
         $this->get('/wypal-ceramiki-krakow')
             ->assertOk()
             ->assertSee('<title>Wypał ceramiki Kraków — cennik wypałów na zlecenie</title>', false)
+            ->assertSee('<meta name="description" content="Wypał biskwitowy i na ostro do 1240°C, wypał złota, cała półka na wyłączność. Cennik od 40 zł za litr.">', false)
             ->assertSeeInOrder(['wypały na zlecenie', 'Wypalę Twoje prace', 'Lepisz w domu i nie masz pieca?'])
             ->assertSeeInOrder(['Wypał biskwitowy do 1000°C', 'liczony od litra zajętego miejsca', '40,00 zł / l', 'Cała półka na wyłączność', '180,00 zł', 'Szkliwienie przeze mnie'])
             ->assertSee('Wsad zbieram raz w tygodniu, zwykle w czwartek.')
@@ -42,7 +44,7 @@ class FiringPageTest extends TestCase
         $this->actingAs(User::factory()->create())
             ->get('/panel/wypaly')
             ->assertOk()
-            ->assertSeeInOrder(['Lepisz w domu', 'Wsad zbieram', 'value="Wypał biskwitowy do 1000°C"', 'value="40"', 'value="/ l"', 'Nowa usługa — nazwa'], false);
+            ->assertSeeInOrder(['Lepisz w domu', 'value="Wypał biskwitowy do 1000°C"', 'value="40"', 'value="/ l"', 'Nowa usługa — nazwa'], false);
 
         $this->put('/panel/wypaly', [
             'text_kiln_lead' => 'Nie masz pieca?',
