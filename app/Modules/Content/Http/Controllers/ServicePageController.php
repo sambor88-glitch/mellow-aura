@@ -40,6 +40,7 @@ class ServicePageController extends Controller
                 ->filter(fn (mixed $step) => is_array($step) && filled($step['title'] ?? null))
                 ->values(),
             'lockerCode' => $settings->get('parcel_locker_code'),
+            'phone' => $settings->get('contact_phone'),
             'examples' => ServiceExample::query()
                 ->where('service', $service)
                 ->ordered()

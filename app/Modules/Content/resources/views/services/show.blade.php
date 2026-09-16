@@ -47,6 +47,9 @@
                         <a href="{{ $contactUrl }}" class="rounded-full bg-ink px-8 py-4 text-[14px] text-linen transition duration-300 hover:bg-navy hover:text-linen active:scale-[.97]">{{ $page['cta'] }}</a>
                         <a href="{{ route($page['other'][0]->route()) }}" class="rounded-full border border-line-strong px-8 py-4 text-[14px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark hover:text-ink active:scale-[.98]">{{ $page['other'][1] }}</a>
                     </div>
+                    @if ($phone)
+                        <p class="mt-5 text-[14.5px] text-lead">Szybciej na WhatsAppie: <a href="https://wa.me/{{ preg_replace('/\D+/', '', $phone) }}" target="_blank" rel="noopener" class="whitespace-nowrap">{{ $phone }}</a></p>
+                    @endif
                 </div>
                 <div class="min-w-0 flex-[1_1_320px]">
                     <img src="{{ Vite::asset($page['photo']) }}" alt="{{ $page['photoAlt'] }}" class="block aspect-[3/4] w-full rounded-[4px] bg-line-soft object-cover">

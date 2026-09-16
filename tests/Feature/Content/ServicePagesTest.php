@@ -40,17 +40,19 @@ class ServicePagesTest extends TestCase
             ->assertSee('dlaczego to robię')
             // No crossed-out price: services keep no price history for the lowest price from 30 days.
             ->assertDontSee('239,00 zł')
-            ->assertDontSee('id="przed-i-po"', false);
+            ->assertDontSee('id="przed-i-po"', false)
+            ->assertDontSee('Szybciej na WhatsAppie');
     }
 
     public function test_the_imprint_page_shows_its_own_texts_and_the_parcel_locker_code(): void
     {
-        $this->settings(['parcel_locker_code' => 'KRA01M']);
+        $this->settings(['parcel_locker_code' => 'KRA01M', 'contact_phone' => '+48 600 100 200']);
 
         $this->get('/odcisk-twojej-rosliny')
             ->assertOk()
             ->assertSee('<title>Talerz z odciskiem Twojego kwiatu — pamiątka na lata</title>', false)
             ->assertSeeInOrder(["Kwiat z bukietu\nzostanie w glinie", 'Przyślij zasuszoną roślinę', 'Napisz, co chcesz odcisnąć', 'href="'.route('content.scarf').'"'], false)
+            ->assertSeeInOrder(['Szybciej na WhatsAppie:', 'href="https://wa.me/48600100200"', '+48 600 100 200</a>'], false)
             ->assertSeeInOrder(['Suszysz roślinę płasko', 'Dwa wypały i wysyłka', 'Paczki do mnie: Paczkomat KRA01M.'])
             ->assertSeeInOrder(['Na czym odciskam', 'Talerzyk deserowy 18 cm', '149,00 zł', 'Para talerzy na rocznicę', '329,00 zł'])
             ->assertSee('na co to zamawiają')
