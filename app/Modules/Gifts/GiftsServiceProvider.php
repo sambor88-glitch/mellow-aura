@@ -12,6 +12,7 @@ use App\Modules\Gifts\Cart\VoucherLine;
 use App\Modules\Gifts\Cart\VoucherLines;
 use App\Modules\Gifts\Listeners\SendVouchers;
 use App\Modules\Shared\ModuleServiceProvider;
+use App\Modules\Shared\Support\SitemapPages;
 use Illuminate\Support\Facades\Event;
 
 class GiftsServiceProvider extends ModuleServiceProvider
@@ -22,6 +23,7 @@ class GiftsServiceProvider extends ModuleServiceProvider
             ->register(VoucherLine::TYPE, VoucherLines::class)
             ->register(BundleLine::TYPE, BundleLines::class)
             ->register(GiftWrapLine::TYPE, GiftWrapLines::class));
+        $this->callAfterResolving(SitemapPages::class, fn (SitemapPages $pages) => $pages->routes('gifts.index', 'bundles.index', 'vouchers.index'));
     }
 
     public function boot(): void

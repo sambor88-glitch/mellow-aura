@@ -11,6 +11,7 @@
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",
         "spatie/laravel-medialibrary": "^11.23",
+        "spatie/laravel-sitemap": "^8.2",
         "spatie/schema-org": "^5.0",
         "symfony/http-client": "^8.1",
         "symfony/postmark-mailer": "^8.1"
