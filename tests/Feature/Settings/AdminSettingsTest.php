@@ -36,6 +36,7 @@ class AdminSettingsTest extends TestCase
             ->assertOk()
             ->assertSee('href="'.route('admin.settings.edit').'"', false)
             ->assertSeeInOrder(['Dostawa i opłaty', 'Darmowa wysyłka od', 'value="400"', 'InPost Paczkomat', 'value="16"', 'Pakowanie na prezent', 'value="12"'], false)
+            ->assertSeeInOrder(['Wysyłka rzeczy z półki', 'name="dispatch_days_min" value="3"', 'name="dispatch_days_max" value="5"'], false)
             ->assertSeeInOrder(['Dane pracowni', 'value="Kraków, okolice Błoń Krakowskich"', 'Dokładny adres'], false)
             ->assertSeeInOrder(['kafelki na „O mnie”', 'value="Glina"', 'Nierówne krawędzie zostawiam'], false);
     }
@@ -62,6 +63,30 @@ class AdminSettingsTest extends TestCase
         $this->put('/panel/ustawienia/dostawa', ['free_shipping_threshold' => '', 'shipping' => ['parcel_locker' => '16']]);
         $this->assertNull(Setting::find('free_shipping_threshold')->value);
         $this->assertSame(1200, Setting::find('gift_wrap_price')->value);
+    }
+
+    public function test_the_days_to_dispatch_are_saved_in_order_and_show_on_the_product_page(): void
+    {
+        $this->actingAs($this->owner)
+            ->put('/panel/ustawienia/dostawa', ['free_shipping_threshold' => '400', 'dispatch_days_min' => '6', 'dispatch_days_max' => '2', 'shipping' => ['parcel_locker' => '16']])
+            ->assertRedirect('/panel/ustawienia#dostawa');
+        $this->assertSame([2, 6], [Setting::find('dispatch_days_min')->value, Setting::find('dispatch_days_max')->value]);
+
+        // One empty end takes the other one's value.
+        $this->put('/panel/ustawienia/dostawa', ['free_shipping_threshold' => '400', 'dispatch_days_min' => '', 'dispatch_days_max' => '4', 'shipping' => ['parcel_locker' => '16']]);
+        $this->assertSame([4, 4], [Setting::find('dispatch_days_min')->value, Setting::find('dispatch_days_max')->value]);
+
+        $this->put('/panel/ustawienia/dostawa', ['free_shipping_threshold' => '400', 'dispatch_days_min' => 'trzy', 'dispatch_days_max' => '0', 'shipping' => ['parcel_locker' => '16']])
+            ->assertSessionHasErrorsIn('dostawa', ['dispatch_days_min' => 'Wpisz liczbę dni, np. 3', 'dispatch_days_max' => 'Wpisz liczbę dni, np. 5']);
+        $this->assertSame(4, Setting::find('dispatch_days_min')->value);
+
+        // A form without the fields leaves the days as they are; both fields empty promise nothing.
+        $this->put('/panel/ustawienia/dostawa', ['free_shipping_threshold' => '400', 'shipping' => ['parcel_locker' => '16']]);
+        $this->assertSame(4, Setting::find('dispatch_days_max')->value);
+
+        $this->put('/panel/ustawienia/dostawa', ['free_shipping_threshold' => '400', 'dispatch_days_min' => '', 'dispatch_days_max' => '', 'shipping' => ['parcel_locker' => '16']]);
+        $this->assertNull(Setting::find('dispatch_days_min')->value);
+        $this->assertNull(Setting::find('dispatch_days_max')->value);
     }
 
     public function test_company_details_are_tidied_up_and_the_nip_shows_in_the_footer(): void

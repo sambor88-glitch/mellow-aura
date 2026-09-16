@@ -5,12 +5,13 @@ namespace App\Modules\Catalog\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Support\ProductStructuredData;
+use App\Modules\Settings\Settings;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ProductController extends Controller
 {
-    public function __invoke(Request $request, Product $product): View
+    public function __invoke(Request $request, Product $product, Settings $settings): View
     {
         abort_unless($product->is_published, 404);
 
@@ -37,7 +38,7 @@ class ProductController extends Controller
             'product' => $product,
             'variant' => $variant,
             'related' => $related,
-            'structuredData' => ProductStructuredData::for($product),
+            'structuredData' => ProductStructuredData::for($product, $settings),
         ]);
     }
 }

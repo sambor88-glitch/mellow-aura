@@ -25,6 +25,7 @@ class SettingsController extends Controller
         return view('settings::admin.edit', [
             'freeFrom' => $settings->get('free_shipping_threshold'),
             'giftWrapPrice' => $settings->get('gift_wrap_price'),
+            'dispatchDays' => ['dispatch_days_min' => $settings->get('dispatch_days_min'), 'dispatch_days_max' => $settings->get('dispatch_days_max')],
             'shippingMethods' => collect((array) $settings->get('shipping_methods', []))
                 ->filter(fn (mixed $method) => is_array($method) && filled($method['code'] ?? null))
                 ->values(),

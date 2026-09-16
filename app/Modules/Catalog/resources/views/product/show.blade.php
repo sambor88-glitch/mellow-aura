@@ -1,4 +1,5 @@
 @use('App\Modules\Catalog\Enums\CategoryGroup')
+@use('App\Modules\Shared\Support\DispatchTime')
 @use('App\Modules\Shared\Support\Money')
 @use('App\Modules\Shared\Support\Seo')
 @inject('settings', 'App\Modules\Settings\Settings')
@@ -179,10 +180,12 @@
                 </div>
 
                 <div class="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-5 border-t border-divider pt-6 text-[13.5px] leading-[1.55] text-muted">
-                    <div>
-                        <div class="mb-1 text-ink">Wysyłka</div>
-                        3–5 dni roboczych{{ $freeShipping ? ', gratis od '.Money::format((int) $freeShipping) : '' }}
-                    </div>
+                    @if ($shippingNote = collect([DispatchTime::label($settings), $freeShipping ? 'gratis od '.Money::format((int) $freeShipping) : null])->filter()->join(', '))
+                        <div>
+                            <div class="mb-1 text-ink">Wysyłka</div>
+                            {{ Str::ucfirst($shippingNote) }}
+                        </div>
+                    @endif
                     <div>
                         <div class="mb-1 text-ink">Certyfikat unikatu</div>
                         W paczce karta z numerem, datą wypału i podpisem

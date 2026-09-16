@@ -4,6 +4,7 @@ namespace App\Modules\Content\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Settings\Settings;
+use App\Modules\Shared\Support\ServiceStructuredData;
 use Illuminate\View\View;
 
 /**
@@ -16,6 +17,7 @@ class CustomOrdersController extends Controller
     {
         return view('content::custom-orders', [
             'lead' => $settings->get('text_custom_orders_lead'),
+            'structuredData' => ServiceStructuredData::for('Ceramika na zamówienie', route('custom-orders.index'), $settings->get('text_custom_orders_lead')),
             'steps' => collect((array) $settings->get('custom_order_steps', []))
                 ->filter(fn (mixed $step) => is_array($step) && filled($step['title'] ?? null))
                 ->values(),

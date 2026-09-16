@@ -1,11 +1,21 @@
+@use('App\Modules\Shared\Support\DispatchTime')
 @use('App\Modules\Shared\Support\Seo')
+@inject('settings', 'App\Modules\Settings\Settings')
 @php
     $title = $category
         ? ($category->seo_title ?: Seo::title($category->name, ' — rękodzieło z Krakowa'))
         : 'Sklep — ceramika i rękodzieło handmade | MellowAura';
 
-    $description = Seo::description($category?->seo_description
-        ?: 'Kubki, talerze, wazony, patery, kadzielnice oraz jedwabne scrunchies i opaski. Każda sztuka jedna, wysyłka w 3–5 dni, BLIK.');
+    $dispatch = DispatchTime::label($settings, short: true);
+    $shipping = $dispatch ? ', wysyłka w '.$dispatch : '';
+    // Without a description from the panel a category names what is in it, so no two categories share one.
+    $description = Seo::description(match (true) {
+        filled($category?->seo_description) => $category->seo_description,
+        $category !== null => $category->name.' z pracowni w Krakowie'
+            .($products->isNotEmpty() ? ': '.$products->map(fn ($product) => Str::lcfirst($product->name))->join(', ') : '')
+            .'. Ręczna robota'.$shipping.'.',
+        default => 'Kubki, talerze, wazony, patery, kadzielnice oraz jedwabne scrunchies i opaski. Każda sztuka jedna'.$shipping.', BLIK.',
+    });
 
     // A shortcut shows up once its page has a route.
     $shortcuts = array_filter([

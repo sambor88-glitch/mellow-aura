@@ -24,7 +24,7 @@ class CustomOrdersPageTest extends TestCase
     {
         $this->settings(['contact_phone' => '+48 600 100 200']);
 
-        $this->get('/zamowienia-indywidualne')
+        $response = $this->get('/zamowienia-indywidualne')
             ->assertOk()
             ->assertSee('<title>Zamówienia indywidualne — ceramika na zamówienie</title>', false)
             ->assertSee('Bezpłatny szkic i wycena w pięć dni, płatność BLIK-iem, realizacja około czterech tygodni.">', false)
@@ -34,6 +34,12 @@ class CustomOrdersPageTest extends TestCase
             ->assertDontSee('Zaliczka')
             ->assertSee('alt="Kubek z wbijanym napisem"', false)
             ->assertSeeInOrder(['Opowiedz o pomyśle', 'Zdjęcia inspiracji — najłatwiej wysłać je na WhatsAppie', 'href="https://wa.me/48600100200"', 'Napisz na WhatsAppie', 'href="'.e(route('content.contact', ['temat' => 'Zamówienie indywidualne'])).'"', 'Napisz przez formularz', 'Woli Ci się pisać na WhatsAppie?'], false);
+
+        // No price list: every piece is quoted, so the markup names the service without offers.
+        $service = $this->structuredData($response->getContent())->firstWhere('@type', 'Service');
+        $this->assertSame(['Ceramika na zamówienie', route('custom-orders.index'), url('/').'/#business'], [$service['name'], $service['url'], $service['provider']['@id']]);
+        $this->assertStringStartsWith('Serwis na wesele, kubek z tekstem', $service['description']);
+        $this->assertArrayNotHasKey('hasOfferCatalog', $service);
     }
 
     public function test_without_a_phone_or_steps_the_page_keeps_the_form_only(): void

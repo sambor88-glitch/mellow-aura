@@ -1,4 +1,6 @@
+@use('App\Modules\Shared\Support\DispatchTime')
 @use('App\Modules\Shared\Support\Money')
+@inject('settings', 'App\Modules\Settings\Settings')
 <x-shared::layout title="Zamówienie | MellowAura" :noindex="true">
     <div class="mx-auto max-w-[1000px] animate-ma-view px-7 pt-14 pb-24 text-center">
         <div class="pt-10 pb-5">
@@ -19,7 +21,9 @@
                 @if ($shippingLabel)
                     <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">Dostawa</span><span>{{ $shippingLabel }}</span></div>
                 @endif
-                <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">Wysyłka</span><span>3–5 dni roboczych</span></div>
+                @if ($dispatch = DispatchTime::label($settings))
+                    <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">Wysyłka</span><span>{{ $dispatch }}</span></div>
+                @endif
             </div>
             <p class="mb-8 text-[13.5px] text-muted">Mail nie przyszedł w kwadrans? Zajrzyj do folderu ze spamem.</p>
             <a href="{{ url('/') }}" class="inline-block rounded-full bg-ink px-[30px] py-[15px] text-[14px] text-linen hover:bg-navy hover:text-linen">Wróć na stronę główną</a>

@@ -8,6 +8,7 @@
 @endphp
 
 <x-shared::layout title="Wypał ceramiki Kraków — cennik wypałów na zlecenie" :description="$description" :canonical="route('firing.index')">
+    <x-slot:head>{!! $structuredData !!}</x-slot:head>
     <div class="mx-auto max-w-[1280px] animate-ma-view px-7 pt-14 pb-24">
         <div class="mb-5 text-[10.5px] tracking-[0.3em] text-brown uppercase">wypały na zlecenie</div>
         <h1 class="mb-5 font-serif text-[length:clamp(36px,5vw,64px)] leading-[1.05] font-light tracking-[-0.02em]">Wypalę Twoje prace</h1>

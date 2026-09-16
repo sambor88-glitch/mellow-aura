@@ -35,7 +35,7 @@ class VoucherPageTest extends TestCase
         $draft = $this->product('Voucher na koło', 'voucher-kolo', $workshops, 30000, ['is_published' => false]);
         $vase = $this->product('Wazony', 'wazony', Category::factory()->create(), 23900);
 
-        $this->get('/voucher-na-warsztaty-ceramiczne')
+        $response = $this->get('/voucher-na-warsztaty-ceramiczne')
             ->assertOk()
             ->assertSee('<title>Voucher na warsztaty ceramiczne w Krakowie | MellowAura</title>', false)
             ->assertSee('<meta name="description" content="Voucher na lepienie z ręki, warsztat dla pary albo kwotowy. PDF z imieniem i dedykacją zaraz po opłaceniu, ważny rok, termin do wyboru.">', false)
@@ -46,6 +46,14 @@ class VoucherPageTest extends TestCase
             ->assertDontSee(route('product.show', $vase))
             ->assertSeeInOrder(['Jak to działa', 'Wybierasz voucher', 'Dostajesz PDF', 'Obdarowana osoba wybiera termin', 'Napisz do mnie i podaj numer vouchera. Voucher jest ważny rok od zakupu.'])
             ->assertSeeInOrder(['href="'.route('workshops.index').'"', 'href="'.route('gifts.index').'"', 'href="https://wa.me/48600100200"'], false);
+
+        // Each voucher on sale at its price, pointing to the page where it is bought.
+        $service = $this->structuredData($response->getContent())->firstWhere('@type', 'Service');
+        $this->assertSame(['Voucher na warsztaty ceramiczne w Krakowie', 'Prezent bez rozmiaru.'], [$service['name'], $service['description']]);
+        $this->assertSame([
+            ['Voucher — warsztat dla pary — '.$couple->variants()->value('label'), '390.00', route('product.show', $couple).'?wariant='.$couple->variants()->value('id')],
+            ['Voucher kwotowy — '.$amount->variants()->value('label'), '150.00', route('product.show', $amount).'?wariant='.$amount->variants()->value('id')],
+        ], array_map(fn (array $offer) => [$offer['itemOffered']['name'], $offer['price'], $offer['url']], $service['hasOfferCatalog']['itemListElement']));
     }
 
     public function test_without_vouchers_on_sale_the_page_points_to_the_contact_form(): void

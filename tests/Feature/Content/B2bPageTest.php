@@ -25,7 +25,7 @@ class B2bPageTest extends TestCase
         $this->settings(['contact_phone' => '+48 600 100 200']);
         $contact = 'href="'.e(route('content.contact', ['temat' => 'Kawiarnia / restauracja'])).'"';
 
-        $this->get('/ceramika-dla-gastronomii')
+        $response = $this->get('/ceramika-dla-gastronomii')
             ->assertOk()
             ->assertSee('<title>Ceramika dla kawiarni i restauracji | MellowAura</title>', false)
             ->assertSee('<meta name="description" content="Powtarzalne formy w ręcznej ceramice dla kawiarni i restauracji: minimum 12 sztuk, próbka przed serią, dosypka po stłuczkach, logo lub sygnatura.">', false)
@@ -33,6 +33,10 @@ class B2bPageTest extends TestCase
             ->assertSeeInOrder(['dla kawiarni, restauracji i hoteli', 'Naczynia, które<br>widać na zdjęciach<br>Waszych gości', 'Ręczna ceramika w powtarzalnej formie', $contact, 'Poproś o wycenę'], false)
             ->assertSeeInOrder(['Minimum 12 sztuk', 'Od dwunastu robi się sens', 'Próbka przed serią', 'Dosypka po stłuczkach', 'Logo lub sygnatura', 'Faktura i przelew z terminem 14 dni.'])
             ->assertSeeInOrder(['Prowadzicie lokal w Krakowie?', 'Przywiozę próbki', 'href="https://wa.me/48600100200"', $contact, 'Umów spotkanie'], false);
+
+        $service = $this->structuredData($response->getContent())->firstWhere('@type', 'Service');
+        $this->assertSame(['Ceramika dla kawiarni i restauracji', route('content.b2b'), 'Kraków'], [$service['name'], $service['url'], $service['areaServed']['name']]);
+        $this->assertArrayNotHasKey('hasOfferCatalog', $service);
     }
 
     public function test_empty_cards_and_texts_are_left_out(): void

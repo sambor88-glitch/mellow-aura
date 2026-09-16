@@ -1,5 +1,6 @@
 @use('App\Modules\Content\Enums\Service')
 @use('App\Modules\Shared\Support\Money')
+@use('App\Modules\Shared\Support\ServiceStructuredData')
 @use('Illuminate\Support\Facades\Vite')
 @php
     $page = match ($service) {
@@ -31,6 +32,8 @@
 @endphp
 
 <x-shared::layout :title="$page['title']" :description="$page['description']" :canonical="route($service->route())">
+    {{-- For Google the service is named like the page title: „Opaska z Twojej apaszki”. --}}
+    <x-slot:head>{!! ServiceStructuredData::for(Str::before($page['title'], ' — '), route($service->route()), $lead, $prices->map(fn (array $row) => [$row['label'], (int) $row['price_gross']])) !!}</x-slot:head>
     <div class="animate-ma-view pb-24">
         <div class="mx-auto max-w-[1280px] px-7 pt-14">
             <div class="flex flex-wrap items-center gap-14">

@@ -4,6 +4,14 @@
         "value": 40000
     },
     {
+        "key": "dispatch_days_min",
+        "value": 3
+    },
+    {
+        "key": "dispatch_days_max",
+        "value": 5
+    },
+    {
         "key": "shipping_methods",
         "value": [
             {

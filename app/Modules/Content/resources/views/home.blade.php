@@ -1,3 +1,4 @@
+@use('App\Modules\Shared\Support\DispatchTime')
 @use('App\Modules\Shared\Support\Money')
 @use('Illuminate\Support\Facades\Vite')
 @inject('settings', 'App\Modules\Settings\Settings')
@@ -63,7 +64,7 @@
                         @endif
                     </div>
                     <div class="flex flex-wrap gap-8 border-t border-divider pt-7">
-                        @foreach ([['100%', 'ręczna robota'], ['BLIK', 'płatność w 10 sekund'], ['3–5 dni', 'wysyłka zamówienia']] as [$value, $label])
+                        @foreach (array_filter([['100%', 'ręczna robota'], ['BLIK', 'płatność w 10 sekund'], ($dispatch = DispatchTime::label($settings, short: true)) ? [$dispatch, 'wysyłka zamówienia'] : null]) as [$value, $label])
                             <div>
                                 <div class="font-serif text-[30px] leading-none">{{ $value }}</div>
                                 <div class="mt-1 text-[11.5px] tracking-[0.14em] text-label uppercase">{{ $label }}</div>

@@ -25,6 +25,8 @@ class ProductPageTest extends TestCase
     {
         Setting::create(['key' => 'care_rule_ceramics', 'value' => 'Zmywarka tak, złoto tylko ręcznie']);
         Setting::create(['key' => 'free_shipping_threshold', 'value' => 40000]);
+        Setting::create(['key' => 'dispatch_days_min', 'value' => 3]);
+        Setting::create(['key' => 'dispatch_days_max', 'value' => 5]);
         $vases = Category::factory()->create(['name' => 'Wazony i patery', 'group' => CategoryGroup::Ceramics]);
         $product = Product::factory()->create([
             'slug' => 'wazony',
@@ -44,7 +46,7 @@ class ProductPageTest extends TestCase
             ->assertSee('239,00 zł')
             ->assertSee(['Wysokość', '24 cm', 'Grubość', '6 mm'])
             ->assertSee('Zmywarka tak, złoto tylko ręcznie')
-            ->assertSee('gratis od 400,00 zł')
+            ->assertSee('3–5 dni roboczych, gratis od 400,00 zł')
             ->assertDontSee('ostatnia sztuka');
 
         $this->get('/produkt/wazony?wariant='.$tall->id)
@@ -54,8 +56,9 @@ class ProductPageTest extends TestCase
 
     public function test_the_page_describes_every_variant_for_search_engines(): void
     {
+        $this->shippingSettings();
         $mugs = Category::factory()->create(['name' => 'Kubki i filiżanki', 'slug' => 'kubki-i-filizanki']);
-        $product = Product::factory()->create(['slug' => 'kubki-z-cytatem', 'name' => 'Kubki z cytatem', 'category_id' => $mugs->id]);
+        $product = Product::factory()->create(['slug' => 'kubki-z-cytatem', 'name' => 'Kubki z cytatem', 'category_id' => $mugs->id, 'stamp_enabled' => true]);
         $sold = ProductVariant::factory()->create(['product_id' => $product->id, 'label' => 'Królowa matka', 'price_gross' => 7900, 'stock' => 0]);
         ProductVariant::factory()->create(['product_id' => $product->id, 'label' => 'Twój tekst', 'price_gross' => 7900, 'stock' => null]);
 
@@ -75,6 +78,55 @@ class ProductPageTest extends TestCase
         $this->assertSame('https://schema.org/InStock', $group['hasVariant'][1]['offers']['availability']);
         $this->assertSame(url('/produkt/kubki-z-cytatem').'?wariant='.$sold->id, $group['hasVariant'][0]['offers']['url']);
         $this->assertSame(['Sklep', 'Kubki i filiżanki', 'Kubki z cytatem'], array_column($breadcrumbs['itemListElement'], 'name'));
+
+        // A mug from the shelf: both parcel options at their price, how long it takes, 14 days to return it.
+        $shelf = $group['hasVariant'][0]['offers'];
+        $this->assertSame(
+            [['InPost Paczkomat', '16.00', 'PLN', 'PL', [3, 5], [1, 2]], ['Kurier InPost', '22.00', 'PLN', 'PL', [3, 5], [1, 1]]],
+            array_map(fn (array $details) => [
+                $details['shippingLabel'],
+                $details['shippingRate']['value'],
+                $details['shippingRate']['currency'],
+                $details['shippingDestination']['addressCountry'],
+                [$details['deliveryTime']['handlingTime']['minValue'], $details['deliveryTime']['handlingTime']['maxValue']],
+                [$details['deliveryTime']['transitTime']['minValue'], $details['deliveryTime']['transitTime']['maxValue']],
+            ], $shelf['shippingDetails']),
+        );
+        $this->assertSame('DAY', $shelf['shippingDetails'][0]['deliveryTime']['handlingTime']['unitCode']);
+        $this->assertSame([
+            '@type' => 'MerchantReturnPolicy',
+            'applicableCountry' => 'PL',
+            'returnPolicyCategory' => 'https://schema.org/MerchantReturnFiniteReturnWindow',
+            'merchantReturnDays' => 14,
+            'returnMethod' => 'https://schema.org/ReturnByMail',
+            'returnFees' => 'https://schema.org/ReturnFeesCustomerResponsibility',
+        ], $shelf['hasMerchantReturnPolicy']);
+
+        // A mug with the customer's own text is made for them: no return and no promised dispatch time.
+        $ownText = $group['hasVariant'][1]['offers'];
+        $this->assertSame('https://schema.org/MerchantReturnNotPermitted', $ownText['hasMerchantReturnPolicy']['returnPolicyCategory']);
+        $this->assertArrayNotHasKey('merchantReturnDays', $ownText['hasMerchantReturnPolicy']);
+        $this->assertCount(2, $ownText['shippingDetails']);
+        $this->assertArrayNotHasKey('deliveryTime', $ownText['shippingDetails'][0]);
+    }
+
+    public function test_shipping_is_free_from_the_threshold_and_a_voucher_has_no_parcel_or_return_in_its_data(): void
+    {
+        $this->shippingSettings();
+        $vases = Category::factory()->create(['group' => CategoryGroup::Ceramics]);
+        $vase = Product::factory()->create(['slug' => 'patera', 'category_id' => $vases->id]);
+        ProductVariant::factory()->create(['product_id' => $vase->id, 'price_gross' => 42000, 'stock' => 1]);
+        $vouchers = Category::factory()->create(['group' => CategoryGroup::Workshops]);
+        $voucher = Product::factory()->create(['slug' => 'voucher-para', 'category_id' => $vouchers->id]);
+        ProductVariant::factory()->create(['product_id' => $voucher->id, 'price_gross' => 39000, 'stock' => null]);
+
+        $offer = $this->structuredData($this->get('/produkt/patera')->getContent())->firstWhere('@type', 'ProductGroup')['hasVariant'][0]['offers'];
+        $this->assertSame(['0.00', '0.00'], array_column(array_column($offer['shippingDetails'], 'shippingRate'), 'value'));
+
+        $offer = $this->structuredData($this->get('/produkt/voucher-para')->getContent())->firstWhere('@type', 'ProductGroup')['hasVariant'][0]['offers'];
+        $this->assertSame('390.00', $offer['price']);
+        $this->assertArrayNotHasKey('shippingDetails', $offer);
+        $this->assertArrayNotHasKey('hasMerchantReturnPolicy', $offer);
     }
 
     public function test_drafts_and_unknown_products_are_not_found(): void
@@ -151,5 +203,20 @@ class ProductPageTest extends TestCase
         ProductVariant::factory()->create(['product_id' => $product->id, 'stock' => 2]);
 
         return $product;
+    }
+
+    /**
+     * Delivery as seeded: parcel locker and courier, pickup at the studio, free from 400 zł, 3–5 days to dispatch.
+     */
+    private function shippingSettings(): void
+    {
+        Setting::create(['key' => 'free_shipping_threshold', 'value' => 40000]);
+        Setting::create(['key' => 'dispatch_days_min', 'value' => 3]);
+        Setting::create(['key' => 'dispatch_days_max', 'value' => 5]);
+        Setting::create(['key' => 'shipping_methods', 'value' => [
+            ['code' => 'parcel_locker', 'label' => 'InPost Paczkomat', 'note' => '1–2 dni robocze', 'price_gross' => 1600],
+            ['code' => 'courier', 'label' => 'Kurier InPost', 'note' => 'Do rąk, 1 dzień', 'price_gross' => 2200],
+            ['code' => 'studio_pickup', 'label' => 'Odbiór w pracowni', 'note' => 'Kraków, po umówieniu', 'price_gross' => 0],
+        ]]);
     }
 }

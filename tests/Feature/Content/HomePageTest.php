@@ -25,6 +25,8 @@ class HomePageTest extends TestCase
         Setting::create(['key' => 'home_hero_product', 'value' => 'patery']);
         Setting::create(['key' => 'home_hero_badge', 'value' => 'nowość']);
         Setting::create(['key' => 'text_home_kasia_heading', 'value' => 'Lubię łączyć surowość z miękkością.']);
+        Setting::create(['key' => 'dispatch_days_min', 'value' => 2]);
+        Setting::create(['key' => 'dispatch_days_max', 'value' => 4]);
         $category = Category::factory()->create();
 
         foreach (['Wazony', 'Patery', 'Talerze', 'Kadzielnice', 'Scrunchies'] as $position => $name) {
@@ -45,7 +47,8 @@ class HomePageTest extends TestCase
             ->assertSee('nowość')
             ->assertSeeInOrder(['Co teraz jest w pracowni', 'Wazony', 'Patery', 'Talerze', 'Kadzielnice'])
             ->assertDontSee('Scrunchies')
-            ->assertSee('Lubię łączyć surowość z miękkością.');
+            ->assertSee('Lubię łączyć surowość z miękkością.')
+            ->assertSeeInOrder(['2–4 dni', 'wysyłka zamówienia']);
     }
 
     public function test_the_workshops_section_shows_the_prices_and_leads_to_their_page(): void
@@ -65,6 +68,8 @@ class HomePageTest extends TestCase
     {
         $this->get('/')
             ->assertOk()
-            ->assertDontSee('Co teraz jest w pracowni');
+            ->assertDontSee('Co teraz jest w pracowni')
+            // Without days to dispatch in the panel the home page promises none.
+            ->assertDontSee('wysyłka zamówienia');
     }
 }

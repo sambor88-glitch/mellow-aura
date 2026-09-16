@@ -25,7 +25,7 @@ class FiringPageTest extends TestCase
         Setting::query()->where('key', 'contact_phone')->update(['value' => json_encode('+48 600 100 200')]);
         Setting::query()->where('key', 'text_kiln_note')->update(['value' => json_encode('Wsad zbieram raz w tygodniu, zwykle w czwartek.')]);
 
-        $this->get('/wypal-ceramiki-krakow')
+        $response = $this->get('/wypal-ceramiki-krakow')
             ->assertOk()
             ->assertSee('<title>Wypał ceramiki Kraków — cennik wypałów na zlecenie</title>', false)
             ->assertSee('<meta name="description" content="Wypał biskwitowy i na ostro do 1240°C, wypał złota, cała półka na wyłączność. Cennik od 40 zł za litr.">', false)
@@ -35,6 +35,16 @@ class FiringPageTest extends TestCase
             ->assertSeeInOrder(['Zgłoś wsad', 'href="https://wa.me/48600100200"', 'href="'.e(route('content.contact', ['temat' => 'Wypał moich prac'])).'"'], false);
 
         $this->get('/pracownia')->assertSeeInOrder(['Terminy i cennik', 'href="'.route('firing.index').'"', 'Wypalę Twoje prace'], false);
+
+        $service = $this->structuredData($response->getContent())->firstWhere('@type', 'Service');
+        $this->assertSame('Wypał ceramiki na zlecenie w Krakowie', $service['name']);
+        $this->assertSame([
+            ['Wypał biskwitowy do 1000°C', '40.00', 'l'],
+            ['Wypał na ostro do 1240°C', '60.00', 'l'],
+            ['Wypał złota, trzeci wypał', '35.00', 'szt.'],
+            ['Cała półka na wyłączność', '180.00', null],
+            ['Szkliwienie przeze mnie', '25.00', 'szt.'],
+        ], array_map(fn (array $offer) => [$offer['itemOffered']['name'], $offer['price'], $offer['priceSpecification']['unitText'] ?? null], $service['hasOfferCatalog']['itemListElement']));
     }
 
     public function test_the_panel_saves_the_price_list_and_the_sentences(): void

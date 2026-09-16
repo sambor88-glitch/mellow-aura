@@ -9,6 +9,7 @@
 @endphp
 
 <x-shared::layout title="Voucher na warsztaty ceramiczne w Krakowie | MellowAura" :description="$description" :canonical="route('vouchers.index')">
+    <x-slot:head>{!! $structuredData !!}</x-slot:head>
     <div class="mx-auto max-w-[1280px] animate-ma-view px-7 pt-14 pb-24">
         <div class="mb-5 text-[10.5px] tracking-[0.3em] text-brown uppercase">prezent &middot; voucher</div>
         <h1 class="mb-6 max-w-[16ch] font-serif text-[length:clamp(38px,5.2vw,68px)] leading-[1.04] font-light tracking-[-0.02em] text-balance">Voucher na warsztaty ceramiczne w Krakowie</h1>

@@ -4,6 +4,7 @@ namespace App\Modules\Content\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Settings\Settings;
+use App\Modules\Shared\Support\ServiceStructuredData;
 use Illuminate\View\View;
 
 /**
@@ -16,6 +17,7 @@ class B2bController extends Controller
     {
         return view('content::b2b', [
             'lead' => $settings->get('text_b2b_lead'),
+            'structuredData' => ServiceStructuredData::for('Ceramika dla kawiarni i restauracji', route('content.b2b'), $settings->get('text_b2b_lead')),
             'facts' => collect((array) $settings->get('b2b_facts', []))
                 ->filter(fn (mixed $fact) => is_array($fact) && filled($fact['title'] ?? null))
                 ->values(),

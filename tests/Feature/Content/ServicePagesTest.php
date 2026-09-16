@@ -27,7 +27,7 @@ class ServicePagesTest extends TestCase
 
     public function test_the_scarf_page_shows_the_texts_steps_and_prices_from_the_panel(): void
     {
-        $this->get('/z-twojej-apaszki')
+        $response = $this->get('/z-twojej-apaszki')
             ->assertOk()
             ->assertSee('<title>Opaska z Twojej apaszki — szyję z Twojej tkaniny</title>', false)
             ->assertSee('<link rel="canonical" href="'.route('content.scarf').'">', false)
@@ -42,6 +42,13 @@ class ServicePagesTest extends TestCase
             ->assertDontSee('239,00 zł')
             ->assertDontSee('id="przed-i-po"', false)
             ->assertDontSee('Szybciej na WhatsAppie');
+
+        $service = $this->structuredData($response->getContent())->firstWhere('@type', 'Service');
+        $this->assertSame(['Opaska z Twojej apaszki', route('content.scarf')], [$service['name'], $service['url']]);
+        $this->assertSame(
+            [['Opaska szeroka, pikowana', '119.00', 'PLN'], ['Scrunchie, rozmiar do wyboru', '69.00', 'PLN'], ['Zestaw: opaska i dwie scrunchies', '199.00', 'PLN']],
+            array_map(fn (array $offer) => [$offer['itemOffered']['name'], $offer['price'], $offer['priceCurrency']], $service['hasOfferCatalog']['itemListElement']),
+        );
     }
 
     public function test_the_imprint_page_shows_its_own_texts_and_the_parcel_locker_code(): void

@@ -57,8 +57,27 @@
                         @endif
                     </div>
                 @endforeach
+                <fieldset class="min-w-0 border-t border-sand-dark pt-3">
+                    <legend class="float-left mb-2 w-full text-[14px] text-graphite">Wysyłka rzeczy z półki</legend>
+                    <div class="clear-both flex flex-wrap items-center gap-2 text-[13.5px] text-label">
+                        @foreach (['dispatch_days_min' => 'od', 'dispatch_days_max' => 'do'] as $key => $word)
+                            <label for="dostawa-{{ str_replace('_', '-', $key) }}">{{ $word }}</label>
+                            <input id="dostawa-{{ str_replace('_', '-', $key) }}" name="{{ $key }}" value="{{ old($key, $dispatchDays[$key]) }}" inputmode="numeric"
+                                   @if ($shippingErrors->has($key)) aria-invalid="true" aria-describedby="dostawa-dni-error" @endif
+                                   @class([
+                                       'min-h-11 w-[60px] min-w-0 rounded-[4px] border bg-white px-2.5 text-right text-[14px] text-ink focus:border-ink',
+                                       'border-error' => $shippingErrors->has($key),
+                                       'border-line' => ! $shippingErrors->has($key),
+                                   ])>
+                        @endforeach
+                        <span>dni roboczych</span>
+                    </div>
+                    @if ($shippingErrors->has('dispatch_days_min') || $shippingErrors->has('dispatch_days_max'))
+                        <p id="dostawa-dni-error" class="mt-1.5 text-[13px] text-error">{{ $shippingErrors->first('dispatch_days_min') ?: $shippingErrors->first('dispatch_days_max') }}</p>
+                    @endif
+                </fieldset>
             </div>
-            <p class="{{ $hint }}">Próg darmowej wysyłki od razu zmienia pasek w koszyku i dopiski „gratis od” na stronie. Puste pole wyłącza darmową wysyłkę, a puste pakowanie znika ze strony zestawów.</p>
+            <p class="{{ $hint }}">Próg darmowej wysyłki od razu zmienia pasek w koszyku i dopiski „gratis od” na stronie. Puste pole wyłącza darmową wysyłkę, a puste pakowanie znika ze strony zestawów. Czas wysyłki widać na karcie produktu, na stronie głównej, po zamówieniu i w danych dla Google.</p>
             <button class="{{ $button }}">Zapisz dostawę</button>
         </form>
 

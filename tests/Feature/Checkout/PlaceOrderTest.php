@@ -59,6 +59,8 @@ class PlaceOrderTest extends TestCase
 
     public function test_paying_saves_the_order_with_copies_of_names_prices_and_the_mug_text(): void
     {
+        Setting::create(['key' => 'dispatch_days_min', 'value' => 3]);
+        Setting::create(['key' => 'dispatch_days_max', 'value' => 5]);
         $vase = $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3);
         $mug = $this->variant('Kubki z cytatem', 'Twój tekst', 7900, stock: null, product: ['stamp_enabled' => true]);
         $this->postJson('/koszyk', ['variant_id' => $vase->id]);
@@ -92,7 +94,8 @@ class PlaceOrderTest extends TestCase
             ->assertOk()
             ->assertSee('Dziękuję. Pakuję.')
             ->assertSee($order->number)
-            ->assertSee('334,00 zł');
+            ->assertSee('334,00 zł')
+            ->assertSeeInOrder(['Wysyłka', '3–5 dni roboczych']);
 
         $this->get('/zamowienie')->assertSee('Nic tu jeszcze nie ma');
     }

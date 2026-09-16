@@ -11,6 +11,7 @@
 @endphp
 
 <x-shared::layout title="Ceramika dla kawiarni i restauracji | MellowAura" :description="$description" :canonical="route('content.b2b')">
+    <x-slot:head>{!! $structuredData !!}</x-slot:head>
     <div class="animate-ma-view">
         <div class="focus-on-dark bg-ink text-divider">
             <div class="mx-auto flex max-w-[1280px] flex-wrap items-center gap-12 px-7 py-[72px]">

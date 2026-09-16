@@ -36,6 +36,16 @@ class WorkshopsPageTest extends TestCase
             ->assertDontSee('Najbliższe terminy');
 
         $this->assertMatchesRegularExpression('/href="'.preg_quote(route('workshops.index'), '/').'"\s+aria-current="page"/', $response->getContent());
+
+        $service = $this->structuredData($response->getContent())->firstWhere('@type', 'Service');
+        $this->assertSame(['Warsztaty ceramiczne w Krakowie', route('workshops.index'), url('/').'/#business', 'Kraków'], [$service['name'], $service['url'], $service['provider']['@id'], $service['areaServed']['name']]);
+        $this->assertSame([
+            ['Lepienie z ręki', '220.00', 'os.'],
+            ['Szkliwienie i malowanie', '160.00', 'os.'],
+            ['Sesja indywidualna 1:1', '420.00', 'os.'],
+            ['Warsztat dla pary', '390.00', 'para'],
+            ['Rodzinnie z dzieckiem', '260.00', 'dorosły + dziecko'],
+        ], $this->serviceOffers($service));
     }
 
     public function test_a_workshop_without_a_name_or_price_and_an_empty_fact_are_left_out(): void
@@ -76,5 +86,15 @@ class WorkshopsPageTest extends TestCase
         foreach ($values as $key => $value) {
             Setting::query()->where('key', $key)->update(['value' => json_encode($value)]);
         }
+    }
+
+    /**
+     * The offers in a page's Service markup as [name, price, unit].
+     *
+     * @return list<array{string, string, ?string}>
+     */
+    private function serviceOffers(array $service): array
+    {
+        return array_map(fn (array $offer) => [$offer['itemOffered']['name'], $offer['price'], $offer['priceSpecification']['unitText'] ?? null], $service['hasOfferCatalog']['itemListElement']);
     }
 }

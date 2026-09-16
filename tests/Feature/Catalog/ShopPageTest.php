@@ -50,8 +50,15 @@ class ShopPageTest extends TestCase
         $this->product('Kubki malowane ręcznie', $mugs, [7900]);
         $this->product('Jedwabne opaski', $silk, [8900]);
 
+        Setting::create(['key' => 'dispatch_days_min', 'value' => 3]);
+        Setting::create(['key' => 'dispatch_days_max', 'value' => 5]);
+
+        $this->get('/sklep')->assertSee('<meta name="description" content="Kubki, talerze, wazony, patery, kadzielnice oraz jedwabne scrunchies i opaski. Każda sztuka jedna, wysyłka w 3–5 dni, BLIK.">', false);
+
+        // Without a description from the panel each category names what is in it.
         $this->get('/sklep/jedwab')
             ->assertOk()
+            ->assertSee('<meta name="description" content="Jedwab z pracowni w Krakowie: jedwabne opaski. Ręczna robota, wysyłka w 3–5 dni.">', false)
             ->assertSee('<title>Jedwab — rękodzieło z Krakowa | MellowAura</title>', false)
             ->assertSee('<link rel="canonical" href="'.url('/sklep/jedwab').'">', false)
             ->assertSee('Jedwabne opaski')
