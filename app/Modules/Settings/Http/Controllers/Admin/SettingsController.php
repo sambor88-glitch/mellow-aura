@@ -13,8 +13,8 @@ use Illuminate\View\View;
 
 /**
  * The panel's „Ustawienia”, like the prototype: delivery and fees, the studio's details and the material
- * tiles. Each card saves on its own, so a mistake in one does not hold back the others. Fees for features
- * not built yet (gift wrapping, workshop deposit) join the page together with those features.
+ * tiles. Each card saves on its own, so a mistake in one does not hold back the others. The workshop
+ * deposit joins the page together with workshop booking.
  */
 class SettingsController extends Controller
 {
@@ -22,6 +22,7 @@ class SettingsController extends Controller
     {
         return view('settings::admin.edit', [
             'freeFrom' => $settings->get('free_shipping_threshold'),
+            'giftWrapPrice' => $settings->get('gift_wrap_price'),
             'shippingMethods' => collect((array) $settings->get('shipping_methods', []))
                 ->filter(fn (mixed $method) => is_array($method) && filled($method['code'] ?? null))
                 ->values(),

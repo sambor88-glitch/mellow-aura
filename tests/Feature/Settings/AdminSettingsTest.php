@@ -35,7 +35,7 @@ class AdminSettingsTest extends TestCase
             ->get('/panel/ustawienia')
             ->assertOk()
             ->assertSee('href="'.route('admin.settings.edit').'"', false)
-            ->assertSeeInOrder(['Dostawa i opłaty', 'Darmowa wysyłka od', 'value="400"', 'InPost Paczkomat', 'value="16"'], false)
+            ->assertSeeInOrder(['Dostawa i opłaty', 'Darmowa wysyłka od', 'value="400"', 'InPost Paczkomat', 'value="16"', 'Pakowanie na prezent', 'value="12"'], false)
             ->assertSeeInOrder(['Dane pracowni', 'value="Kraków, okolice Błoń Krakowskich"', 'Dokładny adres'], false)
             ->assertSeeInOrder(['kafelki na „O mnie”', 'value="Glina"', 'Kamionka i szamot piaskowy'], false);
     }
@@ -61,6 +61,21 @@ class AdminSettingsTest extends TestCase
 
         $this->put('/panel/ustawienia/dostawa', ['free_shipping_threshold' => '', 'shipping' => ['parcel_locker' => '16']]);
         $this->assertNull(Setting::find('free_shipping_threshold')->value);
+        $this->assertSame(1200, Setting::find('gift_wrap_price')->value);
+    }
+
+    public function test_gift_wrapping_gets_its_price_here_and_an_empty_price_turns_it_off(): void
+    {
+        $this->actingAs($this->owner)
+            ->put('/panel/ustawienia/dostawa', ['free_shipping_threshold' => '400', 'gift_wrap_price' => '14,50', 'shipping' => ['parcel_locker' => '16']])
+            ->assertRedirect('/panel/ustawienia#dostawa');
+        $this->assertSame(1450, Setting::find('gift_wrap_price')->value);
+
+        $this->put('/panel/ustawienia/dostawa', ['free_shipping_threshold' => '400', 'gift_wrap_price' => 'dwanaście', 'shipping' => ['parcel_locker' => '16']])
+            ->assertSessionHasErrorsIn('dostawa', ['gift_wrap_price' => 'Wpisz cenę, np. 12 — puste pole wyłącza pakowanie na prezent']);
+
+        $this->put('/panel/ustawienia/dostawa', ['free_shipping_threshold' => '400', 'gift_wrap_price' => '', 'shipping' => ['parcel_locker' => '16']]);
+        $this->assertNull(Setting::find('gift_wrap_price')->value);
     }
 
     public function test_studio_details_are_tidied_up_and_the_address_never_reaches_the_site(): void

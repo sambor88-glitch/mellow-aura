@@ -18,6 +18,7 @@ class Menu
         return array_values(array_filter([
             ['label' => 'Zamówienia', 'route' => 'admin.orders.index', 'active' => 'admin.orders.*', 'description' => 'Kto zapłacił, co wysłać i jaki napis wbić w glinę.'],
             ['label' => 'Produkty', 'route' => 'admin.products.index', 'active' => 'admin.products.*', 'description' => 'Nazwy, rozmiary, ceny, stany i zdjęcia.'],
+            ['label' => 'Prezenty i zestawy', 'route' => 'admin.gifts.edit', 'active' => 'admin.gifts.*', 'description' => 'Zestawy z rabatem, teksty ich strony i vouchery.'],
             ['label' => 'Ustawienia', 'route' => 'admin.settings.edit', 'active' => 'admin.settings.*', 'description' => 'E-mail, próg darmowej wysyłki i kod Paczkomatu.'],
         ], fn (array $section) => Route::has($section['route'])));
     }

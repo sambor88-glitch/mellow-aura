@@ -30,9 +30,12 @@ class MarkOrderPaid
 
             // Variants in id order, so two payments that share one always lock rows in the same order.
             foreach ($order->items()->orderBy('product_variant_id')->get() as $item) {
-                $missing = $item->product_variant_id === null
-                    ? $item->quantity
-                    : ($this->decrementStock)($item->product_variant_id, $item->quantity);
+                $missing = match (true) {
+                    $item->is_made_to_order => 0,
+                    // The size was removed from the shop after the order was placed.
+                    $item->product_variant_id === null => $item->quantity,
+                    default => ($this->decrementStock)($item->product_variant_id, $item->quantity),
+                };
 
                 if ($missing > 0) {
                     $item->update(['missing_quantity' => $missing]);

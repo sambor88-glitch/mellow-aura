@@ -35,6 +35,9 @@ export default {
         this.trigger = null;
     },
 
+    /*
+     * Posts a cart form and says whether the cart took it, so a page can switch a button afterwards.
+     */
     async send(form) {
         const focusKey = document.activeElement?.dataset.focus;
         let response = null;
@@ -54,7 +57,7 @@ export default {
         if (!response?.ok || !data) {
             this.say(response?.status === 422 && data?.message ? data.message : failure);
 
-            return;
+            return false;
         }
 
         document.getElementById('cart-content').innerHTML = data.content;
@@ -67,6 +70,8 @@ export default {
         }
 
         this.say(data.notice);
+
+        return true;
     },
 
     say(message) {

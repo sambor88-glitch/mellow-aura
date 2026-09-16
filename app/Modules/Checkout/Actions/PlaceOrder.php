@@ -46,6 +46,7 @@ class PlaceOrder
             foreach ($lines->flatMap(fn (CartLine $line) => $line->orderItems()) as $item) {
                 $order->items()->create([
                     'product_variant_id' => $item->variantId,
+                    'is_made_to_order' => $item->variantId === null,
                     'product_name' => $item->name,
                     'variant_label' => $item->label,
                     'quantity' => $item->quantity,

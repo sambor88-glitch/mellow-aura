@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
-    'product_variant_id', 'product_name', 'variant_label', 'quantity', 'missing_quantity', 'unit_price_gross',
+    'product_variant_id', 'product_name', 'variant_label', 'quantity', 'missing_quantity', 'is_made_to_order', 'unit_price_gross',
     'custom_text', 'custom_glaze', 'recipient_name', 'dedication',
 ])]
 class OrderItem extends Model
@@ -44,6 +44,7 @@ class OrderItem extends Model
         return [
             'quantity' => 'integer',
             'missing_quantity' => 'integer',
+            'is_made_to_order' => 'boolean',
             'unit_price_gross' => 'integer',
         ];
     }

@@ -12,6 +12,7 @@
             $method['label'] ?? $method['code'],
             old('shipping.'.$method['code'], Money::input((int) ($method['price_gross'] ?? 0))),
         ])->all(),
+        ['gift_wrap_price', 'gift_wrap_price', 'Pakowanie na prezent', old('gift_wrap_price', $giftWrapPrice === null ? null : Money::input((int) $giftWrapPrice))],
     ];
 
     $savedTiles = array_values((array) old('tiles', $tiles));
@@ -57,7 +58,7 @@
                     </div>
                 @endforeach
             </div>
-            <p class="{{ $hint }}">Próg darmowej wysyłki od razu zmienia pasek w koszyku i dopiski „gratis od” na stronie. Puste pole wyłącza darmową wysyłkę.</p>
+            <p class="{{ $hint }}">Próg darmowej wysyłki od razu zmienia pasek w koszyku i dopiski „gratis od” na stronie. Puste pole wyłącza darmową wysyłkę, a puste pakowanie znika ze strony zestawów.</p>
             <button class="{{ $button }}">Zapisz dostawę</button>
         </form>
 
