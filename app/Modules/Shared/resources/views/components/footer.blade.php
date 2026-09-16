@@ -35,7 +35,7 @@
         'WhatsApp' => $whatsApp,
     ]);
 @endphp
-<footer class="focus-on-dark mt-auto bg-ink text-on-dark">
+<footer class="focus-on-dark mt-auto bg-ink text-on-dark print:hidden">
     <div class="mx-auto flex max-w-[1280px] flex-wrap gap-12 px-7 pt-16 pb-[30px]">
         <div class="min-w-0 flex-[1_1_280px]">
             <div class="mb-3.5 font-serif text-[25px] tracking-[0.16em] text-sand uppercase">mellowaura</div>
@@ -102,8 +102,9 @@
             @if (Route::has('content.faq'))
                 <a href="{{ route('content.faq') }}" class="text-label-dark hover:text-rose">FAQ</a>
             @endif
-            <span>Regulamin</span>
-            <span>Polityka prywatności</span>
+            @foreach (array_filter([$link('Regulamin', 'content.terms'), $link('Polityka prywatności', 'content.privacy')]) as [$label, $href])
+                <a href="{{ $href }}" class="text-label-dark hover:text-rose">{{ $label }}</a>
+            @endforeach
             <span>BLIK &middot; Przelewy24 &middot; karta</span>
         </div>
     </div>

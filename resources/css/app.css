@@ -192,6 +192,99 @@
 }
 
 /*
+ * The terms of sale and the privacy policy: numbered paragraphs with hanging numbers, tables that scroll
+ * sideways on a phone, and draft gaps washed in rose.
+ */
+@layer components {
+    .legal-document {
+        color: var(--color-graphite);
+        font-size: 15.5px;
+        line-height: 1.65;
+    }
+
+    .legal-document .sec {
+        margin: 40px 0 14px;
+        font-family: var(--font-serif);
+        font-size: 23px;
+        line-height: 1.25;
+        color: var(--color-ink);
+        scroll-margin-top: 110px;
+    }
+
+    .legal-document .sec:first-child {
+        margin-top: 0;
+    }
+
+    .legal-document p {
+        margin: 0 0 10px;
+        text-wrap: pretty;
+    }
+
+    .legal-document .np,
+    .legal-document .sp {
+        display: grid;
+        column-gap: 8px;
+    }
+
+    .legal-document .np {
+        grid-template-columns: 2em minmax(0, 1fr);
+    }
+
+    .legal-document .sp {
+        grid-template-columns: 1.7em minmax(0, 1fr);
+        margin-left: 2em;
+        margin-bottom: 6px;
+    }
+
+    .legal-document .n {
+        color: var(--color-brown);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .legal-document mark {
+        padding: 1px 4px;
+        border-radius: 3px;
+        background: color-mix(in srgb, var(--color-rose) 34%, transparent);
+        color: var(--color-ink);
+        box-decoration-break: clone;
+        -webkit-box-decoration-break: clone;
+    }
+
+    .legal-document a {
+        overflow-wrap: anywhere;
+    }
+
+    .legal-document .table-wrap {
+        overflow-x: auto;
+        margin: 6px 0 18px;
+        border: 1px solid var(--color-divider);
+        border-radius: 4px;
+    }
+
+    .legal-document table {
+        width: 100%;
+        min-width: 520px;
+        border-collapse: collapse;
+        font-size: 13.5px;
+        line-height: 1.5;
+    }
+
+    .legal-document th {
+        padding: 10px 12px;
+        background: var(--color-sand-dark);
+        text-align: left;
+        font-weight: 500;
+        vertical-align: bottom;
+    }
+
+    .legal-document td {
+        padding: 10px 12px;
+        border-top: 1px solid var(--color-divider);
+        vertical-align: top;
+    }
+}
+
+/*
  * Navy focus disappears on ink (1.5:1), so a dark surface such as the footer gives everything inside a linen outline (13.3:1).
  * Put it on the dark surface itself, never on the parent of a light panel.
  */

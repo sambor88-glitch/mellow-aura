@@ -9,7 +9,7 @@
         ['Kontakt', 'content.contact', 'content.contact'],
     ];
 @endphp
-<div class="sticky top-0 z-60 border-b border-divider bg-sand/94 backdrop-blur-[14px]">
+<div class="sticky top-0 z-60 border-b border-divider bg-sand/94 backdrop-blur-[14px] print:hidden">
     <div class="mx-auto flex max-w-[1280px] flex-wrap items-center gap-5 px-7 py-4">
         <a href="{{ url('/') }}" class="flex flex-col gap-0.5 text-ink hover:text-ink">
             <span class="font-serif text-[25px] leading-none tracking-[0.16em] uppercase">mellowaura</span>
