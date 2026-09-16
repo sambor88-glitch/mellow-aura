@@ -27,11 +27,11 @@ class CustomOrdersPageTest extends TestCase
         $this->get('/zamowienia-indywidualne')
             ->assertOk()
             ->assertSee('<title>Zamówienia indywidualne — ceramika na zamówienie</title>', false)
-            ->assertSee('realizacja około czterech tygodni.">', false)
+            ->assertSee('Bezpłatny szkic i wycena w pięć dni, płatność BLIK-iem, realizacja około czterech tygodni.">', false)
             ->assertSee('<link rel="canonical" href="'.route('custom-orders.index').'">', false)
             ->assertSeeInOrder(['zamówienia indywidualne', 'Zaprojektujmy<br>to razem', 'Serwis na wesele, kubek z tekstem'], false)
-            ->assertSeeInOrder(['Piszesz, czego szukasz', 'Dostajesz szkic i cenę', 'Do pięciu dni roboczych.', 'Zaliczka BLIK-iem', 'Lepienie, dwa wypały, wysyłka', 'Około czterech tygodni.'])
-            ->assertDontSee('40%')
+            ->assertSeeInOrder(['Piszesz, czego szukasz', 'Dostajesz szkic i cenę', 'Do pięciu dni roboczych i za darmo.', 'Akceptujesz i płacisz BLIK-iem', 'Całość po akceptacji szkicu i ceny.', 'w dwóch ratach', 'Lepienie, dwa wypały, wysyłka', 'Przed wysyłką dostajesz zdjęcia gotowej pracy.', 'robię od nowa albo oddaję całą wpłatę.'])
+            ->assertDontSee('Zaliczka')
             ->assertSee('alt="Kubek z wbijanym napisem"', false)
             ->assertSeeInOrder(['Opowiedz o pomyśle', 'Zdjęcia inspiracji — najłatwiej wysłać je na WhatsAppie', 'href="https://wa.me/48600100200"', 'Napisz na WhatsAppie', 'href="'.e(route('content.contact', ['temat' => 'Zamówienie indywidualne'])).'"', 'Napisz przez formularz', 'Woli Ci się pisać na WhatsAppie?'], false);
     }

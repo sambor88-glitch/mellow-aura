@@ -48,6 +48,30 @@ class KasiaFirstAnswersMigrationTest extends TestCase
         $this->assertSame('gotowe w 5 tygodni', Setting::find('text_mug_lead_time')->value);
     }
 
+    public function test_custom_orders_are_paid_in_full_and_an_edited_step_stays(): void
+    {
+        $this->seed(SettingsSeeder::class);
+        $migration = require base_path('app/Modules/Settings/Database/Migrations/2026_09_16_190000_pay_custom_orders_in_full.php');
+
+        $this->settings(['custom_order_steps' => [
+            ['title' => 'Dostajesz szkic i cenę', 'text' => 'Do pięciu dni roboczych. Jeśli coś jest technicznie niemożliwe, powiem to od razu.'],
+            ['title' => 'Zaliczka BLIK-iem', 'text' => 'Resztę płacisz po zobaczeniu zdjęć gotowej pracy, przed wysyłką.'],
+            ['title' => 'Lepienie', 'text' => 'Mój własny opis.'],
+        ]]);
+        $migration->up();
+
+        $steps = Setting::find('custom_order_steps')->value;
+        $this->assertSame('Do pięciu dni roboczych i za darmo. Jeśli coś jest technicznie niemożliwe, powiem to od razu.', $steps[0]['text']);
+        $this->assertSame('Akceptujesz i płacisz BLIK-iem', $steps[1]['title']);
+        $this->assertStringStartsWith('Całość po akceptacji szkicu i ceny.', $steps[1]['text']);
+        $this->assertSame(['Lepienie', 'Mój własny opis.'], [$steps[2]['title'], $steps[2]['text']]);
+
+        $this->get('/regulamin')
+            ->assertSee('zaakceptuje propozycję wiadomością i zapłaci całą cenę')
+            ->assertSee('Sprzedawca przesyła Klientowi zdjęcia gotowej rzeczy')
+            ->assertDontSee('kwota albo procent ceny');
+    }
+
     public function test_fresh_seed_already_has_the_answers(): void
     {
         $this->seed(SettingsSeeder::class);
