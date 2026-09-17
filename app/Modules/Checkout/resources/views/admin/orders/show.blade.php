@@ -62,7 +62,7 @@
                         @endif
                         @if ($item->missing_quantity > 0)
                             <p class="mt-2.5 rounded-[4px] border border-alert-line bg-alert px-3.5 py-2.5 text-[13.5px] text-alert-text">
-                                Brakuje {{ $item->missing_quantity }} szt. — ktoś kupił ostatnią sztukę chwilę wcześniej. Napisz do klientki, czy zrobisz kolejną, czy oddasz pieniądze.
+                                Brakuje {{ $item->missing_quantity }} szt. — ktoś kupił ostatnią sztukę chwilę wcześniej. Klientka dostała maila, że zwrócisz jej {{ Money::format($item->unit_price_gross * $item->missing_quantity) }} najpóźniej w ciągu 14 dni. Podobną sztukę zrób, jeśli o nią poprosi.
                             </p>
                         @endif
                     </div>

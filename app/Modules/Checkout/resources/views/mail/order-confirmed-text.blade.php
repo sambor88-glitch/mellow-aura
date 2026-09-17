@@ -5,7 +5,7 @@ Dziękuję. Pakuję.
 Zamówienie {!! $order->number !!} jest opłacone. Zanim paczka wyjdzie, wyślę Ci jej zdjęcie — każdą sztukę zawijam osobno.
 @if ($missing->isNotEmpty())
 
-Ktoś kupił ostatnią sztukę chwilę przed Tobą: {!! $missing->map(fn ($item) => $item->product_name.' ('.$item->variant_label.')')->join(', ') !!}. Napiszę do Ciebie, żeby ustalić, co dalej — mogę zrobić kolejną albo oddać pieniądze.
+Ktoś kupił ostatnią sztukę chwilę przed zaksięgowaniem Twojej płatności: {!! $missing->map(fn ($item) => $item->product_name.' ('.$item->variant_label.')')->join(', ') !!}. Za brakujące sztuki zwrócę Ci {{ Money::format($refund) }} — najpóźniej w ciągu 14 dni. Jeśli wolisz podobną sztukę na zamówienie, odpisz na tego maila.
 @endif
 
 TWOJE ZAMÓWIENIE

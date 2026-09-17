@@ -6,7 +6,7 @@ Opłacone: {{ Money::format($order->total_gross) }}, {!! $order->payment_method-
 Odpowiedź na tego maila trafi prosto do osoby, która zamówiła.
 @if ($missing->isNotEmpty())
 
-Brakuje na półce: {!! $missing->map(fn ($item) => $item->product_name.' ('.$item->variant_label.', '.$item->missing_quantity.' szt.)')->join(', ') !!}. Ktoś zapłacił za tę sztukę chwilę wcześniej. Napisz, czy zrobisz kolejną, czy oddajesz pieniądze.
+{!! $nothingLeft ? 'Nic z tego zamówienia nie zostało na półce' : 'Brakuje na półce' !!}: {!! $missing->map(fn ($item) => $item->product_name.' ('.$item->variant_label.', '.$item->missing_quantity.' szt.)')->join(', ') !!}. Ktoś zapłacił za to chwilę wcześniej. Klientka dostała maila, że zwrócisz jej {{ Money::format($refund) }} najpóźniej w ciągu 14 dni. Podobną sztukę zrób, jeśli o nią poprosi.
 @endif
 
 DO SPAKOWANIA

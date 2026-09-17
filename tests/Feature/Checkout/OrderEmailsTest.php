@@ -10,7 +10,9 @@ use App\Modules\Checkout\Actions\MarkOrderPaid;
 use App\Modules\Checkout\Actions\PlaceOrder;
 use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Mail\NewOrderReceived;
+use App\Modules\Checkout\Mail\OrderAwaitingPayment;
 use App\Modules\Checkout\Mail\OrderConfirmed;
+use App\Modules\Checkout\Mail\OrderUnavailable;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Settings\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -51,7 +53,9 @@ class OrderEmailsTest extends TestCase
 
         $order = Order::sole();
         Mail::assertSent(OrderConfirmed::class, fn (OrderConfirmed $mail) => $mail->hasTo('ania@example.com', 'Anna Nowak') && $mail->order->is($order));
-        Mail::assertSentCount(2);
+        // The summary right after ordering, the confirmation once paid and Kasia's notice.
+        Mail::assertSent(OrderAwaitingPayment::class, fn (OrderAwaitingPayment $mail) => $mail->hasTo('ania@example.com', 'Anna Nowak') && $mail->order->is($order));
+        Mail::assertSentCount(3);
 
         $mail = new OrderConfirmed($order);
         $mail->assertHasSubject('Zamówienie '.$order->number.' jest opłacone');
@@ -145,26 +149,73 @@ class OrderEmailsTest extends TestCase
         Mail::assertSent(NewOrderReceived::class, 1);
     }
 
-    public function test_a_piece_someone_else_paid_for_first_is_explained_in_both_mails(): void
+    public function test_the_summary_says_the_contract_comes_with_the_payment_and_gives_the_bank_details_for_a_transfer(): void
+    {
+        Setting::create(['key' => 'company_name', 'value' => 'MellowAura Katarzyna Samborska']);
+        Setting::create(['key' => 'company_bank_account', 'value' => '12 3456 7890 1234 5678 9012 3456']);
+        $order = $this->placeOrder($this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3), ['payment_method' => 'bank_transfer']);
+
+        $mail = new OrderAwaitingPayment($order->load('items'));
+        $mail->assertHasSubject('Podsumowanie zamówienia '.$order->number);
+        $mail->assertSeeInOrderInHtml(['Dziękuję za zamówienie', $order->number, 'czeka na płatność', 'Z tą chwilą zawieramy umowę.', 'Dane do przelewu', 'Kwota: 255,00 zł', 'Tytuł: '.$order->number, 'Rachunek: 12 3456 7890 1234 5678 9012 3456', 'Odbiorca: MellowAura Katarzyna Samborska', 'Wazony', '239,00 zł', 'Płatność: Przelew tradycyjny']);
+        $mail->assertSeeInText('Kwota: 255,00 zł');
+
+        $blik = new OrderAwaitingPayment($this->placeOrder($this->variant('Patery', 'Duża', 32900, stock: 1))->load('items'));
+        $blik->assertDontSeeInHtml('Dane do przelewu');
+        $blik->assertSeeInHtml('Płatność: BLIK');
+    }
+
+    public function test_a_piece_someone_else_paid_for_first_comes_back_as_money_in_the_confirmation(): void
     {
         Mail::fake();
         Setting::create(['key' => 'contact_email', 'value' => 'kasia@example.com']);
-        $mug = $this->variant('Kadzielnice', 'Złoty kołnierz', 9900, stock: 1);
-        $first = $this->placeOrder($mug);
-        $second = $this->placeOrder($mug);
+        $holder = $this->variant('Kadzielnice', 'Złoty kołnierz', 9900, stock: 1);
+        $vase = $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3);
+        $first = $this->placeOrder($holder);
+        $second = app(PlaceOrder::class)(collect([
+            'v'.$holder->id => new ProductLine('v'.$holder->id, 1, $holder->load('product')),
+            'v'.$vase->id => new ProductLine('v'.$vase->id, 1, $vase->load('product')),
+        ]), ['name' => 'Anna Nowak', 'email' => 'ania@example.com', 'phone' => '600100200', 'shipping_method' => 'parcel_locker', 'payment_method' => 'blik'], 1600);
 
         app(MarkOrderPaid::class)($first, 'test-first');
         app(MarkOrderPaid::class)($second, 'test-second');
 
+        Mail::assertSent(OrderConfirmed::class, fn (OrderConfirmed $mail) => $mail->order->is($second));
         $second->refresh();
         (new OrderConfirmed($second))
-            ->assertSeeInHtml('Ktoś kupił ostatnią sztukę chwilę przed Tobą:')
+            ->assertSeeInHtml('Ktoś kupił ostatnią sztukę chwilę przed zaksięgowaniem Twojej płatności:')
             ->assertSeeInHtml('Kadzielnice (Złoty kołnierz).')
-            ->assertSeeInText('Ktoś kupił ostatnią sztukę chwilę przed Tobą: Kadzielnice (Złoty kołnierz).');
+            ->assertSeeInHtml('Za brakujące sztuki zwrócę Ci 99,00 zł — najpóźniej w ciągu 14 dni.')
+            ->assertSeeInText('Za brakujące sztuki zwrócę Ci 99,00 zł — najpóźniej w ciągu 14 dni. Jeśli wolisz podobną sztukę na zamówienie, odpisz na tego maila.');
         (new NewOrderReceived($second))
             ->assertSeeInHtml('Brakuje na półce:')
-            ->assertSeeInHtml('Kadzielnice (Złoty kołnierz, 1 szt.)');
+            ->assertSeeInHtml('Kadzielnice (Złoty kołnierz, 1 szt.)')
+            ->assertSeeInHtml('Klientka dostała maila, że zwrócisz jej 99,00 zł najpóźniej w ciągu 14 dni.');
         (new OrderConfirmed($first->refresh()))->assertDontSeeInHtml('Ktoś kupił ostatnią sztukę');
+    }
+
+    public function test_an_order_with_nothing_left_gets_the_whole_payment_back_instead_of_a_confirmation(): void
+    {
+        Mail::fake();
+        Setting::create(['key' => 'contact_email', 'value' => 'kasia@example.com']);
+        $holder = $this->variant('Kadzielnice', 'Złoty kołnierz', 9900, stock: 1);
+        $first = $this->placeOrder($holder);
+        $second = $this->placeOrder($holder);
+
+        app(MarkOrderPaid::class)($first, 'test-first');
+        app(MarkOrderPaid::class)($second, 'test-second');
+
+        Mail::assertSent(OrderUnavailable::class, fn (OrderUnavailable $mail) => $mail->order->is($second) && $mail->hasTo('ania@example.com'));
+        Mail::assertNotSent(OrderConfirmed::class, fn (OrderConfirmed $mail) => $mail->order->is($second));
+
+        $second->refresh();
+        (new OrderUnavailable($second))
+            ->assertHasSubject('Zamówienie '.$second->number.' — zwrócę całą wpłatę')
+            ->assertSeeInOrderInHtml(['Przepraszam — tego już nie ma na półce', 'Kadzielnice (Złoty kołnierz)', 'nie wyślę zamówienia '.$second->number, 'Zwrócę Ci całą wpłatę', '115,00 zł', 'najpóźniej w ciągu 14 dni', 'Jeśli wolisz podobną sztukę na zamówienie, odpisz na tego maila.'])
+            ->assertSeeInText('Zwrócę Ci całą wpłatę — 115,00 zł — najpóźniej w ciągu 14 dni.');
+        (new NewOrderReceived($second))
+            ->assertSeeInHtml('Nic z tego zamówienia nie zostało na półce:')
+            ->assertSeeInHtml('zwrócisz jej 115,00 zł');
     }
 
     public function test_a_pickup_gets_no_address_and_the_customers_text_is_escaped(): void

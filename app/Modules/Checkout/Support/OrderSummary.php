@@ -2,6 +2,7 @@
 
 namespace App\Modules\Checkout\Support;
 
+use App\Modules\Checkout\Enums\PaymentMethod;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Checkout\Models\OrderItem;
 use App\Modules\Settings\Settings;
@@ -20,6 +21,9 @@ class OrderSummary
      *     order: Order,
      *     items: Collection<int, OrderItem>,
      *     missing: Collection<int, OrderItem>,
+     *     refund: int,
+     *     nothingLeft: bool,
+     *     bankTransfer: ?array{account: ?string, recipient: ?string},
      *     subtotal: int,
      *     shippingLabel: string,
      *     delivery: string,
@@ -31,11 +35,21 @@ class OrderSummary
     public function for(Order $order): array
     {
         $items = $order->items->sortBy('id')->values();
+        $missing = $items->filter(fn (OrderItem $item) => $item->missing_quantity > 0)->values();
+        // Gift wrapping has no product and no text, so on its own it is nothing to send.
+        $toSend = $items->filter(fn (OrderItem $item) => $item->quantity > $item->missing_quantity && ($item->product_variant_id !== null || $item->custom_text !== null));
+        $nothingLeft = $missing->isNotEmpty() && $toSend->isEmpty();
 
         return [
             'order' => $order,
             'items' => $items,
-            'missing' => $items->filter(fn (OrderItem $item) => $item->missing_quantity > 0)->values(),
+            'missing' => $missing,
+            // What comes back for the pieces someone else bought first; the whole payment when nothing is left to send.
+            'refund' => $nothingLeft ? $order->total_gross : (int) $missing->sum(fn (OrderItem $item) => $item->unit_price_gross * $item->missing_quantity),
+            'nothingLeft' => $nothingLeft,
+            'bankTransfer' => $order->payment_method === PaymentMethod::BankTransfer
+                ? ['account' => $this->settings->get('company_bank_account'), 'recipient' => $this->settings->get('company_name')]
+                : null,
             'subtotal' => (int) $items->sum(fn (OrderItem $item) => $item->total()),
             'shippingLabel' => $this->shipping->all()->get($order->shipping_method)['label'] ?? $order->shipping_method,
             'delivery' => $this->delivery($order),

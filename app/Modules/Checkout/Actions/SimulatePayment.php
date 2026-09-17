@@ -4,6 +4,7 @@ namespace App\Modules\Checkout\Actions;
 
 use App\Modules\Checkout\Enums\PaymentMethod;
 use App\Modules\Checkout\Enums\PaymentStatus;
+use App\Modules\Checkout\Events\OrderPlaced;
 use App\Modules\Checkout\Models\Order;
 use Illuminate\Support\Str;
 use RuntimeException;
@@ -28,6 +29,8 @@ class SimulatePayment
             return false;
         }
 
+        // A payment that starts gets the order summary first and the confirmation after, like with the gateway.
+        OrderPlaced::dispatch($order);
         ($this->markOrderPaid)($order, 'test-'.Str::lower(Str::random(12)));
 
         return true;

@@ -13,9 +13,9 @@
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 24px;">
             <tr>
                 <td style="background: #F7ECE9; border: 1px solid #E0C3BC; border-radius: 4px; padding: 14px 16px; font-size: 14.5px; line-height: 1.6; color: #7A3A2E;">
-                    Brakuje na półce:
+                    {{ $nothingLeft ? 'Nic z tego zamówienia nie zostało na półce:' : 'Brakuje na półce:' }}
                     @foreach ($missing as $item){{ $item->product_name }} ({{ $item->variant_label }}, {{ $item->missing_quantity }} szt.){{ $loop->last ? '.' : ', ' }}@endforeach
-                    Ktoś zapłacił za tę sztukę chwilę wcześniej. Napisz, czy zrobisz kolejną, czy oddajesz pieniądze.
+                    Ktoś zapłacił za to chwilę wcześniej. Klientka dostała maila, że zwrócisz jej {{ Money::format($refund) }} najpóźniej w ciągu 14 dni. Podobną sztukę zrób, jeśli o nią poprosi.
                 </td>
             </tr>
         </table>
