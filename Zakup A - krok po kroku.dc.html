@@ -200,8 +200,8 @@ class Component extends DCLogic {
         dot: s.ship === m.id ? '#2F2620' : 'transparent', set: () => this.setState({ ship: m.id }) })),
       pays: [
         { id: 'blik', label: 'BLIK', note: 'Kod z aplikacji banku' },
-        { id: 'p24', label: 'Przelewy24', note: 'Przelew online z 380 banków' },
         { id: 'karta', label: 'Karta', note: 'Visa, Mastercard, Apple Pay' },
+        { id: 'przelew-online', label: 'Szybki przelew', note: 'Wybierasz bank i płacisz online' },
         { id: 'przelew', label: 'Przelew tradycyjny', note: 'Wysyłka po zaksięgowaniu' }
       ].map(m => ({ label: m.label, note: m.note, bd: s.pay === m.id ? '#24417E' : '#DCD0BE',
         bg: s.pay === m.id ? '#F0F3FA' : '#FCF9F4', dot: s.pay === m.id ? '#24417E' : 'transparent',
