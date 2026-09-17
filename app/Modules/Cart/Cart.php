@@ -38,11 +38,16 @@ class Cart
             }
         }
 
-        return collect($stored)
+        $lines = collect($stored)
             ->map(fn (array $row, string $key) => $lines[$key] ?? null)
             ->filter()
             ->map(fn (CartLine $line) => $line->quantity > $line->limit() ? $line->withQuantity($line->limit()) : $line)
             ->filter(fn (CartLine $line) => $line->quantity > 0);
+
+        // Gift wrapping without a piece in a parcel has nothing to wrap; it comes back with the next such piece.
+        return $lines->contains(fn (CartLine $line) => $line->needsDelivery())
+            ? $lines
+            : $lines->reject(fn (CartLine $line) => $line->onlyWithParcel());
     }
 
     public function count(): int

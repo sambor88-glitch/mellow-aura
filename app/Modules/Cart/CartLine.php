@@ -80,6 +80,15 @@ abstract class CartLine
     }
 
     /**
+     * Whether this line only makes sense next to a piece that goes in a parcel, like gift wrapping. Without such
+     * a piece the line drops out of the cart, so nobody pays for wrapping a voucher that comes by e-mail.
+     */
+    public function onlyWithParcel(): bool
+    {
+        return false;
+    }
+
+    /**
      * The line as a Google Analytics item. Only the name and the price go: the details may hold what the customer typed.
      *
      * @return array<string, string|int|float>

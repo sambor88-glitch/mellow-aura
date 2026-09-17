@@ -52,6 +52,11 @@ class GiftWrapLine extends CartLine
         return false;
     }
 
+    public function onlyWithParcel(): bool
+    {
+        return true;
+    }
+
     public function addedNotice(): string
     {
         return $this->label.' — dodane do zamówienia';

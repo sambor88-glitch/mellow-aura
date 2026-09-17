@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Gifts;
 
+use App\Modules\Catalog\Enums\CategoryGroup;
+use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
 use App\Modules\Checkout\Actions\MarkOrderPaid;
@@ -115,6 +117,31 @@ class BundlesPageTest extends TestCase
 
         app(MarkOrderPaid::class)(Order::sole(), 'test-repeated-confirmation');
         $this->assertSame(0, $wrap->fresh()->missing_quantity);
+    }
+
+    public function test_gift_wrapping_waits_for_a_piece_that_goes_in_a_parcel(): void
+    {
+        Setting::create(['key' => 'gift_wrap_price', 'value' => 1200]);
+        Setting::create(['key' => 'text_gift_wrap_heading', 'value' => 'Pakowanie na prezent']);
+        $vouchers = Category::factory()->create(['group' => CategoryGroup::Workshops]);
+        $voucher = ProductVariant::factory()->for(Product::factory()->state(['name' => 'Voucher kwotowy', 'category_id' => $vouchers->id]))->create(['price_gross' => 15000, 'stock' => null]);
+        $vase = ProductVariant::factory()->for(Product::factory()->state(['name' => 'Wazony']))->create(['price_gross' => 23900, 'stock' => 3]);
+
+        $this->postJson('/koszyk', ['type' => 'gift_wrap'])
+            ->assertUnprocessable()
+            ->assertJson(['message' => 'Najpierw dodaj do koszyka to, co mam zapakować']);
+
+        $this->postJson('/koszyk', ['type' => 'voucher', 'variant_id' => $voucher->id]);
+        $this->postJson('/koszyk', ['type' => 'gift_wrap'])
+            ->assertUnprocessable()
+            ->assertJson(['message' => 'Voucher w PDF przychodzi mailem, więc nie ma czego pakować']);
+
+        $this->postJson('/koszyk', ['variant_id' => $vase->id]);
+        $this->postJson('/koszyk', ['type' => 'gift_wrap'])->assertJson(['count' => 3]);
+
+        // Without the vase there is nothing left to wrap: the wrapping drops out, also from the price.
+        $this->deleteJson('/koszyk/v'.$vase->id)->assertJson(['count' => 1]);
+        $this->get('/zamowienie')->assertDontSee('Pakowanie na prezent')->assertSeeInOrder(['Razem', '150,00 zł']);
     }
 
     public function test_without_a_price_there_is_no_gift_wrapping(): void
