@@ -1,6 +1,8 @@
 @use('App\Modules\Admin\Menu')
-<x-admin::layout title="Mój panel" lead="Dodawaj produkty, zmieniaj ceny i terminy. Zmiany widać na stronie od razu.">
-    @includeIf('monitoring::admin.dashboard-notice')
+<x-admin::layout title="Mój panel" :lead="auth()->user()->isOwner() ? 'Dodawaj produkty, zmieniaj ceny i terminy. Zmiany widać na stronie od razu.' : 'Zamówienia do spakowania i wysłania, z napisami do wbicia i certyfikatami do druku.'">
+    @can('manage-shop')
+        @includeIf('monitoring::admin.dashboard-notice')
+    @endcan
 
     @if (Menu::sections())
         <div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4">

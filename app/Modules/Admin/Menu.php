@@ -2,11 +2,12 @@
 
 namespace App\Modules\Admin;
 
+use App\Modules\Admin\Support\PanelAccess;
 use Illuminate\Support\Facades\Route;
 
 /**
  * Panel sections. Each screen belongs to its module; a section shows up once that screen has a route,
- * the same way links appear on the site.
+ * the same way links appear on the site, and only to an account that may open it.
  */
 class Menu
 {
@@ -28,6 +29,7 @@ class Menu
             ['label' => 'Usługi', 'route' => 'admin.services.edit', 'active' => 'admin.services.*', 'description' => 'Apaszka i odcisk rośliny: zdjęcia przed i po, teksty, cennik i kroki.'],
             ['label' => 'Treści', 'route' => 'admin.content.edit', 'active' => 'admin.content.*', 'description' => 'Teksty na stronach, częste pytania, fakty o pracowni, zamówienia indywidualne, karty dla lokali i sprawy w formularzu.'],
             ['label' => 'Ustawienia', 'route' => 'admin.settings.edit', 'active' => 'admin.settings.*', 'description' => 'E-mail, próg darmowej wysyłki i kod Paczkomatu.'],
-        ], fn (array $section) => Route::has($section['route'])));
+            ['label' => 'Konta', 'route' => 'admin.accounts.index', 'active' => 'admin.accounts.*', 'description' => 'Kto ma dostęp do panelu: Ty i osoba, która pomaga przy zamówieniach.'],
+        ], fn (array $section) => Route::has($section['route']) && PanelAccess::allows(auth()->user(), $section['route'])));
     }
 }

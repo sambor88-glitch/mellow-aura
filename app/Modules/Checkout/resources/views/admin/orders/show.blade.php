@@ -29,7 +29,9 @@
                     @if ($withdrawal->items !== null)
                         <p class="mt-2 text-[14px] whitespace-pre-line [overflow-wrap:anywhere]">Rzeczy: {{ $withdrawal->items }}</p>
                     @endif
-                    <a href="{{ route('admin.withdrawals.index') }}" class="mt-2.5 inline-block text-[13.5px]">Wszystkie odstąpienia →</a>
+                    @can('manage-shop')
+                        <a href="{{ route('admin.withdrawals.index') }}" class="mt-2.5 inline-block text-[13.5px]">Wszystkie odstąpienia →</a>
+                    @endcan
                 </section>
             @endforeach
 
@@ -196,7 +198,7 @@
                             Regulamin zaakceptowany: {{ $order->terms_version }}, {{ $order->terms_accepted_at?->format('j.m.Y, H:i') }}
                         </p>
                     @endif
-                    @if (Route::has('admin.complaints.index'))
+                    @if (Route::has('admin.complaints.index') && Gate::allows('manage-shop'))
                         <a href="{{ route('admin.complaints.index', ['zamowienie' => $order->number]) }}#odpowiedz" class="mt-1 text-[13px]">Odpowiedz na reklamację →</a>
                     @endif
                 </div>

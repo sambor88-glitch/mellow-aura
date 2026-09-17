@@ -13,7 +13,7 @@ use ReflectionClass;
  * Base provider for app/Modules/<Name>. A module provider only extends this class
  * and is registered in bootstrap/providers.php.
  *
- * Loads, when present: routes/web.php, routes/admin.php (prefix /panel, name admin.*),
+ * Loads, when present: routes/web.php, routes/admin.php (prefix /panel, name admin.*, signed-in accounts allowed there),
  * resources/views (namespace = snake-case module name), resources/views/components as
  * anonymous Blade components (<x-module::name>), Database/Migrations,
  * and points model factories at Database/Factories.
@@ -31,7 +31,8 @@ abstract class ModuleServiceProvider extends ServiceProvider
         }
 
         if (is_file($dir.'/routes/admin.php')) {
-            Route::middleware(['web', 'auth'])
+            // „panel-route” (Admin module) keeps a helper's account to the screens it may open.
+            Route::middleware(['web', 'auth', 'can:panel-route'])
                 ->prefix('panel')
                 ->name('admin.')
                 ->group($dir.'/routes/admin.php');
