@@ -103,6 +103,9 @@
                             Regulamin zaakceptowany: {{ $order->terms_version }}, {{ $order->terms_accepted_at?->format('j.m.Y, H:i') }}
                         </p>
                     @endif
+                    @if (Route::has('admin.complaints.index'))
+                        <a href="{{ route('admin.complaints.index', ['zamowienie' => $order->number]) }}#odpowiedz" class="mt-1 text-[13px]">Odpowiedz na reklamację →</a>
+                    @endif
                 </div>
             </section>
 
