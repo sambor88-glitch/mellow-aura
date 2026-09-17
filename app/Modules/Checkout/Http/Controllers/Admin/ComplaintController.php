@@ -53,6 +53,7 @@ class ComplaintController extends Controller
             'letter' => implode("\n\n", $paragraphs),
         ]);
 
+        // Sent at once, not through the queue: the answer has a deadline, so Kasia learns right here whether it went out.
         // A failed e-mail is reported and the letter stays on the list to send by hand.
         $emailed = rescue(function () use ($answer) {
             Mail::to(new Address($answer->email, $answer->name))->send(new ComplaintAnswered($answer));

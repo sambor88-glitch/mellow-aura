@@ -6,7 +6,7 @@ use App\Modules\Checkout\Models\Order;
 use App\Modules\Checkout\Support\OrderSummary;
 use App\Modules\Content\Support\LegalPdf;
 use App\Modules\Settings\Settings;
-use Illuminate\Mail\Mailable;
+use App\Modules\Shared\Mail\QueuedMail;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
@@ -17,9 +17,14 @@ use Illuminate\Mail\Mailables\Envelope;
  * where it goes and what happens next. The terms of sale and the model withdrawal form come
  * attached, so the contract is confirmed on a durable medium. Replies reach Kasia's contact address.
  */
-class OrderConfirmed extends Mailable
+class OrderConfirmed extends QueuedMail
 {
     public function __construct(public Order $order) {}
+
+    public function description(): string
+    {
+        return 'Potwierdzenie zamówienia '.$this->order->number;
+    }
 
     public function envelope(): Envelope
     {

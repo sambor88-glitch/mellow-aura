@@ -1,5 +1,7 @@
 @use('App\Modules\Admin\Menu')
 <x-admin::layout title="Mój panel" lead="Dodawaj produkty, zmieniaj ceny i terminy. Zmiany widać na stronie od razu.">
+    @includeIf('monitoring::admin.dashboard-notice')
+
     @if (Menu::sections())
         <div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4">
             @foreach (Menu::sections() as $section)

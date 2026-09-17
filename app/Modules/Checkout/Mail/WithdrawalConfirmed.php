@@ -4,7 +4,7 @@ namespace App\Modules\Checkout\Mail;
 
 use App\Modules\Checkout\Models\Withdrawal;
 use App\Modules\Settings\Settings;
-use Illuminate\Mail\Mailable;
+use App\Modules\Shared\Mail\QueuedMail;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -13,9 +13,14 @@ use Illuminate\Mail\Mailables\Envelope;
  * The customer's acknowledgement on a durable medium: the statement word for word, when it arrived,
  * and what happens with the return and the refund.
  */
-class WithdrawalConfirmed extends Mailable
+class WithdrawalConfirmed extends QueuedMail
 {
     public function __construct(public Withdrawal $withdrawal) {}
+
+    public function description(): string
+    {
+        return 'Potwierdzenie odstąpienia od umowy — zamówienie '.$this->withdrawal->order_number;
+    }
 
     public function envelope(): Envelope
     {

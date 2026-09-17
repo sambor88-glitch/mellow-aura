@@ -10,9 +10,9 @@ use Illuminate\Mail\Mailables\Address;
 use Illuminate\Support\Facades\Mail;
 
 /**
- * The law asks for an acknowledgement with the statement's content, date and time, sent without delay,
- * so it goes within the request. Kasia gets the same statement. A mail that fails is reported;
- * the statement stays saved and listed in the panel either way.
+ * The law asks for an acknowledgement with the statement's content, date and time, sent without delay: the queue
+ * worker sends it within seconds and repeats a failed attempt. Kasia gets the same statement. A mail that cannot be
+ * queued is reported; the statement stays saved and listed in the panel either way.
  */
 class SendWithdrawalEmails
 {

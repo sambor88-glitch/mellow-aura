@@ -70,10 +70,10 @@ class WithdrawalTest extends TestCase
             ->assertSee('Ja, Anna Nowak, odstępuję od umowy zawartej w zamówieniu '.$order->number.'.')
             ->assertSee('Rzeczy odeślij w ciągu 14 dni od dziś na adres: Paczkomat KRA01M.');
 
-        Mail::assertSent(WithdrawalConfirmed::class, fn (WithdrawalConfirmed $mail) => $mail->hasTo('ania@example.com', 'Anna Nowak')
+        Mail::assertQueued(WithdrawalConfirmed::class, fn (WithdrawalConfirmed $mail) => $mail->hasTo('ania@example.com', 'Anna Nowak')
             && $mail->hasReplyTo('kasia@example.com')
             && $mail->hasSubject('Potwierdzenie odstąpienia od umowy — '.$order->number));
-        Mail::assertSent(NewWithdrawalReceived::class, fn (NewWithdrawalReceived $mail) => $mail->hasTo('kasia@example.com')
+        Mail::assertQueued(NewWithdrawalReceived::class, fn (NewWithdrawalReceived $mail) => $mail->hasTo('kasia@example.com')
             && $mail->hasReplyTo('ania@example.com', 'Anna Nowak'));
 
         $mail = new WithdrawalConfirmed($withdrawal);
@@ -100,7 +100,7 @@ class WithdrawalTest extends TestCase
             ->assertSee('value="part" checked', false);
 
         $this->assertSame(0, Withdrawal::count());
-        Mail::assertNothingSent();
+        Mail::assertNothingOutgoing();
 
         $this->post('/odstapienie-od-umowy', $this->form(['scope' => 'part', 'items' => "Kubek „Królowa matka”\n<b>Talerz</b>"]));
 
@@ -121,7 +121,7 @@ class WithdrawalTest extends TestCase
 
         $withdrawal = Withdrawal::sole();
         $this->assertNull($withdrawal->order_id);
-        Mail::assertSent(WithdrawalConfirmed::class, fn (WithdrawalConfirmed $mail) => $mail->hasTo('ktos-inny@example.com'));
+        Mail::assertQueued(WithdrawalConfirmed::class, fn (WithdrawalConfirmed $mail) => $mail->hasTo('ktos-inny@example.com'));
 
         (new NewWithdrawalReceived($withdrawal))
             ->assertSeeInHtml('Nie znalazłam zamówienia '.$order->number.' złożonego z adresu ktos-inny@example.com.')

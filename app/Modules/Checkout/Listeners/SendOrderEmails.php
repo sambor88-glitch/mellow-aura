@@ -12,9 +12,8 @@ use Illuminate\Mail\Mailables\Address;
 use Illuminate\Support\Facades\Mail;
 
 /**
- * Sends the customer's confirmation and tells Kasia about the order. It runs within the request
- * for now, because staging has no queue worker yet (MA-80). A mail that fails is reported
- * and never undoes a paid order.
+ * Queues the customer's confirmation and Kasia's notice about the order; the queue worker sends them and repeats
+ * a failed attempt. A mail that cannot be queued is reported and never undoes a paid order.
  */
 class SendOrderEmails
 {

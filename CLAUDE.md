@@ -48,11 +48,15 @@ app/Modules/Catalog/
 - Czytać cudze dane przez relację Eloquent wolno.
 - Zdarzenia służą do skutków ubocznych: maile, etykiety InPost, logi. Stanu magazynu nie zdejmuje się
   w listenerze z kolejki — musi zejść w tej samej transakcji co potwierdzenie płatności.
+- Mail dziedziczy po `Shared\Mail\QueuedMail`: idzie przez kolejkę, ponawia się przez dwie godziny, a jeśli nie wyjdzie,
+  trafia do panelu „Niewysłane maile” z opisem z `description()`. Wyjątek to odpowiedź na reklamację — Kasia musi
+  od razu wiedzieć, czy wyszła. Alerty techniczne (`Monitoring\Support\Alerts`) idą od razu, nigdy przez kolejkę.
 - Ekrany panelu należą do modułu, którego dotyczą. `Admin` daje tylko logowanie, układ panelu i menu.
 - Testy: `tests/Feature/<Name>` i `tests/Unit/<Name>`.
 
 Pierwsza fala: `Shared` (układ strony, komponenty Blade, formatowanie kwot, SEO), `Settings`, `Admin`,
-`Catalog`, `Cart`, `Checkout`, `Payments`, `Shipping`, `MugConfigurator`, `Gifts`, `Content`, `Consent` (zgody na cookies i Google Analytics).
+`Catalog`, `Cart`, `Checkout`, `Payments`, `Shipping`, `MugConfigurator`, `Gifts`, `Content`, `Consent` (zgody na cookies i Google Analytics),
+`Monitoring` (niewysłane maile w panelu, alerty o błędach, pilnowanie kolejki i harmonogramu).
 Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
 
 ## Sesja i cache w plikach
@@ -120,6 +124,7 @@ cp .env.example .env              # potem wartości dla Sail z komentarza na ko�
 ./vendor/bin/sail artisan key:generate
 ./vendor/bin/sail artisan migrate
 npm install && npm run dev        # Vite na Macu, nie w kontenerze
+./vendor/bin/sail artisan queue:listen  # bez tego maile czekają w kolejce i nie docierają do Mailpit
 ./vendor/bin/sail test            # testy na bazie `testing` w kontenerze MySQL
 ./vendor/bin/sail down            # zatrzymanie kontenerów
 ```

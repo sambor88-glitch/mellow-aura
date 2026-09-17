@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailables\Address;
 use Illuminate\Support\Facades\Mail;
 
 /**
- * The summary right after ordering. A mail that fails is reported and never stops the payment.
+ * Queues the summary right after ordering. A mail that cannot be queued is reported and never stops the payment.
  */
 class SendOrderSummary
 {

@@ -69,7 +69,7 @@ class ContactPageTest extends TestCase
 
         $this->post('/kontakt', $this->form())->assertRedirect(route('content.contact').'#formularz');
 
-        Mail::assertSent(ContactMessageReceived::class, fn (ContactMessageReceived $mail) => $mail->hasTo('kasia@example.com')
+        Mail::assertQueued(ContactMessageReceived::class, fn (ContactMessageReceived $mail) => $mail->hasTo('kasia@example.com')
             && $mail->hasReplyTo('ola@example.com', 'Ola')
             && $mail->hasSubject('Wiadomość ze strony: Warsztaty i terminy — Ola'));
 
@@ -107,7 +107,7 @@ class ContactPageTest extends TestCase
             ->assertSee('Napisz, w czym mogę pomóc')
             ->assertSee('aria-describedby="contact-message-error"', false);
 
-        Mail::assertNothingSent();
+        Mail::assertNothingOutgoing();
     }
 
     public function test_a_bot_that_fills_the_hidden_field_hears_the_same_and_nothing_is_sent(): void
@@ -119,7 +119,7 @@ class ContactPageTest extends TestCase
             ->post('/kontakt', $this->form(['website' => 'https://spam.example']))
             ->assertSee('Wiadomość poszła. Odpisuję zwykle tego samego dnia.');
 
-        Mail::assertNothingSent();
+        Mail::assertNothingOutgoing();
     }
 
     public function test_without_an_e_mail_in_the_panel_the_message_waits_in_the_form(): void
@@ -134,7 +134,7 @@ class ContactPageTest extends TestCase
             ->assertSee('albo napisz na WhatsApp +48 600 100 200')
             ->assertSee('Czy w sobotę jest jeszcze miejsce?');
 
-        Mail::assertNothingSent();
+        Mail::assertNothingOutgoing();
         Exceptions::assertReported(RuntimeException::class);
     }
 
@@ -152,7 +152,7 @@ class ContactPageTest extends TestCase
             ->assertSee('Mam już od Ciebie kilka wiadomości i na wszystkie odpiszę.')
             ->assertSee('Szósta wiadomość');
 
-        Mail::assertSentCount(5);
+        Mail::assertQueuedCount(5);
     }
 
     /**

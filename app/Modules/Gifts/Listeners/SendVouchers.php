@@ -9,9 +9,8 @@ use Illuminate\Mail\Mailables\Address;
 use Illuminate\Support\Facades\Mail;
 
 /**
- * Sends the buyer the vouchers issued with the payment, as PDFs. It runs within the request until
- * a queue worker exists (MA-80); a mail that fails is reported and never undoes a paid order —
- * the vouchers are already issued and Kasia can download them in the panel.
+ * Queues the vouchers issued with the payment for the buyer, as PDFs. A mail that cannot be queued is reported
+ * and never undoes a paid order — the vouchers are already issued and Kasia can download them in the panel.
  */
 class SendVouchers
 {

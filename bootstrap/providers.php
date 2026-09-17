@@ -8,6 +8,7 @@ use App\Modules\Consent\ConsentServiceProvider;
 use App\Modules\Content\ContentServiceProvider;
 use App\Modules\Firing\FiringServiceProvider;
 use App\Modules\Gifts\GiftsServiceProvider;
+use App\Modules\Monitoring\MonitoringServiceProvider;
 use App\Modules\MugConfigurator\MugConfiguratorServiceProvider;
 use App\Modules\Settings\SettingsServiceProvider;
 use App\Modules\Shared\SharedServiceProvider;
@@ -28,4 +29,5 @@ return [
     ConsentServiceProvider::class,
     WorkshopsServiceProvider::class,
     FiringServiceProvider::class,
+    MonitoringServiceProvider::class,
 ];

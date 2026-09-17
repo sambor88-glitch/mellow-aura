@@ -52,10 +52,10 @@ class OrderEmailsTest extends TestCase
         $this->post('/zamowienie', $this->form(['expected_total' => 33400]))->assertRedirect('/zamowienie/potwierdzenie');
 
         $order = Order::sole();
-        Mail::assertSent(OrderConfirmed::class, fn (OrderConfirmed $mail) => $mail->hasTo('ania@example.com', 'Anna Nowak') && $mail->order->is($order));
+        Mail::assertQueued(OrderConfirmed::class, fn (OrderConfirmed $mail) => $mail->hasTo('ania@example.com', 'Anna Nowak') && $mail->order->is($order));
         // The summary right after ordering, the confirmation once paid and Kasia's notice.
-        Mail::assertSent(OrderAwaitingPayment::class, fn (OrderAwaitingPayment $mail) => $mail->hasTo('ania@example.com', 'Anna Nowak') && $mail->order->is($order));
-        Mail::assertSentCount(3);
+        Mail::assertQueued(OrderAwaitingPayment::class, fn (OrderAwaitingPayment $mail) => $mail->hasTo('ania@example.com', 'Anna Nowak') && $mail->order->is($order));
+        Mail::assertQueuedCount(3);
 
         $mail = new OrderConfirmed($order);
         $mail->assertHasSubject('Zamówienie '.$order->number.' jest opłacone');
@@ -97,7 +97,7 @@ class OrderEmailsTest extends TestCase
         ]))->assertRedirect('/zamowienie/potwierdzenie');
 
         $order = Order::sole();
-        Mail::assertSent(NewOrderReceived::class, fn (NewOrderReceived $mail) => $mail->hasTo('kasia@example.com'));
+        Mail::assertQueued(NewOrderReceived::class, fn (NewOrderReceived $mail) => $mail->hasTo('kasia@example.com'));
 
         $mail = new NewOrderReceived($order);
         $mail->assertHasSubject('Nowe zamówienie '.$order->number.' · 261,00 zł');
@@ -118,8 +118,8 @@ class OrderEmailsTest extends TestCase
 
         $this->post('/zamowienie', $this->form())->assertRedirect('/zamowienie/potwierdzenie');
 
-        Mail::assertSent(OrderConfirmed::class);
-        Mail::assertNotSent(NewOrderReceived::class);
+        Mail::assertQueued(OrderConfirmed::class);
+        Mail::assertNotQueued(NewOrderReceived::class);
 
         (new OrderConfirmed(Order::sole()))->assertSeeInHtml('Napisz do mnie przez stronę sklepu i podaj numer');
     }
@@ -133,7 +133,7 @@ class OrderEmailsTest extends TestCase
         $this->from('/zamowienie')->post('/zamowienie', $this->form(['blik_code' => '000000']));
 
         $this->assertSame(PaymentStatus::Failed, Order::sole()->payment_status);
-        Mail::assertNothingSent();
+        Mail::assertNothingOutgoing();
     }
 
     public function test_a_payment_confirmed_twice_sends_each_mail_once(): void
@@ -145,8 +145,8 @@ class OrderEmailsTest extends TestCase
         app(MarkOrderPaid::class)($order, 'test-first');
         app(MarkOrderPaid::class)($order, 'test-repeated');
 
-        Mail::assertSent(OrderConfirmed::class, 1);
-        Mail::assertSent(NewOrderReceived::class, 1);
+        Mail::assertQueued(OrderConfirmed::class, 1);
+        Mail::assertQueued(NewOrderReceived::class, 1);
     }
 
     public function test_the_summary_says_the_contract_comes_with_the_payment_and_gives_the_bank_details_for_a_transfer(): void
@@ -180,7 +180,7 @@ class OrderEmailsTest extends TestCase
         app(MarkOrderPaid::class)($first, 'test-first');
         app(MarkOrderPaid::class)($second, 'test-second');
 
-        Mail::assertSent(OrderConfirmed::class, fn (OrderConfirmed $mail) => $mail->order->is($second));
+        Mail::assertQueued(OrderConfirmed::class, fn (OrderConfirmed $mail) => $mail->order->is($second));
         $second->refresh();
         (new OrderConfirmed($second))
             ->assertSeeInHtml('Ktoś kupił ostatnią sztukę chwilę przed zaksięgowaniem Twojej płatności:')
@@ -205,8 +205,8 @@ class OrderEmailsTest extends TestCase
         app(MarkOrderPaid::class)($first, 'test-first');
         app(MarkOrderPaid::class)($second, 'test-second');
 
-        Mail::assertSent(OrderUnavailable::class, fn (OrderUnavailable $mail) => $mail->order->is($second) && $mail->hasTo('ania@example.com'));
-        Mail::assertNotSent(OrderConfirmed::class, fn (OrderConfirmed $mail) => $mail->order->is($second));
+        Mail::assertQueued(OrderUnavailable::class, fn (OrderUnavailable $mail) => $mail->order->is($second) && $mail->hasTo('ania@example.com'));
+        Mail::assertNotQueued(OrderConfirmed::class, fn (OrderConfirmed $mail) => $mail->order->is($second));
 
         $second->refresh();
         (new OrderUnavailable($second))

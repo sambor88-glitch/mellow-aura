@@ -109,7 +109,7 @@ class VoucherTest extends TestCase
         app(MarkOrderPaid::class)($order, 'test-repeated-confirmation');
         $this->assertSame(2, Voucher::count());
 
-        Mail::assertSent(VouchersIssued::class, fn (VouchersIssued $mail) => $mail->hasTo('ania@example.com') && $mail->vouchers->count() === 2);
+        Mail::assertQueued(VouchersIssued::class, fn (VouchersIssued $mail) => $mail->hasTo('ania@example.com') && $mail->vouchers->count() === 2);
 
         $mail = new VouchersIssued($order, $vouchers->load('orderItem'));
         $mail->assertHasSubject('Vouchery z MellowAury');
