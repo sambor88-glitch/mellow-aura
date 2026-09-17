@@ -1,8 +1,8 @@
 @use('App\Modules\Shared\Support\Money')
 {{-- The plain-text part is never rendered as HTML, so values print raw instead of as HTML entities. --}}
-Dziękuję. Pakuję.
+{!! $parcel ? 'Dziękuję. Pakuję.' : 'Dziękuję.' !!}
 
-Zamówienie {!! $order->number !!} jest opłacone. Zanim paczka wyjdzie, wyślę Ci jej zdjęcie — każdą sztukę zawijam osobno.
+Zamówienie {!! $order->number !!} jest opłacone.{!! $parcel ? ' Zanim paczka wyjdzie, wyślę Ci jej zdjęcie — każdą sztukę zawijam osobno.' : '' !!}
 @if ($missing->isNotEmpty())
 
 Ktoś kupił ostatnią sztukę chwilę przed zaksięgowaniem Twojej płatności: {!! $missing->map(fn ($item) => $item->product_name.' ('.$item->variant_label.')')->join(', ') !!}. Za brakujące sztuki zwrócę Ci {{ Money::format($refund) }} — najpóźniej w ciągu 14 dni. Jeśli wolisz podobną sztukę na zamówienie, odpisz na tego maila.

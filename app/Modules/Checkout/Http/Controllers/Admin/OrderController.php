@@ -42,7 +42,7 @@ class OrderController extends Controller
     {
         return view('checkout::admin.orders.show', [
             'order' => $order->load(['items.variant.product.category', 'items.certificates', 'withdrawals']),
-            'shippingLabel' => $shipping->all()->get($order->shipping_method)['label'] ?? $order->shipping_method,
+            'shippingLabel' => $shipping->label($order->shipping_method),
         ]);
     }
 }

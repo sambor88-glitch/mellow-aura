@@ -30,15 +30,24 @@ class CheckoutController extends Controller
     {
         $lines = $cart->lines();
         $subtotal = $this->subtotal($lines);
+        // Vouchers sent as PDFs alone come by e-mail, so there is no delivery to choose or pay for.
+        $needsDelivery = $cart->needsDelivery();
 
-        $methods = $shipping->all()->map(fn (array $method) => [...$method, 'cost' => $shipping->cost($method['code'], $subtotal)]);
-        $selectedShipping = $methods->has(old('shipping_method')) ? old('shipping_method') : $methods->keys()->first();
+        $methods = $needsDelivery
+            ? $shipping->all()->map(fn (array $method) => [...$method, 'cost' => $shipping->cost($method['code'], $subtotal)])
+            : collect();
+        $selectedShipping = match (true) {
+            ! $needsDelivery => ShippingMethods::EMAIL,
+            $methods->has(old('shipping_method')) => old('shipping_method'),
+            default => $methods->keys()->first(),
+        };
         $selectedPayment = PaymentMethod::tryFrom((string) old('payment_method', $settings->get('default_payment_method')))->value ?? PaymentMethod::Blik->value;
 
         return response()->view('checkout::checkout', [
             'lines' => $lines,
             'subtotal' => $subtotal,
             'methods' => $methods,
+            'needsDelivery' => $needsDelivery,
             'shippingGross' => $methods->get($selectedShipping)['cost'] ?? 0,
             'selectedShipping' => $selectedShipping,
             'selectedPayment' => $selectedPayment,
@@ -68,7 +77,9 @@ class CheckoutController extends Controller
 
         $data = $request->validated();
         $subtotal = $this->subtotal($lines);
-        $shippingGross = $shipping->cost($data['shipping_method'], $subtotal);
+        $needsDelivery = $cart->needsDelivery();
+        $data['shipping_method'] = $needsDelivery ? $data['shipping_method'] : ShippingMethods::EMAIL;
+        $shippingGross = $needsDelivery ? $shipping->cost($data['shipping_method'], $subtotal) : 0;
 
         // The customer pays the sum the screen showed. If a price or stock changed meanwhile, show the new sum first.
         if ((int) $data['expected_total'] !== $subtotal + $shippingGross) {
@@ -107,7 +118,8 @@ class CheckoutController extends Controller
             'purchase' => ($analytics['order'] ?? null) === $order->number
                 ? AnalyticsItem::params((int) $analytics['value'], $analytics['items'], ['transaction_id' => $order->number, 'shipping' => $order->shipping_gross / 100])
                 : null,
-            'shippingLabel' => app(ShippingMethods::class)->all()->get($order->shipping_method)['label'] ?? null,
+            'shippingLabel' => app(ShippingMethods::class)->label($order->shipping_method),
+            'parcel' => $order->sendsParcel(),
         ])->header('X-Robots-Tag', self::ROBOTS);
     }
 

@@ -69,6 +69,11 @@ class ProductLine extends CartLine
         return VariantAnalyticsItem::make($this->variant, $this->quantity);
     }
 
+    public function needsDelivery(): bool
+    {
+        return $this->variant->needsDelivery();
+    }
+
     public function limit(): int
     {
         return min($this->variant->stock ?? Cart::MAX_QUANTITY, Cart::MAX_QUANTITY);

@@ -72,6 +72,14 @@ abstract class CartLine
     }
 
     /**
+     * Whether this line has to be delivered, so the checkout asks how. A voucher sent as a PDF does not.
+     */
+    public function needsDelivery(): bool
+    {
+        return true;
+    }
+
+    /**
      * The line as a Google Analytics item. Only the name and the price go: the details may hold what the customer typed.
      *
      * @return array<string, string|int|float>

@@ -19,7 +19,10 @@
             'price' => Money::input($variant->price_gross),
             'compare_at' => $variant->compare_at_price === null ? '' : Money::input($variant->compare_at_price),
             'stock' => $variant->stock,
+            'sent_by_post' => $variant->sent_by_post,
         ])->all() ?? []);
+    // A voucher goes out as a PDF by e-mail; a size ticked „pocztą” is printed and posted, so its buyer chooses a delivery.
+    $isVoucher = (bool) $product?->isVoucher();
     // Spare rows for new sizes; left empty, they are not saved.
     $rows = [...$rows, ...array_fill(0, max(1, 3 - count($rows)), ['id' => null, 'label' => '', 'price' => '', 'compare_at' => '', 'stock' => ''])];
 
@@ -118,6 +121,11 @@
                                @class([$input, 'w-[64px] px-2.5 py-2.5 text-right', 'border-error' => $bag->has('variants.'.$index.'.stock'), 'border-line' => ! $bag->has('variants.'.$index.'.stock')])>
                         <span class="text-[12.5px] text-label">szt.</span>
                     </span>
+                    @if ($isVoucher)
+                        <label class="flex min-h-11 items-center gap-1.5 text-[12.5px] text-label">
+                            <input type="checkbox" name="variants[{{ $index }}][sent_by_post]" value="1" @checked(! empty($row['sent_by_post'])) class="size-4 accent-ink"> pocztą
+                        </label>
+                    @endif
                     @if (! empty($row['id']))
                         <label class="flex min-h-11 items-center gap-1.5 text-[12.5px] text-label">
                             <input type="checkbox" name="variants[{{ $index }}][remove]" value="1" class="size-4 accent-error"> usuń
@@ -129,6 +137,9 @@
         </div>
         {!! $error('variants') !!}
         <p class="mt-2.5 text-[12.5px] leading-[1.5] text-hint">Puste wiersze się nie zapiszą. Jedna cena nie potrzebuje nazwy rozmiaru. Pole „szt.” zostaw puste, jeśli nie liczysz sztuk — przy zerze produkt sam znika ze sklepu. „Przed obniżką” wpisz tylko przy promocji: karta produktu przekreśli tę cenę, gdy obniżysz cenę, i sama poda najniższą cenę z 30 dni.</p>
+        @if ($isVoucher)
+            <p class="mt-1.5 text-[12.5px] leading-[1.5] text-hint">Voucher idzie mailem w PDF, bez kosztów dostawy. Zaznacz „pocztą” przy rozmiarze, który drukujesz i wysyłasz — wtedy zamówienie zapyta o dostawę.</p>
+        @endif
     </fieldset>
 
     <fieldset>

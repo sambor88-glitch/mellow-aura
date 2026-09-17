@@ -26,6 +26,7 @@ class OrderSummary
      *     bankTransfer: ?array{account: ?string, recipient: ?string},
      *     subtotal: int,
      *     shippingLabel: string,
+     *     parcel: bool,
      *     delivery: string,
      *     contactEmail: ?string,
      *     contactPhone: ?string,
@@ -51,7 +52,8 @@ class OrderSummary
                 ? ['account' => $this->settings->get('company_bank_account'), 'recipient' => $this->settings->get('company_name')]
                 : null,
             'subtotal' => (int) $items->sum(fn (OrderItem $item) => $item->total()),
-            'shippingLabel' => $this->shipping->all()->get($order->shipping_method)['label'] ?? $order->shipping_method,
+            'shippingLabel' => $this->shipping->label($order->shipping_method),
+            'parcel' => $order->sendsParcel(),
             'delivery' => $this->delivery($order),
             'contactEmail' => $this->settings->get('contact_email'),
             'contactPhone' => $this->settings->get('contact_phone'),
@@ -72,6 +74,7 @@ class OrderSummary
         }
 
         return match ($order->shipping_method) {
+            ShippingMethods::EMAIL => 'Na adres '.$order->email,
             'parcel_locker' => $order->locker_code
                 ? 'Paczkomat '.$order->locker_code
                 : 'Paczkomat dobiorę po numerze telefonu '.$order->phone,

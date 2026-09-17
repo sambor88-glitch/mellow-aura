@@ -14,7 +14,7 @@ Rachunek: {!! $bankTransfer['account'] !!}
 @if ($bankTransfer['recipient'])
 Odbiorca: {!! $bankTransfer['recipient'] !!}
 @endif
-Paczkę wyślę po zaksięgowaniu przelewu.
+{!! $parcel ? 'Paczkę wyślę po zaksięgowaniu przelewu.' : 'PDF wyślę po zaksięgowaniu przelewu.' !!}
 @endif
 
 TWOJE ZAMÓWIENIE

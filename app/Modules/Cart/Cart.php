@@ -56,6 +56,14 @@ class Cart
     }
 
     /**
+     * Whether anything in the cart goes in a parcel. Vouchers sent as PDFs alone need no delivery.
+     */
+    public function needsDelivery(): bool
+    {
+        return $this->lines()->contains(fn (CartLine $line) => $line->needsDelivery());
+    }
+
+    /**
      * Adds the line's quantity, up to its limit, and returns how many pieces went in.
      * A line with the same key grows instead of appearing twice.
      */

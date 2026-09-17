@@ -10,6 +10,7 @@ use App\Modules\Catalog\Models\ProductVariant;
 use App\Modules\Checkout\Actions\MarkOrderPaid;
 use App\Modules\Checkout\Mail\OrderConfirmed;
 use App\Modules\Checkout\Models\Order;
+use App\Modules\Checkout\Support\ShippingMethods;
 use App\Modules\Gifts\Mail\VouchersIssued;
 use App\Modules\Gifts\Models\Voucher;
 use App\Modules\Gifts\Support\VoucherPdf;
@@ -124,12 +125,60 @@ class VoucherTest extends TestCase
         $confirmation->assertSeeInText($vouchers[0]->code.' · dla: Ania · od: Kasia · ważny do 20 listopada 2027');
     }
 
+    public function test_a_voucher_sent_as_a_pdf_needs_no_delivery_but_one_sent_by_post_does(): void
+    {
+        Mail::fake();
+        Setting::create(['key' => 'free_shipping_threshold', 'value' => 50000]);
+        Setting::create(['key' => 'dispatch_days_min', 'value' => 3]);
+        Setting::create(['key' => 'dispatch_days_max', 'value' => 5]);
+        $pdf = $this->voucherVariant();
+
+        $drawer = $this->postJson('/koszyk', ['type' => 'voucher', 'variant_id' => $pdf->id, 'recipient_name' => 'Ania'])->json('content');
+        $this->assertStringContainsString('mailem, gratis', $drawer);
+        $this->assertStringNotContainsString('Do darmowej wysyłki', $drawer);
+
+        $this->get('/zamowienie')
+            ->assertOk()
+            ->assertDontSee('name="shipping_method"', false)
+            ->assertDontSee('name="street"', false)
+            ->assertSeeInOrder(['Dostawa', 'Mailem, w PDF', 'gratis', 'Razem', '420,00 zł'])
+            ->assertDontSee('Ceramikę zawijam');
+
+        // The parcel locker sent with the form means nothing for a PDF and costs nothing.
+        $this->post('/zamowienie', $this->form(['expected_total' => 42000]))->assertRedirect('/zamowienie/potwierdzenie');
+
+        $order = Order::sole();
+        $this->assertSame([ShippingMethods::EMAIL, 0, 42000], [$order->shipping_method, $order->shipping_gross, $order->total_gross]);
+
+        $this->get('/zamowienie/potwierdzenie')
+            ->assertSeeInOrder(['Dziękuję.', $order->number, 'Dostawa', 'Mailem, w PDF'])
+            ->assertDontSee('Pakuję')
+            ->assertDontSee('3–5 dni roboczych');
+
+        $confirmation = new OrderConfirmed($order->load('items'));
+        $confirmation->assertSeeInOrderInHtml(['Dostawa', 'Mailem, w PDF', 'Na adres ania@example.com']);
+        $confirmation->assertDontSeeInHtml('Zanim paczka wyjdzie');
+
+        // A voucher printed and posted travels like a parcel, so the order asks how to send it.
+        $posted = ProductVariant::factory()->create(['product_id' => $pdf->product_id, 'label' => 'Wysyłka pocztą', 'price_gross' => 42000, 'stock' => null, 'sent_by_post' => true]);
+        $this->postJson('/koszyk', ['type' => 'voucher', 'variant_id' => $posted->id, 'recipient_name' => 'Ola']);
+
+        $this->get('/zamowienie')->assertSee('name="shipping_method"', false);
+        $this->from('/zamowienie')
+            ->post('/zamowienie', $this->form(['shipping_method' => '', 'expected_total' => 43600]))
+            ->assertSessionHasErrors(['shipping_method' => 'Wybierz, jak mam wysłać paczkę']);
+        $this->post('/zamowienie', $this->form(['expected_total' => 43600]))->assertRedirect('/zamowienie/potwierdzenie');
+
+        $byPost = Order::query()->latest('id')->first();
+        $this->assertSame(['parcel_locker', 1600, 43600], [$byPost->shipping_method, $byPost->shipping_gross, $byPost->total_gross]);
+    }
+
     public function test_the_confirmation_page_links_to_each_pdf_with_a_signed_address(): void
     {
         Mail::fake();
         $voucher = $this->voucherVariant();
         $this->postJson('/koszyk', ['type' => 'voucher', 'variant_id' => $voucher->id, 'recipient_name' => 'Ania']);
-        $this->post('/zamowienie', $this->form(['expected_total' => 43600]));
+        $this->post('/zamowienie', $this->form(['expected_total' => 42000]));
         $code = Voucher::sole()->code;
 
         $page = $this->get('/zamowienie/potwierdzenie')
@@ -153,7 +202,7 @@ class VoucherTest extends TestCase
         Mail::fake();
         $voucher = $this->voucherVariant();
         $this->postJson('/koszyk', ['type' => 'voucher', 'variant_id' => $voucher->id, 'recipient_name' => 'Ania', 'dedication' => 'Sto lat!']);
-        $this->post('/zamowienie', $this->form(['expected_total' => 43600]));
+        $this->post('/zamowienie', $this->form(['expected_total' => 42000]));
         $issued = Voucher::sole();
 
         $this->get('/panel/vouchery/'.$issued->id)->assertRedirect('/panel/logowanie');
@@ -177,7 +226,7 @@ class VoucherTest extends TestCase
         ]]]);
         $voucher = $this->voucherVariant();
         $this->postJson('/koszyk', ['type' => 'voucher', 'variant_id' => $voucher->id, 'recipient_name' => 'Nia', 'sender_name' => 'Kasia i Tomek']);
-        $this->post('/zamowienie', $this->form(['expected_total' => 43600]));
+        $this->post('/zamowienie', $this->form(['expected_total' => 42000]));
 
         $html = app(VoucherPdf::class)->html(Voucher::sole());
 
@@ -210,7 +259,7 @@ class VoucherTest extends TestCase
         $this->postJson('/koszyk', ['type' => 'voucher', 'variant_id' => $twoFifty->id, 'recipient_name' => 'Nia']);
         $this->postJson('/koszyk', ['type' => 'voucher', 'variant_id' => $printed->id, 'recipient_name' => 'Ola']);
         Mail::fake();
-        $this->post('/zamowienie', $this->form(['expected_total' => 65600]));
+        $this->post('/zamowienie', $this->form(['expected_total' => 64000]));
 
         [$first, $second] = Voucher::query()->orderBy('id')->get()->all();
         $pdf = app(VoucherPdf::class);

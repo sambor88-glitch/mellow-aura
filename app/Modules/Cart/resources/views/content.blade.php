@@ -7,6 +7,8 @@
     $freeFrom = (int) $settings->get('free_shipping_threshold', 0);
     $freeReached = $freeFrom > 0 && $subtotal >= $freeFrom;
     $cheapestShipping = collect((array) $settings->get('shipping_methods', []))->pluck('price_gross')->filter(fn ($price) => $price > 0)->min();
+    // Vouchers sent as PDFs alone come by e-mail: no free-shipping threshold to reach and no delivery to pay for.
+    $needsDelivery = $cart->needsDelivery();
 @endphp
 <div class="min-h-0 flex-1 overflow-y-auto px-[26px] py-[22px]">
     @forelse ($lines as $line)
@@ -55,11 +57,11 @@
 
 @if ($lines->isNotEmpty())
     <div class="border-t border-divider bg-linen px-[26px] pt-[22px] pb-[26px]">
-        @if ($freeReached)
+        @if ($needsDelivery && $freeReached)
             <div class="mb-3.5 flex items-center gap-[9px] rounded-[4px] border border-success-line bg-success-soft px-3.5 py-[11px] text-[13px] text-success-text">
                 <span aria-hidden="true" class="inline-block animate-ma-check">✓</span><span>Wysyłka gratis — próg osiągnięty</span>
             </div>
-        @elseif ($freeFrom > 0)
+        @elseif ($needsDelivery && $freeFrom > 0)
             <div class="mb-3.5">
                 <div class="mb-[7px] text-[12.5px] text-muted">Do darmowej wysyłki brakuje {{ Money::format($freeFrom - $subtotal) }}</div>
                 <div aria-hidden="true" class="h-[5px] overflow-hidden rounded-full bg-divider">
@@ -69,7 +71,9 @@
         @endif
 
         <div class="mb-2 flex justify-between text-[14.5px] text-muted"><span>Produkty</span><span>{{ Money::format($subtotal) }}</span></div>
-        @if ($freeReached || $cheapestShipping !== null)
+        @if (! $needsDelivery)
+            <div class="mb-3.5 flex justify-between text-[14.5px] text-muted"><span>Dostawa</span><span>mailem, gratis</span></div>
+        @elseif ($freeReached || $cheapestShipping !== null)
             <div class="mb-3.5 flex justify-between text-[14.5px] text-muted">
                 <span>Dostawa</span>
                 <span>{{ $freeReached ? 'gratis od '.Money::format($freeFrom) : 'od '.Money::format((int) $cheapestShipping) }}</span>

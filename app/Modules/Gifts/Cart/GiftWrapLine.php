@@ -44,6 +44,14 @@ class GiftWrapLine extends CartLine
         return 1;
     }
 
+    /**
+     * Wrapping goes with the pieces in the parcel; on its own it is nothing to deliver.
+     */
+    public function needsDelivery(): bool
+    {
+        return false;
+    }
+
     public function addedNotice(): string
     {
         return $this->label.' — dodane do zamówienia';

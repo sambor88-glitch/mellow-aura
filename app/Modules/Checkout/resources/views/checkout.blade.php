@@ -1,7 +1,8 @@
 @use('App\Modules\Checkout\Enums\PaymentMethod')
 @use('App\Modules\Shared\Support\Money')
 @php
-    $more = ['street', 'postal_code', 'city', 'invoice_nip', 'note'];
+    // Vouchers sent as PDFs alone need no address or note for the parcel, only an invoice may.
+    $more = $needsDelivery ? ['street', 'postal_code', 'city', 'invoice_nip', 'note'] : ['invoice_nip'];
     $moreOpen = $errors->hasAny($more) || collect($more)->contains(fn (string $field) => filled(old($field)));
     $radio = 'group flex cursor-pointer items-center gap-3.5 rounded-[4px] border border-line bg-cream px-[18px] has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy';
 @endphp
@@ -22,7 +23,13 @@
                 <span class="size-[7px] rounded-full bg-navy"></span><span>jeden ekran &middot; zapłacisz blikiem</span>
             </div>
             <h1 class="mb-2.5 font-serif text-[length:clamp(32px,4.4vw,50px)] leading-[1.06] font-light">Jeszcze trzy pola<br>i gotowe</h1>
-            <p class="mb-[34px] max-w-[46ch] text-[16px] text-muted">Bez zakładania konta. Paczkomat dobiorę po numerze telefonu — resztę danych podasz tylko, jeśli zechcesz.</p>
+            <p class="mb-[34px] max-w-[46ch] text-[16px] text-muted">
+                @if ($needsDelivery)
+                    Bez zakładania konta. Paczkomat dobiorę po numerze telefonu — resztę danych podasz tylko, jeśli zechcesz.
+                @else
+                    Bez zakładania konta. PDF wyślę na Twój e-mail zaraz po płatności.
+                @endif
+            </p>
 
             <form method="post" action="{{ route('checkout.store') }}" novalidate x-data="checkout(@js($config))" x-on:submit="submit($event)" class="flex flex-wrap gap-11">
                 @csrf
@@ -31,24 +38,28 @@
                 <div class="min-w-0 flex-[1_1_340px]">
                     <div class="mb-[26px] rounded-[4px] border border-divider bg-cream px-[22px] py-6">
                         <div class="grid gap-[13px]">
-                            <x-shared::field name="phone" label="Telefon" type="tel" autocomplete="tel" hint="Po nim znajdę Twój paczkomat" />
+                            <x-shared::field name="phone" label="Telefon" type="tel" autocomplete="tel" :hint="$needsDelivery ? 'Po nim znajdę Twój paczkomat' : 'Zadzwonię tylko w sprawie zamówienia'" />
                             <x-shared::field name="email" label="E-mail" type="email" autocomplete="email" hint="Wyślę na niego potwierdzenie" />
                             <x-shared::field name="name" label="Imię i nazwisko" autocomplete="name" />
                         </div>
 
                         <details @if ($moreOpen) open @endif class="group mt-4 border-t border-sand-dark pt-4">
                             <summary class="flex cursor-pointer list-none justify-between gap-3 text-[13.5px] text-brown [&::-webkit-details-marker]:hidden">
-                                <span>Inny adres, faktura na firmę, dopisek do paczki</span>
+                                <span>{{ $needsDelivery ? 'Inny adres, faktura na firmę, dopisek do paczki' : 'Faktura na firmę' }}</span>
                                 <span aria-hidden="true" class="group-open:hidden">+</span><span aria-hidden="true" class="hidden group-open:inline">−</span>
                             </summary>
                             <div class="mt-3.5 grid animate-ma-up-quick gap-[13px]">
-                                <x-shared::field name="street" label="Ulica i numer" autocomplete="street-address" />
-                                <div class="flex flex-wrap gap-[13px]">
-                                    <x-shared::field name="postal_code" label="Kod pocztowy" autocomplete="postal-code" inputmode="numeric" placeholder="30-001" class="flex-[0_1_130px]" />
-                                    <x-shared::field name="city" label="Miasto" autocomplete="address-level2" class="flex-[1_1_150px]" />
-                                </div>
+                                @if ($needsDelivery)
+                                    <x-shared::field name="street" label="Ulica i numer" autocomplete="street-address" />
+                                    <div class="flex flex-wrap gap-[13px]">
+                                        <x-shared::field name="postal_code" label="Kod pocztowy" autocomplete="postal-code" inputmode="numeric" placeholder="30-001" class="flex-[0_1_130px]" />
+                                        <x-shared::field name="city" label="Miasto" autocomplete="address-level2" class="flex-[1_1_150px]" />
+                                    </div>
+                                @endif
                                 <x-shared::field name="invoice_nip" label="NIP do faktury" inputmode="numeric" />
-                                <x-shared::field name="note" label="Dopisek do paczki" placeholder="np. to prezent, dołóż kartkę" />
+                                @if ($needsDelivery)
+                                    <x-shared::field name="note" label="Dopisek do paczki" placeholder="np. to prezent, dołóż kartkę" />
+                                @endif
                             </div>
                         </details>
                     </div>
@@ -94,27 +105,41 @@
                         @enderror
                     </div>
 
-                    <fieldset>
-                        <legend class="mb-3.5 text-[11.5px] tracking-[0.16em] text-label uppercase">Sposób dostawy</legend>
-                        <div class="grid gap-2.5">
-                            @foreach ($methods as $method)
-                                <label class="{{ $radio }} py-4 has-checked:border-ink has-checked:bg-sand-dark">
-                                    <input type="radio" name="shipping_method" value="{{ $method['code'] }}" x-model="shipping" @checked($selectedShipping === $method['code']) class="sr-only">
-                                    <span class="grid size-4 flex-none place-items-center rounded-full border border-label"><span class="size-2 rounded-full group-has-checked:bg-ink"></span></span>
-                                    <span class="min-w-0 flex-1">
-                                        <span class="block text-[15px]">{{ $method['label'] }}</span>
-                                        @if ($method['note'])
-                                            <span class="mt-0.5 block text-[12.5px] text-label">{{ $method['note'] }}</span>
-                                        @endif
-                                    </span>
-                                    <span class="text-[14px]">{{ $method['cost'] === 0 ? 'gratis' : Money::format($method['cost']) }}</span>
-                                </label>
-                            @endforeach
+                    @if ($needsDelivery)
+                        <fieldset>
+                            <legend class="mb-3.5 text-[11.5px] tracking-[0.16em] text-label uppercase">Sposób dostawy</legend>
+                            <div class="grid gap-2.5">
+                                @foreach ($methods as $method)
+                                    <label class="{{ $radio }} py-4 has-checked:border-ink has-checked:bg-sand-dark">
+                                        <input type="radio" name="shipping_method" value="{{ $method['code'] }}" x-model="shipping" @checked($selectedShipping === $method['code']) class="sr-only">
+                                        <span class="grid size-4 flex-none place-items-center rounded-full border border-label"><span class="size-2 rounded-full group-has-checked:bg-ink"></span></span>
+                                        <span class="min-w-0 flex-1">
+                                            <span class="block text-[15px]">{{ $method['label'] }}</span>
+                                            @if ($method['note'])
+                                                <span class="mt-0.5 block text-[12.5px] text-label">{{ $method['note'] }}</span>
+                                            @endif
+                                        </span>
+                                        <span class="text-[14px]">{{ $method['cost'] === 0 ? 'gratis' : Money::format($method['cost']) }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                            @error('shipping_method')
+                                <p class="mt-2 text-[13px] text-error">{{ $message }}</p>
+                            @enderror
+                        </fieldset>
+                    @else
+                        {{-- Vouchers sent as PDFs alone: the e-mail is the delivery, so there is nothing to choose. --}}
+                        <div>
+                            <div class="mb-3.5 text-[11.5px] tracking-[0.16em] text-label uppercase">Dostawa</div>
+                            <div class="flex items-center gap-3.5 rounded-[4px] border border-ink bg-sand-dark px-[18px] py-4">
+                                <span class="min-w-0 flex-1">
+                                    <span class="block text-[15px]">Mailem, w PDF</span>
+                                    <span class="mt-0.5 block text-[12.5px] text-label">Zaraz po płatności — do wydruku albo do przekazania dalej</span>
+                                </span>
+                                <span class="text-[14px]">gratis</span>
+                            </div>
                         </div>
-                        @error('shipping_method')
-                            <p class="mt-2 text-[13px] text-error">{{ $message }}</p>
-                        @enderror
-                    </fieldset>
+                    @endif
                 </div>
 
                 <div class="min-w-[260px] flex-[0_1_300px]">
@@ -187,7 +212,9 @@
                         <div class="mt-3.5 flex flex-wrap justify-center gap-3 text-[11.5px] tracking-[0.08em] text-label uppercase">
                             <span>Apple Pay</span><span>&middot;</span><span>Google Pay</span><span>&middot;</span><span>Przelewy24</span>
                         </div>
-                        <p class="mt-3 text-center text-[12px] leading-[1.5] text-hint">Ceramikę zawijam w wióry i podwójny karton</p>
+                        @if ($needsDelivery)
+                            <p class="mt-3 text-center text-[12px] leading-[1.5] text-hint">Ceramikę zawijam w wióry i podwójny karton</p>
+                        @endif
                     </div>
                 </div>
             </form>

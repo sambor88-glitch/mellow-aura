@@ -14,8 +14,8 @@ use Illuminate\Validation\Rule;
 
 /**
  * Three fields, delivery, payment and accepting the terms are required, and so is accepting each unexpected
- * feature of a product in the cart (terms §4.5). The address, NIP and note are
- * optional, but an address has to be whole and a NIP has to add up.
+ * feature of a product in the cart (terms §4.5). A cart of vouchers sent as PDFs has no delivery to choose.
+ * The address, NIP and note are optional, but an address has to be whole and a NIP has to add up.
  */
 class PlaceOrderRequest extends FormRequest
 {
@@ -41,7 +41,10 @@ class PlaceOrderRequest extends FormRequest
             'city' => ['nullable', 'required_with:street,postal_code', 'string', 'max:80'],
             'invoice_nip' => ['bail', 'nullable', 'digits:10', $this->checksum(...)],
             'note' => ['nullable', 'string', 'max:500'],
-            'shipping_method' => ['required', Rule::in($this->container->make(ShippingMethods::class)->all()->keys())],
+            // Vouchers sent as PDFs alone have nothing to deliver; the controller records them as sent by e-mail.
+            'shipping_method' => $this->needsDelivery()
+                ? ['required', Rule::in($this->container->make(ShippingMethods::class)->all()->keys())]
+                : ['exclude'],
             'payment_method' => ['required', Rule::enum(PaymentMethod::class)],
             'blik_code' => ['exclude_unless:payment_method,blik', 'required', 'digits:6'],
             'expected_total' => ['required', 'integer'],
@@ -56,7 +59,7 @@ class PlaceOrderRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'phone.required' => 'Bez numeru telefonu kurier nie znajdzie paczkomatu',
+            'phone.required' => $this->needsDelivery() ? 'Bez numeru telefonu kurier nie znajdzie paczkomatu' : 'Wpisz numer telefonu — zadzwonię tylko w sprawie zamówienia',
             'phone.regex' => 'Numer telefonu ma 9 cyfr — sprawdź, czy żadna nie uciekła',
             'email.required' => 'Wpisz e-mail — wyślę na niego potwierdzenie',
             'email.email' => 'Adres e-mail bez małpy — sprawdź, czy nie uciekła',
@@ -82,6 +85,11 @@ class PlaceOrderRequest extends FormRequest
                 'accept_deviations.'.$key.'.accepted' => 'Zaznacz, że akceptujesz tę cechę — bez tego nie mogę przyjąć zamówienia',
             ])->all(),
         ];
+    }
+
+    private function needsDelivery(): bool
+    {
+        return $this->container->make(Cart::class)->needsDelivery();
     }
 
     /**

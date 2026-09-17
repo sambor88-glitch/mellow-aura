@@ -5,6 +5,7 @@ namespace App\Modules\Checkout\Models;
 use App\Modules\Checkout\Enums\OrderStatus;
 use App\Modules\Checkout\Enums\PaymentMethod;
 use App\Modules\Checkout\Enums\PaymentStatus;
+use App\Modules\Checkout\Support\ShippingMethods;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -30,6 +31,14 @@ class Order extends Model
     public function withdrawals(): HasMany
     {
         return $this->hasMany(Withdrawal::class);
+    }
+
+    /**
+     * Whether something goes out in a parcel. An order of vouchers sent as PDFs has nothing to wrap or wait for.
+     */
+    public function sendsParcel(): bool
+    {
+        return $this->shipping_method !== ShippingMethods::EMAIL;
     }
 
     /**

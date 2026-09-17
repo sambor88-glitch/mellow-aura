@@ -1,12 +1,14 @@
 @use('App\Modules\Shared\Support\Money')
 <x-shared::mail.layout
     :title="'Zamówienie '.$order->number"
-    :preheader="'Zapłacone '.Money::format($order->total_gross).'. Zanim paczka wyjdzie, wyślę Ci jej zdjęcie.'"
+    :preheader="'Zapłacone '.Money::format($order->total_gross).'.'.($parcel ? ' Zanim paczka wyjdzie, wyślę Ci jej zdjęcie.' : '')"
 >
-    <h1 style="margin: 0 0 12px; font-family: Georgia, 'Times New Roman', serif; font-weight: normal; font-size: 30px; line-height: 1.15; color: #2F2620;">Dziękuję. Pakuję.</h1>
+    <h1 style="margin: 0 0 12px; font-family: Georgia, 'Times New Roman', serif; font-weight: normal; font-size: 30px; line-height: 1.15; color: #2F2620;">{{ $parcel ? 'Dziękuję. Pakuję.' : 'Dziękuję.' }}</h1>
     <p style="margin: 0 0 22px; color: #5C5043;">
         Zamówienie <strong style="font-weight: 600; color: #2F2620;">{{ $order->number }}</strong> jest opłacone.
-        Zanim paczka wyjdzie, wyślę Ci jej zdjęcie — każdą sztukę zawijam osobno.
+        @if ($parcel)
+            Zanim paczka wyjdzie, wyślę Ci jej zdjęcie — każdą sztukę zawijam osobno.
+        @endif
     </p>
 
     @if ($missing->isNotEmpty())

@@ -212,6 +212,42 @@ class AdminProductsTest extends TestCase
             ->assertSeeInOrder(['Zanim ktoś kupi', 'Kontakt z żywnością', '<option value="suitable" selected>Tak — do jedzenia i picia</option>', 'value="Nie do mikrofalówki"', 'placeholder="jak w Ustawieniach: 0,5 cm"', 'Puste pole — obowiązuje różnica z Ustawień: 0,5 cm.', 'Ostrzeżenia', 'name="is_exact_piece" value="1" checked'], false);
     }
 
+    public function test_a_voucher_size_can_be_sent_by_post_and_goods_are_never_asked(): void
+    {
+        $vouchers = Category::factory()->create(['name' => 'Vouchery', 'slug' => 'vouchery', 'group' => CategoryGroup::Workshops]);
+        $voucher = $this->product('Voucher dla pary', 1, [39000, 39000], ['category_id' => $vouchers->id]);
+        [$pdf, $posted] = $voucher->variants()->orderBy('id')->get()->all();
+        $this->product('Kubki malowane', 2, [7900]);
+        $owner = User::factory()->create();
+
+        $page = $this->actingAs($owner)->get('/panel/produkty')->assertOk()->getContent();
+        $this->assertSame(3, substr_count($page, '][sent_by_post]"'), 'Two sizes of the voucher and one spare row, none for the mugs.');
+        $this->assertStringContainsString('Zaznacz „pocztą” przy rozmiarze, który drukujesz i wysyłasz', $page);
+
+        $this->actingAs($owner)
+            ->put('/panel/produkty/'.$voucher->id, [
+                'form' => 'produkt-'.$voucher->id,
+                'name' => 'Voucher dla pary',
+                'category_id' => $vouchers->id,
+                'is_published' => '1',
+                'variants' => [
+                    ['id' => $pdf->id, 'label' => 'PDF do wydruku', 'price' => '390', 'stock' => ''],
+                    ['id' => $posted->id, 'label' => 'Wysyłka pocztą', 'price' => '390', 'stock' => '', 'sent_by_post' => '1'],
+                ],
+            ])
+            ->assertRedirect('/panel/produkty#produkt-'.$voucher->id);
+
+        $this->assertSame([false, true], $voucher->variants()->orderBy('id')->pluck('sent_by_post')->all());
+        $this->assertSame([false, true], $voucher->variants()->orderBy('id')->get()->map->needsDelivery()->all());
+
+        // Goods always travel in a parcel, whatever the column says.
+        $mug = ProductVariant::query()->whereRelation('product', 'name', 'Kubki malowane')->sole();
+        $mug->update(['sent_by_post' => false]);
+        $this->assertTrue($mug->needsDelivery());
+
+        $this->actingAs($owner)->get('/panel/produkty')->assertSee('name="variants[1][sent_by_post]" value="1" checked', false);
+    }
+
     public function test_google_shopping_gets_the_kind_from_the_list_and_a_product_can_stay_out_of_it(): void
     {
         $vase = $this->product('Wazony', 1, [23900], ['google_category' => GoogleCategory::Vases]);

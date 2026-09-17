@@ -647,7 +647,8 @@
                 {
                     "label": "Wysyłka pocztą",
                     "price_gross": 39000,
-                    "stock": null
+                    "stock": null,
+                    "sent_by_post": true
                 }
             ],
             "images": [

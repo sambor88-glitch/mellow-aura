@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['product_id', 'label', 'price_gross', 'compare_at_price', 'stock'])]
+#[Fillable(['product_id', 'label', 'price_gross', 'compare_at_price', 'stock', 'sent_by_post'])]
 class ProductVariant extends Model
 {
     /** @use HasFactory<ProductVariantFactory> */
@@ -70,6 +70,15 @@ class ProductVariant extends Model
     }
 
     /**
+     * Whether the customer chooses a delivery for this size. A voucher comes as a PDF by e-mail,
+     * unless its size is printed and posted; everything else from the shop goes in a parcel.
+     */
+    public function needsDelivery(): bool
+    {
+        return ! $this->product->isVoucher() || $this->sent_by_post;
+    }
+
+    /**
      * On a stamped product the variant without stock tracking is made to order with the customer's
      * own text ("Twój tekst"), next to the ready one-off mugs that each have a stock of 1.
      */
@@ -122,6 +131,7 @@ class ProductVariant extends Model
             'price_gross' => 'integer',
             'compare_at_price' => 'integer',
             'stock' => 'integer',
+            'sent_by_post' => 'boolean',
         ];
     }
 }

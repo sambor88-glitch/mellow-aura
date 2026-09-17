@@ -22,7 +22,7 @@
                     @if ($bankTransfer['recipient'])
                         Odbiorca: {{ $bankTransfer['recipient'] }}<br>
                     @endif
-                    <span style="color: #5C5043;">Paczkę wyślę po zaksięgowaniu przelewu.</span>
+                    <span style="color: #5C5043;">{{ $parcel ? 'Paczkę wyślę po zaksięgowaniu przelewu.' : 'PDF wyślę po zaksięgowaniu przelewu.' }}</span>
                 </td>
             </tr>
         </table>

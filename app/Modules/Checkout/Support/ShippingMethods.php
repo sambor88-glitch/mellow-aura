@@ -11,6 +11,9 @@ use Illuminate\Support\Collection;
  */
 class ShippingMethods
 {
+    /** An order of vouchers sent as PDFs: nothing goes in a parcel, the e-mail brings them. */
+    public const EMAIL = 'email';
+
     public function __construct(private Settings $settings) {}
 
     /**
@@ -26,6 +29,14 @@ class ShippingMethods
                 'note' => $method['note'] ?? null,
                 'price_gross' => (int) ($method['price_gross'] ?? 0),
             ]]);
+    }
+
+    /**
+     * The name of the way an order is delivered, also for an order whose method was later removed from the panel.
+     */
+    public function label(string $code): string
+    {
+        return $code === self::EMAIL ? 'Mailem, w PDF' : ($this->all()->get($code)['label'] ?? $code);
     }
 
     public function freeFrom(): int
