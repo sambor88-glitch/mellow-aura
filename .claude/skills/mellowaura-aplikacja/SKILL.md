@@ -61,6 +61,13 @@ Na karcie produktu cena i „Do koszyka" nie mogą wyjechać poza ekran przy prz
 
 `env(safe-area-inset-bottom)` odsuwa przycisk od paska gestów na iPhonie. Bez tego palec trafia w pasek systemowy.
 
+## Nagłówek na telefonie
+
+Nagłówek z prototypu zawija się na telefonie w cztery wiersze: logo, dwa wiersze menu, koszyk. Ma wtedy 218 px,
+czyli ponad ćwierć ekranu. Przy przewijaniu na ekranie zostaje tylko wiersz z koszykiem, a logo i menu odjeżdżają
+razem ze stroną. Nagłówek dostaje wtedy ujemne `top` z `resources/js/header.js`. Gdy wszystko mieści się
+w jednym wierszu (komputer, tablet), nagłówek przykleja się cały, jak w prototypie.
+
 ## Warstwy — trzymaj tę skalę
 
 | z-index | Element |
