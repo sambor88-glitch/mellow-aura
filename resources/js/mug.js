@@ -14,6 +14,8 @@ export default ({ maxLines, maxChars, prices, glazes, size, glaze }) => {
         size,
         glaze,
         sound: true,
+        // The field has focus: on a phone the small preview shows above it and the bottom bar steps aside.
+        writing: false,
 
         init() {
             try {
@@ -73,6 +75,21 @@ export default ({ maxLines, maxChars, prices, glazes, size, glaze }) => {
             }
 
             this.text = next;
+        },
+
+        startWriting() {
+            this.writing = true;
+
+            // After the keyboard has opened, bring the small preview and the field into view together.
+            setTimeout(() => {
+                if (this.writing && this.$refs.mini.offsetParent !== null) {
+                    this.$refs.mini.scrollIntoView({ block: 'start', behavior: 'smooth' });
+                }
+            }, 350);
+        },
+
+        focusText() {
+            this.$refs.text.focus();
         },
 
         setText(value) {

@@ -53,21 +53,7 @@
                     @else
                         <div class="aspect-square w-full"></div>
                     @endif
-                    <div aria-hidden="true" class="pointer-events-none absolute inset-0 opacity-[.07] mix-blend-multiply transition-[background-color] duration-600"
-                         style="background-color: {{ $startGlaze['hex'] }}" x-bind:style="{ backgroundColor: glazeHex }"></div>
-                    {{-- The text is only a picture of what the field holds, so screen readers skip it. --}}
-                    <div aria-hidden="true" class="absolute w-[60%] text-center text-[length:clamp(15px,2.3vw,26px)]"
-                         style="left: {{ $position['x'] }}%; top: {{ $position['y'] }}%; transform: translate(-50%, -50%) rotate({{ $position['rotation'] }}deg)">
-                        <span x-show="false" class="block leading-[1.35] tracking-[0.16em]" style="font-size: {{ $position['size'] }}%; color: {{ $ink['hex'] }}">TWÓJ NAPIS</span>
-                        <template x-for="line in preview" x-bind:key="line.key">
-                            <span class="block leading-[1.35] tracking-[0.16em] [overflow-wrap:anywhere]"
-                                  style="font-size: {{ $position['size'] }}%; color: {{ $ink['hex'] }}; text-shadow: 0 1px 0 rgba(255, 255, 255, .35)">
-                                <template x-for="item in line.letters" x-bind:key="item.key">
-                                    <span class="inline-block animate-ma-stamp whitespace-pre" x-text="item.letter"></span>
-                                </template>
-                            </span>
-                        </template>
-                    </div>
+                    @include('mug-configurator::partials.overlay')
                     <div class="absolute right-4 bottom-4 flex items-center gap-[9px] rounded-full bg-cream/92 px-[13px] py-[7px]">
                         <span aria-hidden="true" class="size-[15px] rounded-full transition-[background-color] duration-600"
                               style="background-color: {{ $startGlaze['hex'] }}" x-bind:style="{ backgroundColor: glazeHex }"></span>
@@ -86,12 +72,23 @@
                     <p class="mb-8 max-w-[46ch] text-[16.5px] leading-[1.7] text-pretty text-lead">{{ $lead }}</p>
                 @endif
 
-                <form method="post" action="{{ route('cart.store') }}" x-on:submit.prevent="add($el)">
+                <form id="mug-form" x-ref="form" method="post" action="{{ route('cart.store') }}" x-on:submit.prevent="add($el)">
                     @csrf
                     <input type="hidden" name="type" value="mug">
 
                     <label for="mug-text" class="mb-3 block {{ $eyebrow }}">Twój napis</label>
-                    <textarea id="mug-text" name="text" x-ref="text" x-on:input="typed($event)" rows="{{ min(3, $maxLines) }}" autocomplete="off" spellcheck="false"
+                    {{-- On a phone the big photo is a screen up while typing, so a strip of it waits above the field (up to 852 px, then the photo stands beside the form). --}}
+                    <div x-ref="mini" x-cloak x-show="writing || text.trim() !== ''" aria-hidden="true"
+                         class="relative mb-3 h-[150px] scroll-mt-24 overflow-hidden rounded-[6px] bg-line-soft [container-type:inline-size] min-[852px]:hidden">
+                        {{-- The same square as the big preview, slid so the text sits in the middle of the strip. --}}
+                        <div class="absolute inset-x-0 aspect-square" style="top: clamp(calc(150px - 100cqw), calc(75px - {{ $position['y'] }}cqw), 0px)">
+                            @if ($photo)
+                                <img src="{{ $photo }}" alt="" loading="lazy" class="block aspect-square w-full object-cover">
+                            @endif
+                            @include('mug-configurator::partials.overlay')
+                        </div>
+                    </div>
+                    <textarea id="mug-text" name="text" x-ref="text" x-on:input="typed($event)" x-on:focus="startWriting()" x-on:blur="writing = false" rows="{{ min(3, $maxLines) }}" autocomplete="off" spellcheck="false"
                               placeholder="NIE POWINNAM&#10;ALE JEDNAK" aria-describedby="mug-text-rules"
                               class="block w-full min-w-0 resize-none rounded-[4px] border border-line bg-cream px-[18px] py-[17px] text-[19px] leading-[1.5] tracking-[0.14em] text-ink uppercase placeholder:text-hint focus:border-ink"></textarea>
                     <div class="mt-3 mb-[30px] flex flex-wrap items-center justify-between gap-3 text-[12.5px] text-label">
@@ -132,7 +129,7 @@
                         </div>
                     </fieldset>
 
-                    <button class="w-full rounded-full bg-ink px-[30px] py-[18px] text-[15px] tracking-[0.02em] text-linen transition duration-300 hover:bg-navy active:scale-[.97]">
+                    <button type="submit" class="w-full rounded-full bg-ink px-[30px] py-[18px] text-[15px] tracking-[0.02em] text-linen transition duration-300 hover:bg-navy active:scale-[.97]">
                         Dodaj do koszyka &middot; <span x-text="price">{{ Money::format($startSize['price_gross']) }}</span>
                     </button>
                 </form>
@@ -159,6 +156,18 @@
                     </div>
                 @endif
             </div>
+        </div>
+
+        {{-- On a phone the price and the button stay at the bottom (mellowaura-aplikacja), out of the way while typing
+             and while the form's own button is in view. Empty, the button says what is missing. --}}
+        <div x-data="buyBar('#mug-form [type=submit]')" x-cloak x-bind:class="(shown && ! writing) || 'invisible translate-y-full'"
+             class="sticky bottom-0 z-50 -mx-7 mt-10 flex items-center gap-3 border-t border-divider bg-sand/96 px-4 pt-3.5 pb-[calc(14px+env(safe-area-inset-bottom))] backdrop-blur-[14px] transition duration-300 min-[852px]:hidden">
+            <div class="min-w-0 flex-auto">
+                <div class="font-serif text-[22px] leading-none" x-text="price">{{ Money::format($startSize['price_gross']) }}</div>
+                <div class="mt-1 truncate text-[11.5px] text-label" x-text="size + ' · wnętrze: ' + glazeName">{{ $startSize['label'] }} · wnętrze: {{ $startGlaze['name'] }}</div>
+            </div>
+            <button type="button" x-on:click="text.trim() ? $refs.form.requestSubmit() : focusText()" x-text="text.trim() ? 'Do koszyka' : 'Wpisz napis'"
+                    class="flex-none rounded-full bg-ink px-7 py-[15px] text-[14px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]">Wpisz napis</button>
         </div>
     </div>
 </x-shared::layout>

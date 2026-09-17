@@ -38,7 +38,10 @@ class MugPageTest extends TestCase
             ->assertSeeInOrder(['Kolor wnętrza', 'value="turquoise" x-model="glaze" checked', 'Turkus', 'Kobalt', 'Ceglany', 'Grafit', 'Pudrowy róż'], false)
             ->assertSeeInOrder(['Dodaj do koszyka', '79,00 zł', 'wysyłka gratis od 400,00 zł'])
             ->assertSeeInOrder(['Zamawiasz więcej?', 'Od sześciu kubków robię rabat', 'Czego nie wbiję', 'Mowy nienawiści'])
-            ->assertSee('Podgląd jest orientacyjny');
+            ->assertSee('Podgląd jest orientacyjny')
+            // On a phone: a strip of the photo above the field while typing, and the price with the button at the bottom.
+            ->assertSeeInOrder(['id="mug-form"', 'Twój napis', 'x-ref="mini"', 'name="text"'], false)
+            ->assertSeeInOrder(['x-data="buyBar(\'#mug-form [type=submit]\')"', '79,00 zł', 'Średni · wnętrze: Turkus', 'Wpisz napis'], false);
     }
 
     public function test_without_sizes_there_is_nothing_to_sell(): void
