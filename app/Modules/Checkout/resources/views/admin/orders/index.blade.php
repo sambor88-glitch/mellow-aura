@@ -16,16 +16,23 @@
         @endforeach
     </div>
 
-    <div class="mb-4 flex flex-wrap gap-2.5">
-        <a href="{{ route('admin.orders.index') }}" @if (! $unpaid) aria-current="page" @endif class="{{ $filter }} {{ $unpaid ? $filterOff : $filterOn }}">Opłacone</a>
+    <nav aria-label="Filtry zamówień" class="mb-4 flex flex-wrap gap-2.5">
+        <a href="{{ route('admin.orders.index') }}" @if (! $unpaid && ! $status) aria-current="page" @endif class="{{ $filter }} {{ $unpaid || $status ? $filterOff : $filterOn }}">Opłacone</a>
+        @foreach ($filters as $option)
+            <a href="{{ route('admin.orders.index', ['status' => $option['slug']]) }}" @if ($option['active']) aria-current="page" @endif class="{{ $filter }} {{ $option['active'] ? $filterOn : $filterOff }}">{{ $option['label'] }} ({{ $option['count'] }})</a>
+        @endforeach
         <a href="{{ route('admin.orders.index', ['platnosc' => 'nieoplacone']) }}" @if ($unpaid) aria-current="page" @endif class="{{ $filter }} {{ $unpaid ? $filterOn : $filterOff }}">Nieopłacone ({{ $unpaidCount }})</a>
-    </div>
+    </nav>
 
     @if ($orders->isEmpty())
         <div class="rounded-[4px] border border-dashed border-line-strong bg-linen px-7 py-10 text-center">
             <div class="mb-2 font-serif text-[22px]">Jeszcze nic tu nie ma</div>
             <p class="mx-auto max-w-[42ch] text-[13.5px] text-label">
-                {{ $unpaid ? 'Nie ma zamówień, które czekają na płatność albo się nie udały.' : 'Pierwsze opłacone zamówienie pojawi się tutaj razem z adresem do wysyłki i sposobem płatności.' }}
+                {{ match (true) {
+                    $unpaid => 'Nie ma zamówień, które czekają na płatność albo się nie udały.',
+                    $status !== null => 'Żadne opłacone zamówienie nie ma teraz tego statusu.',
+                    default => 'Pierwsze opłacone zamówienie pojawi się tutaj razem z adresem do wysyłki i sposobem płatności.',
+                } }}
             </p>
         </div>
     @else
@@ -37,7 +44,7 @@
                         $order->payment_status === PaymentStatus::Pending => ['Czeka na płatność', 'bg-linen text-label'],
                         $order->withdrawals->whereNull('handled_at')->isNotEmpty() => ['Odstąpienie od umowy', 'bg-alert text-error'],
                         $order->items->contains(fn ($item) => $item->missing_quantity > 0) => ['Problem: brak sztuki', 'bg-alert text-error'],
-                        default => [$order->status->label(), 'bg-sand-dark text-lead'],
+                        default => [$order->status->label(), $order->status->chipClass()],
                     };
                 @endphp
                 <div class="flex flex-wrap items-center gap-3.5 rounded-[4px] border border-line bg-cream px-[18px] py-4">

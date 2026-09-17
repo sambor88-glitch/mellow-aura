@@ -1,9 +1,14 @@
+@use('App\Modules\Checkout\Enums\OrderStatus')
 @use('App\Modules\Checkout\Enums\PaymentStatus')
 @use('App\Modules\Shared\Support\Money')
 @php
     $card = 'rounded-[4px] border border-line bg-cream px-[26px] py-7';
     $row = 'flex flex-wrap justify-between gap-x-6 gap-y-0.5';
     $address = $order->shipping_address;
+    $paid = $order->payment_status === PaymentStatus::Paid;
+    // „Wysłane” fits a parcel that travels; a pickup at the studio and vouchers sent as PDFs end straight away.
+    $travels = $order->sendsParcel() && $order->shipping_method !== 'studio_pickup';
+    $action = 'w-full rounded-full border border-line-strong px-4 py-2.5 text-[13.5px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark active:scale-[.98]';
 @endphp
 <x-admin::layout title="Zamówienie {{ $order->number }}">
     <a href="{{ route('admin.orders.index') }}" class="mb-5 inline-block text-[13.5px]">← Wszystkie zamówienia</a>
@@ -92,6 +97,94 @@
         </div>
 
         <div class="grid min-w-0 flex-[0_1_300px] content-start gap-[26px]">
+            <section class="{{ $card }}" aria-labelledby="status-heading">
+                <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+                    <h2 id="status-heading" class="font-serif text-[23px]">Status</h2>
+                    <span class="rounded-full px-3 py-[5px] text-[11.5px] {{ $order->status->chipClass() }}">{{ $order->status->label() }}</span>
+                </div>
+                <dl class="grid gap-2 text-[13.5px]">
+                    @if ($order->paid_at)
+                        <div class="{{ $row }}"><dt class="text-label">Opłacone</dt><dd class="tabular-nums">{{ $order->paid_at->format('j.m.Y, H:i') }}</dd></div>
+                    @endif
+                    @if ($order->shipped_at)
+                        <div class="{{ $row }}"><dt class="text-label">Wysłane</dt><dd class="tabular-nums">{{ $order->shipped_at->format('j.m.Y, H:i') }}</dd></div>
+                    @endif
+                    @if ($order->tracking_number)
+                        <div class="{{ $row }}"><dt class="text-label">Nr przesyłki</dt><dd><a href="{{ $order->trackingUrl() }}" target="_blank" rel="noopener" class="tabular-nums [overflow-wrap:anywhere]">{{ $order->tracking_number }}</a></dd></div>
+                    @endif
+                    @if ($order->completed_at)
+                        <div class="{{ $row }}"><dt class="text-label">Zakończone</dt><dd class="tabular-nums">{{ $order->completed_at->format('j.m.Y, H:i') }}</dd></div>
+                    @endif
+                </dl>
+                @if ($order->status === OrderStatus::Problem && $order->problem_note)
+                    <p class="mt-3 rounded-[4px] border border-alert-line bg-alert px-3.5 py-2.5 text-[13.5px] whitespace-pre-line [overflow-wrap:anywhere] text-alert-text">{{ $order->problem_note }}</p>
+                @endif
+                @error('status')
+                    <p class="mt-3 text-[13px] text-error">{{ $message }}</p>
+                @enderror
+
+                @if (! $paid)
+                    <p class="mt-3 text-[13px] leading-[1.55] text-label">Status zmienisz, gdy zamówienie będzie opłacone.</p>
+                @else
+                    <div class="mt-4 grid gap-3 border-t border-divider pt-4">
+                        @if ($travels && in_array($order->status, [OrderStatus::InProgress, OrderStatus::Problem], true))
+                            <form method="post" action="{{ route('admin.orders.status', $order) }}" class="grid gap-2.5">
+                                @csrf
+                                @method('patch')
+                                <input type="hidden" name="status" value="{{ OrderStatus::Shipped->value }}">
+                                <x-shared::field name="tracking_number" label="Numer przesyłki" autocomplete="off" autocapitalize="characters" spellcheck="false"
+                                                 hint="Nieobowiązkowe — z numerem klientka śledzi paczkę" />
+                                <button class="w-full rounded-full bg-ink p-3 text-[13.5px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]">Wysłane — powiadom klientkę</button>
+                            </form>
+                        @endif
+
+                        @if (in_array($order->status, [OrderStatus::InProgress, OrderStatus::Shipped, OrderStatus::Problem], true))
+                            <form method="post" action="{{ route('admin.orders.status', $order) }}">
+                                @csrf
+                                @method('patch')
+                                <input type="hidden" name="status" value="{{ OrderStatus::Completed->value }}">
+                                <button class="{{ $action }}">{{ match (true) {
+                                    $order->status === OrderStatus::Shipped => 'Doręczone — zakończ',
+                                    $order->shipping_method === 'studio_pickup' => 'Odebrane — zakończ',
+                                    default => 'Zakończ zamówienie',
+                                } }}</button>
+                            </form>
+                        @endif
+
+                        @if ($order->status !== OrderStatus::Problem)
+                            <details @if ($errors->has('problem_note')) open @endif class="group">
+                                <summary class="cursor-pointer list-none text-[13px] text-brown [&::-webkit-details-marker]:hidden">Coś poszło nie tak? Oznacz problem</summary>
+                                <form method="post" action="{{ route('admin.orders.status', $order) }}" class="mt-2.5 grid gap-2.5">
+                                    @csrf
+                                    @method('patch')
+                                    <input type="hidden" name="status" value="{{ OrderStatus::Problem->value }}">
+                                    <div class="min-w-0">
+                                        <label for="problem_note" class="mb-1.5 block text-[13.5px] text-graphite">Co się stało</label>
+                                        <textarea id="problem_note" name="problem_note" rows="3" maxlength="500" aria-describedby="problem_note-note"
+                                                  class="w-full min-w-0 resize-y rounded-[4px] border border-line bg-white px-3.5 py-3 text-[14px] leading-[1.55] text-ink focus:border-ink pointer-coarse:text-[16px]">{{ old('problem_note') }}</textarea>
+                                        @error('problem_note')
+                                            <p id="problem_note-note" class="mt-1.5 text-[13px] text-error">{{ $message }}</p>
+                                        @else
+                                            <p id="problem_note-note" class="mt-1.5 text-[12.5px] text-hint">Tylko dla Ciebie, np. „paczka wróciła” albo „pęknięty kubek”</p>
+                                        @enderror
+                                    </div>
+                                    <button class="{{ $action }}">Oznacz jako problem</button>
+                                </form>
+                            </details>
+                        @endif
+
+                        @if (in_array($order->status, [OrderStatus::Shipped, OrderStatus::Completed, OrderStatus::Problem], true))
+                            <form method="post" action="{{ route('admin.orders.status', $order) }}">
+                                @csrf
+                                @method('patch')
+                                <input type="hidden" name="status" value="{{ OrderStatus::InProgress->value }}">
+                                <button class="text-[13px] text-label underline decoration-line-strong underline-offset-4 hover:text-ink">Wróć do „W realizacji”</button>
+                            </form>
+                        @endif
+                    </div>
+                @endif
+            </section>
+
             <section class="{{ $card }}">
                 <h2 class="mb-4 font-serif text-[23px]">Kontakt</h2>
                 <div class="grid gap-2 text-[14px]">

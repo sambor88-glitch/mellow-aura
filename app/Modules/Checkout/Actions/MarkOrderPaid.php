@@ -43,7 +43,9 @@ class MarkOrderPaid
             }
 
             $order->update([
-                'status' => OrderStatus::InProgress,
+                // Vouchers sent as PDFs alone are delivered by the e-mail that goes out now, so nothing is left to do.
+                'status' => $order->sendsParcel() ? OrderStatus::InProgress : OrderStatus::Completed,
+                'completed_at' => $order->sendsParcel() ? null : now(),
                 'payment_status' => PaymentStatus::Paid,
                 'payment_provider_id' => $providerId,
                 'paid_at' => now(),
