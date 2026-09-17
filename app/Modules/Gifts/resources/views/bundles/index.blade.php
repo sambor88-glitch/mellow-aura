@@ -26,7 +26,7 @@
                     $full = $bundle->fullPrice();
                     $price = $bundle->price();
                 @endphp
-                <article class="flex animate-ma-up flex-wrap overflow-hidden rounded-[4px] border border-divider bg-cream">
+                <article id="zestaw-{{ $bundle->id }}" class="flex scroll-mt-28 animate-ma-up flex-wrap overflow-hidden rounded-[4px] border border-divider bg-cream">
                     <div class="flex min-w-0 flex-[1_1_260px]">
                         @foreach ($bundle->items->take(2) as $item)
                             @php($photo = $item->variant->product->getFirstMedia('images'))

@@ -1,5 +1,6 @@
 @use('App\Modules\Catalog\Enums\Dimension')
 @use('App\Modules\Catalog\Enums\FoodContact')
+@use('App\Modules\Catalog\Enums\GoogleCategory')
 @use('App\Modules\Catalog\Enums\Occasion')
 @use('App\Modules\Catalog\Enums\Recipient')
 @use('App\Modules\Shared\Support\Money')
@@ -29,6 +30,8 @@
     $oneOff = $mine ? (bool) old('is_one_off') : (bool) $product?->is_one_off;
     $exactPiece = $mine ? (bool) old('is_exact_piece') : (bool) $product?->is_exact_piece;
     $foodContact = (string) $old('food_contact', $product?->food_contact?->value);
+    $googleCategory = (string) $old('google_category', $product?->google_category?->value);
+    $showInGoogle = $mine ? (bool) old('show_in_google') : ($product?->show_in_google ?? true);
     $defaultTolerance = $settings->get('size_tolerance');
 
     $input = 'min-w-0 rounded-[4px] border bg-white text-[15px] text-ink placeholder:text-hint focus:border-ink';
@@ -235,6 +238,31 @@
                     <input type="checkbox" name="recipients[]" value="{{ $recipient->value }}" @checked(in_array($recipient->value, $recipients, true)) class="sr-only">{{ $recipient->label() }}
                 </label>
             @endforeach
+        </div>
+    </fieldset>
+
+    <fieldset class="rounded-[4px] border border-sand-dark bg-linen px-4 pt-3 pb-4">
+        <legend class="{{ $legend }} mb-0 px-1">Zakupy Google — bezpłatne wyniki</legend>
+        <div class="grid gap-3">
+            <div class="min-w-0">
+                <label for="{{ $formKey }}-google-category" class="mb-1.5 block text-[13.5px] text-graphite">Rodzaj w Google</label>
+                <select id="{{ $formKey }}-google-category" name="google_category" aria-describedby="{{ $formKey }}-google-category-note"
+                        @class([$input, 'w-full px-4 py-[13px]', 'border-error' => $bag->has('google_category'), 'border-line' => ! $bag->has('google_category')])>
+                    <option value="">Niech Google dobierze sam</option>
+                    @foreach (GoogleCategory::cases() as $option)
+                        <option value="{{ $option->value }}" @selected($googleCategory === (string) $option->value)>{{ $option->label() }}</option>
+                    @endforeach
+                </select>
+                @if ($bag->has('google_category'))
+                    <p id="{{ $formKey }}-google-category-note" class="mt-1.5 text-[13px] text-error">{{ $bag->first('google_category') }}</p>
+                @else
+                    <p id="{{ $formKey }}-google-category-note" class="mt-1.5 text-[12.5px] text-hint">Pomaga Google pokazać produkt osobom, które szukają właśnie tego.</p>
+                @endif
+            </div>
+            <label class="flex min-h-11 items-start gap-2.5 text-[14px] text-graphite">
+                <input type="checkbox" name="show_in_google" value="1" @checked($showInGoogle) class="mt-[3px] size-4 flex-none accent-ink">
+                <span>Pokazuj w Zakupach Google<span class="mt-0.5 block text-[12.5px] text-hint">Trafi tam, gdy jest widoczny w sklepie i ma zdjęcie. Google zagląda do sklepu raz na dobę.</span></span>
+            </label>
         </div>
     </fieldset>
 

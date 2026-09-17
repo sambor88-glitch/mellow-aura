@@ -8,8 +8,6 @@
     $photo = $options->photoUrl();
     $maxLines = $options->maxLines();
     $maxChars = $options->maxCharsPerLine();
-    // Like the prototype, the middle size is chosen at the start.
-    $startSize = $sizes->get(intdiv($sizes->count() - 1, 2));
     $startGlaze = $glazes->first();
 
     $heading = $settings->get('text_mug_heading', 'Kubek z napisem');
@@ -30,6 +28,7 @@
     :canonical="route('mug.index')"
     :image="$photo"
 >
+    <x-slot:head>{!! $structuredData !!}</x-slot:head>
     <div class="mx-auto max-w-[1280px] animate-ma-view px-7 pt-11 pb-24"
          x-data="mugConfigurator({
              maxLines: {{ $maxLines }},

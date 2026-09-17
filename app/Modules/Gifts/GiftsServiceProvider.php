@@ -11,7 +11,9 @@ use App\Modules\Gifts\Cart\GiftWrapLines;
 use App\Modules\Gifts\Cart\VoucherLine;
 use App\Modules\Gifts\Cart\VoucherLines;
 use App\Modules\Gifts\Listeners\SendVouchers;
+use App\Modules\Gifts\Support\BundleMerchantItems;
 use App\Modules\Shared\ModuleServiceProvider;
+use App\Modules\Shared\Support\MerchantFeed;
 use App\Modules\Shared\Support\SitemapPages;
 use Illuminate\Support\Facades\Event;
 
@@ -24,6 +26,7 @@ class GiftsServiceProvider extends ModuleServiceProvider
             ->register(BundleLine::TYPE, BundleLines::class)
             ->register(GiftWrapLine::TYPE, GiftWrapLines::class));
         $this->callAfterResolving(SitemapPages::class, fn (SitemapPages $pages) => $pages->routes('gifts.index', 'bundles.index', 'vouchers.index'));
+        $this->callAfterResolving(MerchantFeed::class, fn (MerchantFeed $feed) => $feed->add(fn () => $this->app->make(BundleMerchantItems::class)()));
     }
 
     public function boot(): void

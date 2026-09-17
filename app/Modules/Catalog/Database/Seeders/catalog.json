@@ -95,7 +95,8 @@
                     "path": "zdjecia/wazon-rzezbiony.webp",
                     "alt": "Wazony"
                 }
-            ]
+            ],
+            "google_category": 602
         },
         {
             "slug": "zestaw-4-filizanek",
@@ -142,7 +143,8 @@
                     "path": "zdjecia/zestaw-flatlay.webp",
                     "alt": "Zestaw 4 filiżanek z talerzykami"
                 }
-            ]
+            ],
+            "google_category": 6049
         },
         {
             "slug": "patery",
@@ -184,7 +186,8 @@
                     "path": "zdjecia/patera-czarna-kolce.webp",
                     "alt": "Patery"
                 }
-            ]
+            ],
+            "google_category": 4372
         },
         {
             "slug": "talerze",
@@ -230,7 +233,8 @@
                     "path": "zdjecia/kasia-talerz-zloto.webp",
                     "alt": "Kasia z talerzem zdobionym złotem"
                 }
-            ]
+            ],
+            "google_category": 3553
         },
         {
             "slug": "bizuteria",
@@ -268,7 +272,8 @@
                     "stock": 3
                 }
             ],
-            "images": []
+            "images": [],
+            "google_category": 188
         },
         {
             "slug": "kubki-z-cytatem",
@@ -334,7 +339,8 @@
                     "path": "zdjecia/kubek-nie-powinnam.webp",
                     "alt": "Kubki z cytatem"
                 }
-            ]
+            ],
+            "google_category": 2169
         },
         {
             "slug": "kubki-malowane",
@@ -387,7 +393,8 @@
                     "path": "zdjecia/zestaw-flatlay.webp",
                     "alt": "Kubki malowane ręcznie"
                 }
-            ]
+            ],
+            "google_category": 2169
         },
         {
             "slug": "kadzielnice",
@@ -421,7 +428,8 @@
                     "path": "zdjecia/kadzielnica-pszczoly.webp",
                     "alt": "Kadzielnica ze złoconym kołnierzem"
                 }
-            ]
+            ],
+            "google_category": 4741
         },
         {
             "slug": "podstawki-pod-bizuterie",
@@ -464,7 +472,8 @@
                     "path": "zdjecia/podstawki-muszle-roz.webp",
                     "alt": "Podstawki pod biżuterię"
                 }
-            ]
+            ],
+            "google_category": 5974
         },
         {
             "slug": "scrunchies",
@@ -514,7 +523,8 @@
                     "path": "zdjecia/opaska-jedwab.webp",
                     "alt": "Opaska z jedwabnej apaszki"
                 }
-            ]
+            ],
+            "google_category": 1483
         },
         {
             "slug": "jedwabne-opaski",
@@ -561,7 +571,8 @@
                     "path": "zdjecia/scrunchies-fiolet.webp",
                     "alt": "Jedwabne scrunchies"
                 }
-            ]
+            ],
+            "google_category": 1662
         },
         {
             "slug": "voucher-lepienie",
@@ -605,7 +616,8 @@
                     "path": "zdjecia/zestaw-flatlay.webp",
                     "alt": "Voucher na warsztat — lepienie z ręki"
                 }
-            ]
+            ],
+            "google_category": 53
         },
         {
             "slug": "voucher-para",
@@ -643,7 +655,8 @@
                     "path": "zdjecia/kubek-cappuccino.webp",
                     "alt": "Kubek malowany ręcznie"
                 }
-            ]
+            ],
+            "google_category": 53
         },
         {
             "slug": "voucher-kwotowy",
@@ -688,7 +701,8 @@
                     "path": "zdjecia/talerz-niebieski-odcisk.webp",
                     "alt": "Talerz z odciskiem rośliny"
                 }
-            ]
+            ],
+            "google_category": 53
         },
         {
             "slug": "miski",
@@ -720,7 +734,8 @@
                     "stock": 3
                 }
             ],
-            "images": []
+            "images": [],
+            "google_category": 3498
         },
         {
             "slug": "kosmetyczki",
@@ -752,7 +767,8 @@
                     "stock": 3
                 }
             ],
-            "images": []
+            "images": [],
+            "google_category": 108
         },
         {
             "slug": "piorniki",
@@ -784,7 +800,8 @@
                     "stock": 3
                 }
             ],
-            "images": []
+            "images": [],
+            "google_category": 3062
         }
     ]
 }

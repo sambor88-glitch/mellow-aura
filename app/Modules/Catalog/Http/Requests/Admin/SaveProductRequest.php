@@ -4,6 +4,7 @@ namespace App\Modules\Catalog\Http\Requests\Admin;
 
 use App\Modules\Catalog\Enums\Dimension;
 use App\Modules\Catalog\Enums\FoodContact;
+use App\Modules\Catalog\Enums\GoogleCategory;
 use App\Modules\Catalog\Enums\Occasion;
 use App\Modules\Catalog\Enums\Recipient;
 use App\Modules\Shared\Rules\PriceBeforeReduction;
@@ -44,6 +45,7 @@ class SaveProductRequest extends FormRequest
             'deviation' => ['nullable', 'string', 'max:160'],
             'size_tolerance' => ['nullable', 'string', 'max:60'],
             'safety_warnings' => ['nullable', 'string', 'max:400'],
+            'google_category' => ['nullable', Rule::enum(GoogleCategory::class)],
             'dimensions' => ['nullable', 'array'],
             'dimensions.*' => ['nullable', 'string', 'max:20', 'regex:/^[\d\s.,x×-]+$/u'],
             'occasions' => ['nullable', 'array'],
@@ -85,6 +87,7 @@ class SaveProductRequest extends FormRequest
             'deviation.max' => 'Tę cechę zmieszczę do :max znaków — napisz ją krócej',
             'size_tolerance.max' => 'Różnicę wymiarów zmieszczę do :max znaków, np. 0,5 cm',
             'safety_warnings.max' => 'Ostrzeżenia zmieszczę do :max znaków',
+            'google_category.enum' => 'Wybierz rodzaj z listy albo zostaw „Niech Google dobierze sam”',
             'dimensions.*.max' => $dimension,
             'dimensions.*.regex' => $dimension,
             'occasions.*.enum' => 'Wybierz okazję z listy',
@@ -107,7 +110,7 @@ class SaveProductRequest extends FormRequest
      * The validated form in the shape SaveProduct takes: prices in grosze, empty dimensions left out,
      * photo descriptions keyed by photo id.
      *
-     * @return array{name: string, category_id: int, description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, is_published: bool, is_one_off: bool, is_exact_piece: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, price_gross: int, compare_at_price: ?int, stock: ?int}>, photo_alts: array<int, string>}
+     * @return array{name: string, category_id: int, description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, price_gross: int, compare_at_price: ?int, stock: ?int}>, photo_alts: array<int, string>}
      */
     public function product(): array
     {
@@ -122,6 +125,8 @@ class SaveProductRequest extends FormRequest
             'deviation' => $data['deviation'] ?? null,
             'size_tolerance' => $data['size_tolerance'] ?? null,
             'safety_warnings' => $data['safety_warnings'] ?? null,
+            'google_category' => isset($data['google_category']) ? (int) $data['google_category'] : null,
+            'show_in_google' => $this->boolean('show_in_google'),
             'is_published' => $this->boolean('is_published'),
             'is_one_off' => $this->boolean('is_one_off'),
             'is_exact_piece' => $this->boolean('is_exact_piece'),

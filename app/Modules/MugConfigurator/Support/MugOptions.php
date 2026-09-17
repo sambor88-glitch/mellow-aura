@@ -5,6 +5,7 @@ namespace App\Modules\MugConfigurator\Support;
 use App\Modules\Settings\Settings;
 use App\Modules\Shared\Support\SitePhoto;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 /**
  * The mug configurator's settings from the panel, tidied up: sizes with prices, the glazes a customer picks,
@@ -35,6 +36,27 @@ class MugOptions
                 'name' => $size['label'].(is_numeric($size['capacity_ml'] ?? null) ? ' '.(int) $size['capacity_ml'].' ml' : ''),
             ])
             ->values();
+    }
+
+    /**
+     * The size in an address, e.g. /kubek-z-napisem?rozmiar=maly for „Mały”.
+     */
+    public static function sizeKey(string $label): string
+    {
+        return Str::slug($label);
+    }
+
+    /**
+     * The size chosen when the page opens: the one in the address, or the middle one, like the prototype.
+     *
+     * @return array{label: string, capacity_ml: ?int, price_gross: int, name: string}|null
+     */
+    public function startSize(?string $key): ?array
+    {
+        $sizes = $this->sizes();
+
+        return $sizes->first(fn (array $size) => $key !== null && self::sizeKey($size['label']) === $key)
+            ?? $sizes->get(intdiv(max($sizes->count() - 1, 0), 2));
     }
 
     /**

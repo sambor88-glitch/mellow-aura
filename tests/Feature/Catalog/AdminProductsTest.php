@@ -5,6 +5,7 @@ namespace Tests\Feature\Catalog;
 use App\Models\User;
 use App\Modules\Catalog\Enums\CategoryGroup;
 use App\Modules\Catalog\Enums\FoodContact;
+use App\Modules\Catalog\Enums\GoogleCategory;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\PriceHistory;
 use App\Modules\Catalog\Models\Product;
@@ -61,6 +62,8 @@ class AdminProductsTest extends TestCase
                 'size_tolerance' => '1 cm',
                 'safety_warnings' => 'Nie stawiaj na ogniu.',
                 'is_exact_piece' => '1',
+                'google_category' => '3498',
+                'show_in_google' => '1',
                 'dimensions' => ['diameter_cm' => '12,5', 'height_cm' => ''],
                 'occasions' => ['birthday'],
                 'recipients' => ['for_her'],
@@ -81,6 +84,7 @@ class AdminProductsTest extends TestCase
             [$bowl->food_contact, $bowl->deviation, $bowl->size_tolerance, $bowl->safety_warnings, $bowl->is_exact_piece, $bowl->is_one_off],
         );
         $this->assertSame([['birthday'], ['for_her']], [$bowl->occasions, $bowl->recipients]);
+        $this->assertSame([GoogleCategory::Bowls, true], [$bowl->google_category, $bowl->show_in_google]);
         $this->assertTrue($bowl->is_published);
         $this->assertSame(
             [['Mała 12 cm', 8900, 2], ['Duża 18 cm', 12990, null]],
@@ -206,6 +210,34 @@ class AdminProductsTest extends TestCase
             ->get('/panel/produkty')
             ->assertOk()
             ->assertSeeInOrder(['Zanim ktoś kupi', 'Kontakt z żywnością', '<option value="suitable" selected>Tak — do jedzenia i picia</option>', 'value="Nie do mikrofalówki"', 'placeholder="jak w Ustawieniach: 0,5 cm"', 'Puste pole — obowiązuje różnica z Ustawień: 0,5 cm.', 'Ostrzeżenia', 'name="is_exact_piece" value="1" checked'], false);
+    }
+
+    public function test_google_shopping_gets_the_kind_from_the_list_and_a_product_can_stay_out_of_it(): void
+    {
+        $vase = $this->product('Wazony', 1, [23900], ['google_category' => GoogleCategory::Vases]);
+        $owner = User::factory()->create();
+
+        $this->actingAs($owner)
+            ->get('/panel/produkty')
+            ->assertSeeInOrder(['Zakupy Google', 'Rodzaj w Google', '<option value="">Niech Google dobierze sam</option>', '<option value="602" selected>Wazony</option>', 'name="show_in_google" value="1" checked', 'Pokazuj w Zakupach Google'], false);
+
+        $form = [
+            'form' => 'produkt-'.$vase->id,
+            'name' => 'Wazony',
+            'category_id' => $this->mugs->id,
+            'is_published' => '1',
+            'variants' => [['id' => $vase->variants()->value('id'), 'label' => '', 'price' => '239', 'stock' => '3']],
+        ];
+
+        $this->actingAs($owner)->put('/panel/produkty/'.$vase->id, [...$form, 'google_category' => '999'])
+            ->assertSessionHasErrors(['google_category' => 'Wybierz rodzaj z listy albo zostaw „Niech Google dobierze sam”'], errorBag: 'produkt-'.$vase->id);
+
+        $this->actingAs($owner)->put('/panel/produkty/'.$vase->id, [...$form, 'google_category' => ''])->assertRedirect();
+
+        $vase->refresh();
+        $this->assertNull($vase->google_category);
+        $this->assertFalse($vase->show_in_google);
+        $this->assertTrue($vase->is_published);
     }
 
     public function test_arrows_set_the_order_and_hiding_takes_a_product_off_the_shop(): void
