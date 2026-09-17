@@ -149,7 +149,7 @@
                             <div class="mb-3.5 border-b border-sand-dark pb-3.5">
                                 <div class="flex gap-3">
                                     @if ($thumbnail = $line->thumbnailUrl())
-                                        <img src="{{ $thumbnail }}" alt="{{ $line->thumbnailAlt() }}" class="h-16 w-[52px] flex-none rounded-[3px] object-cover">
+                                        <img src="{{ $thumbnail }}" alt="{{ $line->thumbnailAlt() }}" width="52" height="64" class="h-16 w-[52px] flex-none rounded-[3px] object-cover">
                                     @else
                                         <div class="h-16 w-[52px] flex-none rounded-[3px] bg-line-soft"></div>
                                     @endif

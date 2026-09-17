@@ -67,7 +67,7 @@
             <div class="mx-auto max-w-[1280px] px-7 pt-16">
                 <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3.5">
                     @foreach ($gallery as $photo)
-                        <img src="{{ $photo['url'] }}" alt="{{ $photo['alt'] }}" loading="lazy" class="block aspect-square w-full rounded-[4px] bg-line-soft object-cover">
+                        <img src="{{ $photo['url'] }}" alt="{{ $photo['alt'] }}" loading="lazy" width="600" height="600" class="block aspect-square w-full rounded-[4px] bg-line-soft object-cover">
                     @endforeach
                 </div>
             </div>

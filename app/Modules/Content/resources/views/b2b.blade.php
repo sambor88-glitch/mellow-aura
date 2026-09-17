@@ -24,7 +24,7 @@
                     <a href="{{ $contactUrl }}" class="inline-block rounded-full bg-rose px-8 py-4 text-[14.5px] text-ink transition duration-300 hover:bg-sand hover:text-ink active:scale-[.97]">Poproś o wycenę</a>
                 </div>
                 <div class="min-w-0 flex-[1_1_320px]">
-                    <img src="{{ Vite::asset('zdjecia/kubek-cappuccino.webp') }}" alt="Kawa w ręcznie robionym kubku" class="block aspect-[4/5] w-full rounded-[4px] bg-divider-dark object-cover">
+                    <img src="{{ Vite::asset('zdjecia/kubek-cappuccino.webp') }}" alt="Kawa w ręcznie robionym kubku" width="600" height="750" class="block aspect-[4/5] w-full rounded-[4px] bg-divider-dark object-cover">
                 </div>
             </div>
         </div>

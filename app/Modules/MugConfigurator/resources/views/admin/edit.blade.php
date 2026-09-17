@@ -53,7 +53,7 @@
                 <h2 class="{{ $heading }}">Zdjęcie kubka pod napisy</h2>
                 <p class="{{ $intro }}">Na tym zdjęciu klientka widzi swój tekst. Najlepiej Twój własny kubek, sfotografowany prosto z boku, na jednolitym tle — i <strong class="font-medium">bez żadnego napisu</strong>, bo tekst ze strony nałoży się na istniejący.</p>
                 @if ($photo)
-                    <img src="{{ $photo }}" alt="Zdjęcie kubka w konfiguratorze" class="mb-3 block max-h-[240px] w-full rounded-[3px] bg-line-soft object-cover">
+                    <img src="{{ $photo }}" alt="Zdjęcie kubka w konfiguratorze" width="1200" height="1200" class="mb-3 block max-h-[240px] w-full rounded-[3px] bg-line-soft object-cover">
                 @else
                     <div class="mb-3 grid h-[160px] place-items-center rounded-[3px] border border-dashed border-line-strong bg-sand-dark text-[13px] text-hint">Brak zdjęcia — strona pokaże pusty kwadrat</div>
                 @endif
@@ -162,7 +162,7 @@
                 @endif
                 <div class="relative mb-5 overflow-hidden rounded-[4px] bg-line-soft">
                     @if ($photo)
-                        <img src="{{ $photo }}" alt="Podgląd ustawienia napisu" class="block aspect-square w-full object-cover">
+                        <img src="{{ $photo }}" alt="Podgląd ustawienia napisu" width="1200" height="1200" class="block aspect-square w-full object-cover">
                     @else
                         <div class="aspect-square w-full"></div>
                     @endif

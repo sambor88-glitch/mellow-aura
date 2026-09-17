@@ -1,4 +1,5 @@
 @use('App\Modules\Catalog\Enums\CategoryGroup')
+@use('App\Modules\Catalog\Support\ProductPhoto')
 @use('App\Modules\Catalog\Support\VariantAnalyticsItem')
 @use('App\Modules\Shared\Support\AnalyticsItem')
 @use('App\Modules\Shared\Support\DispatchTime')
@@ -45,9 +46,12 @@
                     <button type="button" x-ref="zoomTrigger" x-on:click="$refs.zoom.showModal()" title="Kliknij, żeby powiększyć"
                             class="relative block w-full cursor-zoom-in overflow-hidden rounded-[6px] bg-line-soft">
                         @foreach ($images as $index => $image)
+                            @php($srcset = ProductPhoto::srcset($image))
+                            {{-- Half of a 1224 px page on a computer, the whole width minus padding on a phone. --}}
                             <img src="{{ $image->getAvailableUrl(['card']) }}" alt="{{ $image->getCustomProperty('alt') ?: $product->name }}"
+                                 @if ($srcset) srcset="{{ $srcset }}" sizes="(min-width: 872px) 584px, calc(100vw - 56px)" @endif
                                  @if ($loop->first) fetchpriority="high" @else loading="lazy" x-cloak @endif
-                                 x-show="active === {{ $index }}"
+                                 x-show="active === {{ $index }}" width="1200" height="1200"
                                  class="block aspect-square w-full object-cover">
                         @endforeach
                         <span class="absolute right-3.5 bottom-3.5 rounded-full bg-cream/92 px-3.5 py-[7px] text-[12px] text-lead">Powiększ fakturę <span aria-hidden="true">⌕</span></span>
@@ -82,7 +86,7 @@
                                     x-bind:class="active === {{ $index }} ? 'border-ink' : 'border-divider'"
                                     aria-label="Pokaż zdjęcie {{ $loop->iteration }}"
                                     class="size-[74px] overflow-hidden rounded-[4px] border bg-transparent p-0">
-                                <img src="{{ $image->getAvailableUrl(['thumb']) }}" alt="" loading="lazy" class="block size-full object-cover">
+                                <img src="{{ $image->getAvailableUrl(['thumb']) }}" alt="" loading="lazy" width="74" height="74" class="block size-full object-cover">
                             </button>
                         @endforeach
                     </div>
@@ -280,7 +284,10 @@
                         <a href="{{ route('product.show', $item) }}" class="group block text-ink hover:text-ink">
                             <div class="mb-3 overflow-hidden rounded-[6px] bg-line-soft">
                                 @if ($cover)
-                                    <img src="{{ $cover->getAvailableUrl(['card']) }}" alt="{{ $cover->getCustomProperty('alt') ?: $item->name }}" loading="lazy" class="block aspect-[4/5] w-full object-cover transition-transform duration-600 group-hover:scale-[1.04]">
+                                    @php($srcset = ProductPhoto::srcset($cover))
+                                    <img src="{{ $cover->getAvailableUrl(['card']) }}" alt="{{ $cover->getCustomProperty('alt') ?: $item->name }}" loading="lazy"
+                                         @if ($srcset) srcset="{{ $srcset }}" sizes="(min-width: 640px) 300px, calc(100vw - 56px)" @endif
+                                         width="1200" height="1500" class="block aspect-[4/5] w-full object-cover transition-transform duration-600 group-hover:scale-[1.04]">
                                 @else
                                     <div class="aspect-[4/5] w-full"></div>
                                 @endif

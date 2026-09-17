@@ -1,6 +1,8 @@
 @props(['product', 'delay' => 0, 'eager' => false, 'withVariantCount' => true])
 @php
     $image = $product->getFirstMedia('images');
+    // One tile is about 290 px wide on a computer and fills the phone screen minus the page padding.
+    $srcset = $image ? \App\Modules\Catalog\Support\ProductPhoto::srcset($image) : null;
     $variants = $product->variants->count();
     $variantsLabel = in_array($variants % 10, [2, 3, 4], true) && ! in_array($variants % 100, [12, 13, 14], true) ? 'warianty' : 'wariantów';
 @endphp
@@ -8,7 +10,9 @@
 <a href="{{ route('product.show', $product) }}" class="block text-ink hover:text-ink">
     <div class="relative mb-3.5 overflow-hidden rounded-[6px] bg-line-soft transition-[box-shadow,transform] duration-500 ease-clay group-hover:-translate-y-1 group-hover:shadow-card-hover">
         @if ($image)
-            <img src="{{ $image->getAvailableUrl(['card']) }}" alt="{{ $image->getCustomProperty('alt') ?: $product->name }}" @unless ($eager) loading="lazy" @endunless class="block aspect-[4/5] w-full object-cover">
+            <img src="{{ $image->getAvailableUrl(['card']) }}" alt="{{ $image->getCustomProperty('alt') ?: $product->name }}" @unless ($eager) loading="lazy" @endunless
+                 @if ($srcset) srcset="{{ $srcset }}" sizes="(min-width: 640px) 400px, calc(100vw - 56px)" @endif
+                 width="1200" height="1500" class="block aspect-[4/5] w-full object-cover">
         @else
             <div class="aspect-[4/5] w-full"></div>
         @endif

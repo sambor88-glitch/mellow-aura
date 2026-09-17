@@ -203,7 +203,7 @@
             @if ($instagram['posts']->isNotEmpty())
                 <div class="mt-3.5 flex flex-wrap items-center gap-2">
                     @foreach ($instagram['posts'] as $post)
-                        <img src="{{ $post->imageUrl() }}" alt="" class="size-12 rounded-[3px] bg-line-soft object-cover">
+                        <img src="{{ $post->imageUrl() }}" alt="" width="48" height="48" class="size-12 rounded-[3px] bg-line-soft object-cover">
                     @endforeach
                     <span class="text-[12.5px] text-label">na stronie teraz, ostatni post {{ $instagram['posts']->first()->posted_at->diffForHumans() }}</span>
                 </div>

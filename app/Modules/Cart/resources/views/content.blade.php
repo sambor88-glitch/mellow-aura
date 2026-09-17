@@ -14,7 +14,7 @@
     @forelse ($lines as $line)
         <div class="flex gap-3.5 border-b border-sand-dark py-4">
             @if ($thumbnail = $line->thumbnailUrl())
-                <img src="{{ $thumbnail }}" alt="{{ $line->thumbnailAlt() }}" class="h-[92px] w-[74px] flex-none rounded-[3px] object-cover">
+                <img src="{{ $thumbnail }}" alt="{{ $line->thumbnailAlt() }}" width="74" height="92" class="h-[92px] w-[74px] flex-none rounded-[3px] object-cover">
             @else
                 <div class="h-[92px] w-[74px] flex-none rounded-[3px] bg-line-soft"></div>
             @endif

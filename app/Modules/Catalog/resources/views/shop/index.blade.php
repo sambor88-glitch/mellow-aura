@@ -115,7 +115,7 @@
         <div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-x-[26px] gap-y-[30px]">
             @foreach ($products as $product)
                 <div x-show="! favorites || $store.favorites.has({{ $product->id }})" class="min-w-0">
-                    <x-catalog::product-card :product="$product" :delay="min($loop->index, 11) * 0.06" :eager="$loop->index < 4" />
+                    <x-catalog::product-card :product="$product" :delay="min($loop->index, 11) * 0.06" :eager="$loop->index < 2" />
                 </div>
             @endforeach
         </div>

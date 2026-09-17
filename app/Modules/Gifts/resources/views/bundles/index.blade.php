@@ -31,8 +31,10 @@
                         @foreach ($bundle->items->take(2) as $item)
                             @php($photo = $item->variant->product->getFirstMedia('images'))
                             @if ($photo)
+                                @php($srcset = \App\Modules\Catalog\Support\ProductPhoto::srcset($photo))
                                 <img src="{{ $photo->getAvailableUrl(['card']) }}" alt="{{ $photo->getCustomProperty('alt') ?: $item->variant->product->name }}" loading="lazy"
-                                     class="block aspect-square w-1/2 bg-line-soft object-cover">
+                                     @if ($srcset) srcset="{{ $srcset }}" sizes="(min-width: 872px) 260px, calc((100vw - 56px) / 2)" @endif
+                                     width="1200" height="1200" class="block aspect-square w-1/2 bg-line-soft object-cover">
                             @else
                                 <div class="aspect-square w-1/2 bg-line-soft"></div>
                             @endif

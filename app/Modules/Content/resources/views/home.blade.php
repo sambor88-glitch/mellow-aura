@@ -1,3 +1,4 @@
+@use('App\Modules\Catalog\Support\ProductPhoto')
 @use('App\Modules\Shared\Support\DispatchTime')
 @use('App\Modules\Shared\Support\Money')
 @use('Illuminate\Support\Facades\Vite')
@@ -26,15 +27,16 @@
         $link('firing.index') ? [$link('firing.index'), false, 'zaplecze', 'Wypalę Twoje prace', 'Miejsce w piecu dla osób bez własnego zaplecza — biskwit i wypał na ostro.'] : null,
     ]);
 
+    // Photo => shape of its frame, with the numbers for width and height.
     $strip = [
-        'kasia-talerz-zloto.webp' => 'aspect-square',
-        'misa-laguna.webp' => 'aspect-[3/4]',
-        'kubek-nie-powinnam.webp' => 'aspect-square',
-        'wazon-rzezbiony.webp' => 'aspect-square',
-        'podstawki-muszle-roz.webp' => 'aspect-[3/4]',
-        'talerz-niebieski-odcisk.webp' => 'aspect-square',
-        'patera-czarna-kolce.webp' => 'aspect-square',
-        'zestaw-flatlay.webp' => 'aspect-[3/4]',
+        'kasia-talerz-zloto.webp' => ['aspect-square', 600, 600],
+        'misa-laguna.webp' => ['aspect-[3/4]', 600, 800],
+        'kubek-nie-powinnam.webp' => ['aspect-square', 600, 600],
+        'wazon-rzezbiony.webp' => ['aspect-square', 600, 600],
+        'podstawki-muszle-roz.webp' => ['aspect-[3/4]', 600, 800],
+        'talerz-niebieski-odcisk.webp' => ['aspect-square', 600, 600],
+        'patera-czarna-kolce.webp' => ['aspect-square', 600, 600],
+        'zestaw-flatlay.webp' => ['aspect-[3/4]', 600, 800],
     ];
     $instagramHandle = ltrim((string) $settings->get('instagram_handle'), '@');
 @endphp
@@ -78,7 +80,10 @@
                     <a href="{{ route('product.show', $hero) }}" class="group relative block min-w-0 flex-[1_1_380px] animate-ma-hero-image text-ink hover:text-ink">
                         <div class="overflow-hidden rounded-[46%_54%_52%_48%/50%_46%_54%_50%] bg-line-soft shadow-hero">
                             @if ($heroImage)
-                                <img src="{{ $heroImage->getAvailableUrl(['card']) }}" alt="Ręcznie formowana ceramika z pracowni MellowAura" fetchpriority="high" class="block aspect-square w-full object-cover transition-transform duration-[1.4s] ease-clay group-hover:scale-[1.04]">
+                                @php($heroSrcset = ProductPhoto::srcset($heroImage))
+                                <img src="{{ $heroImage->getAvailableUrl(['card']) }}" alt="Ręcznie formowana ceramika z pracowni MellowAura" fetchpriority="high"
+                                     @if ($heroSrcset) srcset="{{ $heroSrcset }}" sizes="(min-width: 872px) 560px, calc(100vw - 56px)" @endif
+                                     width="1200" height="1200" class="block aspect-square w-full object-cover transition-transform duration-[1.4s] ease-clay group-hover:scale-[1.04]">
                             @else
                                 <div class="aspect-square w-full"></div>
                             @endif
@@ -143,8 +148,8 @@
             <section class="ma-reveal mx-auto max-w-[1280px] px-7 pt-21">
                 <div class="flex flex-wrap overflow-hidden rounded-[4px] border border-divider bg-cream">
                     <div class="flex min-w-0 flex-[1_1_300px]">
-                        <img src="{{ Vite::asset('zdjecia/kubek-cappuccino.webp') }}" alt="Kubek malowany ręcznie" loading="lazy" class="block aspect-square w-1/2 object-cover">
-                        <img src="{{ Vite::asset('zdjecia/scrunchies-fiolet.webp') }}" alt="Jedwabne scrunchies" loading="lazy" class="block aspect-square w-1/2 object-cover">
+                        <img src="{{ Vite::asset('zdjecia/kubek-cappuccino.webp') }}" alt="Kubek malowany ręcznie" loading="lazy" width="600" height="600" class="block aspect-square w-1/2 object-cover">
+                        <img src="{{ Vite::asset('zdjecia/scrunchies-fiolet.webp') }}" alt="Jedwabne scrunchies" loading="lazy" width="600" height="600" class="block aspect-square w-1/2 object-cover">
                     </div>
                     <div class="flex min-w-0 flex-[1_1_360px] flex-col justify-center px-10 py-11">
                         <div class="mb-[18px] text-[10.5px] tracking-[0.3em] text-brown uppercase">zestawy prezentowe</div>
@@ -171,7 +176,7 @@
                 <div class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-[22px]">
                     @foreach ($services as [$url, $photo, $alt, $title, $text, $from])
                         <a href="{{ $url }}" class="flex flex-wrap overflow-hidden rounded-[4px] border border-divider bg-cream text-ink transition-[transform,box-shadow] duration-350 hover:-translate-y-1 hover:text-ink hover:shadow-card-hover">
-                            <img src="{{ Vite::asset('zdjecia/'.$photo) }}" alt="{{ $alt }}" loading="lazy" class="block aspect-[3/4] w-[118px] flex-none object-cover">
+                            <img src="{{ Vite::asset('zdjecia/'.$photo) }}" alt="{{ $alt }}" loading="lazy" width="300" height="400" class="block aspect-[3/4] w-[118px] flex-none object-cover">
                             <div class="min-w-0 flex-[1_1_180px] px-6 py-[26px]">
                                 <div class="mb-2 font-serif text-[25px] leading-[1.16]">{{ $title }}</div>
                                 <div class="text-[14.5px] leading-[1.6] text-muted">{{ $text }}</div>
@@ -188,8 +193,8 @@
         <div class="mt-21 overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_8%,#000_92%,transparent)]">
             <div aria-hidden="true" class="flex h-[clamp(180px,22vw,300px)] w-max animate-ma-strip gap-4 pr-4">
                 @foreach ([1, 2] as $copy)
-                    @foreach ($strip as $photo => $ratio)
-                        <img src="{{ Vite::asset('zdjecia/'.$photo) }}" alt="" loading="lazy" class="block h-full rounded-[4px] object-cover {{ $ratio }}">
+                    @foreach ($strip as $photo => [$ratio, $width, $height])
+                        <img src="{{ Vite::asset('zdjecia/'.$photo) }}" alt="" loading="lazy" width="{{ $width }}" height="{{ $height }}" class="block h-full rounded-[4px] object-cover {{ $ratio }}">
                     @endforeach
                 @endforeach
             </div>
@@ -240,7 +245,7 @@
                     <div class="grid grid-cols-2 gap-2.5 min-[520px]:grid-cols-3 min-[980px]:grid-cols-6">
                         @foreach ($instagramPosts as $post)
                             <a href="{{ $post->permalink }}" target="_blank" rel="noopener" class="block overflow-hidden rounded-[3px] bg-line-soft">
-                                <img src="{{ $post->imageUrl() }}" alt="{{ $post->alt() }}" loading="lazy" class="block aspect-square w-full object-cover transition-opacity duration-300 hover:opacity-72">
+                                <img src="{{ $post->imageUrl() }}" alt="{{ $post->alt() }}" loading="lazy" width="1080" height="1080" class="block aspect-square w-full object-cover transition-opacity duration-300 hover:opacity-72">
                             </a>
                         @endforeach
                     </div>

@@ -35,12 +35,12 @@
                 </div>
                 <div class="min-w-0 flex-[1_1_340px]">
                     <img src="{{ Vite::asset('zdjecia/kasia-talerz-zloto.webp') }}" alt="Kasia trzymająca talerz ze złoconą krawędzią"
-                         class="block aspect-[3/4] w-full rounded-[4px] bg-line-soft object-cover">
+                         width="600" height="800" class="block aspect-[3/4] w-full rounded-[4px] bg-line-soft object-cover">
                     <div class="mt-3.5 flex gap-3.5">
                         <img src="{{ Vite::asset('zdjecia/kubek-ochujeje.webp') }}" alt="Kubek z wbijanym tekstem" loading="lazy"
-                             class="block aspect-square min-w-0 flex-1 rounded-[4px] bg-line-soft object-cover">
+                             width="600" height="600" class="block aspect-square min-w-0 flex-1 rounded-[4px] bg-line-soft object-cover">
                         <img src="{{ Vite::asset('zdjecia/kadzielnica-pszczoly.webp') }}" alt="Kadzielnica ze złoconym kołnierzem" loading="lazy"
-                             class="block aspect-square min-w-0 flex-1 rounded-[4px] bg-line-soft object-cover">
+                             width="600" height="600" class="block aspect-square min-w-0 flex-1 rounded-[4px] bg-line-soft object-cover">
                     </div>
                 </div>
             </div>

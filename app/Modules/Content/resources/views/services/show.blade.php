@@ -55,7 +55,7 @@
                     @endif
                 </div>
                 <div class="min-w-0 flex-[1_1_320px]">
-                    <img src="{{ Vite::asset($page['photo']) }}" alt="{{ $page['photoAlt'] }}" class="block aspect-[3/4] w-full rounded-[4px] bg-line-soft object-cover">
+                    <img src="{{ Vite::asset($page['photo']) }}" alt="{{ $page['photoAlt'] }}" width="600" height="800" class="block aspect-[3/4] w-full rounded-[4px] bg-line-soft object-cover">
                 </div>
             </div>
         </div>
@@ -86,8 +86,8 @@
                         <figure x-data="beforeAfter" class="m-0 self-start overflow-hidden rounded-[4px] border border-divider bg-cream">
                             <div x-on:pointerdown="start($event)" x-on:pointermove="drag($event)" x-on:pointerup="stop()" x-on:pointercancel="stop()"
                                  class="relative aspect-[4/5] cursor-ew-resize touch-none overflow-hidden bg-line-soft select-none">
-                                <img src="{{ $example->getFirstMedia('after')->getAvailableUrl(['card']) }}" alt="{{ $example->alt('after') }}" loading="lazy" draggable="false" class="absolute inset-0 block size-full object-cover">
-                                <img src="{{ $example->getFirstMedia('before')->getAvailableUrl(['card']) }}" alt="{{ $example->alt('before') }}" loading="lazy" draggable="false"
+                                <img src="{{ $example->getFirstMedia('after')->getAvailableUrl(['card']) }}" alt="{{ $example->alt('after') }}" loading="lazy" draggable="false" width="960" height="1200" class="absolute inset-0 block size-full object-cover">
+                                <img src="{{ $example->getFirstMedia('before')->getAvailableUrl(['card']) }}" alt="{{ $example->alt('before') }}" loading="lazy" draggable="false" width="960" height="1200"
                                      class="absolute inset-0 block size-full object-cover" style="clip-path: inset(0 50% 0 0)" x-bind:style="{ clipPath: `inset(0 ${100 - pos}% 0 0)` }">
                                 <span class="{{ $label }} left-2.5" x-bind:class="pos < 12 && 'opacity-0'">przed</span>
                                 <span class="{{ $label }} right-2.5" x-bind:class="pos > 88 && 'opacity-0'">po</span>

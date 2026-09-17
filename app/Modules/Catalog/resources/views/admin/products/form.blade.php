@@ -72,7 +72,7 @@
             <div x-show="previews.length" class="mt-2.5 flex flex-wrap gap-2">
                 <template x-for="(url, index) in previews" x-bind:key="url">
                     <div x-bind:class="index === 0 ? 'border-ink' : 'border-line'" class="relative h-[70px] w-[58px] rounded-[4px] border bg-line-soft">
-                        <img x-bind:src="url" x-bind:alt="index === 0 ? 'Okładka' : 'Zdjęcie ' + (index + 1)" class="size-full rounded-[3px] object-cover">
+                        <img x-bind:src="url" x-bind:alt="index === 0 ? 'Okładka' : 'Zdjęcie ' + (index + 1)" width="58" height="70" class="size-full rounded-[3px] object-cover">
                         <button type="button" x-on:click="remove(index)" x-bind:aria-label="'Nie dodawaj zdjęcia ' + (index + 1)"
                                 class="absolute top-[3px] right-[3px] grid size-5 place-items-center rounded-full bg-ink/75 text-[11px] leading-none text-linen transition-colors duration-300 after:absolute after:-inset-3 hover:bg-error">×</button>
                     </div>
@@ -219,7 +219,7 @@
             <div class="grid gap-2">
                 @foreach ($product->getMedia('images') as $photo)
                     <div class="flex items-center gap-2.5">
-                        <img src="{{ $photo->getAvailableUrl(['thumb']) }}" alt="" class="h-[46px] w-[38px] flex-none rounded-[3px] bg-line-soft object-cover">
+                        <img src="{{ $photo->getAvailableUrl(['thumb']) }}" alt="" width="38" height="46" class="h-[46px] w-[38px] flex-none rounded-[3px] bg-line-soft object-cover">
                         <input name="photo_alts[{{ $photo->id }}]" value="{{ $old('photo_alts.'.$photo->id, $photo->getCustomProperty('alt')) }}" maxlength="160"
                                aria-label="Opis zdjęcia {{ $loop->iteration }}" placeholder="{{ $product->name }}"
                                @class([$input, 'flex-1 px-3 py-2.5', 'border-error' => $bag->has('photo_alts.'.$photo->id), 'border-line' => ! $bag->has('photo_alts.'.$photo->id)])>

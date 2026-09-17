@@ -50,6 +50,35 @@ class ProductGalleryTest extends TestCase
             ->assertDontSee('Powiększone zdjęcie');
     }
 
+    public function test_the_main_photo_reserves_its_frame_and_offers_the_smaller_copy_to_a_phone(): void
+    {
+        $product = Product::factory()->create(['slug' => 'kubki']);
+        ProductVariant::factory()->create(['product_id' => $product->id]);
+        $this->photo($product, 'kubek-cappuccino.webp', 'Kubek z piaskowej gliny');
+
+        $html = $this->get('/produkt/kubki')->assertOk()->getContent();
+
+        $this->assertStringContainsString('kubek-cappuccino-phone.webp 720w', $html);
+        $this->assertStringContainsString('kubek-cappuccino-card.webp 1200w', $html);
+        $this->assertStringContainsString('sizes="(min-width: 872px) 584px, calc(100vw - 56px)"', $html);
+        $this->assertStringContainsString('width="1200" height="1200"', $html);
+    }
+
+    public function test_a_photo_without_the_smaller_copy_keeps_one_address(): void
+    {
+        $product = Product::factory()->create(['slug' => 'kubki']);
+        ProductVariant::factory()->create(['product_id' => $product->id]);
+        $this->photo($product, 'kubek-cappuccino.webp', 'Kubek z piaskowej gliny');
+        $photo = $product->getFirstMedia('images');
+        $photo->generated_conversions = ['card' => true];
+        $photo->save();
+
+        $this->get('/produkt/kubki')
+            ->assertOk()
+            ->assertSee('kubek-cappuccino-card.webp', false)
+            ->assertDontSee('srcset', false);
+    }
+
     private function photo(Product $product, string $file, string $alt): void
     {
         $product->addMedia(base_path('zdjecia/'.$file))

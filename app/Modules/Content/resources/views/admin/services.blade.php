@@ -75,7 +75,7 @@
                                     @foreach (['before' => 'przed', 'after' => 'po'] as $side => $word)
                                         <figure class="m-0 w-[84px]">
                                             @if ($media = $example->getFirstMedia($side))
-                                                <img src="{{ $media->getAvailableUrl(['thumb']) }}" alt="{{ $example->alt($side) }}" loading="lazy" class="block aspect-[4/5] w-full rounded-[3px] bg-line-soft object-cover">
+                                                <img src="{{ $media->getAvailableUrl(['thumb']) }}" alt="{{ $example->alt($side) }}" loading="lazy" width="240" height="300" class="block aspect-[4/5] w-full rounded-[3px] bg-line-soft object-cover">
                                             @else
                                                 <div class="grid aspect-[4/5] w-full place-items-center rounded-[3px] border border-dashed border-line-strong text-center text-[11px] text-error">brak zdjęcia</div>
                                             @endif
@@ -153,7 +153,7 @@
                     @foreach (['before' => ['Zdjęcie „przed”', $isScarf ? 'tkanina, która przyszła' : 'przysłana roślina'], 'after' => ['Zdjęcie „po”', $isScarf ? 'to, co z niej uszyłaś' : 'ceramika z odciskiem']] as $side => [$title, $what])
                         <div class="min-w-0">
                             <label class="flex min-h-[120px] cursor-pointer flex-col items-center justify-center gap-1 rounded-[4px] border border-dashed border-line-strong bg-linen p-3 text-center transition duration-300 hover:border-ink has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy">
-                                <img x-show="previews.{{ $side }}" x-cloak x-bind:src="previews.{{ $side }}" alt="" class="mb-1 h-[90px] w-[72px] rounded-[3px] object-cover">
+                                <img x-show="previews.{{ $side }}" x-cloak x-bind:src="previews.{{ $side }}" alt="" width="72" height="90" class="mb-1 h-[90px] w-[72px] rounded-[3px] object-cover">
                                 <span class="text-[14px] text-ink">{{ $title }}</span>
                                 <span class="text-[12.5px] text-hint">{{ $what }} — JPG, PNG albo WebP</span>
                                 <input type="file" name="{{ $side }}" accept="image/jpeg,image/png,image/webp" x-on:change="choose('{{ $side }}', $event.target)" class="sr-only">

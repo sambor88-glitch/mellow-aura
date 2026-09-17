@@ -60,7 +60,7 @@
                 </div>
 
                 <img src="{{ Vite::asset('zdjecia/talerz-niebieski-odcisk.webp') }}" alt="Talerz z odciskiem roślinnym" loading="lazy"
-                     class="block aspect-[4/3] w-full max-w-[420px] rounded-[4px] bg-line-soft object-cover">
+                     width="800" height="600" class="block aspect-[4/3] w-full max-w-[420px] rounded-[4px] bg-line-soft object-cover">
             </div>
 
             <div class="min-w-[290px] flex-[1_1_340px]">

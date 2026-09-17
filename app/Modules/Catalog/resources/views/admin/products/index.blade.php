@@ -61,7 +61,7 @@
                     <div id="{{ $formKey }}" class="scroll-mt-6 border-b border-sand-dark px-4 py-3.5 last:border-b-0">
                         <div class="flex flex-wrap items-center gap-3.5">
                             @if ($cover)
-                                <img src="{{ $cover->getAvailableUrl(['thumb']) }}" alt="{{ $cover->getCustomProperty('alt') ?: $product->name }}" class="h-14 w-[46px] flex-none rounded-[3px] object-cover">
+                                <img src="{{ $cover->getAvailableUrl(['thumb']) }}" alt="{{ $cover->getCustomProperty('alt') ?: $product->name }}" width="46" height="56" class="h-14 w-[46px] flex-none rounded-[3px] object-cover">
                             @else
                                 <span class="grid h-14 w-[46px] flex-none place-items-center rounded-[3px] border border-dashed border-line-strong bg-sand-dark text-[11px] text-hint">brak</span>
                             @endif
@@ -95,7 +95,7 @@
                             <div class="flex flex-wrap items-center gap-2">
                                 @foreach ($photos as $photo)
                                     <div @class(['relative h-[90px] w-[76px] flex-none rounded-[4px] border bg-line-soft', 'border-ink' => $loop->first, 'border-line' => ! $loop->first])>
-                                        <img src="{{ $photo->getAvailableUrl(['thumb']) }}" alt="{{ $photo->getCustomProperty('alt') ?: 'Zdjęcie '.$loop->iteration }}" loading="lazy" class="size-full rounded-[3px] object-cover">
+                                        <img src="{{ $photo->getAvailableUrl(['thumb']) }}" alt="{{ $photo->getCustomProperty('alt') ?: 'Zdjęcie '.$loop->iteration }}" loading="lazy" width="76" height="90" class="size-full rounded-[3px] object-cover">
                                         <form method="post" action="{{ route('admin.products.photos.destroy', [$product, $photo]) }}" x-data x-on:submit="confirm('Usunąć to zdjęcie? Nie da się tego cofnąć.') || $event.preventDefault()">
                                             @csrf
                                             @method('DELETE')

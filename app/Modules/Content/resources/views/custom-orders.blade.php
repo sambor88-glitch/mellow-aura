@@ -48,7 +48,7 @@
 
                 <div class="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-3.5">
                     @foreach ($photos as [$photo, $alt])
-                        <img src="{{ Vite::asset($photo) }}" alt="{{ $alt }}" loading="lazy" class="block aspect-square w-full rounded-[4px] bg-line-soft object-cover">
+                        <img src="{{ Vite::asset($photo) }}" alt="{{ $alt }}" loading="lazy" width="600" height="600" class="block aspect-square w-full rounded-[4px] bg-line-soft object-cover">
                     @endforeach
                 </div>
             </div>

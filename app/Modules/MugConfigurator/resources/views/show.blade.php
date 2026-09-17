@@ -49,7 +49,7 @@
             <div class="min-w-0 flex-[1_1_380px]">
                 <div class="relative overflow-hidden rounded-[6px] bg-line-soft">
                     @if ($photo)
-                        <img src="{{ $photo }}" alt="Kubek z wbijanym w glinę napisem" fetchpriority="high" class="block aspect-square w-full object-cover">
+                        <img src="{{ $photo }}" alt="Kubek z wbijanym w glinę napisem" fetchpriority="high" width="1200" height="1200" class="block aspect-square w-full object-cover">
                     @else
                         <div class="aspect-square w-full"></div>
                     @endif
@@ -83,7 +83,7 @@
                         {{-- The same square as the big preview, slid so the text sits in the middle of the strip. --}}
                         <div class="absolute inset-x-0 aspect-square" style="top: clamp(calc(150px - 100cqw), calc(75px - {{ $position['y'] }}cqw), 0px)">
                             @if ($photo)
-                                <img src="{{ $photo }}" alt="" loading="lazy" class="block aspect-square w-full object-cover">
+                                <img src="{{ $photo }}" alt="" loading="lazy" width="1200" height="1200" class="block aspect-square w-full object-cover">
                             @endif
                             @include('mug-configurator::partials.overlay')
                         </div>
