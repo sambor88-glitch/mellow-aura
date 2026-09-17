@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Content\Http\Controllers\Admin\ContentController;
+use App\Modules\Content\Http\Controllers\Admin\InstagramFeedController;
 use App\Modules\Content\Http\Controllers\Admin\ServiceExampleController;
 use App\Modules\Content\Http\Controllers\Admin\ServicesController;
 use Illuminate\Support\Facades\Route;
@@ -12,6 +13,7 @@ Route::put('/tresci/pracownia', [ContentController::class, 'facts'])->name('cont
 Route::put('/tresci/zamowienia-indywidualne', [ContentController::class, 'customOrderSteps'])->name('content.custom-order-steps');
 Route::put('/tresci/gastronomia', [ContentController::class, 'b2bFacts'])->name('content.b2b-facts');
 Route::put('/tresci/kontakt', [ContentController::class, 'topics'])->name('content.topics');
+Route::put('/tresci/instagram', InstagramFeedController::class)->name('content.instagram');
 
 Route::whereIn('service', ['apaszka', 'odcisk'])->group(function () {
     Route::get('/uslugi/{service?}', [ServicesController::class, 'edit'])->name('services.edit');

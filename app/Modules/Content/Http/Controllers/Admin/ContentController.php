@@ -9,6 +9,7 @@ use App\Modules\Content\Http\Requests\Admin\SaveCustomOrderStepsRequest;
 use App\Modules\Content\Http\Requests\Admin\SaveFaqRequest;
 use App\Modules\Content\Http\Requests\Admin\SavePageTextsRequest;
 use App\Modules\Content\Http\Requests\Admin\SaveStudioFactsRequest;
+use App\Modules\Content\Models\InstagramPost;
 use App\Modules\Settings\Actions\SaveSettings;
 use App\Modules\Settings\Settings;
 use Illuminate\Http\RedirectResponse;
@@ -35,6 +36,11 @@ class ContentController extends Controller
             'facts' => $rows('studio_facts', ['title', 'text']),
             'customOrderSteps' => $rows('custom_order_steps', ['title', 'text']),
             'b2bFacts' => $rows('b2b_facts', ['title', 'text']),
+            'instagram' => [
+                'instagram_feed_url' => $settings->get('instagram_feed_url'),
+                'instagram_feed_hashtag' => $settings->get('instagram_feed_hashtag'),
+                'posts' => InstagramPost::query()->latest('posted_at')->get(),
+            ],
             'topics' => collect((array) $settings->get('contact_form_topics', []))
                 ->filter(fn (mixed $topic) => is_string($topic) && $topic !== '')
                 ->map(fn (string $topic) => ['label' => $topic])

@@ -31,7 +31,7 @@
 @endphp
 <x-admin::layout title="Treści" lead="Każde zdanie na stronach „O mnie”, „Pracownia”, „Zamówienia indywidualne”, „Dla kawiarni i restauracji”, „Kontakt” i w częstych pytaniach. Zmiany widać na stronie od razu.">
     <nav aria-label="Karty na tej stronie" class="mb-[22px] flex flex-wrap gap-2.5 text-[13px]">
-        @foreach (['teksty' => 'Teksty na stronach', 'czeste-pytania' => 'Częste pytania', 'pracownia' => 'Pracownia — dobrze wiedzieć', 'zamowienia-indywidualne' => 'Zamówienia indywidualne — kroki', 'gastronomia' => 'Dla lokali — karty', 'kontakt' => 'Sprawy w formularzu'] as $id => $label)
+        @foreach (['teksty' => 'Teksty na stronach', 'czeste-pytania' => 'Częste pytania', 'pracownia' => 'Pracownia — dobrze wiedzieć', 'zamowienia-indywidualne' => 'Zamówienia indywidualne — kroki', 'gastronomia' => 'Dla lokali — karty', 'kontakt' => 'Sprawy w formularzu', 'instagram' => 'Instagram na stronie głównej'] as $id => $label)
             <a href="#{{ $id }}" class="rounded-full border border-line-strong px-4 py-2 text-lead hover:border-ink hover:bg-sand hover:text-ink">{{ $label }}</a>
         @endforeach
     </nav>
@@ -184,5 +184,31 @@
                 <button class="{{ $button }}">{{ ['faq' => 'Zapisz częste pytania', 'facts' => 'Zapisz fakty o pracowni', 'steps' => 'Zapisz kroki zamówienia', 'b2b' => 'Zapisz karty dla lokali', 'topics' => 'Zapisz sprawy w formularzu'][$list['name']] }}</button>
             </form>
         @endforeach
+
+        <form id="instagram" method="post" action="{{ route('admin.content.instagram') }}" novalidate class="{{ $card }}">
+            @csrf
+            @method('PUT')
+            <h2 class="{{ $heading }}">Instagram na stronie głównej</h2>
+            <p class="{{ $intro }}">Wklej adres kanału JSON z Behold.so. Strona pobiera z niego {{ \App\Modules\Content\Actions\RefreshInstagramFeed::POSTS }} ostatnich zdjęć co godzinę i trzyma je u siebie, więc odwiedzający nie łączą się z Instagramem.</p>
+            @if ($errors->hasBag('instagram'))
+                <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+            @endif
+            <div class="grid gap-3">
+                <x-shared::field name="instagram_feed_url" id="instagram-kanal" bag="instagram" type="url" label="Adres kanału JSON z Behold"
+                                 :value="old('instagram_feed_url', $instagram['instagram_feed_url'])" placeholder="https://feeds.behold.so/…"
+                                 hint="Behold → Twój kanał → JSON. Puste pole zdejmuje sekcję ze strony głównej." />
+                <x-shared::field name="instagram_feed_hashtag" id="instagram-hashtag" bag="instagram" label="Tylko posty z hashtagiem — nieobowiązkowe"
+                                 :value="old('instagram_feed_hashtag', $instagram['instagram_feed_hashtag'])" placeholder="np. #zpracowni" />
+            </div>
+            @if ($instagram['posts']->isNotEmpty())
+                <div class="mt-3.5 flex flex-wrap items-center gap-2">
+                    @foreach ($instagram['posts'] as $post)
+                        <img src="{{ $post->imageUrl() }}" alt="" class="size-12 rounded-[3px] bg-line-soft object-cover">
+                    @endforeach
+                    <span class="text-[12.5px] text-label">na stronie teraz, ostatni post {{ $instagram['posts']->first()->posted_at->diffForHumans() }}</span>
+                </div>
+            @endif
+            <button class="{{ $button }}">Zapisz i pobierz zdjęcia</button>
+        </form>
     </div>
 </x-admin::layout>

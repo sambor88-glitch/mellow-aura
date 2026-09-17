@@ -36,6 +36,7 @@
         'patera-czarna-kolce.webp' => 'aspect-square',
         'zestaw-flatlay.webp' => 'aspect-[3/4]',
     ];
+    $instagramHandle = ltrim((string) $settings->get('instagram_handle'), '@');
 @endphp
 
 <x-shared::layout
@@ -209,6 +210,40 @@
                             @endisset
                         </a>
                     @endforeach
+                </div>
+            </section>
+        @endif
+
+        {{-- Photos saved on the shop's own disk, so looking at them sends nothing to Instagram (privacy policy §9). --}}
+        @if ($instagramPosts->isNotEmpty())
+            <section class="ma-reveal mx-auto max-w-[1280px] px-7 pt-21">
+                <div class="mb-[26px] flex flex-wrap items-end justify-between gap-5">
+                    <div>
+                        @if ($instagramHandle !== '')
+                            <div class="mb-3 text-[10.5px] tracking-[0.3em] text-brown uppercase">{{ '@'.$instagramHandle }}</div>
+                        @endif
+                        <h2 class="font-serif text-[length:clamp(30px,3.6vw,46px)] leading-[normal] font-light">Codzienność pracowni <span aria-hidden="true" class="text-brown">🪐</span></h2>
+                    </div>
+                    @if ($instagramHandle !== '')
+                        <a href="https://www.instagram.com/{{ $instagramHandle }}/" target="_blank" rel="noopener" class="border-b border-line-strong pb-[3px] text-[13.5px] tracking-[0.06em]">Obserwuj na Instagramie →</a>
+                    @endif
+                </div>
+                <div class="rounded-[4px] border border-divider bg-cream p-3.5">
+                    <div class="mb-3.5 flex flex-wrap items-center justify-between gap-3 border-b border-sand-dark px-1.5 pt-1 pb-3.5">
+                        <div class="flex items-center gap-2.5">
+                            <span class="size-2 animate-ma-pulse rounded-full bg-rose"></span>
+                            <span class="text-[11.5px] tracking-[0.14em] text-label uppercase">prosto z Instagrama</span>
+                        </div>
+                        <span class="text-[12px] text-hint">ostatni post {{ $instagramPosts->first()->posted_at->diffForHumans() }}</span>
+                    </div>
+                    {{-- Six photos always fill whole rows: two, three or six to a row. --}}
+                    <div class="grid grid-cols-2 gap-2.5 min-[520px]:grid-cols-3 min-[980px]:grid-cols-6">
+                        @foreach ($instagramPosts as $post)
+                            <a href="{{ $post->permalink }}" target="_blank" rel="noopener" class="block overflow-hidden rounded-[3px] bg-line-soft">
+                                <img src="{{ $post->imageUrl() }}" alt="{{ $post->alt() }}" loading="lazy" class="block aspect-square w-full object-cover transition-opacity duration-300 hover:opacity-72">
+                            </a>
+                        @endforeach
+                    </div>
                 </div>
             </section>
         @endif
