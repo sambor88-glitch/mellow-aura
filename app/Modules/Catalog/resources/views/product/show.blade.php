@@ -165,7 +165,7 @@
 
                 @if (Route::has('cart.store') && $variant->isInStock())
                     @php($stampMax = (int) $settings->get('stamp_text_max_chars', 22))
-                    <form method="post" action="{{ route('cart.store') }}" x-data="{ quantity: 1, text: @js((string) old('custom_text')) }"
+                    <form id="add-to-cart" method="post" action="{{ route('cart.store') }}" x-data="{ quantity: 1, text: @js((string) old('custom_text')) }"
                           x-on:submit.prevent="$store.cart.send($el)" class="mb-[26px]">
                         @csrf
                         <input type="hidden" name="variant_id" value="{{ $variant->id }}">
@@ -290,6 +290,22 @@
                         </a>
                     @endforeach
                 </div>
+            </div>
+        @endif
+
+        {{-- On a phone the price and the button stay at the bottom of the screen (mellowaura-aplikacja). Where the photo
+             and the form stand side by side (from 872 px) they are in view anyway, so the bar is gone. --}}
+        @if (Route::has('cart.store') && $variant->isInStock())
+            <div x-data="buyBar" x-cloak x-bind:class="shown || 'invisible translate-y-full'"
+                 class="sticky bottom-0 z-50 -mx-7 mt-10 flex items-center gap-3 border-t border-divider bg-sand/96 px-4 pt-3.5 pb-[calc(14px+env(safe-area-inset-bottom))] backdrop-blur-[14px] transition duration-300 min-[872px]:hidden">
+                <div class="min-w-0 flex-auto">
+                    <div class="font-serif text-[22px] leading-none">{{ Money::format($variant->price_gross) }}</div>
+                    @if ($variant->label)
+                        <div class="mt-1 truncate text-[11.5px] text-label">{{ $variant->label }}</div>
+                    @endif
+                </div>
+                <button type="submit" form="add-to-cart"
+                        class="flex-none rounded-full bg-ink px-7 py-[15px] text-[14px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]">Do koszyka</button>
             </div>
         @endif
     </div>

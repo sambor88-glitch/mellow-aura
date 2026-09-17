@@ -1,6 +1,7 @@
 import Alpine from 'alpinejs';
 import { trackPage } from './analytics';
 import beforeAfter from './before-after';
+import buyBar from './buy-bar';
 import cart from './cart';
 import checkout from './checkout';
 import consentBanner from './consent';
@@ -15,6 +16,7 @@ window.Alpine = Alpine;
 Alpine.store('cart', cart);
 Alpine.store('favorites', favorites);
 Alpine.data('beforeAfter', beforeAfter);
+Alpine.data('buyBar', buyBar);
 Alpine.data('checkout', checkout);
 Alpine.data('consentBanner', consentBanner);
 Alpine.data('mugConfigurator', mugConfigurator);

@@ -56,6 +56,23 @@ class ProductPageTest extends TestCase
             ->assertSee('ostatnia sztuka — kolejną zrobię na zamówienie');
     }
 
+    public function test_a_phone_keeps_the_price_and_the_button_at_the_bottom_only_while_the_piece_can_be_bought(): void
+    {
+        $product = Product::factory()->create(['slug' => 'wazony', 'name' => 'Wazony']);
+        $low = ProductVariant::factory()->create(['product_id' => $product->id, 'label' => 'Niski 16 cm', 'price_gross' => 23900, 'stock' => 3]);
+        $sold = ProductVariant::factory()->create(['product_id' => $product->id, 'label' => 'Wysoki 24 cm', 'price_gross' => 29900, 'stock' => 0]);
+
+        $this->get('/produkt/wazony?wariant='.$low->id)
+            ->assertOk()
+            ->assertSee('<form id="add-to-cart"', false)
+            ->assertSeeInOrder(['x-data="buyBar"', '239,00 zł', 'Niski 16 cm', 'form="add-to-cart"', 'Do koszyka'], false);
+
+        $this->get('/produkt/wazony?wariant='.$sold->id)
+            ->assertOk()
+            ->assertDontSee('x-data="buyBar"', false)
+            ->assertDontSee('form="add-to-cart"', false);
+    }
+
     public function test_the_page_describes_every_variant_for_search_engines(): void
     {
         $this->shippingSettings();

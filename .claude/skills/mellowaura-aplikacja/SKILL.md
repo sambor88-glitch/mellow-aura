@@ -61,6 +61,10 @@ Na karcie produktu cena i „Do koszyka" nie mogą wyjechać poza ekran przy prz
 
 `env(safe-area-inset-bottom)` odsuwa przycisk od paska gestów na iPhonie. Bez tego palec trafia w pasek systemowy.
 
+W aplikacji (`catalog::product.show`, `resources/js/buy-bar.js`) pasek wysyła formularz karty przez `form="add-to-cart"`.
+Znika, gdy przycisk formularza jest na ekranie, żeby dwa „Do koszyka” nie stały naraz. Od 872 px zdjęcie
+i formularz stoją obok siebie, więc pasek znika zapytaniem medialnym (`min-[872px]:hidden`).
+
 ## Nagłówek na telefonie
 
 Nagłówek z prototypu zawija się na telefonie w cztery wiersze: logo, dwa wiersze menu, koszyk. Ma wtedy 218 px,
