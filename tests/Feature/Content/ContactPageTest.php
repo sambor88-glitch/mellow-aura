@@ -155,6 +155,30 @@ class ContactPageTest extends TestCase
         Mail::assertQueuedCount(5);
     }
 
+    public function test_behind_cloudflare_each_sender_has_her_own_limit(): void
+    {
+        Mail::fake();
+        $this->settings(['contact_email' => 'kasia@example.com']);
+        $this->withServerVariables(['REMOTE_ADDR' => '162.158.10.20']);
+
+        foreach (range(1, 5) as $attempt) {
+            $this->withHeader('X-Forwarded-For', '203.0.113.7')->post('/kontakt', $this->form());
+        }
+
+        $this->withHeader('X-Forwarded-For', '203.0.113.7')
+            ->followingRedirects()
+            ->post('/kontakt', $this->form())
+            ->assertSee('Mam już od Ciebie kilka wiadomości i na wszystkie odpiszę.');
+
+        // Someone else writing through the same Cloudflare address is not held back.
+        $this->withHeader('X-Forwarded-For', '198.51.100.4')
+            ->followingRedirects()
+            ->post('/kontakt', $this->form())
+            ->assertDontSee('Mam już od Ciebie kilka wiadomości i na wszystkie odpiszę.');
+
+        Mail::assertQueuedCount(6);
+    }
+
     /**
      * @param  array<string, mixed>  $values
      */

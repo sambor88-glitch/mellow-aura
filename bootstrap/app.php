@@ -2,6 +2,8 @@
 
 use App\Http\Middleware\NoIndex;
 use App\Modules\Shared\Http\Middleware\RedirectOldAddresses;
+use App\Modules\Shared\Http\Middleware\SecurityHeaders;
+use App\Modules\Shared\Support\Cloudflare;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -16,6 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->append(NoIndex::class);
         $middleware->append(RedirectOldAddresses::class);
+        $middleware->append(SecurityHeaders::class);
+        // The customer's own address behind Cloudflare, so limits count per customer (see Cloudflare).
+        $middleware->trustProxies(at: Cloudflare::PROXIES);
         $middleware->redirectGuestsTo(fn () => route('admin.login'));
         $middleware->redirectUsersTo(fn () => route('admin.dashboard'));
     })
