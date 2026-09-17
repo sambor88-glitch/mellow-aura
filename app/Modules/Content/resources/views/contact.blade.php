@@ -87,7 +87,7 @@
                                 <select id="contact-topic" name="topic"
                                         @error('topic') aria-invalid="true" aria-describedby="contact-topic-error" @enderror
                                         @class([
-                                            'w-full min-w-0 rounded-[4px] border bg-white px-4 py-[15px] text-[15px] text-lead focus:border-ink',
+                                            'w-full min-w-0 rounded-[4px] border bg-white px-4 py-[15px] text-[15px] text-lead focus:border-ink pointer-coarse:text-[16px]',
                                             'border-error' => $errors->has('topic'),
                                             'border-line' => ! $errors->has('topic'),
                                         ])>
@@ -106,7 +106,7 @@
                             <textarea id="contact-message" name="message" rows="6" maxlength="3000"
                                       @error('message') aria-invalid="true" aria-describedby="contact-message-error" @enderror
                                       @class([
-                                          'w-full min-w-0 resize-y rounded-[4px] border bg-white px-4 py-[14px] text-[15px] leading-[1.6] text-ink focus:border-ink',
+                                          'w-full min-w-0 resize-y rounded-[4px] border bg-white px-4 py-[14px] text-[15px] leading-[1.6] text-ink focus:border-ink pointer-coarse:text-[16px]',
                                           'border-error' => $errors->has('message'),
                                           'border-line' => ! $errors->has('message'),
                                       ])>{{ old('message') }}</textarea>

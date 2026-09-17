@@ -199,7 +199,7 @@
                                 <button type="button" x-on:click="quantity++" @if ($variant->stock !== null) x-bind:disabled="quantity >= {{ $variant->stock }}" @endif
                                         aria-label="Więcej sztuk" class="h-[46px] w-11 text-[18px] text-muted disabled:cursor-not-allowed disabled:text-line-strong">+</button>
                             </div>
-                            <button type="submit" class="flex-[1_1_200px] rounded-full bg-ink px-[30px] py-4 text-[14.5px] tracking-[0.03em] text-linen transition duration-300 hover:bg-navy active:scale-[.97]">
+                            <button type="submit" class="flex-[1_1_200px] rounded-full bg-ink px-5 py-4 text-[14.5px] tracking-[0.03em] whitespace-nowrap text-linen transition duration-300 hover:bg-navy active:scale-[.97]">
                                 Dodaj do koszyka &middot; <span x-text="$store.cart.format({{ $variant->price_gross }} * quantity)">{{ Money::format($variant->price_gross) }}</span>
                             </button>
                             <x-catalog::favorite-button :product="$product"

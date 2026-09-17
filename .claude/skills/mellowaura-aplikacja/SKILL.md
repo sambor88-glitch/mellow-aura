@@ -33,10 +33,15 @@ Zapytanie medialne piszesz dopiero wtedy, gdy zmienia się kolejność albo znik
 
 ## Pola formularza
 
-- **`font-size: 15px` to minimum.** Poniżej 16 px Safari na iPhonie sam przybliża stronę przy kliknięciu
-  w pole i użytkownik ląduje w przypadkowym powiększeniu. W projekcie pola mają `15px` — nie zmniejszaj.
+- **Na ekranie dotykowym pole ma co najmniej 16 px.** Poniżej 16 px Safari na iPhonie sam przybliża stronę przy kliknięciu
+  w pole i użytkownik ląduje w przypadkowym powiększeniu. Pola z projektu mają `15px`, więc w aplikacji dostają
+  `text-[15px] pointer-coarse:text-[16px]`: komputer zostaje przy projekcie, telefon nie przybliża. Nie zmniejszaj.
 - `type` steruje klawiaturą: `type="tel"` do telefonu i kodu BLIK, `type="email"` do adresu,
   `inputmode="numeric"` do liczby sztuk.
+- Klawiatura numeryczna iPhone'a nie ma myślnika ani spacji. Pole z `inputmode="numeric"` na kod pocztowy czy NIP
+  przyjmuje same cyfry, a serwer dokłada myślnik sam („30001” → „30-001”).
+- Pole, które skrypt czyści ze spacji (kod BLIK), nie dostaje `maxlength`. Przeglądarka ucina wklejone „123 456”
+  do „123 45”, zanim skrypt wyrzuci spację, i zostaje pięć cyfr. Długość przycina skrypt i sprawdza serwer.
 - `autocomplete` skraca płacenie o minutę: `name`, `email`, `tel`, `street-address`, `postal-code`.
 - Etykieta nad polem, nie tylko `placeholder` — po wpisaniu treści placeholder znika razem z informacją, co to za pole.
 

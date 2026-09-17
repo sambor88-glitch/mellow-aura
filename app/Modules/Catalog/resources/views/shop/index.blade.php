@@ -63,7 +63,7 @@
             <div class="flex flex-wrap items-center gap-2.5">
                 <form method="get" action="{{ $baseUrl }}" role="search" class="flex min-w-0 flex-[0_1_240px] items-center gap-2 rounded-full border border-line bg-cream px-3.5 py-2 focus-within:border-ink">
                     <span aria-hidden="true" class="text-[13px] text-hint">⌕</span>
-                    <input type="text" name="q" value="{{ $search }}" enterkeyhint="search" placeholder="Szukaj — kubek, wazon, jedwab" aria-label="Szukaj produktów" class="min-w-0 flex-1 border-0 bg-transparent py-0.5 text-[13.5px] text-ink focus:outline-none">
+                    <input type="text" name="q" value="{{ $search }}" enterkeyhint="search" placeholder="Szukaj — kubek, wazon, jedwab" aria-label="Szukaj produktów" class="min-w-0 flex-1 border-0 bg-transparent py-0.5 text-[13.5px] text-ink focus:outline-none pointer-coarse:text-[16px]">
                     @if ($sort !== '')
                         <input type="hidden" name="sort" value="{{ $sort }}">
                     @endif

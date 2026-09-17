@@ -10,7 +10,7 @@
            @if ($error) aria-invalid="true" @endif
            {{ $attributes->except('class') }}
            @class([
-               'w-full min-w-0 rounded-[4px] border bg-white px-4 py-[15px] text-[15px] text-ink placeholder:text-hint focus:border-ink',
+               'w-full min-w-0 rounded-[4px] border bg-white px-4 py-[15px] text-[15px] text-ink pointer-coarse:text-[16px] placeholder:text-hint focus:border-ink',
                'border-error' => $error,
                'border-line' => ! $error,
            ])>

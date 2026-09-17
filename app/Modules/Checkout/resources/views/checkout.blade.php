@@ -79,7 +79,7 @@
                         </div>
                         <input id="blik_code" name="blik_code" x-ref="blik" x-bind:value="blik"
                                x-on:input="blik = $el.value = $el.value.replace(/\D/g, '').slice(0, 6)"
-                               inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="• • • • • •" aria-describedby="blik_code-note"
+                               inputmode="numeric" autocomplete="one-time-code" placeholder="• • • • • •" aria-describedby="blik_code-note"
                                @error('blik_code') aria-invalid="true" @enderror
                                x-bind:class="blik.length === 6 && 'border-navy'"
                                @class([
@@ -166,7 +166,7 @@
                         @endif
 
                         @if (Route::has('content.terms'))
-                            <label class="mt-5 flex cursor-pointer items-start gap-2.5 text-[13.5px] leading-[1.5] text-graphite">
+                            <label class="mt-2 -mb-3 flex cursor-pointer items-start gap-2.5 py-3 text-[13.5px] leading-[1.5] text-graphite">
                                 <input type="checkbox" name="accept_terms" value="1" x-ref="terms" x-model="accepted" @checked(old('accept_terms'))
                                        @error('accept_terms') aria-invalid="true" aria-describedby="accept-terms-error" @enderror
                                        class="mt-[3px] size-4 flex-none accent-ink">

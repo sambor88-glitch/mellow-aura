@@ -53,7 +53,7 @@
                               aria-describedby="withdrawal-items-note"
                               @error('items') aria-invalid="true" @enderror
                               @class([
-                                  'w-full min-w-0 resize-y rounded-[4px] border bg-white px-4 py-[14px] text-[15px] leading-[1.6] text-ink placeholder:text-hint focus:border-ink',
+                                  'w-full min-w-0 resize-y rounded-[4px] border bg-white px-4 py-[14px] text-[15px] leading-[1.6] text-ink placeholder:text-hint focus:border-ink pointer-coarse:text-[16px]',
                                   'border-error' => $errors->has('items'),
                                   'border-line' => ! $errors->has('items'),
                               ])

@@ -99,9 +99,13 @@ class PlaceOrderRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        $postalCode = (string) $this->input('postal_code');
+
         $this->merge([
             'blik_code' => preg_replace('/\D+/', '', (string) $this->input('blik_code')),
             'invoice_nip' => preg_replace('/\D+/', '', (string) $this->input('invoice_nip')) ?: null,
+            // The iPhone's number pad has no dash, so „30001” and „30 001” count as 30-001.
+            'postal_code' => preg_match('/^\s*(\d{2})[\s-]*(\d{3})\s*$/', $postalCode, $digits) ? $digits[1].'-'.$digits[2] : $this->input('postal_code'),
         ]);
     }
 

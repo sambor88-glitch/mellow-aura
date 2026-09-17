@@ -14,14 +14,14 @@
         </div>
     </div>
 
-    <div role="status" class="fixed bottom-[26px] left-1/2 w-max max-w-[calc(100%-32px)] -translate-x-1/2">
+    <div role="status" class="pointer-events-none fixed bottom-[26px] left-1/2 w-max max-w-[calc(100%-32px)] -translate-x-1/2">
         <div x-cloak x-show="$store.cart.opened && $store.cart.notice" x-text="$store.cart.notice"
              class="animate-ma-up-quick rounded-full bg-ink px-6 py-3.5 text-center text-[14px] text-sand shadow-pill"></div>
     </div>
 </dialog>
 
 {{-- The same confirmation when the drawer is closed, e.g. an error after "Dodaj do koszyka". --}}
-<div x-data role="status" class="fixed bottom-[26px] left-1/2 z-120 w-max max-w-[calc(100%-32px)] -translate-x-1/2">
+<div x-data role="status" class="pointer-events-none fixed bottom-[26px] left-1/2 z-120 w-max max-w-[calc(100%-32px)] -translate-x-1/2">
     <div x-cloak x-show="! $store.cart.opened && $store.cart.notice" x-text="$store.cart.notice"
          class="animate-ma-up-quick rounded-full bg-ink px-6 py-3.5 text-center text-[14px] text-sand shadow-pill"></div>
 </div>
