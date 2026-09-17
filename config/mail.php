@@ -115,4 +115,17 @@ return [
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | One Inbox For Staging
+    |--------------------------------------------------------------------------
+    |
+    | Staging sends every mail to this address instead of the addresses typed
+    | into test orders, with the original recipients in the subject. Technical
+    | alerts keep their own address. Empty on production.
+    |
+    */
+
+    'redirect_to' => env('MAIL_REDIRECT_TO'),
+
 ];
