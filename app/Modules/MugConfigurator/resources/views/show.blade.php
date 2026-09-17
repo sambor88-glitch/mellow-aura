@@ -94,6 +94,8 @@
                     <div class="mt-3 mb-[30px] flex flex-wrap items-center justify-between gap-3 text-[12.5px] text-label">
                         <span id="mug-text-rules">
                             <span x-text="lineInfo">Enter przenosi wyraz do nowej linii</span><span class="sr-only">. Najwyżej {{ $maxLines }} × {{ $maxChars }} znaków.</span>
+                            {{-- A letter past the limit just doesn't appear; a screen reader hears why. --}}
+                            <span class="sr-only" aria-live="polite" x-text="limitNotice"></span>
                         </span>
                         <span class="flex flex-wrap items-center gap-3.5">
                             <button type="button" x-on:click="toggleSound()" class="{{ $pill }}"

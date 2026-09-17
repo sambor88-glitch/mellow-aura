@@ -64,7 +64,7 @@
             </div>
 
             <div class="min-w-[290px] flex-[1_1_340px]">
-                <div id="formularz" class="scroll-mt-56 rounded-[4px] border border-divider bg-cream px-[30px] py-8">
+                <div id="formularz" class="scroll-mt-6 rounded-[4px] border border-divider bg-cream px-[30px] py-8">
                     @if (session('contact_sent'))
                         <p role="status" class="mb-5 rounded-[4px] border border-line-strong bg-sand-dark p-4 text-[14px] leading-[1.6] text-graphite">Wiadomość poszła. Odpisuję zwykle tego samego dnia.</p>
                     @elseif (session('contact_failed'))

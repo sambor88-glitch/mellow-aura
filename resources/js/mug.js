@@ -5,6 +5,15 @@
  */
 const SOUND_KEY = 'ma-sound';
 
+// 1 linię, 2–4 linie, 5 linii; 12–14 take the last form too.
+const plural = (count, one, few, many) => {
+    if (count === 1) {
+        return one;
+    }
+
+    return [2, 3, 4].includes(count % 10) && ![12, 13, 14].includes(count % 100) ? few : many;
+};
+
 export default ({ maxLines, maxChars, prices, glazes, size, glaze }) => {
     // The audio context stays outside Alpine's reactive state.
     let audio = null;
@@ -16,6 +25,7 @@ export default ({ maxLines, maxChars, prices, glazes, size, glaze }) => {
         sound: true,
         // The field has focus: on a phone the small preview shows above it and the bottom bar steps aside.
         writing: false,
+        limitNotice: '',
 
         init() {
             try {
@@ -72,9 +82,18 @@ export default ({ maxLines, maxChars, prices, glazes, size, glaze }) => {
                 const caret = Math.min(field.selectionStart, next.length);
                 field.value = next;
                 field.setSelectionRange(caret, caret);
+                this.announceLimit();
             }
 
             this.text = next;
+        },
+
+        announceLimit() {
+            // Emptied first, so the same sentence is read again after the next letter that doesn't fit.
+            this.limitNotice = '';
+            this.$nextTick(() => {
+                this.limitNotice = `Zmieszczę ${maxLines} ${plural(maxLines, 'linię', 'linie', 'linii')} po ${maxChars} ${plural(maxChars, 'znak', 'znaki', 'znaków')}`;
+            });
         },
 
         startWriting() {

@@ -219,7 +219,8 @@
         font-size: 23px;
         line-height: 1.25;
         color: var(--color-ink);
-        scroll-margin-top: 110px;
+        /* The header's height comes from the page's scroll padding (resources/js/header.js). */
+        scroll-margin-top: 24px;
     }
 
     .legal-document .sec:first-child {
