@@ -33,6 +33,9 @@ class WorkshopsPageTest extends TestCase
             ->assertSeeInOrder(['Jak się zapisać', 'Pracownia: Kraków, okolice Błoń Krakowskich. Dokładny adres podaję po zapisie.'])
             ->assertSee('href="https://wa.me/48600100200"', false)
             ->assertSee('href="'.e(route('content.contact', ['temat' => 'Warsztaty i terminy'])).'"', false)
+            // Until workshops are booked on the site, writing about one counts as workshop_booking in Google Analytics.
+            ->assertSee('data-analytics-click="'.e(json_encode(['name' => 'workshop_booking', 'params' => ['method' => 'whatsapp']])).'"', false)
+            ->assertSee('data-analytics-click="'.e(json_encode(['name' => 'workshop_booking', 'params' => ['method' => 'contact_form']])).'"', false)
             ->assertDontSee('Najbliższe terminy');
 
         $this->assertMatchesRegularExpression('/href="'.preg_quote(route('workshops.index'), '/').'"\s+aria-current="page"/', $response->getContent());

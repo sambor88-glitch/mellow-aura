@@ -1,5 +1,5 @@
 import Alpine from 'alpinejs';
-import { trackPage } from './analytics';
+import { trackClicks, trackPage } from './analytics';
 import beforeAfter from './before-after';
 import buyBar from './buy-bar';
 import cart from './cart';
@@ -25,3 +25,4 @@ Alpine.data('photoPicker', photoPicker);
 Alpine.data('stickyHeader', stickyHeader);
 Alpine.start();
 trackPage();
+trackClicks();

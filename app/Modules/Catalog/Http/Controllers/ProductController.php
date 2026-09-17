@@ -6,14 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Support\ProductStructuredData;
 use App\Modules\Settings\Settings;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ProductController extends Controller
 {
-    public function __invoke(Request $request, Product $product, Settings $settings): View
+    public function __invoke(Request $request, Product $product, Settings $settings): View|RedirectResponse
     {
-        abort_unless($product->is_published, 404);
+        // A hidden product may still be in Google or in someone's link: its shelf is the closest thing (specification, point 1).
+        if (! $product->is_published) {
+            return to_route('shop.category', $product->category, 301);
+        }
 
         $product->load(['category', 'variants' => fn ($query) => $query->orderBy('id'), 'media']);
 

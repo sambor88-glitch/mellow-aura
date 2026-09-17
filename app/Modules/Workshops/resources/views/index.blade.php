@@ -73,9 +73,10 @@
                     <div class="grid gap-3">
                         @if ($phone)
                             <a href="https://wa.me/{{ preg_replace('/\D+/', '', $phone) }}" target="_blank" rel="noopener"
+                               data-analytics-click="{{ json_encode(['name' => 'workshop_booking', 'params' => ['method' => 'whatsapp']]) }}"
                                class="rounded-full bg-rose p-[15px] text-center text-[14.5px] text-ink transition duration-300 hover:bg-sand hover:text-ink active:scale-[.97]">Napisz na WhatsAppie</a>
                         @endif
-                        <a href="{{ $contactUrl }}"
+                        <a href="{{ $contactUrl }}" data-analytics-click="{{ json_encode(['name' => 'workshop_booking', 'params' => ['method' => 'contact_form']]) }}"
                            class="rounded-full border border-line-dark p-[15px] text-center text-[14.5px] text-sand transition duration-300 hover:border-rose hover:text-rose active:scale-[.98]">Napisz przez formularz</a>
                     </div>
                     @if ($phone)

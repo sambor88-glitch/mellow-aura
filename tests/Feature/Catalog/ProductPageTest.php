@@ -208,12 +208,13 @@ class ProductPageTest extends TestCase
             ->assertDontSee('mogą różnić się');
     }
 
-    public function test_drafts_and_unknown_products_are_not_found(): void
+    public function test_a_hidden_product_leads_to_its_category_and_an_unknown_one_is_not_found(): void
     {
-        $draft = Product::factory()->create(['slug' => 'miski', 'is_published' => false]);
+        $bowls = Category::factory()->create(['slug' => 'talerze-i-miski']);
+        $draft = Product::factory()->create(['slug' => 'miski', 'is_published' => false, 'category_id' => $bowls->id]);
         ProductVariant::factory()->create(['product_id' => $draft->id]);
 
-        $this->get('/produkt/miski')->assertNotFound();
+        $this->get('/produkt/miski')->assertStatus(301)->assertRedirect('/sklep/talerze-i-miski');
         $this->get('/produkt/nie-ma-takiego')->assertNotFound();
     }
 

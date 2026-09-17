@@ -34,6 +34,26 @@ function remember(key) {
 }
 
 /*
+ * An event for a click, e.g. workshop_booking on „Napisz na WhatsAppie”, until workshops are booked on the site.
+ * The link names it in data-analytics-click; without a yes to statistics nothing goes out.
+ */
+export function trackClicks() {
+    document.addEventListener('click', (click) => {
+        const link = click.target.closest?.('[data-analytics-click]');
+
+        if (!link) {
+            return;
+        }
+
+        try {
+            track(JSON.parse(link.dataset.analyticsClick));
+        } catch {
+            // A broken attribute never stops the link.
+        }
+    });
+}
+
+/*
  * Sends the events written into the page: when it loads, and again right after a yes in the banner.
  * An event marked "once", like a purchase, goes out once in this browser.
  */
