@@ -10,8 +10,8 @@ use Illuminate\Support\Str;
 use RuntimeException;
 
 /**
- * Stands in for the payment gateway until Przelewy24 arrives (MA-50). The BLIK code 000000
- * plays a payment the bank rejects, so the failure path can be tried on staging.
+ * Stands in for Stripe while the shop has no keys (Payments\Gateways\TestGateway decides when).
+ * The BLIK code 000000 plays a payment the bank rejects, so the failure path can be tried on staging.
  */
 class SimulatePayment
 {

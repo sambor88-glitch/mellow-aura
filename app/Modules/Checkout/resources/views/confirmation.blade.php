@@ -8,10 +8,18 @@
     @endif
     <div class="mx-auto max-w-[1000px] animate-ma-view px-7 pt-14 pb-24 text-center">
         <div class="pt-10 pb-5">
-            <div aria-hidden="true" class="mx-auto mb-[26px] grid size-[76px] place-items-center rounded-full border border-line bg-sand-dark text-[30px] text-success">✓</div>
-            <h1 class="mb-4 font-serif text-[length:clamp(32px,4.4vw,52px)] leading-[1.04] font-light">{{ $parcel ? 'Dziękuję. Pakuję.' : 'Dziękuję.' }}</h1>
+            @if ($paid)
+                <div aria-hidden="true" class="mx-auto mb-[26px] grid size-[76px] place-items-center rounded-full border border-line bg-sand-dark text-[30px] text-success">✓</div>
+            @endif
+            <h1 class="mb-4 font-serif text-[length:clamp(32px,4.4vw,52px)] leading-[1.04] font-light">
+                @if (! $paid) Dziękuję. Czekam na przelew. @elseif ($parcel) Dziękuję. Pakuję. @else Dziękuję. @endif
+            </h1>
             <p class="mx-auto mb-8 max-w-[48ch] text-[17px] leading-[1.7] text-lead">
-                @if ($parcel)
+                @if (! $paid)
+                    {{-- The money is not in yet, so the page must not say „opłacone”. --}}
+                    Zamówienie <strong class="font-medium select-all">{{ $order->number }}</strong> czeka na przelew. Dane do przelewu są w mailu,
+                    który właśnie wyszedł. Zabieram się za nie, gdy tylko pieniądze dojdą.
+                @elseif ($parcel)
                     Zamówienie <strong class="font-medium select-all">{{ $order->number }}</strong> jest opłacone. Dostaniesz maila z potwierdzeniem,
                     a ode mnie zdjęcie paczki przed wysłaniem — zawijam każdą sztukę osobno.
                 @else
@@ -25,7 +33,7 @@
                 </p>
             @endif
             <div class="mb-6 inline-flex min-w-[min(380px,100%)] flex-col gap-3.5 rounded-[4px] border border-divider bg-cream px-[30px] py-[26px] text-left">
-                <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">Zapłacone</span><span>{{ Money::format($order->total_gross) }}</span></div>
+                <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">{{ $paid ? 'Zapłacone' : 'Do zapłaty' }}</span><span>{{ Money::format($order->total_gross) }}</span></div>
                 @if ($shippingLabel)
                     <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">Dostawa</span><span>{{ $shippingLabel }}</span></div>
                 @endif

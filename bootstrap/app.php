@@ -21,6 +21,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(SecurityHeaders::class);
         // The customer's own address behind Cloudflare, so limits count per customer (see Cloudflare).
         $middleware->trustProxies(at: Cloudflare::PROXIES);
+        // Stripe has no session and no token; its calls prove themselves with a signature instead.
+        $middleware->validateCsrfTokens(except: ['stripe/webhook']);
         $middleware->redirectGuestsTo(fn () => route('admin.login'));
         $middleware->redirectUsersTo(fn () => route('admin.dashboard'));
     })

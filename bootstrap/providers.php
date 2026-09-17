@@ -10,6 +10,7 @@ use App\Modules\Firing\FiringServiceProvider;
 use App\Modules\Gifts\GiftsServiceProvider;
 use App\Modules\Monitoring\MonitoringServiceProvider;
 use App\Modules\MugConfigurator\MugConfiguratorServiceProvider;
+use App\Modules\Payments\PaymentsServiceProvider;
 use App\Modules\Settings\SettingsServiceProvider;
 use App\Modules\Shared\SharedServiceProvider;
 use App\Modules\Workshops\WorkshopsServiceProvider;
@@ -23,6 +24,7 @@ return [
     CatalogServiceProvider::class,
     CartServiceProvider::class,
     CheckoutServiceProvider::class,
+    PaymentsServiceProvider::class,
     GiftsServiceProvider::class,
     MugConfiguratorServiceProvider::class,
     ContentServiceProvider::class,

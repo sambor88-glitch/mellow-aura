@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Marks an order as paid, takes its pieces off the shelf and issues its vouchers, in one transaction
- * and exactly once, however many times the confirmation arrives. The payment webhook will call it too (MA-51).
+ * and exactly once, however many times the confirmation arrives. Stripe's webhook calls it as well.
  * A piece that someone else bought first stays on the order as missing, and the order is still paid.
  */
 class MarkOrderPaid

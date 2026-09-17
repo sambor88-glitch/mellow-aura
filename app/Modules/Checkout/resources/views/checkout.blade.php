@@ -8,6 +8,12 @@
 @endphp
 
 <x-shared::layout title="Zamówienie | MellowAura" :noindex="true">
+    @if ($config['stripeKey'])
+        {{-- Only here, only when the shop can really charge: the payment page is the one place that needs it. --}}
+        <x-slot:head>
+            <script src="https://js.stripe.com/v3/"></script>
+        </x-slot:head>
+    @endif
     @if ($analytics)
         <x-consent::analytics-event name="begin_checkout" :params="$analytics" />
     @endif
@@ -67,7 +73,7 @@
                     <fieldset class="mb-[18px]">
                         <legend class="mb-3 text-[11.5px] tracking-[0.16em] text-label uppercase">Płatność</legend>
                         <div class="grid gap-2.5">
-                            @foreach (PaymentMethod::cases() as $method)
+                            @foreach ($paymentMethods as $method)
                                 <label class="{{ $radio }} py-[15px] has-checked:border-navy has-checked:bg-navy-soft">
                                     <input type="radio" name="payment_method" value="{{ $method->value }}" x-model="payment" @checked($selectedPayment === $method->value) class="sr-only">
                                     <span class="grid size-4 flex-none place-items-center rounded-full border border-label"><span class="size-2 rounded-full group-has-checked:bg-navy"></span></span>
