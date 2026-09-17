@@ -13,6 +13,7 @@ use App\Modules\Checkout\Models\Order;
 use App\Modules\Checkout\Support\ShippingMethods;
 use App\Modules\Content\Support\LegalDocument;
 use App\Modules\Settings\Settings;
+use App\Modules\Shared\Support\AnalyticsItem;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -41,6 +42,7 @@ class CheckoutController extends Controller
             'shippingGross' => $methods->get($selectedShipping)['cost'] ?? 0,
             'selectedShipping' => $selectedShipping,
             'selectedPayment' => $selectedPayment,
+            'analytics' => $lines->isEmpty() ? null : AnalyticsItem::params($subtotal, $this->analyticsItems($lines)),
             'config' => [
                 'accepted' => (bool) old('accept_terms'),
                 // One checkbox per line with a feature to accept, ticked again after a mistake elsewhere in the form.
@@ -83,6 +85,8 @@ class CheckoutController extends Controller
 
         $cart->clear();
         $request->session()->put('checkout.order', $order->number);
+        // The cart is gone after this, so the confirmation page takes the purchase for Google Analytics from here.
+        $request->session()->put('checkout.analytics', ['order' => $order->number, 'value' => $subtotal, 'items' => $this->analyticsItems($lines)]);
 
         return to_route('checkout.confirmation');
     }
@@ -96,10 +100,24 @@ class CheckoutController extends Controller
             return to_route('shop.index');
         }
 
+        $analytics = $request->session()->get('checkout.analytics');
+
         return response()->view('checkout::confirmation', [
             'order' => $order,
+            'purchase' => ($analytics['order'] ?? null) === $order->number
+                ? AnalyticsItem::params((int) $analytics['value'], $analytics['items'], ['transaction_id' => $order->number, 'shipping' => $order->shipping_gross / 100])
+                : null,
             'shippingLabel' => app(ShippingMethods::class)->all()->get($order->shipping_method)['label'] ?? null,
         ])->header('X-Robots-Tag', self::ROBOTS);
+    }
+
+    /**
+     * @param  Collection<string, CartLine>  $lines
+     * @return list<array<string, string|int|float>>
+     */
+    private function analyticsItems(Collection $lines): array
+    {
+        return $lines->map(fn (CartLine $line) => $line->analyticsItem())->values()->all();
     }
 
     /**

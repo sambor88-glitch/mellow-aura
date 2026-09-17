@@ -7,6 +7,9 @@
 @endphp
 
 <x-shared::layout title="Zamówienie | MellowAura" :noindex="true">
+    @if ($analytics)
+        <x-consent::analytics-event name="begin_checkout" :params="$analytics" />
+    @endif
     <div class="mx-auto max-w-[1000px] animate-ma-view px-7 pt-14 pb-24">
         @if ($lines->isEmpty())
             <div class="py-16 text-center">

@@ -1,3 +1,5 @@
+import { trackPage } from './analytics';
+
 /*
  * The cookie banner. The server decides whether it shows and whether Google Analytics loads with the page;
  * this saves a choice in the background and starts Analytics right after a yes, the same way
@@ -80,6 +82,8 @@ export default (config) => ({
 
         if (allow) {
             startAnalytics(config.measurementId);
+            // The page's own events (a viewed product, a purchase) go out now too.
+            trackPage();
         } else if (wasAllowed) {
             // Analytics already runs on this page; a reload leaves it out.
             window.location.reload();

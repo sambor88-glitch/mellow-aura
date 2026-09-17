@@ -1,4 +1,6 @@
 @use('App\Modules\Catalog\Enums\CategoryGroup')
+@use('App\Modules\Catalog\Support\VariantAnalyticsItem')
+@use('App\Modules\Shared\Support\AnalyticsItem')
 @use('App\Modules\Shared\Support\DispatchTime')
 @use('App\Modules\Shared\Support\Money')
 @use('App\Modules\Shared\Support\Seo')
@@ -26,6 +28,7 @@
     @isset($structuredData)
         <x-slot:head>{!! $structuredData !!}</x-slot:head>
     @endisset
+    <x-consent::analytics-event name="view_item" :params="AnalyticsItem::params($variant->price_gross, [VariantAnalyticsItem::make($variant)])" />
 
     <div class="mx-auto max-w-[1280px] animate-ma-view px-7 pt-11 pb-24">
         <nav aria-label="Okruszki" class="mb-7 text-[12px] text-hint">

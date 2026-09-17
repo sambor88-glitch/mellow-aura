@@ -6,6 +6,7 @@ use App\Modules\Cart\Cart;
 use App\Modules\Cart\CartLine;
 use App\Modules\Cart\LineItem;
 use App\Modules\Catalog\Models\ProductVariant;
+use App\Modules\Catalog\Support\VariantAnalyticsItem;
 
 /**
  * A size of a product from the catalogue, with the customer's own text when the product is stamped.
@@ -61,6 +62,11 @@ class ProductLine extends CartLine
         $deviation = $this->variant->product->deviation;
 
         return filled($deviation) ? [$this->name() => $deviation] : [];
+    }
+
+    public function analyticsItem(): array
+    {
+        return VariantAnalyticsItem::make($this->variant, $this->quantity);
     }
 
     public function limit(): int

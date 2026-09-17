@@ -7,6 +7,7 @@ use App\Modules\Cart\Cart;
 use App\Modules\Cart\CartLine;
 use App\Modules\Cart\Lines\ProductLine;
 use App\Modules\Cart\LineTypes;
+use App\Modules\Shared\Support\AnalyticsItem;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -29,8 +30,12 @@ class CartController extends Controller
 
         $line = $lineType->fromRequest($request);
         $added = $cart->add($line);
+        // What went in, for Google Analytics; the page sends it only after a yes to statistics.
+        $analytics = $added > 0
+            ? ['name' => 'add_to_cart', 'params' => AnalyticsItem::params($line->unitPrice() * $added, [$line->withQuantity($added)->analyticsItem()])]
+            : null;
 
-        return $this->respond($request, $cart, $added === $line->quantity ? $line->addedNotice() : $line->limitNotice());
+        return $this->respond($request, $cart, $added === $line->quantity ? $line->addedNotice() : $line->limitNotice(), $analytics);
     }
 
     public function update(Request $request, Cart $cart, string $line): JsonResponse|RedirectResponse
@@ -53,16 +58,25 @@ class CartController extends Controller
         return $this->respond($request, $cart, null);
     }
 
-    private function respond(Request $request, Cart $cart, ?string $notice): JsonResponse|RedirectResponse
+    /**
+     * @param  array{name: string, params: array<string, mixed>}|null  $analytics
+     */
+    private function respond(Request $request, Cart $cart, ?string $notice, ?array $analytics = null): JsonResponse|RedirectResponse
     {
         if (! $request->expectsJson()) {
             return back();
         }
 
-        return response()->json([
+        $data = [
             'count' => $cart->count(),
             'content' => view('cart::content')->render(),
             'notice' => $notice,
-        ]);
+        ];
+
+        if ($analytics !== null) {
+            $data['analytics'] = $analytics;
+        }
+
+        return response()->json($data);
     }
 }

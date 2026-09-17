@@ -1,3 +1,5 @@
+@use('App\Modules\MugConfigurator\Support\MugAnalyticsItem')
+@use('App\Modules\Shared\Support\AnalyticsItem')
 @use('App\Modules\Shared\Support\Money')
 @inject('settings', 'App\Modules\Settings\Settings')
 @php
@@ -29,6 +31,7 @@
     :image="$photo"
 >
     <x-slot:head>{!! $structuredData !!}</x-slot:head>
+    <x-consent::analytics-event name="view_item" :params="AnalyticsItem::params($startSize['price_gross'], [MugAnalyticsItem::make($startSize)])" />
     <div class="mx-auto max-w-[1280px] animate-ma-view px-7 pt-11 pb-24"
          x-data="mugConfigurator({
              maxLines: {{ $maxLines }},

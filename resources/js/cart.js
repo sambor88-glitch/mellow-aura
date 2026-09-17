@@ -1,3 +1,5 @@
+import { track } from './analytics';
+
 /*
  * The cart drawer. Cart forms post in the background and the server answers with the drawer's
  * fresh content, so Blade stays the only place that renders the cart.
@@ -70,6 +72,7 @@ export default {
         }
 
         this.say(data.notice);
+        track(data.analytics);
 
         return true;
     },

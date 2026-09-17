@@ -2,6 +2,10 @@
 @use('App\Modules\Shared\Support\Money')
 @inject('settings', 'App\Modules\Settings\Settings')
 <x-shared::layout title="Zamówienie | MellowAura" :noindex="true">
+    @if ($purchase)
+        {{-- Once per order in this browser, so a reload of the confirmation counts no second purchase. --}}
+        <x-consent::analytics-event name="purchase" :params="$purchase" :once="'purchase-'.$order->number" />
+    @endif
     <div class="mx-auto max-w-[1000px] animate-ma-view px-7 pt-14 pb-24 text-center">
         <div class="pt-10 pb-5">
             <div aria-hidden="true" class="mx-auto mb-[26px] grid size-[76px] place-items-center rounded-full border border-line bg-sand-dark text-[30px] text-success">✓</div>

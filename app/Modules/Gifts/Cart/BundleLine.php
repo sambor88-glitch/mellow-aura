@@ -7,6 +7,7 @@ use App\Modules\Cart\CartLine;
 use App\Modules\Cart\LineItem;
 use App\Modules\Gifts\Models\Bundle;
 use App\Modules\Gifts\Models\BundleItem;
+use App\Modules\Shared\Support\AnalyticsItem;
 
 /**
  * A gift set in the cart. It sells for the set's price and becomes one order item per part,
@@ -41,6 +42,11 @@ class BundleLine extends CartLine
         return 'Zestaw: '.$this->bundle->items
             ->map(fn (BundleItem $item) => $item->variant->product->name.($item->variant->label ? ' ('.$item->variant->label.')' : ''))
             ->join(' + ');
+    }
+
+    public function analyticsItem(): array
+    {
+        return AnalyticsItem::make('bundle-'.$this->bundle->id, $this->name(), $this->unitPrice(), $this->quantity, category: 'Zestawy prezentowe');
     }
 
     public function deviations(): array

@@ -5,6 +5,7 @@ namespace App\Modules\MugConfigurator\Cart;
 use App\Modules\Cart\Cart;
 use App\Modules\Cart\CartLine;
 use App\Modules\Cart\LineItem;
+use App\Modules\MugConfigurator\Support\MugAnalyticsItem;
 
 /**
  * A mug from the configurator: the customer's text in capitals, one line per row, a size and the inside glaze.
@@ -62,6 +63,11 @@ class MugLine extends CartLine
     public function thumbnailAlt(): string
     {
         return 'Kubek z wbijanym w glinę napisem';
+    }
+
+    public function analyticsItem(): array
+    {
+        return MugAnalyticsItem::make($this->size, $this->quantity);
     }
 
     public function limit(): int

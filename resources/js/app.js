@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs';
+import { trackPage } from './analytics';
 import beforeAfter from './before-after';
 import cart from './cart';
 import checkout from './checkout';
@@ -19,3 +20,4 @@ Alpine.data('mugConfigurator', mugConfigurator);
 Alpine.data('pairUpload', pairUpload);
 Alpine.data('photoPicker', photoPicker);
 Alpine.start();
+trackPage();

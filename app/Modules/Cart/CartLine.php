@@ -2,6 +2,8 @@
 
 namespace App\Modules\Cart;
 
+use App\Modules\Shared\Support\AnalyticsItem;
+
 /**
  * One line in the cart. A product size is a line, and so is a mug from the configurator or a gift set:
  * each module brings its own kind of line and registers it in LineTypes. Names, prices and limits are
@@ -67,6 +69,16 @@ abstract class CartLine
     public function deviations(): array
     {
         return [];
+    }
+
+    /**
+     * The line as a Google Analytics item. Only the name and the price go: the details may hold what the customer typed.
+     *
+     * @return array<string, string|int|float>
+     */
+    public function analyticsItem(): array
+    {
+        return AnalyticsItem::make($this->key, $this->name(), $this->unitPrice(), $this->quantity);
     }
 
     public function total(): int
