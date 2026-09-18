@@ -10,6 +10,7 @@ Strona pracowni ceramiki i rękodzieła Katarzyny Samborskiej — Kraków.
 | `Plan wdrozenia - Laravel krok po kroku.dc.html` | Ośmiotygodniowy plan wdrożenia na Laravel + Forge: konta, schemat bazy, pułapki, pierwsze kroki |
 | `Specyfikacja wdrozenia - MellowAura.dc.html` | Dokument dla osoby wdrażającej: adresy stron z tytułami i opisami, dane strukturalne, zakres panelu, integracje, braki do uzupełnienia |
 | `Analiza konkurencji i propozycje - MellowAura.dc.html` | Dokument decyzyjny dla właścicielki: krakowska i polska konkurencja z cenami, nastroje konsumenckie ze źródłami, propozycje na grudzień i na styczeń oraz audyt edytowalności — czego nie da się zmienić w panelu i w jakiej kolejności to dopisać |
+| `Raport SEO - MellowAura.dc.html` | O które frazy walczyć i gdzie nie stawać: cztery grupy fraz z realną szansą na każdej, słownik, którym trzeba pisać strony usług, decyzja o ukrytym adresie w wizytówce Google, stan danych strukturalnych po zmianach z 2026 i kolejność pracy |
 | `Certyfikat unikatu.dc.html` | Dwustronna karta A6 do wydruku, dołączana do każdej paczki |
 | `Voucher warsztatowy.dc.html` | Pozioma karta A4 — voucher na warsztat do wydruku |
 | `Zakup A - krok po kroku.dc.html`, `Zakup B - ekspres BLIK.dc.html` | Dwa warianty ścieżki zakupu; wybrany został wariant B i jest wbudowany w stronę |
