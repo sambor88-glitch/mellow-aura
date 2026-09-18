@@ -21,6 +21,12 @@ Laravel 13 + Blade, Alpine.js, MySQL, własny panel na Blade (nie Filament), pac
 sitemap, schema-org. Serwer na Forge, przed nim Cloudflare. PHP 8.4 lokalnie i na serwerze.
 Bez Next.js, Astro i WooCommerce — uzasadnienie w planie, punkt 3.
 
+Płatności: **Stripe**, paczka `stripe/stripe-php` (bez Cashiera — nie ma subskrypcji), waluta `pln`.
+BLIK jest pierwszą i domyślną metodą, dalej karta, Apple Pay, Google Pay i przelew tradycyjny poza bramką.
+Bez Przelewy24, Tpay i PayU — nawet w przykładach; jeśli w dokumencie albo w kodzie zostało gdzieś
+„Przelewy24”, to pomyłka do naprawienia. Wyjątek: szybki przelew w Stripe jedzie po railu Przelewy24,
+więc ta nazwa może pojawić się na ekranie banku po przekierowaniu — nigdy w naszych tekstach.
+
 ## Moduły
 
 Kod jest modularny: każdy obszar sklepu to osobny moduł w `app/Modules/<Name>`, w przestrzeni nazw
@@ -90,7 +96,13 @@ Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
 ## Zasady, których nie łamiemy
 
 - Stan magazynu zdejmuj dopiero w webhooku potwierdzającym płatność, w transakcji z `lockForUpdate`.
-- Webhook płatności: weryfikuj podpis i loguj każde wywołanie.
+- Webhook Stripe: weryfikuj nagłówek `Stripe-Signature` przez `Stripe\Webhook::constructEvent()`
+  z **surowego** ciała żądania, trasę wyłącz z ochrony CSRF, loguj każde wywołanie. Zamówienie jest
+  opłacone dopiero po `payment_intent.succeeded` — nie po powrocie klientki na stronę.
+- Kod BLIK (6 cyfr) zbieraj na własnej stronie i podawaj do `stripe.confirmBlikPayment`; kod żyje
+  2 minuty, a klientka ma 60 sekund na potwierdzenie w aplikacji banku — licznik na ekranie jest wymagany.
+- Stripe.js wczytuj wyłącznie z `js.stripe.com` i tylko na stronie zamówienia. To jedyny skrypt,
+  którego nie trzymamy u siebie — własna kopia łamie zgodność z PCI.
 - Kwoty jako grosze w liczbach całkowitych albo `decimal(10,2)` — nigdy float.
 - Pozycja zamówienia kopiuje cenę, napis i kolor z konfiguratora, a nie tylko klucze obce.
 - `custom_text` (napis na kubku): limit długości po stronie serwera i escapowanie przy każdym wyświetleniu.

@@ -82,9 +82,9 @@
         <th style="text-align: left; padding: 3mm; font-weight: 500">Co potrzebne</th>
       </tr>
       <tr style="border-bottom: 0.25mm solid #E2D7C7">
-        <td style="padding: 3mm; vertical-align: top"><strong style="font-weight: 500">Przelewy24</strong> albo Tpay<br /><span style="color: #726456">BLIK, karta, Apple/Google Pay</span></td>
-        <td style="padding: 3mm; vertical-align: top">3–10 dni roboczych</td>
-        <td style="padding: 3mm; vertical-align: top">NIP, umowa, weryfikacja tożsamości, konto firmowe. Prowizja ok. 1,9% za BLIK. Oba mają paczkę do Laravela.</td>
+        <td style="padding: 3mm; vertical-align: top"><strong style="font-weight: 500">Stripe</strong><br /><span style="color: #726456">BLIK, karta, Apple/Google Pay</span></td>
+        <td style="padding: 3mm; vertical-align: top">konto od razu, wypłaty po weryfikacji</td>
+        <td style="padding: 3mm; vertical-align: top">NIP, dane firmy, dokument tożsamości, konto firmowe do wypłat. BLIK włączasz przełącznikiem w panelu Stripe. Prowizje: BLIK 1,6% + 1 zł, karty z EOG 1,5% + 1 zł. Oficjalna paczka <code>stripe/stripe-php</code>; Cashier jest do subskrypcji, tu niepotrzebny. <strong style="font-weight: 500">Nie czekasz na umowę</strong> — to jedyne konto z tej tabeli, które nie blokuje startu.</td>
       </tr>
       <tr style="border-bottom: 0.25mm solid #E2D7C7">
         <td style="padding: 3mm; vertical-align: top"><strong style="font-weight: 500">InPost ShipX</strong><br /><span style="color: #726456">paczkomaty, etykiety</span></td>
@@ -150,7 +150,7 @@
       <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">product_variants</strong> — id, product_id, label („Mała 12 cm"), price_gross, compare_at_price (przekreślona cena), stock. <em style="font-style: italic">Stan trzymaj na wariancie, nie na produkcie</em> — unikat to wariant ze stanem 1.</div>
       <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">price_history</strong> — id, product_variant_id, price_gross, valid_from. Każda zmiana ceny to nowy wiersz. Przy cenie przekreślonej sklep musi pokazać najniższą cenę z 30 dni przed obniżką — bez tej tabeli nie ma jej skąd wziąć.</div>
       <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">media</strong> — obsługuje Spatie, nie pisz sam</div>
-      <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">orders</strong> — id, number (MA-2026-1047), status, email, phone, name, shipping_method, shipping_address (JSON), locker_code, total_gross, payment_status, payment_provider_id, note, invoice_nip</div>
+      <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">orders</strong> — id, number (MA-2026-1047), status, email, phone, name, shipping_method, shipping_address (JSON), locker_code, total_gross, payment_status, payment_provider_id (identyfikator <em style="font-style: italic">PaymentIntent</em> ze Stripe), note, invoice_nip</div>
       <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">order_items</strong> — id, order_id, product_variant_id, quantity, unit_price_gross, <strong style="font-weight: 500">custom_text</strong>, <strong style="font-weight: 500">custom_glaze</strong>. Dwa ostatnie pola to napis i kolor z konfiguratora — kopiuj wartości, nie tylko klucze obce, bo cena i nazwa mogą się później zmienić.</div>
       <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">vouchers</strong> — id, code, order_item_id, recipient_name, dedication, valid_until, redeemed_at. Kod nadawany automatycznie; od stycznia wpisywany przy zapisie na warsztat.</div>
       <div style="margin-bottom: 3.5mm"><strong style="font-weight: 500">bundles</strong> i <strong style="font-weight: 500">bundle_items</strong> — id, name, description, discount_percent, is_published. Cena liczona z wariantów minus rabat, tak jak w panelu.</div>
@@ -162,7 +162,7 @@
     <div style="font-size: 10pt; line-height: 1.6">
       <div style="display: flex; gap: 5mm; padding: 4mm 0; border-bottom: 0.25mm solid #EDE4D8">
         <div style="flex: 0 0 26mm"><strong style="font-weight: 500">Tydzień 1</strong><br /><span style="font-size: 9pt; color: #726456">15–21.09</span></div>
-        <div style="flex: 1">Wnioski o Przelewy24 i InPost — <strong style="font-weight: 500">pierwszego dnia</strong>. Nowa strona na Forge, repozytorium, staging na subdomenie za hasłem i z nagłówkiem <code>X-Robots-Tag: noindex</code>, Laravel 13 na PHP 8.4, migracje jedenastu tabel, seeder z 17 produktami przepisanymi z prototypu. Na koniec tygodnia w bazie siedzi prawdziwa oferta.</div>
+        <div style="flex: 1">Wniosek o InPost — <strong style="font-weight: 500">pierwszego dnia</strong>, bo tylko on blokuje start. Konto Stripe zakładasz w pół godziny, ale zrób je tego samego dnia: weryfikacja do wypłat idzie swoim tempem, a klucze testowe masz od razu. Nowa strona na Forge, repozytorium, staging na subdomenie za hasłem i z nagłówkiem <code>X-Robots-Tag: noindex</code>, Laravel 13 na PHP 8.4, migracje jedenastu tabel, seeder z 17 produktami przepisanymi z prototypu. Na koniec tygodnia w bazie siedzi prawdziwa oferta.</div>
       </div>
       <div style="display: flex; gap: 5mm; padding: 4mm 0; border-bottom: 0.25mm solid #EDE4D8">
         <div style="flex: 0 0 26mm"><strong style="font-weight: 500">Tydzień 2</strong><br /><span style="font-size: 9pt; color: #726456">22–28.09</span></div>
@@ -174,7 +174,7 @@
       </div>
       <div style="display: flex; gap: 5mm; padding: 4mm 0; border-bottom: 0.25mm solid #EDE4D8">
         <div style="flex: 0 0 26mm"><strong style="font-weight: 500">Tydzień 4</strong><br /><span style="font-size: 9pt; color: #726456">6–12.10</span></div>
-        <div style="flex: 1">Przelewy24: przekierowanie, powrót, <strong style="font-weight: 500">webhook</strong>. Zdejmowanie stanu w transakcji przy potwierdzeniu płatności, nie przy złożeniu zamówienia. Maile przez Postmark. Test na prawdziwych 1 zł. Na koniec: pieniądze wpływają.</div>
+        <div style="flex: 1">Stripe: <code>PaymentIntent</code> w groszach i w <code>pln</code>, kod BLIK wpisywany na własnej stronie przez <code>stripe.confirmBlikPayment</code>, licznik 60 sekund na potwierdzenie w aplikacji banku, <strong style="font-weight: 500">webhook z weryfikacją podpisu</strong>. Zdejmowanie stanu w transakcji przy potwierdzeniu płatności, nie przy złożeniu zamówienia. Maile przez Postmark. Test na prawdziwych 1 zł. Na koniec: pieniądze wpływają.</div>
       </div>
       <div style="display: flex; gap: 5mm; padding: 4mm 0; border-bottom: 0.25mm solid #EDE4D8">
         <div style="flex: 0 0 26mm"><strong style="font-weight: 500">Tydzień 5</strong><br /><span style="font-size: 9pt; color: #726456">13–19.10</span></div>
@@ -190,7 +190,7 @@
       </div>
       <div style="display: flex; gap: 5mm; padding: 4mm 0">
         <div style="flex: 0 0 26mm"><strong style="font-weight: 500">Tydzień 8</strong><br /><span style="font-size: 9pt; color: #726456">3–9.11</span></div>
-        <div style="flex: 1">Bufor — i nie usuwaj go. Funkcje dopisane we wrześniu zjadają z niego około czterech dni. Kopie zapasowe, monitoring, kolejki na Forge, przejście całej ścieżki zakupu na telefonie, sprawdzenie na dwóch przeglądarkach, uzupełnienie treści przez Kasię, próbne zamówienie od początku do końca.</div>
+        <div style="flex: 1">Ścieżkę BLIK-a przetestuj na nieudanych wariantach, nie tylko na udanym: w piaskownicy Stripe przechodzi dowolne sześć cyfr, a konkretny błąd wymusza się adresem e-mail w zamówieniu — <code>customer_timeout@</code>, <code>insufficient_funds@</code>, <code>expired_code@</code>, <code>bank_declined@</code>. Te ekrany klientka zobaczy częściej, niż myślisz. Bufor — i nie usuwaj go. Funkcje dopisane we wrześniu zjadają z niego około czterech dni. Kopie zapasowe, monitoring, kolejki na Forge, przejście całej ścieżki zakupu na telefonie, sprawdzenie na dwóch przeglądarkach, uzupełnienie treści przez Kasię, próbne zamówienie od początku do końca.</div>
       </div>
     </div>
 
@@ -198,7 +198,7 @@
 
     <div style="font-size: 10pt; line-height: 1.62">
       <p style="margin: 0 0 3.5mm"><strong style="font-weight: 500">Stan zdejmowany w złym momencie.</strong> Jeśli odejmiesz sztukę przy kliknięciu „Płacę", porzucone koszyki wyzerują półkę. Odejmuj dopiero w webhooku potwierdzającym płatność, w transakcji z <code>lockForUpdate</code>. Przy unikatach po jednej sztuce dwie osoby naprawdę kupią to samo w tej samej minucie — w grudniu to pewne.</p>
-      <p style="margin: 0 0 3.5mm"><strong style="font-weight: 500">Webhook bez weryfikacji podpisu.</strong> Przelewy24 przysyła powiadomienie o płatności na publiczny adres. Bez sprawdzenia podpisu ktoś może je podrobić i dostać paczkę za darmo. Weryfikuj i loguj każde wywołanie.</p>
+      <p style="margin: 0 0 3.5mm"><strong style="font-weight: 500">Webhook bez weryfikacji podpisu.</strong> Stripe przysyła powiadomienie o płatności na publiczny adres. Bez sprawdzenia nagłówka <code>Stripe-Signature</code> ktoś może je podrobić i dostać paczkę za darmo. Weryfikuj przez <code>Stripe\Webhook::constructEvent()</code> sekretem z <code>STRIPE_WEBHOOK_SECRET</code> i loguj każde wywołanie. Dwie pułapki, na których wywraca się to w Laravelu: trasę webhooka trzeba <strong style="font-weight: 500">wyłączyć z ochrony CSRF</strong>, a podpis liczyć z <strong style="font-weight: 500">surowego ciała żądania</strong> (<code>$request-&gt;getContent()</code>) — po zdekodowaniu i ponownym zakodowaniu JSON-a podpis przestaje się zgadzać. Lokalnie podsłuchujesz przez <code>stripe listen --forward-to</code>.</p>
       <p style="margin: 0 0 3.5mm"><strong style="font-weight: 500">Ceny w groszach albo w setnych.</strong> Trzymaj kwoty jako liczby całkowite w groszach (<code>unsignedInteger</code>) albo <code>decimal(10,2)</code>. Nigdy <code>float</code> — przy rabatach zestawów zaczną wychodzić grosze różnicy i nie da się tego pogodzić z księgowością.</p>
       <p style="margin: 0 0 3.5mm"><strong style="font-weight: 500">Napis klienta bez oczyszczenia.</strong> <code>custom_text</code> idzie na kubek, ale też do maila i na kartę produkcyjną. Ogranicz długość po stronie serwera, nie tylko w przeglądarce, i oczyszczaj przy wyświetlaniu. To jedyne pole, w którym obcy człowiek pisze dowolny tekst.</p>
       <p style="margin: 0"><strong style="font-weight: 500">Obniżka bez najniższej ceny z 30 dni.</strong> Prototyp przekreśla ceny przy czterech produktach. Przy każdej obniżce, także w Black Friday, obok nowej ceny musi stać najniższa cena z 30 dni przed obniżką — UOKiK karze za jej brak. Sklep liczy ją z tabeli <code>price_history</code>.</p>
@@ -216,7 +216,7 @@
       <strong style="font-weight: 500">Zdjęcia „przed i po”</strong> do apaszki i odcisku rośliny — przed pełnym startem<br />
       <strong style="font-weight: 500">Teksty kafelków o materiale</strong> — temperatura wypału, zmywarka, mikrofalówka, atest szkliw, pakowanie<br />
       <strong style="font-weight: 500">E-mail kontaktowy i kod Paczkomatu</strong> do wpisania w panelu<br />
-      <strong style="font-weight: 500">Dane do faktur</strong> i konto firmowe do Przelewy24<br />
+      <strong style="font-weight: 500">Dane do faktur</strong> i konto firmowe do wypłat ze Stripe<br />
       <strong style="font-weight: 500">Realne czasy realizacji</strong> — ile trwa kubek z napisem, ile talerz z odciskiem
     </div>
 

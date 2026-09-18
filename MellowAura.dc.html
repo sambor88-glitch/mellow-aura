@@ -602,7 +602,7 @@
               <div style="display: flex; justify-content: space-between; font-family: Newsreader, serif; font-size: 21px; padding-top: 14px; border-top: 1px solid #E2D7C7"><span>Razem</span><span>{{ totalLabel }}</span></div>
               <button onClick="{{ payNow }}" style="width: 100%; margin-top: 20px; background: {{ payBigBg }}; color: #F7F2EA; border: 0; border-radius: 999px; padding: 17px; font-size: 15px; letter-spacing: 0.02em" style-hover="background: #2F2620">{{ payBigLabel }}</button>
               <div style="display: flex; justify-content: center; gap: 12px; margin-top: 14px; font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #726456; flex-wrap: wrap">
-                <span>Apple Pay</span><span>&middot;</span><span>Google Pay</span><span>&middot;</span><span>Przelewy24</span>
+                <span>Apple Pay</span><span>&middot;</span><span>Google Pay</span><span>&middot;</span><span>szybki przelew</span>
               </div>
               <div style="font-size: 12px; color: #736454; text-align: center; margin-top: 12px; line-height: 1.5">Ceramikę zawijam w wióry i podwójny karton</div>
             </div>
@@ -2275,7 +2275,8 @@
         <a href="#/wysylka-i-pielegnacja" onClick="{{ goFaq }}" style="color: #9B8C7C" style-hover="color: #D6A39C">FAQ</a>
         <span>Regulamin</span>
         <span>Polityka prywatności</span>
-        <span>BLIK &middot; Przelewy24 &middot; karta</span>
+        <span>BLIK &middot; karta &middot; Apple Pay</span>
+        <span>Płatności obsługuje Stripe</span>
       </div>
     </div>
   </div>
@@ -2336,7 +2337,7 @@
             <button onClick="{{ goCheckout }}" style="width: 100%; background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 16px; font-size: 14.5px; letter-spacing: 0.03em; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Przejdź do zamówienia</button>
             <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 14px; font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: #726456">
               <span style="background: #24417E; color: #fff; font-weight: 600; font-size: 10px; letter-spacing: 0.08em; padding: 3px 7px; border-radius: 3px">BLIK</span>
-              <span>Przelewy24</span><span>&middot;</span><span>karta</span>
+              <span>karta</span><span>&middot;</span><span>Apple Pay</span>
             </div>
           </div>
         </sc-if>
@@ -2358,7 +2359,7 @@
 </div>
 
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1280}, &quot;defaultPayment&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;blik&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;blik&quot;, &quot;p24&quot;, &quot;karta&quot;, &quot;przelew&quot;], &quot;section&quot;: &quot;Sklep&quot;, &quot;label&quot;: &quot;Domyślna płatność&quot;}, &quot;showInstagramFeed&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Strona główna&quot;, &quot;label&quot;: &quot;Sekcja Instagram na stronie głównej&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1280}, &quot;defaultPayment&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;blik&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;blik&quot;, &quot;karta&quot;, &quot;przelew-online&quot;, &quot;przelew&quot;], &quot;section&quot;: &quot;Sklep&quot;, &quot;label&quot;: &quot;Domyślna płatność&quot;}, &quot;showInstagramFeed&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Strona główna&quot;, &quot;label&quot;: &quot;Sekcja Instagram na stronie głównej&quot;}}">
 const PRODUCTS = [
   { id: 'wazony', name: 'Wazony', cat: 'Ceramika', price: 299, old: 315, img: 'zdjecia/wazon-rzezbiony.webp',
     variants: ['Niski 16 cm', 'Średni 20 cm', 'Wysoki 24 cm'], vp: [239, 269, 299],
@@ -2492,7 +2493,7 @@ const ROUTES = {
     desc: 'Jak myć ceramikę ze złotem, czy można do zmywarki, ile trwa wysyłka, jak zapłacić BLIK-iem i jak wyglądają zwroty.' },
   contact: { path: '/kontakt', title: 'Kontakt — pracownia MellowAura, Kraków',
     desc: 'Napisz na WhatsApp +48 792 569 771 albo przez formularz. Odpisuję zwykle tego samego dnia.' },
-  checkout: { path: '/zamowienie', title: 'Zamówienie | MellowAura', desc: 'Płatność BLIK, Przelewy24, karta. Bez zakładania konta.' },
+  checkout: { path: '/zamowienie', title: 'Zamówienie | MellowAura', desc: 'Płatność BLIK, karta, Apple Pay. Bez zakładania konta.' },
   admin: { path: '/panel', title: 'Panel | MellowAura', desc: '' }
 };
 
@@ -2532,7 +2533,7 @@ const TEXTS = {
 
 const FAQ_SEED = [
   { q: 'Jak szybko wyślesz zamówienie?', a: 'Rzeczy, które są na stanie, pakuję w 3–5 dni roboczych. Ceramika jedzie w papierze, wiórach i podwójnym kartonie — do tej pory nic nie dotarło stłuczone. Zamówienia indywidualne to około 3 tygodnie, bo każda praca przechodzi przez dwa wypały.' },
-  { q: 'Czy mogę zapłacić BLIK-iem?', a: 'Tak, BLIK jest pierwszą opcją w koszyku — wpisujesz sześciocyfrowy kod z aplikacji banku i zamówienie jest opłacone od razu. Poza tym: Przelewy24, karta, Apple Pay, Google Pay i zwykły przelew.' },
+  { q: 'Czy mogę zapłacić BLIK-iem?', a: 'Tak, BLIK jest pierwszą opcją w koszyku — wpisujesz sześciocyfrowy kod z aplikacji banku, potwierdzasz w telefonie i zamówienie jest opłacone od razu. Poza tym: karta, Apple Pay, Google Pay, szybki przelew z banku i zwykły przelew. Płatności obsługuje Stripe, więc numer karty nie przechodzi przez moją stronę — nie widzę go i nigdzie go nie zapisuję.' },
   { q: 'Ceramika do zmywarki i mikrofalówki?', a: 'Szkliwione naczynia bez złota myj spokojnie w zmywarce na krótkim programie. Wszystko ze złotą krawędzią — tylko ręcznie i nigdy w mikrofalówce, bo złoto to prawdziwy metal.' },
   { q: 'Dlaczego mój kubek różni się od zdjęcia?', a: 'Bo nie jest odlewem. Szkliwo płynie inaczej w każdym wypale, glina inaczej chwyta kolor. Różnica w odcieniu, wielkości do pół centymetra i drobne nierówności to nie wada — to dowód, że to zrobiła ręka.' },
   { q: 'Zwroty i wymiany', a: 'Masz 14 dni na odesłanie rzeczy kupionej w sklepie, w stanie nienaruszonym. Nie dotyczy to zamówień indywidualnych i kubków z Twoim tekstem, bo powstały tylko dla Ciebie.' },
@@ -3492,8 +3493,8 @@ class Component extends DCLogic {
 
     const pays = [
       { id: 'blik', label: 'BLIK', note: 'Kod z aplikacji banku' },
-      { id: 'p24', label: 'Przelewy24', note: 'Przelew online z 380 banków' },
       { id: 'karta', label: 'Karta', note: 'Visa, Mastercard, Apple Pay' },
+      { id: 'przelew-online', label: 'Szybki przelew', note: 'Wybierasz bank i płacisz online' },
       { id: 'przelew', label: 'Przelew tradycyjny', note: 'Wysyłka po zaksięgowaniu' }
     ].map(m => ({ id: m.id, label: m.label, note: m.note, bd: s.pay === m.id ? '#24417E' : '#DCD0BE',
       bg: s.pay === m.id ? '#F0F3FA' : '#FCF9F4', dot: s.pay === m.id ? '#24417E' : 'transparent',
