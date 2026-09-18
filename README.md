@@ -7,8 +7,8 @@ Strona pracowni ceramiki i rękodzieła Katarzyny Samborskiej — Kraków.
 | Plik | Co to jest |
 | --- | --- |
 | `MellowAura.dc.html` | Cała strona: 20 widoków, sklep z własnym koszykiem i BLIK-iem, konfigurator kubka z napisem, warsztaty z terminami, usługi na zamówienie, dziennik i panel właścicielki (8 zakładek — w tym Ustawienia i Treści); galerie produktów z karuzelą na kartach, animacje wejścia i przejść |
-| `Plan wdrozenia - Laravel krok po kroku.dc.html` | Ośmiotygodniowy plan wdrożenia na Laravel + Forge: konta, schemat bazy, pułapki, pierwsze kroki |
-| `Specyfikacja wdrozenia - MellowAura.dc.html` | Dokument dla osoby wdrażającej: adresy stron z tytułami i opisami, dane strukturalne, zakres panelu, integracje, braki do uzupełnienia |
+| `Plan wdrozenia - Laravel krok po kroku.dc.html` | Ośmiotygodniowy plan wdrożenia na Laravel + Forge, z serwerem na AWS: konta, schemat bazy, pułapki, pierwsze kroki |
+| `Specyfikacja wdrozenia - MellowAura.dc.html` | Dokument dla osoby wdrażającej: adresy stron z tytułami i opisami, dane strukturalne, zakres panelu, integracje, hosting na AWS z kosztami, braki do uzupełnienia |
 | `Certyfikat unikatu.dc.html` | Dwustronna karta A6 do wydruku, dołączana do każdej paczki |
 | `Voucher warsztatowy.dc.html` | Pozioma karta A4 — voucher na warsztat do wydruku |
 | `Zakup A - krok po kroku.dc.html`, `Zakup B - ekspres BLIK.dc.html` | Dwa warianty ścieżki zakupu; wybrany został wariant B i jest wbudowany w stronę |

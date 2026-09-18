@@ -18,8 +18,10 @@ Pliki `.dc.html` otwierają się w przeglądarce i muszą leżeć obok `support.
 ## Stos
 
 Laravel 13 + Blade, Alpine.js, MySQL, własny panel na Blade (nie Filament), paczki Spatie: medialibrary,
-sitemap, schema-org. Serwer na Forge, przed nim Cloudflare. PHP 8.4 lokalnie i na serwerze.
+sitemap, schema-org. Serwer na Forge, postawiony na AWS EC2 w regionie eu-central-1 (Frankfurt),
+zdjęcia w S3, infrastruktura w Terraformie; przed serwerem Cloudflare. PHP 8.4 lokalnie i na serwerze.
 Bez Next.js, Astro i WooCommerce — uzasadnienie w planie, punkt 3.
+Hosting, koszty i granice rozwiązania — specyfikacja, punkt 7.
 
 ## Moduły
 

@@ -24,7 +24,7 @@
 
   <div slot="header" style="display: flex; justify-content: space-between; align-items: baseline; font-size: 8pt; color: #726456; padding-bottom: 5px; border-bottom: 0.3mm solid #E2D7C7">
     <span style="letter-spacing: 0.22em; text-transform: uppercase">mellowaura &middot; plan wdrożenia</span>
-    <span>Laravel na Forge &middot; wrzesień 2026</span>
+    <span>Laravel na Forge, serwer na AWS &middot; wrzesień 2026</span>
   </div>
 
   <div style="max-width: 165mm">
@@ -132,6 +132,10 @@
         <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">Moduły, sesja i cache w plikach</strong></td>
         <td style="padding: 2.5mm 3mm">Każdy obszar — katalog, koszyk, płatności, konfigurator kubka — to osobny moduł z własnymi trasami, widokami i migracjami. W styczniu dołożysz warsztaty, nie ruszając sklepu. Sesja i cache na dysku serwera: bez Redisa i bez tabel w bazie, przy jednym serwerze to wystarcza.</td>
       </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">Serwer na AWS, region eu-central-1</strong></td>
+        <td style="padding: 2.5mm 3mm">Maszyna stoi na EC2 we Frankfurcie, a stawia ją i utrzymuje Forge — ten sam model, który obsługuje dwa CRM-y. Region w Unii, więc dane klientek nie wychodzą poza EOG, i najbliżej Polski: około 20 ms z Krakowa. Zdjęcia idą do S3, nie na dysk maszyny. Bez Lambdy i bez kontenerów: sesja i cache w plikach wymagałyby przepisania, a przy 17 produktach nie ma czego skalować. Rachunek około 27–30 USD miesięcznie, w grudniu do 60. Rozpiska i uzasadnienie: specyfikacja, punkt 7.</td>
+      </tr>
       <tr>
         <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">Cloudflare przed serwerem</strong></td>
         <td style="padding: 2.5mm 3mm">Darmowy plan. Zdjęcia ceramiki są ciężkie, a szybkość wczytywania wpływa na pozycję w Google.</td>
@@ -162,7 +166,7 @@
     <div style="font-size: 10pt; line-height: 1.6">
       <div style="display: flex; gap: 5mm; padding: 4mm 0; border-bottom: 0.25mm solid #EDE4D8">
         <div style="flex: 0 0 26mm"><strong style="font-weight: 500">Tydzień 1</strong><br /><span style="font-size: 9pt; color: #726456">15–21.09</span></div>
-        <div style="flex: 1">Wnioski o Przelewy24 i InPost — <strong style="font-weight: 500">pierwszego dnia</strong>. Nowa strona na Forge, repozytorium, staging na subdomenie za hasłem i z nagłówkiem <code>X-Robots-Tag: noindex</code>, Laravel 13 na PHP 8.4, migracje jedenastu tabel, seeder z 17 produktami przepisanymi z prototypu. Na koniec tygodnia w bazie siedzi prawdziwa oferta.</div>
+        <div style="flex: 1">Wnioski o Przelewy24 i InPost — <strong style="font-weight: 500">pierwszego dnia</strong>. Nowa strona na Forge, na maszynie EC2 w eu-central-1 opisanej Terraformem, repozytorium, staging na subdomenie za hasłem i z nagłówkiem <code>X-Robots-Tag: noindex</code>, Laravel 13 na PHP 8.4, migracje jedenastu tabel, seeder z 17 produktami przepisanymi z prototypu. Na koniec tygodnia w bazie siedzi prawdziwa oferta.</div>
       </div>
       <div style="display: flex; gap: 5mm; padding: 4mm 0; border-bottom: 0.25mm solid #EDE4D8">
         <div style="flex: 0 0 26mm"><strong style="font-weight: 500">Tydzień 2</strong><br /><span style="font-size: 9pt; color: #726456">22–28.09</span></div>
