@@ -45,7 +45,7 @@ class HomePageTest extends TestCase
             ->assertSee('<link rel="canonical" href="'.url('/').'">', false)
             ->assertSee('href="'.route('product.show', 'patery').'"', false)
             ->assertSee('nowość')
-            ->assertSeeInOrder(['Co teraz jest w pracowni', 'Wazony', 'Patery', 'Talerze', 'Kadzielnice'])
+            ->assertSeeTextInOrder(['Co teraz jest w pracowni', 'Wazony', 'Patery', 'Talerze', 'Kadzielnice'])
             ->assertDontSee('Scrunchies')
             ->assertSee('Lubię łączyć surowość z miękkością.')
             ->assertSeeInOrder(['2–4 dni', 'wysyłka zamówienia']);
@@ -59,7 +59,7 @@ class HomePageTest extends TestCase
 
         $this->get('/')
             ->assertOk()
-            ->assertSee('Zanurz dłonie w glinie')
+            ->assertSeeText('Zanurz dłonie w glinie')
             ->assertSee('od 220,00 zł / os.')
             ->assertSee('href="'.route('workshops.index').'"', false);
     }
@@ -68,7 +68,7 @@ class HomePageTest extends TestCase
     {
         $this->get('/')
             ->assertOk()
-            ->assertDontSee('Co teraz jest w pracowni')
+            ->assertDontSeeText('Co teraz jest w pracowni')
             // Without days to dispatch in the panel the home page promises none.
             ->assertDontSee('wysyłka zamówienia');
     }

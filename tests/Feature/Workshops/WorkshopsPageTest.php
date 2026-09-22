@@ -78,7 +78,7 @@ class WorkshopsPageTest extends TestCase
     public function test_the_studio_and_home_pages_lead_here(): void
     {
         $this->get('/pracownia')->assertSeeInOrder(['href="'.route('workshops.index').'"', 'Terminy i cennik'], false);
-        $this->get('/')->assertSeeInOrder(['Zanurz dłonie w glinie', 'Lepienie z ręki'])->assertSee('href="'.route('workshops.index').'"', false);
+        $this->get('/')->assertSeeTextInOrder(['Zanurz dłonie w glinie', 'Lepienie z ręki'])->assertSee('href="'.route('workshops.index').'"', false);
     }
 
     /**

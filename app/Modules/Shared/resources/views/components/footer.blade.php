@@ -35,7 +35,7 @@
         'WhatsApp' => $whatsApp,
     ]);
 @endphp
-<footer class="focus-on-dark mt-auto bg-ink text-on-dark print:hidden">
+<footer class="focus-on-dark mt-auto overflow-hidden rounded-t-[36px] bg-ink text-on-dark print:hidden">
     <div class="mx-auto flex max-w-[1280px] flex-wrap gap-12 px-7 pt-16 pb-[30px]">
         <div class="min-w-0 flex-[1_1_280px]">
             <div class="mb-3.5 font-serif text-[25px] tracking-[0.16em] text-sand uppercase">mellowaura</div>
@@ -94,6 +94,11 @@
                 <span>Pracownia na zapisy</span>
             </div>
         </div>
+    </div>
+
+    {{-- The word mark bleeding off the bottom; its letters rise with the scroll (resources/js/aura.js). --}}
+    <div data-aura-giant aria-hidden="true" class="overflow-hidden pb-[.06em] text-center font-serif text-[clamp(80px,19.5vw,330px)] leading-[.8] font-light tracking-[-0.045em] whitespace-nowrap text-sand">
+        @foreach (mb_str_split('Mellow') as $letter)<span class="inline-block">{{ $letter }}</span>@endforeach<em class="text-rose">@foreach (mb_str_split('Aura') as $letter)<span class="inline-block">{{ $letter }}</span>@endforeach</em>
     </div>
 
     <div class="mx-auto flex max-w-[1280px] flex-wrap justify-between gap-x-7 gap-y-4 border-t border-divider-dark px-7 pt-[22px] pb-10 text-[12.5px] text-label-dark">
