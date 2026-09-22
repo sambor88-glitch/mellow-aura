@@ -10,6 +10,7 @@ i dokumentacja — kodu aplikacji jeszcze nie ma.
 | `MellowAura.dc.html` | wygląd, teksty i zachowanie każdego ekranu — przenoś, nie projektuj od nowa |
 | `Specyfikacja wdrozenia - MellowAura.dc.html` | adresy, tytuły, opisy, JSON-LD, zakres panelu, integracje |
 | `Plan wdrozenia - Laravel krok po kroku.dc.html` | stos, schemat bazy, harmonogram do 10 listopada |
+| `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html` | drugi język, druga waluta, strefy wysyłki, próg WSTO — rozstrzyga wszystko, co dotyczy `/en/` i euro |
 | `.claude/skills/` | paleta, komponenty, UX, teksty, dostępność — kolory i kroje zmieniasz tylko w `mellowaura-design` |
 
 Pliki `.dc.html` otwierają się w przeglądarce i muszą leżeć obok `support.js`
@@ -51,7 +52,8 @@ app/Modules/Catalog/
 - Ekrany panelu należą do modułu, którego dotyczą. `Admin` daje tylko logowanie, układ panelu i menu.
 - Testy: `tests/Feature/<Name>` i `tests/Unit/<Name>`.
 
-Pierwsza fala: `Shared` (układ strony, komponenty Blade, formatowanie kwot, SEO), `Settings`, `Admin`,
+Pierwsza fala: `Shared` (układ strony, komponenty Blade, formatowanie kwot, SEO), `Localization` (prefiks
+`/en/`, slugi per język, przełącznik — wchodzi przed modułami z tłumaczonymi treściami), `Settings`, `Admin`,
 `Catalog`, `Cart`, `Checkout`, `Payments`, `Shipping`, `MugConfigurator`, `Gifts`, `Content`.
 Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
 
@@ -76,6 +78,27 @@ Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
 - Trasa ma polski adres i angielską nazwę: `Route::get('/sklep', ...)->name('shop.index')`.
 - Wartość po angielsku, etykieta po polsku: `crafts` → „Rękodzieło”, `in_progress` → „W realizacji”.
 - Polskie nazwy z prototypu i z przykładów w skillach (`doKoszyka`, `zamowienia`, `cena`) tłumacz przy przenoszeniu.
+
+## Dwa języki i dwie waluty
+
+Szczegóły w `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html`. Tu zasady, których nie wolno obejść w kodzie.
+
+- Polski bez prefiksu, angielski pod `/en/`. Jedna trasa, jedna nazwa po angielsku, slug osobny dla każdego
+  języka: `Route::get('/sklep', ...)->name('shop.index')` i `/en/shop` pod tą samą nazwą.
+- Waluta wynika z języka: PL to PLN, EN to EUR. Nie ma osobnego przełącznika waluty i nie ma koszyka
+  z mieszanymi walutami.
+- Ceny w euro wpisuje Kasia w panelu. Żadnego przeliczania po kursie w locie.
+- Cena mieszka w tabeli `prices` (`product_variant_id`, `currency`, `amount_minor`), historia w
+  `price_history` osobno dla każdej waluty — Omnibus liczy się per waluta.
+- Brak tłumaczenia albo brak ceny w EUR ukrywa pozycję na `/en/`. Nigdy nie psuje wersji polskiej
+  i nigdy nie podstawia polskiego tekstu pod angielski adres.
+- Warsztaty, voucher, wypał, gastronomia, odcisk rośliny i apaszka nie istnieją na `/en/`. Menu budujemy
+  z konfiguracji per język, nie ukrywamy pozycji CSS-em.
+- Przełącznik języka na stronie bez odpowiednika prowadzi do najbliższej sensownej strony, nigdy na stronę główną.
+- Język podpowiadamy z nagłówka `Accept-Language`, nigdy z adresu IP, i nigdy nie przekierowujemy automatycznie.
+- BLIK istnieje tylko w PLN. Lista metod płatności filtruje się walutą koszyka.
+- Każde zamówienie zapisuje kraj dostawy i stawkę VAT na pozycji — także wtedy, gdy stawka wynosi zero.
+  Bez tego nie da się odtworzyć obrotu WSTO, a próg 10 000 EUR rocznie przekracza się niezauważenie.
 
 ## Treści i dane
 
