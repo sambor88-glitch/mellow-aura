@@ -8,10 +8,13 @@ description: Ekrany dotykowe i zachowanie na telefonie — układ płynny bez pu
 Większość osób wchodzi na MellowAurę z Instagrama, czyli z telefonu trzymanego w jednej ręce,
 często w ruchu. Ekran telefonu jest wersją podstawową, komputer to wariant rozszerzony — nie odwrotnie.
 
-## Ten projekt nie ma punktów łamania — i tak ma zostać
+## Układ płynny, zapytania medialne tylko przy zmianie zachowania
 
-W całym `MellowAura.dc.html` jest **jedno** zapytanie medialne: `prefers-reduced-motion`.
-Cała reszta układa się płynnie. Zanim napiszesz `@media`, sprawdź, czy nie wystarczy jedno z trzech:
+Układ nadal płynie sam. W kierunku „Aura” (`Aura - strona glowna.html`, `Aura - ekrany.html`) jest kilka
+zapytań medialnych, ale każde zmienia **zachowanie**, nie tylko ułożenie: inny kadr hero i mniej pływających
+zdjęć na telefonie, sklep przewijany w poziomie dopiero od 768 px, menu zamiast linków poniżej 920 px,
+przypięty pasek zakupu poniżej 760 px — plus `prefers-reduced-motion` i `pointer: fine`.
+Zanim napiszesz kolejne `@media`, sprawdź, czy nie wystarczy jedno z trzech:
 
 | Narzędzie | Zapis | Efekt |
 | --- | --- | --- |
@@ -22,7 +25,16 @@ Cała reszta układa się płynnie. Zanim napiszesz `@media`, sprawdź, czy nie 
 Do tego **`min-width: 0` na każdym elemencie w kolumnie elastycznej**. Bez tego długa nazwa produktu
 rozpycha stronę i pojawia się poziome przewijanie — najczęstsza usterka mobilna w tym projekcie.
 
-Zapytanie medialne piszesz dopiero wtedy, gdy zmienia się kolejność albo znika cały element.
+Zapytanie medialne piszesz dopiero wtedy, gdy zmienia się kolejność, znika cały element albo zmienia się zachowanie.
+
+## Efekty Aury na telefonie
+
+- Na dotyku nie ma kursora: bez mokrej gliny, magnesów, poświaty za kursorem i płynnego wypełnienia przycisków
+  (to wszystko wisi na `<html class="fine">`). Zostają: intro, litery z rozmycia, rosnący kadr, paralaksa przy przewijaniu,
+  kubek 3D (obrót przeciągnięciem palca w poziomie, `touch-action: pan-y`), przejście do produktu, szklany koszyk.
+- Sklep na telefonie przewija się palcem w bok ze `scroll-snap`, bez przypinania sekcji.
+- `backdrop-filter` i plamy z `blur(90px)` najbardziej obciążają słabsze telefony. Sprawdź na telefonie Kasi,
+  zanim uznasz ekran za gotowy.
 
 ## Cele dotykowe
 

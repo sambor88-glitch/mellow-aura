@@ -7,17 +7,18 @@ i szkielet aplikacji Laravel 13 (katalogi `app/`, `config/`, `public/` itd.). Se
 
 | Plik | Rozstrzyga |
 | --- | --- |
-| `MellowAura.dc.html` | wygląd, teksty i zachowanie każdego ekranu — przenoś, nie projektuj od nowa |
+| `Aura - strona glowna.html`, `Aura - ekrany.html` | wygląd i ruch (kierunek „Aura” od 22.09.2026) — przenoś do Blade, nie projektuj od nowa |
+| `MellowAura.dc.html` | teksty, ceny, przebieg i zachowanie każdego ekranu; jego wygląd zastąpiła Aura |
 | `Specyfikacja wdrozenia - MellowAura.dc.html` | adresy, tytuły, opisy, JSON-LD, zakres panelu, integracje |
 | `Plan wdrozenia - Laravel krok po kroku.dc.html` | stos, schemat bazy, harmonogram do 10 listopada |
-| `.claude/skills/` | paleta, komponenty, UX, teksty, dostępność — kolory i kroje zmieniasz tylko w `mellowaura-design` |
+| `.claude/skills/` | paleta, efekty, komponenty, UX, teksty, dostępność — kolory, kroje i efekty zmieniasz tylko w `mellowaura-design` |
 
 Pliki `.dc.html` otwierają się w przeglądarce i muszą leżeć obok `support.js`
 (dokumenty do druku także obok `doc-page.js`).
 
 ## Stos
 
-Laravel 13 + Blade, Alpine.js, MySQL, własny panel na Blade (nie Filament), paczki Spatie: medialibrary,
+Laravel 13 + Blade, Alpine.js, GSAP z ScrollTrigger, Lenis i three.js (tylko kubek 3D) przez npm, MySQL, własny panel na Blade (nie Filament), paczki Spatie: medialibrary,
 sitemap, schema-org. Serwer na Forge, przed nim Cloudflare. PHP 8.4 lokalnie i na serwerze.
 Bez Next.js, Astro i WooCommerce — uzasadnienie w planie, punkt 3.
 

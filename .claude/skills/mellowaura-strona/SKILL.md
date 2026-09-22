@@ -6,6 +6,8 @@ description: Dodawanie i przebudowa widoków strony MellowAura w pliku MellowAur
 # Nowy widok na stronie MellowAura
 
 Cała strona to jeden plik `MellowAura.dc.html` — 20 widoków, jeden stan, jeden komponent.
+Ten plik rozstrzyga o treści, adresach i przebiegu widoków. Wygląd i ruch od 22.09.2026 bierzesz
+z kierunku „Aura” (`Aura - strona glowna.html`, `Aura - ekrany.html`, skill `mellowaura-design`).
 Nowy widok wymaga zmian w **pięciu miejscach**. Pominięcie któregokolwiek daje ekran,
 który działa w klikaniu, ale znika po odświeżeniu albo jest niewidoczny dla Google.
 
