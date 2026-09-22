@@ -286,43 +286,51 @@
     <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; margin-bottom: 4mm">
       <tr style="background: #EDE4D8">
         <th style="text-align: left; padding: 3mm; font-weight: 500; width: 8%">&nbsp;</th>
-        <th style="text-align: left; padding: 3mm; font-weight: 500; width: 46%">Krok</th>
+        <th style="text-align: left; padding: 3mm; font-weight: 500; width: 40%">Krok</th>
         <th style="text-align: left; padding: 3mm; font-weight: 500">Co po nim działa</th>
+        <th style="text-align: left; padding: 3mm; font-weight: 500; width: 14%">Jira</th>
       </tr>
       <tr style="border-bottom: 0.25mm solid #E2D7C7">
         <td style="padding: 3mm; vertical-align: top; font-family: Newsreader, serif; font-size: 13pt">1</td>
         <td style="padding: 3mm; vertical-align: top">Moduł <code>Localization</code>: prefiks, slugi, przełącznik, <code>lang/pl</code> i <code>lang/en</code></td>
         <td style="padding: 3mm; vertical-align: top">Interfejs mówi po angielsku, adresy działają</td>
+        <td style="padding: 3mm; vertical-align: top; color: #726456">MA-125</td>
       </tr>
       <tr style="border-bottom: 0.25mm solid #E2D7C7">
         <td style="padding: 3mm; vertical-align: top; font-family: Newsreader, serif; font-size: 13pt">2</td>
         <td style="padding: 3mm; vertical-align: top">Tabele tłumaczeń, trait <code>HasTranslations</code>, zakładki PL/EN w panelu</td>
         <td style="padding: 3mm; vertical-align: top">Kasia może tłumaczyć produkty</td>
+        <td style="padding: 3mm; vertical-align: top; color: #726456">MA-126</td>
       </tr>
       <tr style="border-bottom: 0.25mm solid #E2D7C7">
         <td style="padding: 3mm; vertical-align: top; font-family: Newsreader, serif; font-size: 13pt">3</td>
         <td style="padding: 3mm; vertical-align: top">Tabela <code>prices</code>, historia per waluta, metody płatności zależne od waluty</td>
         <td style="padding: 3mm; vertical-align: top"><strong style="font-weight: 500">Angielski sklep sprzedaje za euro</strong></td>
+        <td style="padding: 3mm; vertical-align: top; color: #726456">MA-127</td>
       </tr>
       <tr style="border-bottom: 0.25mm solid #E2D7C7">
         <td style="padding: 3mm; vertical-align: top; font-family: Newsreader, serif; font-size: 13pt">4</td>
         <td style="padding: 3mm; vertical-align: top">Strefy wysyłki, cennik wagowy, waga wariantu, kraj w checkoucie</td>
         <td style="padding: 3mm; vertical-align: top">Paczka jedzie za granicę</td>
+        <td style="padding: 3mm; vertical-align: top; color: #726456">MA-128</td>
       </tr>
       <tr style="border-bottom: 0.25mm solid #E2D7C7">
         <td style="padding: 3mm; vertical-align: top; font-family: Newsreader, serif; font-size: 13pt">5</td>
         <td style="padding: 3mm; vertical-align: top">Stawka VAT na pozycji, licznik obrotu WSTO, alerty progowe</td>
         <td style="padding: 3mm; vertical-align: top">Próg nie przejdzie niezauważony</td>
+        <td style="padding: 3mm; vertical-align: top; color: #726456">MA-129</td>
       </tr>
       <tr style="border-bottom: 0.25mm solid #E2D7C7">
         <td style="padding: 3mm; vertical-align: top; font-family: Newsreader, serif; font-size: 13pt">6</td>
         <td style="padding: 3mm; vertical-align: top">hreflang, canonical, sitemap, JSON-LD per język</td>
         <td style="padding: 3mm; vertical-align: top">Google rozumie, że to dwie wersje, nie duplikat</td>
+        <td style="padding: 3mm; vertical-align: top; color: #726456">MA-130</td>
       </tr>
       <tr>
         <td style="padding: 3mm; vertical-align: top; font-family: Newsreader, serif; font-size: 13pt">7</td>
         <td style="padding: 3mm; vertical-align: top">Regulamin EN, pouczenie o odstąpieniu, wyłączenie dla personalizacji</td>
         <td style="padding: 3mm; vertical-align: top">Można przyjąć pierwsze zamówienie</td>
+        <td style="padding: 3mm; vertical-align: top; color: #726456">MA-131</td>
       </tr>
     </table>
 
@@ -372,6 +380,54 @@
       <strong style="font-weight: 500">Prawnik</strong> <span style="color: #726456">MA-122</span> — regulamin i polityka prywatności po angielsku, pouczenie o odstąpieniu, konstrukcja wyłączenia zwrotu dla rzeczy personalizowanych, kto ponosi koszt zwrotu z zagranicy.<br />
       <strong style="font-weight: 500">Kasia</strong> <span style="color: #726456">MA-123</span> — cennik w euro dla każdego produktu, decyzja o obsłudze zapytań po angielsku, potwierdzenie listy krajów w strefie UE 1, kolejność tłumaczenia produktów.<br />
       <strong style="font-weight: 500">Przewoźnik i operator płatności</strong> <span style="color: #726456">MA-124</span> — umowny cennik międzynarodowy zamiast szacunków z rozdziału 6, warunki rozliczania EUR w Przelewy24.
+    </div>
+
+
+    <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">Załącznik: mapa adresów PL &rarr; EN</h2>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty">Adresy polskie pochodzą ze <strong style="font-weight: 500">Specyfikacji wdrozenia</strong> i nie zmieniają się. Angielskie są frazami wpisywanymi w Google przez osobę szukającą po angielsku — dlatego <code>/en/shop</code>, a nie <code>/en/sklep</code>. Nazwa trasy jest jedna, po angielsku, wspólna dla obu adresów.</p>
+
+    <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; margin-bottom: 4mm">
+      <tr style="background: #EDE4D8">
+        <th style="text-align: left; padding: 3mm; font-weight: 500; width: 33%">Adres polski</th>
+        <th style="text-align: left; padding: 3mm; font-weight: 500; width: 33%">Adres angielski</th>
+        <th style="text-align: left; padding: 3mm; font-weight: 500">Nazwa trasy</th>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/</code></td><td style="padding: 2.5mm 3mm"><code>/en</code></td><td style="padding: 2.5mm 3mm"><code>home</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/sklep</code></td><td style="padding: 2.5mm 3mm"><code>/en/shop</code></td><td style="padding: 2.5mm 3mm"><code>shop.index</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/sklep/{kategoria}</code></td><td style="padding: 2.5mm 3mm"><code>/en/shop/{category}</code></td><td style="padding: 2.5mm 3mm"><code>shop.category</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/produkt/{slug}</code></td><td style="padding: 2.5mm 3mm"><code>/en/product/{slug}</code></td><td style="padding: 2.5mm 3mm"><code>product.show</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/kubek-z-napisem</code></td><td style="padding: 2.5mm 3mm"><code>/en/custom-text-mug</code></td><td style="padding: 2.5mm 3mm"><code>mug.configurator</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/prezenty</code></td><td style="padding: 2.5mm 3mm"><code>/en/gifts</code></td><td style="padding: 2.5mm 3mm"><code>gifts.index</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/zestawy-prezentowe</code></td><td style="padding: 2.5mm 3mm"><code>/en/gift-sets</code></td><td style="padding: 2.5mm 3mm"><code>gifts.sets</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/zamowienie</code></td><td style="padding: 2.5mm 3mm"><code>/en/checkout</code></td><td style="padding: 2.5mm 3mm"><code>checkout.index</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/o-mnie</code></td><td style="padding: 2.5mm 3mm"><code>/en/about</code></td><td style="padding: 2.5mm 3mm"><code>about</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/pracownia</code></td><td style="padding: 2.5mm 3mm"><code>/en/studio</code></td><td style="padding: 2.5mm 3mm"><code>studio</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/dziennik</code></td><td style="padding: 2.5mm 3mm"><code>/en/journal</code></td><td style="padding: 2.5mm 3mm"><code>journal.index</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/dziennik/{slug}</code></td><td style="padding: 2.5mm 3mm"><code>/en/journal/{slug}</code></td><td style="padding: 2.5mm 3mm"><code>journal.show</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/wysylka-i-pielegnacja</code></td><td style="padding: 2.5mm 3mm"><code>/en/shipping-and-care</code></td><td style="padding: 2.5mm 3mm"><code>shipping.info</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/zamowienia-indywidualne</code></td><td style="padding: 2.5mm 3mm"><code>/en/custom-orders</code></td><td style="padding: 2.5mm 3mm"><code>custom-orders</code></td></tr>
+      <tr><td style="padding: 2.5mm 3mm"><code>/kontakt</code></td><td style="padding: 2.5mm 3mm"><code>/en/contact</code></td><td style="padding: 2.5mm 3mm"><code>contact</code></td></tr>
+    </table>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty">Kategorie sklepu mają własne slugi per język. Na <code>/en/shop</code> istnieją tylko dwie: <code>ceramics</code> (Ceramika) i <code>crafts</code> (Rękodzieło). Vouchery i warsztaty są kategoriami wyłącznie polskimi. Wartość w bazie jest po angielsku, etykieta po polsku — zgodnie z zasadą z <code>CLAUDE.md</code>.</p>
+
+    <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; margin-bottom: 4mm">
+      <tr style="background: #EDE4D8">
+        <th style="text-align: left; padding: 3mm; font-weight: 500; width: 33%">Adres wyłącznie polski</th>
+        <th style="text-align: left; padding: 3mm; font-weight: 500">Dokąd prowadzi przełącznik języka</th>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/warsztaty-ceramiczne-krakow</code></td><td style="padding: 2.5mm 3mm"><code>/en/about</code> z notką, że warsztaty odbywają się po polsku</td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/voucher-na-warsztaty-ceramiczne</code></td><td style="padding: 2.5mm 3mm"><code>/en/gifts</code> — najbliższy sensowny odpowiednik dla prezentu</td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/wypal-ceramiki-krakow</code></td><td style="padding: 2.5mm 3mm"><code>/en/studio</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/ceramika-dla-gastronomii</code></td><td style="padding: 2.5mm 3mm"><code>/en/custom-orders</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/odcisk-twojej-rosliny</code></td><td style="padding: 2.5mm 3mm"><code>/en/custom-orders</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/z-twojej-apaszki</code></td><td style="padding: 2.5mm 3mm"><code>/en/custom-orders</code></td></tr>
+      <tr><td style="padding: 2.5mm 3mm"><code>/panel</code></td><td style="padding: 2.5mm 3mm">Bez przełącznika. Panel jest wyłącznie po polsku — czyta go tylko Kasia.</td></tr>
+    </table>
+
+    <div style="background: #F7F2EA; border-left: 0.6mm solid #B98E64; padding: 5mm 6mm; margin-bottom: 4mm; font-size: 9.5pt; line-height: 1.65; color: #5C5043">
+      Żadna z tych stron nie ma znacznika <code>hreflang alternate</code> — nie mają odpowiednika, więc nie ma czego wskazywać. Przełącznik i tak prowadzi do strony z kolumny obok, bo <strong style="font-weight: 500">powrót na stronę główną Google traktuje jak miękkie 404</strong>, a użytkownik traci kontekst. Przy każdym takim przejściu na docelowej stronie wyświetla się jednozdaniowe wyjaśnienie, dlaczego nie ma angielskiej wersji tego, czego szukał.
     </div>
 
     <div style="margin-top: 10mm; padding-top: 5mm; border-top: 0.3mm solid #E2D7C7; font-size: 9.5pt; line-height: 1.6; color: #726456">
