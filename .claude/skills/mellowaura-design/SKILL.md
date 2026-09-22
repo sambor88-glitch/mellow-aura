@@ -200,6 +200,7 @@ focus: obrys atramentowy + `box-shadow: 0 0 0 4px rgba(36,65,126,.14)`.
 
 **Kod BLIK:** sześć osobnych kratek `4/5`, Newsreader 34 px, przerwa po trzeciej. Kursor sam przeskakuje dalej,
 wklejenie całego kodu wypełnia wszystkie. Wypełniona kratka lekko podskakuje (`pop`).
+W aplikacji kasa ma na razie **jedno** duże pole BLIK, bo jest powiązane ze Stripe w `resources/js/checkout.js` — kratki to osobna zmiana w tym skrypcie.
 
 **Wybór (warianty, dostawa):** pigułki z `aria-pressed` albo kafle z `role="radio"`. Wybrany = atrament z lnianym tekstem.
 
@@ -246,7 +247,7 @@ Każdy efekt ma jedno miejsce. Nie przenoś ich gdzie indziej bez powodu.
 | --- | --- |
 | `gsap` + `ScrollTrigger` | wszystko, co zależy od przewijania, przypinanie sekcji, liczniki |
 | `lenis` | płynne przewijanie; `lenis.stop()` przy otwartym koszyku, menu i widoku produktu |
-| `three` (r128 w plikach Aura) | wyłącznie kubek 3D; ładowany tylko tam, gdzie jest konfigurator |
+| `three` (r128 w plikach Aura, 0.180 w aplikacji) | wyłącznie kubek 3D (`resources/js/mug3d.js`), ładowany osobnym plikiem tylko na `/kubek-z-napisem` |
 
 W plikach Aura biblioteki idą z cdnjs/jsdelivr. W Laravelu instalujesz je przez npm i wiążesz w Vite obok Alpine.
 Innych bibliotek do animacji nie dokładaj.

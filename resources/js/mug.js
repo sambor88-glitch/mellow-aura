@@ -14,9 +14,10 @@ const plural = (count, one, few, many) => {
     return [2, 3, 4].includes(count % 10) && ![12, 13, 14].includes(count % 100) ? few : many;
 };
 
-export default ({ maxLines, maxChars, prices, glazes, size, glaze }) => {
-    // The audio context stays outside Alpine's reactive state.
+export default ({ maxLines, maxChars, prices, glazes, size, glaze, ink }) => {
+    // The audio context and the 3D mug stay outside Alpine's reactive state.
     let audio = null;
+    let mug = null;
 
     return {
         text: '',
@@ -26,12 +27,41 @@ export default ({ maxLines, maxChars, prices, glazes, size, glaze }) => {
         // The field has focus: on a phone the small preview shows above it and the bottom bar steps aside.
         writing: false,
         limitNotice: '',
+        // The photo with the text on it until the 3D mug has loaded; then either one, by choice.
+        view: 'photo',
+        has3d: false,
 
         init() {
             try {
                 this.sound = window.localStorage.getItem(SOUND_KEY) !== 'off';
             } catch {
                 // Private mode without storage: the sound stays on.
+            }
+
+            this.load3d();
+        },
+
+        // The 3D mug (resources/js/mug3d.js) comes as its own file, only here, and only with WebGL and full motion.
+        async load3d() {
+            if (!this.$refs.stage3d || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                return;
+            }
+
+            try {
+                const { default: createMug, webglWorks } = await import('./mug3d');
+
+                if (!webglWorks()) {
+                    return;
+                }
+
+                mug = createMug(this.$refs.stage3d, { ink, glaze: this.glazeHex });
+                mug.setText(this.text.split('\n'), false);
+                this.has3d = true;
+                this.view = '3d';
+                this.$watch('text', (value) => mug.setText(value.split('\n'), true));
+                this.$watch('glaze', () => mug.setGlaze(this.glazeHex));
+            } catch {
+                // The photo preview already works; the 3D mug is only a bonus.
             }
         },
 
