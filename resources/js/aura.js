@@ -42,9 +42,11 @@ export default function aura() {
     parallax();
     rise();
     giant();
+    flyToCart();
 
     if (fine) {
         pointer();
+        zoomFollow();
     }
 
     addEventListener('load', () => ScrollTrigger.refresh());
@@ -415,4 +417,46 @@ function wetClay() {
             requestAnimationFrame(tick);
         }
     }, { passive: true });
+}
+
+/* „Dodaj do koszyka”: a copy of the photo flies into the cart button and blurs away (mellowaura-design, „Lot do koszyka”). */
+function flyToCart() {
+    document.querySelectorAll('form[data-fly-to-cart]').forEach((form) => {
+        form.addEventListener('submit', () => {
+            const photo = [...document.querySelectorAll('[data-zoom-follow] img')].find((img) => img.offsetParent !== null && getComputedStyle(img).display !== 'none');
+            const cart = document.querySelector('button[aria-controls="cart"]');
+            if (! photo || ! cart) {
+                return;
+            }
+
+            const from = photo.getBoundingClientRect();
+            const to = cart.getBoundingClientRect();
+            const flyer = photo.cloneNode();
+            flyer.removeAttribute('srcset');
+            flyer.removeAttribute('x-show');
+            flyer.alt = '';
+            Object.assign(flyer.style, { position: 'fixed', zIndex: 99, margin: 0, objectFit: 'cover', pointerEvents: 'none', borderRadius: '26px' });
+            document.body.append(flyer);
+            gsap.fromTo(flyer, { left: from.left, top: from.top, width: from.width, height: from.height }, {
+                left: to.right - 30, top: to.top + 8, width: 28, height: 28, borderRadius: '50%', opacity: 0.2, filter: 'blur(3px)',
+                duration: 0.9, ease: 'power3.inOut', onComplete: () => flyer.remove(),
+            });
+        });
+    });
+}
+
+/* A product photo zooms in slightly and follows the mouse, so the texture of the glaze can be looked at. */
+function zoomFollow() {
+    document.querySelectorAll('[data-zoom-follow]').forEach((stage) => {
+        stage.addEventListener('pointermove', (event) => {
+            const box = stage.getBoundingClientRect();
+            gsap.to(stage.querySelectorAll('img'), {
+                scale: 1.12,
+                xPercent: -((event.clientX - box.left) / box.width - 0.5) * 8,
+                yPercent: -((event.clientY - box.top) / box.height - 0.5) * 8,
+                duration: 0.8, ease: 'power3', overwrite: 'auto',
+            });
+        });
+        stage.addEventListener('pointerleave', () => gsap.to(stage.querySelectorAll('img'), { scale: 1, xPercent: 0, yPercent: 0, duration: 1, ease: 'power3', overwrite: 'auto' }));
+    });
 }

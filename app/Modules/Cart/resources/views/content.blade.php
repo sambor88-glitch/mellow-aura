@@ -12,17 +12,17 @@
 @endphp
 <div class="min-h-0 flex-1 overflow-y-auto px-[26px] py-[22px]">
     @forelse ($lines as $line)
-        <div class="flex gap-3.5 border-b border-sand-dark py-4">
+        <div class="flex animate-[auraItemIn_.6s_var(--ease-clay)_both] gap-3.5 border-b border-line py-4">
             @if ($thumbnail = $line->thumbnailUrl())
-                <img src="{{ $thumbnail }}" alt="{{ $line->thumbnailAlt() }}" width="74" height="92" class="h-[92px] w-[74px] flex-none rounded-[3px] object-cover">
+                <img src="{{ $thumbnail }}" alt="{{ $line->thumbnailAlt() }}" width="74" height="92" class="h-[92px] w-[74px] flex-none rounded-[12px] object-cover">
             @else
-                <div class="h-[92px] w-[74px] flex-none rounded-[3px] bg-line-soft"></div>
+                <div class="h-[92px] w-[74px] flex-none rounded-[12px] bg-linen"></div>
             @endif
             <div class="min-w-0 flex-1">
-                <div class="font-serif text-[17.5px] leading-[1.25]">{{ $line->name() }}</div>
+                <div class="font-serif text-[19px] leading-[1.2] font-light">{{ $line->name() }}</div>
                 <div class="mt-[3px] mb-2.5 text-[12.5px] [overflow-wrap:anywhere] text-label">{{ $line->details() }}</div>
                 <div class="flex items-center gap-3.5">
-                    <div class="flex items-center rounded-full border border-line">
+                    <div class="glass flex items-center rounded-full">
                         <form method="post" action="{{ route('cart.update', $line->key) }}" x-on:submit.prevent="$store.cart.send($el)">
                             @csrf
                             @method('PATCH')
@@ -48,24 +48,24 @@
         </div>
     @empty
         <div class="px-3 py-14 text-center text-label">
-            <div class="mb-2 font-serif text-[21px] text-ink">Jeszcze pusto</div>
+            <div class="mb-2 font-serif text-[28px] font-light text-ink">Jeszcze pusto</div>
             <p class="mb-[22px] text-[14.5px] leading-[1.6]">Ceramika czeka w pracowni. Każda sztuka jest jedna.</p>
-            <a href="{{ route('shop.index') }}" class="inline-block rounded-full bg-ink px-[26px] py-[13px] text-[13.5px] text-linen hover:bg-navy hover:text-linen">Zobacz produkty</a>
+            <a href="{{ route('shop.index') }}" class="fill-btn inline-flex min-h-12 items-center rounded-full bg-ink px-[26px] text-[13.5px] text-linen [--fill:var(--color-navy)] hover:bg-navy hover:text-linen">Zobacz produkty</a>
         </div>
     @endforelse
 </div>
 
 @if ($lines->isNotEmpty())
-    <div class="border-t border-divider bg-linen px-[26px] pt-[22px] pb-[26px]">
+    <div class="border-t border-line bg-linen/60 px-[26px] pt-[22px] pb-[26px]">
         @if ($needsDelivery && $freeReached)
-            <div class="mb-3.5 flex items-center gap-[9px] rounded-[4px] border border-success-line bg-success-soft px-3.5 py-[11px] text-[13px] text-success-text">
+            <div class="mb-3.5 flex items-center gap-[9px] rounded-[16px] border border-success-line bg-success-soft px-3.5 py-[11px] text-[13px] text-success-text">
                 <span aria-hidden="true" class="inline-block animate-ma-check">✓</span><span>Wysyłka gratis — próg osiągnięty</span>
             </div>
         @elseif ($needsDelivery && $freeFrom > 0)
             <div class="mb-3.5">
                 <div class="mb-[7px] text-[12.5px] text-muted">Do darmowej wysyłki brakuje {{ Money::format($freeFrom - $subtotal) }}</div>
                 <div aria-hidden="true" class="h-[5px] overflow-hidden rounded-full bg-divider">
-                    <div class="h-full rounded-full bg-dash transition-[width] duration-400" style="width: {{ min(100, (int) round($subtotal / $freeFrom * 100)) }}%"></div>
+                    <div class="h-full rounded-full bg-linear-to-r from-rose to-brown transition-[width] duration-1000 ease-clay" style="width: {{ min(100, (int) round($subtotal / $freeFrom * 100)) }}%"></div>
                 </div>
             </div>
         @endif
@@ -79,13 +79,13 @@
                 <span>{{ $freeReached ? 'gratis od '.Money::format($freeFrom) : 'od '.Money::format((int) $cheapestShipping) }}</span>
             </div>
         @endif
-        <div class="mb-[18px] flex justify-between border-t border-divider pt-3.5 font-serif text-[22px]"><span>Razem</span><span>{{ Money::format($subtotal) }}</span></div>
+        <div class="mb-[18px] flex items-baseline justify-between border-t border-line pt-3.5"><span class="text-[14.5px]">Razem</span><span class="font-serif text-[32px] leading-none font-light tabular-nums">{{ Money::format($subtotal) }}</span></div>
 
         @if (Route::has('checkout.index'))
-            <a href="{{ route('checkout.index') }}" class="block rounded-full bg-ink p-4 text-center text-[14.5px] tracking-[0.03em] text-linen transition duration-300 hover:bg-navy hover:text-linen active:scale-[.97]">Przejdź do zamówienia</a>
+            <a href="{{ route('checkout.index') }}" class="fill-btn block rounded-full bg-ink p-4 text-center text-[14.5px] font-medium tracking-[0.03em] text-linen transition duration-300 [--fill:var(--color-navy)] hover:bg-navy hover:text-linen active:scale-[.97]">Przejdź do zamówienia <span aria-hidden="true">→</span></a>
         @endif
         <div class="mt-3.5 flex items-center justify-center gap-2.5 text-[11.5px] tracking-[0.1em] text-label uppercase">
-            <span class="rounded-[3px] bg-navy px-[7px] py-[3px] text-[10px] font-semibold tracking-[0.08em] text-white">BLIK</span>
+            <span class="rounded-full bg-navy px-2.5 py-[3px] text-[10px] font-semibold tracking-[0.08em] text-white">BLIK</span>
             <span>Przelewy24</span><span>&middot;</span><span>karta</span>
         </div>
     </div>

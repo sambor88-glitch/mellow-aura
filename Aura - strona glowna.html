@@ -625,8 +625,10 @@ html.intro-on body{overflow:hidden}
   fillRow(document.getElementById('row2'),['surowość','miękkość','less waste','unikat','kraków'],0);
 
   var man=document.getElementById('manifest'), mwords=man.textContent.trim().split(/\s+/);
-  man.setAttribute('aria-label', man.textContent.trim()); man.textContent='';
-  mwords.forEach(function(w,i){ var s=el('span','w',w); s.setAttribute('aria-hidden','true'); man.appendChild(s); if(i<mwords.length-1) man.appendChild(document.createTextNode(' ')); });
+  // A screen reader gets the whole sentence; the words that sharpen are only the picture of it.
+  var spoken=el('span','sr',man.textContent.trim()), shown=el('span'); shown.setAttribute('aria-hidden','true');
+  mwords.forEach(function(w,i){ shown.appendChild(el('span','w',w)); if(i<mwords.length-1) shown.appendChild(document.createTextNode(' ')); });
+  man.textContent=''; man.appendChild(spoken); man.appendChild(shown);
 
   /* ---------- products (texts and prices from the prototype) ---------- */
   var P=[

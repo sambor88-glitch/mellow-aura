@@ -357,20 +357,6 @@
         transition: opacity .6s;
     }
 
-    .glass {
-        background: var(--color-glass);
-        border: 1px solid var(--color-glass-line);
-        -webkit-backdrop-filter: blur(18px) saturate(1.4);
-        backdrop-filter: blur(18px) saturate(1.4);
-    }
-
-    .glass-dark {
-        background: var(--color-glass-dark);
-        border: 1px solid var(--color-glass-dark-line);
-        -webkit-backdrop-filter: blur(18px);
-        backdrop-filter: blur(18px);
-    }
-
     /* The eyebrow with its 34 px dash, the page's signature. */
     .eyebrow {
         display: flex;
@@ -621,6 +607,26 @@
 .hero-overlay .aura-hero-copy .aura-btn-glass { background: rgb(247 242 234 / .12); border-color: rgb(247 242 234 / .34); color: var(--color-sand); --fill: rgb(247 242 234 / .24); }
 
 
+/* Light glass on sand and dark glass over photos (mellowaura-design, „Głębia”). Utilities, so variants such as [&>div]:glass work. */
+@utility glass {
+    background: var(--color-glass);
+    border: 1px solid var(--color-glass-line);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    backdrop-filter: blur(18px) saturate(1.4);
+}
+
+@utility glass-dark {
+    background: var(--color-glass-dark);
+    border: 1px solid var(--color-glass-dark-line);
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+}
+
+@keyframes auraDrawer { from { transform: translateX(110%); filter: blur(10px); } }
+@keyframes auraItemIn { from { opacity: 0; transform: translateY(14px); filter: blur(6px); } }
+@keyframes auraRing { 0%, 100% { box-shadow: 0 0 0 0 rgb(36 65 126 / .3); } 50% { box-shadow: 0 0 0 10px rgb(36 65 126 / 0); } }
+@keyframes auraGlow { 0% { transform: scale(.2); opacity: 0; } 40% { opacity: 1; } 100% { transform: scale(1); opacity: .55; } }
+@keyframes auraDraw { to { stroke-dashoffset: 0; } }
 @keyframes auraDrift1 { to { transform: translate(18vw, 14vh) scale(1.15); } }
 @keyframes auraDrift2 { to { transform: translate(-22vw, -10vh) scale(.9); } }
 @keyframes auraDrift3 { to { transform: translate(-14vw, -18vh) scale(1.2); } }
