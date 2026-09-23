@@ -4,6 +4,7 @@ namespace App\Modules\Checkout\Support;
 
 use App\Modules\Catalog\Enums\CategoryGroup;
 use App\Modules\Checkout\Models\Certificate;
+use App\Modules\Localization\Support\Locales;
 use App\Modules\Settings\Settings;
 use App\Modules\Shared\Support\Pdf;
 use Illuminate\Support\Collection;
@@ -22,17 +23,28 @@ class CertificatePdf
     public function __construct(private Settings $settings) {}
 
     /**
+     * The cards in the language the order was placed in: an English order has its piece, its care and its
+     * warnings in English, and the card says so too.
+     *
      * @param  Collection<int, Certificate>  $certificates
      */
-    public function render(Collection $certificates): string
+    public function render(Collection $certificates, string $locale = 'pl'): string
     {
-        return Pdf::render($this->html($certificates), 'portrait', 'a6');
+        return Pdf::render($this->html($certificates, $locale), 'portrait', 'a6');
     }
 
     /**
      * @param  Collection<int, Certificate>  $certificates
      */
-    public function html(Collection $certificates): string
+    public function html(Collection $certificates, string $locale = 'pl'): string
+    {
+        return Locales::within($locale, fn () => $this->view($certificates));
+    }
+
+    /**
+     * @param  Collection<int, Certificate>  $certificates
+     */
+    private function view(Collection $certificates): string
     {
         return view('checkout::pdf.certificates', [
             'cards' => $certificates->map($this->card(...))->values(),
@@ -46,9 +58,9 @@ class CertificatePdf
         ])->render();
     }
 
-    public static function filename(string $orderNumber): string
+    public static function filename(string $orderNumber, string $locale = 'pl'): string
     {
-        return 'certyfikaty-'.$orderNumber.'.pdf';
+        return Locales::within($locale, fn () => __('checkout::certificate.filename')).'-'.$orderNumber.'.pdf';
     }
 
     /**
@@ -60,6 +72,9 @@ class CertificatePdf
         $product = $item->variant?->product;
         // A mug from the configurator has no product in the shop, but it is ceramics too.
         $ceramics = $product === null || $product->category?->group === CategoryGroup::Ceramics;
+        // The general care rule and the panel's wording of food contact are Polish; another language reads the
+        // product's own care line and the shop's label for food contact (see the product page).
+        $polish = Locales::current() === Locales::default();
 
         return [
             'number' => (string) $certificate->number,
@@ -68,10 +83,10 @@ class CertificatePdf
             'ceramics' => $ceramics,
             'dimensions' => $product ? (collect($product->dimensionLabels())->map(fn (string $value, string $label) => $label.' '.$value)->join(' · ') ?: null) : null,
             'notes' => collect([
-                ['Pielęgnacja', $product?->care_note ?: ($ceramics ? $this->settings->get('care_rule_ceramics') : null)],
-                ['Kontakt z żywnością', $product?->food_contact?->option()],
-                ['Zwróć uwagę', $item->accepted_deviation ?? $product?->deviation],
-                ['Ostrzeżenia', $product?->safety_warnings],
+                [__('checkout::certificate.care'), $product?->care_note ?: ($ceramics && $polish ? $this->settings->get('care_rule_ceramics') : null)],
+                [__('checkout::certificate.food_contact'), $polish ? $product?->food_contact?->option() : $product?->food_contact?->label()],
+                [__('checkout::certificate.deviation'), $item->accepted_deviation ?? $product?->deviation],
+                [__('checkout::certificate.warnings'), $product?->safety_warnings],
             ])->filter(fn (array $note) => filled($note[1]))->values()->all(),
         ];
     }

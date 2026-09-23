@@ -15,9 +15,10 @@
         'label' => $size['label'],
         'capacity' => $size['capacity_ml'],
         'price' => Money::input($size['price_gross']),
+        'price_eur' => $size['price_eur'] === null ? '' : Money::input($size['price_eur']),
     ])->all()));
     // One empty row for a new size; left empty, it is not saved.
-    $sizeRows = [...$savedSizes, ['label' => '', 'capacity' => '', 'price' => '']];
+    $sizeRows = [...$savedSizes, ['label' => '', 'capacity' => '', 'price' => '', 'price_eur' => '']];
     $maxChars = (int) old('max_chars_per_line', $options->maxCharsPerLine());
     $maxLines = (int) old('max_lines', $options->maxLines());
 
@@ -102,13 +103,18 @@
                                        class="{{ $input }} {{ $border($sizeErrors, 'sizes.'.$index.'.price') }} min-h-11 w-[72px] px-2.5 text-right">
                                 <span class="text-[12.5px] text-label">zł</span>
                             </span>
+                            <span class="flex items-center gap-[5px]">
+                                <input name="sizes[{{ $index }}][price_eur]" value="{{ $row['price_eur'] ?? '' }}" inputmode="decimal" placeholder="w euro" aria-label="Rozmiar {{ $index + 1 }} — cena w euro"
+                                       class="{{ $input }} {{ $border($sizeErrors, 'sizes.'.$index.'.price_eur') }} min-h-11 w-[72px] px-2.5 text-right">
+                                <span class="text-[12.5px] text-label">€</span>
+                            </span>
                             @if ($index < count($savedSizes))
                                 <label class="flex min-h-11 items-center gap-1.5 text-[12.5px] text-label">
                                     <input type="checkbox" name="sizes[{{ $index }}][remove]" value="1" class="size-4 accent-error"> usuń
                                 </label>
                             @endif
                         </div>
-                        @foreach (['label', 'capacity', 'price'] as $field)
+                        @foreach (['label', 'capacity', 'price', 'price_eur'] as $field)
                             @if ($sizeErrors->has('sizes.'.$index.'.'.$field))
                                 <p class="text-[13px] text-error">{{ $sizeErrors->first('sizes.'.$index.'.'.$field) }}</p>
                             @endif
@@ -118,7 +124,7 @@
                         <p class="text-[13px] text-error">{{ $sizeErrors->first('sizes') }}</p>
                     @endif
                 </div>
-                <p class="mt-2.5 text-[12.5px] text-hint">W pusty wiersz wpisz nowy rozmiar. Kubek z napisem powstaje na zamówienie, więc nie ma stanu na półce.</p>
+                <p class="mt-2.5 text-[12.5px] text-hint">W pusty wiersz wpisz nowy rozmiar. Kubek z napisem powstaje na zamówienie, więc nie ma stanu na półce. Cena w euro jest dla angielskiej wersji sklepu — rozmiar bez niej nie pokazuje się tam wcale.</p>
 
                 <div class="mt-[26px] border-t border-sand-dark pt-[22px]">
                     <h3 class="mb-1 font-serif text-[21px]">Ile znaków wolno wpisać</h3>

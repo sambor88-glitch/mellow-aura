@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="utf-8">
-    <title>Certyfikaty unikatu</title>
+    <title>{{ __('checkout::certificate.title') }}</title>
     <style>
         @include('shared::pdf.fonts')
 
@@ -46,29 +46,29 @@
         <div class="page front">
             <div class="head">
                 <div class="brand">mellowaura</div>
-                <div class="brand-note">ceramika &middot; rękodzieło &middot; kraków</div>
+                <div class="brand-note">{!! __('checkout::certificate.brand_note') !!}</div>
             </div>
             <div class="intro">
-                <div class="eyebrow">certyfikat unikatu</div>
-                <div class="quote">Ta rzecz jest jedna<br>i nie powtórzę jej<br>nawet ja.</div>
+                <div class="eyebrow">{{ __('checkout::certificate.eyebrow') }}</div>
+                <div class="quote">{!! __('checkout::certificate.quote') !!}</div>
             </div>
             <table class="fields">
-                <tr><td class="label">Praca</td><td class="value">{{ $card['work'] }}@if ($card['text'])<br>„{{ $card['text'] }}”@endif</td></tr>
-                <tr><td class="label">Numer</td><td class="value">{{ $card['number'] }}</td></tr>
+                <tr><td class="label">{{ __('checkout::certificate.work') }}</td><td class="value">{{ $card['work'] }}@if ($card['text'])<br>„{{ $card['text'] }}”@endif</td></tr>
+                <tr><td class="label">{{ __('checkout::certificate.number') }}</td><td class="value">{{ $card['number'] }}</td></tr>
                 {{-- Written by hand on the card: the firing date and the glaze are known only in the studio. --}}
                 @if ($card['ceramics'])
-                    <tr><td class="label">Data wypału</td><td class="value">&nbsp;</td></tr>
-                    <tr><td class="label">Glina i szkliwo</td><td class="value">&nbsp;</td></tr>
+                    <tr><td class="label">{{ __('checkout::certificate.fired') }}</td><td class="value">&nbsp;</td></tr>
+                    <tr><td class="label">{{ __('checkout::certificate.clay') }}</td><td class="value">&nbsp;</td></tr>
                 @else
-                    <tr><td class="label">Materiał</td><td class="value">&nbsp;</td></tr>
+                    <tr><td class="label">{{ __('checkout::certificate.material') }}</td><td class="value">&nbsp;</td></tr>
                 @endif
-                <tr><td class="label">Wymiary</td><td class="value">{{ $card['dimensions'] ?? '' }}&nbsp;</td></tr>
+                <tr><td class="label">{{ __('checkout::certificate.dimensions') }}</td><td class="value">{{ $card['dimensions'] ?? '' }}&nbsp;</td></tr>
             </table>
             <table class="signature">
                 <tr>
                     <td>
                         <div class="sign-line"></div>
-                        <div class="small-label">podpis</div>
+                        <div class="small-label">{{ __('checkout::certificate.signature') }}</div>
                     </td>
                     <td class="maker">Katarzyna Samborska<br>{{ $website }}</td>
                 </tr>
@@ -77,7 +77,7 @@
 
         <div class="page back">
             @if ($card['notes'])
-                <div class="eyebrow" style="margin-bottom: 5mm;">jak się tym opiekować</div>
+                <div class="eyebrow" style="margin-bottom: 5mm;">{{ __('checkout::certificate.care_heading') }}</div>
                 @foreach ($card['notes'] as [$title, $text])
                     <div class="note">
                         <div class="note-title">{{ $title }}</div>
@@ -88,7 +88,7 @@
             {{-- The maker's name, postal address and e-mail go into the parcel with the product (GPSR art. 9). --}}
             @if ($producer->isNotEmpty())
                 <div class="producer-block producer">
-                    <div class="small-label" style="margin: 0 0 1mm;">producent</div>
+                    <div class="small-label" style="margin: 0 0 1mm;">{{ __('checkout::certificate.producer') }}</div>
                     @foreach ($producer as $line)
                         {{ $line }}<br>
                     @endforeach
@@ -98,7 +98,7 @@
                 <table class="foot">
                     <tr>
                         <td>@foreach ($contact as $line){{ $line }}<br>@endforeach</td>
-                        <td class="thanks">Dziękuję, że wybrałaś rzecz<br>zrobioną w dłoniach.</td>
+                        <td class="thanks">{!! __('checkout::certificate.thanks') !!}</td>
                     </tr>
                 </table>
             </div>

@@ -143,12 +143,11 @@ class EuroPricesTest extends TestCase
             ->assertSee('Przelewy24');
     }
 
-    public function test_the_mug_and_the_gift_sets_wait_for_euro_on_the_english_side(): void
+    public function test_the_gift_sets_wait_for_euro_on_the_english_side(): void
     {
-        $this->get('/en/custom-text-mug')->assertNotFound();
         $this->get('/en/gift-sets')->assertNotFound();
 
-        $this->get('/kubek-z-napisem')->assertSee('href="'.url('/en/shop').'?unavailable=1" hreflang="en"', false);
+        $this->get('/zestawy-prezentowe')->assertSee('href="'.url('/en/shop').'?unavailable=1" hreflang="en"', false);
     }
 
     public function test_the_free_delivery_threshold_stays_in_the_polish_basket(): void

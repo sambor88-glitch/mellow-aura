@@ -5,16 +5,7 @@
  */
 const SOUND_KEY = 'ma-sound';
 
-// 1 linię, 2–4 linie, 5 linii; 12–14 take the last form too.
-const plural = (count, one, few, many) => {
-    if (count === 1) {
-        return one;
-    }
-
-    return [2, 3, 4].includes(count % 10) && ![12, 13, 14].includes(count % 100) ? few : many;
-};
-
-export default ({ maxLines, maxChars, prices, glazes, size, glaze, ink }) => {
+export default ({ maxLines, maxChars, prices, texts, glazes, size, glaze, ink }) => {
     // The audio context and the 3D mug stay outside Alpine's reactive state.
     let audio = null;
     let mug = null;
@@ -68,7 +59,7 @@ export default ({ maxLines, maxChars, prices, glazes, size, glaze, ink }) => {
         get preview() {
             const typed = this.text.trim() !== '';
 
-            return (typed ? this.text.split('\n') : ['TWÓJ NAPIS']).map((line, row) => ({
+            return (typed ? this.text.split('\n') : [texts.sample]).map((line, row) => ({
                 key: (typed ? 't' : 'p') + row,
                 letters: Array.from(line.toUpperCase()).map((letter, column) => ({ key: (typed ? 't' : 'p') + row + '-' + column, letter })),
             }));
@@ -81,7 +72,7 @@ export default ({ maxLines, maxChars, prices, glazes, size, glaze, ink }) => {
         get lineInfo() {
             const count = this.text.split('\n').length;
 
-            return count === 1 ? 'Enter przenosi wyraz do nowej linii' : `${count} ${count < 5 ? 'linie' : 'linii'} z ${maxLines} możliwych`;
+            return count === 1 ? this.$refs.text.dataset.enter : texts[count < 5 ? 'lines_few' : 'lines_many'].replace(':count', count).replace(':max', maxLines);
         },
 
         get price() {
@@ -122,7 +113,7 @@ export default ({ maxLines, maxChars, prices, glazes, size, glaze, ink }) => {
             // Emptied first, so the same sentence is read again after the next letter that doesn't fit.
             this.limitNotice = '';
             this.$nextTick(() => {
-                this.limitNotice = `Zmieszczę ${maxLines} ${plural(maxLines, 'linię', 'linie', 'linii')} po ${maxChars} ${plural(maxChars, 'znak', 'znaki', 'znaków')}`;
+                this.limitNotice = this.$refs.text.dataset.limit;
             });
         },
 
@@ -150,7 +141,7 @@ export default ({ maxLines, maxChars, prices, glazes, size, glaze, ink }) => {
             const words = this.text.replace(/\n/g, ' ').split(/\s+/).filter(Boolean);
 
             if (words.length < 2) {
-                this.$store.cart.say('Do podziału potrzebne są co najmniej dwa wyrazy');
+                this.$store.cart.say(texts.split_needs_two);
 
                 return;
             }

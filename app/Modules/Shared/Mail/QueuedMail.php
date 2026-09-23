@@ -16,6 +16,14 @@ abstract class QueuedMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
+    /**
+     * Polish, whatever page the customer was on when it was queued: a mail to Kasia is always Polish, and a mail
+     * to a customer names her language itself (Checkout\Mail\Concerns\InOrderLanguage).
+     *
+     * @var string
+     */
+    public $locale = 'pl';
+
     /** The first attempt and five more. */
     public $tries = 6;
 

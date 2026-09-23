@@ -2,9 +2,11 @@
 
 namespace App\Modules\MugConfigurator\Support;
 
+use App\Modules\Localization\Support\Locales;
 use App\Modules\Settings\Settings;
 use App\Modules\Shared\Support\SitePhoto;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
 
 /**
@@ -23,17 +25,29 @@ class MugOptions
     public function __construct(private Settings $settings) {}
 
     /**
-     * @return Collection<int, array{label: string, capacity_ml: ?int, price_gross: int, name: string}>
+     * Sizes for the page's currency and language. „label” is the size's name in the panel, which the basket keeps
+     * whatever the page; „title” is that name for this page, „name” the title with the capacity, and „price” what
+     * she pays here. A euro
+     * page offers only the sizes with a euro price and an English name (mug-configurator::mug.sizes).
+     *
+     * @return Collection<int, array{label: string, title: string, capacity_ml: ?int, price_gross: int, price_eur: ?int, price: int, name: string}>
      */
     public function sizes(): Collection
     {
+        $home = Locales::currency() === Locales::defaultCurrency();
+
         return collect((array) $this->settings->get('mug_sizes', []))
             ->filter(fn (mixed $size) => is_array($size) && filled($size['label'] ?? null) && is_numeric($size['price_gross'] ?? null))
+            ->filter(fn (array $size) => $home || (is_numeric($size['price_eur'] ?? null) && Lang::has('mug-configurator::mug.sizes.'.self::sizeKey($size['label']))))
+            ->map(fn (array $size) => [...$size, 'title' => $home ? (string) $size['label'] : __('mug-configurator::mug.sizes.'.self::sizeKey($size['label']))])
             ->map(fn (array $size) => [
                 'label' => (string) $size['label'],
+                'title' => $size['title'],
                 'capacity_ml' => is_numeric($size['capacity_ml'] ?? null) ? (int) $size['capacity_ml'] : null,
                 'price_gross' => (int) $size['price_gross'],
-                'name' => $size['label'].(is_numeric($size['capacity_ml'] ?? null) ? ' '.(int) $size['capacity_ml'].' ml' : ''),
+                'price_eur' => is_numeric($size['price_eur'] ?? null) ? (int) $size['price_eur'] : null,
+                'price' => (int) ($home ? $size['price_gross'] : $size['price_eur']),
+                'name' => $size['title'].(is_numeric($size['capacity_ml'] ?? null) ? ' '.(int) $size['capacity_ml'].' ml' : ''),
             ])
             ->values();
     }
@@ -49,7 +63,7 @@ class MugOptions
     /**
      * The size chosen when the page opens: the one in the address, or the middle one, like the prototype.
      *
-     * @return array{label: string, capacity_ml: ?int, price_gross: int, name: string}|null
+     * @return array{label: string, title: string, capacity_ml: ?int, price_gross: int, price_eur: ?int, price: int, name: string}|null
      */
     public function startSize(?string $key): ?array
     {
@@ -60,11 +74,20 @@ class MugOptions
     }
 
     /**
+     * The glazes, named in the language of the page; on a page in another language only those with a name in it.
+     *
      * @return Collection<int, array{code: string, name: string, hex: string}>
      */
     public function glazes(): Collection
     {
-        return $this->palette('mug_glazes');
+        if (Locales::current() === Locales::default()) {
+            return $this->palette('mug_glazes');
+        }
+
+        return $this->palette('mug_glazes')
+            ->filter(fn (array $glaze) => Lang::has('mug-configurator::mug.glazes.'.$glaze['code']))
+            ->map(fn (array $glaze) => [...$glaze, 'name' => __('mug-configurator::mug.glazes.'.$glaze['code'])])
+            ->values();
     }
 
     /**

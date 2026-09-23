@@ -23,9 +23,9 @@ class CertificateController extends Controller
 
         abort_if($certificates->isEmpty(), 404);
 
-        return response($pdf->render($certificates), 200, [
+        return response($pdf->render($certificates, $order->locale ?? 'pl'), 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.CertificatePdf::filename($order->number).'"',
+            'Content-Disposition' => 'inline; filename="'.CertificatePdf::filename($order->number, $order->locale ?? 'pl').'"',
             'Cache-Control' => 'private, no-store',
         ]);
     }

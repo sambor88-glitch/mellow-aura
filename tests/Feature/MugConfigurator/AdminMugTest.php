@@ -51,7 +51,7 @@ class AdminMugTest extends TestCase
         $this->actingAs($this->owner)
             ->put('/panel/kubek-z-napisem/rozmiary', [
                 'sizes' => [
-                    ['label' => 'Mały', 'capacity' => '250 ml', 'price' => '72,50'],
+                    ['label' => 'Mały', 'capacity' => '250 ml', 'price' => '72,50', 'price_eur' => '19 €'],
                     ['label' => 'Średni', 'capacity' => '300', 'price' => '79', 'remove' => '1'],
                     ['label' => 'Duży', 'capacity' => '', 'price' => '99'],
                     ['label' => '', 'capacity' => '', 'price' => ''],
@@ -63,8 +63,8 @@ class AdminMugTest extends TestCase
             ->assertSessionHas('panel_status', 'Zapisane. Koszyk już liczy według nowych cen.');
 
         $this->assertEquals([
-            ['label' => 'Mały', 'capacity_ml' => 250, 'price_gross' => 7250],
-            ['label' => 'Duży', 'capacity_ml' => null, 'price_gross' => 9900],
+            ['label' => 'Mały', 'capacity_ml' => 250, 'price_gross' => 7250, 'price_eur' => 1900],
+            ['label' => 'Duży', 'capacity_ml' => null, 'price_gross' => 9900, 'price_eur' => null],
         ], Setting::find('mug_sizes')->value);
         $this->assertSame([18, 2], [Setting::find('mug_max_chars_per_line')->value, Setting::find('mug_max_lines')->value]);
 
