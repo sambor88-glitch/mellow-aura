@@ -3,6 +3,7 @@
 namespace App\Modules\Catalog\Models;
 
 use App\Modules\Catalog\Database\Factories\ProductVariantFactory;
+use App\Modules\Shared\Models\Concerns\HasTranslations;
 use App\Modules\Shared\Support\LowestPrice;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -16,7 +17,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class ProductVariant extends Model
 {
     /** @use HasFactory<ProductVariantFactory> */
-    use HasFactory;
+    use HasFactory, HasTranslations;
+
+    /** Read in the language of the page; the Polish label lives in the column itself. */
+    protected array $translatable = ['label'];
 
     /**
      * Every price a variant has had lands in price_history, so a crossed-out price

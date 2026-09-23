@@ -38,7 +38,10 @@ class LocalizationServiceProvider extends ModuleServiceProvider
         // Through the kernel: it overwrites the router's groups with its own list when it starts, so a middleware
         // pushed straight onto the router would be gone. Every web page gets it, so a Polish page after an English
         // one (the same process under Octane or in tests) is Polish again.
-        $this->app->make(Kernel::class)->appendMiddlewareToGroup('web', SetLocale::class);
+        $kernel = $this->app->make(Kernel::class);
+        $kernel->appendMiddlewareToGroup('web', SetLocale::class);
+        // Before route bindings: /en/product/{slug} looks the product up by its English slug.
+        $kernel->prependToMiddlewarePriority(SetLocale::class);
 
         // After every module has added its routes, so each twin copies a finished route. A cached route list
         // already holds the twins.

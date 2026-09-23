@@ -7,6 +7,7 @@ use App\Modules\Catalog\Enums\CategoryGroup;
 use App\Modules\Catalog\Enums\Dimension;
 use App\Modules\Catalog\Enums\FoodContact;
 use App\Modules\Catalog\Enums\GoogleCategory;
+use App\Modules\Shared\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -27,7 +28,10 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class Product extends Model implements HasMedia
 {
     /** @use HasFactory<ProductFactory> */
-    use HasFactory, InteractsWithMedia;
+    use HasFactory, HasTranslations, InteractsWithMedia;
+
+    /** Read in the language of the page; the Polish text lives in the columns themselves. */
+    protected array $translatable = ['slug', 'name', 'description', 'seo_description', 'care_note', 'deviation', 'size_tolerance', 'safety_warnings'];
 
     public function registerMediaCollections(): void
     {
@@ -46,14 +50,15 @@ class Product extends Model implements HasMedia
     }
 
     /**
-     * Published products with at least one variant on the shelf or without stock tracking.
+     * Published products with at least one variant on the shelf or without stock tracking — on a page in another
+     * language, only the ones written in it.
      *
      * @param  Builder<Product>  $query
      */
     #[Scope]
     protected function live(Builder $query): void
     {
-        $query->where('is_published', true)->whereHas('variants', fn (Builder $variants) => $variants->inStock());
+        $query->where('is_published', true)->whereHas('variants', fn (Builder $variants) => $variants->inStock())->translatedInto();
     }
 
     /**
