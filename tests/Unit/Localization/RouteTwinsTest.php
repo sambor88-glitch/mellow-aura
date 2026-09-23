@@ -41,6 +41,8 @@ class RouteTwinsTest extends TestCase
     public function test_a_listed_page_that_is_not_built_yet_is_skipped(): void
     {
         config(['localization.enabled' => ['pl', 'en']]);
+        // The whole list at once: a route name's dots would nest the key otherwise.
+        config(['localization.paths.en' => [...config('localization.paths.en'), 'journal.index' => 'journal']]);
 
         $router = $this->routerWithShop();
         RouteTwins::register($router);

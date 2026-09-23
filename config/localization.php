@@ -23,7 +23,10 @@ return [
     /*
      * English addresses, keyed by route name. Every page listed here gets an English twin under /en/ with the
      * same controller and the name „en.<name>”; a page missing here exists in Polish only. A name whose route
-     * does not exist yet (Journal comes after the holidays) is skipped until it does.
+     * does not exist yet is skipped until it does.
+     *
+     * Polish only by decision (23.09.2026): workshops and their vouchers, firing, the café offer, the scarf and
+     * plant-imprint services, the journal and the gift finder.
      */
     'paths' => [
         'en' => [
@@ -32,7 +35,6 @@ return [
             'shop.category' => 'shop/{category:slug}',
             'product.show' => 'product/{product:slug}',
             'mug.index' => 'custom-text-mug',
-            'gifts.index' => 'gifts',
             'bundles.index' => 'gift-sets',
             'checkout.index' => 'checkout',
             'checkout.store' => 'checkout',
@@ -50,8 +52,6 @@ return [
             'withdrawal.confirmation' => 'withdrawal/confirmation',
             'consent.edit' => 'cookie-settings',
             'consent.store' => 'cookie-settings',
-            'journal.index' => 'journal',
-            'journal.show' => 'journal/{post:slug}',
         ],
     ],
 
@@ -61,7 +61,10 @@ return [
      */
     'fallbacks' => [
         'workshops.index' => 'content.about',
-        'vouchers.index' => 'gifts.index',
+        'vouchers.index' => 'bundles.index',
+        'gifts.index' => 'bundles.index',
+        'journal.index' => 'content.about',
+        'journal.show' => 'content.about',
         'firing.index' => 'content.studio',
         'content.b2b' => 'custom-orders.index',
         'content.imprint' => 'custom-orders.index',

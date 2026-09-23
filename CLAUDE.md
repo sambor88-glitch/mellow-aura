@@ -103,8 +103,8 @@ Szczegóły w `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html`. Tu zasady,
   `price_history` osobno dla każdej waluty — Omnibus liczy się per waluta.
 - Brak tłumaczenia albo brak ceny w EUR ukrywa pozycję na `/en/`. Nigdy nie psuje wersji polskiej
   i nigdy nie podstawia polskiego tekstu pod angielski adres.
-- Warsztaty, voucher, wypał, gastronomia, odcisk rośliny i apaszka nie istnieją na `/en/`. Menu budujemy
-  z konfiguracji per język, nie ukrywamy pozycji CSS-em.
+- Warsztaty, voucher, wypał, gastronomia, odcisk rośliny, apaszka, dziennik i „Szukam prezentu” nie istnieją
+  na `/en/`. Menu budujemy z konfiguracji per język, nie ukrywamy pozycji CSS-em.
 - Przełącznik języka na stronie bez odpowiednika prowadzi do najbliższej sensownej strony, nigdy na stronę główną.
 - Język podpowiadamy z nagłówka `Accept-Language`, nigdy z adresu IP, i nigdy nie przekierowujemy automatycznie.
 - BLIK istnieje tylko w PLN. Lista metod płatności filtruje się walutą koszyka.

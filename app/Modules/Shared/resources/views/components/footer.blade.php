@@ -1,24 +1,30 @@
 @inject('settings', 'App\Modules\Settings\Settings')
+@use('App\Modules\Localization\Support\Locales')
 @php
-    // A link shows up once its page has a route; an empty setting is not shown.
-    $link = fn (string $label, string $route, mixed $parameters = []) => Route::has($route) ? [$label, route($route, $parameters)] : null;
+    // A link shows up once its page exists in the language of this page; an empty setting is not shown.
+    // On an English page the studio services held in Polish drop out on their own.
+    $link = fn (string $key, string $route, mixed $parameters = []) => Locales::has($route, Locales::current())
+        ? [__('shared::footer.'.$key), route($route, $parameters)]
+        : null;
+    $polish = Locales::current() === Locales::default();
 
     $shopLinks = array_filter([
-        $link('Wszystkie produkty', 'shop.index'),
-        $link('Kubek z napisem', 'mug.index'),
-        $link('Szukam prezentu', 'gifts.index'),
-        $link('Zestawy prezentowe', 'bundles.index'),
-        $link('Vouchery na warsztaty', 'vouchers.index') ?? $link('Vouchery na warsztaty', 'shop.category', 'vouchery'),
-        $link('Wysyłka i zwroty', 'content.faq'),
+        $link('all', 'shop.index'),
+        $link('mug', 'mug.index'),
+        $link('gift_finder', 'gifts.index'),
+        $link('bundles', 'bundles.index'),
+        // The voucher category is Polish-only, like the workshops it pays for.
+        $link('vouchers', 'vouchers.index') ?? ($polish ? $link('vouchers', 'shop.category', 'vouchery') : null),
+        $link('shipping', 'content.faq'),
     ]);
 
     $studioLinks = array_filter([
-        $link('Warsztaty i cennik', 'workshops.index'),
-        $link('Zamówienia indywidualne', 'custom-orders.index'),
-        $link('Z Twojej apaszki', 'content.scarf'),
-        $link('Odcisk Twojej rośliny', 'content.imprint'),
-        $link('Dla kawiarni i restauracji', 'content.b2b'),
-        $link('Wypały na zlecenie', 'firing.index'),
+        $link('workshops', 'workshops.index'),
+        $link('custom_orders', 'custom-orders.index'),
+        $link('scarf', 'content.scarf'),
+        $link('imprint', 'content.imprint'),
+        $link('b2b', 'content.b2b'),
+        $link('firing', 'firing.index'),
     ]);
 
     $tagline = $settings->get('text_footer_tagline');
@@ -53,7 +59,7 @@
 
         @if ($shopLinks)
             <div class="flex-[0_1_170px]">
-                <div class="mb-4 text-[10.5px] tracking-[0.24em] text-label-dark uppercase">Sklep</div>
+                <div class="mb-4 text-[10.5px] tracking-[0.24em] text-label-dark uppercase">{{ __('shared::footer.shop') }}</div>
                 <div class="flex flex-col gap-[11px] text-[14.5px]">
                     @foreach ($shopLinks as [$label, $href])
                         <a href="{{ $href }}" class="text-on-dark hover:text-rose">{{ $label }}</a>
@@ -64,20 +70,20 @@
 
         @if ($studioLinks || Route::has('admin.dashboard'))
             <div class="flex-[0_1_170px]">
-                <div class="mb-4 text-[10.5px] tracking-[0.24em] text-label-dark uppercase">Pracownia</div>
+                <div class="mb-4 text-[10.5px] tracking-[0.24em] text-label-dark uppercase">{{ __('shared::footer.studio') }}</div>
                 <div class="flex flex-col gap-[11px] text-[14.5px]">
                     @foreach ($studioLinks as [$label, $href])
                         <a href="{{ $href }}" class="text-on-dark hover:text-rose">{{ $label }}</a>
                     @endforeach
                     @if (Route::has('admin.dashboard'))
-                        <a href="{{ route('admin.dashboard') }}" class="text-label-dark hover:text-rose">Mój panel</a>
+                        <a href="{{ route('admin.dashboard') }}" class="text-label-dark hover:text-rose">{{ __('shared::footer.panel') }}</a>
                     @endif
                 </div>
             </div>
         @endif
 
         <div class="flex-[0_1_200px]">
-            <div class="mb-4 text-[10.5px] tracking-[0.24em] text-label-dark uppercase">Kontakt</div>
+            <div class="mb-4 text-[10.5px] tracking-[0.24em] text-label-dark uppercase">{{ __('shared::footer.contact') }}</div>
             <div class="flex flex-col gap-[11px] text-[14.5px] text-on-dark-muted">
                 @if ($whatsApp)
                     <a href="{{ $whatsApp }}" target="_blank" rel="noopener" class="text-on-dark hover:text-rose">{{ $phone }}</a>
@@ -85,13 +91,13 @@
                 @if ($email)
                     <a href="mailto:{{ $email }}" class="text-on-dark [overflow-wrap:anywhere] hover:text-rose">{{ $email }}</a>
                 @endif
-                @if (Route::has('content.contact'))
-                    <a href="{{ route('content.contact') }}" class="text-on-dark hover:text-rose">Napisz do mnie</a>
+                @if ($write = $link('write', 'content.contact'))
+                    <a href="{{ $write[1] }}" class="text-on-dark hover:text-rose">{{ $write[0] }}</a>
                 @endif
                 @if ($city)
                     <span>{{ $city }}</span>
                 @endif
-                <span>Pracownia na zapisy</span>
+                <span>{{ __('shared::footer.by_appointment') }}</span>
             </div>
         </div>
     </div>
@@ -104,17 +110,16 @@
     <div class="mx-auto flex max-w-[1280px] flex-wrap justify-between gap-x-7 gap-y-4 border-t border-divider-dark px-7 pt-[22px] pb-10 text-[12.5px] text-label-dark">
         <span>© {{ now()->year }} MellowAura &middot; Katarzyna Samborska{{ $nip ? ' · NIP '.$nip : '' }}</span>
         <div class="flex flex-wrap gap-[22px]">
-            @if (Route::has('content.faq'))
-                <a href="{{ route('content.faq') }}" class="text-label-dark hover:text-rose">FAQ</a>
-            @endif
-            @foreach (array_filter([$link('Regulamin', 'content.terms'), $link('Polityka prywatności', 'content.privacy'), $link('Odstąp od umowy tutaj', 'withdrawal.create')]) as [$label, $href])
+            @foreach (array_filter([$link('faq', 'content.faq'), $link('terms', 'content.terms'), $link('privacy', 'content.privacy'), $link('withdrawal', 'withdrawal.create')]) as [$label, $href])
                 <a href="{{ $href }}" class="text-label-dark hover:text-rose">{{ $label }}</a>
             @endforeach
-            @if (Route::has('consent.edit'))
+            @if ($cookies = $link('cookies', 'consent.edit'))
                 {{-- With the banner on the page, the link opens it in place. --}}
-                <a href="{{ route('consent.edit') }}" data-consent-open class="text-label-dark hover:text-rose">Ustawienia cookies</a>
+                <a href="{{ $cookies[1] }}" data-consent-open class="text-label-dark hover:text-rose">{{ $cookies[0] }}</a>
             @endif
-            <span>BLIK &middot; Przelewy24 &middot; karta</span>
+            @if ($payments = __('shared::footer.payments'))
+                <span>{{ $payments }}</span>
+            @endif
         </div>
     </div>
 </footer>
