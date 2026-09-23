@@ -113,12 +113,14 @@ class CatalogTranslationTest extends TestCase
         [$translated] = $this->twoProducts();
         $translated->update(['care_note' => 'Zmywarka tak', 'deviation' => 'Złota krawędź', 'dimensions' => ['height_cm' => '9']]);
         $translated->translation('en')->update(['description' => 'Thrown by hand, rim left rough.', 'care_note' => 'Dishwasher safe']);
-        $translated->variants()->create(['label' => 'Duża', 'price_gross' => 12900, 'stock' => 1])->translations()->create(['locale' => 'en', 'label' => 'Large']);
+        $large = $translated->variants()->create(['label' => 'Duża', 'price_gross' => 12900, 'stock' => 1]);
+        $large->translations()->create(['locale' => 'en', 'label' => 'Large']);
+        $large->prices()->create(['currency' => 'EUR', 'amount_minor' => 3500]);
         Setting::query()->updateOrCreate(['key' => 'free_shipping_threshold'], ['value' => json_encode(30000)]);
 
         $this->get('/en/product/rough-edged-bowl')
             ->assertOk()
-            ->assertSee('<html lang="en">', false)
+            ->assertSee('<html lang="en" data-currency="EUR">', false)
             ->assertSee('Rough-edged bowl')
             ->assertSee('Thrown by hand, rim left rough.')
             ->assertSee('Dishwasher safe')
@@ -146,6 +148,8 @@ class CatalogTranslationTest extends TestCase
     public function test_a_basket_filled_on_a_polish_page_still_names_its_pieces_on_an_english_one(): void
     {
         [, $polishOnly] = $this->twoProducts();
+        // Priced in euro but not written in English yet: out of the English shop, still in the basket.
+        $polishOnly->variants->first()->prices()->create(['currency' => 'EUR', 'amount_minor' => 2500]);
 
         $this->post('/koszyk', ['variant_id' => $polishOnly->variants->first()->id])->assertRedirect();
 
@@ -163,6 +167,8 @@ class CatalogTranslationTest extends TestCase
         $translated->translations()->create(['locale' => 'en', 'name' => 'Rough-edged bowl', 'slug' => 'rough-edged-bowl']);
         $variant = ProductVariant::factory()->create(['product_id' => $translated->id, 'label' => 'Mała', 'stock' => 2]);
         $variant->translations()->create(['locale' => 'en', 'label' => 'Small']);
+        // Without a euro price the piece would stay out of the English shop (see EuroPricesTest).
+        $variant->prices()->create(['currency' => 'EUR', 'amount_minor' => 2900]);
 
         $polishOnly = Product::factory()->create(['name' => 'Voucher na warsztaty', 'slug' => 'voucher-na-warsztaty', 'category_id' => $category->id]);
         ProductVariant::factory()->create(['product_id' => $polishOnly->id, 'stock' => 1]);

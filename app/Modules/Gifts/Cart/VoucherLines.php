@@ -36,7 +36,7 @@ class VoucherLines extends ProductLines
             'sender_name' => ['nullable', 'string', 'max:'.(int) $this->settings->get('voucher_recipient_name_max_chars', 40)],
             'dedication' => ['nullable', 'string', 'max:'.(int) $this->settings->get('voucher_dedication_max_chars', 180)],
         ], [
-            'quantity.max' => CartLine::TOO_MANY_NOTICE,
+            'quantity.max' => CartLine::tooManyNotice(),
             'recipient_name.max' => 'Imię na voucherze zmieszczę do :max znaków',
             'sender_name.max' => 'Podpis „od kogo” zmieszczę do :max znaków',
             'dedication.max' => 'Dedykację zmieszczę do :max znaków',

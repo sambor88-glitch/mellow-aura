@@ -29,10 +29,7 @@ class ShopController extends Controller
         $sort = (string) $request->query('sort', '');
         $sort = array_key_exists($sort, self::SORTS) ? $sort : '';
 
-        $live = Product::query()->live()
-            ->with(['category', 'variants', 'media'])
-            // Only where they are read: a Polish page reads the Polish columns.
-            ->when(Locales::current() !== Locales::default(), fn ($query) => $query->with(['category.translations', 'variants.translations']))
+        $live = Product::query()->live()->withShelf()
             ->orderBy('sort_order')
             ->get();
 
@@ -101,7 +98,7 @@ class ShopController extends Controller
      */
     private function sorted(Collection $products, string $sort): Collection
     {
-        $lowestPrice = fn (Product $product) => $product->variants->min('price_gross');
+        $lowestPrice = fn (Product $product) => $product->variants->min(fn ($variant) => $variant->price());
 
         return match ($sort) {
             'price_asc' => $products->sortBy($lowestPrice)->values(),

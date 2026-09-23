@@ -58,6 +58,9 @@ class SaveProductRequest extends FormRequest
             'variants.*.label' => [count((array) $this->input('variants')) > 1 ? 'required' : 'nullable', 'string', 'max:60'],
             'variants.*.price' => ['required', 'regex:/^\d{1,5}([.,]\d{1,2})?$/'],
             'variants.*.compare_at' => ['nullable', new PriceBeforeReduction],
+            // The euro price, typed in by hand. A size without one stays out of the English shop.
+            'variants.*.price_eur' => ['nullable', 'regex:/^\d{1,5}([.,]\d{1,2})?$/'],
+            'variants.*.compare_at_eur' => ['nullable', new PriceBeforeReduction('price_eur')],
             'variants.*.stock' => ['nullable', 'integer', 'min:0', 'max:9999'],
             'variants.*.sent_by_post' => ['nullable', 'boolean'],
             'photo_alts' => ['nullable', 'array'],
@@ -111,6 +114,7 @@ class SaveProductRequest extends FormRequest
             'variants.*.label.max' => 'Nazwę rozmiaru zmieszczę do :max znaków',
             'variants.*.price.required' => $price,
             'variants.*.price.regex' => $price,
+            'variants.*.price_eur.regex' => 'Wpisz cenę w euro, np. 39 albo 39,90 — albo zostaw puste pole',
             'variants.*.stock.integer' => $stock,
             'variants.*.stock.min' => $stock,
             'variants.*.stock.max' => $stock,
@@ -133,7 +137,7 @@ class SaveProductRequest extends FormRequest
      * The validated form in the shape SaveProduct takes: prices in grosze, empty dimensions left out,
      * photo descriptions keyed by photo id.
      *
-     * @return array{name: string, category_id: int, description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, price_gross: int, compare_at_price: ?int, stock: ?int, sent_by_post: bool}>, photo_alts: array<int, string>}
+     * @return array{name: string, category_id: int, description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels: array<string, string>, price_gross: int, compare_at_price: ?int, prices: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post: bool}>, photo_alts: array<int, string>}
      */
     public function product(): array
     {
@@ -165,6 +169,10 @@ class SaveProductRequest extends FormRequest
                 'labels' => ['en' => trim((string) ($row['label_en'] ?? ''))],
                 'price_gross' => Money::parse((string) $row['price']),
                 'compare_at_price' => filled($row['compare_at'] ?? null) ? Money::parse((string) $row['compare_at']) : null,
+                'prices' => ['EUR' => [
+                    'amount' => filled($row['price_eur'] ?? null) ? Money::parse((string) $row['price_eur']) : null,
+                    'compare_at' => filled($row['compare_at_eur'] ?? null) ? Money::parse((string) $row['compare_at_eur']) : null,
+                ]],
                 'stock' => isset($row['stock']) ? (int) $row['stock'] : null,
                 'sent_by_post' => (bool) ($row['sent_by_post'] ?? false),
             ], $data['variants']),
@@ -183,7 +191,7 @@ class SaveProductRequest extends FormRequest
         $variants = collect((array) $this->input('variants', []))
             ->filter(fn (mixed $row) => is_array($row) && ! ($row['remove'] ?? false))
             // A row left empty is a spare slot for another size.
-            ->reject(fn (array $row) => blank($row['id'] ?? null) && blank($row['label'] ?? null) && blank($row['price'] ?? null) && blank($row['compare_at'] ?? null) && blank($row['stock'] ?? null))
+            ->reject(fn (array $row) => blank($row['id'] ?? null) && blank($row['label'] ?? null) && blank($row['price'] ?? null) && blank($row['compare_at'] ?? null) && blank($row['price_eur'] ?? null) && blank($row['stock'] ?? null))
             ->values()
             ->all();
 

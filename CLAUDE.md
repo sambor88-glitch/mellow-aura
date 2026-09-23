@@ -99,8 +99,13 @@ Szczegóły w `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html`. Tu zasady,
 - Waluta wynika z języka: PL to PLN, EN to EUR. Nie ma osobnego przełącznika waluty i nie ma koszyka
   z mieszanymi walutami.
 - Ceny w euro wpisuje Kasia w panelu. Żadnego przeliczania po kursie w locie.
-- Cena mieszka w tabeli `prices` (`product_variant_id`, `currency`, `amount_minor`), historia w
-  `price_history` osobno dla każdej waluty — Omnibus liczy się per waluta.
+- Cena w złotych zostaje w wariancie (`price_gross`, `compare_at_price`), tak jak polski tekst zostaje w tabeli
+  katalogu. Inne waluty mieszkają w `prices` (`product_variant_id`, `currency`, `amount_minor`, `compare_at_minor`).
+  Historia w `price_history` ma kolumnę `currency` — Omnibus liczy się per waluta.
+- Cenę czytasz przez `$variant->price()` i `compareAtPrice()` — w walucie strony. Kwotę pokazujesz przez
+  `Money::format($kwota, $waluta)`; bez waluty to złote. `price_gross` to zawsze złote, nigdy „cena strony”.
+- Koszyk liczy w walucie strony. Pozycja bez ceny w tej walucie (`CartLine::pricedIn`) wypada z koszyka na tej
+  stronie i wraca na stronie w swojej walucie. Kubek, zestawy i pakowanie mają na razie tylko złote.
 - Brak tłumaczenia albo brak ceny w EUR ukrywa pozycję na `/en/`. Nigdy nie psuje wersji polskiej
   i nigdy nie podstawia polskiego tekstu pod angielski adres.
 - Warsztaty, voucher, wypał, gastronomia, odcisk rośliny, apaszka, dziennik i „Szukam prezentu” nie istnieją

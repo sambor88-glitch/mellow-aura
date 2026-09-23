@@ -14,7 +14,10 @@
         default => '',
     };
     // BLIK and free shipping exist only in Poland, in złoty.
-    $inZloty = Locales::currency() === 'PLN';
+    $currency = Locales::currency();
+    $inZloty = $currency === Locales::defaultCurrency();
+    // Prices in the currency of the page; the controller left only the variants priced in it.
+    $price = fn ($option) => Money::format($option->price(), $currency);
     $canonical = route('product.show', $product);
     $images = $product->getMedia('images');
     $lowestBeforeDiscount = $variant->lowestPriceBeforeDiscount();
@@ -33,7 +36,7 @@
     @isset($structuredData)
         <x-slot:head>{!! $structuredData !!}</x-slot:head>
     @endisset
-    <x-consent::analytics-event name="view_item" :params="AnalyticsItem::params($variant->price_gross, [VariantAnalyticsItem::make($variant)])" />
+    <x-consent::analytics-event name="view_item" :params="AnalyticsItem::params($variant->price(), [VariantAnalyticsItem::make($variant)])" />
 
     <div class="mx-auto max-w-[1360px] animate-ma-view px-[clamp(18px,4vw,48px)] pt-9 pb-24">
         <nav aria-label="{{ __('catalog::shop.breadcrumb') }}" class="mb-7 text-[12.5px] text-label">
@@ -110,13 +113,13 @@
 
                 <div class="mb-[26px]">
                     <div class="flex items-baseline gap-3.5">
-                        <span class="font-serif text-[42px] leading-none font-light tabular-nums">{{ Money::format($variant->price_gross) }}</span>
+                        <span class="font-serif text-[42px] leading-none font-light tabular-nums">{{ $price($variant) }}</span>
                         @if ($lowestBeforeDiscount !== null)
-                            <span class="text-[16px] text-label line-through">{{ Money::format($variant->compare_at_price) }}</span>
+                            <span class="text-[16px] text-label line-through">{{ Money::format($variant->compareAtPrice(), $currency) }}</span>
                         @endif
                     </div>
                     @if ($lowestBeforeDiscount !== null)
-                        <p class="mt-2 text-[12.5px] text-label">{{ __('catalog::product.lowest_price', ['price' => Money::format($lowestBeforeDiscount)]) }}</p>
+                        <p class="mt-2 text-[12.5px] text-label">{{ __('catalog::product.lowest_price', ['price' => Money::format($lowestBeforeDiscount, $currency)]) }}</p>
                     @endif
                 </div>
 
@@ -150,7 +153,7 @@
                                 'glass text-lead hover:border-ink hover:text-lead' => ! $option->is($variant),
                             ])>
                                 <span class="block text-[13.5px]">{{ $option->label }}</span>
-                                <span @class(['mt-[3px] block text-[12.5px]', 'text-line-strong' => $option->is($variant), 'text-label' => ! $option->is($variant)])>{{ Money::format($option->price_gross) }}</span>
+                                <span @class(['mt-[3px] block text-[12.5px]', 'text-line-strong' => $option->is($variant), 'text-label' => ! $option->is($variant)])>{{ $price($option) }}</span>
                             </a>
                         @endforeach
                     </div>
@@ -213,7 +216,7 @@
                                         aria-label="{{ __('catalog::product.more') }}" class="h-[46px] w-11 text-[18px] text-muted disabled:cursor-not-allowed disabled:text-line-strong">+</button>
                             </div>
                             <button type="submit" data-magnet class="fill-btn min-h-[54px] flex-[1_1_200px] rounded-full bg-ink px-5 py-4 text-[14.5px] font-medium tracking-[0.03em] whitespace-nowrap text-linen transition duration-300 [--fill:var(--color-navy)] hover:bg-navy active:scale-[.97]">
-                                {{ __('catalog::product.add_to_cart') }} &middot; <span x-text="$store.cart.format({{ $variant->price_gross }} * quantity)">{{ Money::format($variant->price_gross) }}</span>
+                                {{ __('catalog::product.add_to_cart') }} &middot; <span x-text="$store.cart.format({{ $variant->price() }} * quantity)">{{ $price($variant) }}</span>
                             </button>
                             <x-catalog::favorite-button :product="$product"
                                                         class="glass size-[54px] flex-none rounded-full text-[20px] hover:border-ink" />
@@ -318,7 +321,7 @@
             <div x-data="buyBar" x-cloak x-bind:class="shown || 'invisible translate-y-full'"
                  class="glass sticky bottom-[calc(12px+env(safe-area-inset-bottom))] z-50 mt-10 flex items-center gap-3 rounded-full py-2 pr-2 pl-5 transition duration-500 ease-clay min-[872px]:hidden">
                 <div class="min-w-0 flex-auto">
-                    <div class="font-serif text-[22px] leading-none">{{ Money::format($variant->price_gross) }}</div>
+                    <div class="font-serif text-[22px] leading-none">{{ $price($variant) }}</div>
                     @if ($variant->label)
                         <div class="mt-1 truncate text-[11.5px] text-label">{{ $variant->label }}</div>
                     @endif

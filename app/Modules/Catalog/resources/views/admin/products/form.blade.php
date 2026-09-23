@@ -19,13 +19,15 @@
             'label_en' => $variant->translation('en')?->label,
             'price' => Money::input($variant->price_gross),
             'compare_at' => $variant->compare_at_price === null ? '' : Money::input($variant->compare_at_price),
+            'price_eur' => ($eur = $variant->price('EUR')) === null ? '' : Money::input($eur),
+            'compare_at_eur' => ($eurBefore = $variant->compareAtPrice('EUR')) === null ? '' : Money::input($eurBefore),
             'stock' => $variant->stock,
             'sent_by_post' => $variant->sent_by_post,
         ])->all() ?? []);
     // A voucher goes out as a PDF by e-mail; a size ticked „pocztą” is printed and posted, so its buyer chooses a delivery.
     $isVoucher = (bool) $product?->isVoucher();
     // Spare rows for new sizes; left empty, they are not saved.
-    $rows = [...$rows, ...array_fill(0, max(1, 3 - count($rows)), ['id' => null, 'label' => '', 'label_en' => '', 'price' => '', 'compare_at' => '', 'stock' => ''])];
+    $rows = [...$rows, ...array_fill(0, max(1, 3 - count($rows)), ['id' => null, 'label' => '', 'label_en' => '', 'price' => '', 'compare_at' => '', 'price_eur' => '', 'compare_at_eur' => '', 'stock' => ''])];
 
     $dimensions = (array) $old('dimensions', $product?->dimensions ?? []);
     $occasions = (array) $old('occasions', $product?->occasions ?? []);
@@ -126,6 +128,15 @@
                                @class([$input, 'w-[118px] px-3 py-2.5 text-right', 'border-error' => $bag->has('variants.'.$index.'.compare_at'), 'border-line' => ! $bag->has('variants.'.$index.'.compare_at')])>
                     </span>
                     <span class="flex items-center gap-1.5">
+                        <input name="variants[{{ $index }}][price_eur]" value="{{ $row['price_eur'] ?? '' }}" inputmode="decimal" aria-label="Cena w euro, rozmiar {{ $index + 1 }}" placeholder="w euro"
+                               @class([$input, 'w-[90px] px-3 py-2.5 text-right', 'border-error' => $bag->has('variants.'.$index.'.price_eur'), 'border-line' => ! $bag->has('variants.'.$index.'.price_eur')])>
+                        <span class="text-[13px] text-label">€</span>
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <input name="variants[{{ $index }}][compare_at_eur]" value="{{ $row['compare_at_eur'] ?? '' }}" inputmode="decimal" aria-label="Cena w euro przed obniżką, rozmiar {{ $index + 1 }}" placeholder="€ przed obniżką"
+                               @class([$input, 'w-[118px] px-3 py-2.5 text-right', 'border-error' => $bag->has('variants.'.$index.'.compare_at_eur'), 'border-line' => ! $bag->has('variants.'.$index.'.compare_at_eur')])>
+                    </span>
+                    <span class="flex items-center gap-1.5">
                         <input name="variants[{{ $index }}][stock]" value="{{ $row['stock'] ?? '' }}" inputmode="numeric" aria-label="Sztuk na półce, rozmiar {{ $index + 1 }}" placeholder="—"
                                @class([$input, 'w-[64px] px-2.5 py-2.5 text-right', 'border-error' => $bag->has('variants.'.$index.'.stock'), 'border-line' => ! $bag->has('variants.'.$index.'.stock')])>
                         <span class="text-[12.5px] text-label">szt.</span>
@@ -141,11 +152,12 @@
                         </label>
                     @endif
                 </div>
-                {!! $error('variants.'.$index.'.label') !!}{!! $error('variants.'.$index.'.label_en') !!}{!! $error('variants.'.$index.'.price') !!}{!! $error('variants.'.$index.'.compare_at') !!}{!! $error('variants.'.$index.'.stock') !!}
+                {!! $error('variants.'.$index.'.label') !!}{!! $error('variants.'.$index.'.label_en') !!}{!! $error('variants.'.$index.'.price') !!}{!! $error('variants.'.$index.'.compare_at') !!}{!! $error('variants.'.$index.'.price_eur') !!}{!! $error('variants.'.$index.'.compare_at_eur') !!}{!! $error('variants.'.$index.'.stock') !!}
             @endforeach
         </div>
         {!! $error('variants') !!}
         <p class="mt-2.5 text-[12.5px] leading-[1.5] text-hint">Puste wiersze się nie zapiszą. Jedna cena nie potrzebuje nazwy rozmiaru. Pole „szt.” zostaw puste, jeśli nie liczysz sztuk — przy zerze produkt sam znika ze sklepu. „Przed obniżką” wpisz tylko przy promocji: karta produktu przekreśli tę cenę, gdy obniżysz cenę, i sama poda najniższą cenę z 30 dni.</p>
+        <p class="mt-1.5 text-[12.5px] leading-[1.5] text-hint">Cenę w euro widać tylko w angielskiej wersji sklepu. Rozmiar bez niej nie pokazuje się po angielsku — polska wersja zostaje bez zmian. Wpisz ją ręcznie: nic się nie przelicza po kursie.</p>
         @if ($isVoucher)
             <p class="mt-1.5 text-[12.5px] leading-[1.5] text-hint">Voucher idzie mailem w PDF, bez kosztów dostawy. Zaznacz „pocztą” przy rozmiarze, który drukujesz i wysyłasz — wtedy zamówienie zapyta o dostawę.</p>
         @endif
@@ -224,7 +236,11 @@
     <details @if ($englishOpen) open @endif class="group rounded-[4px] border border-sand-dark bg-linen px-4 py-3">
         <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-[14px] text-graphite">
             <span>Wersja angielska — nieobowiązkowa
-                <span class="mt-0.5 block text-[12.5px] text-hint">{{ $english ? 'Produkt jest w angielskim sklepie pod adresem /en/product/'.$english->slug : 'Bez angielskiej nazwy produkt nie pokaże się w angielskim sklepie.' }}</span>
+                <span class="mt-0.5 block text-[12.5px] text-hint">{{ match (true) {
+                    ! $english => 'Bez angielskiej nazwy produkt nie pokaże się w angielskim sklepie.',
+                    $product->variants->contains(fn ($variant) => $variant->price('EUR') !== null) => 'Produkt jest w angielskim sklepie pod adresem /en/product/'.$english->slug,
+                    default => 'Angielski tekst jest gotowy. Produkt pokaże się pod adresem /en/product/'.$english->slug.', gdy wpiszesz cenę w euro przy rozmiarze.',
+                } }}</span>
             </span>
             <span aria-hidden="true" class="text-[18px] leading-none text-label transition-transform duration-300 group-open:rotate-45">+</span>
         </summary>

@@ -3,6 +3,7 @@
 namespace App\Modules\Catalog\Models;
 
 use App\Modules\Catalog\Database\Factories\ProductVariantFactory;
+use App\Modules\Localization\Support\Locales;
 use App\Modules\Shared\Models\Concerns\HasTranslations;
 use App\Modules\Shared\Support\LowestPrice;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -61,6 +62,35 @@ class ProductVariant extends Model
     }
 
     /**
+     * Prices in currencies other than złoty; the złoty price is price_gross.
+     *
+     * @return HasMany<Price, $this>
+     */
+    public function prices(): HasMany
+    {
+        return $this->hasMany(Price::class);
+    }
+
+    /**
+     * The price of one piece in a currency's smallest unit (grosze, cents) — the currency of the page unless
+     * named. Null when the variant is not for sale in that currency.
+     */
+    public function price(?string $currency = null): ?int
+    {
+        $currency ??= Locales::currency();
+
+        return $currency === Locales::defaultCurrency() ? $this->price_gross : $this->priceIn($currency)?->amount_minor;
+    }
+
+    /** The crossed-out price in the same currency, or null without one. */
+    public function compareAtPrice(?string $currency = null): ?int
+    {
+        $currency ??= Locales::currency();
+
+        return $currency === Locales::defaultCurrency() ? $this->compare_at_price : $this->priceIn($currency)?->compare_at_minor;
+    }
+
+    /**
      * @return HasMany<PriceHistory, $this>
      */
     public function priceHistory(): HasMany
@@ -103,22 +133,51 @@ class ProductVariant extends Model
     }
 
     /**
+     * Variants for sale in a currency — the currency of the page unless named. Every variant has a złoty price.
+     *
+     * @param  Builder<ProductVariant>  $query
+     */
+    #[Scope]
+    protected function pricedIn(Builder $query, ?string $currency = null): void
+    {
+        $currency ??= Locales::currency();
+
+        if ($currency !== Locales::defaultCurrency()) {
+            $query->whereHas('prices', fn (Builder $prices) => $prices->where('currency', $currency))->with('prices');
+        }
+    }
+
+    /**
      * The lowest price in effect during the 30 days before the current price took effect
-     * (Omnibus). Null when there is no discount or no earlier price to compare with,
+     * (Omnibus), in the same currency. Null when there is no discount or no earlier price to compare with,
      * in which case the crossed-out price must not be shown.
      */
-    public function lowestPriceBeforeDiscount(): ?int
+    public function lowestPriceBeforeDiscount(?string $currency = null): ?int
     {
-        if ($this->compare_at_price === null || $this->compare_at_price <= $this->price_gross) {
+        $currency ??= Locales::currency();
+        $price = $this->price($currency);
+        $compareAt = $this->compareAtPrice($currency);
+
+        if ($price === null || $compareAt === null || $compareAt <= $price) {
             return null;
         }
 
-        return LowestPrice::beforeCurrent($this->priceHistory()->orderBy('valid_from')->orderBy('id')->get());
+        return LowestPrice::beforeCurrent($this->priceHistory()->where('currency', $currency)->orderBy('valid_from')->orderBy('id')->get());
+    }
+
+    private function priceIn(string $currency): ?Price
+    {
+        if (! $this->relationLoaded('prices')) {
+            $this->load('prices');
+        }
+
+        return $this->prices->firstWhere('currency', $currency);
     }
 
     private function recordPrice(): void
     {
         $this->priceHistory()->create([
+            'currency' => Locales::defaultCurrency(),
             'price_gross' => $this->price_gross,
             'valid_from' => now(),
         ]);

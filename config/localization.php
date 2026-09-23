@@ -27,6 +27,9 @@ return [
      *
      * Polish only by decision (23.09.2026): workshops and their vouchers, firing, the café offer, the scarf and
      * plant-imprint services, the journal and the gift finder.
+     *
+     * Not yet: the mug configurator and the gift sets come back with their euro prices and English texts, and the
+     * checkout with payment in euro. Until then a euro basket would lead to a złoty checkout (MA-127).
      */
     'paths' => [
         'en' => [
@@ -34,11 +37,9 @@ return [
             'shop.index' => 'shop',
             'shop.category' => 'shop/{category:slug}',
             'product.show' => 'product/{product:slug}',
-            'mug.index' => 'custom-text-mug',
-            'bundles.index' => 'gift-sets',
-            'checkout.index' => 'checkout',
-            'checkout.store' => 'checkout',
-            'checkout.confirmation' => 'checkout/confirmation',
+            'cart.store' => 'basket',
+            'cart.update' => 'basket/{line}',
+            'cart.destroy' => 'basket/{line}',
             'content.about' => 'about',
             'content.studio' => 'studio',
             'content.contact' => 'contact',
@@ -64,8 +65,12 @@ return [
         'product.show' => 'shop.index',
         'shop.category' => 'shop.index',
         'workshops.index' => 'content.about',
-        'vouchers.index' => 'bundles.index',
-        'gifts.index' => 'bundles.index',
+        'vouchers.index' => 'shop.index',
+        'gifts.index' => 'shop.index',
+        // Back on /en/ with euro prices (MA-127).
+        'mug.index' => 'shop.index',
+        'bundles.index' => 'shop.index',
+        'checkout.index' => 'shop.index',
         'journal.index' => 'content.about',
         'journal.show' => 'content.about',
         'firing.index' => 'content.studio',

@@ -51,6 +51,12 @@ trait HasTranslations
         return $locale === Locales::default() || $this->translation($locale) !== null;
     }
 
+    /** Whether the model has a page in $locale. A model can ask for more than its text, e.g. a price in that currency. */
+    public function availableIn(string $locale): bool
+    {
+        return $this->hasTranslation($locale);
+    }
+
     /**
      * The field in the language of the page, or in Polish when it has none. Only for what a customer already chose —
      * a basket line put in on a Polish page — never for what a page offers: the basket must name what is in it.

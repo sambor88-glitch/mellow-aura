@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Table('price_history', timestamps: false)]
-#[Fillable(['product_variant_id', 'price_gross', 'valid_from'])]
+#[Fillable(['product_variant_id', 'currency', 'price_gross', 'valid_from'])]
 class PriceHistory extends Model
 {
     /**
