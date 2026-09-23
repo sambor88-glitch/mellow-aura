@@ -2,6 +2,7 @@
 
 namespace App\Modules\Checkout\Mail;
 
+use App\Modules\Checkout\Mail\Concerns\InOrderLanguage;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Checkout\Support\OrderSummary;
 use App\Modules\Settings\Settings;
@@ -16,7 +17,12 @@ use Illuminate\Mail\Mailables\Envelope;
  */
 class ParcelOnItsWay extends QueuedMail
 {
-    public function __construct(public Order $order) {}
+    use InOrderLanguage;
+
+    public function __construct(public Order $order)
+    {
+        $this->inOrderLanguage($order);
+    }
 
     public function description(): string
     {
@@ -28,16 +34,16 @@ class ParcelOnItsWay extends QueuedMail
         $contact = app(Settings::class)->get('contact_email');
 
         return new Envelope(
-            subject: 'Zamówienie '.$this->order->number.' jest w drodze',
-            replyTo: $contact ? [new Address($contact, 'Kasia z MellowAury')] : [],
+            subject: __('checkout::mail.subject.parcel', ['number' => $this->order->number]),
+            replyTo: $contact ? [new Address($contact, __('checkout::mail.from'))] : [],
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'checkout::mail.parcel-on-its-way',
-            text: 'checkout::mail.parcel-on-its-way-text',
+            view: $this->template('parcel-on-its-way'),
+            text: $this->template('parcel-on-its-way-text'),
             with: app(OrderSummary::class)->for($this->order),
         );
     }

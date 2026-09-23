@@ -62,7 +62,7 @@ class OrderSummary
     }
 
     /**
-     * Where the parcel goes, in the words the checkout used. Never the studio address:
+     * Where the parcel goes, in the words the checkout used and in the language the summary is read in. Never the studio address:
      * the place for a pickup goes out in a separate message.
      */
     private function delivery(Order $order): string
@@ -74,12 +74,12 @@ class OrderSummary
         }
 
         return match ($order->shipping_method) {
-            ShippingMethods::EMAIL => 'Na adres '.$order->email,
+            ShippingMethods::EMAIL => __('checkout::mail.delivery.email', ['email' => $order->email]),
             'parcel_locker' => $order->locker_code
-                ? 'Paczkomat '.$order->locker_code
-                : 'Paczkomat dobiorę po numerze telefonu '.$order->phone,
-            'courier' => 'Adres dostawy potwierdzę z Tobą przed wysyłką',
-            default => 'Napiszę, kiedy i gdzie możesz odebrać zamówienie',
+                ? __('checkout::mail.delivery.locker', ['code' => $order->locker_code])
+                : __('checkout::mail.delivery.locker_by_phone', ['phone' => $order->phone]),
+            'courier' => __('checkout::mail.delivery.courier'),
+            default => __('checkout::mail.delivery.pickup'),
         };
     }
 }
