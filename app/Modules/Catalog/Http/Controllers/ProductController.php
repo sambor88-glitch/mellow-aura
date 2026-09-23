@@ -5,6 +5,7 @@ namespace App\Modules\Catalog\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Support\ProductStructuredData;
+use App\Modules\Localization\Support\Locales;
 use App\Modules\Settings\Settings;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,11 +16,17 @@ class ProductController extends Controller
     public function __invoke(Request $request, Product $product, Settings $settings): View|RedirectResponse
     {
         // A hidden product may still be in Google or in someone's link: its shelf is the closest thing (specification, point 1).
+        // On an English page only when the category is written in English, or its address would have no slug.
         if (! $product->is_published) {
-            return to_route('shop.category', $product->category, 301);
+            return $product->category->hasTranslation(Locales::current())
+                ? to_route('shop.category', $product->category, 301)
+                : to_route('shop.index', status: 301);
         }
 
         $product->load(['category', 'variants' => fn ($query) => $query->orderBy('id'), 'media']);
+        if (Locales::current() !== Locales::default()) {
+            $product->load(['category.translations', 'variants.translations']);
+        }
 
         $variant = $product->variants->firstWhere('id', (int) $request->query('wariant')) ?? $product->variants->first();
 
@@ -31,6 +38,7 @@ class ProductController extends Controller
         $related = Product::query()->live()
             ->whereKeyNot($product->getKey())
             ->with(['category', 'variants', 'media'])
+            ->when(Locales::current() !== Locales::default(), fn ($query) => $query->with(['variants.translations']))
             ->orderBy('sort_order')
             ->get()
             ->filter(fn (Product $other) => $other->category->group === $product->category->group)

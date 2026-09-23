@@ -6,6 +6,7 @@ use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
 use App\Modules\Settings\Database\Seeders\SettingsSeeder;
+use App\Modules\Settings\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\App;
 use Tests\TestCase;
@@ -80,6 +81,66 @@ class CatalogTranslationTest extends TestCase
         $this->get('/produkt/'.$polishOnly->getRawOriginal('slug'))
             ->assertDontSee('<link rel="alternate" hreflang=', false)
             ->assertSee('href="'.url('/en/shop').'?unavailable=1" hreflang="en"', false);
+    }
+
+    public function test_the_english_shop_shows_english_pieces_in_english(): void
+    {
+        [$translated, $polishOnly] = $this->twoProducts();
+
+        $this->get('/en/shop')
+            ->assertOk()
+            ->assertSee('<title>Shop — handmade ceramics and crafts | MellowAura</title>', false)
+            ->assertSee('Rough-edged bowl')
+            ->assertSee('href="'.url('/en/product/rough-edged-bowl').'"', false)
+            ->assertSee('>Ceramics (1)</a>', false)
+            ->assertSee('>All (1)</a>', false)
+            ->assertSee('Price: low to high')
+            ->assertSee('1 of 1 pieces on the shelf')
+            ->assertDontSee('Voucher na warsztaty')
+            ->assertDontSee('Miska z surową krawędzią');
+
+        $this->get('/en/shop/ceramics')->assertOk()->assertSee('<link rel="canonical" href="'.url('/en/shop/ceramics').'">', false);
+        $this->get('/en/shop/ceramika')->assertNotFound();
+
+        $this->get('/sklep')
+            ->assertSee('Miska z surową krawędzią')
+            ->assertSee('Voucher na warsztaty')
+            ->assertSee('Cena rosnąco');
+    }
+
+    public function test_the_english_product_page_is_in_english_without_złoty_only_offers(): void
+    {
+        [$translated] = $this->twoProducts();
+        $translated->update(['care_note' => 'Zmywarka tak', 'deviation' => 'Złota krawędź', 'dimensions' => ['height_cm' => '9']]);
+        $translated->translation('en')->update(['description' => 'Thrown by hand, rim left rough.', 'care_note' => 'Dishwasher safe']);
+        $translated->variants()->create(['label' => 'Duża', 'price_gross' => 12900, 'stock' => 1])->translations()->create(['locale' => 'en', 'label' => 'Large']);
+        Setting::query()->updateOrCreate(['key' => 'free_shipping_threshold'], ['value' => json_encode(30000)]);
+
+        $this->get('/en/product/rough-edged-bowl')
+            ->assertOk()
+            ->assertSee('<html lang="en">', false)
+            ->assertSee('Rough-edged bowl')
+            ->assertSee('Thrown by hand, rim left rough.')
+            ->assertSee('Dishwasher safe')
+            ->assertSee('>Height</span>', false)
+            ->assertSee('Size and price')
+            ->assertSee('>Small</span>', false)
+            ->assertSee('>Large</span>', false)
+            ->assertSee('Add to basket')
+            ->assertSee('Certificate of uniqueness')
+            // No English deviation written: nothing shows, not the Polish one.
+            ->assertDontSee('Złota krawędź')
+            ->assertDontSee('Please note:')
+            ->assertDontSee('BLIK')
+            ->assertDontSee('free from')
+            ->assertDontSee('Zmywarka tak');
+
+        $this->get('/produkt/miska-z-surowa-krawedzia')
+            ->assertSee('Rozmiar i cena')
+            ->assertSee('Zmywarka tak')
+            ->assertSee('Złota krawędź')
+            ->assertSee('BLIK')
+            ->assertSee('gratis od');
     }
 
     /** @return array{Product, Product} */

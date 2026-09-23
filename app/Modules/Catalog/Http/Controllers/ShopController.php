@@ -5,6 +5,7 @@ namespace App\Modules\Catalog\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
+use App\Modules\Localization\Support\Locales;
 use App\Modules\Shared\Support\BreadcrumbStructuredData;
 use Collator;
 use Illuminate\Http\Request;
@@ -14,12 +15,12 @@ use Illuminate\View\View;
 
 class ShopController extends Controller
 {
-    /** @var array<string, string> */
+    /** @var array<string, string> sort => its label in catalog::shop */
     private const SORTS = [
-        '' => 'Polecane',
-        'price_asc' => 'Cena rosnąco',
-        'price_desc' => 'Cena malejąco',
-        'name' => 'Nazwa A–Z',
+        '' => 'sort_featured',
+        'price_asc' => 'sort_price_asc',
+        'price_desc' => 'sort_price_desc',
+        'name' => 'sort_name',
     ];
 
     public function __invoke(Request $request, ?Category $category = null): View
@@ -28,7 +29,12 @@ class ShopController extends Controller
         $sort = (string) $request->query('sort', '');
         $sort = array_key_exists($sort, self::SORTS) ? $sort : '';
 
-        $live = Product::query()->live()->with(['category', 'variants', 'media'])->orderBy('sort_order')->get();
+        $live = Product::query()->live()
+            ->with(['category', 'variants', 'media'])
+            // Only where they are read: a Polish page reads the Polish columns.
+            ->when(Locales::current() !== Locales::default(), fn ($query) => $query->with(['category.translations', 'variants.translations']))
+            ->orderBy('sort_order')
+            ->get();
 
         $products = $this->sorted(
             $live->filter(fn (Product $product) => $this->inCategory($product, $category) && $this->matches($product, $search))->values(),
@@ -39,7 +45,7 @@ class ShopController extends Controller
         $baseUrl = $category ? route('shop.category', $category) : route('shop.index');
         $withQuery = fn (string $url, array $query) => $url.(($query = array_filter($query)) ? '?'.http_build_query($query) : '');
 
-        $chips = Category::query()->orderBy('sort_order')->get()
+        $chips = Category::query()->translatedInto()->orderBy('sort_order')->get()
             ->map(fn (Category $item) => [$item, $live->filter(fn (Product $product) => $this->inCategory($product, $item))->count()])
             ->filter(fn (array $pair) => $pair[1] > 0 || $pair[0]->is($category))
             ->map(fn (array $pair) => [
@@ -48,14 +54,14 @@ class ShopController extends Controller
                 'active' => $pair[0]->is($category),
             ])
             ->prepend([
-                'label' => 'Wszystkie ('.$live->count().')',
+                'label' => __('catalog::shop.all', ['count' => $live->count()]),
                 'url' => $withQuery(route('shop.index'), ['q' => $search, 'sort' => $sort]),
                 'active' => $category === null,
             ])
             ->values();
 
         $sorts = collect(self::SORTS)->map(fn (string $label, string $key) => [
-            'label' => $label,
+            'label' => __('catalog::shop.'.$label),
             'url' => $withQuery($baseUrl, ['q' => $search, 'sort' => $key]),
             'active' => $key === $sort,
         ])->values();
@@ -72,8 +78,8 @@ class ShopController extends Controller
             'clearSearchUrl' => $withQuery($baseUrl, ['sort' => $sort]),
             // The same trail the page shows as links.
             'structuredData' => $category ? BreadcrumbStructuredData::for([
-                ['Strona główna', url('/')],
-                ['Produkty', route('shop.index')],
+                [__('catalog::shop.home'), route('home')],
+                [__('catalog::shop.products'), route('shop.index')],
                 [$category->name, $baseUrl],
             ]) : null,
         ]);
@@ -107,8 +113,10 @@ class ShopController extends Controller
 
     private function compareNames(string $a, string $b): int
     {
-        static $collator;
-        $collator ??= class_exists(Collator::class) ? new Collator('pl_PL') : false;
+        // The alphabet of the page: ł after l in Polish, plain A–Z in English. One per language, since a process
+        // (tests, Octane) serves pages in both.
+        static $collators = [];
+        $collator = $collators[Locales::current()] ??= class_exists(Collator::class) ? new Collator(Locales::ogLocale()) : false;
 
         return $collator ? (int) $collator->compare($a, $b) : strcmp($a, $b);
     }

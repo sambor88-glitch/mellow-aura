@@ -7,7 +7,8 @@
     // One tile is about 290 px wide on a computer and fills the phone screen minus the page padding.
     $srcset = $image ? \App\Modules\Catalog\Support\ProductPhoto::srcset($image) : null;
     $variants = $product->variants->count();
-    $variantsLabel = in_array($variants % 10, [2, 3, 4], true) && ! in_array($variants % 100, [12, 13, 14], true) ? 'warianty' : 'wariantów';
+    $few = in_array($variants % 10, [2, 3, 4], true) && ! in_array($variants % 100, [12, 13, 14], true);
+    $variantsLabel = __($few ? 'catalog::card.variants_few' : 'catalog::card.variants_many', ['count' => $variants]);
 @endphp
 <div data-shelf-card class="group relative animate-ma-up" style="animation-delay: {{ $delay }}s">
 <a href="{{ route('product.show', $product) }}" class="block text-ink hover:text-ink">
@@ -32,7 +33,7 @@
         <span class="text-[10px] tracking-[0.22em] whitespace-nowrap text-label uppercase">{{ $product->category->name }}</span>
     </div>
     @if ($withVariantCount && $variants > 1)
-        <div class="mt-1 text-[12px] text-label">{{ $variants }} {{ $variantsLabel }}</div>
+        <div class="mt-1 text-[12px] text-label">{{ $variantsLabel }}</div>
     @endif
 </a>
 <x-catalog::favorite-button :product="$product"

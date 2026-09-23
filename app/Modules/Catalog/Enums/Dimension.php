@@ -16,14 +16,7 @@ enum Dimension: string
 
     public function label(): string
     {
-        return match ($this) {
-            self::Height => 'Wysokość',
-            self::Width => 'Szerokość',
-            self::Diameter => 'Średnica',
-            self::Circumference => 'Obwód',
-            self::Thickness => 'Grubość',
-            self::Capacity => 'Pojemność',
-        };
+        return __('catalog::enums.dimension.'.$this->value);
     }
 
     public function unit(): string

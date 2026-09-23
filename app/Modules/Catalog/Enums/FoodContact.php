@@ -16,10 +16,7 @@ enum FoodContact: string
      */
     public function label(): string
     {
-        return match ($this) {
-            self::Suitable => 'Do kontaktu z żywnością',
-            self::NotSuitable => 'Nie do kontaktu z żywnością',
-        };
+        return __('catalog::enums.food_contact.'.$this->value);
     }
 
     /**
