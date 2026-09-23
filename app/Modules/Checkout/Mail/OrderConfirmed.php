@@ -2,6 +2,7 @@
 
 namespace App\Modules\Checkout\Mail;
 
+use App\Modules\Checkout\Mail\Concerns\InOrderLanguage;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Checkout\Support\OrderSummary;
 use App\Modules\Content\Support\LegalPdf;
@@ -19,7 +20,12 @@ use Illuminate\Mail\Mailables\Envelope;
  */
 class OrderConfirmed extends QueuedMail
 {
-    public function __construct(public Order $order) {}
+    use InOrderLanguage;
+
+    public function __construct(public Order $order)
+    {
+        $this->inOrderLanguage($order);
+    }
 
     public function description(): string
     {
@@ -31,8 +37,8 @@ class OrderConfirmed extends QueuedMail
         $contact = app(Settings::class)->get('contact_email');
 
         return new Envelope(
-            subject: 'Zamówienie '.$this->order->number.' jest opłacone',
-            replyTo: $contact ? [new Address($contact, 'Kasia z MellowAury')] : [],
+            subject: __('checkout::mail.subject.confirmed', ['number' => $this->order->number]),
+            replyTo: $contact ? [new Address($contact, __('checkout::mail.from'))] : [],
         );
     }
 
@@ -52,8 +58,8 @@ class OrderConfirmed extends QueuedMail
     public function content(): Content
     {
         return new Content(
-            view: 'checkout::mail.order-confirmed',
-            text: 'checkout::mail.order-confirmed-text',
+            view: $this->template('order-confirmed'),
+            text: $this->template('order-confirmed-text'),
             with: app(OrderSummary::class)->for($this->order),
         );
     }

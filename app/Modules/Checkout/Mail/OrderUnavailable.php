@@ -2,6 +2,7 @@
 
 namespace App\Modules\Checkout\Mail;
 
+use App\Modules\Checkout\Mail\Concerns\InOrderLanguage;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Checkout\Support\OrderSummary;
 use App\Modules\Settings\Settings;
@@ -16,7 +17,12 @@ use Illuminate\Mail\Mailables\Envelope;
  */
 class OrderUnavailable extends QueuedMail
 {
-    public function __construct(public Order $order) {}
+    use InOrderLanguage;
+
+    public function __construct(public Order $order)
+    {
+        $this->inOrderLanguage($order);
+    }
 
     public function description(): string
     {
@@ -28,16 +34,16 @@ class OrderUnavailable extends QueuedMail
         $contact = app(Settings::class)->get('contact_email');
 
         return new Envelope(
-            subject: 'Zamówienie '.$this->order->number.' — zwrócę całą wpłatę',
-            replyTo: $contact ? [new Address($contact, 'Kasia z MellowAury')] : [],
+            subject: __('checkout::mail.subject.unavailable', ['number' => $this->order->number]),
+            replyTo: $contact ? [new Address($contact, __('checkout::mail.from'))] : [],
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'checkout::mail.order-unavailable',
-            text: 'checkout::mail.order-unavailable-text',
+            view: $this->template('order-unavailable'),
+            text: $this->template('order-unavailable-text'),
             with: app(OrderSummary::class)->for($this->order),
         );
     }

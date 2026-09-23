@@ -28,7 +28,7 @@ return [
      * Polish only by decision (23.09.2026): workshops and their vouchers, firing, the café offer, the scarf and
      * plant-imprint services, the journal and the gift finder.
      *
-     * Not yet: the mug configurator and the gift sets come back with their euro prices and English texts (MA-127).
+     * Not yet: the gift sets come back with their euro prices and English texts (MA-127).
      */
     'paths' => [
         'en' => [
@@ -36,6 +36,7 @@ return [
             'shop.index' => 'shop',
             'shop.category' => 'shop/{category:slug}',
             'product.show' => 'product/{product:slug}',
+            'mug.index' => 'custom-text-mug',
             'cart.store' => 'basket',
             'cart.update' => 'basket/{line}',
             'cart.destroy' => 'basket/{line}',
@@ -70,7 +71,6 @@ return [
         'vouchers.index' => 'shop.index',
         'gifts.index' => 'shop.index',
         // Back on /en/ with euro prices (MA-127).
-        'mug.index' => 'shop.index',
         'bundles.index' => 'shop.index',
         'journal.index' => 'content.about',
         'journal.show' => 'content.about',

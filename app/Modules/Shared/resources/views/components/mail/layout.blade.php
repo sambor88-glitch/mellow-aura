@@ -1,7 +1,7 @@
 @props(['title' => 'MellowAura', 'preheader' => ''])
 {{-- E-mail clients ignore most CSS, so every style is inline and the layout is tables. Colours come from the palette in mellowaura-design. --}}
 <!doctype html>
-<html lang="pl">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">

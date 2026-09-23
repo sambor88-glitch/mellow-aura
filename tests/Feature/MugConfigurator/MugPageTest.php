@@ -44,6 +44,45 @@ class MugPageTest extends TestCase
             ->assertSeeInOrder(['x-data="buyBar(\'#mug-form [type=submit]\')"', '79,00 zł', 'Średni · wnętrze: Turkus', 'Wpisz napis'], false);
     }
 
+    public function test_the_english_page_sells_the_mug_in_euro_in_english(): void
+    {
+        $this->get('/en/custom-text-mug')
+            ->assertOk()
+            ->assertSee('<title>Custom text mug — your words stamped into clay</title>', false)
+            ->assertSeeInOrder(['Home', 'Custom text mug'])
+            ->assertSeeInOrder(['Your text', 'Mute the stamp', 'Split into lines'])
+            ->assertSeeInOrder(['Size', 'Small 200 ml', '€19.00', 'Medium 300 ml', '€19.00', 'Large 400 ml', '€19.00'])
+            ->assertSeeInOrder(['Inside colour', 'Turquoise', 'Cobalt', 'Brick red', 'Graphite', 'Powder pink'])
+            ->assertSeeInOrder(['Add to basket', '€19.00'])
+            ->assertSee('data-limit="I can fit 3 lines of 16 characters"', false)
+            ->assertSee('"priceCurrency":"EUR"', false)
+            // Kasia's Polish texts from the panel, BLIK and free delivery stay on the Polish page.
+            ->assertDontSee('Kubek, który mówi to')
+            ->assertDontSee('BLIK')
+            ->assertDontSee('zł</span>', false);
+
+        $content = $this->postJson('/en/basket', ['type' => 'mug', 'text' => 'not today', 'size' => 'Duży', 'glaze' => 'cobalt'])
+            ->assertOk()
+            ->assertJson(['count' => 1, 'notice' => 'Your mug is in the basket'])
+            ->json('content');
+        $this->assertStringContainsString('“NOT TODAY” · Large 400 ml · cobalt inside', $content);
+        $this->assertStringContainsString('€19.00', $content);
+
+        // The same mug in the Polish basket costs złoty.
+        $this->get('/sklep')->assertSee('95,00 zł');
+    }
+
+    public function test_a_size_without_a_euro_price_stays_off_the_english_page(): void
+    {
+        $sizes = Setting::query()->where('key', 'mug_sizes')->sole()->value;
+        $sizes[0]['price_eur'] = null;
+        Setting::query()->where('key', 'mug_sizes')->update(['value' => json_encode($sizes)]);
+
+        $this->get('/en/custom-text-mug')->assertOk()->assertDontSee('Small 200 ml');
+        $this->postJson('/en/basket', ['type' => 'mug', 'text' => 'hi', 'size' => 'Mały', 'glaze' => 'cobalt'])->assertUnprocessable();
+        $this->get('/kubek-z-napisem')->assertSee('Mały 200 ml');
+    }
+
     public function test_without_sizes_there_is_nothing_to_sell(): void
     {
         Setting::query()->where('key', 'mug_sizes')->update(['value' => json_encode([])]);

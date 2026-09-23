@@ -3,13 +3,17 @@
 namespace Tests\Feature\Checkout;
 
 use App\Models\User;
+use App\Modules\Catalog\Enums\CategoryGroup;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
+use App\Modules\Checkout\Actions\IssueCertificates;
 use App\Modules\Checkout\Enums\PaymentMethod;
 use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Mail\OrderConfirmed;
+use App\Modules\Checkout\Mail\ParcelOnItsWay;
 use App\Modules\Checkout\Models\Order;
+use App\Modules\Checkout\Support\CertificatePdf;
 use App\Modules\Monitoring\Support\Alerts;
 use App\Modules\Payments\Gateways\StripeGateway;
 use App\Modules\Settings\Models\Setting;
@@ -97,6 +101,59 @@ class EuroCheckoutTest extends TestCase
         Mail::assertQueued(OrderConfirmed::class, fn (OrderConfirmed $mail) => preg_match('/€43\.50|43,50 €/u', $mail->render()) && ! preg_match('/\d,\d\d zł/u', $mail->render()));
     }
 
+    public function test_the_customer_hears_from_kasia_in_english_and_kasia_in_polish(): void
+    {
+        Setting::create(['key' => 'owner_email', 'value' => 'kasia@example.com']);
+        $this->basket();
+
+        $this->post('/en/checkout', $this->form());
+        $order = Order::sole();
+
+        Mail::assertQueued(OrderConfirmed::class, function (OrderConfirmed $mail) use ($order) {
+            $html = $mail->render();
+
+            return $mail->locale === 'en'
+                && $mail->envelope()->subject === 'Order '.$order->number.' is paid'
+                && str_contains($html, '<html lang="en">')
+                && str_contains($html, 'Thank you. I’m packing.')
+                && str_contains($html, 'I’ll find your parcel locker by your phone number, 600100200')
+                && str_contains($html, 'InPost parcel locker')
+                && str_contains($html, '<strong>Total</strong>')
+                && str_contains($html, '€43.50')
+                && ! str_contains($html, 'Dziękuję');
+        });
+
+        // The shipping notice later on, from the panel, speaks the order's language too.
+        $order->update(['tracking_number' => '6000123']);
+        $notice = new ParcelOnItsWay($order->fresh());
+        $this->assertSame('Order '.$order->number.' is on its way', $notice->envelope()->subject);
+        $this->assertStringContainsString('Your parcel is on its way', $notice->render());
+    }
+
+    public function test_an_english_order_gets_english_certificates(): void
+    {
+        $variant = $this->basket();
+        $variant->product->update(['care_note' => 'Myć ręcznie', 'dimensions' => ['height_cm' => '9']]);
+        $variant->product->translation('en')->update(['care_note' => 'Wash by hand']);
+        Setting::create(['key' => 'care_rule_ceramics', 'value' => 'Zmywarka tak']);
+        $this->post('/en/checkout', $this->form());
+        $order = Order::sole();
+        // Kasia prints it from the Polish panel.
+        app()->setLocale('pl');
+
+        $html = app(CertificatePdf::class)->html(app(IssueCertificates::class)($order), $order->locale);
+
+        foreach (['<html lang="en">', 'certificate of uniqueness', 'Painted mug', 'Wash by hand', 'Height 9 cm', 'Fired on', 'Care'] as $text) {
+            $this->assertStringContainsString($text, $html);
+        }
+        foreach (['certyfikat unikatu', 'Myć ręcznie', 'Zmywarka tak', 'Pielęgnacja'] as $text) {
+            $this->assertStringNotContainsString($text, $html);
+        }
+        $this->assertSame('certificates-'.$order->number.'.pdf', CertificatePdf::filename($order->number, 'en'));
+        // The panel itself stays in Polish.
+        $this->assertSame('pl', app()->getLocale());
+    }
+
     public function test_blik_never_takes_euro(): void
     {
         $this->basket();
@@ -169,6 +226,20 @@ class EuroCheckoutTest extends TestCase
         $this->get('/panel/ustawienia')->assertSee('InPost Paczkomat — w angielskiej kasie');
     }
 
+    public function test_delivery_gets_a_working_euro_price_that_never_overwrites_the_panel(): void
+    {
+        Setting::query()->where('key', 'shipping_methods')->update(['value' => json_encode([
+            ['code' => 'parcel_locker', 'label' => 'InPost Paczkomat', 'price_gross' => 1600],
+            ['code' => 'courier', 'label' => 'Kurier InPost', 'price_gross' => 2200, 'price_eur' => 900],
+            ['code' => 'studio_pickup', 'label' => 'Odbiór w pracowni', 'price_gross' => 0],
+        ])]);
+
+        (require base_path('app/Modules/Settings/Database/Migrations/2026_09_23_180000_add_working_euro_delivery_prices.php'))->up();
+
+        $methods = collect(Setting::query()->where('key', 'shipping_methods')->sole()->value)->keyBy('code');
+        $this->assertSame([1200, 900, 0], [$methods['parcel_locker']['price_eur'], $methods['courier']['price_eur'], $methods['studio_pickup']['price_eur']]);
+    }
+
     /** @param  array<string, mixed>  $attributes */
     private function order(array $attributes): Order
     {
@@ -189,6 +260,7 @@ class EuroCheckoutTest extends TestCase
     {
         $category = Category::factory()->create();
         $category->translations()->create(['locale' => 'en', 'name' => 'Ceramics', 'slug' => 'ceramics']);
+        $category->update(['group' => CategoryGroup::Ceramics]);
         $product = Product::factory()->create(['name' => 'Malowany kubek', 'category_id' => $category->id, 'stamp_enabled' => false]);
         $product->translations()->create(['locale' => 'en', 'name' => 'Painted mug', 'slug' => 'painted-mug']);
         $variant = ProductVariant::factory()->create(['product_id' => $product->id, 'label' => '', 'price_gross' => 14900, 'stock' => 10]);

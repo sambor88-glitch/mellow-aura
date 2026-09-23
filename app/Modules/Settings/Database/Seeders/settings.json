@@ -18,19 +18,22 @@
                 "code": "parcel_locker",
                 "label": "InPost Paczkomat",
                 "note": "1–2 dni robocze",
-                "price_gross": 1600
+                "price_gross": 1600,
+                "price_eur": 1200
             },
             {
                 "code": "courier",
                 "label": "Kurier InPost",
                 "note": "Do rąk, 1 dzień",
-                "price_gross": 2200
+                "price_gross": 2200,
+                "price_eur": 1200
             },
             {
                 "code": "studio_pickup",
                 "label": "Odbiór w pracowni",
                 "note": "Kraków, po umówieniu",
-                "price_gross": 0
+                "price_gross": 0,
+                "price_eur": 0
             }
         ]
     },
@@ -185,17 +188,20 @@
             {
                 "label": "Mały",
                 "capacity_ml": 200,
-                "price_gross": 6900
+                "price_gross": 6900,
+                "price_eur": 1900
             },
             {
                 "label": "Średni",
                 "capacity_ml": 300,
-                "price_gross": 7900
+                "price_gross": 7900,
+                "price_eur": 1900
             },
             {
                 "label": "Duży",
                 "capacity_ml": 400,
-                "price_gross": 9500
+                "price_gross": 9500,
+                "price_eur": 1900
             }
         ]
     },

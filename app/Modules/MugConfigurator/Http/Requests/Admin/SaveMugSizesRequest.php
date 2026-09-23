@@ -29,6 +29,8 @@ class SaveMugSizesRequest extends FormRequest
             'sizes.*.label' => ['required', 'string', 'max:30', 'distinct:ignore_case'],
             'sizes.*.capacity' => ['nullable', 'integer', 'min:1', 'max:2000'],
             'sizes.*.price' => ['required', 'regex:/^\d{1,5}([.,]\d{1,2})?$/'],
+            // For the English shop; empty leaves the size out of it.
+            'sizes.*.price_eur' => ['nullable', 'regex:/^\d{1,5}([.,]\d{1,2})?$/'],
             'max_chars_per_line' => ['required', 'integer', 'min:4', 'max:'.MugOptions::MAX_CHARS_PER_LINE],
             'max_lines' => ['required', 'integer', 'min:1', 'max:'.MugOptions::MAX_LINES],
         ];
@@ -49,13 +51,14 @@ class SaveMugSizesRequest extends FormRequest
             'sizes.*.capacity.*' => 'Pojemność to liczba mililitrów, np. 300 — albo puste pole',
             'sizes.*.price.required' => 'Wpisz cenę, np. 79 albo 79,90',
             'sizes.*.price.regex' => 'Wpisz cenę, np. 79 albo 79,90',
+            'sizes.*.price_eur.regex' => 'Wpisz cenę w euro, np. 19 albo 19,50 — albo zostaw puste pole',
             'max_chars_per_line.*' => 'Znaków w linii: od 4 do '.MugOptions::MAX_CHARS_PER_LINE,
             'max_lines.*' => 'Liczba linii: od 1 do '.MugOptions::MAX_LINES,
         ];
     }
 
     /**
-     * @return array{mug_sizes: list<array{label: string, capacity_ml: ?int, price_gross: int}>, mug_max_chars_per_line: int, mug_max_lines: int}
+     * @return array{mug_sizes: list<array{label: string, capacity_ml: ?int, price_gross: int, price_eur: ?int}>, mug_max_chars_per_line: int, mug_max_lines: int}
      */
     public function settings(): array
     {
@@ -65,6 +68,7 @@ class SaveMugSizesRequest extends FormRequest
                     'label' => trim($row['label']),
                     'capacity_ml' => filled($row['capacity'] ?? null) ? (int) $row['capacity'] : null,
                     'price_gross' => Money::parse((string) $row['price']),
+                    'price_eur' => filled($row['price_eur'] ?? null) ? Money::parse((string) $row['price_eur']) : null,
                 ])
                 ->values()
                 ->all(),
@@ -83,6 +87,7 @@ class SaveMugSizesRequest extends FormRequest
                     'label' => is_string($row['label'] ?? null) ? trim($row['label']) : ($row['label'] ?? null),
                     'capacity' => is_string($row['capacity'] ?? null) ? trim($row['capacity'], " \u{00A0}ml") : ($row['capacity'] ?? null),
                     'price' => is_string($row['price'] ?? null) ? trim($row['price'], " \u{00A0}zł") : ($row['price'] ?? null),
+                    'price_eur' => is_string($row['price_eur'] ?? null) ? trim($row['price_eur'], " \u{00A0}€") : ($row['price_eur'] ?? null),
                 ])
                 ->values()
                 ->all(),

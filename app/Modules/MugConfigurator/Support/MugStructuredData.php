@@ -2,7 +2,7 @@
 
 namespace App\Modules\MugConfigurator\Support;
 
-use App\Modules\MugConfigurator\Cart\MugLine;
+use App\Modules\Localization\Support\Locales;
 use App\Modules\Settings\Settings;
 use App\Modules\Shared\Support\BreadcrumbStructuredData;
 use App\Modules\Shared\Support\DeliveryOffers;
@@ -26,23 +26,28 @@ class MugStructuredData
         $brand = Schema::brand()->name(MerchantFeed::BRAND);
         $photo = $options->photoUrl();
 
-        $variants = $options->sizes()->map(function (array $size) use ($url, $brand, $photo, $settings) {
+        // In the currency of the page; delivery is Polish and in złoty, so a euro page leaves it out (as for products).
+        $currency = Locales::currency();
+        $home = $currency === Locales::defaultCurrency();
+        $name = __('mug-configurator::mug.name');
+
+        $variants = $options->sizes()->map(function (array $size) use ($url, $brand, $photo, $settings, $currency, $home, $name) {
             $offer = Schema::offer()
                 ->url($url.'?rozmiar='.MugOptions::sizeKey($size['label']))
-                ->price(Money::decimal($size['price_gross']))
-                ->priceCurrency('PLN')
+                ->price(Money::decimal($size['price']))
+                ->priceCurrency($currency)
                 ->availability(ItemAvailability::InStock)
                 ->itemCondition(OfferItemCondition::NewCondition)
                 ->hasMerchantReturnPolicy(OfferStructuredData::returns(false));
 
-            $shipping = OfferStructuredData::shipping(DeliveryOffers::for($size['price_gross'], false, $settings));
+            $shipping = $home ? OfferStructuredData::shipping(DeliveryOffers::for($size['price_gross'], false, $settings)) : [];
 
             if ($shipping !== []) {
                 $offer->shippingDetails($shipping);
             }
 
             $item = Schema::product()
-                ->name(MugLine::NAME.' — '.$size['name'])
+                ->name($name.' — '.$size['name'])
                 ->sku('mug-'.MugOptions::sizeKey($size['label']))
                 ->brand($brand)
                 ->offers($offer);
@@ -51,13 +56,14 @@ class MugStructuredData
         });
 
         $group = Schema::productGroup()
-            ->name(MugLine::NAME)
+            ->name($name)
             ->url($url)
             ->brand($brand)
             ->productGroupID('kubek-z-napisem')
             ->hasVariant($variants->all());
 
-        if (filled($lead = $settings->get('text_mug_lead'))) {
+        // Kasia's lead from the panel is Polish; an English page describes the mug in its own words.
+        if (filled($lead = $home ? $settings->get('text_mug_lead') : __('mug-configurator::mug.description'))) {
             $group->description((string) $lead);
         }
 
@@ -66,8 +72,8 @@ class MugStructuredData
         }
 
         return $group->toScript().BreadcrumbStructuredData::for([
-            ['Strona główna', url('/')],
-            [MugLine::NAME, $url],
+            [__('mug-configurator::mug.home'), route('home')],
+            [$name, $url],
         ]);
     }
 }

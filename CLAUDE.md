@@ -105,7 +105,8 @@ Szczegóły w `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html`. Tu zasady,
 - Cenę czytasz przez `$variant->price()` i `compareAtPrice()` — w walucie strony. Kwotę pokazujesz przez
   `Money::format($kwota, $waluta)`; bez waluty to złote. `price_gross` to zawsze złote, nigdy „cena strony”.
 - Koszyk liczy w walucie strony. Pozycja bez ceny w tej walucie (`CartLine::pricedIn`) wypada z koszyka na tej
-  stronie i wraca na stronie w swojej walucie. Kubek, zestawy i pakowanie mają na razie tylko złote.
+  stronie i wraca na stronie w swojej walucie. Kubek z napisem ma `price_eur` przy rozmiarze w ustawieniach;
+  zestawy i pakowanie mają na razie tylko złote.
 - Brak tłumaczenia albo brak ceny w EUR ukrywa pozycję na `/en/`. Nigdy nie psuje wersji polskiej
   i nigdy nie podstawia polskiego tekstu pod angielski adres.
 - Warsztaty, voucher, wypał, gastronomia, odcisk rośliny, apaszka, dziennik i „Szukam prezentu” nie istnieją
@@ -116,6 +117,9 @@ Szczegóły w `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html`. Tu zasady,
   Przelewy24, karta i przelew tradycyjny; EUR to karta i Przelewy24. Przelew tradycyjny w euro czeka na konto (MA-124).
 - Zamówienie zapisuje `currency` i `locale`. Każdą kwotę zamówienia pokazujesz przez `$order->money($kwota)`,
   nigdy przez gołe `Money::format` — w mailach i w panelu też.
+- Mail do klientki idzie w języku zamówienia (`Checkout\Mail\Concerns\InOrderLanguage`): list ma szablon
+  na język (`mail/en/…`), wspólne kawałki biorą teksty z `checkout::mail`. Mail do Kasi zawsze po polsku —
+  `QueuedMail` ma domyślnie `pl`. Certyfikat renderuje się w języku zamówienia.
 - Dostawa w euro to `price_eur` przy metodzie w ustawieniach i angielska nazwa w `checkout::shipping`. Bez jednego
   z nich metody nie ma w angielskiej kasie. Darmowa wysyłka działa tylko w złotych.
 - Każde zamówienie zapisuje kraj dostawy i stawkę VAT na pozycji — także wtedy, gdy stawka wynosi zero.
