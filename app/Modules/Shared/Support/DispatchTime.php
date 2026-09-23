@@ -29,7 +29,7 @@ class DispatchTime
     }
 
     /**
-     * „3–5 dni roboczych”, „1 dzień roboczy”, or with $short „3–5 dni”.
+     * „3–5 dni roboczych”, „1 dzień roboczy”, or with $short „3–5 dni” — in the language of the page.
      */
     public static function label(Settings $settings, bool $short = false): ?string
     {
@@ -41,11 +41,11 @@ class DispatchTime
         $range = $min === $max ? (string) $max : $min.'–'.$max;
 
         if ($min === $max && $max === 1) {
-            return $range.($short ? ' dzień' : ' dzień roboczy');
+            return __($short ? 'shared::dispatch.one_short' : 'shared::dispatch.one', ['range' => $range]);
         }
 
         $few = in_array($max % 10, [2, 3, 4], true) && ! in_array($max % 100, [12, 13, 14], true);
 
-        return $range.($short ? ' dni' : ($few ? ' dni robocze' : ' dni roboczych'));
+        return __($short ? 'shared::dispatch.many_short' : ($few ? 'shared::dispatch.few' : 'shared::dispatch.many'), ['range' => $range]);
     }
 }

@@ -8,6 +8,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 
 const INTRO_SEEN = 'ma-intro';
+// The page names the phases in its own language (data-phases); these Polish ones are only the fallback.
 const INTRO_PHASES = [[0, 'surowa glina'], [28, 'suszenie'], [55, 'pierwszy wypał'], [82, 'szkliwo i drugi wypał']];
 
 export default function aura() {
@@ -74,6 +75,12 @@ function intro(lenis) {
     const phase = el.querySelector('[data-intro-phase]');
     const bar = el.querySelector('[data-intro-bar]');
     const counter = { value: 0 };
+    let phases = INTRO_PHASES;
+    try {
+        phases = JSON.parse(el.dataset.phases) || INTRO_PHASES;
+    } catch {
+        // No or broken data-phases: keep the Polish ones.
+    }
 
     const finish = () => {
         el.hidden = true;
@@ -101,7 +108,7 @@ function intro(lenis) {
                 const v = Math.round(counter.value);
                 num.textContent = v;
                 gsap.set(bar, { scaleX: counter.value / 100 });
-                const current = [...INTRO_PHASES].reverse().find(([from]) => v >= from)[1];
+                const current = [...phases].reverse().find(([from]) => v >= from)[1];
                 if (phase.textContent !== current) {
                     phase.textContent = current;
                 }
