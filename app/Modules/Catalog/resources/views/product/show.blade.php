@@ -239,6 +239,9 @@
                         <div>
                             <div class="mb-1 text-ink">{{ __('catalog::product.shipping') }}</div>
                             {{ Str::ucfirst($shippingNote) }}
+                            @if (filled($settings->get(Locales::current() === Locales::default() ? 'text_packing_steps' : 'text_packing_steps_'.Locales::current())))
+                                <a href="{{ route('content.faq') }}#pakowanie" class="mt-1.5 block">{{ __('catalog::product.packing_link') }}</a>
+                            @endif
                         </div>
                     @endif
                     @if ($isGoods)

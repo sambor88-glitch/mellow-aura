@@ -412,7 +412,7 @@
             },
             {
                 "title": "Pakowanie",
-                "text": null
+                "text": "Papier pakowy i wióry albo inne wypełnienie. Wysyłam InPostem, z numerem do śledzenia."
             }
         ]
     },
@@ -444,6 +444,14 @@
                 "answer": "Tak, do Unii Europejskiej. Napisz przed zamówieniem — policzę wysyłkę dla Twojego kraju i dobiorę opakowanie do dystansu."
             }
         ]
+    },
+    {
+        "key": "text_packing_steps",
+        "value": "Każdą rzecz owijam osobno w papier pakowy.\nWolne miejsce w kartonie wypełniam wiórami albo innym wypełnieniem, żeby nic się nie przesuwało w drodze.\nPaczkę nadaję w InPoście.\nKiedy wyjedzie z pracowni, dostajesz mailem numer do śledzenia."
+    },
+    {
+        "key": "text_packing_steps_en",
+        "value": "I wrap every piece separately in packing paper.\nAny empty space in the box gets wood wool or other padding, so nothing moves on the way.\nI send the parcel with InPost.\nOnce it leaves the studio, you get an email with a tracking number."
     },
     {
         "key": "text_home_kasia_heading",

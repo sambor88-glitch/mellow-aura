@@ -28,6 +28,7 @@ return [
     'add_to_cart' => 'Dodaj do koszyka',
     'blik' => 'zapłacisz w 10 sekund kodem z aplikacji banku',
     'shipping' => 'Wysyłka',
+    'packing_link' => 'Jak pakuję i wysyłam →',
     'free_from' => 'gratis od :price',
     'certificate' => 'Certyfikat unikatu',
     'certificate_ceramics' => 'W paczce karta z numerem, datą wypału i podpisem',

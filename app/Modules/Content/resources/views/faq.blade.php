@@ -22,6 +22,20 @@
             </div>
         @endif
 
+        @if ($packingSteps)
+            <section id="pakowanie" aria-labelledby="pakowanie-tytul" class="mt-12 scroll-mt-28">
+                <h2 id="pakowanie-tytul" class="mb-6 font-serif text-[length:clamp(26px,3vw,34px)] leading-[1.15] font-light">{{ __('content::faq.packing_heading') }}</h2>
+                <ol class="grid gap-3">
+                    @foreach ($packingSteps as $step)
+                        <li class="glass flex items-baseline gap-4 rounded-[18px] px-5 py-4 text-[16px] leading-[1.65] text-lead">
+                            <span aria-hidden="true" class="flex-none font-serif text-[22px] leading-none text-brown tabular-nums">{{ $loop->iteration }}</span>
+                            <span class="min-w-0 text-pretty">{{ $step }}</span>
+                        </li>
+                    @endforeach
+                </ol>
+            </section>
+        @endif
+
         @if ($shippingMethods->isNotEmpty())
             <section aria-labelledby="wysylka-i-zwroty" class="mt-12 rounded-[4px] border border-divider bg-cream px-[30px] py-8">
                 <h2 id="wysylka-i-zwroty" class="mb-5 font-serif text-[25px]">Wysyłka i zwroty</h2>
