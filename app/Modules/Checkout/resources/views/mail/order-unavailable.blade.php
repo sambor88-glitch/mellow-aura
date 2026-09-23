@@ -1,7 +1,6 @@
-@use('App\Modules\Shared\Support\Money')
 <x-shared::mail.layout
     :title="'Zamówienie '.$order->number"
-    :preheader="'Zwrócę całą wpłatę — '.Money::format($refund).' — najpóźniej w ciągu 14 dni.'"
+    :preheader="'Zwrócę całą wpłatę — '.$order->money($refund).' — najpóźniej w ciągu 14 dni.'"
 >
     <h1 style="margin: 0 0 12px; font-family: Georgia, 'Times New Roman', serif; font-weight: normal; font-size: 28px; line-height: 1.15; color: #2F2620;">Przepraszam — tego już nie ma na półce</h1>
     <p style="margin: 0 0 14px; color: #2F2620;">
@@ -9,7 +8,7 @@
         chwilę przed zaksięgowaniem Twojej płatności, więc nie wyślę zamówienia {{ $order->number }}.
     </p>
     <p style="margin: 0 0 14px; color: #2F2620;">
-        Zwrócę Ci całą wpłatę — <strong style="font-weight: 600;">{{ Money::format($refund) }}</strong> — najpóźniej w ciągu 14 dni.
+        Zwrócę Ci całą wpłatę — <strong style="font-weight: 600;">{{ $order->money($refund) }}</strong> — najpóźniej w ciągu 14 dni.
     </p>
     <p style="margin: 0 0 4px; color: #5C5043;">
         @if ($contactEmail)

@@ -23,7 +23,7 @@ class TestGateway implements PaymentGateway
             return StartedPayment::done();
         }
 
-        return StartedPayment::rejected('Bank odrzucił kod. Spróbuj jeszcze raz albo zapłać przelewem.');
+        return StartedPayment::rejected(__('payments::gateway.code_refused'));
     }
 
     public function state(Order $order): PaymentState

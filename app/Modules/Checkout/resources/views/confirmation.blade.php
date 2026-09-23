@@ -1,7 +1,11 @@
 @use('App\Modules\Shared\Support\DispatchTime')
-@use('App\Modules\Shared\Support\Money')
 @inject('settings', 'App\Modules\Settings\Settings')
-<x-shared::layout title="Zamówienie | MellowAura" :noindex="true">
+@php
+    $t = fn (string $key, array $replace = []) => __('checkout::checkout.'.$key, $replace);
+    // The order number stands out and can be selected in one tap.
+    $withNumber = fn (string $key) => str_replace(':number', '<strong class="font-medium select-all">'.e($order->number).'</strong>', e($t($key)));
+@endphp
+<x-shared::layout :title="$t('title')" :noindex="true">
     @if ($purchase)
         {{-- Once per order in this browser, so a reload of the confirmation counts no second purchase. --}}
         <x-consent::analytics-event name="purchase" :params="$purchase" :once="'purchase-'.$order->number" />
@@ -20,37 +24,35 @@
                 </svg>
             @endif
             <h1 class="mb-5 animate-[auraBlurIn_1.2s_var(--ease-clay)_.6s_both] font-serif text-[length:clamp(52px,8vw,120px)] leading-[.92] font-light tracking-[-0.03em] text-balance">
-                @if (! $paid) Dziękuję. Czekam na przelew. @elseif ($parcel) Dziękuję. Pakuję. @else Dziękuję. @endif
+                {{ $t(match (true) { ! $paid => 'thanks_waiting', $parcel => 'thanks_packing', default => 'thanks' }) }}
             </h1>
             <p class="mx-auto mb-8 max-w-[48ch] text-[17px] leading-[1.7] text-lead">
                 @if (! $paid)
                     {{-- The money is not in yet, so the page must not say „opłacone”. --}}
-                    Zamówienie <strong class="font-medium select-all">{{ $order->number }}</strong> czeka na przelew. Dane do przelewu są w mailu,
-                    który właśnie wyszedł. Zabieram się za nie, gdy tylko pieniądze dojdą.
+                    {!! $withNumber('waiting_text') !!}
                 @elseif ($parcel)
-                    Zamówienie <strong class="font-medium select-all">{{ $order->number }}</strong> jest opłacone. Dostaniesz maila z potwierdzeniem,
-                    a ode mnie zdjęcie paczki przed wysłaniem — zawijam każdą sztukę osobno.
+                    {!! $withNumber('paid_parcel_text') !!}
                 @else
-                    Zamówienie <strong class="font-medium select-all">{{ $order->number }}</strong> jest opłacone. Dostaniesz maila z potwierdzeniem.
+                    {!! $withNumber('paid_text') !!}
                 @endif
             </p>
             @includeIf('gifts::checkout.vouchers', ['order' => $order])
             @if ($order->hasShortage())
                 <p role="status" class="mx-auto mb-8 max-w-[48ch] rounded-[18px] border border-alert-line bg-alert px-5 py-4 text-[15px] leading-[1.6] text-alert-text">
-                    Ktoś kupił ostatnią sztukę chwilę przed Tobą. Napiszę do Ciebie, żeby ustalić, co dalej — mogę zrobić kolejną albo oddać pieniądze.
+                    {{ $t('shortage') }}
                 </p>
             @endif
             <div class="glass mb-6 inline-flex min-w-[min(380px,100%)] flex-col gap-3.5 rounded-[24px] px-[30px] py-[26px] text-left">
-                <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">{{ $paid ? 'Zapłacone' : 'Do zapłaty' }}</span><span>{{ Money::format($order->total_gross) }}</span></div>
+                <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">{{ $t($paid ? 'paid' : 'to_pay') }}</span><span>{{ $order->money($order->total_gross) }}</span></div>
                 @if ($shippingLabel)
-                    <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">Dostawa</span><span>{{ $shippingLabel }}</span></div>
+                    <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">{{ $t('delivery') }}</span><span>{{ $shippingLabel }}</span></div>
                 @endif
                 @if ($parcel && ($dispatch = DispatchTime::label($settings)))
-                    <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">Wysyłka</span><span>{{ $dispatch }}</span></div>
+                    <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">{{ $t('dispatch') }}</span><span>{{ $dispatch }}</span></div>
                 @endif
             </div>
-            <p class="mb-8 text-[13.5px] text-muted">Mail nie przyszedł w kwadrans? Zajrzyj do folderu ze spamem.</p>
-            <a href="{{ url('/') }}" class="fill-btn inline-flex min-h-[52px] items-center gap-2.5 rounded-full bg-ink px-[30px] text-[14px] font-medium text-linen [--fill:var(--color-navy)] hover:bg-navy hover:text-linen">Wróć na stronę główną <span aria-hidden="true">→</span></a>
+            <p class="mb-8 text-[13.5px] text-muted">{{ $t('spam') }}</p>
+            <a href="{{ route('home') }}" class="fill-btn inline-flex min-h-[52px] items-center gap-2.5 rounded-full bg-ink px-[30px] text-[14px] font-medium text-linen [--fill:var(--color-navy)] hover:bg-navy hover:text-linen">{{ $t('home') }} <span aria-hidden="true">→</span></a>
         </div>
     </div>
     </div>

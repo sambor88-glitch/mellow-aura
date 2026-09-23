@@ -133,8 +133,8 @@ class EuroPricesTest extends TestCase
         // The large size, added in złoty, stays out of the euro basket and comes back on a Polish page.
         $this->get('/en/shop')
             ->assertSee('data-count="1"', false)
-            ->assertSee('Paying in euro is almost ready')
-            ->assertDontSee('Go to checkout')
+            ->assertSee('href="'.url('/en/checkout').'"', false)
+            ->assertSee('Go to checkout')
             ->assertDontSee('Przelewy24');
         $this->get('/sklep')
             ->assertSee('data-count="2"', false)
@@ -143,13 +143,11 @@ class EuroPricesTest extends TestCase
             ->assertSee('Przelewy24');
     }
 
-    public function test_the_checkout_the_mug_and_the_gift_sets_wait_for_euro_on_the_english_side(): void
+    public function test_the_mug_and_the_gift_sets_wait_for_euro_on_the_english_side(): void
     {
-        $this->get('/en/checkout')->assertNotFound();
         $this->get('/en/custom-text-mug')->assertNotFound();
         $this->get('/en/gift-sets')->assertNotFound();
 
-        $this->get('/zamowienie')->assertSee('href="'.url('/en/shop').'?unavailable=1" hreflang="en"', false);
         $this->get('/kubek-z-napisem')->assertSee('href="'.url('/en/shop').'?unavailable=1" hreflang="en"', false);
     }
 

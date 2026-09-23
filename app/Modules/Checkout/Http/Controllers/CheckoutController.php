@@ -13,6 +13,7 @@ use App\Modules\Checkout\Http\Requests\PlaceOrderRequest;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Checkout\Support\ShippingMethods;
 use App\Modules\Content\Support\LegalDocument;
+use App\Modules\Localization\Support\Locales;
 use App\Modules\Payments\Contracts\PaymentGateway;
 use App\Modules\Payments\Enums\PaymentState;
 use App\Modules\Payments\Support\StripeKeys;
@@ -70,7 +71,9 @@ class CheckoutController extends Controller
                 'shipping' => $selectedShipping,
                 'subtotal' => $subtotal,
                 'freeFrom' => $shipping->freeFrom(),
-                'prices' => $methods->map(fn (array $method) => $method['price_gross']),
+                'prices' => $methods->map(fn (array $method) => $method['price']),
+                // What the pay button and the pill say, in the language of the page.
+                'texts' => __('checkout::checkout.js'),
                 // With keys the browser hands the code to Stripe itself; without them the shop pays itself.
                 'stripeKey' => StripeKeys::publishable(),
             ],
@@ -93,7 +96,7 @@ class CheckoutController extends Controller
 
         // The customer pays the sum the screen showed. If a price or stock changed meanwhile, show the new sum first.
         if ((int) $data['expected_total'] !== $subtotal + $shippingGross) {
-            return back()->withInput()->with('checkout_notice', 'W koszyku coś się zmieniło — sprawdź sumę i zapłać jeszcze raz');
+            return back()->withInput()->with('checkout_notice', __('checkout::checkout.changed'));
         }
 
         // The version on the site at the moment of ordering is the one the customer accepted.
@@ -136,7 +139,7 @@ class CheckoutController extends Controller
         if ($order->payment_status === PaymentStatus::Failed) {
             $request->session()->forget('checkout.order');
 
-            return to_route('checkout.index')->with('checkout_notice', 'Bank nie potwierdził płatności. Koszyk czeka nietknięty — spróbuj jeszcze raz albo zapłać przelewem');
+            return to_route('checkout.index')->with('checkout_notice', __('checkout::checkout.bank_refused'));
         }
 
         $cart->clear();
@@ -155,17 +158,14 @@ class CheckoutController extends Controller
     }
 
     /**
-     * What the shop can actually finish today. Stripe takes BLIK with the code from our own field and
-     * Przelewy24 by sending the customer to their bank; a card needs a field on the page that is not
-     * built yet, so the card is not offered at all rather than offered and then refused.
+     * The ways to pay in the currency of the basket (PaymentMethod::for). The card is paid in a Stripe field on
+     * this page, BLIK with the code from our own field and Przelewy24 by sending the customer to their bank.
      *
      * @return Collection<int, PaymentMethod>
      */
     private function paymentMethods(): Collection
     {
-        return collect(PaymentMethod::cases())
-            ->reject(fn (PaymentMethod $method) => StripeKeys::configured() && $method === PaymentMethod::Card)
-            ->values();
+        return collect(PaymentMethod::for(Locales::currency()));
     }
 
     /**

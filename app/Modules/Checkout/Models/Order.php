@@ -6,13 +6,14 @@ use App\Modules\Checkout\Enums\OrderStatus;
 use App\Modules\Checkout\Enums\PaymentMethod;
 use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Support\ShippingMethods;
+use App\Modules\Shared\Support\Money;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     'number', 'status', 'name', 'email', 'phone', 'shipping_method', 'shipping_address', 'locker_code', 'tracking_number',
-    'shipping_gross', 'total_gross', 'payment_method', 'payment_status', 'payment_provider_id', 'paid_at', 'shipped_at', 'completed_at',
+    'shipping_gross', 'total_gross', 'currency', 'locale', 'payment_method', 'payment_status', 'payment_provider_id', 'paid_at', 'shipped_at', 'completed_at',
     'note', 'problem_note', 'invoice_nip', 'terms_version', 'terms_accepted_at',
 ])]
 class Order extends Model
@@ -31,6 +32,14 @@ class Order extends Model
     public function withdrawals(): HasMany
     {
         return $this->hasMany(Withdrawal::class);
+    }
+
+    /**
+     * An amount from this order — its total, delivery, an item — in the currency it was paid in.
+     */
+    public function money(int $amount): string
+    {
+        return Money::format($amount, $this->currency ?? 'PLN');
     }
 
     /**

@@ -12,8 +12,8 @@ use Stripe\Exception\ApiErrorException;
 use Stripe\StripeClient;
 
 /**
- * Stripe. BLIK, card and Przelewy24 go through one payment intent; the customer confirms it in the
- * browser, so the card number and the BLIK code never touch our server.
+ * Stripe. BLIK, card and Przelewy24 go through one payment intent in the currency of the order; the customer
+ * confirms it in the browser, so the card number and the BLIK code never touch our server.
  *
  * A bank transfer has nothing to confirm online: the order waits for the money and the customer gets
  * the account number by mail.
@@ -21,12 +21,12 @@ use Stripe\StripeClient;
 class StripeGateway implements PaymentGateway
 {
     /**
-     * What Stripe calls each way of paying. A card is missing on purpose: it needs a field on our page
-     * that is not built yet, and the checkout does not offer what it cannot finish.
+     * What Stripe calls each way of paying. The card is typed into Stripe's own field on the checkout page.
      */
     private const METHODS = [
         PaymentMethod::Blik->value => 'blik',
         PaymentMethod::OnlineTransfer->value => 'p24',
+        PaymentMethod::Card->value => 'card',
     ];
 
     public function __construct(private StripeClient $stripe, private Alerts $alerts) {}
@@ -44,14 +44,14 @@ class StripeGateway implements PaymentGateway
         // Never „done” for a way of paying we cannot take — that would leave an order the shop
         // treats as placed and nobody ever pays for.
         if ($method === null) {
-            return StartedPayment::rejected('Tej płatności chwilowo nie obsługujemy. Wybierz BLIK albo przelew.');
+            return StartedPayment::rejected(__('payments::gateway.unsupported'));
         }
 
         try {
             $intent = $this->stripe->paymentIntents->create([
-                // Grosze, exactly as the order keeps them.
+                // Grosze or cents, exactly as the order keeps them, in the currency it was placed in.
                 'amount' => $order->total_gross,
-                'currency' => 'pln',
+                'currency' => strtolower($order->currency ?? 'PLN'),
                 'payment_method_types' => [$method],
                 // The bank application shows this line, so it says who is taking the money and for which order.
                 'description' => 'MellowAura '.$order->number,
@@ -60,7 +60,7 @@ class StripeGateway implements PaymentGateway
         } catch (ApiErrorException $exception) {
             $this->alerts->send('stripe-intent', 'Stripe nie przyjął płatności', $order->number.': '.$exception->getMessage());
 
-            return StartedPayment::rejected('Płatność chwilowo nie działa. Spróbuj za chwilę albo zapłać przelewem.');
+            return StartedPayment::rejected(__('payments::gateway.down'));
         }
 
         $order->update(['payment_provider_id' => $intent->id]);

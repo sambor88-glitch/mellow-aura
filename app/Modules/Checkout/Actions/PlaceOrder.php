@@ -6,6 +6,7 @@ use App\Modules\Cart\CartLine;
 use App\Modules\Checkout\Enums\OrderStatus;
 use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Models\Order;
+use App\Modules\Localization\Support\Locales;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -35,6 +36,9 @@ class PlaceOrder
                 'shipping_address' => $address ?: null,
                 'shipping_gross' => $shippingGross,
                 'total_gross' => $lines->sum(fn (CartLine $line) => $line->total()) + $shippingGross,
+                // The cart counts in the currency of the page, so the order is paid in it and speaks its language.
+                'currency' => Locales::currency(),
+                'locale' => Locales::current(),
                 'payment_method' => $data['payment_method'],
                 'payment_status' => PaymentStatus::Pending,
                 'note' => $data['note'] ?? null,

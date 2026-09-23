@@ -1,7 +1,6 @@
-@use('App\Modules\Shared\Support\Money')
 <x-shared::mail.layout
     :title="'Zamówienie '.$order->number"
-    :preheader="'Zapłacone '.Money::format($order->total_gross).'.'.($parcel ? ' Zanim paczka wyjdzie, wyślę Ci jej zdjęcie.' : '')"
+    :preheader="'Zapłacone '.$order->money($order->total_gross).'.'.($parcel ? ' Zanim paczka wyjdzie, wyślę Ci jej zdjęcie.' : '')"
 >
     <h1 style="margin: 0 0 12px; font-family: Georgia, 'Times New Roman', serif; font-weight: normal; font-size: 30px; line-height: 1.15; color: #2F2620;">{{ $parcel ? 'Dziękuję. Pakuję.' : 'Dziękuję.' }}</h1>
     <p style="margin: 0 0 22px; color: #5C5043;">
@@ -17,7 +16,7 @@
                 <td style="background: #F7ECE9; border: 1px solid #E0C3BC; border-radius: 4px; padding: 14px 16px; font-size: 14.5px; line-height: 1.6; color: #7A3A2E;">
                     Ktoś kupił ostatnią sztukę chwilę przed zaksięgowaniem Twojej płatności:
                     @foreach ($missing as $item){{ $item->product_name }} ({{ $item->variant_label }}@if ($item->missing_quantity > 1), brakuje {{ $item->missing_quantity }} szt.@endif){{ $loop->last ? '.' : ', ' }}@endforeach
-                    Za brakujące sztuki zwrócę Ci {{ Money::format($refund) }} — najpóźniej w ciągu 14 dni. Jeśli wolisz podobną sztukę na zamówienie, odpisz na tego maila.
+                    Za brakujące sztuki zwrócę Ci {{ $order->money($refund) }} — najpóźniej w ciągu 14 dni. Jeśli wolisz podobną sztukę na zamówienie, odpisz na tego maila.
                 </td>
             </tr>
         </table>

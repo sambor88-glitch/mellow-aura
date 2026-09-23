@@ -7,8 +7,8 @@ use App\Modules\Shared\Support\Money;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * The „Dostawa i opłaty” card: the free-shipping threshold, the price of each delivery option and how many
- * working days an item from the shelf takes to leave the studio.
+ * The „Dostawa i opłaty” card: the free-shipping threshold, the price of each delivery option (in złoty, and in
+ * euro for the English checkout) and how many working days an item from the shelf takes to leave the studio.
  */
 class SaveShippingRequest extends FormRequest
 {
@@ -32,6 +32,9 @@ class SaveShippingRequest extends FormRequest
             'gift_wrap_price' => ['nullable', 'regex:'.self::PRICE],
             'shipping' => ['nullable', 'array'],
             'shipping.*' => ['required', 'regex:'.self::PRICE],
+            // The same delivery paid in euro on the English checkout; empty means not offered there.
+            'shipping_eur' => ['nullable', 'array'],
+            'shipping_eur.*' => ['nullable', 'regex:'.self::PRICE],
             'dispatch_days_min' => ['nullable', 'integer', 'min:1', 'max:60'],
             'dispatch_days_max' => ['nullable', 'integer', 'min:1', 'max:60'],
         ];
@@ -49,6 +52,7 @@ class SaveShippingRequest extends FormRequest
             'gift_wrap_price.regex' => 'Wpisz cenę, np. 12 — puste pole wyłącza pakowanie na prezent',
             'shipping.*.required' => $price,
             'shipping.*.regex' => $price,
+            'shipping_eur.*.regex' => 'Wpisz cenę w euro, np. 5 albo 4,50 — albo zostaw puste pole, a tej dostawy nie będzie w angielskiej kasie',
             'dispatch_days_min.*' => 'Wpisz liczbę dni, np. 3',
             'dispatch_days_max.*' => 'Wpisz liczbę dni, np. 5',
         ];
@@ -67,6 +71,7 @@ class SaveShippingRequest extends FormRequest
         $giftWrap = $this->validated('gift_wrap_price');
         $giftWrap = filled($giftWrap) ? Money::parse((string) $giftWrap) : 0;
         $prices = (array) $this->validated('shipping', []);
+        $euro = (array) $this->validated('shipping_eur', []);
 
         return [
             'free_shipping_threshold' => $threshold > 0 ? $threshold : null,
@@ -75,7 +80,11 @@ class SaveShippingRequest extends FormRequest
             ...($this->has('dispatch_days_min') || $this->has('dispatch_days_max') ? $this->dispatchDays() : []),
             'shipping_methods' => collect((array) $settings->get('shipping_methods', []))
                 ->map(fn (mixed $method) => is_array($method) && array_key_exists((string) ($method['code'] ?? ''), $prices)
-                    ? [...$method, 'price_gross' => Money::parse((string) $prices[$method['code']])]
+                    ? [
+                        ...$method,
+                        'price_gross' => Money::parse((string) $prices[$method['code']]),
+                        'price_eur' => filled($euro[$method['code']] ?? null) ? Money::parse((string) $euro[$method['code']]) : null,
+                    ]
                     : $method)
                 ->values()
                 ->all(),

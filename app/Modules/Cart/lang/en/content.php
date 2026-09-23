@@ -19,6 +19,4 @@ return [
     'delivery_at_checkout' => 'at checkout',
     'total' => 'Total',
     'checkout' => 'Go to checkout',
-    // Shown instead of the button until the checkout takes euro (MA-127).
-    'checkout_soon' => 'Paying in euro is almost ready — the checkout opens in the coming days.',
 ];

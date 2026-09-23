@@ -1,3 +1,4 @@
+@use('App\Modules\Localization\Support\Locales')
 @use('App\Modules\Shared\Support\Money')
 <x-shared::layout title="Wysyłka, płatności i pielęgnacja ceramiki — FAQ"
                   description="Jak myć ceramikę ze złotem, czy można do zmywarki, ile trwa wysyłka, jak zapłacić BLIK-iem i jak wyglądają zwroty."
@@ -33,7 +34,7 @@
                                     <div class="mt-0.5 text-[13px] text-label">{{ $method['note'] }}</div>
                                 @endif
                             </div>
-                            <div class="flex-none font-serif text-[19px] tabular-nums">{{ $method['price_gross'] === 0 ? 'gratis' : Money::format($method['price_gross']) }}</div>
+                            <div class="flex-none font-serif text-[19px] tabular-nums">{{ $method['price'] === 0 ? 'gratis' : Money::format($method['price'], Locales::currency()) }}</div>
                         </div>
                     @endforeach
                 </div>

@@ -1,11 +1,10 @@
-@use('App\Modules\Shared\Support\Money')
 <x-shared::mail.layout
     :title="'Nowe zamówienie '.$order->number"
-    :preheader="$order->name.' · '.Money::format($order->total_gross).' · '.$shippingLabel"
+    :preheader="$order->name.' · '.$order->money($order->total_gross).' · '.$shippingLabel"
 >
     <h1 style="margin: 0 0 12px; font-family: Georgia, 'Times New Roman', serif; font-weight: normal; font-size: 28px; line-height: 1.15; color: #2F2620;">Nowe zamówienie {{ $order->number }}</h1>
     <p style="margin: 0 0 22px; color: #5C5043;">
-        Opłacone: {{ Money::format($order->total_gross) }}, {{ $order->payment_method->label() }}.
+        Opłacone: {{ $order->money($order->total_gross) }}, {{ $order->payment_method->label() }}.
         Odpowiedź na tego maila trafi prosto do osoby, która zamówiła.
     </p>
 
@@ -15,7 +14,7 @@
                 <td style="background: #F7ECE9; border: 1px solid #E0C3BC; border-radius: 4px; padding: 14px 16px; font-size: 14.5px; line-height: 1.6; color: #7A3A2E;">
                     {{ $nothingLeft ? 'Nic z tego zamówienia nie zostało na półce:' : 'Brakuje na półce:' }}
                     @foreach ($missing as $item){{ $item->product_name }} ({{ $item->variant_label }}, {{ $item->missing_quantity }} szt.){{ $loop->last ? '.' : ', ' }}@endforeach
-                    Ktoś zapłacił za to chwilę wcześniej. Klientka dostała maila, że zwrócisz jej {{ Money::format($refund) }} najpóźniej w ciągu 14 dni. Podobną sztukę zrób, jeśli o nią poprosi.
+                    Ktoś zapłacił za to chwilę wcześniej. Klientka dostała maila, że zwrócisz jej {{ $order->money($refund) }} najpóźniej w ciągu 14 dni. Podobną sztukę zrób, jeśli o nią poprosi.
                 </td>
             </tr>
         </table>
