@@ -1,24 +1,25 @@
 # MellowAura
 
-Sklep i strona pracowni ceramiki Kasi Samborskiej z Krakowa. W repozytorium jest na razie prototyp
-i dokumentacja — kodu aplikacji jeszcze nie ma.
+Sklep i strona pracowni ceramiki Kasi Samborskiej z Krakowa. W repozytorium jest prototyp, dokumentacja
+i szkielet aplikacji Laravel 13 (katalogi `app/`, `config/`, `public/` itd.). Serwer serwuje wyłącznie `public/`.
 
 ## Źródła prawdy
 
 | Plik | Rozstrzyga |
 | --- | --- |
-| `MellowAura.dc.html` | wygląd, teksty i zachowanie każdego ekranu — przenoś, nie projektuj od nowa |
+| `Aura - strona glowna.html`, `Aura - ekrany.html` | wygląd i ruch (kierunek „Aura” od 22.09.2026) — przenoś do Blade, nie projektuj od nowa |
+| `MellowAura.dc.html` | teksty, ceny, przebieg i zachowanie każdego ekranu; jego wygląd zastąpiła Aura |
 | `Specyfikacja wdrozenia - MellowAura.dc.html` | adresy, tytuły, opisy, JSON-LD, zakres panelu, integracje |
 | `Plan wdrozenia - Laravel krok po kroku.dc.html` | stos, schemat bazy, harmonogram do 10 listopada |
 | `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html` | drugi język, druga waluta, strefy wysyłki, próg WSTO — rozstrzyga wszystko, co dotyczy `/en/` i euro |
-| `.claude/skills/` | paleta, komponenty, UX, teksty, dostępność — kolory i kroje zmieniasz tylko w `mellowaura-design` |
+| `.claude/skills/` | paleta, efekty, komponenty, UX, teksty, dostępność — kolory, kroje i efekty zmieniasz tylko w `mellowaura-design` |
 
 Pliki `.dc.html` otwierają się w przeglądarce i muszą leżeć obok `support.js`
 (dokumenty do druku także obok `doc-page.js`).
 
 ## Stos
 
-Laravel 13 + Blade, Alpine.js, MySQL, własny panel na Blade (nie Filament), paczki Spatie: medialibrary,
+Laravel 13 + Blade, Alpine.js, GSAP z ScrollTrigger, Lenis i three.js (tylko kubek 3D) przez npm, MySQL, własny panel na Blade (nie Filament), paczki Spatie: medialibrary,
 sitemap, schema-org. Serwer na Forge, przed nim Cloudflare. PHP 8.4 lokalnie i na serwerze.
 Bez Next.js, Astro i WooCommerce — uzasadnienie w planie, punkt 3.
 
@@ -49,12 +50,16 @@ app/Modules/Catalog/
 - Czytać cudze dane przez relację Eloquent wolno.
 - Zdarzenia służą do skutków ubocznych: maile, etykiety InPost, logi. Stanu magazynu nie zdejmuje się
   w listenerze z kolejki — musi zejść w tej samej transakcji co potwierdzenie płatności.
+- Mail dziedziczy po `Shared\Mail\QueuedMail`: idzie przez kolejkę, ponawia się przez dwie godziny, a jeśli nie wyjdzie,
+  trafia do panelu „Niewysłane maile” z opisem z `description()`. Wyjątek to odpowiedź na reklamację — Kasia musi
+  od razu wiedzieć, czy wyszła. Alerty techniczne (`Monitoring\Support\Alerts`) idą od razu, nigdy przez kolejkę.
 - Ekrany panelu należą do modułu, którego dotyczą. `Admin` daje tylko logowanie, układ panelu i menu.
 - Testy: `tests/Feature/<Name>` i `tests/Unit/<Name>`.
 
 Pierwsza fala: `Shared` (układ strony, komponenty Blade, formatowanie kwot, SEO), `Localization` (prefiks
 `/en/`, slugi per język, przełącznik — wchodzi przed modułami z tłumaczonymi treściami), `Settings`, `Admin`,
-`Catalog`, `Cart`, `Checkout`, `Payments`, `Shipping`, `MugConfigurator`, `Gifts`, `Content`.
+`Catalog`, `Cart`, `Checkout`, `Payments`, `Shipping`, `MugConfigurator`, `Gifts`, `Content`, `Consent` (zgody na cookies i Google Analytics),
+`Monitoring` (niewysłane maile w panelu, alerty o błędach, pilnowanie kolejki i harmonogramu).
 Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
 
 ## Sesja i cache w plikach
@@ -131,4 +136,29 @@ Szczegóły w `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html`. Tu zasady,
 
 ## Komendy
 
-Do uzupełnienia po założeniu projektu Laravela: serwer lokalny, testy, migracje.
+Lokalnie wszystko działa w Dockerze (Laravel Sail), bo PHP na Macu to nie 8.4. Strona: http://localhost:8000,
+poczta z aplikacji: http://localhost:8025 (Mailpit).
+
+```bash
+# pierwsze uruchomienie: vendor/ instaluje kontener z PHP 8.4
+docker run --rm -u "$(id -u):$(id -g)" -v "$(pwd):/var/www/html" -w /var/www/html \
+  -e COMPOSER_HOME=/tmp/composer laravelsail/php84-composer:latest composer install
+cp .env.example .env              # potem wartości dla Sail z komentarza na końcu pliku
+./vendor/bin/sail up -d           # PHP 8.4, MySQL 8.4 na porcie 3307, Mailpit
+./vendor/bin/sail artisan key:generate
+./vendor/bin/sail artisan migrate
+npm install && npm run dev        # Vite na Macu, nie w kontenerze
+./vendor/bin/sail artisan queue:listen  # bez tego maile czekają w kolejce i nie docierają do Mailpit
+./vendor/bin/sail test            # testy na bazie `testing` w kontenerze MySQL
+./vendor/bin/sail down            # zatrzymanie kontenerów
+```
+
+- `compose.yaml` buduje `runtimes/8.4`, tak jak na Forge. Sail przy instalacji wybiera najnowsze PHP — nie zmieniaj na 8.5.
+- `npm` uruchamiaj tylko na Macu: `node_modules` z macOS nie działa w kontenerze z Linuksem.
+- Composer i Artisan tylko przez `./vendor/bin/sail`, żeby zależności liczyły się dla PHP 8.4.
+
+## Gałęzie i środowiska
+
+- `dev` → staging na Forge (`*.on-forge.com`), auto-deploy po każdym pushu, `APP_ENV=staging`, `APP_NOINDEX=true`, dostęp za hasłem.
+- `main` → produkcja `mellow-aura.com` (strona produkcyjna powstaje przy starcie), `APP_NOINDEX=false`.
+- Pracujesz na `dev`; do `main` scalasz dopiero przetestowane zmiany.

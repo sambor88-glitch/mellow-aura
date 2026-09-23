@@ -15,7 +15,7 @@ częściej, niż się wydaje.
 
 | Skill | Odpowiada za | Włącza się, gdy mówisz |
 | --- | --- | --- |
-| `mellowaura-design` | paleta, typografia, gotowe komponenty | „ładniej", „spójnie", „w stylu strony" |
+| `mellowaura-design` | kierunek „Aura”: paleta, typografia, szkło, efekty i ruch, gotowe komponenty | „ładniej", „spójnie", „w stylu strony", „animacja" |
 | `mellowaura-strona` | nowe podstrony i sekcje sklepu | „dodaj stronę", „nowa sekcja", „landing" |
 | `mellowaura-panel` | panel właścicielki, CRM, zamówienia | „panel", „lista klientów", „statystyki" |
 | `mellowaura-aplikacja` | telefon, dotyk, aplikacja na ekranie głównym | „na telefonie", „aplikacja", „mobilnie" |
@@ -37,8 +37,8 @@ i podaje poprawiony odcień, jeśli para nie przechodzi normy:
 python3 .claude/skills/mellowaura-dostepnosc/kontrast.py --fix '#A0907D'
 ```
 
-`mellowaura-design` jest podstawą dla wyglądu, `mellowaura-ux` dla zachowania. Jeśli zmieniasz kolor
-albo krój pisma marki, zmieniasz go **w `mellowaura-design`**, a nie w dziewięciu miejscach.
+`mellowaura-design` jest podstawą dla wyglądu, `mellowaura-ux` dla zachowania. Jeśli zmieniasz kolor,
+krój pisma albo efekt, zmieniasz go **w `mellowaura-design`**, a nie w dziewięciu miejscach.
 
 ## Przykłady poleceń
 
