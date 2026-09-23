@@ -1,7 +1,6 @@
-@use('App\Modules\Shared\Support\Money')
 <x-shared::mail.layout
     :title="'Zamówienie '.$order->number"
-    :preheader="'Czekam na płatność '.Money::format($order->total_gross).'. Potwierdzenie przyjęcia do realizacji przyjdzie w osobnym mailu.'"
+    :preheader="'Czekam na płatność '.$order->money($order->total_gross).'. Potwierdzenie przyjęcia do realizacji przyjdzie w osobnym mailu.'"
 >
     <h1 style="margin: 0 0 12px; font-family: Georgia, 'Times New Roman', serif; font-weight: normal; font-size: 30px; line-height: 1.15; color: #2F2620;">Dziękuję za zamówienie</h1>
     <p style="margin: 0 0 22px; color: #5C5043;">
@@ -14,7 +13,7 @@
             <tr>
                 <td style="background: #F7F2EA; border: 1px solid #E2D7C7; border-radius: 4px; padding: 14px 16px; font-size: 14.5px; line-height: 1.7; color: #2F2620;">
                     <div style="margin: 0 0 4px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #726456;">Dane do przelewu</div>
-                    Kwota: {{ Money::format($order->total_gross) }}<br>
+                    Kwota: {{ $order->money($order->total_gross) }}<br>
                     Tytuł: {{ $order->number }}<br>
                     @if ($bankTransfer['account'])
                         Rachunek: {{ $bankTransfer['account'] }}<br>

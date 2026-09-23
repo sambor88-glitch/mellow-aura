@@ -1,4 +1,3 @@
-@use('App\Modules\Shared\Support\Money')
 {{-- The plain-text part is never rendered as HTML, so values print raw instead of as HTML entities. --}}
 Dziękuję za zamówienie
 
@@ -6,7 +5,7 @@ Zamówienie {!! $order->number !!} czeka na płatność. Gdy wpłata dotrze, dos
 @if ($bankTransfer)
 
 DANE DO PRZELEWU
-Kwota: {{ Money::format($order->total_gross) }}
+Kwota: {{ $order->money($order->total_gross) }}
 Tytuł: {!! $order->number !!}
 @if ($bankTransfer['account'])
 Rachunek: {!! $bankTransfer['account'] !!}

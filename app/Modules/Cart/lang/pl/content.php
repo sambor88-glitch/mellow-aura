@@ -18,5 +18,4 @@ return [
     'delivery_at_checkout' => 'w zamówieniu',
     'total' => 'Razem',
     'checkout' => 'Przejdź do zamówienia',
-    'checkout_soon' => '',
 ];

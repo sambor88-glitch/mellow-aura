@@ -88,7 +88,7 @@ class StripeWebhookTest extends TestCase
 
         $this->assertSame(PaymentStatus::Pending, $order->fresh()->payment_status);
         $this->assertSame(3, $variant->fresh()->stock);
-        $this->assertStringContainsString('Kwota 100 gr inna niż w zamówieniu', PaymentEvent::sole()->note);
+        $this->assertStringContainsString('Kwota 100 PLN inna niż w zamówieniu', PaymentEvent::sole()->note);
     }
 
     public function test_a_refused_payment_marks_the_order_and_leaves_the_shelf_alone(): void
@@ -113,6 +113,18 @@ class StripeWebhookTest extends TestCase
         $this->assertSame(PaymentStatus::Paid, $order->fresh()->payment_status);
     }
 
+    public function test_the_same_number_in_another_currency_is_not_the_money_the_order_waits_for(): void
+    {
+        $variant = $this->variant(stock: 3);
+        $order = $this->order($variant, quantity: 2);
+
+        $this->send($this->event(currency: 'eur'))->assertNoContent();
+
+        $this->assertSame(PaymentStatus::Pending, $order->fresh()->payment_status);
+        $this->assertStringContainsString('Kwota 49400 EUR inna niż w zamówieniu (49400 PLN', PaymentEvent::sole()->note);
+        $this->assertSame(3, $variant->fresh()->stock);
+    }
+
     public function test_without_a_webhook_secret_the_address_does_not_exist(): void
     {
         config(['services.stripe.webhook_secret' => null]);
@@ -123,13 +135,13 @@ class StripeWebhookTest extends TestCase
     /**
      * @return array<string, mixed>
      */
-    private function event(string $id = 'evt_test', string $type = 'payment_intent.succeeded', int $amount = 49400): array
+    private function event(string $id = 'evt_test', string $type = 'payment_intent.succeeded', int $amount = 49400, string $currency = 'pln'): array
     {
         return [
             'id' => $id,
             'object' => 'event',
             'type' => $type,
-            'data' => ['object' => ['id' => 'pi_test', 'object' => 'payment_intent', 'amount' => $amount, 'currency' => 'pln']],
+            'data' => ['object' => ['id' => 'pi_test', 'object' => 'payment_intent', 'amount' => $amount, 'currency' => $currency]],
         ];
     }
 

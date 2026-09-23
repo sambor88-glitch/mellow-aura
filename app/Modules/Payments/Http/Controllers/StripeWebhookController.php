@@ -57,7 +57,7 @@ class StripeWebhookController extends Controller
         }
 
         match ($event->type) {
-            'payment_intent.succeeded' => $this->paid($record, $order, (int) ($intent->amount ?? 0), (string) $intentId, $markOrderPaid),
+            'payment_intent.succeeded' => $this->paid($record, $order, (int) ($intent->amount ?? 0), strtoupper((string) ($intent->currency ?? '')), (string) $intentId, $markOrderPaid),
             'payment_intent.payment_failed', 'payment_intent.canceled' => $this->failed($record, $order),
             default => $record->handled('Zdarzenie, którego sklep nie obsługuje'),
         };
@@ -69,7 +69,7 @@ class StripeWebhookController extends Controller
      * Money is in. The shelf, the vouchers and the mails happen in MarkOrderPaid, which is safe to
      * call again — a call that arrives twice changes nothing the second time.
      */
-    private function paid(PaymentEvent $record, ?Order $order, int $amount, string $intentId, MarkOrderPaid $markOrderPaid): void
+    private function paid(PaymentEvent $record, ?Order $order, int $amount, string $currency, string $intentId, MarkOrderPaid $markOrderPaid): void
     {
         if ($order === null) {
             $record->handled('Płatność bez zamówienia w sklepie');
@@ -78,10 +78,12 @@ class StripeWebhookController extends Controller
             return;
         }
 
-        // A sum other than the one on the order is never quietly accepted.
-        if ($amount !== $order->total_gross) {
-            $record->handled('Kwota '.$amount.' gr inna niż w zamówieniu ('.$order->total_gross.' gr)');
-            $this->alerts->send('stripe-amount', 'Zapłacono inną kwotę', $order->number.': Stripe mówi o '.$amount.' gr, zamówienie ma '.$order->total_gross.' gr. Zamówienie zostaje nieopłacone.');
+        // A sum other than the one on the order is never quietly accepted — nor the same number in another currency.
+        if ($amount !== $order->total_gross || $currency !== $order->currency) {
+            $paid = $amount.' '.$currency;
+            $due = $order->total_gross.' '.$order->currency;
+            $record->handled('Kwota '.$paid.' inna niż w zamówieniu ('.$due.', w groszach albo centach)');
+            $this->alerts->send('stripe-amount', 'Zapłacono inną kwotę', $order->number.': Stripe mówi o '.$paid.', zamówienie ma '.$due.' (w groszach albo centach). Zamówienie zostaje nieopłacone.');
 
             return;
         }

@@ -45,7 +45,7 @@ class StripeCheckoutTest extends TestCase
         $this->assertInstanceOf(StripeGateway::class, app(PaymentGateway::class));
     }
 
-    public function test_with_keys_the_shop_stops_offering_a_card_it_has_no_field_for(): void
+    public function test_with_keys_the_card_is_typed_into_stripes_own_field(): void
     {
         config(['services.stripe.key' => 'pk_test_x', 'services.stripe.secret' => 'sk_test_x']);
         $this->cartWithAVase();
@@ -54,7 +54,8 @@ class StripeCheckoutTest extends TestCase
             ->assertOk()
             ->assertSee('BLIK')
             ->assertSee('Przelew tradycyjny')
-            ->assertDontSee('Visa, Mastercard, Apple Pay')
+            ->assertSee('Visa, Mastercard')
+            ->assertSee('x-ref="card"', false)
             ->assertSee('js.stripe.com', false);
     }
 

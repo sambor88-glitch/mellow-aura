@@ -5,14 +5,25 @@
     $tileErrors = $errors->getBag('materialy');
 
     $moneyRows = [
-        ['free_shipping_threshold', 'free_shipping_threshold', 'Darmowa wysyłka od', old('free_shipping_threshold', $freeFrom === null ? null : Money::input((int) $freeFrom))],
-        ...$shippingMethods->map(fn (array $method) => [
-            'shipping['.$method['code'].']',
-            'shipping.'.$method['code'],
-            $method['label'] ?? $method['code'],
-            old('shipping.'.$method['code'], Money::input((int) ($method['price_gross'] ?? 0))),
+        ['free_shipping_threshold', 'free_shipping_threshold', 'Darmowa wysyłka od', old('free_shipping_threshold', $freeFrom === null ? null : Money::input((int) $freeFrom)), 'zł'],
+        ...$shippingMethods->flatMap(fn (array $method) => [
+            [
+                'shipping['.$method['code'].']',
+                'shipping.'.$method['code'],
+                $method['label'] ?? $method['code'],
+                old('shipping.'.$method['code'], Money::input((int) ($method['price_gross'] ?? 0))),
+                'zł',
+            ],
+            // The same delivery on the English checkout; an empty field leaves it out there.
+            [
+                'shipping_eur['.$method['code'].']',
+                'shipping_eur.'.$method['code'],
+                ($method['label'] ?? $method['code']).' — w angielskiej kasie',
+                old('shipping_eur.'.$method['code'], is_numeric($method['price_eur'] ?? null) ? Money::input((int) $method['price_eur']) : null),
+                '€',
+            ],
         ])->all(),
-        ['gift_wrap_price', 'gift_wrap_price', 'Pakowanie na prezent', old('gift_wrap_price', $giftWrapPrice === null ? null : Money::input((int) $giftWrapPrice))],
+        ['gift_wrap_price', 'gift_wrap_price', 'Pakowanie na prezent', old('gift_wrap_price', $giftWrapPrice === null ? null : Money::input((int) $giftWrapPrice)), 'zł'],
     ];
 
     $savedTiles = array_values((array) old('tiles', $tiles));
@@ -36,7 +47,7 @@
                 <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
             @endif
             <div class="grid gap-3">
-                @foreach ($moneyRows as [$name, $key, $label, $value])
+                @foreach ($moneyRows as [$name, $key, $label, $value, $unit])
                     @php($id = 'dostawa-'.str_replace(['.', '_'], '-', $key))
                     <div>
                         <div class="flex items-center justify-between gap-3.5">
@@ -49,7 +60,7 @@
                                            'border-error' => $shippingErrors->has($key),
                                            'border-line' => ! $shippingErrors->has($key),
                                        ])>
-                                <span aria-hidden="true" class="text-[13px] text-label">zł</span>
+                                <span aria-hidden="true" class="w-3 text-[13px] text-label">{{ $unit }}</span>
                             </span>
                         </div>
                         @if ($shippingErrors->has($key))
@@ -78,6 +89,7 @@
                 </fieldset>
             </div>
             <p class="{{ $hint }}">Próg darmowej wysyłki od razu zmienia pasek w koszyku i dopiski „gratis od” na stronie. Puste pole wyłącza darmową wysyłkę, a puste pakowanie znika ze strony zestawów. Czas wysyłki widać na karcie produktu, na stronie głównej, po zamówieniu i w danych dla Google.</p>
+            <p class="{{ $hint }}">Ceny „w angielskiej kasie” płaci klientka z angielskiej wersji sklepu, w euro. Dostawa bez ceny w euro nie pokazuje się tam wcale. Darmowa wysyłka działa tylko w złotych.</p>
             <button class="{{ $button }}">Zapisz dostawę</button>
         </form>
 

@@ -1,6 +1,5 @@
-@use('App\Modules\Shared\Support\Money')
 @foreach ($items as $item)
-- {!! $item->product_name !!}, {!! $item->variant_label !!}@if ($item->quantity > 1), {{ $item->quantity }} × {{ Money::format($item->unit_price_gross) }}@endif: {{ Money::format($item->total()) }}
+- {!! $item->product_name !!}, {!! $item->variant_label !!}@if ($item->quantity > 1), {{ $item->quantity }} × {{ $order->money($item->unit_price_gross) }}@endif: {{ $order->money($item->total()) }}
 @if ($item->custom_text)
   Napis: „{!! str_replace("\n", ' / ', $item->custom_text) !!}”
 @endif
@@ -12,6 +11,6 @@
 @endif
 @endforeach
 
-Produkty: {{ Money::format($subtotal) }}
-Dostawa · {!! $shippingLabel !!}: {{ $order->shipping_gross > 0 ? Money::format($order->shipping_gross) : 'gratis' }}
-Razem: {{ Money::format($order->total_gross) }}
+Produkty: {{ $order->money($subtotal) }}
+Dostawa · {!! $shippingLabel !!}: {{ $order->shipping_gross > 0 ? $order->money($order->shipping_gross) : 'gratis' }}
+Razem: {{ $order->money($order->total_gross) }}

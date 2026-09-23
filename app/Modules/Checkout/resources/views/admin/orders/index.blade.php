@@ -1,5 +1,4 @@
 @use('App\Modules\Checkout\Enums\PaymentStatus')
-@use('App\Modules\Shared\Support\Money')
 @php
     $filter = 'rounded-full border px-[18px] py-[9px] text-[13px]';
     $filterOn = 'border-ink bg-ink text-linen hover:text-linen';
@@ -56,7 +55,7 @@
                         <div class="text-[14.5px] text-ink">{{ $order->name }}</div>
                         <div class="mt-0.5 text-[12.5px] text-label">{{ $order->items->map(fn ($item) => $item->product_name.($item->variant_label === '' ? '' : ' ('.$item->variant_label.')').' × '.$item->quantity)->join(', ') }}</div>
                     </div>
-                    <div class="flex-none font-serif text-[19px] tabular-nums">{{ Money::format($order->total_gross) }}</div>
+                    <div class="flex-none font-serif text-[19px] tabular-nums">{{ $order->money($order->total_gross) }}</div>
                     <span class="flex-none rounded-full px-3 py-[5px] text-[11.5px] {{ $chipClass }}">{{ $chip }}</span>
                     <a href="{{ route('admin.orders.show', $order) }}" class="flex-none rounded-full border border-line-strong px-4 py-2 text-[12.5px] text-ink hover:border-ink hover:bg-sand-dark hover:text-ink">Szczegóły</a>
                 </div>

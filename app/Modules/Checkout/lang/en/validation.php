@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'phone_required_parcel' => 'The courier needs your phone number',
+    'phone_required' => 'Enter your phone number — I’ll only call about your order',
+    'phone_regex' => 'A Polish phone number has 9 digits — check none went missing',
+    'email_required' => 'Enter your e-mail — your confirmation goes there',
+    'email_email' => 'That e-mail address has no @ — check it',
+    'email_max' => 'That e-mail address is too long — check it again',
+    'name_required' => 'Enter your full name — that’s how I’ll address the parcel',
+    'name_max' => 'Your name fits in :max characters',
+    'street_required_with' => 'Add the street and number — the courier needs them',
+    'street_max' => 'The street and number fit in :max characters',
+    'postal_code_required_with' => 'Add the postcode',
+    'postal_code_regex' => 'Write the Polish postcode as on an envelope, e.g. 30-001',
+    'city_required_with' => 'Add the city',
+    'city_max' => 'The city fits in :max characters',
+    'nip_digits' => 'A NIP has 10 digits — check none went missing',
+    'nip_checksum' => 'This NIP doesn’t add up — check the digits',
+    'note_max' => 'The note fits in :max characters',
+    'shipping_method' => 'Choose how I should send your parcel',
+    'payment_method' => 'Choose how you’d like to pay',
+    'blik_code' => 'Enter the 6-digit code from your banking app',
+    'accept_terms' => 'Tick the box to accept the terms — I can’t take the order without it',
+    'accept_deviation' => 'Tick the box to accept this feature — I can’t take the order without it',
+];

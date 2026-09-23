@@ -6,6 +6,7 @@ use App\Modules\Cart\Cart;
 use App\Modules\Cart\CartLine;
 use App\Modules\Checkout\Enums\PaymentMethod;
 use App\Modules\Checkout\Support\ShippingMethods;
+use App\Modules\Localization\Support\Locales;
 use App\Modules\Shared\Support\Nip;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
@@ -45,7 +46,8 @@ class PlaceOrderRequest extends FormRequest
             'shipping_method' => $this->needsDelivery()
                 ? ['required', Rule::in($this->container->make(ShippingMethods::class)->all()->keys())]
                 : ['exclude'],
-            'payment_method' => ['required', Rule::enum(PaymentMethod::class)],
+            // Only the ways to pay in the currency of the basket: BLIK never takes euro.
+            'payment_method' => ['required', Rule::in(array_column(PaymentMethod::for(Locales::currency()), 'value'))],
             'blik_code' => ['exclude_unless:payment_method,blik', 'required', 'digits:6'],
             'expected_total' => ['required', 'integer'],
             'accept_terms' => ['accepted'],
@@ -58,31 +60,33 @@ class PlaceOrderRequest extends FormRequest
      */
     public function messages(): array
     {
+        $t = fn (string $key) => __('checkout::validation.'.$key);
+
         return [
-            'phone.required' => $this->needsDelivery() ? 'Bez numeru telefonu kurier nie znajdzie paczkomatu' : 'Wpisz numer telefonu — zadzwonię tylko w sprawie zamówienia',
-            'phone.regex' => 'Numer telefonu ma 9 cyfr — sprawdź, czy żadna nie uciekła',
-            'email.required' => 'Wpisz e-mail — wyślę na niego potwierdzenie',
-            'email.email' => 'Adres e-mail bez małpy — sprawdź, czy nie uciekła',
-            'email.max' => 'Ten adres e-mail jest za długi — sprawdź go jeszcze raz',
-            'name.required' => 'Wpisz imię i nazwisko — tak podpiszę paczkę',
-            'name.max' => 'Imię i nazwisko zmieszczę do :max znaków',
-            'street.required_with' => 'Dopisz ulicę i numer — bez nich kurier nie trafi',
-            'street.max' => 'Ulicę i numer zmieszczę do :max znaków',
-            'postal_code.required_with' => 'Dopisz kod pocztowy',
-            'postal_code.regex' => 'Kod pocztowy wpisz jak na kopercie, np. 30-001',
-            'city.required_with' => 'Dopisz miasto',
-            'city.max' => 'Nazwę miasta zmieszczę do :max znaków',
-            'invoice_nip.digits' => 'NIP ma 10 cyfr — sprawdź, czy żadna nie uciekła',
-            'note.max' => 'Dopisek zmieszczę do :max znaków',
-            'shipping_method.required' => 'Wybierz, jak mam wysłać paczkę',
-            'shipping_method.in' => 'Wybierz, jak mam wysłać paczkę',
-            'payment_method.required' => 'Wybierz, jak chcesz zapłacić',
-            'payment_method.enum' => 'Wybierz, jak chcesz zapłacić',
-            'blik_code.required' => 'Wpisz 6-cyfrowy kod z aplikacji banku',
-            'blik_code.digits' => 'Wpisz 6-cyfrowy kod z aplikacji banku',
-            'accept_terms.accepted' => 'Zaznacz akceptację regulaminu — bez niej nie mogę przyjąć zamówienia',
+            'phone.required' => $t($this->needsDelivery() ? 'phone_required_parcel' : 'phone_required'),
+            'phone.regex' => $t('phone_regex'),
+            'email.required' => $t('email_required'),
+            'email.email' => $t('email_email'),
+            'email.max' => $t('email_max'),
+            'name.required' => $t('name_required'),
+            'name.max' => $t('name_max'),
+            'street.required_with' => $t('street_required_with'),
+            'street.max' => $t('street_max'),
+            'postal_code.required_with' => $t('postal_code_required_with'),
+            'postal_code.regex' => $t('postal_code_regex'),
+            'city.required_with' => $t('city_required_with'),
+            'city.max' => $t('city_max'),
+            'invoice_nip.digits' => $t('nip_digits'),
+            'note.max' => $t('note_max'),
+            'shipping_method.required' => $t('shipping_method'),
+            'shipping_method.in' => $t('shipping_method'),
+            'payment_method.required' => $t('payment_method'),
+            'payment_method.in' => $t('payment_method'),
+            'blik_code.required' => $t('blik_code'),
+            'blik_code.digits' => $t('blik_code'),
+            'accept_terms.accepted' => $t('accept_terms'),
             ...$this->deviationKeys()->mapWithKeys(fn (string $key) => [
-                'accept_deviations.'.$key.'.accepted' => 'Zaznacz, że akceptujesz tę cechę — bez tego nie mogę przyjąć zamówienia',
+                'accept_deviations.'.$key.'.accepted' => $t('accept_deviation'),
             ])->all(),
         ];
     }
@@ -120,7 +124,7 @@ class PlaceOrderRequest extends FormRequest
     private function checksum(string $attribute, mixed $value, Closure $fail): void
     {
         if (! Nip::isValid($value)) {
-            $fail('Ten NIP się nie zgadza — sprawdź cyfry');
+            $fail(__('checkout::validation.nip_checksum'));
         }
     }
 }

@@ -1,6 +1,5 @@
 @use('App\Modules\Checkout\Enums\OrderStatus')
 @use('App\Modules\Checkout\Enums\PaymentStatus')
-@use('App\Modules\Shared\Support\Money')
 @php
     $card = 'rounded-[4px] border border-line bg-cream px-[26px] py-7';
     $row = 'flex flex-wrap justify-between gap-x-6 gap-y-0.5';
@@ -48,9 +47,9 @@
                         <div class="flex flex-wrap justify-between gap-3">
                             <div class="min-w-0">
                                 <div class="text-[15px]">{{ $item->product_name }}</div>
-                                <div class="mt-0.5 text-[13px] text-label">{{ collect([$item->variant_label, $item->quantity.' szt.', Money::format($item->unit_price_gross).' za sztukę'])->filter()->join(' · ') }}</div>
+                                <div class="mt-0.5 text-[13px] text-label">{{ collect([$item->variant_label, $item->quantity.' szt.', $order->money($item->unit_price_gross).' za sztukę'])->filter()->join(' · ') }}</div>
                             </div>
-                            <div class="font-serif text-[18px] tabular-nums">{{ Money::format($item->total()) }}</div>
+                            <div class="font-serif text-[18px] tabular-nums">{{ $order->money($item->total()) }}</div>
                         </div>
                         @if ($item->custom_text !== null)
                             {{-- A mug from the configurator keeps one line of the text per row, as it goes on the clay. --}}
@@ -69,7 +68,7 @@
                         @endif
                         @if ($item->missing_quantity > 0)
                             <p class="mt-2.5 rounded-[4px] border border-alert-line bg-alert px-3.5 py-2.5 text-[13.5px] text-alert-text">
-                                Brakuje {{ $item->missing_quantity }} szt. — ktoś kupił ostatnią sztukę chwilę wcześniej. Klientka dostała maila, że zwrócisz jej {{ Money::format($item->unit_price_gross * $item->missing_quantity) }} najpóźniej w ciągu 14 dni. Podobną sztukę zrób, jeśli o nią poprosi.
+                                Brakuje {{ $item->missing_quantity }} szt. — ktoś kupił ostatnią sztukę chwilę wcześniej. Klientka dostała maila, że zwrócisz jej {{ $order->money($item->unit_price_gross * $item->missing_quantity) }} najpóźniej w ciągu 14 dni. Podobną sztukę zrób, jeśli o nią poprosi.
                             </p>
                         @endif
                     </div>
@@ -207,9 +206,9 @@
             <section class="{{ $card }}">
                 <h2 class="mb-4 font-serif text-[23px]">Płatność</h2>
                 <dl class="grid gap-2.5 text-[14px]">
-                    <div class="{{ $row }}"><dt class="text-label">Produkty</dt><dd class="tabular-nums">{{ Money::format($order->total_gross - $order->shipping_gross) }}</dd></div>
-                    <div class="{{ $row }}"><dt class="text-label">Dostawa</dt><dd class="tabular-nums">{{ $order->shipping_gross === 0 ? 'gratis' : Money::format($order->shipping_gross) }}</dd></div>
-                    <div class="{{ $row }} border-t border-divider pt-2.5 font-serif text-[20px]"><dt>Razem</dt><dd class="tabular-nums">{{ Money::format($order->total_gross) }}</dd></div>
+                    <div class="{{ $row }}"><dt class="text-label">Produkty</dt><dd class="tabular-nums">{{ $order->money($order->total_gross - $order->shipping_gross) }}</dd></div>
+                    <div class="{{ $row }}"><dt class="text-label">Dostawa</dt><dd class="tabular-nums">{{ $order->shipping_gross === 0 ? 'gratis' : $order->money($order->shipping_gross) }}</dd></div>
+                    <div class="{{ $row }} border-t border-divider pt-2.5 font-serif text-[20px]"><dt>Razem</dt><dd class="tabular-nums">{{ $order->money($order->total_gross) }}</dd></div>
                     <div class="{{ $row }}"><dt class="text-label">Metoda</dt><dd>{{ $order->payment_method->label() }}</dd></div>
                     <div class="{{ $row }}"><dt class="text-label">Status</dt><dd>{{ $order->payment_status->label() }}</dd></div>
                     @if ($order->paid_at)

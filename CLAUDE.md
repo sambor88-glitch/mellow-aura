@@ -112,7 +112,12 @@ Szczegóły w `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html`. Tu zasady,
   na `/en/`. Menu budujemy z konfiguracji per język, nie ukrywamy pozycji CSS-em.
 - Przełącznik języka na stronie bez odpowiednika prowadzi do najbliższej sensownej strony, nigdy na stronę główną.
 - Język podpowiadamy z nagłówka `Accept-Language`, nigdy z adresu IP, i nigdy nie przekierowujemy automatycznie.
-- BLIK istnieje tylko w PLN. Lista metod płatności filtruje się walutą koszyka.
+- BLIK istnieje tylko w PLN. Lista metod płatności filtruje się walutą koszyka (`PaymentMethod::for`): PLN to BLIK,
+  Przelewy24, karta i przelew tradycyjny; EUR to karta i Przelewy24. Przelew tradycyjny w euro czeka na konto (MA-124).
+- Zamówienie zapisuje `currency` i `locale`. Każdą kwotę zamówienia pokazujesz przez `$order->money($kwota)`,
+  nigdy przez gołe `Money::format` — w mailach i w panelu też.
+- Dostawa w euro to `price_eur` przy metodzie w ustawieniach i angielska nazwa w `checkout::shipping`. Bez jednego
+  z nich metody nie ma w angielskiej kasie. Darmowa wysyłka działa tylko w złotych.
 - Każde zamówienie zapisuje kraj dostawy i stawkę VAT na pozycji — także wtedy, gdy stawka wynosi zero.
   Bez tego nie da się odtworzyć obrotu WSTO, a próg 10 000 EUR rocznie przekracza się niezauważenie.
 
