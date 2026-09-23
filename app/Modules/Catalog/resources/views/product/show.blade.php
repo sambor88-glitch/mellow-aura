@@ -20,6 +20,8 @@
     $price = fn ($option) => Money::format($option->price(), $currency);
     $canonical = route('product.show', $product);
     $images = $product->getMedia('images');
+    // The gallery opens on the chosen variant's photo: a quote mug shows its own lettering.
+    $firstPhoto = max(0, (int) $images->search(fn ($image) => $image->is($variant->photo())));
     $lowestBeforeDiscount = $variant->lowestPriceBeforeDiscount();
     $dimensions = $product->dimensionLabels();
     // The general care rule from the panel is written in Polish, so an English page shows only the piece's own line.
@@ -48,7 +50,7 @@
         </nav>
 
         <div class="flex flex-wrap items-start gap-[clamp(28px,5vw,72px)]">
-            <div class="min-w-0 flex-[1_1_460px]" x-data="{ active: 0 }">
+            <div class="min-w-0 flex-[1_1_460px]" x-data="{ active: {{ $firstPhoto }} }">
                 @if ($images->isEmpty())
                     <div class="aspect-square w-full rounded-[26px] bg-linen"></div>
                 @else
@@ -60,7 +62,7 @@
                             {{-- Half of a 1224 px page on a computer, the whole width minus padding on a phone. --}}
                             <img src="{{ $image->getAvailableUrl(['card']) }}" alt="{{ $image->getCustomProperty('alt') ?: $product->name }}"
                                  @if ($srcset) srcset="{{ $srcset }}" sizes="(min-width: 872px) 584px, calc(100vw - 56px)" @endif
-                                 @if ($loop->first) fetchpriority="high" @else loading="lazy" x-cloak @endif
+                                 @if ($index === $firstPhoto) fetchpriority="high" @else loading="lazy" x-cloak @endif
                                  x-show="active === {{ $index }}" width="1200" height="1200"
                                  x-transition:enter="transition duration-700 ease-clay" x-transition:enter-start="opacity-0 blur-md scale-105"
                                  x-transition:leave="transition duration-300 ease-in" x-transition:leave-end="opacity-0 blur-md"

@@ -39,6 +39,8 @@ class ProductMerchantItems
 
             foreach ($product->variants as $variant) {
                 $variant->setRelation('product', $product);
+                // The variant's own photo leads, the others follow.
+                $photo = $variant->photo()->getAvailableUrl(['card']);
                 // The crossed-out price from the panel, as the product page shows it.
                 $reduced = $variant->compare_at_price !== null && $variant->compare_at_price > $variant->price_gross;
 
@@ -47,12 +49,12 @@ class ProductMerchantItems
                     title: $variant->label === '' ? $product->name : $product->name.' — '.$variant->label,
                     description: $product->description ?: ($product->seo_description ?: $product->name),
                     link: route('product.show', $product).'?wariant='.$variant->id,
-                    image: $images->first(),
+                    image: $photo,
                     price: $reduced ? $variant->compare_at_price : $variant->price_gross,
                     available: $variant->isInStock(),
                     // A voucher and a mug with the customer's own text don't wait on the shelf, so no delivery time is promised.
                     delivery: DeliveryOffers::for($variant->price_gross, ! $variant->takesCustomText() && ! $product->isVoucher(), $this->settings),
-                    additionalImages: $images->slice(1)->values()->all(),
+                    additionalImages: $images->reject(fn (string $image) => $image === $photo)->values()->all(),
                     salePrice: $reduced ? $variant->price_gross : null,
                     googleCategory: $product->google_category?->value,
                     productType: $product->category->group->label().' > '.$product->category->name,

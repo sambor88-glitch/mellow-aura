@@ -35,7 +35,7 @@ class ProductStructuredData
         $currency = Locales::currency();
         $home = $currency === Locales::defaultCurrency();
 
-        $variants = $product->variants->map(function (ProductVariant $variant) use ($product, $url, $images, $brand, $settings, $shipped, $currency, $home) {
+        $variants = $product->variants->map(function (ProductVariant $variant) use ($product, $url, $brand, $settings, $shipped, $currency, $home) {
             $variant->setRelation('product', $product);
 
             $offer = Schema::offer()
@@ -63,7 +63,10 @@ class ProductStructuredData
                 ->brand($brand)
                 ->offers($offer);
 
-            return $images ? $item->image($images[0]) : $item;
+            // Each variant with its own photo, so Google shows the mug with the lettering it sells.
+            $photo = $variant->photo();
+
+            return $photo ? $item->image($photo->getAvailableUrl(['card'])) : $item;
         });
 
         $group = Schema::productGroup()

@@ -327,22 +327,26 @@
                 {
                     "label": "Królowa matka",
                     "price_gross": 7900,
-                    "stock": 1
+                    "stock": 1,
+                    "image": "zdjecia/kubek-krolowa-matka.webp"
                 },
                 {
                     "label": "Ochujeję",
                     "price_gross": 7900,
-                    "stock": 1
+                    "stock": 1,
+                    "image": "zdjecia/kubek-ochujeje.webp"
                 },
                 {
                     "label": "No ocipieje zaraz",
                     "price_gross": 7900,
-                    "stock": 1
+                    "stock": 1,
+                    "image": "zdjecia/kubek-ocipieje.webp"
                 },
                 {
                     "label": "Nie powinnam, ale…",
                     "price_gross": 7900,
-                    "stock": 1
+                    "stock": 1,
+                    "image": "zdjecia/kubek-nie-powinnam.webp"
                 },
                 {
                     "label": "Twój tekst",

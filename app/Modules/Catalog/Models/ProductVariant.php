@@ -13,8 +13,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-#[Fillable(['product_id', 'label', 'price_gross', 'compare_at_price', 'stock', 'sent_by_post'])]
+#[Fillable(['product_id', 'label', 'price_gross', 'compare_at_price', 'stock', 'sent_by_post', 'media_id'])]
 class ProductVariant extends Model
 {
     /** @use HasFactory<ProductVariantFactory> */
@@ -101,6 +102,17 @@ class ProductVariant extends Model
     public function isInStock(): bool
     {
         return $this->stock === null || $this->stock > 0;
+    }
+
+    /**
+     * The photo that shows this variant — the quote mug with its own lettering — or the product's first photo.
+     * Only a photo of its own product counts.
+     */
+    public function photo(): ?Media
+    {
+        $photos = $this->product->getMedia('images');
+
+        return ($this->media_id === null ? null : $photos->firstWhere('id', $this->media_id)) ?? $photos->first();
     }
 
     /**
@@ -195,6 +207,7 @@ class ProductVariant extends Model
             'compare_at_price' => 'integer',
             'stock' => 'integer',
             'sent_by_post' => 'boolean',
+            'media_id' => 'integer',
         ];
     }
 }

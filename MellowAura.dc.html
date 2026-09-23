@@ -2384,7 +2384,8 @@ const PRODUCTS = [
   { id: 'kubki-z-cytatem', name: 'Kubki z cytatem', cat: 'Ceramika', price: 79, old: 99, img: 'zdjecia/kubek-krolowa-matka.webp', stamp: true,
     variants: ['Królowa matka', 'Ochujeję', 'No ocipieje zaraz', 'Nie powinnam, ale…', 'Twój tekst'],
     desc: 'Kubek, który mówi głośno to, co myślisz przed pierwszą kawą. Litery wbijam stemplem jedna po drugiej w surową glinę — „królowa matka", „ochujeję", „no ocipieje zaraz". Wnętrze szkliwione kolorem, na zewnątrz matowy piasek. Twój własny tekst do 22 znaków bez dopłaty.',
-    gallery: ['zdjecia/kubek-krolowa-matka.webp', 'zdjecia/kubek-ochujeje.webp', 'zdjecia/kubek-ocipieje.webp', 'zdjecia/kubek-nie-powinnam.webp'] },
+    gallery: ['zdjecia/kubek-krolowa-matka.webp', 'zdjecia/kubek-ochujeje.webp', 'zdjecia/kubek-ocipieje.webp', 'zdjecia/kubek-nie-powinnam.webp'],
+    vgal: [0, 1, 2, 3] },
   { id: 'kubki-malowane', name: 'Kubki malowane ręcznie', cat: 'Ceramika', price: 79, old: 99, img: 'zdjecia/kubek-cappuccino.webp',
     variants: ['200 ml', '300 ml', '400 ml'], vp: [69, 79, 95],
     dims: { wys: '8,5', sred: '9', poj: '300', gr: '5' },
@@ -2800,6 +2801,12 @@ class Component extends DCLogic {
     const orig = (p.variants || []).indexOf(label);
     if (p.vp && orig > -1 && p.vp[orig] !== undefined) return p.vp[orig];
     return this.price(p);
+  };
+  // Variant -> gallery photo index (vgal follows the original variant order); null when the variant has no own photo
+  vgal = (p, i) => {
+    const orig = (p.variants || []).indexOf(this.vlist(p)[i]);
+    const g = p.vgal && orig > -1 ? p.vgal[orig] : undefined;
+    return (g !== undefined && g !== null && p.gallery[g]) ? g : null;
   };
   vRange = (p) => {
     const arr = this.vlist(p).map((v, i) => this.vprice(p, i));
@@ -3438,7 +3445,7 @@ class Component extends DCLogic {
         label: v, priceLabel: zl(this.vprice(p, i)),
         bg: i === s.variant ? '#2F2620' : '#FCF9F4', fg: i === s.variant ? '#F7F2EA' : '#5C5043',
         sub: i === s.variant ? '#C6B8A5' : '#726456',
-        bd: i === s.variant ? '#2F2620' : '#DCD0BE', set: () => this.setState({ variant: i })
+        bd: i === s.variant ? '#2F2620' : '#DCD0BE', set: () => { const g = this.vgal(p, i); this.setState(g === null ? { variant: i } : { variant: i, gal: g }); }
       })),
       hasSizes: this.vlist(p).length > 1,
       stockLabel: this.stockOf(p) === 1 ? 'ostatnia sztuka' : this.stockOf(p) + ' szt. na półce',
