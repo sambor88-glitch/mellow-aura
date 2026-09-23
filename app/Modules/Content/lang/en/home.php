@@ -7,9 +7,6 @@ return [
     'title' => 'MellowAura — handmade ceramics & silk, Kraków',
     'description' => 'Hand-formed ceramics and silk accessories sewn from reclaimed fabric. Mugs with stamped lettering, made in a small studio in Kraków.',
 
-    'intro_phases' => [[0, 'raw clay'], [28, 'drying'], [55, 'first firing'], [82, 'glaze and second firing']],
-    'intro_skip' => 'Skip',
-
     'hero_alt' => 'Kasia in her studio holding a plate with a gilded rim',
     'hero_meta' => 'ceramics & silk · home studio · kraków',
     'scroll' => 'scroll',

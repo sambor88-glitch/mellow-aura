@@ -51,7 +51,7 @@
                         <p class="mt-1.5 text-[13px] text-error">{{ $message }}</p>
                     @enderror
                 </fieldset>
-                <button class="w-full rounded-full bg-ink p-4 text-[14px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]">Dodaj konto i wyślij link</button>
+                <button class="w-full rounded-full bg-ink p-4 text-[14px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Dodaj konto i wyślij link</button>
             </form>
         </section>
     </div>

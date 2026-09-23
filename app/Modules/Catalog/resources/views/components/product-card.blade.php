@@ -12,7 +12,7 @@
 @endphp
 <div data-shelf-card class="group relative animate-ma-up" style="animation-delay: {{ $delay }}s">
 <a href="{{ route('product.show', $product) }}" class="block text-ink hover:text-ink">
-    <div data-clay class="relative isolate mb-3.5 overflow-hidden rounded-[18px] bg-linen transition-[box-shadow,transform] duration-500 ease-clay group-hover:-translate-y-1 group-hover:shadow-card-hover">
+    <div class="relative isolate mb-3.5 overflow-hidden rounded-[18px] bg-linen transition-[box-shadow,transform] duration-500 ease-clay group-hover:-translate-y-1 group-hover:shadow-card-hover">
         @if ($image)
             <img src="{{ $image->getAvailableUrl(['card']) }}" alt="{{ $image->getCustomProperty('alt') ?: $product->name }}" @unless ($eager) loading="lazy" @endunless
                  @if ($srcset) srcset="{{ $srcset }}" sizes="(min-width: 640px) 400px, calc(100vw - 56px)" @endif

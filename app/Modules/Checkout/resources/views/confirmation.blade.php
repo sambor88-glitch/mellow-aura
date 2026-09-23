@@ -52,7 +52,7 @@
                 @endif
             </div>
             <p class="mb-8 text-[13.5px] text-muted">{{ $t('spam') }}</p>
-            <a href="{{ route('home') }}" class="fill-btn inline-flex min-h-[52px] items-center gap-2.5 rounded-full bg-ink px-[30px] text-[14px] font-medium text-linen [--fill:var(--color-navy)] hover:bg-navy hover:text-linen">{{ $t('home') }} <span aria-hidden="true">→</span></a>
+            <a href="{{ route('home') }}" class="fill-btn inline-flex min-h-[52px] items-center gap-2.5 rounded-full bg-ink px-[30px] text-[14px] font-medium text-linen [--fill:var(--color-rose)] hover:bg-rose hover:text-ink">{{ $t('home') }} <span aria-hidden="true">→</span></a>
         </div>
     </div>
     </div>

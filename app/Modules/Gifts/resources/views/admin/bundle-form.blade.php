@@ -93,5 +93,5 @@
         <span x-show="chosen < 2" @if (count($chosen) >= 2) x-cloak @endif>Cena pokaże się, gdy wybierzesz dwie rzeczy.</span>
     </p>
 
-    <button class="rounded-full bg-ink p-4 text-[14.5px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]">{{ $bundle ? 'Zapisz zestaw' : 'Dodaj zestaw na stronę' }}</button>
+    <button class="rounded-full bg-ink p-4 text-[14.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">{{ $bundle ? 'Zapisz zestaw' : 'Dodaj zestaw na stronę' }}</button>
 </form>

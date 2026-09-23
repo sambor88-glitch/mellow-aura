@@ -38,7 +38,7 @@
             <div class="mb-[72px] rounded-[4px] border border-dashed border-line-strong bg-linen px-7 py-10 text-center">
                 <h2 class="mb-2 font-serif text-[24px] font-normal">Vouchery wrócą niedługo</h2>
                 <p class="mx-auto mb-5 max-w-[46ch] text-[14.5px] text-label">Warsztat na prezent nadal da się podarować — napisz, a przygotuję voucher.</p>
-                <a href="{{ route('content.contact', ['temat' => 'Warsztaty i terminy']) }}" class="inline-block rounded-full bg-ink px-7 py-3.5 text-[14px] text-linen hover:bg-navy hover:text-linen">Napisz do mnie</a>
+                <a href="{{ route('content.contact', ['temat' => 'Warsztaty i terminy']) }}" class="inline-block rounded-full bg-ink px-7 py-3.5 text-[14px] text-linen hover:bg-rose hover:text-ink">Napisz do mnie</a>
             </div>
         @endif
 

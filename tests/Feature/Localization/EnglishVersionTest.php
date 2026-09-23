@@ -144,7 +144,7 @@ class EnglishVersionTest extends TestCase
             ->assertOk()
             ->assertSee('<title>MellowAura — handmade ceramics &amp; silk, Kraków</title>', false)
             ->assertSee('Clay and silk from <em class="text-brown italic">one pair of</em> hands.', false)
-            ->assertSee('data-phases=\'[[0,"raw clay"]', false)
+            ->assertDontSee('aura-intro')
             ->assertSee('Let’s design it together')
             ->assertSee('>Basket</span>', false)
             // Złoty-only payment, services and workshops held in Polish, Kasia's Polish panel texts.

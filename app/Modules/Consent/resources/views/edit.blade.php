@@ -57,7 +57,7 @@
                 @if ($decidedAt)
                     <p class="mt-3 text-[12.5px] text-hint">Twój wybór z {{ $decidedAt->translatedFormat('j F Y') }}.</p>
                 @endif
-                <button class="mt-5 min-h-11 rounded-full bg-ink px-7 py-3.5 text-[14px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]">Zapisz wybór</button>
+                <button class="mt-5 min-h-11 rounded-full bg-ink px-7 py-3.5 text-[14px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Zapisz wybór</button>
             </form>
         @endif
 

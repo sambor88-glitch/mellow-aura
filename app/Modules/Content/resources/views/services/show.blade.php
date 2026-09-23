@@ -47,7 +47,7 @@
                         <p class="mb-[34px] max-w-[46ch] text-[16px] leading-[1.7] text-lead">{{ $lead2 }}</p>
                     @endif
                     <div class="flex flex-wrap gap-3.5">
-                        <a href="{{ $contactUrl }}" class="rounded-full bg-ink px-8 py-4 text-[14px] text-linen transition duration-300 hover:bg-navy hover:text-linen active:scale-[.97]">{{ $page['cta'] }}</a>
+                        <a href="{{ $contactUrl }}" class="rounded-full bg-ink px-8 py-4 text-[14px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">{{ $page['cta'] }}</a>
                         <a href="{{ route($page['other'][0]->route()) }}" class="rounded-full border border-line-strong px-8 py-4 text-[14px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark hover:text-ink active:scale-[.98]">{{ $page['other'][1] }}</a>
                     </div>
                     @if ($phone)

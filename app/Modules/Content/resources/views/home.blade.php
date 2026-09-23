@@ -50,7 +50,7 @@
     $instagramHandle = ltrim((string) $settings->get('instagram_handle'), '@');
     $dispatch = DispatchTime::label($settings, short: true);
 
-    $btnMain = 'fill-btn aura-btn-main inline-flex min-h-[52px] items-center gap-2.5 rounded-full bg-ink px-[30px] text-[14px] font-medium tracking-[0.04em] text-linen transition-[background-color,color] duration-300 [--fill:var(--color-navy)] hover:bg-navy hover:text-linen active:scale-[.97]';
+    $btnMain = 'fill-btn aura-btn-main inline-flex min-h-[52px] items-center gap-2.5 rounded-full bg-ink px-[30px] text-[14px] font-medium tracking-[0.04em] text-linen transition-[background-color,color] duration-300 [--fill:var(--color-rose)] hover:bg-rose hover:text-ink active:scale-[.97]';
     $btnGlass = 'fill-btn aura-btn-glass glass inline-flex min-h-[52px] items-center gap-2.5 rounded-full px-[30px] text-[14px] font-medium tracking-[0.04em] text-ink transition-[border-color,color] duration-300 [--fill:var(--color-cream)] hover:border-ink hover:text-ink active:scale-[.97]';
     $sectionTitle = 'font-serif text-[length:clamp(40px,5.6vw,84px)] leading-[.98] font-light tracking-[-0.02em] text-balance';
 @endphp
@@ -61,23 +61,12 @@
     :canonical="route('home')"
     :image="$heroImage?->getAvailableUrl(['card'])"
 >
-    {{-- Firing intro on the first visit (resources/js/aura.js). No temperature: it depends on the clay, which we do not name. --}}
-    <div id="aura-intro" class="aura-intro" hidden aria-hidden="true" data-phases='@json($t('intro_phases'))'>
-        <div class="aura-heat"></div>
-        <div data-intro-core class="relative px-5 text-center">
-            <div class="font-serif text-[length:clamp(96px,20vw,260px)] leading-[.9] font-light tracking-[-0.04em] tabular-nums"><span data-intro-number>0</span><sup class="ml-[.1em] align-[.25em] text-[.22em] tracking-normal text-brown italic">%</sup></div>
-            <div data-intro-phase class="mt-[18px] min-h-[1.6em] text-[11px] tracking-[0.32em] text-graphite uppercase">{{ $t('intro_phases')[0][1] }}</div>
-            <div class="mx-auto mt-[22px] h-px w-[min(260px,60vw)] overflow-hidden bg-ink/15"><i data-intro-bar class="block h-full origin-left scale-x-0 bg-ink"></i></div>
-        </div>
-        <button type="button" data-intro-skip class="absolute right-5 bottom-5 flex min-h-11 items-center rounded-full border border-line-strong px-4 text-[13.5px] text-ink">{{ $t('intro_skip') }}</button>
-    </div>
-
     {{-- The hero slides under the floating header. --}}
     <section id="aura-hero" class="aura-hero relative -mt-[78px]" aria-labelledby="hero-title">
         <div class="aura-hero-pin">
             <div class="aura-scene">
                 @foreach ($floats as [$file, $class, $speed, $depth])
-                    <div class="aura-float {{ $class }}" data-speed="{{ $speed }}" data-depth="{{ $depth }}" data-clay aria-hidden="true">
+                    <div class="aura-float {{ $class }}" data-speed="{{ $speed }}" data-depth="{{ $depth }}" aria-hidden="true">
                         <div class="size-full"><img src="{{ $photo($file) }}" alt="" width="400" height="500" @if ($loop->index > 2) loading="lazy" @endif></div>
                     </div>
                 @endforeach
@@ -89,8 +78,8 @@
                 <div class="aura-scrim"></div>
 
                 <div class="aura-mark" aria-hidden="true">
-                    <div class="aura-mark-1"><span class="inline-block">@foreach (mb_str_split('Mellow') as $i => $letter)<span class="blur-in" style="animation-delay: {{ .15 + $i * .06 }}s">{{ $letter }}</span>@endforeach</span></div>
-                    <div class="aura-mark-2"><span class="inline-block">@foreach (mb_str_split('Aura') as $i => $letter)<span class="blur-in" style="animation-delay: {{ .55 + $i * .07 }}s">{{ $letter }}</span>@endforeach</span></div>
+                    <div class="aura-mark-1"><span class="inline-block">@foreach (mb_str_split('Mellow') as $i => $letter)<span class="blur-in" style="animation-delay: {{ .05 + $i * .04 }}s">{{ $letter }}</span>@endforeach</span></div>
+                    <div class="aura-mark-2"><span class="inline-block">@foreach (mb_str_split('Aura') as $i => $letter)<span class="blur-in" style="animation-delay: {{ .3 + $i * .04 }}s">{{ $letter }}</span>@endforeach</span></div>
                 </div>
 
                 <div data-hero-meta class="absolute inset-x-0 bottom-[22px] z-6 flex items-end justify-between px-[clamp(18px,4vw,48px)] text-[10.5px] tracking-[0.3em] text-label uppercase">
@@ -154,7 +143,7 @@
                         @endif
                     </div>
                 </div>
-                <div data-clay class="aspect-[3/4] min-w-0 flex-[0_1_300px] overflow-hidden rounded-[200px_200px_16px_16px]">
+                <div class="aspect-[3/4] min-w-0 flex-[0_1_300px] overflow-hidden rounded-[200px_200px_16px_16px]">
                     <img src="{{ $photo('zestaw-filizanka-talerz.webp') }}" alt="{{ $t('kasia_alt') }}" loading="lazy" width="600" height="800" data-aura-parallax="8" class="size-full object-cover">
                 </div>
             </div>
@@ -202,7 +191,7 @@
             <div class="glass flex flex-wrap overflow-hidden rounded-[26px]">
                 <div class="flex min-w-0 flex-[1_1_300px] gap-1.5 p-1.5">
                     @foreach ([['kubek-cappuccino.webp', $t('gifts_mug_alt')], ['scrunchies-fiolet.webp', $t('gifts_scrunchies_alt')]] as [$file, $alt])
-                        <div data-clay class="aspect-square w-1/2 overflow-hidden rounded-[20px]"><img src="{{ $photo($file) }}" alt="{{ $alt }}" loading="lazy" width="600" height="600" data-aura-parallax="6" class="size-full object-cover"></div>
+                        <div class="aspect-square w-1/2 overflow-hidden rounded-[20px]"><img src="{{ $photo($file) }}" alt="{{ $alt }}" loading="lazy" width="600" height="600" data-aura-parallax="6" class="size-full object-cover"></div>
                     @endforeach
                 </div>
                 <div class="flex min-w-0 flex-[1_1_360px] flex-col justify-center px-[clamp(24px,4vw,48px)] py-11">
@@ -233,7 +222,7 @@
             </div>
             <div data-aura-rise class="flex flex-wrap gap-[clamp(16px,2vw,28px)]">
                 @foreach ($services as [$url, $file, $alt, $material, $title, $text, $from])
-                    <a href="{{ $url }}" data-clay class="group relative block h-[clamp(460px,72vh,700px)] min-w-0 flex-[1_1_420px] overflow-hidden rounded-[24px] text-sand hover:text-sand focus-visible:outline-offset-4">
+                    <a href="{{ $url }}" class="group relative block h-[clamp(460px,72vh,700px)] min-w-0 flex-[1_1_420px] overflow-hidden rounded-[24px] text-sand hover:text-sand focus-visible:outline-offset-4">
                         <img src="{{ $photo($file) }}" alt="{{ $alt }}" loading="lazy" width="900" height="1200" data-aura-parallax="6" class="absolute inset-x-0 -top-[8%] h-[116%] w-full object-cover">
                         <span class="absolute inset-0 bg-linear-to-b from-transparent from-40% to-ink/55"></span>
                         <span class="glass-dark absolute inset-x-3.5 bottom-3.5 z-2 block rounded-[18px] px-6 py-[22px] transition-transform duration-800 ease-clay group-hover:-translate-y-2">
@@ -281,7 +270,7 @@
                 </div>
                 <div aria-hidden="true" class="relative h-[clamp(460px,70vh,680px)] min-w-0 flex-[1_1_420px]">
                     @foreach ([['zestaw-flatlay.webp', 'top-[6%] left-0 h-[70%] w-[58%]'], ['patera-czarna-kolce.webp', 'top-0 right-0 h-[44%] w-[38%]'], ['kubek-nie-powinnam.webp', 'right-[6%] bottom-0 h-[46%] w-[46%]']] as [$file, $place])
-                        <div data-clay class="absolute overflow-hidden rounded-[20px] {{ $place }}"><img src="{{ $photo($file) }}" alt="" loading="lazy" width="800" height="1000" data-aura-parallax="{{ 6 + $loop->index * 4 }}" class="size-full object-cover"></div>
+                        <div class="absolute overflow-hidden rounded-[20px] {{ $place }}"><img src="{{ $photo($file) }}" alt="" loading="lazy" width="800" height="1000" data-aura-parallax="{{ 6 + $loop->index * 4 }}" class="size-full object-cover"></div>
                     @endforeach
                 </div>
             </div>
@@ -313,7 +302,7 @@
                 {{-- Six photos always fill whole rows: two, three or six to a row. --}}
                 <div data-aura-rise class="grid grid-cols-2 gap-2.5 min-[520px]:grid-cols-3 min-[980px]:grid-cols-6">
                     @foreach ($instagramPosts as $post)
-                        <a href="{{ $post->permalink }}" target="_blank" rel="noopener" data-clay class="block overflow-hidden rounded-[14px] bg-linen">
+                        <a href="{{ $post->permalink }}" target="_blank" rel="noopener" class="block overflow-hidden rounded-[14px] bg-linen">
                             <img src="{{ $post->imageUrl() }}" alt="{{ $post->alt() }}" loading="lazy" width="1080" height="1080" class="block aspect-square w-full object-cover transition-transform duration-[1.1s] ease-clay hover:scale-[1.06]">
                         </a>
                     @endforeach
@@ -328,7 +317,7 @@
                 @foreach ($cards as [$url, $dark, $eyebrow, $title, $text])
                     <a href="{{ $url }}" @class([
                         'fill-btn flex min-h-[260px] flex-col justify-between rounded-[24px] px-8 py-[38px] transition-[border-color,transform] duration-500 ease-clay hover:-translate-y-1',
-                        'focus-on-dark bg-ink text-sand [--fill:var(--color-navy)] hover:bg-navy hover:text-sand' => $dark,
+                        'focus-on-dark bg-ink text-sand [--fill:var(--color-rose)] hover:bg-rose hover:text-ink' => $dark,
                         'glass text-ink [--fill:var(--color-cream)] hover:border-ink hover:text-ink' => ! $dark,
                     ])>
                         <span @class(['text-[10.5px] tracking-[0.24em] uppercase', 'text-rose' => $dark, 'text-brown' => ! $dark])>{{ $eyebrow }}</span>

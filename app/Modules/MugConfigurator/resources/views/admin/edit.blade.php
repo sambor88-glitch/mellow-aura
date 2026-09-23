@@ -43,7 +43,7 @@
     $intro = 'mb-[18px] text-[13.5px] leading-[1.6] text-label';
     $alert = 'mb-3.5 rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text';
     $input = 'min-w-0 rounded-[4px] border bg-white text-[14.5px] text-ink placeholder:text-hint focus:border-ink';
-    $button = 'mt-[18px] min-h-11 w-full rounded-full bg-ink p-4 text-[14px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]';
+    $button = 'mt-[18px] min-h-11 w-full rounded-full bg-ink p-4 text-[14px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]';
     $border = fn ($bag, string $key) => $bag->has($key) ? 'border-error' : 'border-line';
 @endphp
 <x-admin::layout title="Kubek z napisem" lead="Zdjęcie pod napisy, rozmiary z cenami i to, jak napis siedzi na kubku. Zmiany widać na stronie od razu.">

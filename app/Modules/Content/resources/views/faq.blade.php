@@ -58,7 +58,7 @@
                 <h2 class="mb-1.5 font-serif text-[24px]">Nie ma tu Twojego pytania?</h2>
                 <p class="text-[15px] text-muted">{{ $phone ? 'Napisz na WhatsAppie — to najszybsza droga do mnie.' : 'Napisz do mnie — odpisuję zwykle tego samego dnia.' }}</p>
             </div>
-            <a href="{{ route('content.contact') }}" class="rounded-full bg-ink px-[30px] py-[15px] text-[14px] text-linen transition duration-300 hover:bg-navy hover:text-linen active:scale-[.97]">Kontakt</a>
+            <a href="{{ route('content.contact') }}" class="rounded-full bg-ink px-[30px] py-[15px] text-[14px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Kontakt</a>
         </div>
     </div>
 </x-shared::layout>

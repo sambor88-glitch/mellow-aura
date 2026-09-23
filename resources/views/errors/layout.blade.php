@@ -38,7 +38,7 @@
         .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
         .button { display: inline-flex; min-height: 44px; align-items: center; border-radius: 999px; padding: 16px 32px; font-size: 14px; letter-spacing: .04em; }
         .button-primary, .button-primary:hover { background: #2F2620; color: #F7F2EA; }
-        .button-primary:hover { background: #24417E; }
+        .button-primary:hover { background: #D6A39C; color: #2F2620; }
         .button-secondary, .button-secondary:hover { border: 1px solid #C6B8A5; color: #2F2620; }
         .button-secondary:hover { border-color: #2F2620; background: #EDE4D8; }
         @media (prefers-reduced-motion: reduce) { a { transition: none; } }

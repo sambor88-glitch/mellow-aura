@@ -53,7 +53,7 @@
                     <div class="aspect-square w-full rounded-[26px] bg-linen"></div>
                 @else
                     {{-- Photos change by blurring into each other; the mouse moves a slight zoom around (resources/js/aura.js). --}}
-                    <button type="button" x-ref="zoomTrigger" x-on:click="$refs.zoom.showModal()" title="{{ __('catalog::product.zoom_hint') }}" data-clay data-zoom-follow
+                    <button type="button" x-ref="zoomTrigger" x-on:click="$refs.zoom.showModal()" title="{{ __('catalog::product.zoom_hint') }}" data-zoom-follow
                             class="relative block aspect-square w-full cursor-zoom-in overflow-hidden rounded-[26px] bg-linen">
                         @foreach ($images as $index => $image)
                             @php($srcset = ProductPhoto::srcset($image))
@@ -215,7 +215,7 @@
                                 <button type="button" x-on:click="quantity++" @if ($variant->stock !== null) x-bind:disabled="quantity >= {{ $variant->stock }}" @endif
                                         aria-label="{{ __('catalog::product.more') }}" class="h-[46px] w-11 text-[18px] text-muted disabled:cursor-not-allowed disabled:text-line-strong">+</button>
                             </div>
-                            <button type="submit" data-magnet class="fill-btn min-h-[54px] flex-[1_1_200px] rounded-full bg-ink px-5 py-4 text-[14.5px] font-medium tracking-[0.03em] whitespace-nowrap text-linen transition duration-300 [--fill:var(--color-navy)] hover:bg-navy active:scale-[.97]">
+                            <button type="submit" data-magnet class="fill-btn min-h-[54px] flex-[1_1_200px] rounded-full bg-ink px-5 py-4 text-[14.5px] font-medium tracking-[0.03em] whitespace-nowrap text-linen transition duration-300 [--fill:var(--color-rose)] hover:bg-rose hover:text-ink active:scale-[.97]">
                                 {{ __('catalog::product.add_to_cart') }} &middot; <span x-text="$store.cart.format({{ $variant->price() }} * quantity)">{{ $price($variant) }}</span>
                             </button>
                             <x-catalog::favorite-button :product="$product"
@@ -297,7 +297,7 @@
                     @foreach ($related as $item)
                         @php($cover = $item->getFirstMedia('images'))
                         <a href="{{ route('product.show', $item) }}" class="group block text-ink hover:text-ink">
-                            <div data-clay class="mb-3.5 overflow-hidden rounded-[18px] bg-linen transition-[box-shadow,transform] duration-500 ease-clay group-hover:-translate-y-1 group-hover:shadow-card-hover">
+                            <div class="mb-3.5 overflow-hidden rounded-[18px] bg-linen transition-[box-shadow,transform] duration-500 ease-clay group-hover:-translate-y-1 group-hover:shadow-card-hover">
                                 @if ($cover)
                                     @php($srcset = ProductPhoto::srcset($cover))
                                     <img src="{{ $cover->getAvailableUrl(['card']) }}" alt="{{ $cover->getCustomProperty('alt') ?: $item->name }}" loading="lazy"
@@ -327,7 +327,7 @@
                     @endif
                 </div>
                 <button type="submit" form="add-to-cart"
-                        class="fill-btn flex-none rounded-full bg-ink px-6 py-[14px] text-[14px] text-linen transition duration-300 [--fill:var(--color-navy)] hover:bg-navy active:scale-[.97]">{{ __('catalog::product.buy_bar') }}</button>
+                        class="fill-btn flex-none rounded-full bg-ink px-6 py-[14px] text-[14px] text-linen transition duration-300 [--fill:var(--color-rose)] hover:bg-rose hover:text-ink active:scale-[.97]">{{ __('catalog::product.buy_bar') }}</button>
             </div>
         @endif
     </div>

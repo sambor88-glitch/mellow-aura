@@ -13,7 +13,7 @@
                 <input type="checkbox" name="remember" value="1" @checked(old('remember')) class="size-4 accent-ink">
                 Nie wylogowuj mnie na tym urządzeniu
             </label>
-            <button class="rounded-full bg-ink p-[15px] text-[14.5px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]">Wejdź do panelu</button>
+            <button class="rounded-full bg-ink p-[15px] text-[14.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Wejdź do panelu</button>
         </form>
         <a href="{{ route('admin.password.request') }}" class="mt-5 inline-block text-[13.5px]">Nie pamiętasz hasła?</a>
     </div>

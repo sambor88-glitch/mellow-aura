@@ -65,7 +65,7 @@
                     @enderror
                 </div>
 
-                <button class="mt-2 rounded-full bg-ink p-4 text-[14.5px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]">Potwierdź odstąpienie od umowy</button>
+                <button class="mt-2 rounded-full bg-ink p-4 text-[14.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Potwierdź odstąpienie od umowy</button>
                 <p class="text-[12px] leading-[1.5] text-hint">Dane z formularza zapisuję, żeby rozliczyć zwrot. Więcej w <a href="{{ route('content.privacy') }}">polityce prywatności</a>.</p>
             </form>
         </div>

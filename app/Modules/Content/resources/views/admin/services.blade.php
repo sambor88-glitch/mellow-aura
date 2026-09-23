@@ -6,7 +6,7 @@
     $intro = 'mb-4 max-w-[62ch] text-[13.5px] leading-[1.6] text-muted';
     $alert = 'mb-3.5 rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text';
     $hint = 'mt-3.5 text-[12.5px] leading-[1.6] text-label';
-    $button = 'mt-[18px] min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]';
+    $button = 'mt-[18px] min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]';
     $input = 'w-full min-w-0 rounded-[4px] border bg-white px-3 py-2.5 text-[15px] text-ink placeholder:text-hint focus:border-ink';
     $label = 'mb-1 block text-[12.5px] text-graphite';
     $small = 'grid min-h-11 min-w-11 place-items-center rounded-full border border-line-strong px-3 text-[13px] text-ink hover:border-ink hover:bg-sand-dark';

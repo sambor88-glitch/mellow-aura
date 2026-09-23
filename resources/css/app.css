@@ -393,7 +393,7 @@
         aspect-ratio: 1;
         border-radius: 50%;
         transform: translate(-50%, -50%);
-        background: var(--fill, var(--color-navy));
+        background: var(--fill, var(--color-rose));
         transition: width .7s var(--ease-clay);
     }
 
@@ -401,22 +401,9 @@
         width: 250%;
     }
 
-    /* Wet clay: a photo ripples while the mouse moves over it. */
-    .clay-on {
-        filter: url(#clay) !important;
-    }
-
     .blur-in {
         display: inline-block;
-        animation: auraBlurIn 1.3s var(--ease-clay) both;
-    }
-
-    html.intro-on .blur-in {
-        animation-play-state: paused;
-    }
-
-    html.intro-on body {
-        overflow: hidden;
+        animation: auraBlurIn .7s var(--ease-clay) both;
     }
 
     /*
@@ -435,7 +422,7 @@
     }
 
     .hero-overlay .aura-hero {
-        height: 330vh;
+        height: 200vh;
     }
 
     .hero-overlay .aura-hero-pin {
@@ -555,32 +542,6 @@
             scroll-snap-type: none;
         }
     }
-
-    /* Firing intro on the first visit to the home page. */
-    .aura-intro {
-        position: fixed;
-        inset: 0;
-        z-index: 100;
-        display: grid;
-        place-items: center;
-        background: var(--color-sand);
-        overflow: hidden;
-        clip-path: inset(0 0 0 0);
-    }
-
-    .aura-heat {
-        position: absolute;
-        left: 50%;
-        top: 55%;
-        width: 120vmax;
-        height: 120vmax;
-        margin: -60vmax 0 0 -60vmax;
-        border-radius: 50%;
-        background: radial-gradient(circle, #F2C39A 0%, #E4A58C 22%, rgb(214 163 156 / .55) 40%, rgb(214 163 156 / 0) 64%);
-        filter: blur(30px);
-        opacity: 0;
-        transform: scale(.4);
-    }
 }
 
 /*
@@ -624,14 +585,14 @@
 
 @keyframes auraDrawer { from { transform: translateX(110%); filter: blur(10px); } }
 @keyframes auraItemIn { from { opacity: 0; transform: translateY(14px); filter: blur(6px); } }
-@keyframes auraRing { 0%, 100% { box-shadow: 0 0 0 0 rgb(36 65 126 / .3); } 50% { box-shadow: 0 0 0 10px rgb(36 65 126 / 0); } }
+@keyframes auraRing { 0%, 100% { box-shadow: 0 0 0 0 rgb(214 163 156 / .5); } 50% { box-shadow: 0 0 0 10px rgb(214 163 156 / 0); } }
 @keyframes auraGlow { 0% { transform: scale(.2); opacity: 0; } 40% { opacity: 1; } 100% { transform: scale(1); opacity: .55; } }
 @keyframes auraDraw { to { stroke-dashoffset: 0; } }
 @keyframes auraDrift1 { to { transform: translate(18vw, 14vh) scale(1.15); } }
 @keyframes auraDrift2 { to { transform: translate(-22vw, -10vh) scale(.9); } }
 @keyframes auraDrift3 { to { transform: translate(-14vw, -18vh) scale(1.2); } }
 @keyframes auraGrain { 20% { transform: translate(-3%, 2%); } 40% { transform: translate(2%, -4%); } 60% { transform: translate(-4%, -1%); } 80% { transform: translate(3%, 3%); } }
-@keyframes auraBlurIn { from { opacity: 0; filter: blur(18px); transform: translateY(.18em); } to { opacity: 1; filter: blur(0); transform: none; } }
+@keyframes auraBlurIn { from { opacity: 0; filter: blur(6px); transform: translateY(.18em); } to { opacity: 1; filter: blur(0); transform: none; } }
 
 /*
  * Navy focus disappears on ink (1.5:1), so a dark surface such as the footer gives everything inside a linen outline (13.3:1).

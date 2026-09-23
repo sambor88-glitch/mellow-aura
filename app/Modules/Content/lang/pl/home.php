@@ -5,9 +5,6 @@ return [
     'title' => 'MellowAura — ceramika i rękodzieło z jedwabiu, Kraków',
     'description' => 'Ręcznie formowana ceramika i jedwabne dodatki z drugiego obiegu. Kubki z wbijanym napisem, warsztaty w kameralnej pracowni w Krakowie. Płatność BLIK.',
 
-    'intro_phases' => [[0, 'surowa glina'], [28, 'suszenie'], [55, 'pierwszy wypał'], [82, 'szkliwo i drugi wypał']],
-    'intro_skip' => 'Pomiń',
-
     'hero_alt' => 'Kasia w pracowni trzyma talerz ze złoconą krawędzią',
     'hero_meta' => 'ceramika & jedwab · home studio · kraków',
     'scroll' => 'przewiń',

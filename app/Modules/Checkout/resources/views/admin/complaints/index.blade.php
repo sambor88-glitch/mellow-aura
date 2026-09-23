@@ -89,7 +89,7 @@
             <div class="flex flex-wrap gap-2.5">
                 <button name="intent" value="preview" class="min-h-11 rounded-full border border-line-strong px-6 py-3 text-[13.5px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark active:scale-[.97]">Pokaż list</button>
                 @if ($letter)
-                    <button name="intent" value="send" class="min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]">Wyślij odpowiedź e-mailem</button>
+                    <button name="intent" value="send" class="min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Wyślij odpowiedź e-mailem</button>
                 @endif
             </div>
         </form>

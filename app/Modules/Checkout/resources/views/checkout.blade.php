@@ -28,7 +28,7 @@
             <div class="py-16 text-center">
                 <h1 class="mb-4 font-serif text-[length:clamp(44px,6vw,88px)] leading-[.96] font-light tracking-[-0.02em]">{{ $t('empty_title') }}</h1>
                 <p class="mx-auto mb-8 max-w-[46ch] text-[17px] leading-[1.7] text-lead">{{ $t('empty_text') }}</p>
-                <a href="{{ route('shop.index') }}" class="fill-btn inline-flex min-h-[52px] items-center rounded-full bg-ink px-[30px] text-[14px] text-linen [--fill:var(--color-navy)] hover:bg-navy hover:text-linen">{{ $t('empty_cta') }}</a>
+                <a href="{{ route('shop.index') }}" class="fill-btn inline-flex min-h-[52px] items-center rounded-full bg-ink px-[30px] text-[14px] text-linen [--fill:var(--color-rose)] hover:bg-rose hover:text-ink">{{ $t('empty_cta') }}</a>
             </div>
         @else
             <p class="eyebrow mb-[18px]">{!! $t('eyebrow') !!}</p>

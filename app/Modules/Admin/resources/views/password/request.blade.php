@@ -10,7 +10,7 @@
         <form method="post" action="{{ route('admin.password.email') }}" novalidate class="grid gap-3">
             @csrf
             <x-shared::field name="email" label="E-mail" type="email" autocomplete="username" autofocus />
-            <button class="rounded-full bg-ink p-[15px] text-[14.5px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]">Wyślij link do nowego hasła</button>
+            <button class="rounded-full bg-ink p-[15px] text-[14.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Wyślij link do nowego hasła</button>
         </form>
         <a href="{{ route('admin.login') }}" class="mt-5 inline-block text-[13.5px]">← Wróć do logowania</a>
     </div>

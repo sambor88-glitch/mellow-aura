@@ -56,13 +56,13 @@
                     <div class="grid gap-3">
                         @if ($phone)
                             <a href="https://wa.me/{{ preg_replace('/\D+/', '', $phone) }}" target="_blank" rel="noopener"
-                               class="rounded-full bg-ink p-[15px] text-center text-[14.5px] text-linen transition duration-300 hover:bg-navy hover:text-linen active:scale-[.97]">Napisz na WhatsAppie</a>
+                               class="rounded-full bg-ink p-[15px] text-center text-[14.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Napisz na WhatsAppie</a>
                         @endif
                         <a href="{{ $contactUrl }}"
                            @class([
                                'rounded-full p-[15px] text-center text-[14.5px] transition duration-300 active:scale-[.98]',
                                'border border-line-strong text-ink hover:border-ink hover:bg-sand-dark hover:text-ink' => $phone,
-                               'bg-ink text-linen hover:bg-navy hover:text-linen' => ! $phone,
+                               'bg-ink text-linen hover:bg-rose hover:text-ink' => ! $phone,
                            ])>Napisz przez formularz</a>
                     </div>
                     @if ($phone)
