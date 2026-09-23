@@ -88,8 +88,14 @@ Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
 
 Szczegóły w `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html`. Tu zasady, których nie wolno obejść w kodzie.
 
-- Polski bez prefiksu, angielski pod `/en/`. Jedna trasa, jedna nazwa po angielsku, slug osobny dla każdego
-  języka: `Route::get('/sklep', ...)->name('shop.index')` i `/en/shop` pod tą samą nazwą.
+- Polski bez prefiksu, angielski pod `/en/`. Trasę piszesz raz, po polsku, w module. Angielski adres dopisujesz
+  w `config/localization.php` (`paths.en`) — moduł `Localization` robi z niego bliźniaka `en.<nazwa>` z tym samym
+  kontrolerem. Strony spoza tej listy istnieją tylko po polsku.
+- `route('shop.index')` na angielskiej stronie sam daje `/en/shop`. Nie pisz `route('en.…')` ani `url('/')` —
+  do strony głównej prowadzi `route('home')`.
+- Sprawdzając bieżącą stronę, pytaj o obie nazwy: `request()->routeIs($p, Locales::current().'.'.$p)`.
+- Teksty interfejsu w `lang/pl` i `lang/en` modułu, jako `__('modul::plik.klucz')`. Moduł wczytuje je sam.
+- `APP_LOCALES` włącza języki: produkcja `pl`, lokalnie i staging `pl,en`. Testy chodzą z `pl,en`.
 - Waluta wynika z języka: PL to PLN, EN to EUR. Nie ma osobnego przełącznika waluty i nie ma koszyka
   z mieszanymi walutami.
 - Ceny w euro wpisuje Kasia w panelu. Żadnego przeliczania po kursie w locie.
@@ -159,6 +165,7 @@ npm install && npm run dev        # Vite na Macu, nie w kontenerze
 
 ## Gałęzie i środowiska
 
-- `dev` → staging na Forge (`*.on-forge.com`), auto-deploy po każdym pushu, `APP_ENV=staging`, `APP_NOINDEX=true`, dostęp za hasłem.
+- `dev` → staging na Forge (`mellowaura-dev.on-forge.com`), auto-deploy po każdym pushu, `APP_ENV=staging`, `APP_NOINDEX=true`,
+  `APP_LOCALES=pl,en`, dostęp za hasłem.
 - `main` → produkcja `mellow-aura.com` (strona produkcyjna powstaje przy starcie), `APP_NOINDEX=false`.
 - Pracujesz na `dev`; do `main` scalasz dopiero przetestowane zmiany.

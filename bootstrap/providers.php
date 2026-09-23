@@ -8,6 +8,7 @@ use App\Modules\Consent\ConsentServiceProvider;
 use App\Modules\Content\ContentServiceProvider;
 use App\Modules\Firing\FiringServiceProvider;
 use App\Modules\Gifts\GiftsServiceProvider;
+use App\Modules\Localization\LocalizationServiceProvider;
 use App\Modules\Monitoring\MonitoringServiceProvider;
 use App\Modules\MugConfigurator\MugConfiguratorServiceProvider;
 use App\Modules\Payments\PaymentsServiceProvider;
@@ -19,6 +20,7 @@ use App\Providers\AppServiceProvider;
 return [
     AppServiceProvider::class,
     SharedServiceProvider::class,
+    LocalizationServiceProvider::class,
     SettingsServiceProvider::class,
     AdminServiceProvider::class,
     CatalogServiceProvider::class,
