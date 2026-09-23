@@ -2,6 +2,7 @@
 
 namespace App\Modules\Cart;
 
+use App\Modules\Localization\Support\Locales;
 use App\Modules\Shared\Support\AnalyticsItem;
 
 /**
@@ -11,15 +12,14 @@ use App\Modules\Shared\Support\AnalyticsItem;
  */
 abstract class CartLine
 {
-    public const TOO_MANY_NOTICE = 'Większą liczbę sztuk zrobię na zamówienie — napisz do mnie';
-
     public function __construct(
         public readonly string $key,
         public private(set) int $quantity,
     ) {}
 
     /**
-     * The price of one piece in grosze.
+     * The price of one piece in the currency of the page, in its smallest unit (grosze, cents).
+     * Asked only of a line priced in that currency (see pricedIn).
      */
     abstract public function unitPrice(): int;
 
@@ -72,6 +72,15 @@ abstract class CartLine
     }
 
     /**
+     * Whether the line has a price in $currency. A line without one stays in the session but out of the cart on
+     * pages in that currency, so a basket never adds złoty to euro. Only złoty unless a kind of line knows more.
+     */
+    public function pricedIn(string $currency): bool
+    {
+        return $currency === Locales::defaultCurrency();
+    }
+
+    /**
      * Whether this line has to be delivered, so the checkout asks how. A voucher sent as a PDF does not.
      */
     public function needsDelivery(): bool
@@ -103,9 +112,15 @@ abstract class CartLine
         return $this->unitPrice() * $this->quantity;
     }
 
+    /** What the customer hears when they ask for more pieces than any line holds. */
+    public static function tooManyNotice(): string
+    {
+        return __('cart::line.too_many');
+    }
+
     public function addedNotice(): string
     {
-        return $this->name().' — dodane do koszyka';
+        return __('cart::line.added', ['name' => $this->name()]);
     }
 
     /**
@@ -113,7 +128,7 @@ abstract class CartLine
      */
     public function limitNotice(): string
     {
-        return self::TOO_MANY_NOTICE;
+        return self::tooManyNotice();
     }
 
     public function withQuantity(int $quantity): static

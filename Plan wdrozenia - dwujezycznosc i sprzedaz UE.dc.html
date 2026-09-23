@@ -155,13 +155,16 @@
 
     <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">5. Dwie waluty</h2>
 
-    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty">Cena przestaje być kolumną w wariancie, a staje się osobną tabelą. Kwoty jako liczby całkowite w najmniejszej jednostce — grosze i centy — zgodnie z zasadą, której nie łamiemy.</p>
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty">Cena w złotych zostaje w wariancie, tak jak polski tekst zostaje w tabeli produktu. Każda inna waluta dostaje wiersz w osobnej tabeli. Kwoty jako liczby całkowite w najmniejszej jednostce — grosze i centy — zgodnie z zasadą, której nie łamiemy.</p>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty">Zmiana względem pierwszej wersji planu (23 września): złotówki nie wyprowadzają się z wariantu. Czyta je kilkadziesiąt miejsc — koszyk, kasa, maile, zestawy, feed Google — i żadne z nich nie potrzebuje euro. Przeniesienie ich do nowej tabeli oznaczałoby przepisanie całego sklepu bez żadnego zysku dla klientki.</p>
 
     <div style="background: #FCF9F4; border: 0.3mm solid #DCD0BE; border-radius: 1.5mm; padding: 6mm; margin-bottom: 4mm; font-size: 9.5pt; line-height: 1.7; font-family: ui-monospace, monospace">
-      prices (product_variant_id, currency, amount_minor, compare_at_minor)<br />
+      product_variants (…, price_gross, compare_at_price)  — złote<br /><br />
+      prices (product_variant_id, currency, amount_minor, compare_at_minor)  — euro i kolejne<br />
       &nbsp;&nbsp;unique (product_variant_id, currency)<br /><br />
-      price_history (product_variant_id, currency, amount_minor, changed_at)<br />
-      &nbsp;&nbsp;index (product_variant_id, currency, changed_at)
+      price_history (product_variant_id, currency, price_gross, valid_from)<br />
+      &nbsp;&nbsp;index (product_variant_id, currency, valid_from)
     </div>
 
     <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty"><strong style="font-weight: 500">Omnibus liczy się osobno dla każdej waluty.</strong> Najniższa cena z trzydziestu dni przed obniżką to inna liczba w złotych i inna w euro, bo ceny zmieniały się w różnych momentach. Jedna historia dla obu walut dawałaby wartości nieprawdziwe w obie strony.</p>

@@ -31,7 +31,7 @@ class BundleLines implements LineType
 
         $data = $request->validate(
             ['quantity' => ['sometimes', 'integer', 'min:1', 'max:'.Cart::MAX_QUANTITY]],
-            ['quantity.max' => CartLine::TOO_MANY_NOTICE],
+            ['quantity.max' => CartLine::tooManyNotice()],
         );
 
         return new BundleLine(BundleLine::keyFor($bundle), (int) ($data['quantity'] ?? 1), $bundle);

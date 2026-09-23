@@ -42,6 +42,12 @@
                         $cover = $photos->first();
                         $photoErrors = collect($errors->getBag('zdjecia-'.$product->id)->all())->unique();
                         $prices = $product->variants->pluck('price_gross');
+                        // Written in English is half of it: without a euro price the product stays out of the English shop.
+                        $english = match (true) {
+                            ! $product->hasTranslation('en') => null,
+                            $product->variants->contains(fn ($variant) => $variant->price('EUR') !== null) => 'EN',
+                            default => 'EN bez ceny w euro',
+                        };
                         $soldOut = $product->variants->isNotEmpty() && $product->variants->every(fn ($variant) => $variant->stock === 0);
                         [$state, $stateClass] = match (true) {
                             ! $product->is_published => ['ukryty w sklepie', 'text-label'],
@@ -67,7 +73,7 @@
                             @endif
                             <div class="min-w-0 flex-[1_1_150px]">
                                 <div class="text-[14.5px] leading-[1.3]">{{ $product->name }}</div>
-                                <div class="mt-[3px] text-[12px] {{ $stateClass }}">{{ $product->category->name }} &middot; {{ $state }}@if ($product->hasTranslation('en')) &middot; EN @endif</div>
+                                <div class="mt-[3px] text-[12px] {{ $stateClass }}">{{ $product->category->name }} &middot; {{ $state }}@if ($english) &middot; {{ $english }} @endif</div>
                             </div>
                             @if ($prices->isNotEmpty())
                                 <div class="flex-none text-[14px] tabular-nums">{{ $prices->min() === $prices->max() ? Money::format($prices->min()) : 'od '.Money::format($prices->min()) }}</div>

@@ -3,6 +3,7 @@
 namespace App\Modules\Cart;
 
 use App\Modules\Cart\Lines\ProductLine;
+use App\Modules\Localization\Support\Locales;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Support\Collection;
 
@@ -22,7 +23,8 @@ class Cart
 
     /**
      * Lines that can still be bought, keyed and ordered as in the session. A line whose product was hidden
-     * or sold out drops out, and a quantity above the limit shrinks to it.
+     * or sold out drops out, and a quantity above the limit shrinks to it. So does a line without a price in the
+     * currency of the page: it comes back on a page in its own currency.
      *
      * @return Collection<string, CartLine>
      */
@@ -41,6 +43,7 @@ class Cart
         $lines = collect($stored)
             ->map(fn (array $row, string $key) => $lines[$key] ?? null)
             ->filter()
+            ->filter(fn (CartLine $line) => $line->pricedIn(Locales::currency()))
             ->map(fn (CartLine $line) => $line->quantity > $line->limit() ? $line->withQuantity($line->limit()) : $line)
             ->filter(fn (CartLine $line) => $line->quantity > 0);
 

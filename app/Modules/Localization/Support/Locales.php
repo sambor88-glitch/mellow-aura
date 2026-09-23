@@ -41,6 +41,12 @@ class Locales
         return config('localization.locales.'.($locale ?? self::current()).'.currency');
     }
 
+    /** The shop's own currency, the one every price has: złoty. */
+    public static function defaultCurrency(): string
+    {
+        return self::currency(self::default());
+    }
+
     public static function ogLocale(?string $locale = null): string
     {
         return config('localization.locales.'.($locale ?? self::current()).'.og');
@@ -110,7 +116,7 @@ class Locales
         }
 
         foreach ($route->parameters() as $parameter) {
-            if (is_object($parameter) && method_exists($parameter, 'hasTranslation') && ! $parameter->hasTranslation($locale)) {
+            if (is_object($parameter) && method_exists($parameter, 'availableIn') && ! $parameter->availableIn($locale)) {
                 return false;
             }
         }

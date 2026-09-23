@@ -7,6 +7,7 @@ use App\Modules\Catalog\Enums\CategoryGroup;
 use App\Modules\Catalog\Enums\Dimension;
 use App\Modules\Catalog\Enums\FoodContact;
 use App\Modules\Catalog\Enums\GoogleCategory;
+use App\Modules\Localization\Support\Locales;
 use App\Modules\Shared\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -51,14 +52,60 @@ class Product extends Model implements HasMedia
 
     /**
      * Published products with at least one variant on the shelf or without stock tracking — on a page in another
-     * language, only the ones written in it.
+     * language, only the ones written in it and priced in its currency.
      *
      * @param  Builder<Product>  $query
      */
     #[Scope]
     protected function live(Builder $query): void
     {
-        $query->where('is_published', true)->whereHas('variants', fn (Builder $variants) => $variants->inStock())->translatedInto();
+        $query->where('is_published', true)
+            ->whereHas('variants', fn (Builder $variants) => $variants->inStock()->pricedIn())
+            ->translatedInto();
+    }
+
+    /**
+     * What a product card and a product page read, in the language and the currency of the page: on /en/ only the
+     * variants with a euro price, so no card ever shows a złoty amount under a euro sign.
+     *
+     * @param  Builder<Product>  $query
+     */
+    #[Scope]
+    protected function withShelf(Builder $query): void
+    {
+        $query->with(self::shelfRelations());
+    }
+
+    /**
+     * The same for a product already in hand, e.g. from a route.
+     */
+    public function loadShelf(): static
+    {
+        return $this->load(self::shelfRelations());
+    }
+
+    /**
+     * Translations only where they are read: a Polish page reads the Polish columns. They load inside the variants'
+     * own query, since a separate „variants.translations” would load every variant again, priced or not.
+     *
+     * @return array<int|string, mixed>
+     */
+    private static function shelfRelations(): array
+    {
+        $translated = Locales::current() !== Locales::default();
+
+        return [
+            'variants' => fn ($variants) => $variants->pricedIn()->orderBy('id')->when($translated, fn ($variants) => $variants->with('translations')),
+            'category' => fn ($category) => $category->when($translated, fn ($category) => $category->with('translations')),
+            'media',
+        ];
+    }
+
+    /** Whether the product has a page in $locale: written in its language and priced in its currency. */
+    public function availableIn(string $locale): bool
+    {
+        return $this->hasTranslation($locale)
+            && ($locale === Locales::default() || $this->variants()->pricedIn(Locales::currency($locale))->exists());
     }
 
     /**

@@ -14,7 +14,7 @@ class AboutController extends Controller
     public function __invoke(): View
     {
         return view('content::about', [
-            'featured' => Product::query()->live()->with(['category', 'variants', 'media'])->orderBy('sort_order')->take(4)->get(),
+            'featured' => Product::query()->live()->withShelf()->orderBy('sort_order')->take(4)->get(),
         ]);
     }
 }

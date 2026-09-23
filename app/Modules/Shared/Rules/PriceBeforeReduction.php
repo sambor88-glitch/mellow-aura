@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 
 /**
  * „Cena przed obniżką” next to a row's price, e.g. variants.0.compare_at next to variants.0.price: an amount
- * higher than the price, or nothing.
+ * higher than the price, or nothing. A row with prices in two currencies names the field to compare with.
  */
 class PriceBeforeReduction implements DataAwareRule, ValidationRule
 {
@@ -18,6 +18,8 @@ class PriceBeforeReduction implements DataAwareRule, ValidationRule
 
     /** @var array<string, mixed> */
     private array $data = [];
+
+    public function __construct(private string $priceField = 'price') {}
 
     public function setData(array $data): static
     {
@@ -34,7 +36,13 @@ class PriceBeforeReduction implements DataAwareRule, ValidationRule
             return;
         }
 
-        $price = data_get($this->data, Str::beforeLast($attribute, '.').'.price');
+        $price = data_get($this->data, Str::beforeLast($attribute, '.').'.'.$this->priceField);
+
+        if (blank($price)) {
+            $fail('Cena przed obniżką potrzebuje obok obecnej ceny');
+
+            return;
+        }
 
         if (preg_match(self::AMOUNT, (string) $price) && Money::parse((string) $value) <= Money::parse((string) $price)) {
             $fail('Cena przed obniżką musi być wyższa niż obecna — albo zostaw puste pole');

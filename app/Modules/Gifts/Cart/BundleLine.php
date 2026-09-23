@@ -84,7 +84,7 @@ class BundleLine extends CartLine
         return match ($limit = $this->limit()) {
             0 => 'Tego zestawu już nie złożę z półki — kolejny zrobię na zamówienie',
             1 => 'To ostatni taki zestaw na półce — kolejny zrobię na zamówienie',
-            Cart::MAX_QUANTITY => self::TOO_MANY_NOTICE,
+            Cart::MAX_QUANTITY => self::tooManyNotice(),
             default => 'Z tego, co na półce, złożę '.$limit.' szt. tego zestawu — więcej zrobię na zamówienie',
         };
     }

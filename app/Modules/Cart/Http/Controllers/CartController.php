@@ -7,6 +7,7 @@ use App\Modules\Cart\Cart;
 use App\Modules\Cart\CartLine;
 use App\Modules\Cart\Lines\ProductLine;
 use App\Modules\Cart\LineTypes;
+use App\Modules\Localization\Support\Locales;
 use App\Modules\Shared\Support\AnalyticsItem;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -29,6 +30,10 @@ class CartController extends Controller
         abort_if($lineType === null, 404);
 
         $line = $lineType->fromRequest($request);
+
+        // Nothing goes into a euro basket without a euro price.
+        abort_unless($line->pricedIn(Locales::currency()), 404);
+
         $added = $cart->add($line);
         // What went in, for Google Analytics; the page sends it only after a yes to statistics.
         $analytics = $added > 0
@@ -42,7 +47,7 @@ class CartController extends Controller
     {
         $wanted = (int) $request->validate(
             ['quantity' => ['required', 'integer', 'min:0', 'max:'.Cart::MAX_QUANTITY]],
-            ['quantity.max' => CartLine::TOO_MANY_NOTICE],
+            ['quantity.max' => CartLine::tooManyNotice()],
         )['quantity'];
 
         $current = $cart->lines()->get($line);

@@ -86,7 +86,15 @@ export default {
         }
     },
 
-    format(grosze) {
-        return (grosze / 100).toFixed(2).replace('.', ',') + ' zł';
+    // The same as Money::format in PHP; the page names its currency on <html data-currency>.
+    format(minor) {
+        const amount = (minor / 100).toFixed(2);
+        const { currency } = document.documentElement.dataset;
+
+        if (currency === 'EUR') {
+            return document.documentElement.lang === 'en' ? '€' + amount : amount.replace('.', ',') + ' €';
+        }
+
+        return amount.replace('.', ',') + ' zł';
     },
 };

@@ -34,7 +34,12 @@ class ProductLine extends CartLine
 
     public function unitPrice(): int
     {
-        return $this->variant->price_gross;
+        return (int) $this->variant->price();
+    }
+
+    public function pricedIn(string $currency): bool
+    {
+        return $this->variant->price($currency) !== null;
     }
 
     // A piece put in on a Polish page may have no English text yet; the basket still names it (see HasTranslations).
@@ -83,10 +88,10 @@ class ProductLine extends CartLine
     public function limitNotice(): string
     {
         return match ($this->variant->stock) {
-            null => self::TOO_MANY_NOTICE,
-            0 => 'Tej sztuki już nie ma na półce — kolejną zrobię na zamówienie',
-            1 => 'To ostatnia sztuka — kolejną zrobię na zamówienie',
-            default => 'Na półce mam '.$this->variant->stock.' szt. — więcej zrobię na zamówienie',
+            null => self::tooManyNotice(),
+            0 => __('cart::line.sold_out'),
+            1 => __('cart::line.last_one'),
+            default => __('cart::line.on_shelf', ['count' => $this->variant->stock]),
         };
     }
 

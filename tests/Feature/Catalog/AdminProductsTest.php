@@ -373,16 +373,51 @@ class AdminProductsTest extends TestCase
     {
         $mug = $this->product('Kubki malowane', 1, [7900]);
         $mug->translations()->create(['locale' => 'en', 'name' => 'Hand-painted mugs', 'slug' => 'hand-painted-mugs']);
-        $this->product('Talerz', 2, [5900]);
+        $mug->variants->first()->prices()->create(['currency' => 'EUR', 'amount_minor' => 1900]);
+        $bowl = $this->product('Miska', 2, [6900]);
+        $bowl->translations()->create(['locale' => 'en', 'name' => 'Bowl', 'slug' => 'bowl']);
+        $this->product('Talerz', 3, [5900]);
 
         $this->actingAs(User::factory()->create())
             ->get('/panel/produkty')
             ->assertOk()
             ->assertSee('Kubki i filiżanki &middot; widoczny w sklepie &middot; EN </div>', false)
+            ->assertSee('Kubki i filiżanki &middot; widoczny w sklepie &middot; EN bez ceny w euro </div>', false)
             ->assertSee('Kubki i filiżanki &middot; widoczny w sklepie</div>', false)
             ->assertSee('value="Hand-painted mugs"', false)
+            ->assertSee('value="19"', false)
             ->assertSee('Produkt jest w angielskim sklepie pod adresem /en/product/hand-painted-mugs')
+            ->assertSee('Produkt pokaże się pod adresem /en/product/bowl, gdy wpiszesz cenę w euro przy rozmiarze.')
             ->assertSee('Bez angielskiej nazwy produkt nie pokaże się w angielskim sklepie.');
+    }
+
+    public function test_a_euro_price_is_typed_in_by_hand_with_its_own_history_and_can_be_taken_away(): void
+    {
+        $mug = $this->product('Kubki malowane', 1, [7900]);
+        $size = $mug->variants->first();
+        $owner = User::factory()->create();
+        $form = fn (array $row) => ['form' => 'produkt-'.$mug->id, 'name' => 'Kubki malowane', 'category_id' => $this->mugs->id, 'is_published' => '1', 'variants' => [['id' => $size->id, 'label' => '', 'price' => '79', ...$row]]];
+
+        $this->actingAs($owner)->put('/panel/produkty/'.$mug->id, $form(['price_eur' => '19']))->assertSessionHasNoErrors();
+        $this->put('/panel/produkty/'.$mug->id, $form(['price_eur' => '17,50', 'compare_at_eur' => '19']))->assertSessionHasNoErrors();
+
+        $this->assertSame([1750, 1900], [$size->fresh()->price('EUR'), $size->fresh()->compareAtPrice('EUR')]);
+        // The złoty price stays as it was, with its own history.
+        $this->assertSame(7900, $size->fresh()->price('PLN'));
+        $this->assertSame([1900, 1750], PriceHistory::query()->where('product_variant_id', $size->id)->where('currency', 'EUR')->orderBy('id')->pluck('price_gross')->all());
+        $this->assertSame([7900], PriceHistory::query()->where('product_variant_id', $size->id)->where('currency', 'PLN')->pluck('price_gross')->all());
+
+        // A crossed-out price only above the price, and only next to one.
+        $this->put('/panel/produkty/'.$mug->id, $form(['price_eur' => '19', 'compare_at_eur' => '15']))
+            ->assertSessionHasErrorsIn('produkt-'.$mug->id, ['variants.0.compare_at_eur' => 'Cena przed obniżką musi być wyższa niż obecna — albo zostaw puste pole']);
+        $this->put('/panel/produkty/'.$mug->id, $form(['compare_at_eur' => '25']))
+            ->assertSessionHasErrorsIn('produkt-'.$mug->id, ['variants.0.compare_at_eur' => 'Cena przed obniżką potrzebuje obok obecnej ceny']);
+        $this->put('/panel/produkty/'.$mug->id, $form(['price_eur' => '19 euro']))
+            ->assertSessionHasErrorsIn('produkt-'.$mug->id, ['variants.0.price_eur']);
+
+        // An emptied euro price takes the size out of the euro shop.
+        $this->put('/panel/produkty/'.$mug->id, $form(['price_eur' => '']))->assertSessionHasNoErrors();
+        $this->assertNull($size->fresh()->price('EUR'));
     }
 
     public function test_an_english_name_needs_the_feature_to_confirm_and_the_warnings_in_english_too(): void

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Content\Actions\RefreshInstagramFeed;
 use App\Modules\Content\Models\InstagramPost;
-use App\Modules\Localization\Support\Locales;
 use App\Modules\Settings\Settings;
 use Illuminate\View\View;
 
@@ -14,9 +13,7 @@ class HomeController extends Controller
 {
     public function __invoke(Settings $settings): View
     {
-        $live = Product::query()->live()
-            ->with(['category', 'variants', 'media'])
-            ->when(Locales::current() !== Locales::default(), fn ($query) => $query->with(['category.translations', 'variants.translations']))
+        $live = Product::query()->live()->withShelf()
             ->orderBy('sort_order')
             ->get();
         $heroSlug = $settings->get('home_hero_product');

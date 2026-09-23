@@ -37,9 +37,9 @@ class ProductLines implements LineType
             'quantity' => ['sometimes', 'integer', 'min:1', 'max:'.Cart::MAX_QUANTITY],
             'custom_text' => [Rule::requiredIf($variant->takesCustomText()), 'nullable', 'string', 'max:'.(int) $this->settings->get('stamp_text_max_chars', 22)],
         ], [
-            'quantity.max' => CartLine::TOO_MANY_NOTICE,
-            'custom_text.required' => 'Napisz, co mam wbić w glinę',
-            'custom_text.max' => 'Zmieszczę najwyżej :max znaków',
+            'quantity.max' => CartLine::tooManyNotice(),
+            'custom_text.required' => __('cart::line.text_required'),
+            'custom_text.max' => __('cart::line.text_max'),
         ]);
 
         // Letters are stamped in capitals; a text sent for a product without stamping is ignored.
@@ -67,7 +67,7 @@ class ProductLines implements LineType
     protected function publishedVariants(array $ids): Collection
     {
         return ProductVariant::query()
-            ->with('product.media', 'product.category')
+            ->with('product.media', 'product.category', 'prices')
             ->whereKey($ids)
             ->whereRelation('product', 'is_published', true)
             ->get()
@@ -79,6 +79,7 @@ class ProductLines implements LineType
         return ProductVariant::query()
             ->with('product.media', 'product.category')
             ->whereRelation('product', 'is_published', true)
+            ->pricedIn()
             ->findOrFail($request->integer('variant_id'));
     }
 }

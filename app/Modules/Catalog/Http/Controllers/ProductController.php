@@ -23,9 +23,11 @@ class ProductController extends Controller
                 : to_route('shop.index', status: 301);
         }
 
-        $product->load(['category', 'variants' => fn ($query) => $query->orderBy('id'), 'media']);
-        if (Locales::current() !== Locales::default()) {
-            $product->load(['category.translations', 'variants.translations']);
+        $product->loadShelf();
+
+        // Written in English but not priced in euro yet: the English shop is the closest thing, for now.
+        if ($product->variants->isEmpty() && Locales::current() !== Locales::default()) {
+            return to_route('shop.index');
         }
 
         $variant = $product->variants->firstWhere('id', (int) $request->query('wariant')) ?? $product->variants->first();
@@ -35,10 +37,8 @@ class ProductController extends Controller
         $variant->setRelation('product', $product);
 
         // Same category first, then the same group (ceramics, crafts, workshops).
-        $related = Product::query()->live()
+        $related = Product::query()->live()->withShelf()
             ->whereKeyNot($product->getKey())
-            ->with(['category', 'variants', 'media'])
-            ->when(Locales::current() !== Locales::default(), fn ($query) => $query->with(['variants.translations']))
             ->orderBy('sort_order')
             ->get()
             ->filter(fn (Product $other) => $other->category->group === $product->category->group)

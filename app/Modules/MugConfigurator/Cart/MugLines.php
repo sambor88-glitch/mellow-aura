@@ -55,7 +55,7 @@ class MugLines implements LineType
             'size.in' => 'Wybierz rozmiar kubka',
             'glaze.required' => 'Wybierz kolor wnętrza',
             'glaze.in' => 'Wybierz kolor wnętrza',
-            'quantity.max' => CartLine::TOO_MANY_NOTICE,
+            'quantity.max' => CartLine::tooManyNotice(),
         ]);
 
         $lines = explode("\n", $data['text']);

@@ -22,12 +22,12 @@ class EnglishVersionTest extends TestCase
     {
         $this->get('/en/shop')
             ->assertOk()
-            ->assertSee('<html lang="en">', false)
+            ->assertSee('<html lang="en" data-currency="EUR">', false)
             ->assertSee('<meta property="og:locale" content="en_GB">', false);
 
         $this->get('/sklep')
             ->assertOk()
-            ->assertSee('<html lang="pl">', false);
+            ->assertSee('<html lang="pl" data-currency="PLN">', false);
     }
 
     public function test_links_on_an_english_page_lead_to_english_addresses(): void
@@ -144,7 +144,6 @@ class EnglishVersionTest extends TestCase
             ->assertOk()
             ->assertSee('<title>MellowAura — handmade ceramics &amp; silk, Kraków</title>', false)
             ->assertSee('Clay and silk from <em class="text-brown italic">one pair of</em> hands.', false)
-            ->assertSee('>Design your mug <span', false)
             ->assertSee('data-phases=\'[[0,"raw clay"]', false)
             ->assertSee('Let’s design it together')
             ->assertSee('>Basket</span>', false)
@@ -154,7 +153,9 @@ class EnglishVersionTest extends TestCase
             ->assertDontSee('Send me')
             ->assertDontSee('Sink your hands')
             ->assertDontSee('Ceramics for cafés and restaurants')
-            ->assertDontSee('Hi, I’m Kasia');
+            ->assertDontSee('Hi, I’m Kasia')
+            // The mug configurator comes back to /en/ with its euro prices.
+            ->assertDontSee('>Design your mug <span', false);
 
         $this->get('/')
             ->assertOk()
@@ -163,18 +164,18 @@ class EnglishVersionTest extends TestCase
             ->assertSee('>Koszyk</span>', false);
     }
 
-    public function test_the_gift_finder_is_polish_only_and_english_gifts_lead_to_the_gift_sets(): void
+    public function test_the_gift_finder_is_polish_only_and_the_gift_sets_wait_for_their_euro_prices(): void
     {
         $this->get('/en/gifts')->assertNotFound();
+        $this->get('/en/gift-sets')->assertNotFound();
 
         $this->get('/en/shop')
-            ->assertSee('href="'.url('/en/gift-sets').'"', false)
-            ->assertSee('>Gifts</a>', false)
+            ->assertDontSee('>Gifts</a>', false)
             ->assertDontSee('Find a gift');
 
         $this->get('/prezenty')
             ->assertOk()
-            ->assertSee('href="'.url('/en/gift-sets').'?unavailable=1" hreflang="en"', false);
+            ->assertSee('href="'.url('/en/shop').'?unavailable=1" hreflang="en"', false);
 
         $this->get('/sklep')->assertSee('href="'.url('/prezenty').'"', false);
     }

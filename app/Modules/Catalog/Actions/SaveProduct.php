@@ -13,13 +13,15 @@ use Illuminate\Support\Str;
  * in price_history (the variant model records it), a size missing from the form is removed, and a new
  * product goes to the top of the list. The address (slug) is set once and survives renaming.
  *
+ * Prices in other currencies ride along the same way, each with its own history.
+ *
  * Its other languages ride along: a product with an English name gets an English row (and its own English
  * address, also set once); an emptied English name removes the row, and the product leaves /en/.
  */
 class SaveProduct
 {
     /**
-     * @param  array{name: string, category_id: int, description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels?: array<string, string>, price_gross: int, compare_at_price: ?int, stock: ?int, sent_by_post?: bool}>, photo_alts?: array<int, string>, translations?: array<string, array<string, ?string>>}  $data
+     * @param  array{name: string, category_id: int, description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels?: array<string, string>, price_gross: int, compare_at_price: ?int, prices?: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post?: bool}>, photo_alts?: array<int, string>, translations?: array<string, array<string, ?string>>}  $data
      */
     public function __invoke(?Product $product, array $data): Product
     {
@@ -72,6 +74,7 @@ class SaveProduct
 
                 $kept[] = $variant->id;
                 $this->saveVariantLabels($variant, $row['labels'] ?? []);
+                $this->savePrices($variant, $row['prices'] ?? []);
             }
 
             $product->variants()->whereKeyNot($kept)->delete();
@@ -127,6 +130,26 @@ class SaveProduct
             $label === ''
                 ? $variant->translations()->where('locale', $locale)->delete()
                 : $variant->translations()->updateOrCreate(['locale' => $locale], ['label' => $label]);
+        }
+    }
+
+    /**
+     * Prices in other currencies. A changed amount lands in price_history under its currency (the Price model
+     * records it); an emptied one removes the row, and the size leaves the shop in that currency.
+     *
+     * @param  array<string, array{amount: ?int, compare_at: ?int}>  $prices  currency => amounts in its smallest unit
+     */
+    private function savePrices(ProductVariant $variant, array $prices): void
+    {
+        foreach ($prices as $currency => $price) {
+            if ($price['amount'] === null) {
+                $variant->prices()->where('currency', $currency)->delete();
+
+                continue;
+            }
+
+            $row = $variant->prices()->firstOrNew(['currency' => $currency]);
+            $row->fill(['amount_minor' => $price['amount'], 'compare_at_minor' => $price['compare_at']])->save();
         }
     }
 
