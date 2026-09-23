@@ -105,17 +105,20 @@
                 {
                     "label": "Niski 16 cm",
                     "price_gross": 23900,
-                    "stock": 3
+                    "stock": 3,
+                    "label_en": "Low 16 cm"
                 },
                 {
                     "label": "Średni 20 cm",
                     "price_gross": 26900,
-                    "stock": 3
+                    "stock": 3,
+                    "label_en": "Medium 20 cm"
                 },
                 {
                     "label": "Wysoki 24 cm",
                     "price_gross": 29900,
-                    "stock": 3
+                    "stock": 3,
+                    "label_en": "Tall 24 cm"
                 }
             ],
             "images": [
@@ -124,7 +127,13 @@
                     "alt": "Wazony"
                 }
             ],
-            "google_category": 602
+            "google_category": 602,
+            "euro_from_rate": true,
+            "en": {
+                "name": "Vases",
+                "slug": "vases",
+                "description": "Hand-formed ceramic vases with an organic, uneven line. Every one is one of a kind — full of small asymmetries that give it its character. A subtle glaze in shades I borrow from nature: earth, water and light."
+            }
         },
         {
             "slug": "zestaw-4-filizanek",
@@ -196,17 +205,20 @@
                 {
                     "label": "Mała 24 cm",
                     "price_gross": 32900,
-                    "stock": 3
+                    "stock": 3,
+                    "label_en": "Small 24 cm"
                 },
                 {
                     "label": "Średnia 30 cm",
                     "price_gross": 36900,
-                    "stock": 3
+                    "stock": 3,
+                    "label_en": "Medium 30 cm"
                 },
                 {
                     "label": "Duża 36 cm",
                     "price_gross": 39900,
-                    "stock": 3
+                    "stock": 3,
+                    "label_en": "Large 36 cm"
                 }
             ],
             "images": [
@@ -215,7 +227,13 @@
                     "alt": "Patery"
                 }
             ],
-            "google_category": 4372
+            "google_category": 4372,
+            "euro_from_rate": true,
+            "en": {
+                "name": "Platters",
+                "slug": "platters",
+                "description": "Large decorative forms on the edge between a dish and a sculpture. I make them without a mould — from a slab of clay that decides for itself where to bend. The black glaze, fired at a high temperature, gives a deep, mirror-like shine."
+            }
         },
         {
             "slug": "talerze",
@@ -239,17 +257,20 @@
                 {
                     "label": "Deserowy 18 cm",
                     "price_gross": 11000,
-                    "stock": 3
+                    "stock": 3,
+                    "label_en": "Dessert 18 cm"
                 },
                 {
                     "label": "Obiadowy 24 cm",
                     "price_gross": 14000,
-                    "stock": 3
+                    "stock": 3,
+                    "label_en": "Dinner 24 cm"
                 },
                 {
                     "label": "Serwisowy 30 cm",
                     "price_gross": 18500,
-                    "stock": 3
+                    "stock": 3,
+                    "label_en": "Serving 30 cm"
                 }
             ],
             "images": [
@@ -262,7 +283,13 @@
                     "alt": "Kasia z talerzem zdobionym złotem"
                 }
             ],
-            "google_category": 3553
+            "google_category": 3553,
+            "euro_from_rate": true,
+            "en": {
+                "name": "Plates",
+                "slug": "plates",
+                "description": "Plates pressed with real plants I pick near the studio — umbels, twigs, leaves. The plant burns away in the kiln and leaves behind a drawing that can never be repeated. Sandy clay with dark speckles."
+            }
         },
         {
             "slug": "bizuteria",
@@ -403,17 +430,20 @@
                 {
                     "label": "200 ml",
                     "price_gross": 6900,
-                    "stock": 3
+                    "stock": 3,
+                    "label_en": "200 ml"
                 },
                 {
                     "label": "300 ml",
                     "price_gross": 7900,
-                    "stock": 3
+                    "stock": 3,
+                    "label_en": "300 ml"
                 },
                 {
                     "label": "400 ml",
                     "price_gross": 9500,
-                    "stock": 3
+                    "stock": 3,
+                    "label_en": "400 ml"
                 }
             ],
             "images": [
@@ -426,7 +456,13 @@
                     "alt": "Kubki malowane ręcznie"
                 }
             ],
-            "google_category": 2169
+            "google_category": 2169,
+            "euro_from_rate": true,
+            "en": {
+                "name": "Hand-painted mugs",
+                "slug": "hand-painted-mugs",
+                "description": "Mugs formed by hand, with walls a little thicker where your hand holds them. Painted with a brush — each one differently. They go in the dishwasher, and they are made for a morning coffee you drink slower than usual."
+            }
         },
         {
             "slug": "kadzielnice",

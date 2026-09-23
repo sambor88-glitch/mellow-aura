@@ -29,6 +29,7 @@ return [
     // BLIK and free shipping exist only in Poland; an English page leaves them out (see the view).
     'blik' => 'pay in 10 seconds with a code from your banking app',
     'shipping' => 'Shipping',
+    'packing_link' => 'How I pack and ship →',
     'free_from' => 'free from :price',
     'certificate' => 'Certificate of uniqueness',
     'certificate_ceramics' => 'A card in the parcel with its number, firing date and my signature',

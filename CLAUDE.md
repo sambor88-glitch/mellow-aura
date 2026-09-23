@@ -98,7 +98,11 @@ Szczegóły w `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html`. Tu zasady,
 - `APP_LOCALES` włącza języki: produkcja `pl`, lokalnie i staging `pl,en`. Testy chodzą z `pl,en`.
 - Waluta wynika z języka: PL to PLN, EN to EUR. Nie ma osobnego przełącznika waluty i nie ma koszyka
   z mieszanymi walutami.
-- Ceny w euro wpisuje Kasia w panelu. Żadnego przeliczania po kursie w locie.
+- Cenę w euro produkt ma na jeden z dwóch sposobów. Domyślnie wpisuje ją Kasia w panelu. Z zaznaczonym
+  „Cena w euro z kursu NBP” (`products.euro_from_rate`) liczy ją `Catalog\Actions\ConvertEuroPrices` z ceny w złotych
+  po średnim kursie NBP (tabela A, `exchange_rates`), zaokrągloną do pełnego euro z końcówką ,90. Kurs pobiera co godzinę
+  `catalog:euro-rate`. Przeliczona cena zapisuje się w `prices` jak każda inna — nigdy nie liczymy jej w locie przy wyświetlaniu,
+  bo koszyk, zamówienie i Omnibus muszą widzieć tę samą kwotę.
 - Cena w złotych zostaje w wariancie (`price_gross`, `compare_at_price`), tak jak polski tekst zostaje w tabeli
   katalogu. Inne waluty mieszkają w `prices` (`product_variant_id`, `currency`, `amount_minor`, `compare_at_minor`).
   Historia w `price_history` ma kolumnę `currency` — Omnibus liczy się per waluta.

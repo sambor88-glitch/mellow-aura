@@ -13,15 +13,18 @@ use Illuminate\Support\Str;
  * in price_history (the variant model records it), a size missing from the form is removed, and a new
  * product goes to the top of the list. The address (slug) is set once and survives renaming.
  *
- * Prices in other currencies ride along the same way, each with its own history.
+ * Prices in other currencies ride along the same way, each with its own history — or, for a product whose euro
+ * prices follow the NBP rate, come from ConvertEuroPrices.
  *
  * Its other languages ride along: a product with an English name gets an English row (and its own English
  * address, also set once); an emptied English name removes the row, and the product leaves /en/.
  */
 class SaveProduct
 {
+    public function __construct(private ConvertEuroPrices $convertEuroPrices) {}
+
     /**
-     * @param  array{name: string, category_id: int, description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels?: array<string, string>, price_gross: int, compare_at_price: ?int, prices?: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post?: bool, media_id?: ?int}>, photo_alts?: array<int, string>, translations?: array<string, array<string, ?string>>}  $data
+     * @param  array{name: string, category_id: int, description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, euro_from_rate?: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels?: array<string, string>, price_gross: int, compare_at_price: ?int, prices?: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post?: bool, media_id?: ?int}>, photo_alts?: array<int, string>, translations?: array<string, array<string, ?string>>}  $data
      */
     public function __invoke(?Product $product, array $data): Product
     {
@@ -40,6 +43,7 @@ class SaveProduct
                 'is_published' => $data['is_published'],
                 'is_one_off' => $data['is_one_off'],
                 'is_exact_piece' => $data['is_exact_piece'],
+                'euro_from_rate' => $data['euro_from_rate'] ?? false,
                 'dimensions' => $data['dimensions'] ?: null,
                 'occasions' => $data['occasions'],
                 'recipients' => $data['recipients'],
@@ -76,10 +80,15 @@ class SaveProduct
 
                 $kept[] = $variant->id;
                 $this->saveVariantLabels($variant, $row['labels'] ?? []);
-                $this->savePrices($variant, $row['prices'] ?? []);
+                // Euro prices that follow the NBP rate are counted below, not typed in.
+                $this->savePrices($variant, $product->euro_from_rate ? [] : $row['prices'] ?? []);
             }
 
             $product->variants()->whereKeyNot($kept)->delete();
+
+            if ($product->euro_from_rate) {
+                ($this->convertEuroPrices)($product);
+            }
 
             foreach ($data['translations'] ?? [] as $locale => $fields) {
                 $this->saveTranslation($product, $locale, $fields);

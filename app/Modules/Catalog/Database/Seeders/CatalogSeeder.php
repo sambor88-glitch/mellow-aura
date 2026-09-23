@@ -31,9 +31,14 @@ class CatalogSeeder extends Seeder
 
         foreach ($data['products'] as $row) {
             $product = Product::firstOrCreate(['slug' => $row['slug']], [
-                ...collect($row)->except(['category', 'variants', 'images'])->all(),
+                ...collect($row)->except(['category', 'variants', 'images', 'en'])->all(),
                 'category_id' => $categories[$row['category']]->id,
             ]);
+
+            // The English text of a product that is also sold on /en/.
+            if (isset($row['en'])) {
+                $product->translations()->firstOrCreate(['locale' => 'en'], $row['en']);
+            }
 
             foreach ($row['images'] as $image) {
                 $existing = $product->getMedia('images')->firstWhere('file_name', basename($image['path']));
@@ -57,9 +62,13 @@ class CatalogSeeder extends Seeder
             foreach ($row['variants'] as $variant) {
                 $photo = isset($variant['image']) ? $photos->firstWhere('file_name', basename($variant['image'])) : null;
                 $saved = $product->variants()->firstOrCreate(['label' => $variant['label']], [
-                    ...collect($variant)->except('image')->all(),
+                    ...collect($variant)->except(['image', 'label_en'])->all(),
                     'media_id' => $photo?->id,
                 ]);
+
+                if (isset($variant['label_en'])) {
+                    $saved->translations()->firstOrCreate(['locale' => 'en'], ['label' => $variant['label_en']]);
+                }
 
                 // A photo added again above took its link with it; put it back.
                 if ($photo !== null && $saved->media_id === null) {

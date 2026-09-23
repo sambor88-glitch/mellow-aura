@@ -58,7 +58,8 @@ class SaveProductRequest extends FormRequest
             'variants.*.label' => [count((array) $this->input('variants')) > 1 ? 'required' : 'nullable', 'string', 'max:60'],
             'variants.*.price' => ['required', 'regex:/^\d{1,5}([.,]\d{1,2})?$/'],
             'variants.*.compare_at' => ['nullable', new PriceBeforeReduction],
-            // The euro price, typed in by hand. A size without one stays out of the English shop.
+            'euro_from_rate' => ['nullable', 'boolean'],
+            // The euro price, typed in by hand unless it follows the NBP rate. A size without one stays out of the English shop.
             'variants.*.price_eur' => ['nullable', 'regex:/^\d{1,5}([.,]\d{1,2})?$/'],
             'variants.*.compare_at_eur' => ['nullable', new PriceBeforeReduction('price_eur')],
             'variants.*.stock' => ['nullable', 'integer', 'min:0', 'max:9999'],
@@ -140,7 +141,7 @@ class SaveProductRequest extends FormRequest
      * The validated form in the shape SaveProduct takes: prices in grosze, empty dimensions left out,
      * photo descriptions keyed by photo id.
      *
-     * @return array{name: string, category_id: int, description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels: array<string, string>, price_gross: int, compare_at_price: ?int, prices: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post: bool, media_id: ?int}>, photo_alts: array<int, string>}
+     * @return array{name: string, category_id: int, description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, euro_from_rate: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels: array<string, string>, price_gross: int, compare_at_price: ?int, prices: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post: bool, media_id: ?int}>, photo_alts: array<int, string>}
      */
     public function product(): array
     {
@@ -160,6 +161,7 @@ class SaveProductRequest extends FormRequest
             'is_published' => $this->boolean('is_published'),
             'is_one_off' => $this->boolean('is_one_off'),
             'is_exact_piece' => $this->boolean('is_exact_piece'),
+            'euro_from_rate' => $this->boolean('euro_from_rate'),
             'dimensions' => array_filter(
                 Arr::only((array) ($data['dimensions'] ?? []), array_column(Dimension::cases(), 'value')),
                 fn (mixed $value) => filled($value),

@@ -34,6 +34,10 @@ class SavePageTextsRequest extends FormRequest
             'text_b2b_cta_heading' => ['Pytanie w ramce na dole strony', 2, 120],
             'text_b2b_cta' => ['Zdanie pod pytaniem', 2, 300],
         ]],
+        ['title' => 'Wysyłka i pielęgnacja', 'route' => 'content.faq', 'fields' => [
+            'text_packing_steps' => ['Jak pakuję i wysyłam — każdy krok w osobnej linii', 5, 800],
+            'text_packing_steps_en' => ['To samo po angielsku — pokaże się w angielskiej wersji strony', 5, 800],
+        ]],
         ['title' => 'Kontakt', 'route' => 'content.contact', 'fields' => [
             'text_contact_lead' => ['Zdanie pod „Napisz do mnie”', 2, 300],
         ]],

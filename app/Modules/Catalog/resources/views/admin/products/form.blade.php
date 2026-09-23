@@ -3,6 +3,7 @@
 @use('App\Modules\Catalog\Enums\GoogleCategory')
 @use('App\Modules\Catalog\Enums\Occasion')
 @use('App\Modules\Catalog\Enums\Recipient')
+@use('App\Modules\Catalog\Models\ExchangeRate')
 @use('App\Modules\Shared\Support\Money')
 @inject('settings', 'App\Modules\Settings\Settings')
 @php
@@ -38,6 +39,8 @@
     $published = $mine ? (bool) old('is_published') : ($product?->is_published ?? true);
     $oneOff = $mine ? (bool) old('is_one_off') : (bool) $product?->is_one_off;
     $exactPiece = $mine ? (bool) old('is_exact_piece') : (bool) $product?->is_exact_piece;
+    $fromRate = $mine ? (bool) old('euro_from_rate') : (bool) $product?->euro_from_rate;
+    $euroRate = ExchangeRate::for('EUR');
     $foodContact = (string) $old('food_contact', $product?->food_contact?->value);
     $googleCategory = (string) $old('google_category', $product?->google_category?->value);
     $showInGoogle = $mine ? (bool) old('show_in_google') : ($product?->show_in_google ?? true);
@@ -109,7 +112,7 @@
         {!! $error('category_id') !!}
     </div>
 
-    <fieldset class="rounded-[4px] border border-sand-dark bg-linen px-4 pt-3 pb-4">
+    <fieldset x-data="{ fromRate: @js($fromRate) }" class="rounded-[4px] border border-sand-dark bg-linen px-4 pt-3 pb-4">
         <legend class="{{ $legend }} mb-0 px-1">Rozmiary i ceny</legend>
         <div class="grid gap-2.5">
             @foreach ($rows as $index => $row)
@@ -131,12 +134,12 @@
                                @class([$input, 'w-[118px] px-3 py-2.5 text-right', 'border-error' => $bag->has('variants.'.$index.'.compare_at'), 'border-line' => ! $bag->has('variants.'.$index.'.compare_at')])>
                     </span>
                     <span class="flex items-center gap-1.5">
-                        <input name="variants[{{ $index }}][price_eur]" value="{{ $row['price_eur'] ?? '' }}" inputmode="decimal" aria-label="Cena w euro, rozmiar {{ $index + 1 }}" placeholder="w euro"
+                        <input name="variants[{{ $index }}][price_eur]" x-bind:readonly="fromRate" x-bind:class="fromRate && 'opacity-60'" value="{{ $row['price_eur'] ?? '' }}" inputmode="decimal" aria-label="Cena w euro, rozmiar {{ $index + 1 }}" placeholder="w euro"
                                @class([$input, 'w-[90px] px-3 py-2.5 text-right', 'border-error' => $bag->has('variants.'.$index.'.price_eur'), 'border-line' => ! $bag->has('variants.'.$index.'.price_eur')])>
                         <span class="text-[13px] text-label">€</span>
                     </span>
                     <span class="flex items-center gap-1.5">
-                        <input name="variants[{{ $index }}][compare_at_eur]" value="{{ $row['compare_at_eur'] ?? '' }}" inputmode="decimal" aria-label="Cena w euro przed obniżką, rozmiar {{ $index + 1 }}" placeholder="€ przed obniżką"
+                        <input name="variants[{{ $index }}][compare_at_eur]" x-bind:readonly="fromRate" x-bind:class="fromRate && 'opacity-60'" value="{{ $row['compare_at_eur'] ?? '' }}" inputmode="decimal" aria-label="Cena w euro przed obniżką, rozmiar {{ $index + 1 }}" placeholder="€ przed obniżką"
                                @class([$input, 'w-[118px] px-3 py-2.5 text-right', 'border-error' => $bag->has('variants.'.$index.'.compare_at_eur'), 'border-line' => ! $bag->has('variants.'.$index.'.compare_at_eur')])>
                     </span>
                     <span class="flex items-center gap-1.5">
@@ -169,7 +172,20 @@
         </div>
         {!! $error('variants') !!}
         <p class="mt-2.5 text-[12.5px] leading-[1.5] text-hint">Puste wiersze się nie zapiszą. Jedna cena nie potrzebuje nazwy rozmiaru. Pole „szt.” zostaw puste, jeśli nie liczysz sztuk — przy zerze produkt sam znika ze sklepu. „Przed obniżką” wpisz tylko przy promocji: karta produktu przekreśli tę cenę, gdy obniżysz cenę, i sama poda najniższą cenę z 30 dni.</p>
-        <p class="mt-1.5 text-[12.5px] leading-[1.5] text-hint">Cenę w euro widać tylko w angielskiej wersji sklepu. Rozmiar bez niej nie pokazuje się po angielsku — polska wersja zostaje bez zmian. Wpisz ją ręcznie: nic się nie przelicza po kursie.</p>
+        <label class="mt-2.5 flex min-h-11 items-start gap-2.5 text-[14px] text-graphite">
+            <input type="checkbox" name="euro_from_rate" value="1" x-model="fromRate" @checked($fromRate) class="mt-[3px] size-4 flex-none accent-ink">
+            <span>Cena w euro z kursu NBP
+                <span class="mt-0.5 block text-[12.5px] leading-[1.5] text-hint">
+                    Liczy się sama z ceny w złotych po średnim kursie NBP i zmienia się razem z kursem. Zaokrąglam do pełnego euro, z końcówką ,90 — np. 239 zł to około 55,90 €.
+                    @if ($euroRate)
+                        Kurs z {{ $euroRate->effective_on->format('d.m.Y') }}: {{ str_replace('.', ',', $euroRate->rate) }} zł.
+                    @else
+                        Kursu jeszcze nie ma — ceny w euro pojawią się w ciągu godziny.
+                    @endif
+                </span>
+            </span>
+        </label>
+        <p class="mt-1.5 text-[12.5px] leading-[1.5] text-hint">Cenę w euro widać tylko w angielskiej wersji sklepu. Rozmiar bez niej nie pokazuje się po angielsku — polska wersja zostaje bez zmian. Bez zaznaczonego kursu NBP wpisujesz ją ręcznie.</p>
         @if ($photos->count() > 1)
             <p class="mt-1.5 text-[12.5px] leading-[1.5] text-hint">„Zdjęcie” to fotka, którą karta produktu pokaże po wybraniu tego rozmiaru — np. kubek z tym napisem. Numery jak w „Opisach zdjęć” niżej.</p>
         @endif
