@@ -15,7 +15,7 @@ use ReflectionClass;
  *
  * Loads, when present: routes/web.php, routes/admin.php (prefix /panel, name admin.*, signed-in accounts allowed there),
  * resources/views (namespace = snake-case module name), resources/views/components as
- * anonymous Blade components (<x-module::name>), Database/Migrations,
+ * anonymous Blade components (<x-module::name>), lang (translations as __('module::file.key')), Database/Migrations,
  * and points model factories at Database/Factories.
  */
 abstract class ModuleServiceProvider extends ServiceProvider
@@ -44,6 +44,10 @@ abstract class ModuleServiceProvider extends ServiceProvider
 
         if (is_dir($dir.'/resources/views/components')) {
             Blade::anonymousComponentPath($dir.'/resources/views/components', $alias);
+        }
+
+        if (is_dir($dir.'/lang')) {
+            $this->loadTranslationsFrom($dir.'/lang', $alias);
         }
 
         if (is_dir($dir.'/Database/Migrations')) {
