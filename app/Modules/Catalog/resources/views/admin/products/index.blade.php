@@ -67,7 +67,7 @@
                             @endif
                             <div class="min-w-0 flex-[1_1_150px]">
                                 <div class="text-[14.5px] leading-[1.3]">{{ $product->name }}</div>
-                                <div class="mt-[3px] text-[12px] {{ $stateClass }}">{{ $product->category->name }} &middot; {{ $state }}</div>
+                                <div class="mt-[3px] text-[12px] {{ $stateClass }}">{{ $product->category->name }} &middot; {{ $state }}@if ($product->hasTranslation('en')) &middot; EN @endif</div>
                             </div>
                             @if ($prices->isNotEmpty())
                                 <div class="flex-none text-[14px] tabular-nums">{{ $prices->min() === $prices->max() ? Money::format($prices->min()) : 'od '.Money::format($prices->min()) }}</div>

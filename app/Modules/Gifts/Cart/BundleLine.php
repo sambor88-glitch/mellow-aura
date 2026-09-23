@@ -40,7 +40,7 @@ class BundleLine extends CartLine
     public function details(): ?string
     {
         return 'Zestaw: '.$this->bundle->items
-            ->map(fn (BundleItem $item) => $item->variant->product->name.($item->variant->label ? ' ('.$item->variant->label.')' : ''))
+            ->map(fn (BundleItem $item) => $item->variant->product->inPageLanguageOrPolish('name').(($label = $item->variant->inPageLanguageOrPolish('label')) ? ' ('.$label.')' : ''))
             ->join(' + ');
     }
 
@@ -53,8 +53,9 @@ class BundleLine extends CartLine
     {
         return $this->bundle->items
             ->map(fn (BundleItem $item) => $item->variant->product)
-            ->filter(fn ($product) => filled($product->deviation))
-            ->mapWithKeys(fn ($product) => [$product->name => $product->deviation])
+            // Never dropped for want of a translation: the checkout asks to accept it.
+            ->filter(fn ($product) => filled($product->inPageLanguageOrPolish('deviation')))
+            ->mapWithKeys(fn ($product) => [$product->inPageLanguageOrPolish('name') => $product->inPageLanguageOrPolish('deviation')])
             ->all();
     }
 
@@ -99,11 +100,11 @@ class BundleLine extends CartLine
 
         return $this->bundle->items->values()->map(fn (BundleItem $item, int $index) => new LineItem(
             variantId: $item->variant->id,
-            name: $item->variant->product->name,
-            label: collect([$item->variant->label, 'z zestawu „'.$this->bundle->name.'”'])->filter()->join(' · '),
+            name: $item->variant->product->inPageLanguageOrPolish('name'),
+            label: collect([$item->variant->inPageLanguageOrPolish('label'), 'z zestawu „'.$this->bundle->name.'”'])->filter()->join(' · '),
             quantity: $this->quantity,
             unitPrice: $shares[$index],
-            deviation: $item->variant->product->deviation ?: null,
+            deviation: $item->variant->product->inPageLanguageOrPolish('deviation') ?: null,
         ))->all();
     }
 }

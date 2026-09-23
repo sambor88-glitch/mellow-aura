@@ -62,6 +62,18 @@ class SaveProductRequest extends FormRequest
             'variants.*.sent_by_post' => ['nullable', 'boolean'],
             'photo_alts' => ['nullable', 'array'],
             'photo_alts.*' => ['nullable', 'string', 'max:160'],
+            // The English version: optional, but once the product has an English name every size needs one too,
+            // or the English page would show a size without a name.
+            'en' => ['nullable', 'array'],
+            'en.name' => ['nullable', 'string', 'max:120'],
+            'en.description' => ['nullable', 'string', 'max:2000'],
+            'en.care_note' => ['nullable', 'string', 'max:200'],
+            // A feature to confirm and the safety warnings must reach an English buyer too: the checkout asks to accept
+            // the first, and product safety law wants the second in the buyer's language.
+            'en.deviation' => [filled($this->input('en.name')) && filled($this->input('deviation')) ? 'required' : 'nullable', 'string', 'max:160'],
+            'en.size_tolerance' => ['nullable', 'string', 'max:60'],
+            'en.safety_warnings' => [filled($this->input('en.name')) && filled($this->input('safety_warnings')) ? 'required' : 'nullable', 'string', 'max:400'],
+            'variants.*.label_en' => [filled($this->input('en.name')) && count((array) $this->input('variants')) > 1 ? 'required' : 'nullable', 'string', 'max:60'],
             ...PhotoRules::rules(required: false),
         ];
     }
@@ -103,6 +115,16 @@ class SaveProductRequest extends FormRequest
             'variants.*.stock.min' => $stock,
             'variants.*.stock.max' => $stock,
             'photo_alts.*.max' => 'Opis zdjęcia zmieszczę do :max znaków',
+            'en.name.max' => 'Angielską nazwę zmieszczę do :max znaków',
+            'en.description.max' => 'Angielski opis zmieszczę do :max znaków',
+            'en.care_note.max' => 'Zdanie o pielęgnacji po angielsku zmieszczę do :max znaków',
+            'en.deviation.required' => 'Produkt ma angielską nazwę i cechę do potwierdzenia — wpisz ją też po angielsku, bo klientka z zagranicy musi ją zaakceptować przy zamówieniu',
+            'en.deviation.max' => 'Tę cechę po angielsku zmieszczę do :max znaków — napisz ją krócej',
+            'en.size_tolerance.max' => 'Różnicę wymiarów po angielsku zmieszczę do :max znaków, np. 0.5 cm',
+            'en.safety_warnings.required' => 'Produkt ma angielską nazwę i ostrzeżenia — wpisz je też po angielsku, prawo wymaga ich w języku kupującej',
+            'en.safety_warnings.max' => 'Ostrzeżenia po angielsku zmieszczę do :max znaków',
+            'variants.*.label_en.required' => 'Produkt ma angielską nazwę, więc nazwij każdy rozmiar także po angielsku — np. Small 12 cm',
+            'variants.*.label_en.max' => 'Angielską nazwę rozmiaru zmieszczę do :max znaków',
             ...PhotoRules::messages(),
         ];
     }
@@ -140,12 +162,17 @@ class SaveProductRequest extends FormRequest
             'variants' => array_map(fn (array $row) => [
                 'id' => isset($row['id']) ? (int) $row['id'] : null,
                 'label' => trim((string) ($row['label'] ?? '')),
+                'labels' => ['en' => trim((string) ($row['label_en'] ?? ''))],
                 'price_gross' => Money::parse((string) $row['price']),
                 'compare_at_price' => filled($row['compare_at'] ?? null) ? Money::parse((string) $row['compare_at']) : null,
                 'stock' => isset($row['stock']) ? (int) $row['stock'] : null,
                 'sent_by_post' => (bool) ($row['sent_by_post'] ?? false),
             ], $data['variants']),
             'photo_alts' => array_map(fn (mixed $alt) => trim((string) $alt), (array) ($data['photo_alts'] ?? [])),
+            'translations' => ['en' => array_map(
+                fn (mixed $value) => filled($value) ? trim((string) $value) : null,
+                Arr::only((array) ($data['en'] ?? []), ['name', 'description', 'care_note', 'deviation', 'size_tolerance', 'safety_warnings']),
+            )],
         ];
     }
 

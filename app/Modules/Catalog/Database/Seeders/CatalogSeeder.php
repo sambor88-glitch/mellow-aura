@@ -19,8 +19,15 @@ class CatalogSeeder extends Seeder
         $data = json_decode(file_get_contents(__DIR__.'/catalog.json'), true, flags: JSON_THROW_ON_ERROR);
 
         $categories = collect($data['categories'])->mapWithKeys(fn (array $category) => [
-            $category['slug'] => Category::firstOrCreate(['slug' => $category['slug']], $category),
+            $category['slug'] => Category::firstOrCreate(['slug' => $category['slug']], collect($category)->except('en')->all()),
         ]);
+
+        // The English names; a category without them (vouchers for workshops) stays Polish-only.
+        foreach ($data['categories'] as $category) {
+            if (isset($category['en'])) {
+                $categories[$category['slug']]->translations()->firstOrCreate(['locale' => 'en'], $category['en']);
+            }
+        }
 
         foreach ($data['products'] as $row) {
             $product = Product::firstOrCreate(['slug' => $row['slug']], [

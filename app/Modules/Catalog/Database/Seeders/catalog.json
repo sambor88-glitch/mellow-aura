@@ -4,43 +4,71 @@
             "slug": "kubki-i-filizanki",
             "name": "Kubki i filiżanki",
             "group": "ceramics",
-            "sort_order": 1
+            "sort_order": 1,
+            "en": {
+                "name": "Mugs & cups",
+                "slug": "mugs-and-cups"
+            }
         },
         {
             "slug": "talerze-i-miski",
             "name": "Talerze i miski",
             "group": "ceramics",
-            "sort_order": 2
+            "sort_order": 2,
+            "en": {
+                "name": "Plates & bowls",
+                "slug": "plates-and-bowls"
+            }
         },
         {
             "slug": "wazony-i-patery",
             "name": "Wazony i patery",
             "group": "ceramics",
-            "sort_order": 3
+            "sort_order": 3,
+            "en": {
+                "name": "Vases & platters",
+                "slug": "vases-and-platters"
+            }
         },
         {
             "slug": "kadzielnice-i-podstawki",
             "name": "Kadzielnice i podstawki",
             "group": "ceramics",
-            "sort_order": 4
+            "sort_order": 4,
+            "en": {
+                "name": "Incense holders & coasters",
+                "slug": "incense-holders-and-coasters"
+            }
         },
         {
             "slug": "bizuteria",
             "name": "Biżuteria",
             "group": "ceramics",
-            "sort_order": 5
+            "sort_order": 5,
+            "en": {
+                "name": "Jewellery",
+                "slug": "jewellery"
+            }
         },
         {
             "slug": "jedwab",
             "name": "Jedwab",
             "group": "crafts",
-            "sort_order": 6
+            "sort_order": 6,
+            "en": {
+                "name": "Silk",
+                "slug": "silk"
+            }
         },
         {
             "slug": "kosmetyczki-i-piorniki",
             "name": "Kosmetyczki i piórniki",
             "group": "crafts",
-            "sort_order": 7
+            "sort_order": 7,
+            "en": {
+                "name": "Pouches & pencil cases",
+                "slug": "pouches-and-pencil-cases"
+            }
         },
         {
             "slug": "vouchery",

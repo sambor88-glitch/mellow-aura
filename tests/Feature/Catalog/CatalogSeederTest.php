@@ -89,4 +89,13 @@ class CatalogSeederTest extends TestCase
         $this->assertSame(50, ProductVariant::count());
         $this->assertSame(21, Media::count());
     }
+
+    public function test_categories_get_their_english_names_except_the_polish_only_vouchers(): void
+    {
+        $this->seed(CatalogSeeder::class);
+
+        $this->assertSame('Mugs & cups', Category::query()->where('slug', 'kubki-i-filizanki')->first()->translation('en')->name);
+        $this->assertSame('silk', Category::query()->where('slug', 'jedwab')->first()->translation('en')->slug);
+        $this->assertFalse(Category::query()->where('slug', 'vouchery')->first()->hasTranslation('en'));
+    }
 }

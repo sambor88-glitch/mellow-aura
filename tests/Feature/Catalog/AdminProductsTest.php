@@ -309,6 +309,101 @@ class AdminProductsTest extends TestCase
      * @param  list<int>  $prices
      * @param  array<string, mixed>  $attributes
      */
+    public function test_the_english_version_is_saved_with_its_own_address_that_survives_renaming(): void
+    {
+        $owner = User::factory()->create();
+        $form = fn (Product $mug, string $englishName, array $variants) => [
+            'form' => 'produkt-'.$mug->id,
+            'name' => 'Kubki malowane',
+            'category_id' => $this->mugs->id,
+            'is_published' => '1',
+            'en' => ['name' => $englishName, 'description' => 'Painted by hand, one by one.', 'care_note' => ''],
+            'variants' => $variants,
+        ];
+        $mug = $this->product('Kubki malowane', 1, [7900, 9900]);
+        [$small, $large] = $mug->variants()->orderBy('id')->get()->all();
+
+        $this->actingAs($owner)->put('/panel/produkty/'.$mug->id, $form($mug, 'Hand-painted mugs', [
+            ['id' => $small->id, 'label' => 'Mały', 'label_en' => 'Small', 'price' => '79'],
+            ['id' => $large->id, 'label' => 'Duży', 'label_en' => 'Large', 'price' => '99'],
+        ]))->assertRedirect('/panel/produkty#produkt-'.$mug->id);
+
+        $english = $mug->translation('en');
+        $this->assertSame(['Hand-painted mugs', 'hand-painted-mugs', 'Painted by hand, one by one.', null], [$english->name, $english->slug, $english->description, $english->care_note]);
+        $this->assertSame(['Small', 'Large'], [$small->fresh()->translation('en')->label, $large->fresh()->translation('en')->label]);
+        // Polish stays in the product itself.
+        $this->assertSame(['Kubki malowane', 'Mały'], [$mug->fresh()->name, $small->fresh()->label]);
+
+        $this->actingAs($owner)->put('/panel/produkty/'.$mug->id, $form($mug, 'Painted mugs', [
+            ['id' => $small->id, 'label' => 'Mały', 'label_en' => 'Small', 'price' => '79'],
+            ['id' => $large->id, 'label' => 'Duży', 'label_en' => 'Large', 'price' => '99'],
+        ]));
+        $this->assertSame(['Painted mugs', 'hand-painted-mugs'], [$mug->fresh()->translation('en')->name, $mug->fresh()->translation('en')->slug]);
+
+        // Emptying the English name takes the product out of the English shop.
+        $this->actingAs($owner)->put('/panel/produkty/'.$mug->id, $form($mug, '', [
+            ['id' => $small->id, 'label' => 'Mały', 'price' => '79'],
+            ['id' => $large->id, 'label' => 'Duży', 'price' => '99'],
+        ]));
+        $this->assertFalse($mug->fresh()->hasTranslation('en'));
+    }
+
+    public function test_an_english_name_needs_english_size_names_too(): void
+    {
+        $mug = $this->product('Kubki malowane', 1, [7900, 9900]);
+        [$small, $large] = $mug->variants()->orderBy('id')->get()->all();
+
+        $this->actingAs(User::factory()->create())
+            ->put('/panel/produkty/'.$mug->id, [
+                'form' => 'produkt-'.$mug->id,
+                'name' => 'Kubki malowane',
+                'category_id' => $this->mugs->id,
+                'en' => ['name' => 'Hand-painted mugs'],
+                'variants' => [
+                    ['id' => $small->id, 'label' => 'Mały', 'label_en' => 'Small', 'price' => '79'],
+                    ['id' => $large->id, 'label' => 'Duży', 'price' => '99'],
+                ],
+            ])
+            ->assertSessionHasErrorsIn('produkt-'.$mug->id, ['variants.1.label_en']);
+
+        $this->assertFalse($mug->fresh()->hasTranslation('en'));
+    }
+
+    public function test_the_list_marks_what_is_in_the_english_shop_and_the_form_shows_it(): void
+    {
+        $mug = $this->product('Kubki malowane', 1, [7900]);
+        $mug->translations()->create(['locale' => 'en', 'name' => 'Hand-painted mugs', 'slug' => 'hand-painted-mugs']);
+        $this->product('Talerz', 2, [5900]);
+
+        $this->actingAs(User::factory()->create())
+            ->get('/panel/produkty')
+            ->assertOk()
+            ->assertSee('Kubki i filiżanki &middot; widoczny w sklepie &middot; EN </div>', false)
+            ->assertSee('Kubki i filiżanki &middot; widoczny w sklepie</div>', false)
+            ->assertSee('value="Hand-painted mugs"', false)
+            ->assertSee('Produkt jest w angielskim sklepie pod adresem /en/product/hand-painted-mugs')
+            ->assertSee('Bez angielskiej nazwy produkt nie pokaże się w angielskim sklepie.');
+    }
+
+    public function test_an_english_name_needs_the_feature_to_confirm_and_the_warnings_in_english_too(): void
+    {
+        $mug = $this->product('Kubki malowane', 1, [7900]);
+
+        $this->actingAs(User::factory()->create())
+            ->put('/panel/produkty/'.$mug->id, [
+                'form' => 'produkt-'.$mug->id,
+                'name' => 'Kubki malowane',
+                'category_id' => $this->mugs->id,
+                'deviation' => 'Nie do zmywarki — złota krawędź',
+                'safety_warnings' => 'Nie stawiaj na ogniu.',
+                'en' => ['name' => 'Hand-painted mugs'],
+                'variants' => [['id' => $mug->variants->first()->id, 'label' => '', 'price' => '79']],
+            ])
+            ->assertSessionHasErrorsIn('produkt-'.$mug->id, ['en.deviation', 'en.safety_warnings']);
+
+        $this->assertFalse($mug->fresh()->hasTranslation('en'));
+    }
+
     private function product(string $name, int $sortOrder, array $prices, array $attributes = []): Product
     {
         $product = Product::factory()->create([

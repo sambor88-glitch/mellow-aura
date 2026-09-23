@@ -60,6 +60,9 @@ return [
      * as a soft 404 and the visitor loses the thread. The target page says in one sentence why.
      */
     'fallbacks' => [
+        // A piece or a category not written in English yet.
+        'product.show' => 'shop.index',
+        'shop.category' => 'shop.index',
         'workshops.index' => 'content.about',
         'vouchers.index' => 'bundles.index',
         'gifts.index' => 'bundles.index',
