@@ -23,9 +23,12 @@
             'compare_at_eur' => ($eurBefore = $variant->compareAtPrice('EUR')) === null ? '' : Money::input($eurBefore),
             'stock' => $variant->stock,
             'sent_by_post' => $variant->sent_by_post,
+            'media_id' => $variant->media_id,
         ])->all() ?? []);
     // A voucher goes out as a PDF by e-mail; a size ticked „pocztą” is printed and posted, so its buyer chooses a delivery.
     $isVoucher = (bool) $product?->isVoucher();
+    // Several photos let each size open the gallery on its own one, e.g. a quote mug with its lettering.
+    $photos = $product?->getMedia('images') ?? collect();
     // Spare rows for new sizes; left empty, they are not saved.
     $rows = [...$rows, ...array_fill(0, max(1, 3 - count($rows)), ['id' => null, 'label' => '', 'label_en' => '', 'price' => '', 'compare_at' => '', 'price_eur' => '', 'compare_at_eur' => '', 'stock' => ''])];
 
@@ -141,6 +144,15 @@
                                @class([$input, 'w-[64px] px-2.5 py-2.5 text-right', 'border-error' => $bag->has('variants.'.$index.'.stock'), 'border-line' => ! $bag->has('variants.'.$index.'.stock')])>
                         <span class="text-[12.5px] text-label">szt.</span>
                     </span>
+                    @if ($photos->count() > 1)
+                        <select name="variants[{{ $index }}][media_id]" aria-label="Zdjęcie, rozmiar {{ $index + 1 }}"
+                                @class([$input, 'px-3 py-2.5', 'border-error' => $bag->has('variants.'.$index.'.media_id'), 'border-line' => ! $bag->has('variants.'.$index.'.media_id')])>
+                            <option value="">pierwsze zdjęcie</option>
+                            @foreach ($photos as $photo)
+                                <option value="{{ $photo->id }}" @selected((int) ($row['media_id'] ?? 0) === $photo->id)>zdjęcie {{ $loop->iteration }}</option>
+                            @endforeach
+                        </select>
+                    @endif
                     @if ($isVoucher)
                         <label class="flex min-h-11 items-center gap-1.5 text-[12.5px] text-label">
                             <input type="checkbox" name="variants[{{ $index }}][sent_by_post]" value="1" @checked(! empty($row['sent_by_post'])) class="size-4 accent-ink"> pocztą
@@ -152,12 +164,15 @@
                         </label>
                     @endif
                 </div>
-                {!! $error('variants.'.$index.'.label') !!}{!! $error('variants.'.$index.'.label_en') !!}{!! $error('variants.'.$index.'.price') !!}{!! $error('variants.'.$index.'.compare_at') !!}{!! $error('variants.'.$index.'.price_eur') !!}{!! $error('variants.'.$index.'.compare_at_eur') !!}{!! $error('variants.'.$index.'.stock') !!}
+                {!! $error('variants.'.$index.'.label') !!}{!! $error('variants.'.$index.'.label_en') !!}{!! $error('variants.'.$index.'.price') !!}{!! $error('variants.'.$index.'.compare_at') !!}{!! $error('variants.'.$index.'.price_eur') !!}{!! $error('variants.'.$index.'.compare_at_eur') !!}{!! $error('variants.'.$index.'.stock') !!}{!! $error('variants.'.$index.'.media_id') !!}
             @endforeach
         </div>
         {!! $error('variants') !!}
         <p class="mt-2.5 text-[12.5px] leading-[1.5] text-hint">Puste wiersze się nie zapiszą. Jedna cena nie potrzebuje nazwy rozmiaru. Pole „szt.” zostaw puste, jeśli nie liczysz sztuk — przy zerze produkt sam znika ze sklepu. „Przed obniżką” wpisz tylko przy promocji: karta produktu przekreśli tę cenę, gdy obniżysz cenę, i sama poda najniższą cenę z 30 dni.</p>
         <p class="mt-1.5 text-[12.5px] leading-[1.5] text-hint">Cenę w euro widać tylko w angielskiej wersji sklepu. Rozmiar bez niej nie pokazuje się po angielsku — polska wersja zostaje bez zmian. Wpisz ją ręcznie: nic się nie przelicza po kursie.</p>
+        @if ($photos->count() > 1)
+            <p class="mt-1.5 text-[12.5px] leading-[1.5] text-hint">„Zdjęcie” to fotka, którą karta produktu pokaże po wybraniu tego rozmiaru — np. kubek z tym napisem. Numery jak w „Opisach zdjęć” niżej.</p>
+        @endif
         @if ($isVoucher)
             <p class="mt-1.5 text-[12.5px] leading-[1.5] text-hint">Voucher idzie mailem w PDF, bez kosztów dostawy. Zaznacz „pocztą” przy rozmiarze, który drukujesz i wysyłasz — wtedy zamówienie zapyta o dostawę.</p>
         @endif

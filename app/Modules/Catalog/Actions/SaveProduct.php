@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /**
- * Saves a product from the panel together with its sizes and photo descriptions. A changed price lands
+ * Saves a product from the panel together with its sizes, the photo of each size and photo descriptions. A changed price lands
  * in price_history (the variant model records it), a size missing from the form is removed, and a new
  * product goes to the top of the list. The address (slug) is set once and survives renaming.
  *
@@ -21,7 +21,7 @@ use Illuminate\Support\Str;
 class SaveProduct
 {
     /**
-     * @param  array{name: string, category_id: int, description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels?: array<string, string>, price_gross: int, compare_at_price: ?int, prices?: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post?: bool}>, photo_alts?: array<int, string>, translations?: array<string, array<string, ?string>>}  $data
+     * @param  array{name: string, category_id: int, description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels?: array<string, string>, price_gross: int, compare_at_price: ?int, prices?: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post?: bool, media_id?: ?int}>, photo_alts?: array<int, string>, translations?: array<string, array<string, ?string>>}  $data
      */
     public function __invoke(?Product $product, array $data): Product
     {
@@ -59,11 +59,13 @@ class SaveProduct
                 $product->update($attributes);
             }
 
+            // A size may point only at a photo of this product; anything else falls back to the first photo.
+            $photoIds = $product->getMedia('images')->modelKeys();
             $existing = $product->variants()->get()->keyBy('id');
             $kept = [];
 
             foreach ($data['variants'] as $row) {
-                $values = ['label' => $row['label'], 'price_gross' => $row['price_gross'], 'compare_at_price' => $row['compare_at_price'] ?? null, 'stock' => $row['stock'], 'sent_by_post' => $row['sent_by_post'] ?? false];
+                $values = ['label' => $row['label'], 'price_gross' => $row['price_gross'], 'compare_at_price' => $row['compare_at_price'] ?? null, 'stock' => $row['stock'], 'sent_by_post' => $row['sent_by_post'] ?? false, 'media_id' => in_array($row['media_id'] ?? null, $photoIds, true) ? $row['media_id'] : null];
                 $variant = $row['id'] === null ? null : $existing->get($row['id']);
 
                 if ($variant !== null) {

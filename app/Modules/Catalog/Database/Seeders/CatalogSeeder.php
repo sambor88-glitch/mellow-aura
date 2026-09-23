@@ -35,10 +35,6 @@ class CatalogSeeder extends Seeder
                 'category_id' => $categories[$row['category']]->id,
             ]);
 
-            foreach ($row['variants'] as $variant) {
-                $product->variants()->firstOrCreate(['label' => $variant['label']], $variant);
-            }
-
             foreach ($row['images'] as $image) {
                 $existing = $product->getMedia('images')->firstWhere('file_name', basename($image['path']));
 
@@ -53,6 +49,22 @@ class CatalogSeeder extends Seeder
                     ->preservingOriginal()
                     ->withCustomProperties(['alt' => $image['alt']])
                     ->toMediaCollection('images');
+            }
+
+            // After the photos, so a size can point at its own one (a quote mug with its lettering).
+            $photos = $product->load('media')->getMedia('images');
+
+            foreach ($row['variants'] as $variant) {
+                $photo = isset($variant['image']) ? $photos->firstWhere('file_name', basename($variant['image'])) : null;
+                $saved = $product->variants()->firstOrCreate(['label' => $variant['label']], [
+                    ...collect($variant)->except('image')->all(),
+                    'media_id' => $photo?->id,
+                ]);
+
+                // A photo added again above took its link with it; put it back.
+                if ($photo !== null && $saved->media_id === null) {
+                    $saved->update(['media_id' => $photo->id]);
+                }
             }
         }
     }

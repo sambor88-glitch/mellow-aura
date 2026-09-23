@@ -55,12 +55,12 @@ class ProductLine extends CartLine
 
     public function thumbnailUrl(): ?string
     {
-        return $this->variant->product->getFirstMedia('images')?->getAvailableUrl(['thumb']);
+        return $this->variant->photo()?->getAvailableUrl(['thumb']);
     }
 
     public function thumbnailAlt(): string
     {
-        return $this->variant->product->getFirstMedia('images')?->getCustomProperty('alt') ?: $this->name();
+        return $this->variant->photo()?->getCustomProperty('alt') ?: $this->name();
     }
 
     public function deviations(): array
