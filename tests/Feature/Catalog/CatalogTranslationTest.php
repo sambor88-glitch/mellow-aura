@@ -63,6 +63,25 @@ class CatalogTranslationTest extends TestCase
         $this->get('/en/product/'.$polishOnly->getRawOriginal('slug'))->assertNotFound();
     }
 
+    public function test_the_switch_and_hreflang_lead_to_the_same_piece_in_the_other_language(): void
+    {
+        [$translated, $polishOnly] = $this->twoProducts();
+
+        $this->get('/produkt/miska-z-surowa-krawedzia')
+            ->assertSee('<link rel="alternate" hreflang="en" href="'.url('/en/product/rough-edged-bowl').'">', false)
+            ->assertSee('href="'.url('/en/product/rough-edged-bowl').'" hreflang="en" lang="en"', false);
+
+        // Built in Polish from an English page: the Polish address carries the Polish slug.
+        $this->get('/en/product/rough-edged-bowl')
+            ->assertSee('<link rel="alternate" hreflang="pl" href="'.url('/produkt/miska-z-surowa-krawedzia').'">', false)
+            ->assertSee('href="'.url('/produkt/miska-z-surowa-krawedzia').'" hreflang="pl" lang="pl"', false);
+
+        // Not written in English yet: no hreflang, and the switch leads to the English shop.
+        $this->get('/produkt/'.$polishOnly->getRawOriginal('slug'))
+            ->assertDontSee('<link rel="alternate" hreflang=', false)
+            ->assertSee('href="'.url('/en/shop').'?unavailable=1" hreflang="en"', false);
+    }
+
     /** @return array{Product, Product} */
     private function twoProducts(): array
     {

@@ -76,6 +76,55 @@ class Locales
     }
 
     /**
+     * Runs $callback with the app in $locale, then puts the language back. A translated model reads its fields in
+     * the current language, so an address in another language has to be built in that language.
+     *
+     * @template T
+     *
+     * @param  callable(): T  $callback
+     * @return T
+     */
+    public static function within(string $locale, callable $callback): mixed
+    {
+        $previous = App::getLocale();
+        App::setLocale($locale);
+
+        try {
+            return $callback();
+        } finally {
+            App::setLocale($previous);
+        }
+    }
+
+    /**
+     * Whether the current page exists in $locale: its route has a twin there and every translated model in its
+     * address (a product, a category) is written in that language.
+     */
+    public static function existsIn(Request $request, string $locale): bool
+    {
+        $route = $request->route();
+        $base = $route instanceof Route ? self::baseName($route->getName()) : null;
+
+        if ($base === null || ! self::has($base, $locale)) {
+            return false;
+        }
+
+        foreach ($route->parameters() as $parameter) {
+            if (is_object($parameter) && method_exists($parameter, 'hasTranslation') && ! $parameter->hasTranslation($locale)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /** The current page's address in $locale, built in that language so a product carries its slug from there. */
+    private static function urlIn(Route $route, string $name, string $locale): string
+    {
+        return self::within($locale, fn () => app('url')->exactRoute($name, $route->parameters()));
+    }
+
+    /**
      * The same page in every language it exists in, for hreflang. Empty when the page has no twin:
      * a single-language page has nothing to point to.
      *
@@ -92,8 +141,8 @@ class Locales
 
         $urls = [];
         foreach (self::enabled() as $locale) {
-            if ($name = self::nameFor($base, $locale)) {
-                $urls[$locale] = app('url')->exactRoute($name, $route->parameters());
+            if (self::existsIn($request, $locale)) {
+                $urls[$locale] = self::urlIn($route, self::nameFor($base, $locale), $locale);
             }
         }
 
@@ -109,8 +158,8 @@ class Locales
         $route = $request->route();
         $base = $route instanceof Route ? self::baseName($route->getName()) : null;
 
-        if ($base !== null && $name = self::nameFor($base, $locale)) {
-            return app('url')->exactRoute($name, $route->parameters());
+        if (self::existsIn($request, $locale)) {
+            return self::urlIn($route, self::nameFor($base, $locale), $locale);
         }
 
         // Route names hold dots, so the list is read whole — „fallbacks.content.b2b” would look for a nested key.
@@ -125,10 +174,7 @@ class Locales
     /** True when the switch from this page leads somewhere else than its own twin. */
     public static function switchFallsBack(Request $request, string $locale): bool
     {
-        $route = $request->route();
-        $base = $route instanceof Route ? self::baseName($route->getName()) : null;
-
-        return $base === null || ! self::has($base, $locale);
+        return ! self::existsIn($request, $locale);
     }
 
     /**

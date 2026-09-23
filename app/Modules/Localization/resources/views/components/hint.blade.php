@@ -2,9 +2,7 @@
 @php
     // Offered, never forced: the browser's first language decides only whether the offer shows up.
     $preferred = Locales::preferred(request());
-    $route = request()->route();
-    $base = Locales::baseName($route?->getName());
-    $show = $preferred !== null && $preferred !== Locales::current() && $base !== null && Locales::has($base, $preferred);
+    $show = $preferred !== null && $preferred !== Locales::current() && Locales::existsIn(request(), $preferred);
 @endphp
 @if ($show)
     <div x-data="{ open: true }" x-init="try { if (localStorage.getItem('locale-hint-closed')) open = false } catch (e) {}" x-show="open" x-cloak
