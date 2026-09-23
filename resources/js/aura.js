@@ -7,10 +7,6 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 
-const INTRO_SEEN = 'ma-intro';
-// The page names the phases in its own language (data-phases); these Polish ones are only the fallback.
-const INTRO_PHASES = [[0, 'surowa glina'], [28, 'suszenie'], [55, 'pierwszy wypał'], [82, 'szkliwo i drugi wypał']];
-
 export default function aura() {
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const fine = matchMedia('(pointer: fine)').matches;
@@ -34,7 +30,6 @@ export default function aura() {
     gsap.ticker.lagSmoothing(0);
     window.auraLenis = lenis;
 
-    intro(lenis);
     header();
     hero(lenis);
     words();
@@ -51,74 +46,6 @@ export default function aura() {
     }
 
     addEventListener('load', () => ScrollTrigger.refresh());
-}
-
-/* Firing intro: only on the first visit, only on a page that has it, never when arriving at an anchor. */
-function intro(lenis) {
-    const el = document.getElementById('aura-intro');
-    if (! el) {
-        return;
-    }
-
-    let seen = false;
-    try {
-        seen = localStorage.getItem(INTRO_SEEN) === '1';
-    } catch {
-        // Private windows may refuse storage; then the intro shows once per visit.
-    }
-    if (seen || location.hash) {
-        return;
-    }
-
-    const root = document.documentElement;
-    const num = el.querySelector('[data-intro-number]');
-    const phase = el.querySelector('[data-intro-phase]');
-    const bar = el.querySelector('[data-intro-bar]');
-    const counter = { value: 0 };
-    let phases = INTRO_PHASES;
-    try {
-        phases = JSON.parse(el.dataset.phases) || INTRO_PHASES;
-    } catch {
-        // No or broken data-phases: keep the Polish ones.
-    }
-
-    const finish = () => {
-        el.hidden = true;
-        root.classList.remove('intro-on');
-        lenis.start();
-        try {
-            localStorage.setItem(INTRO_SEEN, '1');
-        } catch {
-            // See above.
-        }
-    };
-
-    el.hidden = false;
-    root.classList.add('intro-on');
-    lenis.stop();
-
-    const timeline = gsap.timeline({ onComplete: finish });
-    timeline
-        .to(el.querySelector('.aura-heat'), { opacity: 1, scale: 1.15, duration: 1.5, ease: 'power2.in' }, 0)
-        .to(counter, {
-            value: 100,
-            duration: 1.6,
-            ease: 'power2.inOut',
-            onUpdate() {
-                const v = Math.round(counter.value);
-                num.textContent = v;
-                gsap.set(bar, { scaleX: counter.value / 100 });
-                const current = [...phases].reverse().find(([from]) => v >= from)[1];
-                if (phase.textContent !== current) {
-                    phase.textContent = current;
-                }
-            },
-        }, 0)
-        .to(el.querySelector('.aura-heat'), { opacity: 0, scale: 1.6, duration: 0.6, ease: 'power2.out' }, 1.65)
-        .to(el.querySelector('[data-intro-core]'), { opacity: 0, filter: 'blur(14px)', scale: 1.06, duration: 0.55, ease: 'power2.in' }, 1.7)
-        .to(el, { clipPath: 'inset(0 0 100% 0)', duration: 0.8, ease: 'power4.inOut' }, 2.05);
-
-    el.querySelector('[data-intro-skip]').addEventListener('click', () => timeline.progress(1));
 }
 
 /* The header pill slides away while scrolling down and comes back on the way up or with keyboard focus. */
@@ -153,47 +80,47 @@ function hero(lenis) {
 
     document.documentElement.classList.toggle('hero-overlay', overlay);
     if (overlay) {
-        gsap.set(copyParts, { opacity: 0, y: 50, filter: 'blur(12px)' });
+        gsap.set(copyParts, { opacity: 0, y: 30 });
     }
 
     const timeline = gsap.timeline({
         defaults: { ease: 'none' },
         scrollTrigger: overlay
-            ? { trigger: el, start: 'top top', end: 'bottom bottom', scrub: 1.1 }
-            : { trigger: scene, start: 'top top', end: 'bottom top', scrub: 0.8 },
+            ? { trigger: el, start: 'top top', end: 'bottom bottom', scrub: 0.5 }
+            : { trigger: scene, start: 'top top', end: 'bottom top', scrub: 0.5 },
     });
 
     timeline
         .fromTo(frame, { clipPath: small ? 'inset(24% 14% 26% 14% round 18px)' : 'inset(22% 37% 22% 37% round 18px)' },
             { clipPath: 'inset(0% 0% 0% 0% round 0px)', duration: 0.55, ease: 'power2.inOut' }, 0)
         .fromTo(frame.querySelector('img'), { scale: 1.28 }, { scale: 1, duration: 0.6 }, 0)
-        .to(el.querySelector('.aura-mark-1 > span'), { yPercent: -120, xPercent: -18, opacity: 0, filter: 'blur(16px)', letterSpacing: '.08em', duration: 0.38 }, 0)
-        .to(el.querySelector('.aura-mark-2 > span'), { yPercent: 120, xPercent: 18, opacity: 0, filter: 'blur(16px)', letterSpacing: '.08em', duration: 0.38 }, 0)
+        .to(el.querySelector('.aura-mark-1 > span'), { yPercent: -120, xPercent: -18, opacity: 0, filter: 'blur(4px)', letterSpacing: '.08em', duration: 0.3 }, 0)
+        .to(el.querySelector('.aura-mark-2 > span'), { yPercent: 120, xPercent: 18, opacity: 0, filter: 'blur(4px)', letterSpacing: '.08em', duration: 0.3 }, 0)
         .to(el.querySelector('[data-hero-meta]'), { opacity: 0, y: 20, duration: 0.12 }, 0)
         .to(el.querySelector('.aura-scrim'), { opacity: overlay ? 1 : 0.35, duration: 0.25 }, 0.4);
 
     el.querySelectorAll('.aura-float').forEach((float) => {
         const speed = Number(float.dataset.speed || 1);
         const left = float.getBoundingClientRect().left < innerWidth / 2;
-        timeline.to(float, { y: `${-speed * 38}vh`, x: `${(left ? -1 : 1) * speed * 8}vw`, scale: 0.7, opacity: 0, filter: 'blur(8px)', duration: 0.5 }, 0);
+        timeline.to(float, { y: `${-speed * 38}vh`, x: `${(left ? -1 : 1) * speed * 8}vw`, scale: 0.7, opacity: 0, duration: 0.4 }, 0);
     });
 
     if (! overlay) {
         return;
     }
 
-    timeline.to(copyParts, { opacity: 1, y: 0, filter: 'blur(0px)', stagger: 0.035, duration: 0.18 }, 0.62).to({}, { duration: 0.12 });
+    timeline.to(copyParts, { opacity: 1, y: 0, stagger: 0.03, duration: 0.15 }, 0.4).to({}, { duration: 0.1 });
 
     // A keyboard user lands on the copy: jump to the end of the scene where it is visible.
     copy.addEventListener('focusin', () => {
         const trigger = timeline.scrollTrigger;
-        if (trigger.progress < 0.85) {
-            lenis.scrollTo(trigger.start + (trigger.end - trigger.start) * 0.92, { immediate: true });
+        if (trigger.progress < 0.7) {
+            lenis.scrollTo(trigger.start + (trigger.end - trigger.start) * 0.8, { immediate: true });
         }
     });
 }
 
-/* A paragraph whose words sharpen one by one as it scrolls in. */
+/* A paragraph whose words light up one by one as it scrolls in. */
 function words() {
     document.querySelectorAll('[data-aura-words]').forEach((el) => {
         // A screen reader gets the whole sentence; the words that sharpen are only the picture of it.
@@ -211,8 +138,8 @@ function words() {
         });
         el.replaceChildren(spoken, shown);
 
-        gsap.fromTo(shown.querySelectorAll('span'), { opacity: 0.14, filter: 'blur(5px)' }, {
-            opacity: 1, filter: 'blur(0px)', stagger: 0.05, ease: 'none',
+        gsap.fromTo(shown.querySelectorAll('span'), { opacity: 0.14 }, {
+            opacity: 1, stagger: 0.05, ease: 'none',
             scrollTrigger: { trigger: el, start: 'top 82%', end: 'bottom 45%', scrub: true },
         });
     });
@@ -295,11 +222,11 @@ function parallax() {
     });
 }
 
-/* data-aura-rise: children come up out of a blur once, the first time the block scrolls into view. */
+/* data-aura-rise: children rise and fade in once, the first time the block scrolls into view. */
 function rise() {
     document.querySelectorAll('[data-aura-rise]').forEach((group) => {
         gsap.from(group.children, {
-            y: 60, opacity: 0, filter: 'blur(10px)', stagger: 0.08, duration: 1.1, ease: 'power3.out', clearProps: 'filter,opacity,transform',
+            y: 40, opacity: 0, stagger: 0.06, duration: 0.8, ease: 'power3.out', clearProps: 'opacity,transform',
             scrollTrigger: { trigger: group, start: 'top 88%', once: true },
         });
     });
@@ -317,7 +244,7 @@ function giant() {
     });
 }
 
-/* Everything that follows a mouse: the floating hero photos, the rose glow, magnets, liquid fill, wet clay. */
+/* Everything that follows a mouse: the floating hero photos, the rose glow, magnets, liquid fill. */
 function pointer() {
     const floats = [...document.querySelectorAll('.aura-float')].map((float) => {
         const inner = float.firstElementChild;
@@ -374,56 +301,6 @@ function pointer() {
     document.addEventListener('pointerover', origin);
     document.addEventListener('pointerout', origin);
 
-    wetClay();
-}
-
-/* [data-clay] marks a photo host; its images ripple while the mouse moves and settle when it stops. */
-function wetClay() {
-    const turbulence = document.getElementById('clay-noise');
-    const displacement = document.getElementById('clay-map');
-    if (! turbulence || ! displacement) {
-        return;
-    }
-
-    let energy = 0;
-    let running = false;
-    let active = [];
-    let last = null;
-
-    const tick = (time) => {
-        energy *= 0.93;
-        displacement.setAttribute('scale', (energy * 34).toFixed(2));
-        turbulence.setAttribute('baseFrequency', `${(0.009 + Math.sin(time / 900) * 0.003).toFixed(4)} ${(0.014 + Math.cos(time / 1100) * 0.004).toFixed(4)}`);
-        if (energy < 0.02) {
-            running = false;
-            displacement.setAttribute('scale', '0');
-            active.forEach((img) => img.classList.remove('clay-on'));
-            active = [];
-            return;
-        }
-        requestAnimationFrame(tick);
-    };
-
-    document.addEventListener('pointermove', (event) => {
-        const host = event.target.closest?.('[data-clay]');
-        if (! host) {
-            last = null;
-            return;
-        }
-        host.querySelectorAll('img').forEach((img) => {
-            if (! active.includes(img)) {
-                active.push(img);
-                img.classList.add('clay-on');
-            }
-        });
-        const speed = last ? Math.hypot(event.clientX - last[0], event.clientY - last[1]) : 0;
-        last = [event.clientX, event.clientY];
-        energy = Math.min(1.3, energy + 0.12 + speed * 0.012);
-        if (! running) {
-            running = true;
-            requestAnimationFrame(tick);
-        }
-    }, { passive: true });
 }
 
 /* „Dodaj do koszyka”: a copy of the photo flies into the cart button and blurs away (mellowaura-design, „Lot do koszyka”). */

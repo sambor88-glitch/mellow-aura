@@ -56,7 +56,7 @@
                         <p class="mt-2 text-[14px] text-muted">Albo napisz na WhatsAppie: <a href="{{ $whatsApp }}" target="_blank" rel="noopener" class="whitespace-nowrap">{{ $phone }}</a></p>
                     @endif
                 </div>
-                <a href="{{ $contactUrl }}" class="flex-none rounded-full bg-ink px-8 py-4 text-[14.5px] text-linen transition duration-300 hover:bg-navy hover:text-linen active:scale-[.97]">Umów spotkanie</a>
+                <a href="{{ $contactUrl }}" class="flex-none rounded-full bg-ink px-8 py-4 text-[14.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Umów spotkanie</a>
             </div>
         </div>
     </div>

@@ -119,7 +119,7 @@
                             <label for="contact-website">Strona internetowa</label>
                             <input id="contact-website" name="website" tabindex="-1" autocomplete="off">
                         </div>
-                        <button class="rounded-full bg-ink p-4 text-[14.5px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]">Wyślij wiadomość</button>
+                        <button class="rounded-full bg-ink p-4 text-[14.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Wyślij wiadomość</button>
                         <p class="text-[12px] leading-[1.5] text-hint">Wiadomość trafi prosto do mnie mailem. Więcej o danych w <a href="{{ route('content.privacy') }}">polityce prywatności</a>.</p>
                     </form>
                 </div>

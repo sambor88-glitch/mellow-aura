@@ -104,7 +104,7 @@
                 <div class="mb-2 font-serif text-[26px]">{{ __('catalog::shop.empty_title') }}</div>
                 <p class="mb-[22px] text-[15.5px] text-lead">{{ __('catalog::shop.empty_text') }}</p>
                 @if (Locales::has('custom-orders.index', Locales::current()))
-                    <a href="{{ route('custom-orders.index') }}" class="inline-block rounded-full bg-ink px-7 py-3.5 text-[14px] text-linen hover:bg-navy hover:text-linen">{{ __('catalog::shop.empty_cta') }}</a>
+                    <a href="{{ route('custom-orders.index') }}" class="inline-block rounded-full bg-ink px-7 py-3.5 text-[14px] text-linen hover:bg-rose hover:text-ink">{{ __('catalog::shop.empty_cta') }}</a>
                 @endif
             </div>
         @endif
@@ -112,7 +112,7 @@
         <div x-cloak x-show="favorites && savedHere === 0" class="rounded-[4px] bg-sand-dark px-9 py-11 text-center">
             <div class="mb-2 font-serif text-[26px]">{{ __('catalog::shop.favorites_empty_title') }}</div>
             <p class="mb-[22px] text-[15.5px] text-lead">{{ __('catalog::shop.favorites_empty_text') }}</p>
-            <a href="{{ $baseUrl }}" class="inline-block rounded-full bg-ink px-7 py-3.5 text-[14px] text-linen hover:bg-navy hover:text-linen">{{ __('catalog::shop.favorites_empty_cta') }}</a>
+            <a href="{{ $baseUrl }}" class="inline-block rounded-full bg-ink px-7 py-3.5 text-[14px] text-linen hover:bg-rose hover:text-ink">{{ __('catalog::shop.favorites_empty_cta') }}</a>
         </div>
 
         <div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-x-[26px] gap-y-[30px]">

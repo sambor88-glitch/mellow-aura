@@ -28,7 +28,7 @@
                     @endforeach
                     <div class="mt-3 flex flex-wrap gap-3.5">
                         @if ($studioUrl)
-                            <a href="{{ $studioUrl }}" class="rounded-full bg-ink px-[30px] py-[15px] text-[14px] text-linen transition-[background-color,transform] duration-300 hover:bg-navy hover:text-linen active:scale-[.97]">Zobacz jak tworzę</a>
+                            <a href="{{ $studioUrl }}" class="rounded-full bg-ink px-[30px] py-[15px] text-[14px] text-linen transition-[background-color,transform] duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Zobacz jak tworzę</a>
                         @endif
                         <a href="{{ route('content.contact') }}" class="rounded-full border border-line-strong px-[30px] py-[15px] text-[14px] text-ink transition-[border-color,background-color,transform] duration-300 hover:border-ink hover:bg-sand-dark hover:text-ink active:scale-[.98]">Napisz do mnie</a>
                     </div>

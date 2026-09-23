@@ -135,7 +135,7 @@
                                 <input type="hidden" name="status" value="{{ OrderStatus::Shipped->value }}">
                                 <x-shared::field name="tracking_number" label="Numer przesyłki" autocomplete="off" autocapitalize="characters" spellcheck="false"
                                                  hint="Nieobowiązkowe — z numerem klientka śledzi paczkę" />
-                                <button class="w-full rounded-full bg-ink p-3 text-[13.5px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]">Wysłane — powiadom klientkę</button>
+                                <button class="w-full rounded-full bg-ink p-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Wysłane — powiadom klientkę</button>
                             </form>
                         @endif
 

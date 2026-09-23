@@ -10,7 +10,7 @@ Maciej zaakceptował zamiast spokojnego stylu z `MellowAura.dc.html`. Wzorcowe s
 
 | Plik | Co pokazuje |
 | --- | --- |
-| `Aura - strona glowna.html` | intro z wypałem, hero z rosnącym kadrem, poświata i ziarno, sklep w poziomie, kubek 3D, warsztaty, stopka |
+| `Aura - strona glowna.html` | hero z rosnącym kadrem, poświata i ziarno, sklep w poziomie, kubek 3D, warsztaty, stopka |
 | `Aura - ekrany.html` | karta produktu, kasa z BLIK-iem na jednym ekranie, potwierdzenie zamówienia |
 
 Oba pliki otwierają się wprost w przeglądarce (obok folderu `zdjecia/`). Teksty, ceny i przebieg ekranów
@@ -31,8 +31,8 @@ Z tego wynikają cztery decyzje:
    Bez zmian — to najsilniejszy znak marki i przetrwał zmianę kierunku.
 3. **Szkło zamiast ramek.** Elementy unoszące się nad treścią (nagłówek, cena na zdjęciu, podsumowanie
    zamówienia, koszyk) są z matowego szkła z rozmyciem tła. Karty w spoczynku dalej trzymają się obrysu.
-4. **Ruch jak glina.** Rzeczy wyłaniają się z rozmycia, zdjęcia falują jak mokra glina, a litery
-   wbijają się jak stempel. Ruch jest wolny i miękki, nigdy sprężynujący i nigdy dla samego efektu.
+4. **Ruch jak glina.** Rzeczy wyłaniają się spokojnie, a litery wbijają się jak stempel.
+   Rozmycie przy przewijaniu zostaje tylko na znaku słownym w hero — reszta się rozjaśnia, nie wyostrza. Ruch jest wolny i miękki, nigdy sprężynujący i nigdy dla samego efektu.
 
 ## Paleta
 
@@ -73,8 +73,8 @@ Na ciemnym tle akcentem jest **róż** `#D6A39C` (6,75): kursywa w nagłówku, h
 | Hex | Token | Zasada |
 | --- | --- | --- |
 | `#855F3D` | `--brown` brąz | kursywa w nagłówku na jasnym tle, nadtytuły |
-| `#24417E` | `--navy` granat | focus na jasnym tle, wypełnienie przycisku głównego po najechaniu |
-| `#D6A39C` | `--rose` róż | licznik koszyka, znacznik „nowość”, poświata, szkliwo kubka 3D, akcent na ciemnym |
+| `#24417E` | `--navy` granat | focus na jasnym tle — róż ma na piasku za mały kontrast na obrys |
+| `#D6A39C` | `--rose` róż | podświetlenie przycisków po najechaniu (tekst w atramencie), licznik koszyka, znacznik „nowość”, poświata, szkliwo kubka 3D, akcent na ciemnym |
 | `#B98E64` | `--dash` | kreska 34×1 px przed nadtytułem, kolor poświaty |
 | `#A8813F` | złoto | drobnica, detal luksusowy |
 | `#8C3A2E` | czerwień | błąd, usuwanie, wyprzedane — nigdy dekoracyjnie |
@@ -86,7 +86,7 @@ Nie są kolorami tekstu ani tła treści, tylko światłem:
 | Wartość | Gdzie |
 | --- | --- |
 | `#E6BDB5`, `#D9B98F`, `#EADFD0` | środki plam poświaty (`.orb`), zawsze w `radial-gradient` do przezroczystości |
-| `#F2C39A` → `#E4A58C` | żar pieca: intro z wypałem i poświata na ekranie potwierdzenia |
+| `#F2C39A` → `#E4A58C` | żar pieca: poświata na ekranie potwierdzenia |
 | `rgba(252,249,244,.58–.6)` | `--glass` szkło jasne |
 | `rgba(220,208,190,.75–.8)` | `--glass-line` obrys szkła |
 | `rgba(47,38,32,.42–.45)` | `--glass-dark` szkło ciemne na zdjęciach |
@@ -110,7 +110,6 @@ Instrument Sans: 400, 500, 600             — interfejs, akapity, przyciski
   | gigantyczny napis w stopce | `clamp(80px, 19.5vw, 330px)` |
   | H1 ekranu | `clamp(42px, 6.4vw, 92px)`, `line-height: .96` |
   | nagłówek sekcji | `clamp(40px, 5.6vw, 84px)`, `line-height: .98` |
-  | licznik w intro | `clamp(96px, 20vw, 260px)` z `tabular-nums` |
   | cena na karcie produktu | `46px` Newsreader 300 |
 - **Kursywa w brązie** (na ciemnym: w różu) podkreśla jedno słowo albo frazę, nie całe zdanie.
 - **Nadtytuł z kreską** — sygnatura strony: `10.5px`, `letter-spacing: .3em`, wersaliki, brąz, przed nim kreska `34×1` w `#B98E64`.
@@ -167,13 +166,15 @@ Wzorcowy kod jest w plikach Aura — kopiuj klasy stamtąd. Skrót:
 **Przycisk główny z płynnym wypełnieniem** — kolor wlewa się od miejsca, w które wjechał kursor:
 ```css
 .btn{position:relative;overflow:hidden;isolation:isolate;border-radius:999px;min-height:52px;padding:0 30px;
-  background:var(--ink);color:var(--linen);--fill:var(--navy)}
+  background:var(--ink);color:var(--linen);--fill:var(--rose)}
+.fine .btn:hover{color:var(--ink)}
 .btn::before{content:"";position:absolute;z-index:-1;left:var(--mx,50%);top:var(--my,50%);width:0;aspect-ratio:1;
   border-radius:50%;transform:translate(-50%,-50%);background:var(--fill);transition:width .7s var(--ease)}
 .fine .btn:hover::before{width:250%}
 ```
-`--mx`/`--my` ustawia skrypt przy `pointerover`/`pointerout`. Bez myszy (`html:not(.fine)`) hover zmienia po prostu tło na granat.
-Warianty `--fill`: główny → granat, szklany → krem, jasny na ciemnym → róż.
+`--mx`/`--my` ustawia skrypt przy `pointerover`/`pointerout`. Bez myszy (`html:not(.fine)`) hover zmienia po prostu tło na róż.
+Podświetlenie po najechaniu jest różowe, nie granatowe: róż `#D6A39C` z tekstem w atramencie (6,75). Len na różu jest nieczytelny.
+Warianty `--fill`: główny → róż, szklany → krem, jasny na ciemnym → róż.
 
 **Przycisk szklany (drugoplanowy):** `background: var(--glass); border: 1px solid var(--glass-line); backdrop-filter: blur(14px)`.
 
@@ -191,7 +192,7 @@ chowa się przy przewijaniu w dół i wraca w górę albo przy fokusie.
 
 **Karta produktu:** zdjęcie `4/5`, promień 18 px, cena w szklanej pigułce w lewym dolnym rogu, znacznik „nowość”
 w różu w lewym górnym. Po najechaniu drugie zdjęcie wylewa się kołem (`clip-path: circle(0% → 75%)`)
-na warstwie `.bw`, na którą działa filtr gliny. Pod zdjęciem nazwa (Newsreader 23 px) i kategoria wersalikami.
+na warstwie `.bw`. Pod zdjęciem nazwa (Newsreader 23 px) i kategoria wersalikami.
 
 **Kafel z liczbą:** szkło, `padding: 14–20px`, liczba Newsreader 26–34 px, pod nią etykieta wersalikami.
 
@@ -213,14 +214,12 @@ Każdy efekt ma jedno miejsce. Nie przenoś ich gdzie indziej bez powodu.
 
 | Efekt | Gdzie | Jak |
 | --- | --- | --- |
-| **Intro z wypałem** | pierwsza wizyta na stronie głównej | licznik 0→100 %, etapy „surowa glina → suszenie → pierwszy wypał → szkliwo i drugi wypał”, żar rośnie i stygnie, plansza odjeżdża w górę. Niecałe 3 s, przycisk „Pomiń”, pamięć w `localStorage` (`ma-intro`). **Bez temperatury w °C** — zależy od gliny, której rodzaju nie podajemy. |
-| **Litery z rozmycia** | znak słowny w hero, H1 karty produktu, „Dziękuję. Pakuję.” | każda litera `blurIn`: od `blur(14–18px)` i `translateY(.2em)`, co 50–70 ms |
-| **Rosnący kadr** | hero strony głównej | przyklejona scena `330vh`, `clip-path: inset(22% 37% round 18px)` → `inset(0)`, zdjęcia wokół odlatują i się rozmywają, na końcu wyłania się hasło |
+| **Litery z rozmycia** | znak słowny w hero, H1 karty produktu, „Dziękuję. Pakuję.” | każda litera `blurIn` w 0,7 s: od `blur(6px)` i `translateY(.2em)`, co 40 ms |
+| **Rosnący kadr** | hero strony głównej | przyklejona scena `200vh`, `clip-path: inset(22% 37% round 18px)` → `inset(0)`, zdjęcia wokół odlatują i się rozmywają, na końcu wyłania się hasło |
 | **Paralaksa** | zdjęcia w hero (także za kursorem), portret, karty usług, zdjęcia warsztatów | przesunięcie ±6–12 % i skala 1,12–1,35 → 1 zsynchronizowane z przewijaniem |
-| **Słowa się wyostrzają** | tekst Kasi | każde słowo od `opacity .14` + `blur(5px)` do pełnego, w rytmie przewijania |
+| **Słowa się wyostrzają** | tekst Kasi | każde słowo od `opacity .14` do pełnego, w rytmie przewijania — bez rozmycia |
 | **Pasy haseł** | między sekcjami | dwa rzędy Newsreadera 10 vw jadą w przeciwne strony razem z przewijaniem; drugi rząd jako kontur |
 | **Sklep w poziomie** | lista produktów na stronie głównej (≥ 768 px) | sekcja przypięta, tor przesuwa się w bok; karty przechylają się (`skewX` do ±6°) przy szybkim przewijaniu. Na telefonie zwykłe przewijanie palcem ze `scroll-snap` |
-| **Mokra glina** | zdjęcia pod kursorem | filtr SVG `#clay` (`feTurbulence` + `feDisplacementMap`), siła rośnie z prędkością kursora i gaśnie sama; klasa `clay-on` tylko na czas ruchu. Nigdy na tekście |
 | **Kubek 3D** | konfigurator napisu | three.js: bryła obrotowa, matowy piasek z nakrapianiem, szkliwo w róż w środku i na krawędzi. Napis stemplowany litera po literze na ściance (tekstura z `<canvas>` + mapa wypukłości), każda litera lekko krzywa, kubek ugina się przy każdym stemplu. Obraca się sam, za przeciągnięciem i przy przewijaniu. Obok zawsze miniatura **prawdziwego** kubka i dopisek „podgląd poglądowy” |
 | **Lot do koszyka** | „Dodaj do koszyka” na karcie produktu | kopia zdjęcia leci do licznika w nagłówku i się rozmywa, licznik podskakuje (`bump`) |
 | **Przejście do produktu** | karta → strona produktu | View Transitions: zdjęcie karty rośnie w zdjęcie produktu (`view-transition-name: pvimg`), reszta rozmywa się |
@@ -269,7 +268,7 @@ Innych bibliotek do animacji nie dokładaj.
   `--label` daje 5,22 — przechodzi.
 - Przypięte i poziome sekcje muszą działać z klawiatury: fokus na karcie poza ekranem przewija stronę tak,
   żeby ją pokazać; fokus na haśle w hero przewija do końca animacji.
-- Intro, koszyk, menu i widok produktu: `Escape` zamyka, fokus wraca tam, skąd przyszedł.
+- Koszyk, menu i widok produktu: `Escape` zamyka, fokus wraca tam, skąd przyszedł.
 - Kubek 3D ma `role="img"` z `aria-label` zawierającym aktualny napis. Gdy WebGL nie działa, pokazuje się zdjęcie prawdziwego kubka.
 - Dekoracje (plamy, ziarno, pływające zdjęcia, pasy haseł, gigantyczny napis w stopce) mają `aria-hidden="true"`.
 - Każdy nowy kolor tekstu przepuść przez `kontrast.py` (skill `mellowaura-dostepnosc`).
@@ -277,7 +276,6 @@ Innych bibliotek do animacji nie dokładaj.
 ## Wydajność
 
 - `backdrop-filter` jest drogi. Jednocześnie na ekranie najwyżej kilka szklanych warstw; nie nakładaj szkła na szkło.
-- Filtr gliny włącza się tylko na czas ruchu kursora i tylko na elemencie pod kursorem.
 - Scena 3D renderuje się tylko, gdy jest widoczna (`IntersectionObserver`), `pixelRatio` najwyżej 2.
 - Przed wdrożeniem sprawdź płynność na telefonie Kasi — jeśli rozmycia klatkują, najpierw zmniejsz `blur` plam, potem liczbę szklanych warstw.
 
@@ -292,8 +290,9 @@ Innych bibliotek do animacji nie dokładaj.
 | Nowy odcień „bo pasuje” | odpowiedź jest w palecie |
 | Przycisk z rogiem innym niż `999px` | rozpada się spójność |
 | Efekt spoza katalogu albo efekt w innym miejscu niż w katalogu | Aura działa, bo każdy efekt coś znaczy |
+| Plansza ładowania, licznik 0→100 %, falowanie zdjęć pod kursorem | Maciej usunął je 23.09.2026 — spowalniały wejście i rozpraszały |
 | Animacja, która chowa treść do czasu przewinięcia | pierwszy kadr, miniatura i czytnik ekranu muszą widzieć całość |
-| Stopnie Celsjusza w intro, wymyślone liczby i opinie | fakty przychodzą z panelu i od Kasi |
+| Wymyślone liczby i opinie | fakty przychodzą z panelu i od Kasi |
 | Ikony z zewnętrznej biblioteki | wystarczą `→`, `·`, `×`, `+` |
 
 ## Dokąd dalej

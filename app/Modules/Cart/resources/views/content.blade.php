@@ -56,7 +56,7 @@
         <div class="px-3 py-14 text-center text-label">
             <div class="mb-2 font-serif text-[28px] font-light text-ink">{{ __('cart::content.empty_title') }}</div>
             <p class="mb-[22px] text-[14.5px] leading-[1.6]">{{ __('cart::content.empty_text') }}</p>
-            <a href="{{ route('shop.index') }}" class="fill-btn inline-flex min-h-12 items-center rounded-full bg-ink px-[26px] text-[13.5px] text-linen [--fill:var(--color-navy)] hover:bg-navy hover:text-linen">{{ __('cart::content.empty_cta') }}</a>
+            <a href="{{ route('shop.index') }}" class="fill-btn inline-flex min-h-12 items-center rounded-full bg-ink px-[26px] text-[13.5px] text-linen [--fill:var(--color-rose)] hover:bg-rose hover:text-ink">{{ __('cart::content.empty_cta') }}</a>
         </div>
     @endforelse
 </div>
@@ -91,7 +91,7 @@
 
         {{-- The checkout in the language of the page, or none: a euro basket never lands on a złoty checkout. --}}
         @if (Locales::has('checkout.index', Locales::current()))
-            <a href="{{ route('checkout.index') }}" class="fill-btn block rounded-full bg-ink p-4 text-center text-[14.5px] font-medium tracking-[0.03em] text-linen transition duration-300 [--fill:var(--color-navy)] hover:bg-navy hover:text-linen active:scale-[.97]">{{ __('cart::content.checkout') }} <span aria-hidden="true">→</span></a>
+            <a href="{{ route('checkout.index') }}" class="fill-btn block rounded-full bg-ink p-4 text-center text-[14.5px] font-medium tracking-[0.03em] text-linen transition duration-300 [--fill:var(--color-rose)] hover:bg-rose hover:text-ink active:scale-[.97]">{{ __('cart::content.checkout') }} <span aria-hidden="true">→</span></a>
         @endif
         @if ($inZloty)
             <div class="mt-3.5 flex items-center justify-center gap-2.5 text-[11.5px] tracking-[0.1em] text-label uppercase">

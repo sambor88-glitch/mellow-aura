@@ -153,7 +153,7 @@
                         </div>
                     </fieldset>
 
-                    <button type="submit" data-magnet class="fill-btn min-h-[58px] w-full rounded-full bg-ink px-[30px] py-[18px] text-[15px] font-medium tracking-[0.02em] text-linen transition duration-300 [--fill:var(--color-navy)] hover:bg-navy active:scale-[.97]">
+                    <button type="submit" data-magnet class="fill-btn min-h-[58px] w-full rounded-full bg-ink px-[30px] py-[18px] text-[15px] font-medium tracking-[0.02em] text-linen transition duration-300 [--fill:var(--color-rose)] hover:bg-rose hover:text-ink active:scale-[.97]">
                         {{ $t('add') }} &middot; <span x-text="price">{{ $money($startSize['price']) }}</span>
                     </button>
                 </form>
@@ -193,7 +193,7 @@
                 <div class="mt-1 truncate text-[11.5px] text-label" x-text="@js($sizes->pluck('title', 'label'))[size] + ' · ' + @js($t('inside')) + ' ' + glazeName">{{ $startSize['title'] }} · {{ $t('inside') }} {{ $startGlaze['name'] }}</div>
             </div>
             <button type="button" x-on:click="text.trim() ? $refs.form.requestSubmit() : focusText()" x-text="text.trim() ? @js($t('to_basket')) : @js($t('type_text'))"
-                    class="fill-btn flex-none rounded-full bg-ink px-6 py-[14px] text-[14px] text-linen transition duration-300 [--fill:var(--color-navy)] hover:bg-navy active:scale-[.97]">{{ $t('type_text') }}</button>
+                    class="fill-btn flex-none rounded-full bg-ink px-6 py-[14px] text-[14px] text-linen transition duration-300 [--fill:var(--color-rose)] hover:bg-rose hover:text-ink active:scale-[.97]">{{ $t('type_text') }}</button>
         </div>
     </div>
 </x-shared::layout>

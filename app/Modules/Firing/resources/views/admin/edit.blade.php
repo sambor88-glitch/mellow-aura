@@ -96,6 +96,6 @@
             <p class="mt-1.5 text-[13px] text-error">{{ $bag->first('prices') }}</p>
         @endif
         <p class="mt-3.5 text-[12.5px] leading-[1.6] text-label">W pusty wiersz na dole wpisz nową usługę. Strzałki zapisują cały cennik i przestawiają pozycję o jedno miejsce. „Przed obniżką” wpisz tylko przy promocji: strona przekreśli tę cenę, gdy obniżysz cenę, i sama poda najniższą cenę z 30 dni.</p>
-        <button class="mt-[18px] min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]">Zapisz cennik wypałów</button>
+        <button class="mt-[18px] min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Zapisz cennik wypałów</button>
     </form>
 </x-admin::layout>

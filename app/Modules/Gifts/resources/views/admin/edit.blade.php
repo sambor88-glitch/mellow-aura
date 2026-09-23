@@ -4,7 +4,7 @@
     $intro = 'mb-5 text-[13.5px] leading-[1.6] text-label';
     $alert = 'mb-3.5 rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text';
     $input = 'w-full min-w-0 rounded-[4px] border bg-white px-3.5 py-3 text-[14.5px] text-ink placeholder:text-hint focus:border-ink';
-    $button = 'mt-[18px] min-h-11 w-full rounded-full bg-ink p-4 text-[14px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]';
+    $button = 'mt-[18px] min-h-11 w-full rounded-full bg-ink p-4 text-[14px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]';
     $textErrors = $errors->getBag('teksty');
     $finderErrors = $errors->getBag('szukam-prezentu');
     $budgetRows = array_values((array) old('budgets', $budgets));

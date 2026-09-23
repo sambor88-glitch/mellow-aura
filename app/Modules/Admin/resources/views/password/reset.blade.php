@@ -9,7 +9,7 @@
             <x-shared::field name="email" label="E-mail" type="email" autocomplete="username" :value="old('email', $email)" />
             <x-shared::field name="password" label="Nowe hasło" type="password" autocomplete="new-password" autofocus />
             <x-shared::field name="password_confirmation" label="To samo hasło jeszcze raz" type="password" autocomplete="new-password" />
-            <button class="rounded-full bg-ink p-[15px] text-[14.5px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]">Zapisz hasło</button>
+            <button class="rounded-full bg-ink p-[15px] text-[14.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Zapisz hasło</button>
         </form>
     </div>
 </x-admin::layout>

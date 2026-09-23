@@ -11,7 +11,7 @@
             <p class="m-0">{{ __('localization::switcher.hint', [], $preferred) }}</p>
             <div class="ml-auto flex items-center gap-2">
                 <a href="{{ Locales::switchUrl(request(), $preferred) }}" hreflang="{{ $preferred }}"
-                   class="fill-btn flex min-h-11 items-center rounded-full bg-ink px-4 text-linen [--fill:var(--color-navy)] hover:text-linen">{{ __('localization::switcher.hint_action', [], $preferred) }}</a>
+                   class="fill-btn flex min-h-11 items-center rounded-full bg-ink px-4 text-linen [--fill:var(--color-rose)] hover:text-ink">{{ __('localization::switcher.hint_action', [], $preferred) }}</a>
                 <button type="button" x-on:click="open = false; try { localStorage.setItem('locale-hint-closed', '1') } catch (e) {}"
                         class="flex min-h-11 items-center rounded-full border border-line-strong px-4 text-ink">{{ __('localization::switcher.hint_close', [], $preferred) }}</button>
             </div>

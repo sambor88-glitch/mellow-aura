@@ -34,7 +34,7 @@
     $heading = 'mb-3 text-[11.5px] tracking-[0.16em] text-label uppercase';
     $alert = 'mb-3.5 rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text';
     $hint = 'mt-3.5 text-[12.5px] leading-[1.6] text-label';
-    $button = 'mt-[18px] min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]';
+    $button = 'mt-[18px] min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]';
     $tileInput = 'w-full min-w-0 rounded-[4px] border bg-white px-3 py-2.5 text-[14px] text-ink placeholder:text-hint focus:border-ink';
 @endphp
 <x-admin::layout title="Ustawienia" lead="Dostawa, dane pracowni i firmy, karta produktu, statystyki i kafelki o materiale. Zmiany widać na stronie od razu.">

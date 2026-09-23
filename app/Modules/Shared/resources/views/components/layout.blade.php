@@ -20,12 +20,6 @@
     <div class="aura-bg print:hidden" aria-hidden="true"><div class="aura-orb aura-orb-1"></div><div class="aura-orb aura-orb-2"></div><div class="aura-orb aura-orb-3"></div></div>
     <div class="aura-grain print:hidden" aria-hidden="true"></div>
     <div class="aura-cursor print:hidden" aria-hidden="true"></div>
-    <svg width="0" height="0" class="absolute" aria-hidden="true" focusable="false">
-        <filter id="clay" x="-8%" y="-8%" width="116%" height="116%">
-            <feTurbulence id="clay-noise" type="fractalNoise" baseFrequency="0.011 0.017" numOctaves="2" seed="4" result="noise"/>
-            <feDisplacementMap id="clay-map" in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G"/>
-        </filter>
-    </svg>
     <div class="relative z-2 flex min-h-screen flex-col">
         <x-localization::hint />
         <x-shared::header />

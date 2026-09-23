@@ -59,7 +59,7 @@
                                 <span class="text-[15px] text-hint line-through"><span class="sr-only">osobno </span>{{ Money::format($full) }}</span>
                                 <span class="rounded-full bg-navy px-3 py-[5px] text-[11.5px] tracking-[0.1em] text-linen uppercase">taniej o {{ Money::format($full - $price) }}</span>
                             @endif
-                            <button class="ml-auto min-h-11 rounded-full bg-ink px-7 py-3.5 text-[14px] text-linen transition duration-300 hover:bg-navy active:scale-[.97]">
+                            <button class="ml-auto min-h-11 rounded-full bg-ink px-7 py-3.5 text-[14px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">
                                 Do koszyka<span class="sr-only">: {{ $bundle->name }}</span>
                             </button>
                         </form>
@@ -69,7 +69,7 @@
                 <div class="rounded-[4px] bg-sand-dark px-9 py-11 text-center">
                     <h2 class="mb-2 font-serif text-[26px] font-normal">Zestawy wrócą, gdy wyjdą z pieca</h2>
                     <p class="mb-[22px] text-[15.5px] text-lead">Części z zestawów pojechały już do kogoś. Każdą rzecz ze sklepu kupisz też osobno.</p>
-                    <a href="{{ route('shop.index') }}" class="inline-block rounded-full bg-ink px-7 py-3.5 text-[14px] text-linen hover:bg-navy hover:text-linen">Zobacz produkty</a>
+                    <a href="{{ route('shop.index') }}" class="inline-block rounded-full bg-ink px-7 py-3.5 text-[14px] text-linen hover:bg-rose hover:text-ink">Zobacz produkty</a>
                 </div>
             @endforelse
         </div>

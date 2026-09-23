@@ -10,7 +10,7 @@
             @if ($mails->count() > 1)
                 <form method="post" action="{{ route('admin.failed-mails.retry-all') }}">
                     @csrf
-                    <button class="min-h-11 rounded-full bg-ink px-5 text-[13px] text-linen hover:bg-navy">Wyślij wszystkie jeszcze raz</button>
+                    <button class="min-h-11 rounded-full bg-ink px-5 text-[13px] text-linen hover:bg-rose hover:text-ink">Wyślij wszystkie jeszcze raz</button>
                 </form>
             @endif
         </div>

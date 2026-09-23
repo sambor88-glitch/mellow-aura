@@ -48,9 +48,9 @@
                 <h2 class="mb-2 font-serif text-[26px] font-normal">Nic nie pasuje do tych warunków</h2>
                 <p class="mb-[22px] text-[15.5px] text-lead">Poluzuj budżet albo napisz do mnie — zrobię coś na zamówienie w Twojej kwocie.</p>
                 @if (Route::has('custom-orders.index'))
-                    <a href="{{ route('custom-orders.index') }}" class="inline-block rounded-full bg-ink px-7 py-3.5 text-[14px] text-linen hover:bg-navy hover:text-linen">Napisz, czego szukasz</a>
+                    <a href="{{ route('custom-orders.index') }}" class="inline-block rounded-full bg-ink px-7 py-3.5 text-[14px] text-linen hover:bg-rose hover:text-ink">Napisz, czego szukasz</a>
                 @else
-                    <a href="{{ $resetUrl }}" class="inline-block rounded-full bg-ink px-7 py-3.5 text-[14px] text-linen hover:bg-navy hover:text-linen">Pokaż wszystkie pomysły</a>
+                    <a href="{{ $resetUrl }}" class="inline-block rounded-full bg-ink px-7 py-3.5 text-[14px] text-linen hover:bg-rose hover:text-ink">Pokaż wszystkie pomysły</a>
                 @endif
             </div>
         @endif
