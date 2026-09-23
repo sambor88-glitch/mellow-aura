@@ -27,7 +27,8 @@ class ProductController extends Controller
     {
         return view('catalog::admin.products.index', [
             'products' => Product::query()
-                ->with(['category', 'variants' => fn ($query) => $query->orderBy('id'), 'media'])
+                // Translations for the English marker on the list and the English block in each form.
+                ->with(['category', 'variants' => fn ($query) => $query->orderBy('id'), 'variants.translations', 'media', 'translations'])
                 ->orderBy('sort_order')
                 ->orderBy('id')
                 ->get(),

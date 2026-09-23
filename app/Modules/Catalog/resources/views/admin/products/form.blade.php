@@ -16,6 +16,7 @@
         : ($product?->variants->map(fn ($variant) => [
             'id' => $variant->id,
             'label' => $variant->label,
+            'label_en' => $variant->translation('en')?->label,
             'price' => Money::input($variant->price_gross),
             'compare_at' => $variant->compare_at_price === null ? '' : Money::input($variant->compare_at_price),
             'stock' => $variant->stock,
@@ -24,7 +25,7 @@
     // A voucher goes out as a PDF by e-mail; a size ticked „pocztą” is printed and posted, so its buyer chooses a delivery.
     $isVoucher = (bool) $product?->isVoucher();
     // Spare rows for new sizes; left empty, they are not saved.
-    $rows = [...$rows, ...array_fill(0, max(1, 3 - count($rows)), ['id' => null, 'label' => '', 'price' => '', 'compare_at' => '', 'stock' => ''])];
+    $rows = [...$rows, ...array_fill(0, max(1, 3 - count($rows)), ['id' => null, 'label' => '', 'label_en' => '', 'price' => '', 'compare_at' => '', 'stock' => ''])];
 
     $dimensions = (array) $old('dimensions', $product?->dimensions ?? []);
     $occasions = (array) $old('occasions', $product?->occasions ?? []);
@@ -36,6 +37,11 @@
     $googleCategory = (string) $old('google_category', $product?->google_category?->value);
     $showInGoogle = $mine ? (bool) old('show_in_google') : ($product?->show_in_google ?? true);
     $defaultTolerance = $settings->get('size_tolerance');
+    // The English version, written here even while the English shop is still switched off.
+    $english = $product?->translation('en');
+    $en = fn (string $field) => $old('en.'.$field, $english?->{$field});
+    // Open when something is written or wrong in it, so a mistake never hides in a closed block.
+    $englishOpen = filled($english) || collect($bag->keys())->contains(fn (string $key) => str_starts_with($key, 'en.'));
 
     $input = 'min-w-0 rounded-[4px] border bg-white text-[15px] text-ink placeholder:text-hint focus:border-ink';
     $legend = 'mb-2.5 text-[11px] tracking-[0.14em] text-hint uppercase';
@@ -107,6 +113,9 @@
                     <input name="variants[{{ $index }}][label]" value="{{ $row['label'] ?? '' }}" aria-label="Rozmiar {{ $index + 1 }}"
                            placeholder="{{ $index === 0 ? 'np. Mały 12 cm' : 'kolejny rozmiar' }}"
                            @class([$input, 'flex-[1_1_140px] px-3 py-2.5', 'border-error' => $bag->has('variants.'.$index.'.label'), 'border-line' => ! $bag->has('variants.'.$index.'.label')])>
+                    <input name="variants[{{ $index }}][label_en]" value="{{ $row['label_en'] ?? '' }}" lang="en" aria-label="Rozmiar {{ $index + 1 }} po angielsku"
+                           placeholder="{{ $index === 0 ? 'po angielsku, np. Small 12 cm' : 'po angielsku' }}"
+                           @class([$input, 'flex-[1_1_120px] px-3 py-2.5', 'border-error' => $bag->has('variants.'.$index.'.label_en'), 'border-line' => ! $bag->has('variants.'.$index.'.label_en')])>
                     <span class="flex items-center gap-1.5">
                         <input name="variants[{{ $index }}][price]" value="{{ $row['price'] ?? '' }}" inputmode="decimal" aria-label="Cena, rozmiar {{ $index + 1 }}" placeholder="cena"
                                @class([$input, 'w-[90px] px-3 py-2.5 text-right', 'border-error' => $bag->has('variants.'.$index.'.price'), 'border-line' => ! $bag->has('variants.'.$index.'.price')])>
@@ -132,7 +141,7 @@
                         </label>
                     @endif
                 </div>
-                {!! $error('variants.'.$index.'.label') !!}{!! $error('variants.'.$index.'.price') !!}{!! $error('variants.'.$index.'.compare_at') !!}{!! $error('variants.'.$index.'.stock') !!}
+                {!! $error('variants.'.$index.'.label') !!}{!! $error('variants.'.$index.'.label_en') !!}{!! $error('variants.'.$index.'.price') !!}{!! $error('variants.'.$index.'.compare_at') !!}{!! $error('variants.'.$index.'.stock') !!}
             @endforeach
         </div>
         {!! $error('variants') !!}
@@ -211,6 +220,38 @@
             </label>
         </div>
     </fieldset>
+
+    <details @if ($englishOpen) open @endif class="group rounded-[4px] border border-sand-dark bg-linen px-4 py-3">
+        <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-[14px] text-graphite">
+            <span>Wersja angielska — nieobowiązkowa
+                <span class="mt-0.5 block text-[12.5px] text-hint">{{ $english ? 'Produkt jest w angielskim sklepie pod adresem /en/product/'.$english->slug : 'Bez angielskiej nazwy produkt nie pokaże się w angielskim sklepie.' }}</span>
+            </span>
+            <span aria-hidden="true" class="text-[18px] leading-none text-label transition-transform duration-300 group-open:rotate-45">+</span>
+        </summary>
+        <div lang="en" class="mt-3 grid gap-3">
+            <p lang="pl" class="text-[12.5px] leading-[1.5] text-hint">Pisz tak jak po polsku — konkretnie, w pierwszej osobie. Nazwy rozmiarów po angielsku wpisz wyżej, obok polskich. Puste pole nie pokaże się na angielskiej stronie, a tekst nie podstawi się po polsku.</p>
+            @foreach ([
+                ['name', 'Nazwa po angielsku', 'input', 120, 'e.g. Fern imprint bowl'],
+                ['description', 'Opis po angielsku', 'textarea', 2000, 'what it’s made of, how it’s made, what to do with it'],
+                ['care_note', 'Pielęgnacja po angielsku', 'input', 200, 'e.g. Dishwasher safe, gold by hand only'],
+                ['deviation', 'Cecha do osobnego potwierdzenia po angielsku', 'input', 160, 'e.g. Not for dishwasher or microwave — gold rim'],
+                ['size_tolerance', 'Dopuszczalna różnica wymiarów po angielsku', 'input', 60, 'e.g. 0.5 cm'],
+                ['safety_warnings', 'Ostrzeżenia po angielsku', 'textarea', 400, 'e.g. Do not place on a flame or a hob.'],
+            ] as [$field, $label, $kind, $max, $placeholder])
+                <div class="min-w-0">
+                    <label for="{{ $formKey }}-en-{{ $field }}" lang="pl" class="mb-1.5 block text-[13.5px] text-graphite">{{ $label }}</label>
+                    @if ($kind === 'textarea')
+                        <textarea id="{{ $formKey }}-en-{{ $field }}" name="en[{{ $field }}]" rows="{{ $field === 'description' ? 4 : 2 }}" maxlength="{{ $max }}" placeholder="{{ $placeholder }}"
+                                  @class([$input, 'w-full resize-y px-4 py-[13px] leading-[1.6]', 'border-error' => $bag->has('en.'.$field), 'border-line' => ! $bag->has('en.'.$field)])>{{ $en($field) }}</textarea>
+                    @else
+                        <input id="{{ $formKey }}-en-{{ $field }}" name="en[{{ $field }}]" value="{{ $en($field) }}" maxlength="{{ $max }}" placeholder="{{ $placeholder }}"
+                               @class([$input, 'w-full px-4 py-[13px]', 'border-error' => $bag->has('en.'.$field), 'border-line' => ! $bag->has('en.'.$field)])>
+                    @endif
+                    <div lang="pl">{!! $error('en.'.$field) !!}</div>
+                </div>
+            @endforeach
+        </div>
+    </details>
 
     @if ($product?->getMedia('images')->isNotEmpty())
         <fieldset>
