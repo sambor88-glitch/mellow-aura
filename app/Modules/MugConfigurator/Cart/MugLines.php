@@ -49,23 +49,23 @@ class MugLines implements LineType
             'glaze' => ['required', Rule::in($glazes->pluck('code')->all())],
             'quantity' => ['sometimes', 'integer', 'min:1', 'max:'.Cart::MAX_QUANTITY],
         ], [
-            'text.required' => 'Napisz, co mam wbić w glinę',
-            'text.regex' => 'Wbiję litery, cyfry i znaki interpunkcyjne — bez emotek',
-            'size.required' => 'Wybierz rozmiar kubka',
-            'size.in' => 'Wybierz rozmiar kubka',
-            'glaze.required' => 'Wybierz kolor wnętrza',
-            'glaze.in' => 'Wybierz kolor wnętrza',
+            'text.required' => __('mug-configurator::mug.validation.text_required'),
+            'text.regex' => __('mug-configurator::mug.validation.text_regex'),
+            'size.required' => __('mug-configurator::mug.validation.size'),
+            'size.in' => __('mug-configurator::mug.validation.size'),
+            'glaze.required' => __('mug-configurator::mug.validation.glaze'),
+            'glaze.in' => __('mug-configurator::mug.validation.glaze'),
             'quantity.max' => CartLine::tooManyNotice(),
         ]);
 
         $lines = explode("\n", $data['text']);
 
         if (count($lines) > $maxLines) {
-            throw ValidationException::withMessages(['text' => 'Zmieszczę najwyżej '.$maxLines.' '.($maxLines === 1 ? 'linię' : ($maxLines < 5 ? 'linie' : 'linii')).' napisu']);
+            throw ValidationException::withMessages(['text' => trans_choice('mug-configurator::mug.validation.too_many_lines', $maxLines)]);
         }
 
         if (collect($lines)->contains(fn (string $line) => mb_strlen($line) > $maxChars)) {
-            throw ValidationException::withMessages(['text' => 'W jednej linii zmieszczę najwyżej '.$maxChars.' znaków — podziel napis na linie']);
+            throw ValidationException::withMessages(['text' => __('mug-configurator::mug.validation.too_long', ['max' => $maxChars])]);
         }
 
         $size = $sizes->firstWhere('label', $data['size']);

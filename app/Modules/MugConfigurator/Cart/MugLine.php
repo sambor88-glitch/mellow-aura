@@ -5,6 +5,7 @@ namespace App\Modules\MugConfigurator\Cart;
 use App\Modules\Cart\Cart;
 use App\Modules\Cart\CartLine;
 use App\Modules\Cart\LineItem;
+use App\Modules\Localization\Support\Locales;
 use App\Modules\MugConfigurator\Support\MugAnalyticsItem;
 
 /**
@@ -15,10 +16,11 @@ class MugLine extends CartLine
 {
     public const TYPE = 'mug';
 
+    /** The Polish name, as Google Merchant Center and Analytics know it. */
     public const NAME = 'Kubek z napisem';
 
     /**
-     * @param  array{label: string, name: string, price_gross: int}  $size
+     * @param  array{label: string, name: string, price_gross: int, price: int}  $size  in the page's currency and language (MugOptions::sizes)
      * @param  array{code: string, name: string}  $glaze
      */
     public function __construct(
@@ -42,17 +44,29 @@ class MugLine extends CartLine
 
     public function unitPrice(): int
     {
-        return $this->size['price_gross'];
+        return $this->size['price'];
+    }
+
+    /**
+     * Built from the sizes of the page's currency (MugLines), so a mug without a euro price never reaches a euro basket.
+     */
+    public function pricedIn(string $currency): bool
+    {
+        return $currency === Locales::currency();
     }
 
     public function name(): string
     {
-        return self::NAME;
+        return __('mug-configurator::mug.name');
     }
 
     public function details(): ?string
     {
-        return '„'.str_replace("\n", ' / ', $this->text).'” · '.$this->size['name'].' · wnętrze '.mb_strtolower($this->glaze['name']);
+        return __('mug-configurator::mug.details', [
+            'text' => str_replace("\n", ' / ', $this->text),
+            'size' => $this->size['name'],
+            'glaze' => mb_strtolower($this->glaze['name']),
+        ]);
     }
 
     public function thumbnailUrl(): ?string
@@ -62,7 +76,7 @@ class MugLine extends CartLine
 
     public function thumbnailAlt(): string
     {
-        return 'Kubek z wbijanym w glinę napisem';
+        return __('mug-configurator::mug.alt');
     }
 
     public function analyticsItem(): array
@@ -77,7 +91,7 @@ class MugLine extends CartLine
 
     public function addedNotice(): string
     {
-        return 'Kubek z Twoim napisem w koszyku';
+        return __('mug-configurator::mug.added');
     }
 
     public function row(int $quantity): array
@@ -95,7 +109,7 @@ class MugLine extends CartLine
     {
         return [new LineItem(
             variantId: null,
-            name: self::NAME,
+            name: $this->name(),
             label: $this->size['name'],
             quantity: $this->quantity,
             unitPrice: $this->unitPrice(),

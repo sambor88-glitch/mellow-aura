@@ -105,7 +105,8 @@ Szczegóły w `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html`. Tu zasady,
 - Cenę czytasz przez `$variant->price()` i `compareAtPrice()` — w walucie strony. Kwotę pokazujesz przez
   `Money::format($kwota, $waluta)`; bez waluty to złote. `price_gross` to zawsze złote, nigdy „cena strony”.
 - Koszyk liczy w walucie strony. Pozycja bez ceny w tej walucie (`CartLine::pricedIn`) wypada z koszyka na tej
-  stronie i wraca na stronie w swojej walucie. Kubek, zestawy i pakowanie mają na razie tylko złote.
+  stronie i wraca na stronie w swojej walucie. Kubek z napisem ma `price_eur` przy rozmiarze w ustawieniach;
+  zestawy i pakowanie mają na razie tylko złote.
 - Brak tłumaczenia albo brak ceny w EUR ukrywa pozycję na `/en/`. Nigdy nie psuje wersji polskiej
   i nigdy nie podstawia polskiego tekstu pod angielski adres.
 - Warsztaty, voucher, wypał, gastronomia, odcisk rośliny, apaszka, dziennik i „Szukam prezentu” nie istnieją

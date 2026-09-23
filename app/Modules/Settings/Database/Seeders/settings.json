@@ -188,17 +188,20 @@
             {
                 "label": "Mały",
                 "capacity_ml": 200,
-                "price_gross": 6900
+                "price_gross": 6900,
+                "price_eur": 1900
             },
             {
                 "label": "Średni",
                 "capacity_ml": 300,
-                "price_gross": 7900
+                "price_gross": 7900,
+                "price_eur": 1900
             },
             {
                 "label": "Duży",
                 "capacity_ml": 400,
-                "price_gross": 9500
+                "price_gross": 9500,
+                "price_eur": 1900
             }
         ]
     },

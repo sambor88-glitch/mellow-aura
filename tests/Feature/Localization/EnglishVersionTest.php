@@ -154,8 +154,8 @@ class EnglishVersionTest extends TestCase
             ->assertDontSee('Sink your hands')
             ->assertDontSee('Ceramics for cafés and restaurants')
             ->assertDontSee('Hi, I’m Kasia')
-            // The mug configurator comes back to /en/ with its euro prices.
-            ->assertDontSee('>Design your mug <span', false);
+            // The mug configurator has euro prices, so it is on the English side too.
+            ->assertSee('href="'.url('/en/custom-text-mug').'"', false);
 
         $this->get('/')
             ->assertOk()
