@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'phone_required_parcel' => 'Bez numeru telefonu kurier nie znajdzie paczkomatu',
+    'phone_required' => 'Wpisz numer telefonu — zadzwonię tylko w sprawie zamówienia',
+    'phone_regex' => 'Numer telefonu ma 9 cyfr — sprawdź, czy żadna nie uciekła',
+    'email_required' => 'Wpisz e-mail — wyślę na niego potwierdzenie',
+    'email_email' => 'Adres e-mail bez małpy — sprawdź, czy nie uciekła',
+    'email_max' => 'Ten adres e-mail jest za długi — sprawdź go jeszcze raz',
+    'name_required' => 'Wpisz imię i nazwisko — tak podpiszę paczkę',
+    'name_max' => 'Imię i nazwisko zmieszczę do :max znaków',
+    'street_required_with' => 'Dopisz ulicę i numer — bez nich kurier nie trafi',
+    'street_max' => 'Ulicę i numer zmieszczę do :max znaków',
+    'postal_code_required_with' => 'Dopisz kod pocztowy',
+    'postal_code_regex' => 'Kod pocztowy wpisz jak na kopercie, np. 30-001',
+    'city_required_with' => 'Dopisz miasto',
+    'city_max' => 'Nazwę miasta zmieszczę do :max znaków',
+    'nip_digits' => 'NIP ma 10 cyfr — sprawdź, czy żadna nie uciekła',
+    'nip_checksum' => 'Ten NIP się nie zgadza — sprawdź cyfry',
+    'note_max' => 'Dopisek zmieszczę do :max znaków',
+    'shipping_method' => 'Wybierz, jak mam wysłać paczkę',
+    'payment_method' => 'Wybierz, jak chcesz zapłacić',
+    'blik_code' => 'Wpisz 6-cyfrowy kod z aplikacji banku',
+    'accept_terms' => 'Zaznacz akceptację regulaminu — bez niej nie mogę przyjąć zamówienia',
+    'accept_deviation' => 'Zaznacz, że akceptujesz tę cechę — bez tego nie mogę przyjąć zamówienia',
+];

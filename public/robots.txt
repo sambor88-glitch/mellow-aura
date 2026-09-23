@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /panel
+
+Sitemap: https://mellow-aura.com/sitemap.xml

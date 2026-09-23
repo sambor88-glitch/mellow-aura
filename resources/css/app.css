@@ -1,0 +1,619 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+/*
+ * Palette, type and motion mirror the mellowaura-design skill: change a color there and here at once.
+ * Tailwind's default colors are switched off, so no off-brand shade slips in.
+ */
+@theme {
+    --color-*: initial;
+    --color-white: #fff;
+
+    /* Backgrounds */
+    --color-ink: #2F2620;
+    --color-sand-dark: #EDE4D8;
+    --color-sand: #F3EDE4;
+    --color-linen: #F7F2EA;
+    --color-cream: #FCF9F4;
+
+    /* Text on light backgrounds */
+    --color-graphite: #4A3E33;
+    --color-lead: #5C5043;
+    --color-muted: #6B5D4F;
+    --color-label: #726456;
+    --color-hint: #736454;
+
+    /* Text on ink */
+    --color-on-dark: #D8CDBD;
+    --color-on-dark-muted: #B8AB99;
+    --color-label-dark: #9B8C7C;
+
+    /* Lines */
+    --color-line: #DCD0BE;
+    --color-divider: #E2D7C7;
+    --color-line-strong: #C6B8A5;
+    --color-line-soft: #E6DCCD;
+    --color-line-dark: #55483C;
+    --color-divider-dark: #453A30;
+
+    /* Low-stock notice from the prototype. Not in the skill palette yet. */
+    --color-alert: #F7ECE9;
+    --color-alert-line: #E0C3BC;
+    --color-alert-text: #7A3A2E;
+
+    /* Free shipping reached, in the cart drawer from the prototype. Not in the skill palette yet. */
+    --color-success-soft: #EDF0E9;
+    --color-success-line: #C7D2BC;
+    --color-success-text: #41563A;
+
+    /* BLIK box on the checkout screen from the prototype. Not in the skill palette yet. */
+    --color-navy-soft: #F0F3FA;
+    --color-navy-line: #C9D4EA;
+    --color-navy-text: #33456B;
+    --color-navy-hint: #5A6B8C;
+
+    /* The navy card on /odcisk-twojej-rosliny from the prototype. Not in the skill palette yet. */
+    --color-navy-pale: #D9E1F0;
+    --color-navy-muted: #AFC0DC;
+
+    /* Backdrop under the zoomed photo (88%) and the cart drawer (44%). Not in the skill palette yet. */
+    --color-scrim: #1F1914;
+
+    /* Accents */
+    --color-brown: #855F3D;
+    --color-navy: #24417E;
+    --color-rose: #D6A39C;
+    --color-gold: #A8813F;
+    --color-dash: #B98E64;
+    --color-error: #8C3A2E;
+    --color-success: #5C7A4A;
+
+    --font-sans: 'Instrument Sans', system-ui, sans-serif;
+    --font-serif: Newsreader, serif;
+
+    /* Aura glass (mellowaura-design, „Głębia”): light glass on sand, dark glass over photos. */
+    --color-glass: rgb(252 249 244 / .6);
+    --color-glass-line: rgb(220 208 190 / .8);
+    --color-glass-dark: rgb(47 38 32 / .42);
+    --color-glass-dark-line: rgb(247 242 234 / .18);
+
+    /* A product card on hover, and the photos floating in the home page hero. */
+    --shadow-card-hover: 0 26px 50px -30px rgba(47, 38, 32, .5);
+    --shadow-float: 0 30px 60px -34px rgba(47, 38, 32, .55);
+
+    /* Older shadows from the prototype, still used by pages that have not moved to Aura yet. */
+    --shadow-hero: 0 34px 80px -34px rgba(47, 38, 32, .45);
+    --shadow-hero-badge: 0 16px 40px -20px rgba(47, 38, 32, .4);
+
+    /* Cart drawer and confirmation pill from the prototype, with the same caveat. */
+    --shadow-drawer: -20px 0 60px -20px rgba(31, 25, 20, .5);
+    --shadow-pill: 0 18px 40px -18px rgba(31, 25, 20, .7);
+
+    --ease-clay: cubic-bezier(.2, .7, .2, 1);
+
+    --animate-ma-view: maView .55s cubic-bezier(.2, .7, .2, 1) both;
+    --animate-ma-up: maUp .55s ease both;
+    --animate-ma-up-quick: maUp .3s ease both;
+    --animate-ma-hero-text: maUp .8s cubic-bezier(.2, .7, .2, 1) both;
+    --animate-ma-hero-image: maUp 1s cubic-bezier(.2, .7, .2, 1) .15s both;
+    --animate-ma-marquee: maMarquee 38s linear infinite;
+    --animate-ma-strip: maMarquee 70s linear infinite;
+    --animate-ma-in: maIn .25s ease both;
+    --animate-ma-slide: maSlide .34s cubic-bezier(.2, .8, .2, 1) both;
+    --animate-ma-bump: maBump .45s cubic-bezier(.2, .8, .2, 1) both;
+    --animate-ma-check: maCheck .4s cubic-bezier(.2, .8, .2, 1) both;
+    --animate-ma-stamp: maStamp .38s cubic-bezier(.2, .8, .2, 1) both;
+    --animate-ma-pulse: maPulse 2.6s ease-in-out infinite;
+
+    @keyframes maView {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: none; }
+    }
+
+    @keyframes maUp {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: none; }
+    }
+
+    @keyframes maMarquee {
+        from { transform: translateX(0); }
+        to { transform: translateX(-50%); }
+    }
+
+    @keyframes maIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes maSlide {
+        from { opacity: 0; transform: translateX(30px); }
+        to { opacity: 1; transform: none; }
+    }
+
+    @keyframes maBump {
+        0% { transform: scale(1); }
+        40% { transform: scale(1.35); }
+        100% { transform: scale(1); }
+    }
+
+    @keyframes maCheck {
+        from { opacity: 0; transform: scale(.4); }
+        to { opacity: 1; transform: none; }
+    }
+
+    /* Something that keeps coming in, like the Instagram posts on the home page. */
+    @keyframes maPulse {
+        0%, 100% { opacity: .35; }
+        50% { opacity: 1; }
+    }
+
+    /* A letter going into the clay in the mug configurator. */
+    @keyframes maStamp {
+        0% { opacity: 0; transform: scale(1.6) translateY(-4px); }
+        60% { opacity: 1; transform: scale(.94); }
+        100% { opacity: 1; transform: none; }
+    }
+}
+
+@keyframes maReveal {
+    from { opacity: 0; transform: translateY(28px); }
+    to { opacity: 1; transform: none; }
+}
+
+/* A section fades in as it scrolls into view. Browsers without scroll timelines show it right away. */
+@utility ma-reveal {
+    animation: maReveal linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 38%;
+}
+
+@layer base {
+    body {
+        background: var(--color-sand);
+        color: var(--color-ink);
+        -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+        color: var(--color-brown);
+    }
+
+    a:hover {
+        color: var(--color-navy);
+    }
+
+    button {
+        cursor: pointer;
+    }
+
+    [x-cloak] {
+        display: none !important;
+    }
+
+    /* An open modal dialog, such as the zoomed photo, keeps the page under it from scrolling. */
+    html:has(dialog[open]) {
+        overflow: hidden;
+    }
+
+    ::selection {
+        background: var(--color-rose);
+        color: var(--color-ink);
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--focus-color, var(--color-navy));
+        outline-offset: 2px;
+        border-radius: 3px;
+    }
+}
+
+/*
+ * The terms of sale and the privacy policy: numbered paragraphs with hanging numbers, tables that scroll
+ * sideways on a phone, and draft gaps washed in rose.
+ */
+@layer components {
+    .legal-document {
+        color: var(--color-graphite);
+        font-size: 15.5px;
+        line-height: 1.65;
+    }
+
+    .legal-document .sec {
+        margin: 40px 0 14px;
+        font-family: var(--font-serif);
+        font-size: 23px;
+        line-height: 1.25;
+        color: var(--color-ink);
+        /* The header's height comes from the page's scroll padding (resources/js/header.js). */
+        scroll-margin-top: 24px;
+    }
+
+    .legal-document .sec:first-child {
+        margin-top: 0;
+    }
+
+    .legal-document p {
+        margin: 0 0 10px;
+        text-wrap: pretty;
+    }
+
+    .legal-document .np,
+    .legal-document .sp {
+        display: grid;
+        column-gap: 8px;
+    }
+
+    .legal-document .np {
+        grid-template-columns: 2em minmax(0, 1fr);
+    }
+
+    .legal-document .sp {
+        grid-template-columns: 1.7em minmax(0, 1fr);
+        margin-left: 2em;
+        margin-bottom: 6px;
+    }
+
+    .legal-document .n {
+        color: var(--color-brown);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .legal-document mark {
+        padding: 1px 4px;
+        border-radius: 3px;
+        background: color-mix(in srgb, var(--color-rose) 34%, transparent);
+        color: var(--color-ink);
+        box-decoration-break: clone;
+        -webkit-box-decoration-break: clone;
+    }
+
+    .legal-document a {
+        overflow-wrap: anywhere;
+    }
+
+    .legal-document .table-wrap {
+        overflow-x: auto;
+        margin: 6px 0 18px;
+        border: 1px solid var(--color-divider);
+        border-radius: 4px;
+    }
+
+    .legal-document table {
+        width: 100%;
+        min-width: 520px;
+        border-collapse: collapse;
+        font-size: 13.5px;
+        line-height: 1.5;
+    }
+
+    .legal-document th {
+        padding: 10px 12px;
+        background: var(--color-sand-dark);
+        text-align: left;
+        font-weight: 500;
+        vertical-align: bottom;
+    }
+
+    .legal-document td {
+        padding: 10px 12px;
+        border-top: 1px solid var(--color-divider);
+        vertical-align: top;
+    }
+}
+
+/*
+ * Aura (mellowaura-design): the aura behind every page, glass, the liquid-fill button, and the home page scenes.
+ * Motion is added by resources/js/aura.js, which puts .motion on <html> only when GSAP runs and the visitor
+ * has not asked for less motion, and .fine when there is a mouse. Without those classes every page is complete and still.
+ */
+@layer components {
+    .aura-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    .aura-orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(90px);
+        opacity: .55;
+        will-change: transform;
+    }
+
+    .aura-orb-1 { width: 52vmax; height: 52vmax; left: -14vmax; top: -12vmax; background: radial-gradient(circle, #E6BDB5 0%, rgb(214 163 156 / 0) 70%); animation: auraDrift1 26s ease-in-out infinite alternate; }
+    .aura-orb-2 { width: 46vmax; height: 46vmax; right: -16vmax; top: 20vh; background: radial-gradient(circle, #D9B98F 0%, rgb(185 142 100 / 0) 70%); animation: auraDrift2 32s ease-in-out infinite alternate; }
+    .aura-orb-3 { width: 40vmax; height: 40vmax; left: 24vw; bottom: -22vmax; background: radial-gradient(circle, #EADFD0 0%, rgb(237 228 216 / 0) 70%); animation: auraDrift3 28s ease-in-out infinite alternate; }
+
+    .aura-grain {
+        position: fixed;
+        inset: -50%;
+        z-index: 90;
+        pointer-events: none;
+        opacity: .085;
+        mix-blend-mode: multiply;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        animation: auraGrain 1.2s steps(6) infinite;
+    }
+
+    .aura-cursor {
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 1;
+        width: 340px;
+        height: 340px;
+        margin: -170px 0 0 -170px;
+        border-radius: 50%;
+        pointer-events: none;
+        background: radial-gradient(circle, rgb(214 163 156 / .55), rgb(214 163 156 / 0) 65%);
+        filter: blur(30px);
+        mix-blend-mode: multiply;
+        opacity: 0;
+        transition: opacity .6s;
+    }
+
+    /* The eyebrow with its 34 px dash, the page's signature. */
+    .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 10.5px;
+        letter-spacing: .3em;
+        text-transform: uppercase;
+        color: var(--color-brown);
+    }
+
+    .eyebrow::before {
+        content: "";
+        flex: none;
+        width: 34px;
+        height: 1px;
+        background: var(--eyebrow-dash, var(--color-dash));
+    }
+
+    /* A button fills with its hover colour from the point the mouse came in (resources/js/aura.js sets --mx and --my). */
+    .fill-btn {
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+    }
+
+    .fill-btn::before {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        left: var(--mx, 50%);
+        top: var(--my, 50%);
+        width: 0;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        background: var(--fill, var(--color-rose));
+        transition: width .7s var(--ease-clay);
+    }
+
+    .fine .fill-btn:hover::before {
+        width: 250%;
+    }
+
+    .blur-in {
+        display: inline-block;
+        animation: auraBlurIn .7s var(--ease-clay) both;
+    }
+
+    /*
+     * Home page hero: one still screen with the copy under it. With .hero-overlay (motion on a screen at least
+     * 761 × 700 px) a tall pinned scene whose frame grows to the whole screen and the copy comes in over the photo.
+     */
+    .aura-hero-pin {
+        position: relative;
+    }
+
+    .aura-scene {
+        position: relative;
+        height: 100svh;
+        min-height: 560px;
+        overflow: hidden;
+    }
+
+    .hero-overlay .aura-hero {
+        height: 200vh;
+    }
+
+    .hero-overlay .aura-hero-pin {
+        position: sticky;
+        top: 0;
+        height: 100svh;
+        min-height: 560px;
+        overflow: hidden;
+    }
+
+    .hero-overlay .aura-scene {
+        position: absolute;
+        inset: 0;
+        height: auto;
+        min-height: 0;
+    }
+
+    .aura-frame {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        clip-path: inset(22% 37% 22% 37% round 18px);
+    }
+
+    .aura-mark {
+        position: absolute;
+        inset: 0;
+        z-index: 4;
+        pointer-events: none;
+        font: 300 clamp(76px, 17vw, 280px) / .8 var(--font-serif);
+        letter-spacing: -.035em;
+    }
+
+    .aura-mark > div {
+        position: absolute;
+        left: 0;
+        right: 0;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .aura-mark-1 { top: calc(22% - .62em); transform: translateX(-9%); }
+    .aura-mark-2 { top: calc(78% - .3em); transform: translateX(11%); font-style: italic; color: var(--color-brown); }
+
+    .aura-float {
+        position: absolute;
+        z-index: 1;
+    }
+
+    .aura-float > div {
+        overflow: hidden;
+        border-radius: 12px;
+        box-shadow: var(--shadow-float);
+    }
+
+    .aura-float img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .aura-float-1 { left: 5%; top: 15%; width: max(92px, 12vw); aspect-ratio: 3 / 4; }
+    .aura-float-2 { left: 14%; bottom: 9%; width: max(84px, 10vw); aspect-ratio: 1; z-index: 5; }
+    .aura-float-3 { right: 6%; top: 11%; width: max(88px, 11vw); aspect-ratio: 1; }
+    .aura-float-4 { right: 12%; bottom: 8%; width: max(96px, 13vw); aspect-ratio: 3 / 4; z-index: 5; }
+    .aura-float-5 { left: 28%; top: 5%; width: 7.5vw; aspect-ratio: 3 / 4; }
+    .aura-float-6 { right: 31%; bottom: 4%; width: 8vw; aspect-ratio: 1; z-index: 5; }
+
+    @media (max-width: 760px) {
+        .aura-frame { clip-path: inset(24% 14% 26% 14% round 18px); }
+        .aura-mark-1 { top: calc(24% - .66em); transform: translateX(-6%); }
+        .aura-mark-2 { top: calc(74% - .28em); transform: translateX(8%); }
+        .aura-float-5, .aura-float-6 { display: none; }
+        .aura-float-1 { top: 8%; left: -4%; }
+        .aura-float-3 { top: 6%; right: -3%; }
+        .aura-float-2 { bottom: 10%; left: 3%; }
+        .aura-float-4 { bottom: 6%; right: -2%; }
+    }
+
+    .aura-scrim {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        opacity: 0;
+        pointer-events: none;
+        background: linear-gradient(180deg, rgb(47 38 32 / 0) 30%, rgb(47 38 32 / .72) 100%), linear-gradient(90deg, rgb(47 38 32 / .55), rgb(47 38 32 / 0) 60%);
+    }
+
+    /* Two rows of words that slide in opposite directions with the scroll. */
+    .aura-row {
+        display: flex;
+        width: max-content;
+        white-space: nowrap;
+        font: 300 clamp(56px, 10vw, 150px) / 1.05 var(--font-serif);
+        letter-spacing: -.02em;
+    }
+
+    .aura-row-outline {
+        color: transparent;
+        -webkit-text-stroke: 1px var(--color-line-strong);
+    }
+
+    /* The shop shelf: swiped sideways on a phone, pinned and moved by the scroll on a wide screen. */
+    .aura-track-wrap {
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+    }
+
+    .aura-track-wrap::-webkit-scrollbar {
+        display: none;
+    }
+
+    @media (min-width: 768px) {
+        .motion .aura-track-wrap {
+            overflow: visible;
+            scroll-snap-type: none;
+        }
+    }
+}
+
+/*
+ * The hero copy sits under the scene, and over the grown photo on a screen tall and wide enough for it
+ * (.hero-overlay, set by resources/js/aura.js). Outside the layers on purpose:
+ * these colours must beat the Tailwind utilities written on the elements.
+ */
+.hero-overlay .aura-hero-copy {
+    position: absolute;
+    inset: auto 0 0;
+    z-index: 7;
+    padding-bottom: clamp(40px, 9vh, 96px);
+    color: var(--color-sand);
+    --focus-color: var(--color-linen);
+    --eyebrow-dash: var(--color-rose);
+}
+
+.hero-overlay .aura-hero-copy .eyebrow { color: var(--color-on-dark); }
+.hero-overlay .aura-hero-copy em { color: var(--color-rose); }
+.hero-overlay .aura-hero-copy .aura-lead { color: var(--color-on-dark); }
+.hero-overlay .aura-hero-copy .aura-fact { background: var(--color-glass-dark); border-color: var(--color-glass-dark-line); }
+.hero-overlay .aura-hero-copy .aura-fact-label { color: var(--color-on-dark); }
+.hero-overlay .aura-hero-copy .aura-btn-main { background: var(--color-linen); color: var(--color-ink); --fill: var(--color-rose); }
+.hero-overlay .aura-hero-copy .aura-btn-glass { background: rgb(247 242 234 / .12); border-color: rgb(247 242 234 / .34); color: var(--color-sand); --fill: rgb(247 242 234 / .24); }
+
+
+/* Light glass on sand and dark glass over photos (mellowaura-design, „Głębia”). Utilities, so variants such as [&>div]:glass work. */
+@utility glass {
+    background: var(--color-glass);
+    border: 1px solid var(--color-glass-line);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    backdrop-filter: blur(18px) saturate(1.4);
+}
+
+@utility glass-dark {
+    background: var(--color-glass-dark);
+    border: 1px solid var(--color-glass-dark-line);
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+}
+
+@keyframes auraDrawer { from { transform: translateX(110%); filter: blur(10px); } }
+@keyframes auraItemIn { from { opacity: 0; transform: translateY(14px); filter: blur(6px); } }
+@keyframes auraRing { 0%, 100% { box-shadow: 0 0 0 0 rgb(214 163 156 / .5); } 50% { box-shadow: 0 0 0 10px rgb(214 163 156 / 0); } }
+@keyframes auraGlow { 0% { transform: scale(.2); opacity: 0; } 40% { opacity: 1; } 100% { transform: scale(1); opacity: .55; } }
+@keyframes auraDraw { to { stroke-dashoffset: 0; } }
+@keyframes auraDrift1 { to { transform: translate(18vw, 14vh) scale(1.15); } }
+@keyframes auraDrift2 { to { transform: translate(-22vw, -10vh) scale(.9); } }
+@keyframes auraDrift3 { to { transform: translate(-14vw, -18vh) scale(1.2); } }
+@keyframes auraGrain { 20% { transform: translate(-3%, 2%); } 40% { transform: translate(2%, -4%); } 60% { transform: translate(-4%, -1%); } 80% { transform: translate(3%, 3%); } }
+@keyframes auraBlurIn { from { opacity: 0; filter: blur(6px); transform: translateY(.18em); } to { opacity: 1; filter: blur(0); transform: none; } }
+
+/*
+ * Navy focus disappears on ink (1.5:1), so a dark surface such as the footer gives everything inside a linen outline (13.3:1).
+ * Put it on the dark surface itself, never on the parent of a light panel.
+ */
+@utility focus-on-dark {
+    --focus-color: var(--color-linen);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+
+    .ma-reveal {
+        animation: none;
+    }
+
+    .aura-cursor {
+        display: none;
+    }
+}

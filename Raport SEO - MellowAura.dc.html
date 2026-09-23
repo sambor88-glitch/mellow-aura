@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300&family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<script src="./doc-page.js"></script>
+<style>
+  doc-page:not(:defined) { visibility: hidden; }
+  body { font-family: "Instrument Sans", system-ui, sans-serif; color: #2F2620; }
+  a { color: #24417E; text-decoration: none; }
+  a:hover { color: #855F3D; }
+</style>
+</helmet>
+
+<doc-page margin="0.7in">
+  <div slot="header" style="display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 8px; border-bottom: 1px solid #E2D7C7; font-size: 9pt; color: #726456">
+    <span style="font-family: Newsreader, serif; letter-spacing: 0.16em; text-transform: uppercase; color: #2F2620">mellowaura</span>
+    <span>Raport SEO &middot; frazy, wizytówka, kolejność pracy</span>
+  </div>
+  <div slot="footer" style="display: flex; justify-content: space-between; padding-top: 8px; border-top: 1px solid #E2D7C7; font-size: 8.5pt; color: #726456">
+    <span>Katarzyna Samborska &middot; MellowAura, Kraków</span>
+    <span>Wersja 1.0 &middot; 18 września 2026</span>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px">
+    <span style="width: 34px; height: 1px; background: #B98E64; display: inline-block"></span>
+    <span style="font-size: 8pt; letter-spacing: 0.28em; text-transform: uppercase; color: #855F3D">dokument decyzyjny dla właścicielki</span>
+  </div>
+
+  <h1 style="font-family: Newsreader, serif; font-weight: 300; font-size: 28pt; line-height: 1.1; margin: 0 0 10px">Gdzie masz szansę w Google,<br />a gdzie nie warto stawać</h1>
+  <p style="font-size: 11.5pt; line-height: 1.6; color: #5C5043; margin: 0 0 24px; max-width: 62ch">Strona nie stoi jeszcze pod własną domeną, więc to nie audyt tego, co jest. To rozstrzygnięcie, o które frazy walczyć, o które nie i w jakiej kolejności ustawić pracę, żeby ruch prezentowy zdążył przed grudniem. Wersja do czytania na telefonie: <a href="https://claude.ai/artifact/7HLY7mVgk4JoiuTkivjZHH">claude.ai/artifact/7HLY7mVgk4JoiuTkivjZHH</a>.</p>
+
+  <div style="background: #F7ECE9; border: 1px solid #E0C3BC; border-radius: 4px; padding: 18px 22px; margin-bottom: 26px">
+    <div style="font-family: Newsreader, serif; font-size: 15pt; margin-bottom: 8px">Czego w tym raporcie nie ma i dlaczego</div>
+    <p style="font-size: 10.5pt; line-height: 1.6; color: #5C5043; margin: 0 0 7px"><strong style="font-weight: 500">Liczb wyszukiwań.</strong> Nie mam dostępu do narzędzia z danymi o liczbie zapytań, a wpisanie ich z wyczucia byłoby najdroższym błędem w całym dokumencie — na fałszywym wolumenie buduje się potem strukturę całej strony. Zamiast tego oceniam każdą grupę fraz dwoma rzeczami, które da się sprawdzić: jaki jest zamiar osoby, która to wpisuje, i kto już tam stoi (sprawdzone na stronach konkurencji 17 września 2026).</p>
+    <p style="font-size: 10.5pt; line-height: 1.6; color: #5C5043; margin: 0">Wolumeny uzupełni Kasia sama w dwóch darmowych miejscach, gdy strona już stanie: <strong style="font-weight: 500">Search Console</strong> pokaże prawdziwe zapytania, po których ludzie trafiają, a <strong style="font-weight: 500">Planer słów kluczowych</strong> poda widełki. Pierwsze jest wiarygodniejsze od każdego płatnego narzędzia, bo dotyczy tej strony, nie średniej rynkowej.</p>
+  </div>
+
+  <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">1. Punkt wyjścia: zero, i to jest ważne</h2>
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 10px">Domena <code>mellow-aura.com</code> prowadzi dziś do sklepu w SumUp. Nie ma wizytówki Google, nie ma linków z zewnątrz, nie ma historii w Search Console. Przy zerowej historii <strong style="font-weight: 500">kolejność pracy waży więcej niż dobór fraz</strong>: strona o siedemnastu produktach nie wygra z pracownią, która ma trzy lata w indeksie i sto opinii, ale wizytówka Google działa od pierwszego tygodnia, a frazy, których nikt nie zajął, nie wymagają przewagi wiekowej.</p>
+
+  <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">2. Cztery grupy fraz i realna szansa na każdej</h2>
+  <p style="font-size: 10.5pt; line-height: 1.6; color: #6B5D4F; margin: 0 0 14px">Podział nie jest tematyczny, tylko według tego, <strong style="font-weight: 500">z kim faktycznie konkurujemy</strong>. To zmienia wnioski — na jednej z tych grup konkurencją nie są wcale pracownie ceramiki.</p>
+  <table style="width: 100%; border-collapse: collapse; font-size: 9pt; line-height: 1.45">
+    <thead>
+      <tr style="background: #F3EDE4">
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500; width: 22%">Grupa</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500; width: 28%">Kto tam stoi</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500; width: 12%">Szansa</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500">Co z tym zrobić</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">A. Lokalne warsztatowe</strong><br /><span style="color: #726456">„warsztaty ceramiczne Kraków”</span></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Siedem pracowni, część z kalendarzem rezerwacji i setką opinii Google</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top; color: #8C3A2E"><strong style="font-weight: 500">niska</strong><br /><span style="color: #726456">stroną</span></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Nie walczyć frazą ogólną — te zapytania kończą się w mapce, a do mapki wchodzi się wizytówką. Strona <code>/warsztaty-ceramiczne-krakow</code> ma domykać zapis, nie wygrywać frazę.</td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">A′. Długi ogon warsztatowy</strong><br /><span style="color: #726456">„warsztat dla pary Kraków”, „sesja 1:1”, „warsztat na prezent”</span></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Ci sami, ale opisują to jednym zdaniem w liście dziesięciu warsztatów</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top; color: #A8813F"><strong style="font-weight: 500">średnia</strong></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Dać każdej z tych ofert osobną sekcję z ceną, czasem i zdjęciem. Jeden stół i sześć osób to argument, nie wada.</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">B. Produktowe ogólne</strong><br /><span style="color: #726456">„ceramika handmade prezent”</span></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Targowiska: Pakamera, art-Madam</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top; color: #8C3A2E"><strong style="font-weight: 500">niska</strong></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Nie wyprzedzać ich, wejść obok: feed do Merchant Center otwiera darmowe wyniki w Zakupach Google, gdzie liczy się kompletność danych o produkcie, nie wiek domeny.</td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">B′. Napis wbijany w glinę</strong><br /><span style="color: #726456">„kubek z wbijanym napisem”, „napis stemplem w glinie”</span></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Manou, TOceramics, Faramuszka, ulepianki, GajaArte — wszystkie nanoszą napis farbą albo nadrukiem</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top; color: #5C7A4A"><strong style="font-weight: 500">wysoka</strong></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Frazy o napisie wgłębionym w glinę nikt nie broni. Cała strona <code>/kubek-z-napisem</code> musi mówić o głębi odcisku, nie o personalizacji: zdjęcie pod światło, palec w literze, zdanie o zmywarce.</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">C. Usługi autorskie</strong><br /><span style="color: #726456">odcisk rośliny, apaszka klientki</span></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Przy odcisku: pracownie konserwacji bukietów (Kraftowe Studio, Kwiatowa Historia, Colie). Przy tkaninie: pracownie krawieckie i marki szyjące z własnych materiałów</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top; color: #5C7A4A"><strong style="font-weight: 500">wysoka</strong></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Pisać ich słownikiem — patrz punkt 3, najważniejszy wniosek raportu.</td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">D. Wypał na zlecenie</strong><br /><span style="color: #726456">„wypał ceramiki Kraków”</span></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Terra-Art, 1000 Stopni, Kaliente, Ceramilo, ŻyWa — wszystkie liczą na kilogramy, część nie podaje ceny wcale</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top; color: #A8813F"><strong style="font-weight: 500">średnia</strong><br /><span style="color: #726456">i tania</span></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Jawny cennik i kalkulator (wymiary → cena) wygrywa tę frazę nie treścią, a odpowiedzią na pytanie, które konkurencja zostawia bez odpowiedzi.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">3. Najważniejszy wniosek: dwie strony celują we frazy, których nikt nie wpisuje</h2>
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 10px">Na odcisk rośliny <strong style="font-weight: 500">nie konkurujemy z ceramikami</strong>, a z pracowniami konserwacji bukietów. One zalewają kwiat żywicą, zamykają w ramce 3D albo robią z niego biżuterię — i mają już ruch z frazy „pamiątka z bukietu ślubnego”. MellowAura ma produkt, którego one nie mają: naczynie, z którego się je. Ale panna młoda nie szuka „talerza z odciskiem rośliny” — szuka, <em style="font-style: italic">co zrobić z bukietem po weselu</em>.</p>
+  <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; line-height: 1.45">
+    <thead>
+      <tr style="background: #F3EDE4">
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500; width: 26%">Adres</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500">Słownik, którego trzeba użyć w tytule, opisie i pierwszym akapicie</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><code>/odcisk-twojej-rosliny</code></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">„pamiątka z bukietu ślubnego”, „co zrobić z bukietem po weselu”, „zasuszony bukiet pamiątka”, „kwiat z wieńca pamiątka”. Dopiero obok nich: odcisk w glinie, wypał, talerz. Tytuł i opis w specyfikacji mówią dziś wyłącznie językiem ceramiki.</td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><code>/z-twojej-apaszki</code></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">„przeszycie apaszki”, „co zrobić z apaszką po babci”, „opaska z własnej tkaniny”, „upcycling jedwabiu na zamówienie”.</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><code>/zamowienia-indywidualne</code></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">„ceramika na zamówienie”, „serwis na wesele ceramika”, „urna dla kota ceramiczna”. Ostatnia fraza ma w Polsce skomercjalizowaną konkurencję (Esthima, Pet Memoria, urnapsa) i zasługuje na własny adres, nie na wzmiankę w formularzu.</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size: 10.5pt; line-height: 1.6; color: #6B5D4F; margin: 12px 0 0">Koszt poprawki: godzina pisania. Koszt jej pominięcia: dwie strony z realną szansą na pierwsze miejsce zostają niewidoczne.</p>
+
+  <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">4. Wizytówka Google: najważniejsza decyzja SEO w tym projekcie</h2>
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 10px">Na frazy lokalne wizytówka wyprzedza stronę i działa od pierwszego tygodnia, bez linków i bez historii. Jest jednak problem, którego nie da się obejść ładnym zdaniem: <strong style="font-weight: 500">zasada projektu mówi, że dokładny adres nigdy nie trafia na stronę</strong> — słusznie, to home studio — a jednocześnie uczestniczki warsztatów przychodzą do pracowni. Google dzieli firmy na te, które obsługują klientów u siebie (adres widoczny), i te, które jeżdżą do klienta (adres musi być ukryty).</p>
+  <ul style="font-size: 10.5pt; line-height: 1.62; margin: 0 0 12px; padding-left: 20px">
+    <li style="margin-bottom: 5px">Google trzyma adres zawsze — jest potrzebny do weryfikacji — i pozwala ukryć go przed publicznością.</li>
+    <li style="margin-bottom: 5px"><strong style="font-weight: 500">Pozycja w mapce i tak liczy się od odległości między szukającą a tym ukrytym adresem.</strong> Ukrycie adresu nie kosztuje widoczności lokalnej — to kluczowa informacja dla tej decyzji.</li>
+    <li style="margin-bottom: 5px">Firma z ukrytym adresem deklaruje obszar obsługi: do dwudziestu wpisów, rozsądnie w promieniu około dwóch godzin jazdy. Tutaj: Kraków i okolice.</li>
+    <li>Ryzyko: profil z ukrytym adresem, do którego przychodzą klientki, teoretycznie nie pasuje do definicji. W praktyce dzielą ten problem wszystkie pracownie domowe przyjmujące po zapisaniu się.</li>
+  </ul>
+  <div style="background: #EDF0E9; border-radius: 4px; padding: 16px 20px; font-size: 10.5pt; line-height: 1.6; color: #41563A">
+    <strong style="font-weight: 500">Rekomendacja:</strong> profil z ukrytym adresem i obszarem obsługi „Kraków”, a na stronie zdanie, które już jest — adres podaję po zapisie na warsztat. Przed opublikowaniem profilu przeczytać aktualną stronę pomocy Google o obszarze obsługi. To jedyny punkt w projekcie, w którym zasada Kasi i wytyczne Google się ocierają, więc nie opierajmy się tu na streszczeniu.
+  </div>
+
+  <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">5. Co w specyfikacji jest już zrobione dobrze</h2>
+  <p style="font-size: 10.5pt; line-height: 1.6; color: #6B5D4F; margin: 0 0 10px">Spisane, żeby nikt tego nie przerabiał drugi raz. Warstwa techniczna jest rozstrzygnięta lepiej niż w większości sklepów: renderowanie po stronie serwera; dwadzieścia adresów z gotowymi tytułami do 60 znaków i opisami do 155; polskie frazy w adresach; jeden <code>h1</code> na stronę i hierarchia bez przeskoków; <code>canonical</code> bezwzględny i jedna wersja domeny; filtry jako parametry z <code>canonical</code> na adres bazowy, wyszukiwanie z <code>noindex</code>; sprzedany unikat pod swoim adresem z <code>OutOfStock</code>, usunięty z 301 albo 410; nieznany adres z prawdziwym 404; staging za hasłem i z <code>X-Robots-Tag: noindex</code> od pierwszego dnia.</p>
+
+  <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">6. Co trzeba naprawić albo dokończyć</h2>
+  <table style="width: 100%; border-collapse: collapse; font-size: 9pt; line-height: 1.45">
+    <thead>
+      <tr style="background: #F3EDE4">
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500; width: 30%">Co</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500; width: 16%">Kiedy</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500">Dlaczego to ma znaczenie</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Tytuły i opisy stron stałych nieedytowalne w panelu</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">przed startem</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Siedzą w kodzie. Pierwsza korekta frazy po odczytach z Search Console będzie wymagała programisty — a ta korekta przyjdzie na pewno, bo pierwsze tytuły nigdy nie są ostateczne.</td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Brak pola „opis dla Google” przy produkcie i kategorii</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">przed startem</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Specyfikacja to obiecuje, prototyp nie ma. Bez tego opis w wynikach ucina się w środku zdania.</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Teksty dwóch usług mówią językiem ceramiki</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">przed startem</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Punkt 3. Największa strata w całym raporcie i najtańsza poprawka.</td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Przekierowania ze starych adresów w SumUp</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">przed startem</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Jedyna pozycja z listy, której później nie da się nadrobić — to, co jest w indeksie, wyparuje w dniu przełączenia domeny.</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Okruszki tylko wizualne</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">pierwszy miesiąc</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><code>BreadcrumbList</code> nadal generuje wyniki rozszerzone. Muszą być linkami na stronie i w znacznikach.</td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Daty warsztatów jako tekst</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">pierwszy miesiąc</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><code>Event</code> wymaga formatu ISO, a to jeden z typów, które Google nadal pokazuje.</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Brak linkowania ze stron usług do sklepu</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">pierwszy miesiąc</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Strony usług będą najmocniejszymi stronami serwisu. Jeśli nie prowadzą do kategorii i produktów, ta siła nigdzie nie idzie.</td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Dziennik z <code>noindex</code></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">pierwszy kwartał</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Słusznie, bo cienkie wpisy szkodzą — ale to znaczy, że dziennik na razie nie pracuje. Trzy wpisy po 400 słów zrobią więcej niż trzydzieści po dwa zdania.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">7. Dane strukturalne po zmianach Google z 2026</h2>
+  <p style="font-size: 10.5pt; line-height: 1.6; color: #6B5D4F; margin: 0 0 12px">Google skasował w ostatnich dwóch latach kilka rodzajów wyników rozszerzonych. Specyfikacja to przewidziała; poniżej stan sprawdzony 18 września 2026, bo decyduje, na co nie wydawać czasu.</p>
+  <div style="font-size: 10.5pt; line-height: 1.66">
+    <p style="margin: 0 0 7px"><strong style="font-weight: 500">Działa i rośnie:</strong> <code>ProductGroup</code> + <code>Product</code> + <code>Offer</code> — priorytet numer jeden, każdy wariant z ceną, dostępnością, zdjęciem i zasadami zwrotów; te same dane idą w feedzie do Merchant Center i karmią też odpowiedzi AI w zakupach.</p>
+    <p style="margin: 0 0 7px"><strong style="font-weight: 500">Działa:</strong> <code>LocalBusiness</code> (bez ulicy — samo <code>addressLocality</code> i <code>areaServed</code>), <code>BreadcrumbList</code>, <code>Article</code>, <code>Review</code>, <code>Event</code>.</p>
+    <p style="margin: 0 0 7px"><strong style="font-weight: 500">Bez wyników rozszerzonych od 7 maja 2026:</strong> <code>FAQPage</code>. Raport o nich wyleciał też z Search Console. Sam znacznik jest nadal poprawny i czytają go roboty Bing oraz systemy AI, więc zostaje — ale zero minut na dopieszczanie.</p>
+    <p style="margin: 0 0 7px"><strong style="font-weight: 500">Wycofane w 2025:</strong> <code>Course</code> i <code>CourseInstance</code>. Nie wdrażamy; terminy warsztatów liczą się w treści strony i w wizytówce.</p>
+    <p style="margin: 0"><strong style="font-weight: 500">Świadomie wbrew typowej poradzie:</strong> żadnego <code>AggregateRating</code> dla samej MellowAury. Poradniki SEO każą go dodawać, ale Google nie pokazuje gwiazdek za opinie firmy o sobie samej, a znacznik niezgodny z widoczną treścią to ryzyko ręcznej kary. Zasada z <code>CLAUDE.md</code> ma rację.</p>
+  </div>
+
+  <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">8. Odpowiedzi AI: szansa, nie zagrożenie</h2>
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 10px">Od wejścia odpowiedzi generowanych przez AI ruch organiczny w e-commerce spadł — polskie dane branżowe mówią o około 11% rok do roku, a marki nieobecne w odpowiedziach AI tracą znacznie więcej. Jednocześnie <strong style="font-weight: 500">41% sklepów rośnie</strong>, a systemy AI polecają małe, wyspecjalizowane pracownie częściej niż duże platformy. Mechanizm jest prosty: pytanie „gdzie zamówić talerz z odciskiem kwiatu z bukietu ślubnego” nie ma sensownego kandydata wśród wielkich sklepów.</p>
+  <p style="font-size: 10pt; line-height: 1.6; color: #6B5D4F; margin: 0 0 10px"><strong style="font-weight: 500">Uczciwie o tych liczbach:</strong> pochodzą z raportu polskiej agencji o e-commerce w modzie, relacjonowanego przez serwisy branżowe — nie z ceramiki i nie z badania recenzowanego. Kierunek, nie prognoza. Jest jednak spójny z tym, co widać w konkurencji: nagradzana jest specjalizacja, nie skala.</p>
+  <ul style="font-size: 10.5pt; line-height: 1.62; margin: 0; padding-left: 20px">
+    <li style="margin-bottom: 5px"><strong style="font-weight: 500">Odpowiadać na pytania w treści, nie opisywać się przymiotnikami.</strong> „Ile trwa”, „co przyślesz”, „co jeśli się nie uda”, „czy można do zmywarki” — teksty usług już tak są napisane. To dokładnie format, który systemy AI cytują.</li>
+    <li style="margin-bottom: 5px"><strong style="font-weight: 500">Trzy unikatowe usługi to trzy pytania bez dobrej odpowiedzi w sieci.</strong> Jedna strona, jedno pytanie, konkretne liczby i ceny na wierzchu.</li>
+    <li style="margin-bottom: 5px"><strong style="font-weight: 500">Dane produktowe kompletne:</strong> cena, dostępność, wymiary, materiał, pielęgnacja. Karmią i Zakupy Google, i odpowiedzi AI.</li>
+    <li><strong style="font-weight: 500">Nie generować treści AI.</strong> Poza tym, że łamie zasadę projektu, jest bez sensu taktycznie — przewaga polega tu na pisaniu o rzeczach, o których nikt inny nie napisze z pierwszej ręki.</li>
+  </ul>
+
+  <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">9. Kolejność pracy i czego się spodziewać</h2>
+  <div style="font-size: 10.5pt; line-height: 1.62">
+    <p style="margin: 0 0 7px"><strong style="font-weight: 500">W tym tygodniu.</strong> Search Console i Bing Webmaster Tools. <strong style="font-weight: 500">Wizytówka Google</strong> — założenie i weryfikacja trwają, a to jedyna rzecz z listy, która działa jeszcze przed startem strony. Spis starych adresów z panelu SumUp.</p>
+    <p style="margin: 0 0 7px"><strong style="font-weight: 500">Przed startem.</strong> Przepisanie tytułów i opisów dwóch stron usług na słownik klientki. Pola SEO w panelu. Przekierowania 301. Sprawdzenie, że staging ma hasło i <code>noindex</code>, a produkcja ich nie ma — ta pomyłka zdarza się częściej, niż się wydaje.</p>
+    <p style="margin: 0 0 7px"><strong style="font-weight: 500">Tydzień po starcie.</strong> Mapa strony w Search Console, feed do Merchant Center, okruszki w znacznikach, pierwsze opinie w wizytówce (poprosić uczestniczki ostatnich warsztatów — to jedyny moment, w którym pamiętają).</p>
+    <p style="margin: 0 0 12px"><strong style="font-weight: 500">Pierwszy kwartał.</strong> Trzy porządne wpisy w dzienniku i zdjęcie <code>noindex</code>. Kalkulator wypału. Osobny adres dla pamiątek pożegnalnych. Korekta tytułów na podstawie prawdziwych zapytań z Search Console — to moment, w którym ten raport przestaje być zgadywaniem.</p>
+  </div>
+  <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; line-height: 1.45">
+    <thead>
+      <tr style="background: #F3EDE4">
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500; width: 26%">Gdzie</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500; width: 24%">Kiedy efekt</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500">Na co patrzeć</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style="padding: 7px 8px; border: 1px solid #E2D7C7">Wizytówka Google</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">2–6 tygodni</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">Telefony, kliknięcia w trasę, zapytania „w pobliżu”. Najszybszy zwrot z całej listy.</td></tr>
+      <tr style="background: #FCF9F4"><td style="padding: 7px 8px; border: 1px solid #E2D7C7">Search Console</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">4–8 tygodni na pierwsze dane</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">Prawdziwe zapytania, <strong style="font-weight: 500">nie pozycje</strong>. Interesuje nas, czego ludzie wpisują, a czego nie przewidzieliśmy.</td></tr>
+      <tr><td style="padding: 7px 8px; border: 1px solid #E2D7C7">Merchant Center</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">1–3 tygodnie po feedzie</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">Ile produktów zatwierdzonych, ile odrzuconych i dlaczego. Zwykle brakuje zdjęcia albo dostępności.</td></tr>
+      <tr style="background: #FCF9F4"><td style="padding: 7px 8px; border: 1px solid #E2D7C7">Frazy produktowe i usługowe</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">3–6 miesięcy</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">Cierpliwość. Nowa domena nie rusza w dwa tygodnie i żadne narzędzie tego nie przyspieszy.</td></tr>
+    </tbody>
+  </table>
+
+  <div style="background: #EDF0E9; border-radius: 4px; padding: 18px 22px; margin-top: 24px; font-size: 10.5pt; line-height: 1.68; color: #41563A">
+    <div style="font-family: Newsreader, serif; font-size: 15pt; margin-bottom: 8px; color: #2F2620">Trzy rzeczy, jeśli tylko trzy</div>
+    <strong style="font-weight: 500">1.</strong> Wizytówka Google w tym tygodniu, z ukrytym adresem i obszarem obsługi „Kraków”.<br />
+    <strong style="font-weight: 500">2.</strong> Przepisać tytuły dwóch stron usług na słownik klientki — godzina pracy na dwóch frazach, na których naprawdę można być pierwszą.<br />
+    <strong style="font-weight: 500">3.</strong> Spisać stare adresy z SumUp i zrobić przekierowania przed przełączeniem domeny.
+  </div>
+
+  <div style="margin-top: 26px; padding-top: 12px; border-top: 1px solid #E2D7C7; font-size: 9pt; line-height: 1.6; color: #726456">
+    <p style="margin: 0 0 6px">Stan konkurencji spisany z ich stron 17 września 2026; stan wyników Google sprawdzony 18 września 2026. Frazy są propozycjami do weryfikacji w Search Console po starcie, nie listą z narzędzia.</p>
+    <p style="margin: 0">Źródła: <a href="https://support.google.com/business/answer/9157481?hl=en">Google — obszar obsługi w wizytówce</a> &middot; <a href="https://www.digitalapplied.com/blog/structured-data-after-io-2026-schema-updates">przegląd zmian w danych strukturalnych po I/O 2026</a> &middot; <a href="https://www.elephate.com/pl/blog/seo-w-e-commerce-2026-ranking-sklepow-internetowych-i-kluczowe-wnioski-z-raportu/">Elephate — SEO i GEO w e-commerce 2026</a>. Dokumenty projektu: <code>Specyfikacja wdrozenia</code>, <code>Plan wdrozenia</code>, <code>Analiza konkurencji i propozycje</code>.</p>
+  </div>
+</doc-page>
+
+</x-dc>
+</body>
+</html>

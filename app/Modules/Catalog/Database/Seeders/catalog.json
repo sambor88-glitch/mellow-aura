@@ -1,0 +1,836 @@
+{
+    "categories": [
+        {
+            "slug": "kubki-i-filizanki",
+            "name": "Kubki i filiżanki",
+            "group": "ceramics",
+            "sort_order": 1,
+            "en": {
+                "name": "Mugs & cups",
+                "slug": "mugs-and-cups"
+            }
+        },
+        {
+            "slug": "talerze-i-miski",
+            "name": "Talerze i miski",
+            "group": "ceramics",
+            "sort_order": 2,
+            "en": {
+                "name": "Plates & bowls",
+                "slug": "plates-and-bowls"
+            }
+        },
+        {
+            "slug": "wazony-i-patery",
+            "name": "Wazony i patery",
+            "group": "ceramics",
+            "sort_order": 3,
+            "en": {
+                "name": "Vases & platters",
+                "slug": "vases-and-platters"
+            }
+        },
+        {
+            "slug": "kadzielnice-i-podstawki",
+            "name": "Kadzielnice i podstawki",
+            "group": "ceramics",
+            "sort_order": 4,
+            "en": {
+                "name": "Incense holders & coasters",
+                "slug": "incense-holders-and-coasters"
+            }
+        },
+        {
+            "slug": "bizuteria",
+            "name": "Biżuteria",
+            "group": "ceramics",
+            "sort_order": 5,
+            "en": {
+                "name": "Jewellery",
+                "slug": "jewellery"
+            }
+        },
+        {
+            "slug": "jedwab",
+            "name": "Jedwab",
+            "group": "crafts",
+            "sort_order": 6,
+            "en": {
+                "name": "Silk",
+                "slug": "silk"
+            }
+        },
+        {
+            "slug": "kosmetyczki-i-piorniki",
+            "name": "Kosmetyczki i piórniki",
+            "group": "crafts",
+            "sort_order": 7,
+            "en": {
+                "name": "Pouches & pencil cases",
+                "slug": "pouches-and-pencil-cases"
+            }
+        },
+        {
+            "slug": "vouchery",
+            "name": "Vouchery",
+            "group": "workshops",
+            "sort_order": 8
+        }
+    ],
+    "products": [
+        {
+            "slug": "wazony",
+            "name": "Wazony",
+            "category": "wazony-i-patery",
+            "description": "Ręcznie formowane wazony z ceramiki o organicznej, nieregularnej linii. Każdy egzemplarz to unikat — pełen drobnych asymetrii, które nadają mu charakter i duszę. Szkliwiony subtelnie, w odcieniach inspirowanych naturą: ziemią, wodą i światłem.",
+            "dimensions": {
+                "height_cm": "24",
+                "diameter_cm": "12",
+                "thickness_mm": "6"
+            },
+            "care_note": null,
+            "is_published": true,
+            "is_one_off": false,
+            "sort_order": 1,
+            "stamp_enabled": false,
+            "occasions": [
+                "wedding",
+                "housewarming",
+                "mothers_day"
+            ],
+            "recipients": [
+                "for_her"
+            ],
+            "variants": [
+                {
+                    "label": "Niski 16 cm",
+                    "price_gross": 23900,
+                    "stock": 3
+                },
+                {
+                    "label": "Średni 20 cm",
+                    "price_gross": 26900,
+                    "stock": 3
+                },
+                {
+                    "label": "Wysoki 24 cm",
+                    "price_gross": 29900,
+                    "stock": 3
+                }
+            ],
+            "images": [
+                {
+                    "path": "zdjecia/wazon-rzezbiony.webp",
+                    "alt": "Wazony"
+                }
+            ],
+            "google_category": 602
+        },
+        {
+            "slug": "zestaw-4-filizanek",
+            "name": "Zestaw 4 filiżanek z talerzykami",
+            "category": "kubki-i-filizanki",
+            "description": "Zestaw czterech filiżanek z talerzykami, stworzony z myślą o chwilach, które chcemy celebrować — nawet tych codziennych. Każdy element jest ręcznie formowany, szkliwiony z czułością i nosi w sobie ślad dłoni, które go stworzyły.",
+            "dimensions": null,
+            "care_note": null,
+            "is_published": true,
+            "is_one_off": false,
+            "sort_order": 2,
+            "stamp_enabled": false,
+            "occasions": [
+                "wedding",
+                "housewarming",
+                "christmas"
+            ],
+            "recipients": [
+                "for_couple"
+            ],
+            "variants": [
+                {
+                    "label": "Zestaw 2 szt.",
+                    "price_gross": 18900,
+                    "stock": 3
+                },
+                {
+                    "label": "Zestaw 4 szt.",
+                    "price_gross": 34900,
+                    "stock": 3
+                },
+                {
+                    "label": "Zestaw 6 szt.",
+                    "price_gross": 49900,
+                    "stock": 3
+                }
+            ],
+            "images": [
+                {
+                    "path": "zdjecia/zestaw-filizanka-talerz.webp",
+                    "alt": "Zestaw filiżanka z talerzykiem"
+                },
+                {
+                    "path": "zdjecia/zestaw-flatlay.webp",
+                    "alt": "Zestaw 4 filiżanek z talerzykami"
+                }
+            ],
+            "google_category": 6049
+        },
+        {
+            "slug": "patery",
+            "name": "Patery",
+            "category": "wazony-i-patery",
+            "description": "Duże formy dekoracyjne na granicy naczynia i rzeźby. Patery powstają bez formy — z płata gliny, który sam decyduje, gdzie się wygnie. Czarne szkliwo wypalane na wysoką temperaturę daje głęboki, lustrzany połysk.",
+            "dimensions": null,
+            "care_note": null,
+            "is_published": true,
+            "is_one_off": false,
+            "sort_order": 3,
+            "stamp_enabled": false,
+            "occasions": [
+                "wedding",
+                "housewarming"
+            ],
+            "recipients": [
+                "for_couple"
+            ],
+            "variants": [
+                {
+                    "label": "Mała 24 cm",
+                    "price_gross": 32900,
+                    "stock": 3
+                },
+                {
+                    "label": "Średnia 30 cm",
+                    "price_gross": 36900,
+                    "stock": 3
+                },
+                {
+                    "label": "Duża 36 cm",
+                    "price_gross": 39900,
+                    "stock": 3
+                }
+            ],
+            "images": [
+                {
+                    "path": "zdjecia/patera-czarna-kolce.webp",
+                    "alt": "Patery"
+                }
+            ],
+            "google_category": 4372
+        },
+        {
+            "slug": "talerze",
+            "name": "Talerze",
+            "category": "talerze-i-miski",
+            "description": "Talerze z odciskiem prawdziwych roślin zebranych pod pracownią — baldachy, gałązki, liście. Roślina wypala się w piecu i zostawia po sobie rysunek, którego nie da się powtórzić. Piaskowa glina z ciemnym nakrapianiem.",
+            "dimensions": null,
+            "care_note": null,
+            "is_published": true,
+            "is_one_off": false,
+            "sort_order": 4,
+            "stamp_enabled": false,
+            "occasions": [
+                "wedding",
+                "housewarming"
+            ],
+            "recipients": [
+                "for_couple"
+            ],
+            "variants": [
+                {
+                    "label": "Deserowy 18 cm",
+                    "price_gross": 11000,
+                    "stock": 3
+                },
+                {
+                    "label": "Obiadowy 24 cm",
+                    "price_gross": 14000,
+                    "stock": 3
+                },
+                {
+                    "label": "Serwisowy 30 cm",
+                    "price_gross": 18500,
+                    "stock": 3
+                }
+            ],
+            "images": [
+                {
+                    "path": "zdjecia/talerz-niebieski-odcisk.webp",
+                    "alt": "Talerz z odciskiem rośliny"
+                },
+                {
+                    "path": "zdjecia/kasia-talerz-zloto.webp",
+                    "alt": "Kasia z talerzem zdobionym złotem"
+                }
+            ],
+            "google_category": 3553
+        },
+        {
+            "slug": "bizuteria",
+            "name": "Biżuteria",
+            "category": "bizuteria",
+            "description": "Ręcznie robiona biżuteria ceramiczna, która łączy w sobie subtelność formy i siłę natury. Lekka, organiczna, często szkliwiona delikatnymi pastelami lub złotem. Dla osób ceniących autentyczność i piękno niedoskonałości.",
+            "dimensions": null,
+            "care_note": null,
+            "is_published": false,
+            "is_one_off": false,
+            "sort_order": 5,
+            "stamp_enabled": false,
+            "occasions": [
+                "mothers_day",
+                "birthday",
+                "self_gift"
+            ],
+            "recipients": [
+                "for_her"
+            ],
+            "variants": [
+                {
+                    "label": "Kolczyki",
+                    "price_gross": 12900,
+                    "stock": 3
+                },
+                {
+                    "label": "Broszka",
+                    "price_gross": 9900,
+                    "stock": 3
+                },
+                {
+                    "label": "Naszyjnik",
+                    "price_gross": 17900,
+                    "stock": 3
+                }
+            ],
+            "images": [],
+            "google_category": 188
+        },
+        {
+            "slug": "kubki-z-cytatem",
+            "name": "Kubki z cytatem",
+            "category": "kubki-i-filizanki",
+            "description": "Kubek, który mówi głośno to, co myślisz przed pierwszą kawą. Litery wbijam stemplem jedna po drugiej w surową glinę — „królowa matka\", „ochujeję\", „no ocipieje zaraz\". Wnętrze szkliwione kolorem, na zewnątrz matowy piasek. Twój własny tekst do 22 znaków bez dopłaty.",
+            "dimensions": null,
+            "care_note": null,
+            "is_published": true,
+            "is_one_off": true,
+            "sort_order": 6,
+            "stamp_enabled": true,
+            "occasions": [
+                "birthday",
+                "self_gift",
+                "christmas"
+            ],
+            "recipients": [
+                "for_her",
+                "for_him"
+            ],
+            "variants": [
+                {
+                    "label": "Królowa matka",
+                    "price_gross": 7900,
+                    "stock": 1
+                },
+                {
+                    "label": "Ochujeję",
+                    "price_gross": 7900,
+                    "stock": 1
+                },
+                {
+                    "label": "No ocipieje zaraz",
+                    "price_gross": 7900,
+                    "stock": 1
+                },
+                {
+                    "label": "Nie powinnam, ale…",
+                    "price_gross": 7900,
+                    "stock": 1
+                },
+                {
+                    "label": "Twój tekst",
+                    "price_gross": 7900,
+                    "stock": null
+                }
+            ],
+            "images": [
+                {
+                    "path": "zdjecia/kubek-krolowa-matka.webp",
+                    "alt": "Kubek z wbijanym tekstem"
+                },
+                {
+                    "path": "zdjecia/kubek-ochujeje.webp",
+                    "alt": "Kubek z wbijanym tekstem"
+                },
+                {
+                    "path": "zdjecia/kubek-ocipieje.webp",
+                    "alt": "Kubki z cytatem"
+                },
+                {
+                    "path": "zdjecia/kubek-nie-powinnam.webp",
+                    "alt": "Kubki z cytatem"
+                }
+            ],
+            "google_category": 2169
+        },
+        {
+            "slug": "kubki-malowane",
+            "name": "Kubki malowane ręcznie",
+            "category": "kubki-i-filizanki",
+            "description": "Kubki formowane z ręki, o ściankach grubszych tam, gdzie trzyma je dłoń. Malowane pędzlem — każdy inaczej. Nadają się do zmywarki i do porannej kawy pitej wolniej niż zwykle.",
+            "dimensions": {
+                "height_cm": "8,5",
+                "diameter_cm": "9",
+                "thickness_mm": "5",
+                "capacity_ml": "300"
+            },
+            "care_note": null,
+            "is_published": true,
+            "is_one_off": false,
+            "sort_order": 7,
+            "stamp_enabled": false,
+            "occasions": [
+                "birthday",
+                "housewarming",
+                "christmas"
+            ],
+            "recipients": [
+                "for_her",
+                "for_him"
+            ],
+            "variants": [
+                {
+                    "label": "200 ml",
+                    "price_gross": 6900,
+                    "stock": 3
+                },
+                {
+                    "label": "300 ml",
+                    "price_gross": 7900,
+                    "stock": 3
+                },
+                {
+                    "label": "400 ml",
+                    "price_gross": 9500,
+                    "stock": 3
+                }
+            ],
+            "images": [
+                {
+                    "path": "zdjecia/kubek-cappuccino.webp",
+                    "alt": "Kubek malowany ręcznie"
+                },
+                {
+                    "path": "zdjecia/zestaw-flatlay.webp",
+                    "alt": "Kubki malowane ręcznie"
+                }
+            ],
+            "google_category": 2169
+        },
+        {
+            "slug": "kadzielnice",
+            "name": "Kadzielnice",
+            "category": "kadzielnice-i-podstawki",
+            "description": "Kadzielnica na patyczki, z misą łapiącą popiół i złoconym kołnierzem wypalanym w trzecim wypale. Drobne pszczoły odbijane stemplem — mały rytuał zapalania czegoś dla siebie o zmierzchu.",
+            "dimensions": null,
+            "care_note": null,
+            "is_published": true,
+            "is_one_off": false,
+            "sort_order": 8,
+            "stamp_enabled": false,
+            "occasions": [
+                "self_gift",
+                "christmas",
+                "birthday"
+            ],
+            "recipients": [
+                "for_her",
+                "for_him"
+            ],
+            "variants": [
+                {
+                    "label": "Pszczoły ze złotem",
+                    "price_gross": 9900,
+                    "stock": 3
+                }
+            ],
+            "images": [
+                {
+                    "path": "zdjecia/kadzielnica-pszczoly.webp",
+                    "alt": "Kadzielnica ze złoconym kołnierzem"
+                }
+            ],
+            "google_category": 4741
+        },
+        {
+            "slug": "podstawki-pod-bizuterie",
+            "name": "Podstawki pod biżuterię",
+            "category": "kadzielnice-i-podstawki",
+            "description": "Małe muszle z gliny z perłą w środku, na której zawiesisz pierścionek na noc. Szkliwo pudrowe, tak samo jak tkanina, na której je fotografuję. Idealne na prezent, który nie zajmuje miejsca.",
+            "dimensions": null,
+            "care_note": null,
+            "is_published": true,
+            "is_one_off": false,
+            "sort_order": 9,
+            "stamp_enabled": false,
+            "occasions": [
+                "mothers_day",
+                "birthday",
+                "self_gift"
+            ],
+            "recipients": [
+                "for_her"
+            ],
+            "variants": [
+                {
+                    "label": "Mała",
+                    "price_gross": 7900,
+                    "stock": 3
+                },
+                {
+                    "label": "Średnia",
+                    "price_gross": 9900,
+                    "stock": 3
+                },
+                {
+                    "label": "Duża",
+                    "price_gross": 12900,
+                    "stock": 3
+                }
+            ],
+            "images": [
+                {
+                    "path": "zdjecia/podstawki-muszle-roz.webp",
+                    "alt": "Podstawki pod biżuterię"
+                }
+            ],
+            "google_category": 5974
+        },
+        {
+            "slug": "scrunchies",
+            "name": "Scrunchies w 3 rozmiarach",
+            "category": "jedwab",
+            "description": "Miękkie scrunchies uszyte z wyselekcjonowanych tkanin — jedwabiu, lnu i bawełny o naturalnym splocie. Każda gumka powstaje z uważnością, często z końcówek tkanin lub materiałów z drugiego obiegu, którym daję nowe życie.",
+            "dimensions": {
+                "width_cm": "5",
+                "circumference_cm": "18"
+            },
+            "care_note": null,
+            "is_published": true,
+            "is_one_off": false,
+            "sort_order": 10,
+            "stamp_enabled": false,
+            "occasions": [
+                "self_gift",
+                "birthday",
+                "mothers_day"
+            ],
+            "recipients": [
+                "for_her"
+            ],
+            "variants": [
+                {
+                    "label": "Mała",
+                    "price_gross": 5900,
+                    "stock": 3
+                },
+                {
+                    "label": "Średnia",
+                    "price_gross": 6900,
+                    "stock": 3
+                },
+                {
+                    "label": "Duża XL",
+                    "price_gross": 7900,
+                    "stock": 3
+                }
+            ],
+            "images": [
+                {
+                    "path": "zdjecia/scrunchies-fiolet.webp",
+                    "alt": "Jedwabne scrunchies"
+                },
+                {
+                    "path": "zdjecia/opaska-jedwab.webp",
+                    "alt": "Opaska z jedwabnej apaszki"
+                }
+            ],
+            "google_category": 1483
+        },
+        {
+            "slug": "jedwabne-opaski",
+            "name": "Jedwabne opaski",
+            "category": "jedwab",
+            "description": "Opaski szyte na sztywnym kabłąku, obszyte jedwabiem z drugiego obiegu — wzory, których nie kupisz na metry. Każda jest jedna, bo tkaniny wystarcza dokładnie na jedną.",
+            "dimensions": null,
+            "care_note": null,
+            "is_published": true,
+            "is_one_off": false,
+            "sort_order": 11,
+            "stamp_enabled": false,
+            "occasions": [
+                "mothers_day",
+                "birthday",
+                "self_gift"
+            ],
+            "recipients": [
+                "for_her"
+            ],
+            "variants": [
+                {
+                    "label": "Wąska 2 cm",
+                    "price_gross": 8900,
+                    "stock": 3
+                },
+                {
+                    "label": "Średnia 4 cm",
+                    "price_gross": 9900,
+                    "stock": 3
+                },
+                {
+                    "label": "Szeroka pikowana",
+                    "price_gross": 11900,
+                    "stock": 3
+                }
+            ],
+            "images": [
+                {
+                    "path": "zdjecia/opaska-jedwab.webp",
+                    "alt": "Opaska z jedwabnej apaszki"
+                },
+                {
+                    "path": "zdjecia/scrunchies-fiolet.webp",
+                    "alt": "Jedwabne scrunchies"
+                }
+            ],
+            "google_category": 1662
+        },
+        {
+            "slug": "voucher-lepienie",
+            "name": "Voucher na warsztat — lepienie z ręki",
+            "category": "vouchery",
+            "description": "Dwie i pół godziny przy stole w mojej pracowni, glina, narzędzia i dwa wypały w cenie. Voucher dostajesz w PDF do wydruku albo wyślę go pocztą na ładnym papierze. Ważny rok — termin obdarowana osoba wybiera sama.",
+            "dimensions": null,
+            "care_note": null,
+            "is_published": true,
+            "is_one_off": false,
+            "sort_order": 12,
+            "stamp_enabled": false,
+            "occasions": [
+                "birthday",
+                "christmas",
+                "mothers_day"
+            ],
+            "recipients": [
+                "for_her",
+                "for_him"
+            ],
+            "variants": [
+                {
+                    "label": "Dla jednej osoby",
+                    "price_gross": 22000,
+                    "stock": null
+                },
+                {
+                    "label": "Dla dwóch osób",
+                    "price_gross": 42000,
+                    "stock": null
+                },
+                {
+                    "label": "Dla trzech osób",
+                    "price_gross": 60000,
+                    "stock": null
+                }
+            ],
+            "images": [
+                {
+                    "path": "zdjecia/zestaw-flatlay.webp",
+                    "alt": "Voucher na warsztat — lepienie z ręki"
+                }
+            ],
+            "google_category": 53
+        },
+        {
+            "slug": "voucher-para",
+            "name": "Voucher — warsztat dla pary",
+            "category": "vouchery",
+            "description": "Trzy godziny, dwa stanowiska obok siebie i dwa kubki na koniec. Popularny prezent na rocznicę — i jedyny, po którym zostają rzeczy do codziennego użytku, a nie zdjęcia.",
+            "dimensions": null,
+            "care_note": null,
+            "is_published": true,
+            "is_one_off": false,
+            "sort_order": 13,
+            "stamp_enabled": false,
+            "occasions": [
+                "anniversary",
+                "christmas",
+                "wedding"
+            ],
+            "recipients": [
+                "for_couple"
+            ],
+            "variants": [
+                {
+                    "label": "PDF do wydruku",
+                    "price_gross": 39000,
+                    "stock": null
+                },
+                {
+                    "label": "Wysyłka pocztą",
+                    "price_gross": 39000,
+                    "stock": null,
+                    "sent_by_post": true
+                }
+            ],
+            "images": [
+                {
+                    "path": "zdjecia/kubek-cappuccino.webp",
+                    "alt": "Kubek malowany ręcznie"
+                }
+            ],
+            "google_category": 53
+        },
+        {
+            "slug": "voucher-kwotowy",
+            "name": "Voucher kwotowy",
+            "category": "vouchery",
+            "description": "Nie wiesz, czy wolą lepić, czy wybrać coś gotowego? Voucher kwotowy działa i na warsztaty, i na wszystko ze sklepu. Ważny rok, można łączyć z innymi.",
+            "dimensions": null,
+            "care_note": null,
+            "is_published": true,
+            "is_one_off": false,
+            "sort_order": 14,
+            "stamp_enabled": false,
+            "occasions": [
+                "birthday",
+                "christmas",
+                "self_gift"
+            ],
+            "recipients": [
+                "for_her",
+                "for_him",
+                "for_couple"
+            ],
+            "variants": [
+                {
+                    "label": "150 zł",
+                    "price_gross": 15000,
+                    "stock": null
+                },
+                {
+                    "label": "250 zł",
+                    "price_gross": 25000,
+                    "stock": null
+                },
+                {
+                    "label": "400 zł",
+                    "price_gross": 40000,
+                    "stock": null
+                }
+            ],
+            "images": [
+                {
+                    "path": "zdjecia/talerz-niebieski-odcisk.webp",
+                    "alt": "Talerz z odciskiem rośliny"
+                }
+            ],
+            "google_category": 53
+        },
+        {
+            "slug": "miski",
+            "name": "Miski",
+            "category": "talerze-i-miski",
+            "description": null,
+            "dimensions": null,
+            "care_note": null,
+            "is_published": false,
+            "is_one_off": false,
+            "sort_order": 15,
+            "stamp_enabled": false,
+            "occasions": [],
+            "recipients": [],
+            "variants": [
+                {
+                    "label": "Mała 12 cm",
+                    "price_gross": 8900,
+                    "stock": 3
+                },
+                {
+                    "label": "Średnia 16 cm",
+                    "price_gross": 11900,
+                    "stock": 3
+                },
+                {
+                    "label": "Duża 22 cm",
+                    "price_gross": 14900,
+                    "stock": 3
+                }
+            ],
+            "images": [],
+            "google_category": 3498
+        },
+        {
+            "slug": "kosmetyczki",
+            "name": "Kosmetyczki",
+            "category": "kosmetyczki-i-piorniki",
+            "description": null,
+            "dimensions": null,
+            "care_note": null,
+            "is_published": false,
+            "is_one_off": false,
+            "sort_order": 16,
+            "stamp_enabled": false,
+            "occasions": [],
+            "recipients": [],
+            "variants": [
+                {
+                    "label": "Mała",
+                    "price_gross": 9900,
+                    "stock": 3
+                },
+                {
+                    "label": "Średnia",
+                    "price_gross": 12900,
+                    "stock": 3
+                },
+                {
+                    "label": "Duża",
+                    "price_gross": 15900,
+                    "stock": 3
+                }
+            ],
+            "images": [],
+            "google_category": 108
+        },
+        {
+            "slug": "piorniki",
+            "name": "Piórniki",
+            "category": "kosmetyczki-i-piorniki",
+            "description": null,
+            "dimensions": null,
+            "care_note": null,
+            "is_published": false,
+            "is_one_off": false,
+            "sort_order": 17,
+            "stamp_enabled": false,
+            "occasions": [],
+            "recipients": [],
+            "variants": [
+                {
+                    "label": "Mały płaski",
+                    "price_gross": 6900,
+                    "stock": 3
+                },
+                {
+                    "label": "Średni",
+                    "price_gross": 8900,
+                    "stock": 3
+                },
+                {
+                    "label": "Duży tubowy",
+                    "price_gross": 10900,
+                    "stock": 3
+                }
+            ],
+            "images": [],
+            "google_category": 3062
+        }
+    ]
+}

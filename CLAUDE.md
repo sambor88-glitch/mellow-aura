@@ -1,23 +1,25 @@
 # MellowAura
 
-Sklep i strona pracowni ceramiki Kasi Samborskiej z Krakowa. W repozytorium jest na razie prototyp
-i dokumentacja — kodu aplikacji jeszcze nie ma.
+Sklep i strona pracowni ceramiki Kasi Samborskiej z Krakowa. W repozytorium jest prototyp, dokumentacja
+i szkielet aplikacji Laravel 13 (katalogi `app/`, `config/`, `public/` itd.). Serwer serwuje wyłącznie `public/`.
 
 ## Źródła prawdy
 
 | Plik | Rozstrzyga |
 | --- | --- |
-| `MellowAura.dc.html` | wygląd, teksty i zachowanie każdego ekranu — przenoś, nie projektuj od nowa |
+| `Aura - strona glowna.html`, `Aura - ekrany.html` | wygląd i ruch (kierunek „Aura” od 22.09.2026) — przenoś do Blade, nie projektuj od nowa |
+| `MellowAura.dc.html` | teksty, ceny, przebieg i zachowanie każdego ekranu; jego wygląd zastąpiła Aura |
 | `Specyfikacja wdrozenia - MellowAura.dc.html` | adresy, tytuły, opisy, JSON-LD, zakres panelu, integracje |
 | `Plan wdrozenia - Laravel krok po kroku.dc.html` | stos, schemat bazy, harmonogram do 10 listopada |
-| `.claude/skills/` | paleta, komponenty, UX, teksty, dostępność — kolory i kroje zmieniasz tylko w `mellowaura-design` |
+| `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html` | drugi język, druga waluta, strefy wysyłki, próg WSTO — rozstrzyga wszystko, co dotyczy `/en/` i euro |
+| `.claude/skills/` | paleta, efekty, komponenty, UX, teksty, dostępność — kolory, kroje i efekty zmieniasz tylko w `mellowaura-design` |
 
 Pliki `.dc.html` otwierają się w przeglądarce i muszą leżeć obok `support.js`
 (dokumenty do druku także obok `doc-page.js`).
 
 ## Stos
 
-Laravel 13 + Blade, Alpine.js, MySQL, własny panel na Blade (nie Filament), paczki Spatie: medialibrary,
+Laravel 13 + Blade, Alpine.js, GSAP z ScrollTrigger, Lenis i three.js (tylko kubek 3D) przez npm, MySQL, własny panel na Blade (nie Filament), paczki Spatie: medialibrary,
 sitemap, schema-org. Serwer na Forge, przed nim Cloudflare. PHP 8.4 lokalnie i na serwerze.
 Bez Next.js, Astro i WooCommerce — uzasadnienie w planie, punkt 3.
 
@@ -48,11 +50,16 @@ app/Modules/Catalog/
 - Czytać cudze dane przez relację Eloquent wolno.
 - Zdarzenia służą do skutków ubocznych: maile, etykiety InPost, logi. Stanu magazynu nie zdejmuje się
   w listenerze z kolejki — musi zejść w tej samej transakcji co potwierdzenie płatności.
+- Mail dziedziczy po `Shared\Mail\QueuedMail`: idzie przez kolejkę, ponawia się przez dwie godziny, a jeśli nie wyjdzie,
+  trafia do panelu „Niewysłane maile” z opisem z `description()`. Wyjątek to odpowiedź na reklamację — Kasia musi
+  od razu wiedzieć, czy wyszła. Alerty techniczne (`Monitoring\Support\Alerts`) idą od razu, nigdy przez kolejkę.
 - Ekrany panelu należą do modułu, którego dotyczą. `Admin` daje tylko logowanie, układ panelu i menu.
 - Testy: `tests/Feature/<Name>` i `tests/Unit/<Name>`.
 
-Pierwsza fala: `Shared` (układ strony, komponenty Blade, formatowanie kwot, SEO), `Settings`, `Admin`,
-`Catalog`, `Cart`, `Checkout`, `Payments`, `Shipping`, `MugConfigurator`, `Gifts`, `Content`.
+Pierwsza fala: `Shared` (układ strony, komponenty Blade, formatowanie kwot, SEO), `Localization` (prefiks
+`/en/`, slugi per język, przełącznik — wchodzi przed modułami z tłumaczonymi treściami), `Settings`, `Admin`,
+`Catalog`, `Cart`, `Checkout`, `Payments`, `Shipping`, `MugConfigurator`, `Gifts`, `Content`, `Consent` (zgody na cookies i Google Analytics),
+`Monitoring` (niewysłane maile w panelu, alerty o błędach, pilnowanie kolejki i harmonogramu).
 Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
 
 ## Sesja i cache w plikach
@@ -76,6 +83,47 @@ Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
 - Trasa ma polski adres i angielską nazwę: `Route::get('/sklep', ...)->name('shop.index')`.
 - Wartość po angielsku, etykieta po polsku: `crafts` → „Rękodzieło”, `in_progress` → „W realizacji”.
 - Polskie nazwy z prototypu i z przykładów w skillach (`doKoszyka`, `zamowienia`, `cena`) tłumacz przy przenoszeniu.
+
+## Dwa języki i dwie waluty
+
+Szczegóły w `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html`. Tu zasady, których nie wolno obejść w kodzie.
+
+- Polski bez prefiksu, angielski pod `/en/`. Trasę piszesz raz, po polsku, w module. Angielski adres dopisujesz
+  w `config/localization.php` (`paths.en`) — moduł `Localization` robi z niego bliźniaka `en.<nazwa>` z tym samym
+  kontrolerem. Strony spoza tej listy istnieją tylko po polsku.
+- `route('shop.index')` na angielskiej stronie sam daje `/en/shop`. Nie pisz `route('en.…')` ani `url('/')` —
+  do strony głównej prowadzi `route('home')`.
+- Sprawdzając bieżącą stronę, pytaj o obie nazwy: `request()->routeIs($p, Locales::current().'.'.$p)`.
+- Teksty interfejsu w `lang/pl` i `lang/en` modułu, jako `__('modul::plik.klucz')`. Moduł wczytuje je sam.
+- `APP_LOCALES` włącza języki: produkcja `pl`, lokalnie i staging `pl,en`. Testy chodzą z `pl,en`.
+- Waluta wynika z języka: PL to PLN, EN to EUR. Nie ma osobnego przełącznika waluty i nie ma koszyka
+  z mieszanymi walutami.
+- Ceny w euro wpisuje Kasia w panelu. Żadnego przeliczania po kursie w locie.
+- Cena w złotych zostaje w wariancie (`price_gross`, `compare_at_price`), tak jak polski tekst zostaje w tabeli
+  katalogu. Inne waluty mieszkają w `prices` (`product_variant_id`, `currency`, `amount_minor`, `compare_at_minor`).
+  Historia w `price_history` ma kolumnę `currency` — Omnibus liczy się per waluta.
+- Cenę czytasz przez `$variant->price()` i `compareAtPrice()` — w walucie strony. Kwotę pokazujesz przez
+  `Money::format($kwota, $waluta)`; bez waluty to złote. `price_gross` to zawsze złote, nigdy „cena strony”.
+- Koszyk liczy w walucie strony. Pozycja bez ceny w tej walucie (`CartLine::pricedIn`) wypada z koszyka na tej
+  stronie i wraca na stronie w swojej walucie. Kubek z napisem ma `price_eur` przy rozmiarze w ustawieniach;
+  zestawy i pakowanie mają na razie tylko złote.
+- Brak tłumaczenia albo brak ceny w EUR ukrywa pozycję na `/en/`. Nigdy nie psuje wersji polskiej
+  i nigdy nie podstawia polskiego tekstu pod angielski adres.
+- Warsztaty, voucher, wypał, gastronomia, odcisk rośliny, apaszka, dziennik i „Szukam prezentu” nie istnieją
+  na `/en/`. Menu budujemy z konfiguracji per język, nie ukrywamy pozycji CSS-em.
+- Przełącznik języka na stronie bez odpowiednika prowadzi do najbliższej sensownej strony, nigdy na stronę główną.
+- Język podpowiadamy z nagłówka `Accept-Language`, nigdy z adresu IP, i nigdy nie przekierowujemy automatycznie.
+- BLIK istnieje tylko w PLN. Lista metod płatności filtruje się walutą koszyka (`PaymentMethod::for`): PLN to BLIK,
+  Przelewy24, karta i przelew tradycyjny; EUR to karta i Przelewy24. Przelew tradycyjny w euro czeka na konto (MA-124).
+- Zamówienie zapisuje `currency` i `locale`. Każdą kwotę zamówienia pokazujesz przez `$order->money($kwota)`,
+  nigdy przez gołe `Money::format` — w mailach i w panelu też.
+- Mail do klientki idzie w języku zamówienia (`Checkout\Mail\Concerns\InOrderLanguage`): list ma szablon
+  na język (`mail/en/…`), wspólne kawałki biorą teksty z `checkout::mail`. Mail do Kasi zawsze po polsku —
+  `QueuedMail` ma domyślnie `pl`. Certyfikat renderuje się w języku zamówienia.
+- Dostawa w euro to `price_eur` przy metodzie w ustawieniach i angielska nazwa w `checkout::shipping`. Bez jednego
+  z nich metody nie ma w angielskiej kasie. Darmowa wysyłka działa tylko w złotych.
+- Każde zamówienie zapisuje kraj dostawy i stawkę VAT na pozycji — także wtedy, gdy stawka wynosi zero.
+  Bez tego nie da się odtworzyć obrotu WSTO, a próg 10 000 EUR rocznie przekracza się niezauważenie.
 
 ## Treści i dane
 
@@ -108,4 +156,30 @@ Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
 
 ## Komendy
 
-Do uzupełnienia po założeniu projektu Laravela: serwer lokalny, testy, migracje.
+Lokalnie wszystko działa w Dockerze (Laravel Sail), bo PHP na Macu to nie 8.4. Strona: http://localhost:8000,
+poczta z aplikacji: http://localhost:8025 (Mailpit).
+
+```bash
+# pierwsze uruchomienie: vendor/ instaluje kontener z PHP 8.4
+docker run --rm -u "$(id -u):$(id -g)" -v "$(pwd):/var/www/html" -w /var/www/html \
+  -e COMPOSER_HOME=/tmp/composer laravelsail/php84-composer:latest composer install
+cp .env.example .env              # potem wartości dla Sail z komentarza na końcu pliku
+./vendor/bin/sail up -d           # PHP 8.4, MySQL 8.4 na porcie 3307, Mailpit
+./vendor/bin/sail artisan key:generate
+./vendor/bin/sail artisan migrate
+npm install && npm run dev        # Vite na Macu, nie w kontenerze
+./vendor/bin/sail artisan queue:listen  # bez tego maile czekają w kolejce i nie docierają do Mailpit
+./vendor/bin/sail test            # testy na bazie `testing` w kontenerze MySQL
+./vendor/bin/sail down            # zatrzymanie kontenerów
+```
+
+- `compose.yaml` buduje `runtimes/8.4`, tak jak na Forge. Sail przy instalacji wybiera najnowsze PHP — nie zmieniaj na 8.5.
+- `npm` uruchamiaj tylko na Macu: `node_modules` z macOS nie działa w kontenerze z Linuksem.
+- Composer i Artisan tylko przez `./vendor/bin/sail`, żeby zależności liczyły się dla PHP 8.4.
+
+## Gałęzie i środowiska
+
+- `dev` → staging na Forge (`mellowaura-dev.on-forge.com`), auto-deploy po każdym pushu, `APP_ENV=staging`, `APP_NOINDEX=true`,
+  `APP_LOCALES=pl,en`, dostęp za hasłem.
+- `main` → produkcja `mellow-aura.com` (strona produkcyjna powstaje przy starcie), `APP_NOINDEX=false`.
+- Pracujesz na `dev`; do `main` scalasz dopiero przetestowane zmiany.

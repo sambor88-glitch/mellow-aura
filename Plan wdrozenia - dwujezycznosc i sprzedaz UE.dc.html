@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300&family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<script src="./doc-page.js"></script>
+<style>
+  doc-page:not(:defined) { visibility: hidden; }
+  body { font-family: "Instrument Sans", system-ui, sans-serif; color: #2F2620; }
+  a { color: #24417E; }
+  a:hover { color: #855F3D; }
+</style>
+</helmet>
+
+<doc-page>
+
+  <div slot="header" style="display: flex; justify-content: space-between; align-items: baseline; font-size: 8pt; color: #726456; padding-bottom: 5px; border-bottom: 0.3mm solid #E2D7C7">
+    <span style="letter-spacing: 0.22em; text-transform: uppercase">mellowaura &middot; plan wdrożenia</span>
+    <span>Dwujęzyczność i sprzedaż do UE &middot; wrzesień 2026</span>
+  </div>
+
+  <div style="max-width: 165mm">
+
+    <div style="font-size: 8pt; letter-spacing: 0.28em; text-transform: uppercase; color: #855F3D; margin-bottom: 6mm">dokument dla osoby kodującej</div>
+    <h1 style="font-family: Newsreader, serif; font-weight: 300; font-size: 30pt; line-height: 1.08; letter-spacing: -0.01em; margin: 0 0 6mm; text-wrap: pretty">Polski i angielski,<br />złotówki i euro</h1>
+    <p style="font-size: 11.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty">Rozszerzenie planu wdrożenia o drugi język, drugą walutę i wysyłkę do krajów Unii. Dokument zakłada decyzje podjęte 22 września 2026 i rozstrzyga je na twardo — nie wraca do rozważań, które już się zamknęły.</p>
+    <p style="font-size: 11.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 10mm; text-wrap: pretty">Nie zastępuje pliku <strong style="font-weight: 500">Plan wdrozenia - Laravel krok po kroku.dc.html</strong>, tylko go uzupełnia. Wszystko, czego tu nie ma — stos, harmonogram do świąt, kolejność modułów — zostaje bez zmian.</p>
+
+    <div style="background: #F7ECE9; border: 0.35mm solid #E0C3BC; border-radius: 1.5mm; padding: 7mm 8mm; margin-bottom: 10mm">
+      <div style="font-family: Newsreader, serif; font-size: 15pt; margin-bottom: 3mm">Jedna liczba, która rządzi całą resztą</div>
+      <p style="font-size: 10.5pt; line-height: 1.6; color: #5C5043; margin: 0 0 3mm">Kasia prowadzi JDG ze zwolnieniem podmiotowym z VAT. To zwolnienie działa w Polsce. Przy sprzedaży wysyłkowej do innych krajów Unii (WSTO) obowiązuje osobny, unijny próg: <strong style="font-weight: 500">10 000 EUR rocznie, liczone łącznie dla wszystkich krajów</strong> — czyli około 43 tysięcy złotych.</p>
+      <p style="font-size: 10.5pt; line-height: 1.6; color: #5C5043; margin: 0 0 3mm">Poniżej progu sprzedaż rozlicza się w Polsce, a że Kasia jest zwolniona — bez VAT w ogóle. Powyżej progu trzeba naliczać VAT kraju klientki i zarejestrować się do OSS. Polskie zwolnienie przestaje chronić.</p>
+      <p style="font-size: 10.5pt; line-height: 1.6; color: #5C5043; margin: 0">Dlatego licznik obrotu unijnego nie jest funkcją „na potem". Wchodzi w tej samej fali co checkout, bo bez niego próg zostanie przekroczony niezauważenie, a dowiemy się o tym od księgowej za rok.</p>
+    </div>
+
+    <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 0 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">1. Decyzje, które są już zamknięte</h2>
+
+    <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; margin-bottom: 4mm">
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 2.5mm 3mm; width: 38%"><strong style="font-weight: 500">Prefiks <code>/en/</code>, jedna domena</strong></td>
+        <td style="padding: 2.5mm 3mm">Polski bez prefiksu, angielski z prefiksem. Nie subdomena i nie osobna domena — jedna domena zbiera całą moc linków.</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">Slug osobny dla każdego języka</strong></td>
+        <td style="padding: 2.5mm 3mm"><code>/sklep</code> i <code>/en/shop</code>. Adres <code>/en/sklep</code> nie pozycjonuje się na żadną angielską frazę, więc nie ma sensu.</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">Waluta wynika z języka</strong></td>
+        <td style="padding: 2.5mm 3mm">PL to PLN, EN to EUR. Bez osobnego przełącznika waluty — znika problem koszyka przeliczanego w trakcie zakupów i historii cen w dwóch walutach naraz.</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">Ceny EUR wpisywane ręcznie</strong></td>
+        <td style="padding: 2.5mm 3mm">Żadnego przeliczania po kursie w locie. Cena ma być okrągła i stabilna, a nie skakać codziennie o czterdzieści groszy.</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">Warsztaty tylko po polsku</strong></td>
+        <td style="padding: 2.5mm 3mm">Kasia nie będzie ich prowadzić po angielsku. Angielska wersja nie pokazuje warsztatów w ogóle — inaczej generowałaby zapytania, których nikt nie obsłuży.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">Bez tłumaczenia maszynowego</strong></td>
+        <td style="padding: 2.5mm 3mm">Głos Kasi jest połową wartości tej marki. Pięć produktów przetłumaczonych przez człowieka bije pięćdziesiąt brzmiących jak instrukcja pralki.</td>
+      </tr>
+    </table>
+
+    <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">2. Co istnieje po angielsku, a co nie</h2>
+
+    <div style="display: flex; gap: 6mm; margin-bottom: 4mm">
+      <div style="flex: 1; min-width: 0; background: #EDF0E9; border-radius: 1.5mm; padding: 6mm">
+        <div style="font-size: 8pt; letter-spacing: 0.16em; text-transform: uppercase; color: #41563A; margin-bottom: 3mm">jest na /en/</div>
+        <div style="font-size: 10pt; line-height: 1.75">
+          Sklep i karta produktu<br />
+          Konfigurator kubka<br />
+          Zestawy prezentowe<br />
+          O mnie, pracownia<br />
+          Kontakt<br />
+          Wysyłka i pielęgnacja<br />
+          Zamówienia indywidualne
+        </div>
+        <div style="font-size: 9pt; line-height: 1.55; color: #41563A; margin-top: 4mm">Wszystko, co da się kupić i wysłać kurierem bez rozmowy po polsku.</div>
+      </div>
+      <div style="flex: 1; min-width: 0; background: #EDE4D8; border-radius: 1.5mm; padding: 6mm">
+        <div style="font-size: 8pt; letter-spacing: 0.16em; text-transform: uppercase; color: #855F3D; margin-bottom: 3mm">tylko po polsku</div>
+        <div style="font-size: 10pt; line-height: 1.75">
+          Warsztaty ceramiczne<br />
+          Voucher na warsztaty<br />
+          Wypał ceramiki<br />
+          Ceramika dla gastronomii<br />
+          Odcisk twojej rośliny<br />
+          Z twojej apaszki<br />
+          Dziennik<br />
+          Szukam prezentu
+        </div>
+        <div style="font-size: 9pt; line-height: 1.55; color: #6B5D4F; margin-top: 4mm">Usługi wymagające przyjazdu do Krakowa albo przesłania materiału tam i z powrotem. Dwie przesyłki międzynarodowe na jedno zamówienie się nie spinają. Dziennik i wyszukiwarka prezentów odpadły 23 września: dużo tekstu, mało sprzedaży.</div>
+      </div>
+    </div>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty">Z tego wynikają trzy rzeczy w kodzie. <strong style="font-weight: 500">Menu budowane z konfiguracji per język</strong>, a nie ukrywane CSS-em — na <code>/en/</code> tych pozycji po prostu nie ma. <strong style="font-weight: 500">Strony bez odpowiednika nie mają znacznika <code>hreflang alternate</code></strong>; to jest poprawne, nie brak. <strong style="font-weight: 500">Przełącznik języka na stronie bez odpowiednika nie prowadzi na stronę główną</strong> — Google traktuje to jako miękkie 404, a użytkownik się gubi. Prowadzi do najbliższej sensownej strony, przy warsztatach do <code>/en/about</code>, z jednozdaniową notką, że warsztaty odbywają się po polsku.</p>
+
+    <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">3. Moduł Localization</h2>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty">Nowy moduł w pierwszej fali, przed wszystkimi, które mają tłumaczone treści. Reszta modułów tylko go używa.</p>
+
+    <div style="background: #FCF9F4; border: 0.3mm solid #DCD0BE; border-radius: 1.5mm; padding: 6mm; margin-bottom: 4mm; font-size: 9.5pt; line-height: 1.7; font-family: ui-monospace, monospace">
+      app/Modules/Localization/<br />
+      &nbsp;&nbsp;LocalizationServiceProvider.php<br />
+      &nbsp;&nbsp;Http/Middleware/SetLocale.php &nbsp;&nbsp;&nbsp;&nbsp;# ustala locale z prefiksu, waluta idzie za nim<br />
+      &nbsp;&nbsp;Http/Middleware/RedirectToLocale.php &nbsp;# tylko podpowiedź, nigdy wymuszone przekierowanie<br />
+      &nbsp;&nbsp;Models/TranslatedRoute.php &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# slug per język, jedna nazwa trasy<br />
+      &nbsp;&nbsp;Support/LocaleUrlGenerator.php &nbsp;&nbsp;&nbsp;# odpowiednik bieżącej strony w drugim języku<br />
+      &nbsp;&nbsp;resources/views/components/language-switcher.blade.php
+    </div>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty">Trasa ma jedną nazwę i dwa adresy, zgodnie z zasadą z <code>CLAUDE.md</code>: adres po polsku albo po angielsku, nazwa zawsze po angielsku. Prefiks i slug dokłada grupa tras, nie każdy kontroler osobno.</p>
+
+    <div style="background: #F7F2EA; border-left: 0.6mm solid #B98E64; padding: 5mm 6mm; margin-bottom: 4mm; font-size: 9.5pt; line-height: 1.65; color: #5C5043">
+      <strong style="font-weight: 500">Wykrywanie języka po nagłówku <code>Accept-Language</code>, nigdy po adresie IP.</strong> Polka na wakacjach w Hiszpanii dostałaby angielską wersję ze złotówkami zamienionymi na euro. Wykryty język daje podpowiedź — pasek u góry z propozycją przejścia — i nic poza tym. Wybór użytkownika zapisuje się w ciasteczku i od tego momentu wygrywa ze wszystkim.
+    </div>
+
+    <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">4. Trzy warstwy tekstu, trzy mechanizmy</h2>
+
+    <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; margin-bottom: 4mm">
+      <tr style="background: #EDE4D8">
+        <th style="text-align: left; padding: 3mm; font-weight: 500; width: 30%">Co</th>
+        <th style="text-align: left; padding: 3mm; font-weight: 500; width: 34%">Gdzie mieszka</th>
+        <th style="text-align: left; padding: 3mm; font-weight: 500">Kto tłumaczy</th>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 3mm; vertical-align: top"><strong style="font-weight: 500">Interfejs</strong><br /><span style="color: #726456">przyciski, błędy, maile</span></td>
+        <td style="padding: 3mm; vertical-align: top"><code>lang/pl/*.php</code><br /><code>lang/en/*.php</code></td>
+        <td style="padding: 3mm; vertical-align: top">Raz, w kodzie. Teksty polskie biorą się ze skilla <code>mellowaura-teksty</code>.</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 3mm; vertical-align: top"><strong style="font-weight: 500">Treści</strong><br /><span style="color: #726456">produkty, wpisy, SEO</span></td>
+        <td style="padding: 3mm; vertical-align: top">tabele <code>*_translations</code></td>
+        <td style="padding: 3mm; vertical-align: top">Kasia w panelu, produkt po produkcie.</td>
+      </tr>
+      <tr>
+        <td style="padding: 3mm; vertical-align: top"><strong style="font-weight: 500">Ustawienia</strong><br /><span style="color: #726456">opis lokalizacji, progi, kafelki o materiale</span></td>
+        <td style="padding: 3mm; vertical-align: top"><code>settings</code> z kolumną <code>locale</code></td>
+        <td style="padding: 3mm; vertical-align: top">Kasia w panelu.</td>
+      </tr>
+    </table>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty"><strong style="font-weight: 500">Osobne tabele tłumaczeń, nie kolumny JSON.</strong> Po nazwie produktu trzeba sortować i szukać w obrębie jednego języka, a w JSON-ie to kończy się pełnym skanem tabeli i zapytaniami, których nie da się zaindeksować. Wzór: <code>product_translations (product_id, locale, name, slug, description, meta_title, meta_description)</code>, unikalny indeks na <code>(product_id, locale)</code> i drugi na <code>(locale, slug)</code>. Trait <code>HasTranslations</code> w module <code>Shared</code>, bo używa go kilka modułów.</p>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty">W panelu przy każdym polu tekstowym dwie zakładki: PL i EN. <strong style="font-weight: 500">Brak tłumaczenia angielskiego oznacza, że produkt nie pokazuje się na <code>/en/</code></strong> — a nie że nie pokazuje się po polsku. Dzięki temu Kasia nie musi tłumaczyć wszystkiego naraz i nic się nie psuje, gdy zostawi połowę na później. Na liście produktów w panelu kolumna z informacją, ile pozycji czeka na angielski.</p>
+
+    <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">5. Dwie waluty</h2>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty">Cena w złotych zostaje w wariancie, tak jak polski tekst zostaje w tabeli produktu. Każda inna waluta dostaje wiersz w osobnej tabeli. Kwoty jako liczby całkowite w najmniejszej jednostce — grosze i centy — zgodnie z zasadą, której nie łamiemy.</p>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty">Zmiana względem pierwszej wersji planu (23 września): złotówki nie wyprowadzają się z wariantu. Czyta je kilkadziesiąt miejsc — koszyk, kasa, maile, zestawy, feed Google — i żadne z nich nie potrzebuje euro. Przeniesienie ich do nowej tabeli oznaczałoby przepisanie całego sklepu bez żadnego zysku dla klientki.</p>
+
+    <div style="background: #FCF9F4; border: 0.3mm solid #DCD0BE; border-radius: 1.5mm; padding: 6mm; margin-bottom: 4mm; font-size: 9.5pt; line-height: 1.7; font-family: ui-monospace, monospace">
+      product_variants (…, price_gross, compare_at_price)  — złote<br /><br />
+      prices (product_variant_id, currency, amount_minor, compare_at_minor)  — euro i kolejne<br />
+      &nbsp;&nbsp;unique (product_variant_id, currency)<br /><br />
+      price_history (product_variant_id, currency, price_gross, valid_from)<br />
+      &nbsp;&nbsp;index (product_variant_id, currency, valid_from)
+    </div>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty"><strong style="font-weight: 500">Omnibus liczy się osobno dla każdej waluty.</strong> Najniższa cena z trzydziestu dni przed obniżką to inna liczba w złotych i inna w euro, bo ceny zmieniały się w różnych momentach. Jedna historia dla obu walut dawałaby wartości nieprawdziwe w obie strony.</p>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty"><strong style="font-weight: 500">Brak ceny w EUR oznacza, że wariant nie pokazuje się na <code>/en/</code></strong> — ta sama zasada co przy tłumaczeniach, ten sam powód.</p>
+
+    <div style="background: #F7ECE9; border: 0.35mm solid #E0C3BC; border-radius: 1.5mm; padding: 6mm 7mm; margin-bottom: 4mm">
+      <div style="font-family: Newsreader, serif; font-size: 13.5pt; margin-bottom: 3mm">Ceny w euro muszą przeżyć wejście zagranicznego VAT-u</div>
+      <p style="font-size: 10pt; line-height: 1.6; color: #5C5043; margin: 0 0 3mm">Dziś cała kwota zostaje w pracowni. Po przekroczeniu progu 10 000 EUR ta sama kwota zawiera VAT kraju klientki. Przy stawce niemieckiej 19% z ceny 35 EUR zostaje 29,41 EUR — różnica rzędu dwudziestu kilku złotych na kubku.</p>
+      <p style="font-size: 10pt; line-height: 1.6; color: #5C5043; margin: 0 0 3mm">Dochodzi drugi koszt: przy zwolnieniu podmiotowym <strong style="font-weight: 500">nie ma odliczenia VAT od zakupów</strong>. Wysyłka do Niemiec za 60 zł to realny koszt 60 zł, nie 48,78 zł. Glina, szkliwa, karton i taśma tak samo.</p>
+      <p style="font-size: 10pt; line-height: 1.6; color: #5C5043; margin: 0">Stąd zasada na wpisywanie cen: <strong style="font-weight: 500">cena PLN podzielona przez kurs, powiększona o około 15%, zaokrąglona w górę do okrągłej końcówki</strong>. Kubek za 149 zł to nie 35 EUR, tylko 39 EUR. To nie chciwość, tylko bufor na podatek, którego dziś nie ma, i na obsługę, która kosztuje więcej niż krajowa.</p>
+    </div>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty"><strong style="font-weight: 500">Metody płatności zależą od waluty.</strong> BLIK działa wyłącznie w złotych, więc na <code>/en/</code> go nie ma — zostają karty i przelew. Moduł <code>Payments</code> dostaje listę metod filtrowaną walutą koszyka, a nie stałą listę z konfiguracji. Płatności obsługuje Stripe, który przyjmuje euro od ręki — do ustalenia zostaje, które metody włączyć dla EUR i na jakie konto trafiają środki.</p>
+
+    <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">6. Wysyłka: trzy strefy, cennik wagowy</h2>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty">Ceramika waży i tłucze się. Ryczałt „jedna cena za paczkę" zjadłby marżę na pierwszym zestawie obiadowym wysłanym do Hiszpanii, dlatego cennik jest wagowy, a progi wpisuje Kasia w panelu.</p>
+
+    <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; margin-bottom: 4mm">
+      <tr style="background: #EDE4D8">
+        <th style="text-align: left; padding: 3mm; font-weight: 500; width: 26%">Strefa</th>
+        <th style="text-align: left; padding: 3mm; font-weight: 500; width: 26%">Przewoźnik</th>
+        <th style="text-align: left; padding: 3mm; font-weight: 500">Orientacyjnie do 2 / 5 / 10 kg</th>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 3mm; vertical-align: top"><strong style="font-weight: 500">PL</strong></td>
+        <td style="padding: 3mm; vertical-align: top">InPost Paczkomat, kurier InPost, odbiór osobisty</td>
+        <td style="padding: 3mm; vertical-align: top">16 zł paczkomat, 22 zł kurier — bez zmian względem specyfikacji</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 3mm; vertical-align: top"><strong style="font-weight: 500">UE 1</strong><br /><span style="color: #726456">DE, CZ, SK</span></td>
+        <td style="padding: 3mm; vertical-align: top">DPD Classic, InPost International gdzie dostępny</td>
+        <td style="padding: 3mm; vertical-align: top">45 / 60 / 85 zł</td>
+      </tr>
+      <tr>
+        <td style="padding: 3mm; vertical-align: top"><strong style="font-weight: 500">UE 2</strong><br /><span style="color: #726456">pozostałe kraje Unii</span></td>
+        <td style="padding: 3mm; vertical-align: top">DPD Classic</td>
+        <td style="padding: 3mm; vertical-align: top">75 / 95 / 130 zł</td>
+      </tr>
+    </table>
+
+    <p style="font-size: 9.5pt; line-height: 1.6; color: #726456; margin: 0 0 4mm">Kwoty dla stref unijnych są szacunkiem z cenników detalicznych i służą do zaprojektowania tabel, nie do wpisania na stronę. Ostateczne wartości wchodzą po podpisaniu umowy z przewoźnikiem — do tego czasu w panelu zostają jako wartości domyślne oznaczone jako niepotwierdzone.</p>
+
+    <div style="background: #F7F2EA; border-left: 0.6mm solid #B98E64; padding: 5mm 6mm; margin-bottom: 4mm; font-size: 9.5pt; line-height: 1.65; color: #5C5043">
+      <strong style="font-weight: 500">Darmowa dostawa tylko w Polsce.</strong> Próg darmowej wysyłki jest ustawieniem per strefa, a dla stref unijnych stoi wyłączony. Zwrot kubka z Portugalii kosztuje więcej niż kubek.<br /><br />
+      <strong style="font-weight: 500">Ubezpieczenie przesyłki i zdjęcie zapakowanej paczki przed nadaniem.</strong> Przy stłuczce zdjęcie jest jedynym dowodem, że paczka wyszła z pracowni prawidłowo zabezpieczona. Panel dostaje pole na zdjęcie przy zamówieniu — to dwie godziny pracy, które zwracają się przy pierwszej reklamacji.<br /><br />
+      <strong style="font-weight: 500">Waga wariantu staje się polem obowiązkowym.</strong> Bez niej nie da się policzyć kosztu wysyłki. Przy migracji istniejących produktów trzeba ją uzupełnić, zanim strefy unijne się włączą.
+    </div>
+
+    <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">7. Podatki przy zwolnieniu z VAT</h2>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty">Cały ten rozdział wymaga potwierdzenia przez księgową Kasi przed uruchomieniem sprzedaży zagranicznej. Poniżej jest to, co musi umieć system — nie interpretacja podatkowa.</p>
+
+    <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; margin-bottom: 4mm">
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 2.5mm 3mm; width: 38%"><strong style="font-weight: 500">Kraj dostawy na zamówieniu</strong></td>
+        <td style="padding: 2.5mm 3mm">Zapisywany zawsze, od pierwszego zamówienia. Bez niego nie da się później odtworzyć obrotu per kraj.</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">Stawka VAT na pozycji</strong></td>
+        <td style="padding: 2.5mm 3mm">Dziś zero ze wskazaniem podstawy zwolnienia. Kolumna istnieje od początku, bo dorobienie jej później oznacza migrację historycznych zamówień.</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">Licznik obrotu WSTO</strong></td>
+        <td style="padding: 2.5mm 3mm">Narastająco w EUR, w roku kalendarzowym, po kursie z dnia sprzedaży. Kafelek w panelu, alert przy 8 000 EUR i drugi, mocniejszy, przy 9 500 EUR.</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">Licznik obrotu krajowego</strong></td>
+        <td style="padding: 2.5mm 3mm">Drugi próg, polski, dla zwolnienia podmiotowego. Ten sam kafelek, inna liczba. Kasia ma widzieć oba w jednym miejscu.</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">Faktura bez stawki</strong></td>
+        <td style="padding: 2.5mm 3mm">Z adnotacją o podstawie zwolnienia. Przy sprzedaży zagranicznej wystawiana zawsze, nie tylko na żądanie — klientka z Niemiec nie rozpozna polskiego potwierdzenia zamówienia jako dokumentu.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">Kasa fiskalna</strong></td>
+        <td style="padding: 2.5mm 3mm">Sprzedaż wysyłkowa opłacona przelewem lub BLIK-iem korzysta ze zwolnienia, o ile prowadzona jest ewidencja wiążąca zapłatę z zamówieniem. Sklep taką ewidencję ma z natury. Warsztaty płatne gotówką na miejscu to osobny temat dla księgowej.</td>
+      </tr>
+    </table>
+
+    <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">8. SEO dwujęzyczne</h2>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty">Cztery rzeczy, bez których dwa języki szkodzą zamiast pomagać, bo Google widzi duplikaty.</p>
+
+    <div style="background: #FCF9F4; border: 0.3mm solid #DCD0BE; border-radius: 1.5mm; padding: 6mm; margin-bottom: 4mm; font-size: 10pt; line-height: 1.8">
+      <strong style="font-weight: 500">1. hreflang</strong> — na każdej stronie mającej odpowiednik: <code>pl</code>, <code>en</code> i <code>x-default</code> wskazujący wersję polską. Odsyłacze muszą być wzajemne, inaczej Google je ignoruje.<br />
+      <strong style="font-weight: 500">2. canonical</strong> — zawsze na siebie, w obrębie własnego języka. Nigdy z <code>/en/shop</code> na <code>/sklep</code>.<br />
+      <strong style="font-weight: 500">3. sitemap</strong> — jedna mapa, każdy wpis z listą wersji językowych. Paczka <code>spatie/laravel-sitemap</code> to obsługuje.<br />
+      <strong style="font-weight: 500">4. JSON-LD w języku strony</strong> — nazwa produktu, opis i waluta w <code>offers</code> zgodne z wersją, na której stoją. Angielska strona z ceną w PLN to błąd w Merchant Center.
+    </div>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty">Tytuł do 60 znaków i opis do 155 obowiązują osobno w każdym języku, licznik w panelu przy obu zakładkach. Angielski tytuł przetłumaczony jeden do jednego z polskiego zwykle wychodzi dłuższy i ucina się w wynikach.</p>
+
+    <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">9. Prawo</h2>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty">Musi być gotowe <strong style="font-weight: 500">przed</strong> pierwszym zamówieniem z zagranicy, nie po nim. Treści pisze prawnik — my przygotowujemy miejsce, mechanizm i moment, w którym klientka je widzi.</p>
+
+    <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; margin-bottom: 4mm">
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 2.5mm 3mm; width: 38%"><strong style="font-weight: 500">Regulamin i polityka prywatności po angielsku</strong></td>
+        <td style="padding: 2.5mm 3mm">Nie tłumaczenie polskiego przez nas. Osobne wersje w bazie, jak każda inna treść.</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">Pouczenie o odstąpieniu i formularz</strong></td>
+        <td style="padding: 2.5mm 3mm">Czternaście dni, w obu językach, plus wzór formularza do pobrania.</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">Wyłączenie zwrotu dla rzeczy personalizowanych</strong></td>
+        <td style="padding: 2.5mm 3mm">Kubek z napisem nie podlega zwrotowi, ale tylko wtedy, gdy klientka została o tym poinformowana <strong style="font-weight: 500">przed</strong> zakupem, wyraźnie i osobno. W konfiguratorze, przy polu na napis, nie w regulaminie na dole strony.</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">Koszty zwrotu z zagranicy</strong></td>
+        <td style="padding: 2.5mm 3mm">Informacja, kto je ponosi, widoczna przed złożeniem zamówienia. Brak takiej informacji przerzuca koszt na sprzedawcę.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2.5mm 3mm"><strong style="font-weight: 500">Platforma ODR</strong></td>
+        <td style="padding: 2.5mm 3mm">Link w stopce obu wersji językowych.</td>
+      </tr>
+    </table>
+
+    <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">10. Kolejność prac</h2>
+
+    <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; margin-bottom: 4mm">
+      <tr style="background: #EDE4D8">
+        <th style="text-align: left; padding: 3mm; font-weight: 500; width: 8%">&nbsp;</th>
+        <th style="text-align: left; padding: 3mm; font-weight: 500; width: 40%">Krok</th>
+        <th style="text-align: left; padding: 3mm; font-weight: 500">Co po nim działa</th>
+        <th style="text-align: left; padding: 3mm; font-weight: 500; width: 14%">Jira</th>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 3mm; vertical-align: top; font-family: Newsreader, serif; font-size: 13pt">1</td>
+        <td style="padding: 3mm; vertical-align: top">Moduł <code>Localization</code>: prefiks, slugi, przełącznik, <code>lang/pl</code> i <code>lang/en</code></td>
+        <td style="padding: 3mm; vertical-align: top">Interfejs mówi po angielsku, adresy działają</td>
+        <td style="padding: 3mm; vertical-align: top; color: #726456">MA-125</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 3mm; vertical-align: top; font-family: Newsreader, serif; font-size: 13pt">2</td>
+        <td style="padding: 3mm; vertical-align: top">Tabele tłumaczeń, trait <code>HasTranslations</code>, zakładki PL/EN w panelu</td>
+        <td style="padding: 3mm; vertical-align: top">Kasia może tłumaczyć produkty</td>
+        <td style="padding: 3mm; vertical-align: top; color: #726456">MA-126</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 3mm; vertical-align: top; font-family: Newsreader, serif; font-size: 13pt">3</td>
+        <td style="padding: 3mm; vertical-align: top">Tabela <code>prices</code>, historia per waluta, metody płatności zależne od waluty</td>
+        <td style="padding: 3mm; vertical-align: top"><strong style="font-weight: 500">Angielski sklep sprzedaje za euro</strong></td>
+        <td style="padding: 3mm; vertical-align: top; color: #726456">MA-127</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 3mm; vertical-align: top; font-family: Newsreader, serif; font-size: 13pt">4</td>
+        <td style="padding: 3mm; vertical-align: top">Strefy wysyłki, cennik wagowy, waga wariantu, kraj w checkoucie</td>
+        <td style="padding: 3mm; vertical-align: top">Paczka jedzie za granicę</td>
+        <td style="padding: 3mm; vertical-align: top; color: #726456">MA-128</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 3mm; vertical-align: top; font-family: Newsreader, serif; font-size: 13pt">5</td>
+        <td style="padding: 3mm; vertical-align: top">Stawka VAT na pozycji, licznik obrotu WSTO, alerty progowe</td>
+        <td style="padding: 3mm; vertical-align: top">Próg nie przejdzie niezauważony</td>
+        <td style="padding: 3mm; vertical-align: top; color: #726456">MA-129</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 3mm; vertical-align: top; font-family: Newsreader, serif; font-size: 13pt">6</td>
+        <td style="padding: 3mm; vertical-align: top">hreflang, canonical, sitemap, JSON-LD per język</td>
+        <td style="padding: 3mm; vertical-align: top">Google rozumie, że to dwie wersje, nie duplikat</td>
+        <td style="padding: 3mm; vertical-align: top; color: #726456">MA-130</td>
+      </tr>
+      <tr>
+        <td style="padding: 3mm; vertical-align: top; font-family: Newsreader, serif; font-size: 13pt">7</td>
+        <td style="padding: 3mm; vertical-align: top">Regulamin EN, pouczenie o odstąpieniu, wyłączenie dla personalizacji</td>
+        <td style="padding: 3mm; vertical-align: top">Można przyjąć pierwsze zamówienie</td>
+        <td style="padding: 3mm; vertical-align: top; color: #726456">MA-131</td>
+      </tr>
+    </table>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty">Kroki 1–3 da się wypuścić osobno: angielski sklep z cenami w euro i wysyłką tylko do Polski. Kroki 4–5 otwierają zagranicę i muszą wejść razem — wysyłka bez licznika obrotu to dokładnie ta sytuacja, przed którą ostrzega pierwsza strona tego dokumentu.</p>
+
+    <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">11. Ryzyka</h2>
+
+    <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; margin-bottom: 4mm">
+      <tr style="background: #EDE4D8">
+        <th style="text-align: left; padding: 3mm; font-weight: 500; width: 34%">Ryzyko</th>
+        <th style="text-align: left; padding: 3mm; font-weight: 500; width: 24%">Skala</th>
+        <th style="text-align: left; padding: 3mm; font-weight: 500">Co je ogranicza</th>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 3mm; vertical-align: top">Przekroczenie progu 10 000 EUR bez rejestracji do OSS</td>
+        <td style="padding: 3mm; vertical-align: top">zaległość podatkowa z odsetkami</td>
+        <td style="padding: 3mm; vertical-align: top">Licznik w panelu, alert przy 8 000 i 9 500 EUR</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 3mm; vertical-align: top">Stłuczka w transporcie międzynarodowym</td>
+        <td style="padding: 3mm; vertical-align: top">100% wartości plus koszt wysyłki</td>
+        <td style="padding: 3mm; vertical-align: top">Ubezpieczenie w cenie dostawy, zdjęcie paczki przed nadaniem</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 3mm; vertical-align: top">Zwrot z drugiego końca Unii przy zamówieniu za 40 EUR</td>
+        <td style="padding: 3mm; vertical-align: top">koszt zwrotu wyższy niż marża</td>
+        <td style="padding: 3mm; vertical-align: top">Brak darmowej dostawy poza PL, jasna informacja o kosztach zwrotu przed zakupem</td>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7">
+        <td style="padding: 3mm; vertical-align: top">Ceny EUR ustawione bez bufora na VAT</td>
+        <td style="padding: 3mm; vertical-align: top">utrata kilkunastu procent marży w dniu przekroczenia progu</td>
+        <td style="padding: 3mm; vertical-align: top">Zasada z rozdziału 5, policzona raz przy wpisywaniu cennika</td>
+      </tr>
+      <tr>
+        <td style="padding: 3mm; vertical-align: top">Angielskie treści tłumaczone maszynowo</td>
+        <td style="padding: 3mm; vertical-align: top">utrata tonu, który jest przewagą marki</td>
+        <td style="padding: 3mm; vertical-align: top">Tłumaczy człowiek, stopniowo; brak tłumaczenia ukrywa produkt zamiast psuć stronę</td>
+      </tr>
+    </table>
+
+    <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">12. Do ustalenia poza kodem</h2>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty">Każda z tych pozycji ma zadanie w projekcie <strong style="font-weight: 500">MA</strong> w Jirze, pod epikiem <strong style="font-weight: 500">MA-120</strong>, z etykietą <code>do-ustalenia</code> i wskazaniem, kto rozstrzyga. Żadnej z nich nie rozstrzyga osoba pisząca kod.</p>
+
+    <div style="background: #FCF9F4; border: 0.3mm solid #DCD0BE; border-radius: 1.5mm; padding: 6mm; margin-bottom: 4mm; font-size: 10pt; line-height: 1.85">
+      <strong style="font-weight: 500">Księgowa</strong> <span style="color: #726456">MA-121</span> — potwierdzenie mechaniki progu WSTO przy zwolnieniu podmiotowym, sposób dokumentowania sprzedaży zagranicznej, kasa fiskalna przy warsztatach płatnych gotówką, moment i tryb rejestracji do OSS.<br />
+      <strong style="font-weight: 500">Prawnik</strong> <span style="color: #726456">MA-122</span> — regulamin i polityka prywatności po angielsku, pouczenie o odstąpieniu, konstrukcja wyłączenia zwrotu dla rzeczy personalizowanych, kto ponosi koszt zwrotu z zagranicy.<br />
+      <strong style="font-weight: 500">Kasia</strong> <span style="color: #726456">MA-123</span> — cennik w euro dla każdego produktu, decyzja o obsłudze zapytań po angielsku, potwierdzenie listy krajów w strefie UE 1, kolejność tłumaczenia produktów.<br />
+      <strong style="font-weight: 500">Przewoźnik i operator płatności</strong> <span style="color: #726456">MA-124</span> — umowny cennik międzynarodowy zamiast szacunków z rozdziału 6, metody płatności i konto dla EUR w Stripe.
+    </div>
+
+
+    <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">Załącznik: mapa adresów PL &rarr; EN</h2>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty">Adresy polskie pochodzą ze <strong style="font-weight: 500">Specyfikacji wdrozenia</strong> i nie zmieniają się. Angielskie są frazami wpisywanymi w Google przez osobę szukającą po angielsku — dlatego <code>/en/shop</code>, a nie <code>/en/sklep</code>. Nazwa trasy jest jedna, po angielsku, wspólna dla obu adresów.</p>
+
+    <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; margin-bottom: 4mm">
+      <tr style="background: #EDE4D8">
+        <th style="text-align: left; padding: 3mm; font-weight: 500; width: 33%">Adres polski</th>
+        <th style="text-align: left; padding: 3mm; font-weight: 500; width: 33%">Adres angielski</th>
+        <th style="text-align: left; padding: 3mm; font-weight: 500">Nazwa trasy</th>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/</code></td><td style="padding: 2.5mm 3mm"><code>/en</code></td><td style="padding: 2.5mm 3mm"><code>home</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/sklep</code></td><td style="padding: 2.5mm 3mm"><code>/en/shop</code></td><td style="padding: 2.5mm 3mm"><code>shop.index</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/sklep/{kategoria}</code></td><td style="padding: 2.5mm 3mm"><code>/en/shop/{category}</code></td><td style="padding: 2.5mm 3mm"><code>shop.category</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/produkt/{slug}</code></td><td style="padding: 2.5mm 3mm"><code>/en/product/{slug}</code></td><td style="padding: 2.5mm 3mm"><code>product.show</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/kubek-z-napisem</code></td><td style="padding: 2.5mm 3mm"><code>/en/custom-text-mug</code></td><td style="padding: 2.5mm 3mm"><code>mug.index</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/zestawy-prezentowe</code></td><td style="padding: 2.5mm 3mm"><code>/en/gift-sets</code></td><td style="padding: 2.5mm 3mm"><code>bundles.index</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/zamowienie</code></td><td style="padding: 2.5mm 3mm"><code>/en/checkout</code></td><td style="padding: 2.5mm 3mm"><code>checkout.index</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/o-mnie</code></td><td style="padding: 2.5mm 3mm"><code>/en/about</code></td><td style="padding: 2.5mm 3mm"><code>content.about</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/pracownia</code></td><td style="padding: 2.5mm 3mm"><code>/en/studio</code></td><td style="padding: 2.5mm 3mm"><code>content.studio</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/wysylka-i-pielegnacja</code></td><td style="padding: 2.5mm 3mm"><code>/en/shipping-and-care</code></td><td style="padding: 2.5mm 3mm"><code>content.faq</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/zamowienia-indywidualne</code></td><td style="padding: 2.5mm 3mm"><code>/en/custom-orders</code></td><td style="padding: 2.5mm 3mm"><code>custom-orders.index</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/kontakt</code></td><td style="padding: 2.5mm 3mm"><code>/en/contact</code></td><td style="padding: 2.5mm 3mm"><code>content.contact</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/regulamin</code></td><td style="padding: 2.5mm 3mm"><code>/en/terms</code></td><td style="padding: 2.5mm 3mm"><code>content.terms</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/polityka-prywatnosci</code></td><td style="padding: 2.5mm 3mm"><code>/en/privacy-policy</code></td><td style="padding: 2.5mm 3mm"><code>content.privacy</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/odstapienie-od-umowy</code></td><td style="padding: 2.5mm 3mm"><code>/en/withdrawal</code></td><td style="padding: 2.5mm 3mm"><code>withdrawal.create</code></td></tr>
+      <tr><td style="padding: 2.5mm 3mm"><code>/ustawienia-cookies</code></td><td style="padding: 2.5mm 3mm"><code>/en/cookie-settings</code></td><td style="padding: 2.5mm 3mm"><code>consent.edit</code></td></tr>
+    </table>
+
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty">Kategorie sklepu mają własne slugi per język. Na <code>/en/shop</code> istnieją tylko dwie: <code>ceramics</code> (Ceramika) i <code>crafts</code> (Rękodzieło). Vouchery i warsztaty są kategoriami wyłącznie polskimi. Wartość w bazie jest po angielsku, etykieta po polsku — zgodnie z zasadą z <code>CLAUDE.md</code>.</p>
+
+    <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; margin-bottom: 4mm">
+      <tr style="background: #EDE4D8">
+        <th style="text-align: left; padding: 3mm; font-weight: 500; width: 33%">Adres wyłącznie polski</th>
+        <th style="text-align: left; padding: 3mm; font-weight: 500">Dokąd prowadzi przełącznik języka</th>
+      </tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/warsztaty-ceramiczne-krakow</code></td><td style="padding: 2.5mm 3mm"><code>/en/about</code> z notką, że warsztaty odbywają się po polsku</td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/voucher-na-warsztaty-ceramiczne</code></td><td style="padding: 2.5mm 3mm"><code>/en/gift-sets</code> — najbliższy sensowny odpowiednik dla prezentu</td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/wypal-ceramiki-krakow</code></td><td style="padding: 2.5mm 3mm"><code>/en/studio</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/ceramika-dla-gastronomii</code></td><td style="padding: 2.5mm 3mm"><code>/en/custom-orders</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/odcisk-twojej-rosliny</code></td><td style="padding: 2.5mm 3mm"><code>/en/custom-orders</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/z-twojej-apaszki</code></td><td style="padding: 2.5mm 3mm"><code>/en/custom-orders</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/prezenty</code></td><td style="padding: 2.5mm 3mm"><code>/en/gift-sets</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/dziennik</code></td><td style="padding: 2.5mm 3mm"><code>/en/about</code></td></tr>
+      <tr><td style="padding: 2.5mm 3mm"><code>/panel</code></td><td style="padding: 2.5mm 3mm">Bez przełącznika. Panel jest wyłącznie po polsku — czyta go tylko Kasia.</td></tr>
+    </table>
+
+    <div style="background: #F7F2EA; border-left: 0.6mm solid #B98E64; padding: 5mm 6mm; margin-bottom: 4mm; font-size: 9.5pt; line-height: 1.65; color: #5C5043">
+      Żadna z tych stron nie ma znacznika <code>hreflang alternate</code> — nie mają odpowiednika, więc nie ma czego wskazywać. Przełącznik i tak prowadzi do strony z kolumny obok, bo <strong style="font-weight: 500">powrót na stronę główną Google traktuje jak miękkie 404</strong>, a użytkownik traci kontekst. Przy każdym takim przejściu na docelowej stronie wyświetla się jednozdaniowe wyjaśnienie, dlaczego nie ma angielskiej wersji tego, czego szukał.
+    </div>
+
+    <div style="margin-top: 10mm; padding-top: 5mm; border-top: 0.3mm solid #E2D7C7; font-size: 9.5pt; line-height: 1.6; color: #726456">
+      Dokument uzupełnia <strong style="font-weight: 500">Plan wdrozenia - Laravel krok po kroku.dc.html</strong> i <strong style="font-weight: 500">Specyfikacja wdrozenia - MellowAura.dc.html</strong>. Tam, gdzie ten plik mówi co innego niż tamte, rozstrzyga ten — jest nowszy i powstał po decyzjach z 22 września. Wygląd wszystkich ekranów, także angielskich, nadal rozstrzyga prototyp <strong style="font-weight: 500">MellowAura.dc.html</strong>.
+    </div>
+
+  </div>
+
+</doc-page>
+
+</x-dc>
+</body>
+</html>
