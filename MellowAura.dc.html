@@ -164,10 +164,10 @@
         <sc-for list="{{ featured }}" as="p" hint-placeholder-count="4">
           <div onClick="{{ p.open }}" style="cursor: pointer; animation: maLift .7s cubic-bezier(.2,.7,.2,1) both; animation-delay: {{ p.delay }}">
             <div onMouseEnter="{{ p.enter }}" onMouseLeave="{{ p.leave }}" style="position: relative; border-radius: 6px; overflow: hidden; background: #E6DCCD; margin-bottom: 14px; transition: box-shadow .55s ease, transform .55s cubic-bezier(.2,.7,.2,1)" style-hover="box-shadow: 0 34px 60px -30px rgba(47,38,32,.5); transform: translateY(-7px)">
-              <img src="{{ p.img }}" alt="{{ p.name }}" style="width: 100%; display: block; aspect-ratio: 4/5; object-fit: cover; transition: transform 1.2s cubic-bezier(.2,.7,.2,1)" style-hover="transform: scale(1.06)" />
+              <img loading="lazy" decoding="async" src="{{ p.img }}" alt="{{ p.name }}" style="width: 100%; display: block; aspect-ratio: 4/5; object-fit: cover; transition: transform 1.2s cubic-bezier(.2,.7,.2,1)" style-hover="transform: scale(1.06)" />
               <button onClick="{{ p.toggleFav }}" aria-label="{{ p.favLabel }}" aria-pressed="{{ p.favPressed }}" style="position: absolute; top: 10px; right: 10px; z-index: 2; width: 44px; height: 44px; border-radius: 999px; border: 0; background: rgba(252,249,244,.62); backdrop-filter: blur(12px) saturate(1.3); -webkit-backdrop-filter: blur(12px) saturate(1.3); color: #2F2620; font-size: 19px; line-height: 1; display: grid; place-items: center; padding: 0; transition: color .25s ease, transform .15s ease" style-hover="color: #24417E" style-active="transform: scale(.92)">{{ p.favIcon }}</button>
               <sc-for list="{{ p.slides }}" as="sl" hint-placeholder-count="0">
-                <img src="{{ sl.src }}" alt="" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{ sl.op }}; transition: opacity .6s ease" />
+                <img loading="lazy" decoding="async" src="{{ sl.src }}" alt="" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{ sl.op }}; transition: opacity .6s ease" />
               </sc-for>
               <sc-if value="{{ p.hasMany }}" hint-placeholder-val="{{ false }}">
                 <div style="position: absolute; left: 0; right: 0; bottom: 10px; display: flex; justify-content: center; gap: 5px; pointer-events: none">
@@ -194,7 +194,7 @@
     <div style="animation: maRevealSoft linear both; animation-timeline: view(); animation-range: entry 0% entry 42%; max-width: 1280px; margin: 0 auto; padding: 84px 28px 0">
       <div style="display: flex; flex-wrap: wrap; gap: 48px; align-items: center; background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; padding: 0; overflow: hidden">
         <div class="ma-frame" style="flex: 1 1 320px; min-width: 0; align-self: stretch; min-height: 380px">
-          <img src="zdjecia/kasia-talerz-zloto.webp" alt="Kasia z talerzem zdobionym złotem" class="ma-para-img" style="width: 100%; height: 100%; min-height: 380px; display: block; object-fit: cover" />
+          <img loading="lazy" decoding="async" src="zdjecia/kasia-talerz-zloto.webp" alt="Kasia z talerzem zdobionym złotem" class="ma-para-img" style="width: 100%; height: 100%; min-height: 380px; display: block; object-fit: cover" />
         </div>
         <div style="flex: 1 1 380px; min-width: 0; padding: 52px 52px 52px 4px">
           <div style="font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #855F3D; margin-bottom: 20px">Cześć, jestem Kasia</div>
@@ -208,8 +208,8 @@
     <div style="animation: maRevealSoft linear both; animation-timeline: view(); animation-range: entry 0% entry 42%; max-width: 1280px; margin: 0 auto; padding: 84px 28px 0">
       <div style="display: flex; flex-wrap: wrap; gap: 0; background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; overflow: hidden">
         <div style="flex: 1 1 300px; min-width: 0; display: flex">
-          <div class="ma-frame" style="width: 50%; aspect-ratio: 1/1"><img src="zdjecia/kubek-cappuccino.webp" alt="Kubek malowany ręcznie" class="ma-para-img" style="width: 100%; height: 100%; object-fit: cover; display: block" /></div>
-          <div class="ma-frame" style="width: 50%; aspect-ratio: 1/1"><img src="zdjecia/scrunchies-fiolet.webp" alt="Jedwabne scrunchies" class="ma-para-img-rev" style="width: 100%; height: 100%; object-fit: cover; display: block" /></div>
+          <div class="ma-frame" style="width: 50%; aspect-ratio: 1/1"><img loading="lazy" decoding="async" src="zdjecia/kubek-cappuccino.webp" alt="Kubek malowany ręcznie" class="ma-para-img" style="width: 100%; height: 100%; object-fit: cover; display: block" /></div>
+          <div class="ma-frame" style="width: 50%; aspect-ratio: 1/1"><img loading="lazy" decoding="async" src="zdjecia/scrunchies-fiolet.webp" alt="Jedwabne scrunchies" class="ma-para-img-rev" style="width: 100%; height: 100%; object-fit: cover; display: block" /></div>
         </div>
         <div style="flex: 1 1 360px; min-width: 0; padding: 44px 40px; display: flex; flex-direction: column; justify-content: center">
           <div style="font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #855F3D; margin-bottom: 18px">zestawy prezentowe</div>
@@ -229,7 +229,7 @@
       <p style="font-size: 16.5px; color: #6B5D4F; margin: 0 0 30px; max-width: 58ch">Dwie usługi, których nie zamówisz w żadnej innej pracowni — bo wymagają i gliny, i igły.</p>
       <div class="ma-stagger" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px">
         <div onClick="{{ goScarf }}" style="cursor: pointer; display: flex; flex-wrap: wrap; gap: 0; background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; overflow: hidden; transition: transform .35s ease, box-shadow .35s ease" style-hover="transform: translateY(-4px); box-shadow: 0 22px 46px -28px rgba(47,38,32,.4)">
-          <img src="zdjecia/opaska-jedwab.webp" alt="Opaska z jedwabnej apaszki" style="flex: 0 0 auto; width: 118px; aspect-ratio: 3/4; object-fit: cover; display: block" />
+          <img loading="lazy" decoding="async" src="zdjecia/opaska-jedwab.webp" alt="Opaska z jedwabnej apaszki" style="flex: 0 0 auto; width: 118px; aspect-ratio: 3/4; object-fit: cover; display: block" />
           <div style="flex: 1 1 180px; min-width: 0; padding: 26px 24px">
             <div style="font-family: Newsreader, serif; font-size: 25px; line-height: 1.16; margin-bottom: 8px">Z Twojej apaszki</div>
             <div style="font-size: 14.5px; line-height: 1.6; color: #6B5D4F">Apaszka po babci wraca jako opaska i dwie scrunchies. Resztki oddaję.</div>
@@ -237,7 +237,7 @@
           </div>
         </div>
         <div onClick="{{ goImprint }}" style="cursor: pointer; display: flex; flex-wrap: wrap; gap: 0; background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; overflow: hidden; transition: transform .35s ease, box-shadow .35s ease" style-hover="transform: translateY(-4px); box-shadow: 0 22px 46px -28px rgba(47,38,32,.4)">
-          <img src="zdjecia/talerz-niebieski-odcisk.webp" alt="Talerz z odciskiem rośliny" style="flex: 0 0 auto; width: 118px; aspect-ratio: 3/4; object-fit: cover; display: block" />
+          <img loading="lazy" decoding="async" src="zdjecia/talerz-niebieski-odcisk.webp" alt="Talerz z odciskiem rośliny" style="flex: 0 0 auto; width: 118px; aspect-ratio: 3/4; object-fit: cover; display: block" />
           <div style="flex: 1 1 180px; min-width: 0; padding: 26px 24px">
             <div style="font-family: Newsreader, serif; font-size: 25px; line-height: 1.16; margin-bottom: 8px">Odcisk Twojej rośliny</div>
             <div style="font-size: 14.5px; line-height: 1.6; color: #6B5D4F">Kwiat z bukietu ślubnego zostaje w glinie. Roślina znika, rysunek zostaje.</div>
@@ -264,8 +264,8 @@
 
     <div class="ma-para-slow" style="margin-top: 84px; overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)">
       <div aria-hidden="true" style="display: flex; width: max-content; gap: 16px; padding-right: 16px; height: clamp(180px, 22vw, 300px); animation: maMarquee 70s linear infinite">
-        <img src="zdjecia/kasia-talerz-zloto.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/misa-laguna.webp" alt="" style="height: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/kubek-nie-powinnam.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/wazon-rzezbiony.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/podstawki-muszle-roz.webp" alt="" style="height: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/talerz-niebieski-odcisk.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/patera-czarna-kolce.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/zestaw-flatlay.webp" alt="" style="height: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; display: block" />
-        <img src="zdjecia/kasia-talerz-zloto.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/misa-laguna.webp" alt="" style="height: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/kubek-nie-powinnam.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/wazon-rzezbiony.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/podstawki-muszle-roz.webp" alt="" style="height: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/talerz-niebieski-odcisk.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/patera-czarna-kolce.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img src="zdjecia/zestaw-flatlay.webp" alt="" style="height: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; display: block" />
+        <img loading="lazy" decoding="async" src="zdjecia/kasia-talerz-zloto.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img loading="lazy" decoding="async" src="zdjecia/misa-laguna.webp" alt="" style="height: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; display: block" /><img loading="lazy" decoding="async" src="zdjecia/kubek-nie-powinnam.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img loading="lazy" decoding="async" src="zdjecia/wazon-rzezbiony.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img loading="lazy" decoding="async" src="zdjecia/podstawki-muszle-roz.webp" alt="" style="height: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; display: block" /><img loading="lazy" decoding="async" src="zdjecia/talerz-niebieski-odcisk.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img loading="lazy" decoding="async" src="zdjecia/patera-czarna-kolce.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img loading="lazy" decoding="async" src="zdjecia/zestaw-flatlay.webp" alt="" style="height: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; display: block" />
+        <img loading="lazy" decoding="async" src="zdjecia/kasia-talerz-zloto.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img loading="lazy" decoding="async" src="zdjecia/misa-laguna.webp" alt="" style="height: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; display: block" /><img loading="lazy" decoding="async" src="zdjecia/kubek-nie-powinnam.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img loading="lazy" decoding="async" src="zdjecia/wazon-rzezbiony.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img loading="lazy" decoding="async" src="zdjecia/podstawki-muszle-roz.webp" alt="" style="height: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; display: block" /><img loading="lazy" decoding="async" src="zdjecia/talerz-niebieski-odcisk.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img loading="lazy" decoding="async" src="zdjecia/patera-czarna-kolce.webp" alt="" style="height: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" /><img loading="lazy" decoding="async" src="zdjecia/zestaw-flatlay.webp" alt="" style="height: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; display: block" />
       </div>
     </div>
     <div style="animation: maRevealSoft linear both; animation-timeline: view(); animation-range: entry 0% entry 42%; max-width: 1280px; margin: 0 auto; padding: 56px 28px 0">
@@ -303,7 +303,7 @@
         <div class="ma-stagger" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px">
           <sc-for list="{{ igFeed }}" as="g" hint-placeholder-count="6">
             <a href="{{ g.link }}" target="_blank" rel="noopener" style="display: block; position: relative; border-radius: 3px; overflow: hidden; background: #E6DCCD">
-              <img src="{{ g.img }}" alt="Post z Instagrama MellowAura" style="width: 100%; display: block; aspect-ratio: 1/1; object-fit: cover; transition: opacity .3s ease" style-hover="opacity: .72" />
+              <img loading="lazy" decoding="async" src="{{ g.img }}" alt="Post z Instagrama MellowAura" style="width: 100%; display: block; aspect-ratio: 1/1; object-fit: cover; transition: opacity .3s ease" style-hover="opacity: .72" />
             </a>
           </sc-for>
         </div>
@@ -384,10 +384,10 @@
       <sc-for list="{{ shopItems }}" as="p" hint-placeholder-count="8">
         <div style="animation: maUp .55s ease both; animation-delay: {{ p.delay }}">
           <div onClick="{{ p.open }}" onMouseEnter="{{ p.enter }}" onMouseLeave="{{ p.leave }}" style="cursor: pointer; position: relative; border-radius: 6px; overflow: hidden; background: #E6DCCD; margin-bottom: 14px; transition: box-shadow .5s ease, transform .5s cubic-bezier(.2,.7,.2,1)" style-hover="box-shadow: 0 26px 50px -30px rgba(47,38,32,.5); transform: translateY(-4px)">
-            <img src="{{ p.img }}" alt="{{ p.name }}" style="width: 100%; display: block; aspect-ratio: 4/5; object-fit: cover" />
+            <img loading="lazy" decoding="async" src="{{ p.img }}" alt="{{ p.name }}" style="width: 100%; display: block; aspect-ratio: 4/5; object-fit: cover" />
             <button onClick="{{ p.toggleFav }}" aria-label="{{ p.favLabel }}" aria-pressed="{{ p.favPressed }}" style="position: absolute; top: 10px; right: 10px; z-index: 2; width: 44px; height: 44px; border-radius: 999px; border: 0; background: rgba(252,249,244,.92); color: #2F2620; font-size: 19px; line-height: 1; display: grid; place-items: center; padding: 0; transition: color .25s ease, transform .15s ease" style-hover="color: #24417E" style-active="transform: scale(.92)">{{ p.favIcon }}</button>
               <sc-for list="{{ p.slides }}" as="sl" hint-placeholder-count="0">
-                <img src="{{ sl.src }}" alt="" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{ sl.op }}; transition: opacity .6s ease" />
+                <img loading="lazy" decoding="async" src="{{ sl.src }}" alt="" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{ sl.op }}; transition: opacity .6s ease" />
               </sc-for>
               <sc-if value="{{ p.hasMany }}" hint-placeholder-val="{{ false }}">
                 <div style="position: absolute; left: 0; right: 0; bottom: 10px; display: flex; justify-content: center; gap: 5px; pointer-events: none">
@@ -425,13 +425,13 @@
     <div style="display: flex; flex-wrap: wrap; gap: 56px">
       <div style="flex: 1 1 400px; min-width: 0">
         <div onClick="{{ openZoom }}" title="Kliknij, żeby powiększyć" style="cursor: zoom-in; position: relative; border-radius: 6px; overflow: hidden; background: #E6DCCD">
-          <img src="{{ p.img }}" alt="{{ p.name }}" style="width: 100%; display: block; aspect-ratio: 1/1; object-fit: cover" />
+          <img loading="lazy" decoding="async" src="{{ p.img }}" alt="{{ p.name }}" style="width: 100%; display: block; aspect-ratio: 1/1; object-fit: cover" />
           <span style="position: absolute; right: 14px; bottom: 14px; background: rgba(252,249,244,.92); border-radius: 999px; padding: 7px 14px; font-size: 12px; color: #5C5043">Powiększ fakturę ⌕</span>
         </div>
         <div style="display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap">
           <sc-for list="{{ p.thumbs }}" as="t" hint-placeholder-count="2">
             <button onClick="{{ t.set }}" style="padding: 0; background: none; border: 1px solid {{ t.bd }}; border-radius: 4px; overflow: hidden; width: 74px; height: 74px">
-              <img src="{{ t.img }}" alt="Kolejne zdjęcie produktu" style="width: 100%; height: 100%; object-fit: cover; display: block" />
+              <img loading="lazy" decoding="async" src="{{ t.img }}" alt="Kolejne zdjęcie produktu" style="width: 100%; height: 100%; object-fit: cover; display: block" />
             </button>
           </sc-for>
         </div>
@@ -531,7 +531,7 @@
         <sc-for list="{{ p.related }}" as="r" hint-placeholder-count="4">
           <div onClick="{{ r.open }}" style="cursor: pointer">
             <div style="border-radius: 6px; overflow: hidden; background: #E6DCCD; margin-bottom: 12px">
-              <img src="{{ r.img }}" alt="{{ r.name }}" style="width: 100%; display: block; aspect-ratio: 4/5; object-fit: cover; transition: transform .6s ease" style-hover="transform: scale(1.04)" />
+              <img loading="lazy" decoding="async" src="{{ r.img }}" alt="{{ r.name }}" style="width: 100%; display: block; aspect-ratio: 4/5; object-fit: cover; transition: transform .6s ease" style-hover="transform: scale(1.04)" />
             </div>
             <div style="font-family: Newsreader, serif; font-size: 18px; line-height: 1.25">{{ r.name }}</div>
             <div style="font-size: 13.5px; color: #6B5D4F; margin-top: 3px">{{ r.priceLabel }}</div>
@@ -632,7 +632,7 @@
               <div style="font-family: Newsreader, serif; font-size: 20px; margin-bottom: 18px">Twoje zamówienie</div>
               <sc-for list="{{ cartItems }}" as="c" hint-placeholder-count="0">
                 <div style="display: flex; gap: 12px; padding-bottom: 14px; margin-bottom: 14px; border-bottom: 1px solid #EDE4D8">
-                  <img src="{{ c.img }}" alt="{{ c.name }}" style="width: 52px; height: 64px; object-fit: cover; border-radius: 3px" />
+                  <img loading="lazy" decoding="async" src="{{ c.img }}" alt="{{ c.name }}" style="width: 52px; height: 64px; object-fit: cover; border-radius: 3px" />
                   <div style="flex: 1; min-width: 0"><div style="font-size: 14px; line-height: 1.3">{{ c.name }}</div><div style="font-size: 12px; color: #726456; margin-top: 2px">{{ c.variant }} &middot; {{ c.qty }} szt.</div></div>
                   <div style="font-size: 13.5px">{{ c.lineLabel }}</div>
                 </div>
@@ -671,11 +671,11 @@
         </div>
         <div style="flex: 1 1 340px; min-width: 0">
           <div style="border-radius: 4px; overflow: hidden">
-            <img src="zdjecia/kasia-talerz-zloto.webp" alt="Kasia trzymająca talerz ze złoconą krawędzią" style="width: 100%; display: block; aspect-ratio: 3/4; object-fit: cover" />
+            <img loading="lazy" decoding="async" src="zdjecia/kasia-talerz-zloto.webp" alt="Kasia trzymająca talerz ze złoconą krawędzią" style="width: 100%; display: block; aspect-ratio: 3/4; object-fit: cover" />
           </div>
           <div style="display: flex; gap: 14px; margin-top: 14px">
-            <img src="zdjecia/kubek-ochujeje.webp" alt="Kubek z wbijanym tekstem" style="flex: 1; min-width: 0; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px" />
-            <img src="zdjecia/kadzielnica-pszczoly.webp" alt="Kadzielnica ze złoconym kołnierzem" style="flex: 1; min-width: 0; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px" />
+            <img loading="lazy" decoding="async" src="zdjecia/kubek-ochujeje.webp" alt="Kubek z wbijanym tekstem" style="flex: 1; min-width: 0; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px" />
+            <img loading="lazy" decoding="async" src="zdjecia/kadzielnica-pszczoly.webp" alt="Kadzielnica ze złoconym kołnierzem" style="flex: 1; min-width: 0; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px" />
           </div>
         </div>
       </div>
@@ -694,7 +694,7 @@
         <sc-for list="{{ featured }}" as="p" hint-placeholder-count="4">
           <div onClick="{{ p.open }}" style="cursor: pointer">
             <div style="border-radius: 6px; overflow: hidden; background: #E6DCCD; margin-bottom: 12px">
-              <img src="{{ p.img }}" alt="{{ p.name }}" style="width: 100%; display: block; aspect-ratio: 4/5; object-fit: cover; transition: transform .6s ease" style-hover="transform: scale(1.04)" />
+              <img loading="lazy" decoding="async" src="{{ p.img }}" alt="{{ p.name }}" style="width: 100%; display: block; aspect-ratio: 4/5; object-fit: cover; transition: transform .6s ease" style-hover="transform: scale(1.04)" />
             </div>
             <div style="font-family: Newsreader, serif; font-size: 19px">{{ p.name }}</div>
             <div style="font-size: 13.5px; color: #6B5D4F; margin-top: 3px">{{ p.priceLabel }}</div>
@@ -708,7 +708,7 @@
   <sc-if value="{{ isStudio }}" hint-placeholder-val="{{ false }}">
   <div style="animation: maView .55s cubic-bezier(.2,.7,.2,1) both">
     <div style="position: relative">
-      <img src="{{ studioHeroImg }}" alt="Praca z gliną w pracowni MellowAura" style="width: 100%; height: clamp(320px, 46vh, 520px); object-fit: cover; display: block; filter: brightness(.82)" />
+      <img loading="lazy" decoding="async" src="{{ studioHeroImg }}" alt="Praca z gliną w pracowni MellowAura" style="width: 100%; height: clamp(320px, 46vh, 520px); object-fit: cover; display: block; filter: brightness(.82)" />
       <div style="position: absolute; inset: 0; display: flex; align-items: end; background: linear-gradient(to top, rgba(31,25,20,.72), rgba(31,25,20,.05))">
         <div style="max-width: 1280px; margin: 0 auto; padding: 0 28px 48px; width: 100%">
           <div style="font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #E2D7C7; margin-bottom: 16px">pracownia &middot; kraków</div>
@@ -743,7 +743,7 @@
     <div style="max-width: 1280px; margin: 0 auto; padding: 64px 28px 96px">
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px">
         <sc-for list="{{ studioPhotos }}" as="g" hint-placeholder-count="6">
-          <img src="{{ g.img }}" alt="Praca z pracowni MellowAura" style="width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" />
+          <img loading="lazy" decoding="async" src="{{ g.img }}" alt="Praca z pracowni MellowAura" style="width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block" />
         </sc-for>
       </div>
     </div>
@@ -839,9 +839,9 @@
           <div style="background: #FCF9F4; padding: 24px 26px; display: flex; gap: 20px; align-items: baseline"><span style="font-family: Newsreader, serif; font-size: 22px; color: #A8813F; flex: 0 0 26px">04</span><div><div style="font-size: 16px; margin-bottom: 4px">Lepienie, dwa wypały, wysyłka</div><div style="font-size: 14.5px; color: #6B5D4F; line-height: 1.6">Około trzech tygodni. Przy dużych serwisach — pięć.</div></div></div>
         </div>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px">
-          <img src="zdjecia/zestaw-filizanka-talerz.webp" alt="Zestaw filiżanka z talerzykiem" style="width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px" />
-          <img src="zdjecia/kubek-krolowa-matka.webp" alt="Kubek z wbijanym tekstem" style="width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px" />
-          <img src="zdjecia/podstawki-muszle-roz.webp" alt="Podstawki pod biżuterię" style="width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px" />
+          <img loading="lazy" decoding="async" src="zdjecia/zestaw-filizanka-talerz.webp" alt="Zestaw filiżanka z talerzykiem" style="width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px" />
+          <img loading="lazy" decoding="async" src="zdjecia/kubek-krolowa-matka.webp" alt="Kubek z wbijanym tekstem" style="width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px" />
+          <img loading="lazy" decoding="async" src="zdjecia/podstawki-muszle-roz.webp" alt="Podstawki pod biżuterię" style="width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px" />
         </div>
       </div>
       <div style="flex: 1 1 340px; min-width: 290px">
@@ -885,7 +885,7 @@
           <button onClick="{{ goContact }}" style="background: #D6A39C; color: #2F2620; border: 0; border-radius: 999px; padding: 16px 32px; font-size: 14.5px" style-hover="background: #F3EDE4">Poproś o wycenę</button>
         </div>
         <div style="flex: 1 1 320px; min-width: 0">
-          <img src="zdjecia/kubek-cappuccino.webp" alt="Kawa w ręcznie robionym kubku" style="width: 100%; aspect-ratio: 4/5; object-fit: cover; border-radius: 4px; display: block" />
+          <img loading="lazy" decoding="async" src="zdjecia/kubek-cappuccino.webp" alt="Kawa w ręcznie robionym kubku" style="width: 100%; aspect-ratio: 4/5; object-fit: cover; border-radius: 4px; display: block" />
         </div>
       </div>
     </div>
@@ -953,7 +953,7 @@
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px">
           <sc-for list="{{ upcoming }}" as="u" hint-placeholder-count="2">
             <div style="display: flex; gap: 16px; align-items: start">
-              <img src="{{ u.img }}" alt="{{ u.name }}" style="flex: 0 0 auto; width: 86px; height: 86px; object-fit: cover; border-radius: 4px" />
+              <img loading="lazy" decoding="async" src="{{ u.img }}" alt="{{ u.name }}" style="flex: 0 0 auto; width: 86px; height: 86px; object-fit: cover; border-radius: 4px" />
               <div style="flex: 1; min-width: 0">
                 <div style="font-family: Newsreader, serif; font-size: 22px; line-height: 1.2; color: #FCF9F4">{{ u.name }}</div>
                 <div style="font-size: 13.5px; color: #C6B8A5; margin: 5px 0 3px">{{ u.date }}</div>
@@ -976,7 +976,7 @@
     <div style="display: grid; gap: 1px; background: #E2D7C7; border-top: 1px solid #E2D7C7; border-bottom: 1px solid #E2D7C7">
       <sc-for list="{{ chronicle }}" as="e" hint-placeholder-count="6">
         <div onClick="{{ e.open }}" style="background: #F3EDE4; display: flex; flex-wrap: wrap; gap: 28px; padding: 28px 0; align-items: center; cursor: pointer" style-hover="background: #EDE4D8">
-          <img src="{{ e.img }}" alt="Wpis z kroniki MellowAura" style="flex: 0 0 auto; width: 152px; height: 152px; object-fit: cover; border-radius: 4px" />
+          <img loading="lazy" decoding="async" src="{{ e.img }}" alt="Wpis z kroniki MellowAura" style="flex: 0 0 auto; width: 152px; height: 152px; object-fit: cover; border-radius: 4px" />
           <div style="flex: 1 1 300px; min-width: 0">
             <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 10px; flex-wrap: wrap">
               <sc-if value="{{ e.isIg }}" hint-placeholder-val="{{ true }}">
@@ -1041,7 +1041,7 @@
           <sc-if value="{{ hasEmail }}" hint-placeholder-val="{{ false }}"><a href="{{ mailHref }}" style="background: #FCF9F4; padding: 22px 24px; display: flex; justify-content: space-between; gap: 16px; align-items: center; color: #2F2620" style-hover="background: #EDE4D8"><span style="min-width: 0"><span style="display: block; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #A8813F; margin-bottom: 5px">e-mail</span><span style="font-size: 17px; overflow-wrap: anywhere">{{ email }}</span></span><span style="color: #855F3D">→</span></a></sc-if>
           <div style="background: #FCF9F4; padding: 22px 24px"><span style="display: block; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #A8813F; margin-bottom: 5px">pracownia</span><span style="font-size: 17px">{{ city }}</span><span style="display: block; font-size: 13.5px; color: #726456; margin-top: 4px">Dokładny adres podaję przy zapisie na warsztat lub odbiorze zamówienia.</span></div>
         </div>
-        <img src="zdjecia/talerz-niebieski-odcisk.webp" alt="Talerz z odciskiem roślinnym" style="width: 100%; max-width: 420px; aspect-ratio: 4/3; object-fit: cover; border-radius: 4px; display: block" />
+        <img loading="lazy" decoding="async" src="zdjecia/talerz-niebieski-odcisk.webp" alt="Talerz z odciskiem roślinnym" style="width: 100%; max-width: 420px; aspect-ratio: 4/3; object-fit: cover; border-radius: 4px; display: block" />
       </div>
       <div style="flex: 1 1 340px; min-width: 290px">
         <div style="background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; padding: 32px 30px">
@@ -1102,7 +1102,7 @@
             <div style="display: grid; grid-template-columns: minmax(0, 1fr); gap: 13px">
               <label style="display: block; border: 1px dashed #C6B8A5; border-radius: 4px; padding: 22px; text-align: center; background: #F7F2EA; cursor: pointer; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; background: #EDE4D8" style-active="transform: scale(.98)">
                 <sc-if value="{{ hasNfPhoto }}" hint-placeholder-val="{{ false }}">
-                  <img src="{{ nfPhoto }}" alt="Podgląd wgranego zdjęcia" style="width: 100%; max-height: 210px; object-fit: cover; border-radius: 3px; display: block; margin-bottom: 12px" />
+                  <img loading="lazy" decoding="async" src="{{ nfPhoto }}" alt="Podgląd wgranego zdjęcia" style="width: 100%; max-height: 210px; object-fit: cover; border-radius: 3px; display: block; margin-bottom: 12px" />
                 </sc-if>
                 <span style="display: block; font-size: 14px; color: #5C5043">{{ nfPhotoCta }}</span>
                 <span style="display: block; font-size: 12.5px; color: #736454; margin-top: 4px">JPG lub PNG, kilka naraz — pierwsze będzie okładką</span>
@@ -1112,7 +1112,7 @@
                 <div style="display: flex; flex-wrap: wrap; gap: 8px">
                   <sc-for list="{{ nfPhotos }}" as="ph" hint-placeholder-count="1">
                     <div style="position: relative; width: 58px; height: 70px; border-radius: 4px; overflow: hidden; border: 1px solid {{ ph.bd }}">
-                      <img src="{{ ph.src }}" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block" />
+                      <img loading="lazy" decoding="async" src="{{ ph.src }}" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block" />
                       <button onClick="{{ ph.del }}" aria-label="Usuń zdjęcie" style="position: absolute; top: 3px; right: 3px; width: 18px; height: 18px; border-radius: 999px; border: 0; background: rgba(47,38,32,.75); color: #F7F2EA; font-size: 11px; line-height: 1; padding: 0; display: grid; place-items: center" style-hover="background: #8C3A2E">×</button>
                     </div>
                   </sc-for>
@@ -1166,7 +1166,7 @@
           <div style="background: #F3EDE4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 18px">
             <div style="background: #E6DCCD; border-radius: 6px; overflow: hidden; margin-bottom: 12px; aspect-ratio: 4/5; display: grid; place-items: center">
               <sc-if value="{{ hasNfPhoto }}" hint-placeholder-val="{{ false }}">
-                <img src="{{ nfPhoto }}" alt="Podgląd karty produktu" style="width: 100%; height: 100%; object-fit: cover; display: block" />
+                <img loading="lazy" decoding="async" src="{{ nfPhoto }}" alt="Podgląd karty produktu" style="width: 100%; height: 100%; object-fit: cover; display: block" />
               </sc-if>
               <sc-if value="{{ noNfPhoto }}" hint-placeholder-val="{{ true }}">
                 <span style="font-size: 12.5px; color: #736454">tu wejdzie zdjęcie</span>
@@ -1196,7 +1196,7 @@
             <sc-for list="{{ adminRows }}" as="r" hint-placeholder-count="8">
               <div style="display: flex; flex-wrap: wrap; gap: 14px; align-items: center; padding: 14px 16px; border-bottom: 1px solid #EDE4D8">
                 <sc-if value="{{ r.hasImg }}" hint-placeholder-val="{{ true }}">
-                  <img src="{{ r.img }}" alt="{{ r.name }}" style="width: 46px; height: 56px; object-fit: cover; border-radius: 3px; flex: 0 0 auto" />
+                  <img loading="lazy" decoding="async" src="{{ r.img }}" alt="{{ r.name }}" style="width: 46px; height: 56px; object-fit: cover; border-radius: 3px; flex: 0 0 auto" />
                 </sc-if>
                 <sc-if value="{{ r.isDraft }}" hint-placeholder-val="{{ false }}">
                   <span style="width: 46px; height: 56px; border-radius: 3px; background: #EDE4D8; border: 1px dashed #C6B8A5; flex: 0 0 auto; display: grid; place-items: center; font-size: 17px; color: #A8813F">+</span>
@@ -1223,7 +1223,7 @@
                   <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 16px">
                     <sc-for list="{{ r.photos }}" as="ph" hint-placeholder-count="1">
                       <div style="position: relative; width: 64px; height: 76px; border-radius: 4px; overflow: hidden; background: #E6DCCD; border: 1px solid {{ ph.bd }}">
-                        <img src="{{ ph.src }}" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block" />
+                        <img loading="lazy" decoding="async" src="{{ ph.src }}" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block" />
                         <button onClick="{{ ph.del }}" aria-label="Usuń zdjęcie" style="position: absolute; top: 3px; right: 3px; width: 18px; height: 18px; border-radius: 999px; border: 0; background: rgba(47,38,32,.75); color: #F7F2EA; font-size: 11px; line-height: 1; padding: 0; display: grid; place-items: center" style-hover="background: #8C3A2E">×</button>
                         <sc-if value="{{ ph.canLeft }}" hint-placeholder-val="{{ false }}">
                           <button onClick="{{ ph.left }}" aria-label="Przesuń w lewo" style="position: absolute; bottom: 3px; left: 3px; width: 18px; height: 18px; border-radius: 999px; border: 0; background: rgba(252,249,244,.85); color: #2F2620; font-size: 10px; line-height: 1; padding: 0; display: grid; place-items: center">‹</button>
@@ -1330,7 +1330,7 @@
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 8px">
               <sc-for list="{{ studioTiles }}" as="t" hint-placeholder-count="6">
                 <div style="position: relative; border: 2px solid {{ t.bd }}; border-radius: 4px; overflow: hidden; opacity: {{ t.op }}">
-                  <img src="{{ t.img }}" alt="Zdjęcie z pracowni" style="width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block" />
+                  <img loading="lazy" decoding="async" src="{{ t.img }}" alt="Zdjęcie z pracowni" style="width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block" />
                   <div style="display: flex; border-top: 1px solid #EDE4D8">
                     <button onClick="{{ t.setHero }}" style="flex: 1; background: #FCF9F4; border: 0; padding: 5px 2px; font-size: 10px; color: #5C5043" style-hover="background: #EDE4D8">u góry</button>
                     <button onClick="{{ t.toggle }}" style="flex: 1; background: #FCF9F4; border: 0; border-left: 1px solid #EDE4D8; padding: 5px 2px; font-size: 10px; color: #726456" style-hover="background: #EDE4D8">{{ t.toggleLabel }}</button>
@@ -1365,7 +1365,7 @@
             <div style="font-family: Newsreader, serif; font-size: 25px; margin-bottom: 4px">Zdjęcie kubka pod napisy</div>
             <p style="font-size: 13.5px; color: #726456; margin: 0 0 18px">Na tym zdjęciu klientka widzi swój tekst. Najlepiej Twój własny kubek, sfotografowany prosto z boku, na jednolitym tle — i <strong style="font-weight: 500">bez żadnego napisu</strong>, bo generowany tekst nałoży się na istniejący.</p>
             <label style="display: block; border: 1px dashed #C6B8A5; border-radius: 4px; padding: 20px; text-align: center; background: #F7F2EA; cursor: pointer; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; background: #EDE4D8" style-active="transform: scale(.98)">
-              <img src="{{ cfgImg }}" alt="Zdjęcie kubka w konfiguratorze" style="width: 100%; max-height: 240px; object-fit: cover; border-radius: 3px; display: block; margin-bottom: 12px" />
+              <img loading="lazy" decoding="async" src="{{ cfgImg }}" alt="Zdjęcie kubka w konfiguratorze" style="width: 100%; max-height: 240px; object-fit: cover; border-radius: 3px; display: block; margin-bottom: 12px" />
               <span style="display: block; font-size: 14px; color: #5C5043">Wgraj inne zdjęcie kubka</span>
               <input type="file" accept="image/*" onChange="{{ onCfgImg }}" style="display: none" />
             </label>
@@ -1415,7 +1415,7 @@
             <div style="font-family: Newsreader, serif; font-size: 23px; margin-bottom: 4px">Gdzie ma siedzieć napis</div>
             <p style="font-size: 13.5px; color: #726456; margin: 0 0 18px">Ustaw raz pod swoje zdjęcie. Podgląd po prawej pokazuje efekt na żywo.</p>
             <div style="position: relative; border-radius: 4px; overflow: hidden; background: #E6DCCD; margin-bottom: 20px">
-              <img src="{{ cfgImg }}" alt="Podgląd ustawienia napisu" style="width: 100%; display: block; aspect-ratio: 1/1; object-fit: cover" />
+              <img loading="lazy" decoding="async" src="{{ cfgImg }}" alt="Podgląd ustawienia napisu" style="width: 100%; display: block; aspect-ratio: 1/1; object-fit: cover" />
               <div style="position: absolute; left: {{ cfgTx }}%; top: {{ cfgTy }}%; width: 60%; transform: translate(-50%, -50%) rotate({{ cfgRot }}deg); text-align: center; font-size: 15px">
                 <span style="display: block; font-size: {{ cfgTs }}%; letter-spacing: 0.16em; line-height: 1.35; color: {{ inkHex }}; word-break: break-word">TWÓJ NAPIS</span>
               </div>
@@ -1500,12 +1500,12 @@
                       <div style="border: 1px solid #EDE4D8; border-radius: 4px; padding: 14px; background: #F7F2EA">
                         <div style="display: flex; gap: 10px; margin-bottom: 10px">
                           <label style="position: relative; flex: 1 1 0; min-width: 0; aspect-ratio: 4/5; border: 1px dashed #C6B8A5; border-radius: 4px; background: #FCF9F4; cursor: pointer; display: grid; place-items: center; overflow: hidden; transition: border-color .3s ease" style-hover="border-color: #2F2620">
-                            <sc-if value="{{ b.hasBefore }}" hint-placeholder-val="{{ false }}"><img src="{{ b.before }}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover" /></sc-if>
+                            <sc-if value="{{ b.hasBefore }}" hint-placeholder-val="{{ false }}"><img loading="lazy" decoding="async" src="{{ b.before }}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover" /></sc-if>
                             <span style="position: relative; background: rgba(252,249,244,.92); border-radius: 999px; padding: 5px 11px; font-size: 12px; color: #2F2620">{{ b.beforeCta }}</span>
                             <input type="file" accept="image/*" onChange="{{ b.onBefore }}" style="display: none" />
                           </label>
                           <label style="position: relative; flex: 1 1 0; min-width: 0; aspect-ratio: 4/5; border: 1px dashed #C6B8A5; border-radius: 4px; background: #FCF9F4; cursor: pointer; display: grid; place-items: center; overflow: hidden; transition: border-color .3s ease" style-hover="border-color: #2F2620">
-                            <sc-if value="{{ b.hasAfter }}" hint-placeholder-val="{{ false }}"><img src="{{ b.after }}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover" /></sc-if>
+                            <sc-if value="{{ b.hasAfter }}" hint-placeholder-val="{{ false }}"><img loading="lazy" decoding="async" src="{{ b.after }}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover" /></sc-if>
                             <span style="position: relative; background: rgba(252,249,244,.92); border-radius: 999px; padding: 5px 11px; font-size: 12px; color: #2F2620">{{ b.afterCta }}</span>
                             <input type="file" accept="image/*" onChange="{{ b.onAfter }}" style="display: none" />
                           </label>
@@ -1551,12 +1551,12 @@
                       <div style="border: 1px solid #EDE4D8; border-radius: 4px; padding: 14px; background: #F7F2EA">
                         <div style="display: flex; gap: 10px; margin-bottom: 10px">
                           <label style="position: relative; flex: 1 1 0; min-width: 0; aspect-ratio: 4/5; border: 1px dashed #C6B8A5; border-radius: 4px; background: #FCF9F4; cursor: pointer; display: grid; place-items: center; overflow: hidden; transition: border-color .3s ease" style-hover="border-color: #2F2620">
-                            <sc-if value="{{ b.hasBefore }}" hint-placeholder-val="{{ false }}"><img src="{{ b.before }}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover" /></sc-if>
+                            <sc-if value="{{ b.hasBefore }}" hint-placeholder-val="{{ false }}"><img loading="lazy" decoding="async" src="{{ b.before }}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover" /></sc-if>
                             <span style="position: relative; background: rgba(252,249,244,.92); border-radius: 999px; padding: 5px 11px; font-size: 12px; color: #2F2620">{{ b.beforeCta }}</span>
                             <input type="file" accept="image/*" onChange="{{ b.onBefore }}" style="display: none" />
                           </label>
                           <label style="position: relative; flex: 1 1 0; min-width: 0; aspect-ratio: 4/5; border: 1px dashed #C6B8A5; border-radius: 4px; background: #FCF9F4; cursor: pointer; display: grid; place-items: center; overflow: hidden; transition: border-color .3s ease" style-hover="border-color: #2F2620">
-                            <sc-if value="{{ b.hasAfter }}" hint-placeholder-val="{{ false }}"><img src="{{ b.after }}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover" /></sc-if>
+                            <sc-if value="{{ b.hasAfter }}" hint-placeholder-val="{{ false }}"><img loading="lazy" decoding="async" src="{{ b.after }}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover" /></sc-if>
                             <span style="position: relative; background: rgba(252,249,244,.92); border-radius: 999px; padding: 5px 11px; font-size: 12px; color: #2F2620">{{ b.afterCta }}</span>
                             <input type="file" accept="image/*" onChange="{{ b.onAfter }}" style="display: none" />
                           </label>
@@ -1794,7 +1794,7 @@
             <div style="display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px">
               <label style="display: block; border: 1px dashed #C6B8A5; border-radius: 4px; padding: 18px; text-align: center; background: #F7F2EA; cursor: pointer; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; background: #EDE4D8" style-active="transform: scale(.98)">
                 <sc-if value="{{ hasNnPhoto }}" hint-placeholder-val="{{ false }}">
-                  <img src="{{ nnPhoto }}" alt="Zdjęcie do notatki" style="width: 100%; max-height: 160px; object-fit: cover; border-radius: 3px; display: block; margin-bottom: 10px" />
+                  <img loading="lazy" decoding="async" src="{{ nnPhoto }}" alt="Zdjęcie do notatki" style="width: 100%; max-height: 160px; object-fit: cover; border-radius: 3px; display: block; margin-bottom: 10px" />
                 </sc-if>
                 <span style="display: block; font-size: 14px; color: #5C5043">Zdjęcie do wpisu</span>
                 <input type="file" accept="image/*" onChange="{{ onNnPhoto }}" style="display: none" />
@@ -1815,7 +1815,7 @@
             <div style="display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px">
               <label style="display: block; border: 1px dashed #C6B8A5; border-radius: 4px; padding: 18px; text-align: center; background: #F7F2EA; cursor: pointer; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; background: #EDE4D8" style-active="transform: scale(.98)">
                 <sc-if value="{{ hasNePhoto }}" hint-placeholder-val="{{ false }}">
-                  <img src="{{ nePhoto }}" alt="Zdjęcie z wydarzenia" style="width: 100%; max-height: 160px; object-fit: cover; border-radius: 3px; display: block; margin-bottom: 10px" />
+                  <img loading="lazy" decoding="async" src="{{ nePhoto }}" alt="Zdjęcie z wydarzenia" style="width: 100%; max-height: 160px; object-fit: cover; border-radius: 3px; display: block; margin-bottom: 10px" />
                 </sc-if>
                 <span style="display: block; font-size: 14px; color: #5C5043">Zdjęcie ze stoiska albo plakat</span>
                 <input type="file" accept="image/*" onChange="{{ onNePhoto }}" style="display: none" />
@@ -1921,7 +1921,7 @@
     <div style="display: flex; flex-wrap: wrap; gap: 56px">
       <div style="flex: 1 1 380px; min-width: 0">
         <div style="position: relative; border-radius: 6px; overflow: hidden; background: #E6DCCD">
-          <img src="{{ mugImg }}" alt="Kubek z wbijanym w glinę napisem" style="width: 100%; display: block; aspect-ratio: 1/1; object-fit: cover" />
+          <img loading="lazy" decoding="async" src="{{ mugImg }}" alt="Kubek z wbijanym w glinę napisem" style="width: 100%; display: block; aspect-ratio: 1/1; object-fit: cover" />
           <div style="position: absolute; inset: 0; background: {{ glazeHex }}; opacity: .07; mix-blend-mode: multiply; transition: background .6s ease; pointer-events: none"></div>
           <div style="position: absolute; left: {{ mugTx }}%; top: {{ mugTy }}%; width: 60%; transform: translate(-50%, -50%) rotate({{ mugRot }}deg); text-align: center; font-size: clamp(15px, 2.3vw, 26px)">
             <sc-for list="{{ mugLines }}" as="ln" hint-placeholder-count="1">
@@ -2023,10 +2023,10 @@
       <sc-for list="{{ giftItems }}" as="p" hint-placeholder-count="6">
         <div style="animation: maUp .45s ease both">
           <div onClick="{{ p.open }}" onMouseEnter="{{ p.enter }}" onMouseLeave="{{ p.leave }}" style="cursor: pointer; position: relative; border-radius: 6px; overflow: hidden; background: #E6DCCD; margin-bottom: 14px; transition: box-shadow .5s ease, transform .5s cubic-bezier(.2,.7,.2,1)" style-hover="box-shadow: 0 26px 50px -30px rgba(47,38,32,.5); transform: translateY(-4px)">
-            <img src="{{ p.img }}" alt="{{ p.name }}" style="width: 100%; display: block; aspect-ratio: 4/5; object-fit: cover" />
+            <img loading="lazy" decoding="async" src="{{ p.img }}" alt="{{ p.name }}" style="width: 100%; display: block; aspect-ratio: 4/5; object-fit: cover" />
             <button onClick="{{ p.toggleFav }}" aria-label="{{ p.favLabel }}" aria-pressed="{{ p.favPressed }}" style="position: absolute; top: 10px; right: 10px; z-index: 2; width: 44px; height: 44px; border-radius: 999px; border: 0; background: rgba(252,249,244,.92); color: #2F2620; font-size: 19px; line-height: 1; display: grid; place-items: center; padding: 0; transition: color .25s ease, transform .15s ease" style-hover="color: #24417E" style-active="transform: scale(.92)">{{ p.favIcon }}</button>
               <sc-for list="{{ p.slides }}" as="sl" hint-placeholder-count="0">
-                <img src="{{ sl.src }}" alt="" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{ sl.op }}; transition: opacity .6s ease" />
+                <img loading="lazy" decoding="async" src="{{ sl.src }}" alt="" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{ sl.op }}; transition: opacity .6s ease" />
               </sc-for>
               <sc-if value="{{ p.hasMany }}" hint-placeholder-val="{{ false }}">
                 <div style="position: absolute; left: 0; right: 0; bottom: 10px; display: flex; justify-content: center; gap: 5px; pointer-events: none">
@@ -2060,8 +2060,8 @@
       <sc-for list="{{ bundles }}" as="b" hint-placeholder-count="3">
         <div style="display: flex; flex-wrap: wrap; gap: 0; background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; overflow: hidden; animation: maUp .45s ease both">
           <div style="flex: 1 1 260px; min-width: 0; display: flex">
-            <img src="{{ b.img }}" alt="{{ b.name }}" style="width: 50%; aspect-ratio: 1/1; object-fit: cover; display: block" />
-            <img src="{{ b.img2 }}" alt="Drugi element zestawu" style="width: 50%; aspect-ratio: 1/1; object-fit: cover; display: block" />
+            <img loading="lazy" decoding="async" src="{{ b.img }}" alt="{{ b.name }}" style="width: 50%; aspect-ratio: 1/1; object-fit: cover; display: block" />
+            <img loading="lazy" decoding="async" src="{{ b.img2 }}" alt="Drugi element zestawu" style="width: 50%; aspect-ratio: 1/1; object-fit: cover; display: block" />
           </div>
           <div style="flex: 1 1 340px; min-width: 0; padding: 32px 30px; display: flex; flex-direction: column; justify-content: center">
             <div style="font-family: Newsreader, serif; font-size: clamp(24px, 2.8vw, 32px); line-height: 1.16; margin-bottom: 12px">{{ b.name }}</div>
@@ -2106,7 +2106,7 @@
           </div>
         </div>
         <div style="flex: 1 1 320px; min-width: 0">
-          <img src="zdjecia/opaska-jedwab.webp" alt="Opaska i scrunchie uszyte z jedwabnej apaszki" style="width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; display: block" />
+          <img loading="lazy" decoding="async" src="zdjecia/opaska-jedwab.webp" alt="Opaska i scrunchie uszyte z jedwabnej apaszki" style="width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; display: block" />
         </div>
       </div>
     </div>
@@ -2126,8 +2126,8 @@
         <sc-for list="{{ baScarf }}" as="b" hint-placeholder-count="2">
           <figure style="margin: 0; background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; overflow: hidden">
             <div onPointerDown="{{ b.down }}" onPointerMove="{{ b.move }}" onPointerUp="{{ b.up }}" onPointerCancel="{{ b.up }}" style="position: relative; background: #E6DCCD; aspect-ratio: 4/5; overflow: hidden; touch-action: none; cursor: ew-resize; user-select: none">
-              <img src="{{ b.after }}" alt="{{ b.altAfter }}" loading="lazy" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block" />
-              <img src="{{ b.before }}" alt="{{ b.altBefore }}" loading="lazy" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; clip-path: inset(0 {{ b.clip }} 0 0)" />
+              <img decoding="async" src="{{ b.after }}" alt="{{ b.altAfter }}" loading="lazy" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block" />
+              <img decoding="async" src="{{ b.before }}" alt="{{ b.altBefore }}" loading="lazy" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; clip-path: inset(0 {{ b.clip }} 0 0)" />
               <span style="position: absolute; top: 10px; left: 10px; background: rgba(252,249,244,.92); color: #2F2620; border-radius: 999px; padding: 4px 11px; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; opacity: {{ b.opBefore }}; transition: opacity .25s ease; pointer-events: none">przed</span>
               <span style="position: absolute; top: 10px; right: 10px; background: rgba(252,249,244,.92); color: #2F2620; border-radius: 999px; padding: 4px 11px; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; opacity: {{ b.opAfter }}; transition: opacity .25s ease; pointer-events: none">po</span>
               <div style="position: absolute; top: 0; bottom: 0; left: {{ b.pos }}; width: 2px; background: #FCF9F4; box-shadow: 0 0 0 1px rgba(47,38,32,.18); pointer-events: none"></div>
@@ -2179,7 +2179,7 @@
           </div>
         </div>
         <div style="flex: 1 1 320px; min-width: 0">
-          <img src="zdjecia/talerz-niebieski-odcisk.webp" alt="Talerz z odciskiem prawdziwej rośliny" style="width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; display: block" />
+          <img loading="lazy" decoding="async" src="zdjecia/talerz-niebieski-odcisk.webp" alt="Talerz z odciskiem prawdziwej rośliny" style="width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; display: block" />
         </div>
       </div>
     </div>
@@ -2199,8 +2199,8 @@
         <sc-for list="{{ baImprint }}" as="b" hint-placeholder-count="2">
           <figure style="margin: 0; background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; overflow: hidden">
             <div onPointerDown="{{ b.down }}" onPointerMove="{{ b.move }}" onPointerUp="{{ b.up }}" onPointerCancel="{{ b.up }}" style="position: relative; background: #E6DCCD; aspect-ratio: 4/5; overflow: hidden; touch-action: none; cursor: ew-resize; user-select: none">
-              <img src="{{ b.after }}" alt="{{ b.altAfter }}" loading="lazy" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block" />
-              <img src="{{ b.before }}" alt="{{ b.altBefore }}" loading="lazy" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; clip-path: inset(0 {{ b.clip }} 0 0)" />
+              <img decoding="async" src="{{ b.after }}" alt="{{ b.altAfter }}" loading="lazy" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block" />
+              <img decoding="async" src="{{ b.before }}" alt="{{ b.altBefore }}" loading="lazy" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; clip-path: inset(0 {{ b.clip }} 0 0)" />
               <span style="position: absolute; top: 10px; left: 10px; background: rgba(252,249,244,.92); color: #2F2620; border-radius: 999px; padding: 4px 11px; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; opacity: {{ b.opBefore }}; transition: opacity .25s ease; pointer-events: none">przed</span>
               <span style="position: absolute; top: 10px; right: 10px; background: rgba(252,249,244,.92); color: #2F2620; border-radius: 999px; padding: 4px 11px; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; opacity: {{ b.opAfter }}; transition: opacity .25s ease; pointer-events: none">po</span>
               <div style="position: absolute; top: 0; bottom: 0; left: {{ b.pos }}; width: 2px; background: #FCF9F4; box-shadow: 0 0 0 1px rgba(47,38,32,.18); pointer-events: none"></div>
@@ -2251,7 +2251,7 @@
       <span style="font-size: 12.5px; color: #736454">{{ entry.date }}</span>
     </div>
     <h1 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(32px, 4.6vw, 54px); line-height: 1.08; letter-spacing: -0.01em; margin: 0 0 28px">{{ entry.title }}</h1>
-    <img src="{{ entry.img }}" alt="{{ entry.title }}" style="width: 100%; aspect-ratio: 3/2; object-fit: cover; border-radius: 4px; display: block; margin-bottom: 32px" />
+    <img loading="lazy" decoding="async" src="{{ entry.img }}" alt="{{ entry.title }}" style="width: 100%; aspect-ratio: 3/2; object-fit: cover; border-radius: 4px; display: block; margin-bottom: 32px" />
     <p style="font-family: Newsreader, serif; font-size: clamp(19px, 2.2vw, 24px); line-height: 1.6; color: #3A3027; margin: 0 0 24px; text-wrap: pretty">{{ entry.lead }}</p>
     <div style="font-size: 12.5px; color: #736454; padding: 18px 0 28px; border-bottom: 1px solid #E2D7C7; margin-bottom: 28px">Adres tego wpisu: <code style="background: #EDE4D8; padding: 2px 6px; border-radius: 3px">{{ entry.path }}</code></div>
     <button onClick="{{ goJournal }}" style="background: transparent; border: 1px solid #C6B8A5; border-radius: 999px; padding: 14px 26px; font-size: 14px; color: #2F2620; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; background: #EDE4D8" style-active="transform: scale(.98)">← Wszystkie wpisy</button>
@@ -2338,7 +2338,7 @@
           </sc-if>
           <sc-for list="{{ cartItems }}" as="c" hint-placeholder-count="0">
             <div style="display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid #EDE4D8; animation: maUp .35s ease both">
-              <img src="{{ c.img }}" alt="{{ c.name }}" style="width: 74px; height: 92px; object-fit: cover; border-radius: 3px; flex: 0 0 auto" />
+              <img loading="lazy" decoding="async" src="{{ c.img }}" alt="{{ c.name }}" style="width: 74px; height: 92px; object-fit: cover; border-radius: 3px; flex: 0 0 auto" />
               <div style="flex: 1; min-width: 0">
                 <div style="font-family: Newsreader, serif; font-size: 17.5px; line-height: 1.25">{{ c.name }}</div>
                 <div style="font-size: 12.5px; color: #726456; margin: 3px 0 10px">{{ c.variant }}</div>
@@ -2386,7 +2386,7 @@
 
   <sc-if value="{{ hasZoom }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeZoom }}" style="position: fixed; inset: 0; z-index: 110; background: rgba(31, 25, 20, 0.88); display: flex; align-items: center; justify-content: center; padding: 28px; cursor: zoom-out; animation: maIn .25s ease both">
-      <img src="{{ zoom }}" alt="Zdjęcie produktu w powiększeniu" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px; box-shadow: 0 30px 80px -30px rgba(0,0,0,.7)" />
+      <img loading="lazy" decoding="async" src="{{ zoom }}" alt="Zdjęcie produktu w powiększeniu" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px; box-shadow: 0 30px 80px -30px rgba(0,0,0,.7)" />
       <button onClick="{{ closeZoom }}" aria-label="Zamknij powiększenie" style="position: absolute; top: 20px; right: 24px; background: transparent; border: 0; color: #E2D7C7; font-size: 30px; line-height: 1; padding: 6px 10px" style-hover="color: #fff">×</button>
     </div>
   </sc-if>
