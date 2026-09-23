@@ -143,6 +143,16 @@ class CatalogTranslationTest extends TestCase
             ->assertSee('gratis od');
     }
 
+    public function test_a_basket_filled_on_a_polish_page_still_names_its_pieces_on_an_english_one(): void
+    {
+        [, $polishOnly] = $this->twoProducts();
+
+        $this->post('/koszyk', ['variant_id' => $polishOnly->variants->first()->id])->assertRedirect();
+
+        // The drawer on an English page: the piece has no English name, so the basket names it in Polish.
+        $this->get('/en/shop')->assertOk()->assertSee('Voucher na warsztaty');
+    }
+
     /** @return array{Product, Product} */
     private function twoProducts(): array
     {

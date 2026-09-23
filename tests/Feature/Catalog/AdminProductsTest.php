@@ -385,6 +385,25 @@ class AdminProductsTest extends TestCase
             ->assertSee('Bez angielskiej nazwy produkt nie pokaże się w angielskim sklepie.');
     }
 
+    public function test_an_english_name_needs_the_feature_to_confirm_and_the_warnings_in_english_too(): void
+    {
+        $mug = $this->product('Kubki malowane', 1, [7900]);
+
+        $this->actingAs(User::factory()->create())
+            ->put('/panel/produkty/'.$mug->id, [
+                'form' => 'produkt-'.$mug->id,
+                'name' => 'Kubki malowane',
+                'category_id' => $this->mugs->id,
+                'deviation' => 'Nie do zmywarki — złota krawędź',
+                'safety_warnings' => 'Nie stawiaj na ogniu.',
+                'en' => ['name' => 'Hand-painted mugs'],
+                'variants' => [['id' => $mug->variants->first()->id, 'label' => '', 'price' => '79']],
+            ])
+            ->assertSessionHasErrorsIn('produkt-'.$mug->id, ['en.deviation', 'en.safety_warnings']);
+
+        $this->assertFalse($mug->fresh()->hasTranslation('en'));
+    }
+
     private function product(string $name, int $sortOrder, array $prices, array $attributes = []): Product
     {
         $product = Product::factory()->create([

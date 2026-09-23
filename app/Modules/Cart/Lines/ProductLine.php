@@ -37,14 +37,15 @@ class ProductLine extends CartLine
         return $this->variant->price_gross;
     }
 
+    // A piece put in on a Polish page may have no English text yet; the basket still names it (see HasTranslations).
     public function name(): string
     {
-        return $this->variant->product->name;
+        return $this->variant->product->inPageLanguageOrPolish('name');
     }
 
     public function details(): ?string
     {
-        return $this->customText !== null ? '„'.$this->customText.'”' : ($this->variant->label ?: null);
+        return $this->customText !== null ? '„'.$this->customText.'”' : ($this->variant->inPageLanguageOrPolish('label') ?: null);
     }
 
     public function thumbnailUrl(): ?string
@@ -104,11 +105,12 @@ class ProductLine extends CartLine
         return [new LineItem(
             variantId: $this->variant->id,
             name: $this->name(),
-            label: $this->variant->label,
+            label: $this->variant->inPageLanguageOrPolish('label'),
             quantity: $this->quantity,
             unitPrice: $this->unitPrice(),
             customText: $this->customText,
-            deviation: $this->variant->product->deviation ?: null,
+            // Never dropped for want of a translation: the checkout asks to accept it.
+            deviation: $this->variant->product->inPageLanguageOrPolish('deviation') ?: null,
         )];
     }
 }

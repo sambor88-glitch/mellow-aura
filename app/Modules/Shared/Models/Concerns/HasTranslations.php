@@ -51,6 +51,15 @@ trait HasTranslations
         return $locale === Locales::default() || $this->translation($locale) !== null;
     }
 
+    /**
+     * The field in the language of the page, or in Polish when it has none. Only for what a customer already chose —
+     * a basket line put in on a Polish page — never for what a page offers: the basket must name what is in it.
+     */
+    public function inPageLanguageOrPolish(string $key): mixed
+    {
+        return $this->getAttribute($key) ?? parent::getAttribute($key);
+    }
+
     public function getAttribute($key)
     {
         if (in_array($key, $this->translatable, true) && Locales::current() !== Locales::default()) {
