@@ -163,6 +163,22 @@ class EnglishVersionTest extends TestCase
             ->assertSee('>Koszyk</span>', false);
     }
 
+    public function test_the_gift_finder_is_polish_only_and_english_gifts_lead_to_the_gift_sets(): void
+    {
+        $this->get('/en/gifts')->assertNotFound();
+
+        $this->get('/en/shop')
+            ->assertSee('href="'.url('/en/gift-sets').'"', false)
+            ->assertSee('>Gifts</a>', false)
+            ->assertDontSee('Find a gift');
+
+        $this->get('/prezenty')
+            ->assertOk()
+            ->assertSee('href="'.url('/en/gift-sets').'?unavailable=1" hreflang="en"', false);
+
+        $this->get('/sklep')->assertSee('href="'.url('/prezenty').'"', false);
+    }
+
     public function test_with_english_switched_off_nothing_points_to_it(): void
     {
         config(['localization.enabled' => ['pl']]);

@@ -6,5 +6,5 @@ return [
     'hint' => 'This page is also available in English.',
     'hint_action' => 'Switch to English',
     'hint_close' => 'Stay on this version',
-    'unavailable' => 'The page you came from is in Polish only — workshops and studio services are held in Polish.',
+    'unavailable' => 'The page you came from is in Polish only, so here is the nearest one in English.',
 ];

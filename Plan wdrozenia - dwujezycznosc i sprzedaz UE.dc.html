@@ -78,8 +78,8 @@
         <div style="font-size: 10pt; line-height: 1.75">
           Sklep i karta produktu<br />
           Konfigurator kubka<br />
-          Prezenty i zestawy prezentowe<br />
-          O mnie, pracownia, dziennik<br />
+          Zestawy prezentowe<br />
+          O mnie, pracownia<br />
           Kontakt<br />
           Wysyłka i pielęgnacja<br />
           Zamówienia indywidualne
@@ -94,9 +94,11 @@
           Wypał ceramiki<br />
           Ceramika dla gastronomii<br />
           Odcisk twojej rośliny<br />
-          Z twojej apaszki
+          Z twojej apaszki<br />
+          Dziennik<br />
+          Szukam prezentu
         </div>
-        <div style="font-size: 9pt; line-height: 1.55; color: #6B5D4F; margin-top: 4mm">Usługi wymagające przyjazdu do Krakowa albo przesłania materiału tam i z powrotem. Dwie przesyłki międzynarodowe na jedno zamówienie się nie spinają.</div>
+        <div style="font-size: 9pt; line-height: 1.55; color: #6B5D4F; margin-top: 4mm">Usługi wymagające przyjazdu do Krakowa albo przesłania materiału tam i z powrotem. Dwie przesyłki międzynarodowe na jedno zamówienie się nie spinają. Dziennik i wyszukiwarka prezentów odpadły 23 września: dużo tekstu, mało sprzedaży.</div>
       </div>
     </div>
 
@@ -173,7 +175,7 @@
       <p style="font-size: 10pt; line-height: 1.6; color: #5C5043; margin: 0">Stąd zasada na wpisywanie cen: <strong style="font-weight: 500">cena PLN podzielona przez kurs, powiększona o około 15%, zaokrąglona w górę do okrągłej końcówki</strong>. Kubek za 149 zł to nie 35 EUR, tylko 39 EUR. To nie chciwość, tylko bufor na podatek, którego dziś nie ma, i na obsługę, która kosztuje więcej niż krajowa.</p>
     </div>
 
-    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty"><strong style="font-weight: 500">Metody płatności zależą od waluty.</strong> BLIK działa wyłącznie w złotych, więc na <code>/en/</code> go nie ma — zostają karty i przelew. Moduł <code>Payments</code> dostaje listę metod filtrowaną walutą koszyka, a nie stałą listę z konfiguracji. Przelewy24 obsługują EUR, ale rozliczenie w tej walucie wymaga osobnych ustaleń z operatorem.</p>
+    <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty"><strong style="font-weight: 500">Metody płatności zależą od waluty.</strong> BLIK działa wyłącznie w złotych, więc na <code>/en/</code> go nie ma — zostają karty i przelew. Moduł <code>Payments</code> dostaje listę metod filtrowaną walutą koszyka, a nie stałą listę z konfiguracji. Płatności obsługuje Stripe, który przyjmuje euro od ręki — do ustalenia zostaje, które metody włączyć dla EUR i na jakie konto trafiają środki.</p>
 
     <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 17pt; margin: 10mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 0.3mm solid #E2D7C7">6. Wysyłka: trzy strefy, cennik wagowy</h2>
 
@@ -379,7 +381,7 @@
       <strong style="font-weight: 500">Księgowa</strong> <span style="color: #726456">MA-121</span> — potwierdzenie mechaniki progu WSTO przy zwolnieniu podmiotowym, sposób dokumentowania sprzedaży zagranicznej, kasa fiskalna przy warsztatach płatnych gotówką, moment i tryb rejestracji do OSS.<br />
       <strong style="font-weight: 500">Prawnik</strong> <span style="color: #726456">MA-122</span> — regulamin i polityka prywatności po angielsku, pouczenie o odstąpieniu, konstrukcja wyłączenia zwrotu dla rzeczy personalizowanych, kto ponosi koszt zwrotu z zagranicy.<br />
       <strong style="font-weight: 500">Kasia</strong> <span style="color: #726456">MA-123</span> — cennik w euro dla każdego produktu, decyzja o obsłudze zapytań po angielsku, potwierdzenie listy krajów w strefie UE 1, kolejność tłumaczenia produktów.<br />
-      <strong style="font-weight: 500">Przewoźnik i operator płatności</strong> <span style="color: #726456">MA-124</span> — umowny cennik międzynarodowy zamiast szacunków z rozdziału 6, warunki rozliczania EUR w Przelewy24.
+      <strong style="font-weight: 500">Przewoźnik i operator płatności</strong> <span style="color: #726456">MA-124</span> — umowny cennik międzynarodowy zamiast szacunków z rozdziału 6, metody płatności i konto dla EUR w Stripe.
     </div>
 
 
@@ -397,17 +399,18 @@
       <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/sklep</code></td><td style="padding: 2.5mm 3mm"><code>/en/shop</code></td><td style="padding: 2.5mm 3mm"><code>shop.index</code></td></tr>
       <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/sklep/{kategoria}</code></td><td style="padding: 2.5mm 3mm"><code>/en/shop/{category}</code></td><td style="padding: 2.5mm 3mm"><code>shop.category</code></td></tr>
       <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/produkt/{slug}</code></td><td style="padding: 2.5mm 3mm"><code>/en/product/{slug}</code></td><td style="padding: 2.5mm 3mm"><code>product.show</code></td></tr>
-      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/kubek-z-napisem</code></td><td style="padding: 2.5mm 3mm"><code>/en/custom-text-mug</code></td><td style="padding: 2.5mm 3mm"><code>mug.configurator</code></td></tr>
-      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/prezenty</code></td><td style="padding: 2.5mm 3mm"><code>/en/gifts</code></td><td style="padding: 2.5mm 3mm"><code>gifts.index</code></td></tr>
-      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/zestawy-prezentowe</code></td><td style="padding: 2.5mm 3mm"><code>/en/gift-sets</code></td><td style="padding: 2.5mm 3mm"><code>gifts.sets</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/kubek-z-napisem</code></td><td style="padding: 2.5mm 3mm"><code>/en/custom-text-mug</code></td><td style="padding: 2.5mm 3mm"><code>mug.index</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/zestawy-prezentowe</code></td><td style="padding: 2.5mm 3mm"><code>/en/gift-sets</code></td><td style="padding: 2.5mm 3mm"><code>bundles.index</code></td></tr>
       <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/zamowienie</code></td><td style="padding: 2.5mm 3mm"><code>/en/checkout</code></td><td style="padding: 2.5mm 3mm"><code>checkout.index</code></td></tr>
-      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/o-mnie</code></td><td style="padding: 2.5mm 3mm"><code>/en/about</code></td><td style="padding: 2.5mm 3mm"><code>about</code></td></tr>
-      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/pracownia</code></td><td style="padding: 2.5mm 3mm"><code>/en/studio</code></td><td style="padding: 2.5mm 3mm"><code>studio</code></td></tr>
-      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/dziennik</code></td><td style="padding: 2.5mm 3mm"><code>/en/journal</code></td><td style="padding: 2.5mm 3mm"><code>journal.index</code></td></tr>
-      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/dziennik/{slug}</code></td><td style="padding: 2.5mm 3mm"><code>/en/journal/{slug}</code></td><td style="padding: 2.5mm 3mm"><code>journal.show</code></td></tr>
-      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/wysylka-i-pielegnacja</code></td><td style="padding: 2.5mm 3mm"><code>/en/shipping-and-care</code></td><td style="padding: 2.5mm 3mm"><code>shipping.info</code></td></tr>
-      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/zamowienia-indywidualne</code></td><td style="padding: 2.5mm 3mm"><code>/en/custom-orders</code></td><td style="padding: 2.5mm 3mm"><code>custom-orders</code></td></tr>
-      <tr><td style="padding: 2.5mm 3mm"><code>/kontakt</code></td><td style="padding: 2.5mm 3mm"><code>/en/contact</code></td><td style="padding: 2.5mm 3mm"><code>contact</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/o-mnie</code></td><td style="padding: 2.5mm 3mm"><code>/en/about</code></td><td style="padding: 2.5mm 3mm"><code>content.about</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/pracownia</code></td><td style="padding: 2.5mm 3mm"><code>/en/studio</code></td><td style="padding: 2.5mm 3mm"><code>content.studio</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/wysylka-i-pielegnacja</code></td><td style="padding: 2.5mm 3mm"><code>/en/shipping-and-care</code></td><td style="padding: 2.5mm 3mm"><code>content.faq</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/zamowienia-indywidualne</code></td><td style="padding: 2.5mm 3mm"><code>/en/custom-orders</code></td><td style="padding: 2.5mm 3mm"><code>custom-orders.index</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/kontakt</code></td><td style="padding: 2.5mm 3mm"><code>/en/contact</code></td><td style="padding: 2.5mm 3mm"><code>content.contact</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/regulamin</code></td><td style="padding: 2.5mm 3mm"><code>/en/terms</code></td><td style="padding: 2.5mm 3mm"><code>content.terms</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/polityka-prywatnosci</code></td><td style="padding: 2.5mm 3mm"><code>/en/privacy-policy</code></td><td style="padding: 2.5mm 3mm"><code>content.privacy</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/odstapienie-od-umowy</code></td><td style="padding: 2.5mm 3mm"><code>/en/withdrawal</code></td><td style="padding: 2.5mm 3mm"><code>withdrawal.create</code></td></tr>
+      <tr><td style="padding: 2.5mm 3mm"><code>/ustawienia-cookies</code></td><td style="padding: 2.5mm 3mm"><code>/en/cookie-settings</code></td><td style="padding: 2.5mm 3mm"><code>consent.edit</code></td></tr>
     </table>
 
     <p style="font-size: 10.5pt; line-height: 1.62; color: #5C5043; margin: 0 0 4mm; text-wrap: pretty">Kategorie sklepu mają własne slugi per język. Na <code>/en/shop</code> istnieją tylko dwie: <code>ceramics</code> (Ceramika) i <code>crafts</code> (Rękodzieło). Vouchery i warsztaty są kategoriami wyłącznie polskimi. Wartość w bazie jest po angielsku, etykieta po polsku — zgodnie z zasadą z <code>CLAUDE.md</code>.</p>
@@ -418,11 +421,13 @@
         <th style="text-align: left; padding: 3mm; font-weight: 500">Dokąd prowadzi przełącznik języka</th>
       </tr>
       <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/warsztaty-ceramiczne-krakow</code></td><td style="padding: 2.5mm 3mm"><code>/en/about</code> z notką, że warsztaty odbywają się po polsku</td></tr>
-      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/voucher-na-warsztaty-ceramiczne</code></td><td style="padding: 2.5mm 3mm"><code>/en/gifts</code> — najbliższy sensowny odpowiednik dla prezentu</td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/voucher-na-warsztaty-ceramiczne</code></td><td style="padding: 2.5mm 3mm"><code>/en/gift-sets</code> — najbliższy sensowny odpowiednik dla prezentu</td></tr>
       <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/wypal-ceramiki-krakow</code></td><td style="padding: 2.5mm 3mm"><code>/en/studio</code></td></tr>
       <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/ceramika-dla-gastronomii</code></td><td style="padding: 2.5mm 3mm"><code>/en/custom-orders</code></td></tr>
       <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/odcisk-twojej-rosliny</code></td><td style="padding: 2.5mm 3mm"><code>/en/custom-orders</code></td></tr>
       <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/z-twojej-apaszki</code></td><td style="padding: 2.5mm 3mm"><code>/en/custom-orders</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/prezenty</code></td><td style="padding: 2.5mm 3mm"><code>/en/gift-sets</code></td></tr>
+      <tr style="border-bottom: 0.25mm solid #E2D7C7"><td style="padding: 2.5mm 3mm"><code>/dziennik</code></td><td style="padding: 2.5mm 3mm"><code>/en/about</code></td></tr>
       <tr><td style="padding: 2.5mm 3mm"><code>/panel</code></td><td style="padding: 2.5mm 3mm">Bez przełącznika. Panel jest wyłącznie po polsku — czyta go tylko Kasia.</td></tr>
     </table>
 

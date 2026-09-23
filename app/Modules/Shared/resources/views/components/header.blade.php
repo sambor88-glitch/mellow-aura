@@ -4,7 +4,8 @@
     // page and the English menu has no Polish-only pages (workshops are held in Polish).
     $links = [
         ['shop', 'shop.index', 'shop.*'],
-        ['gifts', 'gifts.index', 'gifts.*'],
+        // The gift finder is Polish-only; an English page leads „Gifts” to the gift sets instead.
+        Locales::has('gifts.index', Locales::current()) ? ['gifts', 'gifts.index', 'gifts.*'] : ['gifts', 'bundles.index', 'bundles.*'],
         ['workshops', 'workshops.index', 'workshops.*'],
         ['about', 'content.about', 'content.about'],
         ['journal', 'journal.index', 'journal.*'],
