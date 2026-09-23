@@ -314,16 +314,17 @@
     @if ($cards)
         <section class="mx-auto max-w-[1360px] px-[clamp(18px,4vw,48px)] pt-[clamp(90px,14vh,150px)] pb-[clamp(90px,14vh,150px)]">
             <div data-aura-rise class="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-[clamp(16px,2vw,28px)]">
+                {{-- The first card stands out at rest; on hover every card fills with the same rose, text in ink and graphite. --}}
                 @foreach ($cards as [$url, $dark, $eyebrow, $title, $text])
                     <a href="{{ $url }}" @class([
-                        'fill-btn flex min-h-[260px] flex-col justify-between rounded-[24px] px-8 py-[38px] transition-[border-color,transform] duration-500 ease-clay hover:-translate-y-1',
-                        'focus-on-dark bg-ink text-sand [--fill:var(--color-rose)] hover:bg-rose hover:text-ink' => $dark,
-                        'glass text-ink [--fill:var(--color-cream)] hover:border-ink hover:text-ink' => ! $dark,
+                        'group fill-btn flex min-h-[260px] flex-col justify-between rounded-[24px] px-8 py-[38px] transition-[background-color,border-color,color,transform] duration-500 ease-clay [--fill:var(--color-rose)] hover:-translate-y-1 hover:border-rose hover:bg-rose hover:text-ink',
+                        'focus-on-dark bg-ink text-sand' => $dark,
+                        'glass text-ink' => ! $dark,
                     ])>
-                        <span @class(['text-[10.5px] tracking-[0.24em] uppercase', 'text-rose' => $dark, 'text-brown' => ! $dark])>{{ $eyebrow }}</span>
+                        <span @class(['text-[10.5px] tracking-[0.24em] uppercase transition-colors duration-500 group-hover:text-graphite', 'text-rose' => $dark, 'text-brown' => ! $dark])>{{ $eyebrow }}</span>
                         <span>
                             <span class="mb-2.5 block font-serif text-[31px] leading-[1.1] font-light">{{ $title }}</span>
-                            <span @class(['block text-[14.5px] leading-[1.6]', 'text-on-dark' => $dark, 'text-muted' => ! $dark])>{{ $text }}</span>
+                            <span @class(['block text-[14.5px] leading-[1.6] transition-colors duration-500 group-hover:text-graphite', 'text-on-dark' => $dark, 'text-muted' => ! $dark])>{{ $text }}</span>
                         </span>
                     </a>
                 @endforeach
