@@ -17,8 +17,9 @@
 @endphp
 {{--
     A glass pill floating over the page (mellowaura-design, „Nagłówek-pigułka”). It slides away while scrolling down
-    and comes back on the way up (resources/js/aura.js). Below 920 px the links and the language switcher move into
-    a full-screen menu, and below 480 px the pill tightens its spacing: logo, „Menu” and the cart must fit a 360 px phone.
+    and comes back on the way up (resources/js/aura.js). Below 920 px the links, the language switcher and the favourites
+    move into a full-screen menu, and below 480 px the pill tightens its spacing: logo, „Menu” and the cart must fit
+    a 360 px phone.
 --}}
 <div x-data="stickyHeader" class="pointer-events-none sticky top-0 z-60 px-3 pt-3.5 print:hidden">
     {{-- The menu is a sibling of the pill, not its child: the pill's backdrop-filter would make it the containing
@@ -35,7 +36,7 @@
             </nav>
             <div class="ml-auto flex items-center gap-2 min-[920px]:ml-0">
                 <div class="hidden min-[920px]:contents"><x-localization::switcher /></div>
-                @includeIf('catalog::favorites.header-link')
+                <div class="hidden min-[920px]:contents">@includeIf('catalog::favorites.header-link')</div>
                 @if ($links)
                     <button type="button" x-ref="menuButton" x-on:click="menu = true" aria-controls="menu" x-bind:aria-expanded="menu"
                             class="fill-btn flex min-h-11 items-center rounded-full border border-line-strong px-3.5 text-[13.5px] text-ink [--fill:var(--color-sand-dark)] min-[480px]:px-4 min-[920px]:hidden">{{ __('shared::header.menu') }}</button>
@@ -56,7 +57,8 @@
                        style="transition-delay: {{ $i * 60 }}ms"
                        class="font-serif text-[clamp(40px,10vw,72px)] leading-[1.08] font-light text-ink transition-[transform,opacity,filter] duration-700 ease-clay hover:text-navy">{{ __('shared::header.'.$label) }}</a>
                 @endforeach
-                <div class="mt-6 flex gap-2"><x-localization::switcher /></div>
+                {{-- Leaving the menu for the favourites on the shop page itself must close it, as a link above does. --}}
+                <div x-on:click="menu = false" class="mt-6 flex gap-2"><x-localization::switcher />@includeIf('catalog::favorites.header-link')</div>
             </nav>
         @endif
     </div>
