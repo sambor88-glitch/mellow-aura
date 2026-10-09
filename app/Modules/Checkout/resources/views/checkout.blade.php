@@ -73,7 +73,7 @@
 
                     <fieldset class="glass mb-4 rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]">
                         <legend class="float-left mb-4 flex w-full items-baseline gap-3 font-serif text-[30px] leading-none font-light"><span aria-hidden="true" class="text-[22px] text-rose italic">ii</span>{{ $t('payment') }}</legend>
-                        <div class="grid gap-2.5">
+                        <div class="clear-both grid gap-2.5">
                             @foreach ($paymentMethods as $method)
                                 <label class="{{ $radio }} py-[15px] has-checked:border-navy has-checked:bg-navy-soft">
                                     <input type="radio" name="payment_method" value="{{ $method->value }}" x-model="payment" @checked($selectedPayment === $method->value) class="sr-only">
@@ -127,7 +127,7 @@
                     @if ($needsDelivery)
                         <fieldset class="glass rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]">
                             <legend class="float-left mb-4 flex w-full items-baseline gap-3 font-serif text-[30px] leading-none font-light"><span aria-hidden="true" class="text-[22px] text-rose italic">iii</span>{{ $t('delivery_way') }}</legend>
-                            <div class="grid gap-2.5">
+                            <div class="clear-both grid gap-2.5">
                                 @foreach ($methods as $method)
                                     <label class="{{ $radio }} py-4 has-checked:border-ink has-checked:bg-sand-dark">
                                         <input type="radio" name="shipping_method" value="{{ $method['code'] }}" x-model="shipping" @checked($selectedShipping === $method['code']) class="sr-only">
