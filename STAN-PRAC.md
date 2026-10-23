@@ -4,10 +4,10 @@ Stan na 23.10.2026. Do startu (10 listopada) zostało 18 dni.
 
 ## Gdzie toczą się prace
 
-- **GitLab** (`gitlab.com/sambor88/mellow-aura`, prywatny): tu toczy się bieżąca praca, także na gałęziach,
-  których nie ma na GitHubie (np. `konrad/*`).
-- **GitHub** (`sambor88-glitch/mellow-aura`): przy każdym pushu workflow `mirror-to-gitlab.yml` kopiuje
-  gałęzie i tagi na GitLab. Nadpisuje gałęzie o tej samej nazwie, a gałęzi istniejących tylko na GitLabie nie rusza.
+- **GitLab** (`gitlab.com/sambor88/mellow-aura`, prywatny): źródło prawdy. Tu toczy się bieżąca praca,
+  także na gałęziach, których nie ma na GitHubie (np. `konrad/*`).
+- **GitHub** (`sambor88-glitch/mellow-aura`): kopia `main` i `dev` z GitLaba. Na GitLab wraca stąd tylko
+  praca z gałęzi `claude/*` (workflow `mirror-to-gitlab.yml`).
 - **Kod Laravela** jest na gałęzi `dev`. Gałąź `main` to wciąż tylko prototyp i dokumenty.
 - **Zadania**: Jira, projekt MA — https://maciej-samborski.atlassian.net/issues?jql=project%20%3D%20MA
 
