@@ -536,9 +536,12 @@
         display: none;
     }
 
+    /* Clipped sideways, not visible: cards past the screen edge would widen the page,
+       and a tablet then lets the whole page slide sideways and zooms it out to fit. */
     @media (min-width: 768px) {
         .motion .aura-track-wrap {
-            overflow: visible;
+            overflow-x: clip;
+            overflow-y: visible;
             scroll-snap-type: none;
         }
     }

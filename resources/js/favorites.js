@@ -40,6 +40,8 @@ export default {
             // Blocked storage: the heart still works until the page is left.
         }
 
-        window.Alpine.store('cart').say(saved ? 'Zapisane w ulubionych — znajdziesz je w nagłówku' : 'Usunięte z ulubionych');
+        // Below 920 px the favourites link sits in the menu, not in the header (components/header.blade.php).
+        const where = window.matchMedia('(min-width: 920px)').matches ? 'w nagłówku' : 'w menu';
+        window.Alpine.store('cart').say(saved ? `Zapisane w ulubionych — znajdziesz je ${where}` : 'Usunięte z ulubionych');
     },
 };
