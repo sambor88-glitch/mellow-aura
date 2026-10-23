@@ -101,7 +101,15 @@ Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
 
 ## Repozytorium
 
-- Publiczne: `sambor88-glitch/mellow-aura`, gałąź `main`, wypychanie przez SSH.
+- Pracujemy na GitLabie: `gitlab.com/sambor88/mellow-aura` (prywatne). Tam są gałęzie robocze i merge requesty.
+- GitHub `sambor88-glitch/mellow-aura` (publiczne, gałąź `main`, wypychanie przez SSH) zostaje, bo czytają z niego
+  Claude Design i sesje Claude Code w chmurze.
+- Przy każdym pushu na GitHub workflow `.github/workflows/mirror-to-gitlab.yml` kopiuje wszystkie gałęzie i tagi
+  na GitLab. Kopia idzie tylko w tę stronę i nadpisuje na GitLabie gałąź o tej samej nazwie. Gałęzie, które są
+  tylko na GitLabie (np. `konrad/*`), zostają nietknięte.
+- Dlatego na GitLabie commituj tylko na gałęziach, których nie ma na GitHubie. Commit wypchnięty na GitLabie
+  do `main` albo `dev` zniknie przy najbliższym pushu na tę gałąź na GitHubie.
+- Stan prac sprawdzaj na GitLabie i w Jirze (projekt MA), nie tylko na GitHubie.
 - Nigdy nie commituj `uploads/` (surowe zrzuty mogą zawierać dane klientek), `.env` ani kluczy — są w `.gitignore`.
 - Projekt w Claude Design czyta z tego repozytorium (`github.md`). Zmianę w `.dc.html` wypchnij, a przed pracą
   w Claude Design pobierz aktualną wersję z repo, żeby się nie rozjechały.
