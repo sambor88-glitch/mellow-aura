@@ -9,7 +9,7 @@ i aplikacja Laravel w budowie (tydzień 1: moduły `Shared`, `Settings`, `Catalo
 | --- | --- |
 | `MellowAura.dc.html` | wygląd, teksty i zachowanie każdego ekranu — przenoś, nie projektuj od nowa |
 | `Specyfikacja wdrozenia - MellowAura.dc.html` | adresy, tytuły, opisy, JSON-LD, zakres panelu, integracje |
-| `Plan wdrozenia - Laravel krok po kroku.dc.html` | stos, schemat bazy, harmonogram do 10 listopada |
+| `Plan wdrozenia - Laravel krok po kroku.dc.html` | stos, schemat bazy, harmonogram, start w pierwszym tygodniu grudnia (30.11–6.12) |
 | `.claude/skills/` | paleta, komponenty, UX, teksty, dostępność — kolory i kroje zmieniasz tylko w `mellowaura-design` |
 
 Pliki `.dc.html` otwierają się w przeglądarce i muszą leżeć obok `support.js`
@@ -105,6 +105,15 @@ Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
 - Nigdy nie commituj `uploads/` (surowe zrzuty mogą zawierać dane klientek), `.env` ani kluczy — są w `.gitignore`.
 - Projekt w Claude Design czyta z tego repozytorium (`github.md`). Zmianę w `.dc.html` wypchnij, a przed pracą
   w Claude Design pobierz aktualną wersję z repo, żeby się nie rozjechały.
+
+## Jira i czas pracy
+
+- Zadania są w Jirze, projekt MA. Każde nowe zadanie i podzadanie dostaje estymatę (`Original Estimate`)
+  od razu przy zakładaniu. Bez estymaty zadanie nie istnieje.
+- Każda praca nad zadaniem ma worklog z prawdziwym czasem i datą. Zadanie nie przechodzi na „Gotowe”
+  bez worklogu.
+- Czas mierzymy od 24.10.2026. Worklogi sprzed tej daty nie są prawdziwym pomiarem — nie licz z nich godzin.
+- Raport godzin jest co poniedziałek: zalogowany czas a estymata, zadania bez estymaty, zamknięte bez worklogu.
 
 ## Komendy
 
