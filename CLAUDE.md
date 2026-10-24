@@ -9,7 +9,7 @@ i dokumentacja — kodu aplikacji jeszcze nie ma.
 | --- | --- |
 | `MellowAura.dc.html` | wygląd, teksty i zachowanie każdego ekranu — przenoś, nie projektuj od nowa |
 | `Specyfikacja wdrozenia - MellowAura.dc.html` | adresy, tytuły, opisy, JSON-LD, zakres panelu, integracje |
-| `Plan wdrozenia - Laravel krok po kroku.dc.html` | stos, schemat bazy, harmonogram do 10 listopada |
+| `Plan wdrozenia - Laravel krok po kroku.dc.html` | stos, schemat bazy, harmonogram, start w pierwszym tygodniu grudnia (30.11–6.12) |
 | `.claude/skills/` | paleta, komponenty, UX, teksty, dostępność — kolory i kroje zmieniasz tylko w `mellowaura-design` |
 
 Pliki `.dc.html` otwierają się w przeglądarce i muszą leżeć obok `support.js`
