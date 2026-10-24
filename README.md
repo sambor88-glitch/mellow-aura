@@ -60,39 +60,12 @@ php artisan test
    $FORGE_PHP artisan migrate --force
    $FORGE_PHP artisan storage:link
    $FORGE_PHP artisan optimize
-   $FORGE_PHP artisan staging:notify-review
    ```
-   Ostatnia linia wysyła Kasi maila o nowościach — opis niżej w „Mail do Kasi po deployu”.
 5. **SSL**: Let's Encrypt. W Cloudflare rekord `staging` jako A na IP serwera.
 6. Pierwszy deploy, potem raz przez SSH jako `forge` (nie root):
    `cd ~/staging.mellow-aura.com && php artisan db:seed --force`.
 7. Sprawdź: `https://staging.mellow-aura.com` pyta o hasło (login `mellowaura`), a odpowiedź ma nagłówek
    `X-Robots-Tag: noindex, nofollow` (`curl -I`).
-
-### Mail do Kasi po deployu
-
-Po każdym deployu na staging `artisan staging:notify-review` zbiera z nowych commitów linie
-`Review-Note:` i wysyła je Kasi jednym mailem z adresem strony. Commit bez tej linii (poprawka
-deployu, refaktor, testy) nie wysyła nic. Błąd wysyłki nie przerywa deployu — mail pójdzie przy następnym.
-
-```text
-Dodaj kartę produktu
-
-Review-Note: karta produktu ze zdjęciami, ceną i wyborem koloru
-```
-
-Ustawienie (raz):
-1. **AWS SES, region eu-central-1**: zweryfikuj domenę `mellow-aura.com` (rekordy DKIM w Cloudflare)
-   oraz adresy Kasi i swój. W trybie sandbox SES wysyła tylko do zweryfikowanych adresów — tu to wystarcza.
-2. SES → **SMTP settings** → utwórz dane logowania SMTP.
-3. Forge → **Environment** stagingu:
-   `MAIL_MAILER=smtp`, `MAIL_HOST=email-smtp.eu-central-1.amazonaws.com`, `MAIL_PORT=587`,
-   `MAIL_USERNAME` i `MAIL_PASSWORD` z SES, `STAGING_REVIEW_TO=<e-mail Kasi>`,
-   `STAGING_REVIEW_REPLY_TO=<Twój e-mail>`, `STAGING_REVIEW_SIGNATURE=Maciej`.
-   Adresy wpisuj tylko tam, nie w repo. Na produkcji `STAGING_REVIEW_TO` zostaw pusty.
-4. Pierwszy deploy po zmianie zapamiętuje bieżący commit i nic nie wysyła. Kolejne wysyłają notki.
-5. Test bez czekania na deploy: ustaw na chwilę `STAGING_REVIEW_TO` na swój adres i przez SSH jako `forge`
-   `printf '%s\n' "$(git rev-parse HEAD~5)" > storage/app/staging-review/last-notified-commit && php artisan staging:notify-review`.
 
 ## Stan projektu
 
