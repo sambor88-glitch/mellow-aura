@@ -115,6 +115,28 @@ class NotifyStagingReviewTest extends TestCase
         $this->assertFileDoesNotExist($this->stateFile);
     }
 
+    public function test_shallow_clone_fetches_history_back_to_last_notified_commit(): void
+    {
+        $this->commit('Deployed before');
+        $lastNotified = $this->headCommit();
+        $this->commit("Add cart\n\nReview-Note: koszyk w szufladzie");
+        $this->commit('Fix build');
+
+        $release = $this->repository.'-release';
+        Process::run(['git', 'clone', '--quiet', '--depth=1', 'file://'.$this->repository, $release])->throw();
+        File::ensureDirectoryExists(dirname($this->stateFile));
+        File::put($this->stateFile, $lastNotified.PHP_EOL);
+        config(['staging.review.repository' => $release]);
+
+        try {
+            $this->artisan('staging:notify-review')->assertSuccessful();
+        } finally {
+            File::deleteDirectory($release);
+        }
+
+        Mail::assertSent(StagingUpdated::class, fn (StagingUpdated $mail) => $mail->notes === ['koszyk w szufladzie']);
+    }
+
     public function test_e_mail_lists_notes_and_site_address(): void
     {
         $mail = new StagingUpdated(['koszyk w szufladzie'], 'https://staging.mellow-aura.test', 'Maciej');

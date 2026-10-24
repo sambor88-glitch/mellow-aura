@@ -91,8 +91,9 @@ Ustawienie (raz):
    `STAGING_REVIEW_REPLY_TO=<Twój e-mail>`, `STAGING_REVIEW_SIGNATURE=Maciej`.
    Adresy wpisuj tylko tam, nie w repo. Na produkcji `STAGING_REVIEW_TO` zostaw pusty.
 4. Pierwszy deploy po zmianie zapamiętuje bieżący commit i nic nie wysyła. Kolejne wysyłają notki.
-5. Test bez czekania na deploy: ustaw na chwilę `STAGING_REVIEW_TO` na swój adres i przez SSH jako `forge`
-   `printf '%s\n' "$(git rev-parse HEAD~5)" > storage/app/staging-review/last-notified-commit && php artisan staging:notify-review`.
+5. Test na własną skrzynkę: Forge → strona → **Commands**, jedna linia:
+   `cd ~/mellow-aura-staging.on-forge.com/current && php artisan tinker --execute="Mail::to('<Twój e-mail>')->send(new App\\Modules\\Shared\\Mail\\StagingUpdated(['test'], config('app.url'), config('staging.review.signature'), config('staging.review.reply_to')));"`.
+   Deploy na Forge to płytki klon repo (`--depth 1`); komenda sama dociąga historię do ostatniego wysłanego commitu.
 
 ## Stan projektu
 
