@@ -62,18 +62,19 @@ class ShopController extends Controller
         $breadcrumbs = Breadcrumbs::home()->add('Sklep', $category ? route('shop.index') : null);
         $breadcrumbs = $category ? $breadcrumbs->add($category->name) : $breadcrumbs;
 
-        $seo = $category
-            ? Seo::make(
-                $category->seo_title ?: Seo::titleFor($category->name, 'rękodzieło z Krakowa'),
-                $category->seo_description ?: (string) $category->intro,
-                route('shop.category', $category),
-            )
-            : Seo::make(self::TITLE, self::DESCRIPTION, route('shop.index'));
-
-        $seo = $seo->withSchema($breadcrumbs->schema());
+        $seo = new Seo(
+            $category
+                ? array_filter([$category->seo_title, "{$category->name} — rękodzieło z Krakowa | MellowAura", "{$category->name} | MellowAura"])
+                : self::TITLE,
+            $category ? ($category->seo_description ?: $category->intro) : self::DESCRIPTION,
+            path: $category ? route('shop.category', $category, false) : route('shop.index', [], false),
+            // Search results stay out of the index; sorting keeps the base canonical.
+            robots: $search === '' ? null : 'noindex, follow',
+            schema: [$breadcrumbs->schema()],
+        );
 
         return view('catalog::shop', [
-            'seo' => $search === '' ? $seo : $seo->noindex(),
+            'seo' => $seo,
             'breadcrumbs' => $breadcrumbs,
             'category' => $category,
             'categories' => $categories,

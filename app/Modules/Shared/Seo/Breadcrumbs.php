@@ -29,6 +29,7 @@ final class Breadcrumbs
     public function schema(): array
     {
         return [
+            '@context' => 'https://schema.org',
             '@type' => 'BreadcrumbList',
             'itemListElement' => array_map(
                 fn (array $item, int $index) => array_filter([

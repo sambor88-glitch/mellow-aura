@@ -8,6 +8,7 @@ use App\Modules\Catalog\Seo\ProductSchema;
 use App\Modules\Settings\Settings;
 use App\Modules\Shared\Seo\Breadcrumbs;
 use App\Modules\Shared\Seo\Seo;
+use App\Modules\Shared\Seo\SeoText;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -26,7 +27,7 @@ class ProductController extends Controller
         $product->load(['category', 'variants', 'media']);
 
         $selected = $this->selectedVariant($product, (int) $request->query('variant'));
-        $description = $product->seo_description ?: Seo::limit((string) $product->description, Seo::DESCRIPTION_LIMIT);
+        $description = SeoText::description($product->seo_description ?: $product->description);
 
         $breadcrumbs = Breadcrumbs::home()->add('Sklep', route('shop.index'));
         $breadcrumbs = $product->category
@@ -34,11 +35,13 @@ class ProductController extends Controller
             : $breadcrumbs;
         $breadcrumbs = $breadcrumbs->add($product->name);
 
-        $seo = Seo::make(
-            Seo::titleFor($product->name, $product->category ? $product->category->productTitleTagline() : 'ceramika handmade'),
+        $seo = new Seo(
+            $this->titleOptions($product),
             $description,
-            route('product.show', $product),
-        )->withSchema($schema->toArray($product, $description), $breadcrumbs->schema());
+            path: route('product.show', $product, false),
+            type: 'product',
+            schema: [$schema->toArray($product, $description), $breadcrumbs->schema()],
+        );
 
         return view('catalog::product', [
             'seo' => $seo,
@@ -49,6 +52,21 @@ class ProductController extends Controller
             'freeShippingFrom' => $settings->get('shipping.free_threshold'),
             'dispatchTime' => $settings->get('shipping.dispatch_time'),
         ]);
+    }
+
+    /**
+     * "{name} — ceramika handmade | MellowAura", silk "— rękodzieło z jedwabiu",
+     * vouchers only the name and the brand (spec, section 2). The brand drops first.
+     *
+     * @return list<string>
+     */
+    private function titleOptions(Product $product): array
+    {
+        $tagline = $product->category ? $product->category->productTitleTagline() : 'ceramika handmade';
+
+        return $tagline === null
+            ? ["{$product->name} | MellowAura", $product->name]
+            : ["{$product->name} — {$tagline} | MellowAura", "{$product->name} — {$tagline}", "{$product->name} | MellowAura", $product->name];
     }
 
     /**

@@ -43,7 +43,7 @@ class HomeController extends Controller
         $hero = $shelf->firstWhere('slug', $settings->get('home.hero_product')) ?? $shelf->first();
 
         return view('content::home', [
-            'seo' => Seo::make(self::TITLE, self::DESCRIPTION, route('home')),
+            'seo' => new Seo(self::TITLE, self::DESCRIPTION, path: '/'),
             'hero' => $hero,
             'heroBadge' => $settings->get('home.hero_badge'),
             'featured' => $shelf->take(self::FEATURED_COUNT),

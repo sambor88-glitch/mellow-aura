@@ -18,7 +18,7 @@
         $freeShippingFrom ? 'gratis od '.Money::format($freeShippingFrom) : null,
     ])->filter()->implode(', ');
 @endphp
-<x-shared::layout :seo="$seo" :image="$product->coverUrl()">
+<x-shared::layout :seo="$seo">
     <div class="ma-product ma-view"
          x-data="productPage({{ Js::from(['photos' => $photos->map->getUrl()->values(), 'variants' => $variantData, 'selected' => $selected?->id]) }})"
          @keydown.escape.window="zoomed && closeZoom()">

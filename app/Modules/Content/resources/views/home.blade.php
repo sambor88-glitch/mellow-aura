@@ -6,7 +6,7 @@
     $aboutUrl = Navigation::url('about.show');
     $marquee = ['glina', 'jedwab', 'len', 'złoto 24k', 'less waste', 'unikat', 'kraków'];
 @endphp
-<x-shared::layout :seo="$seo" :image="$hero?->coverUrl()">
+<x-shared::layout :seo="$seo">
     <div class="ma-view">
         <div class="ma-container">
             <div class="ma-split">

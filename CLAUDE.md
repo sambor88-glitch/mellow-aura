@@ -9,7 +9,7 @@ i aplikacja Laravel w budowie (sprint 1: strona główna, sklep z kategoriami, k
 | --- | --- |
 | `MellowAura.dc.html` | wygląd, teksty i zachowanie każdego ekranu — przenoś, nie projektuj od nowa |
 | `Specyfikacja wdrozenia - MellowAura.dc.html` | adresy, tytuły, opisy, JSON-LD, zakres panelu, integracje |
-| `Plan wdrozenia - Laravel krok po kroku.dc.html` | stos, schemat bazy, harmonogram do 10 listopada |
+| `Plan wdrozenia - Laravel krok po kroku.dc.html` | stos, schemat bazy, harmonogram, start w pierwszym tygodniu grudnia (30.11–6.12) |
 | `.claude/skills/` | paleta, komponenty, UX, teksty, dostępność — kolory i kroje zmieniasz tylko w `mellowaura-design` |
 
 Pliki `.dc.html` otwierają się w przeglądarce i muszą leżeć obok `support.js`
@@ -50,13 +50,12 @@ app/Modules/Catalog/
   w listenerze z kolejki — musi zejść w tej samej transakcji co potwierdzenie płatności.
 - Ekrany panelu należą do modułu, którego dotyczą. `Admin` daje tylko logowanie, układ panelu i menu.
 - Testy: `tests/Feature/<Name>` i `tests/Unit/<Name>`.
-- Strona składa się z `<x-shared::layout :seo="$seo">` (nagłówek, stopka, meta, JSON-LD organizacji). Każdy
-  kontroler podaje obiekt `Shared\Seo\Seo`; tytuł przez `Seo::titleFor()`, opis przez `Seo::limit()`.
+- Strona składa się z `<x-shared::layout :seo="$seo">`. Kontroler podaje `new Seo([...tytuły od najpełniejszego], $opis,
+  path:, robots:, schema: [...])`; limity pilnuje `SeoText`, okruszki `Shared\Seo\Breadcrumbs`.
   Komponenty modułu leżą w `resources/views/components` i wołasz je jako `<x-catalog::product-card>`.
-- Link do strony, której jeszcze nie ma, się nie wyświetla: menu i sekcje pytają `Shared\Navigation::url()`
-  o nazwę trasy (`workshops.index`, `mug.show`…). Nowy moduł z trasą o tej nazwie sam pojawia się w menu.
-- Kolory i klasy `ma-*` w `resources/css/app.css` (tokeny z `mellowaura-design`). Kroje z `resources/fonts`,
-  bez Google Fonts. Zdjęcia spoza produktów (Kasia, pasek pracowni) z `zdjecia/` przez dowiązanie `public/zdjecia`.
+- Przyciski i skróty w treści strony prowadzą tylko do istniejących stron: `Shared\Navigation::url('mug.show')`
+  zwraca `null`, dopóki trasy nie ma. Nagłówek i stopka zostają przy adresach ze specyfikacji.
+- Zdjęcia spoza produktów (Kasia, pasek pracowni) idą z `zdjecia/` przez dowiązanie `public/zdjecia`.
 
 Pierwsza fala: `Shared` (układ strony, komponenty Blade, formatowanie kwot, SEO), `Settings`, `Admin`,
 `Catalog`, `Cart`, `Checkout`, `Payments`, `Shipping`, `MugConfigurator`, `Gifts`, `Content` (strona główna już tu jest).
@@ -112,6 +111,15 @@ Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
 - Nigdy nie commituj `uploads/` (surowe zrzuty mogą zawierać dane klientek), `.env` ani kluczy — są w `.gitignore`.
 - Projekt w Claude Design czyta z tego repozytorium (`github.md`). Zmianę w `.dc.html` wypchnij, a przed pracą
   w Claude Design pobierz aktualną wersję z repo, żeby się nie rozjechały.
+
+## Jira i czas pracy
+
+- Zadania są w Jirze, projekt MA. Każde nowe zadanie i podzadanie dostaje estymatę (`Original Estimate`)
+  od razu przy zakładaniu. Bez estymaty zadanie nie istnieje.
+- Każda praca nad zadaniem ma worklog z prawdziwym czasem i datą. Zadanie nie przechodzi na „Gotowe”
+  bez worklogu.
+- Czas mierzymy od 24.10.2026. Worklogi sprzed tej daty nie są prawdziwym pomiarem — nie licz z nich godzin.
+- Raport godzin jest co poniedziałek: zalogowany czas a estymata, zadania bez estymaty, zamknięte bez worklogu.
 
 ## Komendy
 

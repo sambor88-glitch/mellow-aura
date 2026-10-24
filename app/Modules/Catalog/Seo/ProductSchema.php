@@ -5,8 +5,6 @@ namespace App\Modules\Catalog\Seo;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
 use App\Modules\Settings\Settings;
-use App\Modules\Shared\Seo\OrganizationSchema;
-use App\Modules\Shared\Seo\Seo;
 
 /**
  * ProductGroup with one Product + Offer per variant (spec, section 3).
@@ -25,13 +23,14 @@ class ProductSchema
         $images = $product->photos()->map(fn ($media) => $media->getUrl())->values()->all();
 
         return array_filter([
+            '@context' => 'https://schema.org',
             '@type' => 'ProductGroup',
             '@id' => $url.'#product',
             'name' => $product->name,
             'description' => $description,
             'url' => $url,
             'image' => $images,
-            'brand' => ['@type' => 'Brand', 'name' => Seo::BRAND],
+            'brand' => ['@type' => 'Brand', 'name' => 'MellowAura'],
             'category' => $product->category?->name,
             'productGroupID' => $product->slug,
             'variesBy' => $product->variants->count() > 1 ? ['https://schema.org/size'] : null,
@@ -57,7 +56,7 @@ class ProductSchema
             'size' => $product->variants->count() > 1 ? $variant->label : null,
             'url' => $variantUrl,
             'image' => $images,
-            'brand' => ['@type' => 'Brand', 'name' => Seo::BRAND],
+            'brand' => ['@type' => 'Brand', 'name' => 'MellowAura'],
             'offers' => array_filter([
                 '@type' => 'Offer',
                 'url' => $variantUrl,
@@ -65,7 +64,7 @@ class ProductSchema
                 'price' => number_format($variant->price_gross / 100, 2, '.', ''),
                 'availability' => $variant->stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
                 'itemCondition' => 'https://schema.org/NewCondition',
-                'seller' => ['@id' => OrganizationSchema::id()],
+                'seller' => ['@id' => rtrim((string) config('app.url'), '/').'/#pracownia'],
                 'shippingDetails' => $this->shipping(),
                 'hasMerchantReturnPolicy' => $this->returns(),
             ]),

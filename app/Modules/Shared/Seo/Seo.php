@@ -2,102 +2,43 @@
 
 namespace App\Modules\Shared\Seo;
 
-use Illuminate\Support\Str;
-
 /**
- * Title, description, canonical, robots and JSON-LD of one page.
+ * Head data of one page: title, description, canonical, robots and JSON-LD.
  *
- * Limits from the implementation spec: title up to 60 characters, description
- * up to 155, both cut on a word boundary. The brand suffix goes first.
+ * Built in the controller from the page's own data and handed to <x-shared::layout :seo="...">.
+ * The site-wide LocalBusiness block is added by the layout, not here.
  */
-final class Seo
+final readonly class Seo
 {
-    public const BRAND = 'MellowAura';
+    public string $title;
 
-    public const TITLE_LIMIT = 60;
-
-    public const DESCRIPTION_LIMIT = 155;
+    public string $description;
 
     /**
-     * @param  array<int, array<string, mixed>>  $schema  JSON-LD nodes added to the Organization graph
+     * @param  list<string>|string  $title  options from the fullest to the shortest, see SeoText::title()
+     * @param  string|null  $path  canonical path; null means the current path without the query string
+     * @param  string|null  $robots  e.g. "noindex, nofollow"; null leaves indexing to the defaults
+     * @param  list<array<string, mixed>>  $schema  page JSON-LD blocks (Product, BreadcrumbList, ...)
      */
     public function __construct(
-        public readonly string $title,
-        public readonly string $description = '',
-        public readonly ?string $canonical = null,
-        public readonly bool $indexable = true,
-        public readonly array $schema = [],
-    ) {}
-
-    /**
-     * A title written for the page, used as is when it fits.
-     */
-    public static function make(string $title, string $description = '', ?string $canonical = null): self
-    {
-        return new self(
-            self::limit($title, self::TITLE_LIMIT),
-            self::limit($description, self::DESCRIPTION_LIMIT),
-            $canonical,
-        );
+        array|string $title,
+        ?string $description = null,
+        public ?string $path = null,
+        public ?string $robots = null,
+        public string $type = 'website',
+        public array $schema = [],
+    ) {
+        $this->title = SeoText::title($title);
+        $this->description = SeoText::description($description);
     }
 
     /**
-     * Builds "{base} — {tagline} | MellowAura"; when it is too long the brand
-     * suffix goes first, then the tagline, then the base is cut on a word.
+     * Absolute and on the one domain from APP_URL, whatever host the request came on.
      */
-    public static function titleFor(string $base, ?string $tagline = null): string
+    public function canonical(): string
     {
-        $candidates = array_filter([
-            $tagline ? "{$base} — {$tagline} | ".self::BRAND : null,
-            $tagline ? "{$base} — {$tagline}" : null,
-            "{$base} | ".self::BRAND,
-            $base,
-        ]);
+        $path = '/'.ltrim($this->path ?? request()->path(), '/');
 
-        foreach ($candidates as $candidate) {
-            if (mb_strlen($candidate) <= self::TITLE_LIMIT) {
-                return $candidate;
-            }
-        }
-
-        return self::limit($base, self::TITLE_LIMIT);
-    }
-
-    /**
-     * Cuts plain text on a word boundary, with "…" counted in the limit.
-     */
-    public static function limit(string $text, int $limit): string
-    {
-        $text = trim(preg_replace('/\s+/u', ' ', strip_tags($text)) ?? '');
-
-        if (mb_strlen($text) <= $limit) {
-            return $text;
-        }
-
-        $cut = mb_substr($text, 0, $limit);
-        $lastSpace = mb_strrpos($cut, ' ');
-
-        if ($lastSpace !== false && $lastSpace > $limit / 2) {
-            $cut = mb_substr($cut, 0, $lastSpace);
-        } else {
-            $cut = mb_substr($cut, 0, $limit - 1);
-        }
-
-        return rtrim($cut, ' ,;:—–-').'…';
-    }
-
-    public function withSchema(array ...$nodes): self
-    {
-        return new self($this->title, $this->description, $this->canonical, $this->indexable, [...$this->schema, ...$nodes]);
-    }
-
-    public function noindex(): self
-    {
-        return new self($this->title, $this->description, $this->canonical, false, $this->schema);
-    }
-
-    public function canonicalUrl(): string
-    {
-        return $this->canonical ?? Str::before(url()->current(), '?');
+        return rtrim((string) config('app.url'), '/').($path === '/' ? '/' : rtrim($path, '/'));
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Modules\Shared;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -24,11 +23,6 @@ abstract class ModuleServiceProvider extends ServiceProvider
         // Only existing directories: view:cache fails on a registered path that is missing.
         if (is_dir($views = $this->modulePath('resources/views'))) {
             $this->loadViewsFrom($views, $this->viewNamespace());
-
-            // <x-catalog::product-card> resolves to Catalog/resources/views/components/product-card.blade.php
-            if (is_dir($views.'/components')) {
-                Blade::anonymousComponentPath($views.'/components', $this->viewNamespace());
-            }
         }
 
         if (is_dir($migrations = $this->modulePath('Database/Migrations'))) {

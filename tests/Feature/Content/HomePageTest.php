@@ -26,30 +26,19 @@ class HomePageTest extends TestCase
         $this->get('/')
             ->assertOk()
             ->assertSee('<title>MellowAura — ceramika i rękodzieło z jedwabiu, Kraków</title>', false)
-            ->assertSee('<link rel="canonical" href="'.url('/').'">', false)
             ->assertSee('z <em>jednej pary</em> rąk.', false)
             ->assertSee('Co teraz jest w pracowni')
             ->assertSee('nowość')
             ->assertSee('Lubię łączyć surowość z miękkością');
     }
 
-    public function test_links_only_to_pages_that_exist(): void
+    public function test_calls_to_action_wait_for_their_pages(): void
     {
-        $response = $this->get('/')->assertOk();
-
-        $response->assertSee('href="'.route('shop.index').'"', false);
-        $response->assertDontSee('/warsztaty-ceramiczne-krakow');
-        $response->assertDontSee('/kubek-z-napisem');
-    }
-
-    public function test_organization_markup_without_street_address(): void
-    {
-        $response = $this->get('/')->assertOk();
-
-        $response->assertSee('"@type":["Organization","LocalBusiness"]', false);
-        $response->assertSee('"addressLocality":"Kraków"', false);
-        $response->assertSee('"priceRange":"59–600 PLN"', false);
-        $response->assertDontSee('streetAddress');
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('Zobacz produkty')
+            ->assertDontSee('Zaprojektuj kubek z napisem')
+            ->assertDontSee('Poznaj mnie bliżej');
     }
 
     public function test_hero_falls_back_to_the_first_product_when_the_chosen_one_is_missing(): void

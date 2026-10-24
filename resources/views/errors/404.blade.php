@@ -1,5 +1,5 @@
 @use('App\Modules\Shared\Seo\Seo')
-<x-shared::layout :seo="(new Seo('Nie ma takiej strony | MellowAura'))->noindex()">
+<x-shared::layout :seo="new Seo('Nie ma takiej strony | MellowAura', robots: 'noindex, follow')">
     <div class="ma-error ma-view">
         <x-shared::eyebrow>błąd 404</x-shared::eyebrow>
         <h1 class="ma-h1 ma-h1--page">Tu nic nie stoi</h1>

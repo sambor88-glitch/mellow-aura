@@ -10,7 +10,7 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
-        // Tests do not need built assets; CI runs them without `npm run build`.
+        // CI runs PHP tests without `npm run build`, so there is no Vite manifest.
         $this->withoutVite();
     }
 }
