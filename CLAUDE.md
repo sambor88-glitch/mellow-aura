@@ -1,7 +1,7 @@
 # MellowAura
 
 Sklep i strona pracowni ceramiki Kasi Samborskiej z Krakowa. W repozytorium jest prototyp, dokumentacja
-i aplikacja Laravel w budowie (tydzień 1: moduły `Shared`, `Settings`, `Catalog`, `Checkout`).
+i aplikacja Laravel w budowie (sprint 1: strona główna, sklep z kategoriami, karta produktu).
 
 ## Źródła prawdy
 
@@ -50,9 +50,16 @@ app/Modules/Catalog/
   w listenerze z kolejki — musi zejść w tej samej transakcji co potwierdzenie płatności.
 - Ekrany panelu należą do modułu, którego dotyczą. `Admin` daje tylko logowanie, układ panelu i menu.
 - Testy: `tests/Feature/<Name>` i `tests/Unit/<Name>`.
+- Strona składa się z `<x-shared::layout :seo="$seo">` (nagłówek, stopka, meta, JSON-LD organizacji). Każdy
+  kontroler podaje obiekt `Shared\Seo\Seo`; tytuł przez `Seo::titleFor()`, opis przez `Seo::limit()`.
+  Komponenty modułu leżą w `resources/views/components` i wołasz je jako `<x-catalog::product-card>`.
+- Link do strony, której jeszcze nie ma, się nie wyświetla: menu i sekcje pytają `Shared\Navigation::url()`
+  o nazwę trasy (`workshops.index`, `mug.show`…). Nowy moduł z trasą o tej nazwie sam pojawia się w menu.
+- Kolory i klasy `ma-*` w `resources/css/app.css` (tokeny z `mellowaura-design`). Kroje z `resources/fonts`,
+  bez Google Fonts. Zdjęcia spoza produktów (Kasia, pasek pracowni) z `zdjecia/` przez dowiązanie `public/zdjecia`.
 
 Pierwsza fala: `Shared` (układ strony, komponenty Blade, formatowanie kwot, SEO), `Settings`, `Admin`,
-`Catalog`, `Cart`, `Checkout`, `Payments`, `Shipping`, `MugConfigurator`, `Gifts`, `Content`.
+`Catalog`, `Cart`, `Checkout`, `Payments`, `Shipping`, `MugConfigurator`, `Gifts`, `Content` (strona główna już tu jest).
 Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
 
 ## Sesja i cache w plikach
@@ -112,6 +119,7 @@ Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
 composer install && cp .env.example .env && php artisan key:generate
 php artisan migrate:fresh --seed   # tabele sklepu + oferta z prototypu (17 produktów, ustawienia)
 php artisan storage:link           # zdjęcia z medialibrary pod /storage
+npm ci && npm run build             # CSS, Alpine.js i kroje do public/build
 php artisan serve                  # http://localhost:8000
 php artisan test                   # testy na SQLite w pamięci; CI puszcza je na MySQL 8.4
 vendor/bin/pint                    # formatowanie, CI sprawdza --test

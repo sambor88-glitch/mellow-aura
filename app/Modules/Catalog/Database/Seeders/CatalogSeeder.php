@@ -16,6 +16,15 @@ use Illuminate\Support\Facades\DB;
  */
 class CatalogSeeder extends Seeder
 {
+    /**
+     * CARE_CERAMIC in the prototype — the general rule a product's own note replaces.
+     */
+    private const CERAMIC_CARE_NOTE = 'Zmywarka tak, złoto tylko ręcznie';
+
+    private const CERAMIC_CATEGORIES = [
+        'kubki-i-filizanki', 'talerze-i-miski', 'wazony-i-patery', 'kadzielnice-i-podstawki', 'bizuteria',
+    ];
+
     public function run(): void
     {
         DB::transaction(function () {
@@ -46,10 +55,17 @@ class CatalogSeeder extends Seeder
         $categories = [];
 
         foreach (array_keys($names) as $position => $slug) {
-            $categories[$slug] = Category::query()->firstOrCreate(
+            $category = Category::query()->firstOrCreate(
                 ['slug' => $slug],
                 ['name' => $names[$slug], 'sort_order' => $position + 1],
             );
+
+            // null means "never set"; the panel stores an emptied note as ''.
+            if ($category->default_care_note === null && in_array($slug, self::CERAMIC_CATEGORIES, true)) {
+                $category->update(['default_care_note' => self::CERAMIC_CARE_NOTE]);
+            }
+
+            $categories[$slug] = $category;
         }
 
         return $categories;

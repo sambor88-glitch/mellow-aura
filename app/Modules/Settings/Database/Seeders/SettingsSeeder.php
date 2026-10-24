@@ -36,6 +36,8 @@ class SettingsSeeder extends Seeder
             'shipping.parcel_locker_price' => 1600,
             'shipping.courier_price' => 2200,
             'shipping.gift_wrap_price' => 1200,
+            // Shown on the home page and the product page; Kasia confirms real times before launch.
+            'shipping.dispatch_time' => '3–5 dni',
             'custom_orders.deposit' => 8000,
             'custom_orders.deposit_enabled' => false,
 
@@ -52,6 +54,15 @@ class SettingsSeeder extends Seeder
             'location.parcel_locker_code' => '',
 
             'mug.text_max_length' => 22,
+
+            // Product on the big home photo (slug) and its label.
+            'home.hero_product' => 'wazony',
+            'home.hero_badge' => 'nowość',
+
+            // Section texts from the prototype (TEXTS); an empty one is not shown.
+            'texts.home_kasia_heading' => 'Lubię łączyć surowość z miękkością, prostotę z symboliką.',
+            'texts.home_kasia_lead' => 'Tworzę MellowAura — kameralną pracownię, w której powstają przedmioty z duszą. To miejsce, gdzie sztuka spotyka się z uważnością, a codzienność nabiera miękkich, zmysłowych kształtów.',
+            'texts.footer_tagline' => 'A little bit of magic. Home studio in Cracow. Ceramic & jewelry. Less waste silk scrunchies.',
 
             // Material tiles on the product page; an empty description is not shown.
             'materials.tiles' => [

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Catalog\Models;
 
+use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -79,6 +80,27 @@ class ProductVariant extends Model
         $prices = array_filter([$inForceAtStart, $changedInWindow], fn ($price) => $price !== null);
 
         return $prices === [] ? null : (int) min($prices);
+    }
+
+    /**
+     * Lowest price from the 30 days before the current price took effect —
+     * shown next to every crossed-out price. Without older history it is the
+     * current price, which is what the law asks for a product sold under 30 days.
+     */
+    public function lowestPriceBeforeDiscount(): int
+    {
+        $currentSince = $this->priceHistory()
+            ->latest('valid_from')
+            ->latest('id')
+            ->value('valid_from');
+
+        if ($currentSince === null) {
+            return $this->price_gross;
+        }
+
+        $lowest = $this->lowestPriceBefore(Carbon::parse($currentSince));
+
+        return $lowest ?? $this->price_gross;
     }
 
     private function recordPrice(): void
