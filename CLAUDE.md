@@ -106,6 +106,15 @@ Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
 - Projekt w Claude Design czyta z tego repozytorium (`github.md`). Zmianę w `.dc.html` wypchnij, a przed pracą
   w Claude Design pobierz aktualną wersję z repo, żeby się nie rozjechały.
 
+## Jira i czas pracy
+
+- Zadania są w Jirze, projekt MA. Każde nowe zadanie i podzadanie dostaje estymatę (`Original Estimate`)
+  od razu przy zakładaniu. Bez estymaty zadanie nie istnieje.
+- Każda praca nad zadaniem ma worklog z prawdziwym czasem i datą. Zadanie nie przechodzi na „Gotowe”
+  bez worklogu.
+- Czas mierzymy od 24.10.2026. Worklogi sprzed tej daty nie są prawdziwym pomiarem — nie licz z nich godzin.
+- Raport godzin jest co poniedziałek: zalogowany czas a estymata, zadania bez estymaty, zamknięte bez worklogu.
+
 ## Komendy
 
 Do uzupełnienia po założeniu projektu Laravela: serwer lokalny, testy, migracje.
