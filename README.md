@@ -56,6 +56,7 @@ php artisan test
    dane bazy z Forge, `STAGING_PASSWORD=<hasło>` (tylko tutaj, nie w repo).
 4. **Deploy Script** — domyślny z Forge, a w części `artisan` dopisz:
    ```bash
+   mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs storage/app/public
    $FORGE_PHP artisan migrate --force
    $FORGE_PHP artisan storage:link
    $FORGE_PHP artisan optimize
