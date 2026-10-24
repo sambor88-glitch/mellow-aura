@@ -56,10 +56,6 @@ class NotifyStagingReview extends Command
             return self::SUCCESS;
         }
 
-        // Forge zero-downtime releases are shallow clones: fetch history until
-        // the last notified commit is there, or log would see no commits.
-        $this->deepenUntilKnown($lastNotified);
-
         $log = $this->git(['log', '--reverse', '--format=%(trailers:key=Review-Note,valueonly,unfold)', $lastNotified.'..'.$head]);
 
         if ($log === null) {
@@ -111,20 +107,6 @@ class NotifyStagingReview extends Command
         $result = Process::path((string) config('staging.review.repository'))->run(['git', ...$arguments]);
 
         return $result->successful() ? trim($result->output()) : null;
-    }
-
-    private function deepenUntilKnown(string $commit): void
-    {
-        for ($attempt = 0; $attempt < 5; $attempt++) {
-            if ($this->git(['cat-file', '-e', $commit.'^{commit}']) !== null) {
-                return;
-            }
-
-            if ($this->git(['rev-parse', '--is-shallow-repository']) !== 'true'
-                || $this->git(['fetch', '--quiet', '--deepen=50']) === null) {
-                return;
-            }
-        }
     }
 
     private function remember(string $stateFile, string $commit): void
