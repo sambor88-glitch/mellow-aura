@@ -1,7 +1,7 @@
 # MellowAura
 
-Sklep i strona pracowni ceramiki Kasi Samborskiej z Krakowa. W repozytorium jest na razie prototyp
-i dokumentacja — kodu aplikacji jeszcze nie ma.
+Sklep i strona pracowni ceramiki Kasi Samborskiej z Krakowa. W repozytorium jest prototyp, dokumentacja
+i aplikacja Laravel w budowie (tydzień 1: moduły `Shared`, `Settings`, `Catalog`, `Checkout`).
 
 ## Źródła prawdy
 
@@ -108,4 +108,16 @@ Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
 
 ## Komendy
 
-Do uzupełnienia po założeniu projektu Laravela: serwer lokalny, testy, migracje.
+```bash
+composer install && cp .env.example .env && php artisan key:generate
+php artisan migrate:fresh --seed   # tabele sklepu + oferta z prototypu (17 produktów, ustawienia)
+php artisan storage:link           # zdjęcia z medialibrary pod /storage
+php artisan serve                  # http://localhost:8000
+php artisan test                   # testy na SQLite w pamięci; CI puszcza je na MySQL 8.4
+vendor/bin/pint                    # formatowanie, CI sprawdza --test
+```
+
+- Seedery nie nadpisują istniejących wierszy (produkt po `slug`, ustawienie po `key`) — można je puścić
+  na stagingu drugi raz bez utraty zmian z panelu. `DatabaseSeeder` nie używa `WithoutModelEvents`,
+  bo zapis do `price_history` idzie przez zdarzenia modelu `ProductVariant`.
+- Staging włącza się samą zmienną `STAGING_PASSWORD` (middleware `Shared\Http\Middleware\ProtectStaging`).
