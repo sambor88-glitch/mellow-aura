@@ -19,8 +19,15 @@ abstract class ModuleServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->bootRoutes();
-        $this->loadViewsFrom($this->modulePath('resources/views'), $this->viewNamespace());
-        $this->loadMigrationsFrom($this->modulePath('Database/Migrations'));
+
+        // Only existing directories: view:cache fails on a registered path that is missing.
+        if (is_dir($views = $this->modulePath('resources/views'))) {
+            $this->loadViewsFrom($views, $this->viewNamespace());
+        }
+
+        if (is_dir($migrations = $this->modulePath('Database/Migrations'))) {
+            $this->loadMigrationsFrom($migrations);
+        }
     }
 
     /**
