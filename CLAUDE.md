@@ -120,4 +120,7 @@ vendor/bin/pint                    # formatowanie, CI sprawdza --test
 - Seedery nie nadpisują istniejących wierszy (produkt po `slug`, ustawienie po `key`) — można je puścić
   na stagingu drugi raz bez utraty zmian z panelu. `DatabaseSeeder` nie używa `WithoutModelEvents`,
   bo zapis do `price_history` idzie przez zdarzenia modelu `ProductVariant`.
+- Commit, który zmienia coś widocznego dla Kasi na stagingu, dostaje linię `Review-Note: <co nowego, po polsku,
+  prostym językiem>`. Po deployu `artisan staging:notify-review` wysyła te linie Kasi mailem. Zmiany czysto
+  techniczne bez tej linii — wtedy mail nie wychodzi.
 - Staging włącza się samą zmienną `STAGING_PASSWORD` (middleware `Shared\Http\Middleware\ProtectStaging`).
