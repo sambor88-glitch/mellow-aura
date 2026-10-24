@@ -53,6 +53,8 @@ class SettingsSeeder extends Seeder
 
             'mug.text_max_length' => 22,
 
+            'texts.footer_tagline' => 'A little bit of magic. Home studio in Cracow. Ceramic & jewelry. Less waste silk scrunchies.',
+
             // Material tiles on the product page; an empty description is not shown.
             'materials.tiles' => [
                 ['title' => 'Glina', 'description' => 'Kamionka i szamot piaskowy. Nierówne krawędzie zostawiam, bo tak wygląda ręka.'],

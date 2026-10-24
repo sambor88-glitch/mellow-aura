@@ -1,4 +1,383 @@
 @import 'tailwindcss';
 
+/* Fonts are bundled from npm, so neither the build nor the page depends on an external font server. */
+@import '@fontsource-variable/newsreader/opsz.css';
+@import '@fontsource-variable/newsreader/opsz-italic.css';
+@import '@fontsource/instrument-sans/400.css';
+@import '@fontsource/instrument-sans/500.css';
+@import '@fontsource/instrument-sans/600.css';
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
+@source '../../app/Modules/*/resources/views/**/*.blade.php';
+
+/*
+ * Palette and type from the mellowaura-design skill. Change values there and here together,
+ * never add a colour that is not on its lists.
+ */
+@theme {
+    --font-sans: 'Instrument Sans', system-ui, sans-serif;
+    --font-serif: 'Newsreader Variable', Newsreader, Georgia, serif;
+
+    /* Backgrounds, darkest to lightest */
+    --color-ink: #2f2620;
+    --color-sand-dark: #ede4d8;
+    --color-sand: #f3ede4;
+    --color-linen: #f7f2ea;
+    --color-cream: #fcf9f4;
+
+    /* Text on light backgrounds */
+    --color-graphite: #4a3e33;
+    --color-lead: #5c5043;
+    --color-muted: #6b5d4f;
+    --color-label: #726456;
+    --color-hint: #736454;
+
+    /* Text on the ink background */
+    --color-on-ink-heading: #f3ede4;
+    --color-on-ink: #d8cdbd;
+    --color-on-ink-soft: #b8ab99;
+    --color-on-ink-label: #9b8c7c;
+
+    /* Lines */
+    --color-line-card: #dcd0be;
+    --color-line-section: #e2d7c7;
+    --color-line-button: #c6b8a5;
+    --color-line-faint: #e6dccd;
+    --color-line-on-ink-button: #55483c;
+    --color-line-on-ink: #453a30;
+
+    /* Accents */
+    --color-brown: #855f3d;
+    --color-navy: #24417e;
+    --color-rose: #d6a39c;
+    --color-gold: #a8813f;
+    --color-eyebrow-line: #b98e64;
+    --color-error: #8c3a2e;
+    --color-success: #5c7a4a;
+
+    --ease-clay: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@layer base {
+    body {
+        margin: 0;
+        background: var(--color-sand);
+        color: var(--color-ink);
+        font-family: var(--font-sans);
+        -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+        color: var(--color-brown);
+        text-decoration: none;
+    }
+
+    a:hover {
+        color: var(--color-navy);
+    }
+
+    button {
+        font-family: inherit;
+        cursor: pointer;
+    }
+
+    input,
+    textarea,
+    select {
+        font-family: inherit;
+    }
+
+    ::selection {
+        background: var(--color-rose);
+        color: var(--color-ink);
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--color-navy);
+        outline-offset: 2px;
+        border-radius: 3px;
+    }
+
+    /* Dark surfaces: navy disappears on ink (1.50:1), linen keeps 13.28:1. */
+    .focus-on-dark :focus-visible {
+        outline-color: var(--color-linen);
+    }
+}
+
+@keyframes maUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes maIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes maSlide { from { transform: translateX(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes maPulse { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
+@keyframes maView { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes maReveal { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+@keyframes maMarquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes maStamp { 0% { opacity: 0; transform: scale(1.6) translateY(-4px); } 60% { opacity: 1; transform: scale(0.94); } 100% { opacity: 1; transform: none; } }
+@keyframes maBump { 0% { transform: scale(1); } 40% { transform: scale(1.35); } 100% { transform: scale(1); } }
+@keyframes maCheck { from { transform: scale(0.4); opacity: 0; } to { transform: none; opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Layout pieces copied from MellowAura.dc.html. */
+@layer components {
+    .ma-page {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background: var(--color-sand);
+    }
+
+    .ma-main {
+        flex: 1;
+    }
+
+    .ma-header {
+        position: sticky;
+        top: 0;
+        z-index: 60;
+        background: rgb(243 237 228 / 0.94);
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid var(--color-line-section);
+    }
+
+    .ma-header__inner {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 16px 28px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .ma-logo {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        color: var(--color-ink);
+    }
+
+    .ma-logo:hover {
+        color: var(--color-ink);
+    }
+
+    .ma-logo__name {
+        font-family: var(--font-serif);
+        font-size: 25px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        line-height: 1;
+    }
+
+    .ma-logo__tagline {
+        font-size: 9px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--color-label);
+    }
+
+    .ma-nav {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        flex: 1 1 200px;
+        min-width: 0;
+        font-size: 13.5px;
+        letter-spacing: 0.02em;
+    }
+
+    .ma-nav a {
+        color: var(--color-graphite);
+        transition: color 0.25s ease;
+    }
+
+    .ma-nav a:hover,
+    .ma-nav a[aria-current='page'] {
+        color: var(--color-navy);
+    }
+
+    .ma-header__actions {
+        display: flex;
+        align-items: center;
+        margin-left: auto;
+    }
+
+    .ma-cart-button {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 44px;
+        background: var(--color-ink);
+        color: var(--color-linen);
+        border: 0;
+        border-radius: 999px;
+        padding: 11px 20px;
+        font-size: 13px;
+        letter-spacing: 0.04em;
+        transition: background 0.3s ease, transform 0.15s ease;
+    }
+
+    .ma-cart-button:hover {
+        background: var(--color-navy);
+        color: var(--color-linen);
+    }
+
+    .ma-cart-button:active {
+        transform: scale(0.97);
+    }
+
+    .ma-cart-button__count {
+        min-width: 21px;
+        height: 21px;
+        border-radius: 999px;
+        background: var(--color-rose);
+        color: var(--color-ink);
+        display: grid;
+        place-items: center;
+        font-size: 11.5px;
+        font-weight: 600;
+        padding: 0 5px;
+        animation: maBump 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+
+    .ma-footer {
+        background: var(--color-ink);
+        color: var(--color-on-ink);
+        margin-top: auto;
+    }
+
+    .ma-footer__inner {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 64px 28px 30px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 48px;
+    }
+
+    .ma-footer__brand {
+        flex: 1 1 280px;
+        min-width: 0;
+    }
+
+    .ma-footer__logo {
+        font-family: var(--font-serif);
+        font-size: 25px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--color-on-ink-heading);
+        margin-bottom: 14px;
+    }
+
+    .ma-footer__tagline {
+        font-size: 14.5px;
+        line-height: 1.7;
+        margin: 0 0 20px;
+        max-width: 34ch;
+        color: var(--color-on-ink-soft);
+    }
+
+    .ma-footer__socials {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .ma-footer__social {
+        color: var(--color-on-ink-heading);
+        border: 1px solid var(--color-line-on-ink-button);
+        border-radius: 999px;
+        padding: 9px 17px;
+        font-size: 12.5px;
+    }
+
+    .ma-footer__social:hover {
+        border-color: var(--color-rose);
+        color: var(--color-rose);
+    }
+
+    .ma-footer__column {
+        flex: 0 1 170px;
+    }
+
+    .ma-footer__column--wide {
+        flex: 0 1 200px;
+    }
+
+    .ma-footer__heading {
+        font-size: 10.5px;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: var(--color-on-ink-label);
+        margin: 0 0 16px;
+        font-weight: 400;
+    }
+
+    .ma-footer__links {
+        display: flex;
+        flex-direction: column;
+        gap: 11px;
+        font-size: 14.5px;
+        color: var(--color-on-ink-soft);
+    }
+
+    .ma-footer__links a {
+        color: var(--color-on-ink);
+        overflow-wrap: anywhere;
+    }
+
+    .ma-footer__links a:hover,
+    .ma-footer__bottom a:hover {
+        color: var(--color-rose);
+    }
+
+    .ma-footer__links a.ma-footer__link--quiet {
+        color: var(--color-on-ink-label);
+    }
+
+    .ma-footer__bottom {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 22px 28px 40px;
+        border-top: 1px solid var(--color-line-on-ink);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px 28px;
+        justify-content: space-between;
+        font-size: 12.5px;
+        color: var(--color-on-ink-label);
+    }
+
+    .ma-footer__bottom a {
+        color: var(--color-on-ink-label);
+    }
+
+    .ma-footer__legal {
+        display: flex;
+        gap: 22px;
+        flex-wrap: wrap;
+    }
+
+    .ma-skip-link {
+        position: absolute;
+        left: 16px;
+        top: -100px;
+        z-index: 100;
+        background: var(--color-ink);
+        color: var(--color-linen);
+        border-radius: 999px;
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+
+    .ma-skip-link:focus {
+        top: 12px;
+        color: var(--color-linen);
+    }
+}
