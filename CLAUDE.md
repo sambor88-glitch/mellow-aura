@@ -114,6 +114,10 @@ Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
   bez worklogu.
 - Czas mierzymy od 24.10.2026. Worklogi sprzed tej daty nie są prawdziwym pomiarem — nie licz z nich godzin.
 - Raport godzin jest co poniedziałek: zalogowany czas a estymata, zadania bez estymaty, zamknięte bez worklogu.
+- Worklogi loguje Claude sam, bez pytania Macieja. Pod koniec pracy w sesji: dla każdego zadania, nad którym
+  była praca, osobny worklog. Czas i godzina startu z godzin wiadomości w sesji (`list_events`), nie z szacunku.
+  Przerwy dłuższe niż 15 minut bez wiadomości nie wchodzą do czasu. Praca bez zadania w Jirze — najpierw
+  zadanie z estymatą, potem worklog.
 
 ## Komendy
 
