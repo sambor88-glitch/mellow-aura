@@ -36,6 +36,11 @@ class StagingUpdated extends Mailable
 
     public function content(): Content
     {
-        return new Content(text: 'shared::mail.staging-updated');
+        // HTML with an explicit <a href> next to plain text, so the address in the
+        // e-mail is always APP_URL and never a link the mail client rewrote.
+        return new Content(
+            view: 'shared::mail.staging-updated-html',
+            text: 'shared::mail.staging-updated',
+        );
     }
 }

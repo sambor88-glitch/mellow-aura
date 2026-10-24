@@ -124,6 +124,22 @@ class NotifyStagingReviewTest extends TestCase
         $mail->assertSeeInText('Maciej');
     }
 
+    public function test_e_mail_links_straight_to_app_url(): void
+    {
+        $mail = new StagingUpdated(['koszyk'], 'https://staging.mellow-aura.test');
+
+        $mail->assertSeeInHtml('<a href="https://staging.mellow-aura.test">https://staging.mellow-aura.test</a>', false);
+        $mail->assertDontSeeInHtml('google.com/url', false);
+        $mail->assertDontSeeInText('google.com/url', false);
+    }
+
+    public function test_notes_are_escaped_in_html(): void
+    {
+        $mail = new StagingUpdated(['<script>alert(1)</script>'], 'https://staging.mellow-aura.test');
+
+        $mail->assertDontSeeInHtml('<script>', false);
+    }
+
     private function commit(string $message): void
     {
         $this->git('-c', 'user.name=Test', '-c', 'user.email=test@example.com', 'commit', '-q', '--allow-empty', '-m', $message);
