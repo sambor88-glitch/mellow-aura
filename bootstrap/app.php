@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\NoIndex;
+use App\Modules\Shared\Http\Middleware\ProtectStaging;
 use App\Modules\Shared\Http\Middleware\RedirectOldAddresses;
 use App\Modules\Shared\Http\Middleware\SecurityHeaders;
 use App\Modules\Shared\Support\Cloudflare;
@@ -17,6 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->append(NoIndex::class);
+        // After NoIndex, so the password prompt carries noindex too.
+        $middleware->append(ProtectStaging::class);
         $middleware->append(RedirectOldAddresses::class);
         $middleware->append(SecurityHeaders::class);
         // The customer's own address behind Cloudflare, so limits count per customer (see Cloudflare).
