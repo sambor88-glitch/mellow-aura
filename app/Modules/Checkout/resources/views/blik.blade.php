@@ -47,7 +47,7 @@
                 </div>
                 <input id="blik_code" name="blik_code" x-bind:value="code"
                        x-on:input="code = $el.value = $el.value.replace(/\D/g, '').slice(0, 6)"
-                       inputmode="numeric" autocomplete="one-time-code" placeholder="• • • • • •" aria-describedby="blik_code-note" autofocus
+                       inputmode="numeric" autocomplete="one-time-code" placeholder="••••••" aria-describedby="blik_code-note" autofocus
                        @error('blik_code') aria-invalid="true" @enderror
                        @class([
                            'w-full min-w-0 rounded-[18px] border bg-white p-[18px] text-center font-serif text-[36px] leading-none font-light tracking-[0.45em] text-ink tabular-nums transition-[border-color,box-shadow] duration-300 placeholder:text-line-strong focus:border-navy focus:shadow-[0_0_0_4px_rgb(36_65_126/.14)] focus:outline-none',
