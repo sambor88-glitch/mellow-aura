@@ -103,8 +103,17 @@ Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
 
 - Publiczne: `sambor88-glitch/mellow-aura`, gałąź `main`, wypychanie przez SSH.
 - Nigdy nie commituj `uploads/` (surowe zrzuty mogą zawierać dane klientek), `.env` ani kluczy — są w `.gitignore`.
+- Jedna gałąź `main`, bez `dev`. Zmiany wchodzą przez PR, gdy przejdą testy w CI.
 - Projekt w Claude Design czyta z tego repozytorium (`github.md`). Zmianę w `.dc.html` wypchnij, a przed pracą
   w Claude Design pobierz aktualną wersję z repo, żeby się nie rozjechały.
+
+## Środowiska i wdrożenie
+
+- Na razie dwa miejsca: laptop Macieja (dev, `php artisan serve`) i jedna strona na Forge.
+  Drugiej strony (stagingu) nie zakładamy, dopóki sklep nie jest gotowy.
+- Na Forge wdraża się `main`. Przed startem sklepu strona stoi za hasłem (`STAGING_PASSWORD`)
+  i z `noindex` — to jeszcze nie produkcja.
+- Gdy wszystko będzie gotowe, Maciej przenosi stronę na docelowy adres. Wtedy wracamy do tematu stagingu.
 
 ## Jira i czas pracy
 
