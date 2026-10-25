@@ -211,8 +211,8 @@ npm install && npm run dev        # Vite na Macu, nie w kontenerze
 - Na Forge jest jedna strona: `mellowaura-dev.on-forge.com`. Drugą (`mellow-aura-staging.on-forge.com`) Maciej usunął 25.10.
   Nie zakładaj drugiej strony stagingu.
 - Hasło: `Shared\Http\Middleware\ProtectStaging` (MA-168), zmienne `STAGING_USER` (domyślnie `mellowaura`) i `STAGING_PASSWORD`.
-  Bez hasła przechodzą `/up` i webhook płatności (`ProtectStaging::OPEN`). Przy zamianie Stripe na Przelewy24 wpisz tam
-  adres powiadomień Przelewy24, inaczej płatności na stagingu przestaną się potwierdzać.
+  Bez hasła przechodzi tylko `/up` (`ProtectStaging::OPEN`). Przy podłączaniu Przelewy24 dopisz tam adres powiadomień
+  (urlStatus), inaczej płatności na stagingu nie będą się potwierdzać.
 - Bez kluczy bramki płatności kasa płaci sama: zamówienie od razu ma status „Zapłacone”, pieniądze nie są pobierane.
 - Maile: Postmark (`MAIL_MAILER=postmark`, `POSTMARK_API_KEY`), konto na kasia@mellow-aura.com, serwer „My First Server”.
   `MAIL_REDIRECT_TO=kasia@mellow-aura.com` — każdy mail ze stagingu trafia do Kasi z adresatem w temacie `[do: …]`.

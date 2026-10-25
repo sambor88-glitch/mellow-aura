@@ -10,13 +10,14 @@ use Symfony\Component\HttpFoundation\Response;
  * Keeps the staging site to Kasia and the people building it: with STAGING_PASSWORD set, every page asks for
  * a login and password (HTTP basic auth). Without it, locally and in production, the site is open.
  *
- * Stripe's webhook and Forge's health check come from servers that know no password and prove themselves
- * another way, so they pass. The 401 page says noindex too, as it never reaches NoIndex.
+ * Forge's health check comes from a server that knows no password, so it passes. The payment gateway's
+ * notification address joins it here when Przelewy24 is connected (MA-167): it proves itself with a signature.
+ * The 401 page says noindex too, as it never reaches NoIndex.
  */
 class ProtectStaging
 {
     /** @var list<string> */
-    private const OPEN = ['stripe/webhook', 'up'];
+    private const OPEN = ['up'];
 
     public function handle(Request $request, Closure $next): Response
     {
