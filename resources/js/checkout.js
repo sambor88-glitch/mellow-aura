@@ -25,7 +25,7 @@ const loadGeowidget = ({ script, style }) => {
 // A sentence from the page's language, with :amount filled in.
 const say = (texts, key, amount = '') => (texts[key] ?? key).replace(':amount', amount);
 
-export default ({ accepted, deviations, payment, shipping, locker, lockerMap, subtotal, freeFrom, prices, texts }) => ({
+export default ({ accepted, deviations, payment, blikCode, shipping, locker, lockerMap, subtotal, freeFrom, prices, texts }) => ({
     accepted,
     // A product with a feature nobody would expect has its own checkbox, keyed by the cart line.
     deviations: { ...deviations },
@@ -45,12 +45,17 @@ export default ({ accepted, deviations, payment, shipping, locker, lockerMap, su
         return subtotal + this.shippingCost;
     },
 
+    // The code is typed here only with BLIK Level 0; without it, on Przelewy24's page.
+    get needsBlikCode() {
+        return blikCode && this.payment === 'blik' && this.blik.length !== 6;
+    },
+
     get deviationsAccepted() {
         return Object.values(this.deviations).every(Boolean);
     },
 
     get ready() {
-        return this.accepted && this.deviationsAccepted && (this.payment !== 'blik' || this.blik.length === 6);
+        return this.accepted && this.deviationsAccepted && !this.needsBlikCode;
     },
 
     // What the pay button says: the amount, or what is still missing.
@@ -59,7 +64,7 @@ export default ({ accepted, deviations, payment, shipping, locker, lockerMap, su
             return say(texts, 'paying');
         }
 
-        if (this.payment === 'blik' && this.blik.length !== 6) {
+        if (this.needsBlikCode) {
             return say(texts, 'blik_missing');
         }
 
@@ -125,7 +130,7 @@ export default ({ accepted, deviations, payment, shipping, locker, lockerMap, su
             return;
         }
 
-        if (this.payment === 'blik' && this.blik.length !== 6) {
+        if (this.needsBlikCode) {
             event.preventDefault();
             this.$store.cart.say(say(texts, 'blik_short'));
             this.$refs.blik.focus();

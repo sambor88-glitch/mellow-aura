@@ -93,7 +93,7 @@ class Przelewy24GatewayTest extends TestCase
         $this->cartWithAVase();
 
         $this->withHeader('User-Agent', 'Firefox')->post('/zamowienie', $this->form())
-            ->assertRedirect(route('checkout.confirmation'));
+            ->assertRedirect(route('checkout.blik'));
 
         Http::assertSent(fn (Request $request) => $request->url() === self::API.'transaction/register'
             && $request['additional']['PSU']['userAgent'] === 'Firefox' && filled($request['additional']['PSU']['IP']));

@@ -18,7 +18,8 @@ use Illuminate\Support\Str;
 /**
  * Przelewy24 (MA-167). Every payment is first registered with Przelewy24, in the order's currency and in grosze
  * or cents. BLIK takes the code from our own field and charges it straight away (BLIK Level 0); the customer
- * confirms in the bank's app. Card and online transfer go to Przelewy24's own page and come back to the confirmation.
+ * confirms in the bank's app while the checkout waits on its BLIK page (MA-101). Card, online transfer and BLIK
+ * without Level 0 go to Przelewy24's own page and come back to the confirmation.
  *
  * The money counts only after Przelewy24's notification has been verified (Przelewy24NotificationController).
  * A bank transfer has nothing to confirm online: the order waits for the money and the customer gets the account
@@ -30,6 +31,12 @@ class Przelewy24Gateway implements PaymentGateway
 
     /** Transaction status in transaction/by/sessionId: 2 is „payment made”, after our verify. */
     private const PAID = 2;
+
+    /**
+     * BLIK's number in Przelewy24's list of methods (paymentMethods), for BLIK on their page. To be checked
+     * against the list in the sandbox once the account is there (MA-98).
+     */
+    private const BLIK_METHOD = 154;
 
     public function __construct(
         private Przelewy24Client $client,
@@ -45,20 +52,48 @@ class Przelewy24Gateway implements PaymentGateway
             return StartedPayment::done();
         }
 
-        $blik = $order->payment_method === PaymentMethod::Blik;
-        $attempt = $this->register($order, $blik);
+        $blikHere = $order->payment_method === PaymentMethod::Blik && $this->takesBlikCode();
+        $attempt = $this->register($order, $blikHere);
 
         if ($attempt === null) {
             return StartedPayment::rejected(__('payments::gateway.down'));
         }
 
-        if ($blik) {
-            return $this->chargeBlik($order, $attempt, (string) $blikCode);
+        if ($blikHere) {
+            $payment = $this->charge($order, $attempt, (string) $blikCode);
+
+            // A refused code leaves no order behind for the customer, so the summary goes out only for a taken one.
+            if ($payment->error === null) {
+                OrderPlaced::dispatch($order);
+            }
+
+            return $payment;
         }
 
         OrderPlaced::dispatch($order);
 
         return StartedPayment::redirect($this->client->paymentPage((string) $attempt->token));
+    }
+
+    /**
+     * Przelewy24 takes a session id only once, so a new code is a new registered try on the same order.
+     */
+    public function chargeBlik(Order $order, string $blikCode): StartedPayment
+    {
+        $attempt = $this->register($order, true);
+
+        return $attempt === null
+            ? StartedPayment::rejected(__('payments::gateway.down'))
+            : $this->charge($order, $attempt, $blikCode);
+    }
+
+    /**
+     * BLIK Level 0 has to be switched on by Przelewy24 for the shop. Until it is, PRZELEWY24_BLIK_ON_SITE=false
+     * sends BLIK to Przelewy24's page, with BLIK already chosen (MA-101).
+     */
+    public function takesBlikCode(): bool
+    {
+        return (bool) config('services.przelewy24.blik_on_site', true);
     }
 
     public function state(Order $order): PaymentState
@@ -88,7 +123,10 @@ class Przelewy24Gateway implements PaymentGateway
             : PaymentState::Pending;
     }
 
-    private function register(Order $order, bool $blik): ?PaymentAttempt
+    /**
+     * $blikHere: the code comes from our own field and is charged straight after (BLIK Level 0).
+     */
+    private function register(Order $order, bool $blikHere): ?PaymentAttempt
     {
         $sessionId = $order->number.'-'.Str::lower(Str::random(8));
         $amount = (int) $order->total_gross;
@@ -117,8 +155,11 @@ class Przelewy24Gateway implements PaymentGateway
         ];
 
         // BLIK charged by code needs the customer's address and browser (the PSU object), says the documentation.
-        if ($blik) {
+        // BLIK on Przelewy24's page opens with BLIK already chosen, so the customer sees no list of banks.
+        if ($blikHere) {
             $body['additional'] = ['PSU' => ['IP' => (string) request()->ip(), 'userAgent' => Str::limit((string) request()->userAgent(), 255, '')]];
+        } elseif ($order->payment_method === PaymentMethod::Blik) {
+            $body['method'] = self::BLIK_METHOD;
         }
 
         try {
@@ -149,7 +190,7 @@ class Przelewy24Gateway implements PaymentGateway
         ]);
     }
 
-    private function chargeBlik(Order $order, PaymentAttempt $attempt, string $blikCode): StartedPayment
+    private function charge(Order $order, PaymentAttempt $attempt, string $blikCode): StartedPayment
     {
         try {
             $response = $this->client->chargeBlik((string) $attempt->token, $blikCode);
@@ -174,8 +215,6 @@ class Przelewy24Gateway implements PaymentGateway
         $attempt->update(['provider_order_id' => $response->json('data.orderId')]);
 
         // The customer now confirms in the bank's app; the notification says when the money is in.
-        OrderPlaced::dispatch($order);
-
-        return StartedPayment::done();
+        return StartedPayment::awaitingBank();
     }
 }

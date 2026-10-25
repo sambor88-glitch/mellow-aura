@@ -5,8 +5,8 @@ namespace App\Modules\Checkout\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Cart\Cart;
 use App\Modules\Cart\CartLine;
-use App\Modules\Checkout\Actions\MarkOrderPaid;
 use App\Modules\Checkout\Actions\PlaceOrder;
+use App\Modules\Checkout\Actions\SettlePayment;
 use App\Modules\Checkout\Enums\PaymentMethod;
 use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Http\Requests\PlaceOrderRequest;
@@ -16,7 +16,6 @@ use App\Modules\Checkout\Support\ShippingMethods;
 use App\Modules\Content\Support\LegalDocument;
 use App\Modules\Localization\Support\Locales;
 use App\Modules\Payments\Contracts\PaymentGateway;
-use App\Modules\Payments\Enums\PaymentState;
 use App\Modules\Settings\Settings;
 use App\Modules\Shared\Support\AnalyticsItem;
 use Illuminate\Http\RedirectResponse;
@@ -31,7 +30,7 @@ class CheckoutController extends Controller
 {
     private const ROBOTS = 'noindex, nofollow';
 
-    public function show(Cart $cart, ShippingMethods $shipping, Settings $settings): Response
+    public function show(Cart $cart, ShippingMethods $shipping, Settings $settings, PaymentGateway $gateway): Response
     {
         $lines = $cart->lines();
         $subtotal = $this->subtotal($lines);
@@ -59,6 +58,8 @@ class CheckoutController extends Controller
             'selectedShipping' => $selectedShipping,
             'paymentMethods' => $paymentMethods,
             'selectedPayment' => $selectedPayment,
+            // Without BLIK Level 0 the code is typed on Przelewy24's page, so there is no field for it here.
+            'blikCode' => $gateway->takesBlikCode(),
             'analytics' => $lines->isEmpty() ? null : AnalyticsItem::params($subtotal, $this->analyticsItems($lines)),
             'config' => [
                 'accepted' => (bool) old('accept_terms'),
@@ -67,6 +68,7 @@ class CheckoutController extends Controller
                     ->map(fn (CartLine $line, string $key) => (bool) old('accept_deviations.'.$key))
                     ->all(),
                 'payment' => $selectedPayment,
+                'blikCode' => $gateway->takesBlikCode(),
                 'shipping' => $selectedShipping,
                 'locker' => (string) old('locker_code', ''),
                 // InPost's map of lockers, or null without a token: then the code is typed by hand.
@@ -116,7 +118,15 @@ class CheckoutController extends Controller
         // The cart is emptied on the confirmation page, so the purchase for Google Analytics is kept here.
         $request->session()->put('checkout.analytics', ['order' => $order->number, 'value' => $subtotal, 'items' => $this->analyticsItems($lines)]);
 
-        // A card or an online transfer is finished on Przelewy24's page, which sends the customer back to the confirmation.
+        // The code was taken: the customer confirms in the bank's app while the BLIK page counts down.
+        if ($payment->awaitsBank) {
+            BlikController::startClock($request);
+
+            return to_route('checkout.blik');
+        }
+
+        // A card, an online transfer or BLIK without Level 0 is finished on Przelewy24's page, which sends the
+        // customer back to the confirmation.
         if ($payment->redirectTo !== null) {
             return redirect()->away($payment->redirectTo);
         }
@@ -124,7 +134,7 @@ class CheckoutController extends Controller
         return to_route('checkout.confirmation');
     }
 
-    public function confirmation(Request $request, Cart $cart, PaymentGateway $gateway, MarkOrderPaid $markOrderPaid): Response|RedirectResponse
+    public function confirmation(Request $request, Cart $cart, SettlePayment $settle, PaymentGateway $gateway): Response|RedirectResponse
     {
         $number = $request->session()->get('checkout.order');
         $order = $number ? Order::query()->where('number', $number)->first() : null;
@@ -133,7 +143,13 @@ class CheckoutController extends Controller
             return to_route('shop.index');
         }
 
-        $order = $this->settle($order, $gateway, $markOrderPaid);
+        $order = $settle($order);
+
+        // A BLIK code still waiting for the bank's app has its own page with the clock.
+        if ($order->payment_method === PaymentMethod::Blik && $order->payment_status === PaymentStatus::Pending
+            && filled($order->payment_provider_id) && $gateway->takesBlikCode()) {
+            return to_route('checkout.blik');
+        }
 
         // The cart waited for this moment, so a payment the bank refused leaves it exactly as it was.
         if ($order->payment_status === PaymentStatus::Failed) {
@@ -166,23 +182,6 @@ class CheckoutController extends Controller
     private function paymentMethods(): Collection
     {
         return collect(PaymentMethod::for(Locales::currency()));
-    }
-
-    /**
-     * The customer can be back in the shop before the gateway's own call reaches us, so we ask it
-     * ourselves. MarkOrderPaid is safe to call twice, so the call arriving later changes nothing.
-     */
-    private function settle(Order $order, PaymentGateway $gateway, MarkOrderPaid $markOrderPaid): Order
-    {
-        if ($order->payment_status !== PaymentStatus::Pending || blank($order->payment_provider_id)) {
-            return $order;
-        }
-
-        return match ($gateway->state($order)) {
-            PaymentState::Succeeded => $markOrderPaid($order, $order->payment_provider_id),
-            PaymentState::Failed => tap($order)->update(['payment_status' => PaymentStatus::Failed]),
-            PaymentState::Pending => $order,
-        };
     }
 
     /**

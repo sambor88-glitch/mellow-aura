@@ -10,15 +10,16 @@ enum PaymentMethod: string
     case BankTransfer = 'bank_transfer';
 
     /**
-     * The ways to pay in a currency, in the order the checkout lists them. BLIK takes only złoty, and a bank
-     * transfer goes to Kasia's złoty account; which account takes euro is still open (MA-124).
+     * The ways to pay in a currency, in the order the checkout lists them (MA-105: BLIK, card, online transfer,
+     * bank transfer last). BLIK takes only złoty, and a bank transfer goes to Kasia's złoty account; which
+     * account takes euro is still open (MA-124).
      *
      * @return list<self>
      */
     public static function for(string $currency): array
     {
         return match ($currency) {
-            'PLN' => [self::Blik, self::OnlineTransfer, self::Card, self::BankTransfer],
+            'PLN' => [self::Blik, self::Card, self::OnlineTransfer, self::BankTransfer],
             'EUR' => [self::Card, self::OnlineTransfer],
             default => [],
         };

@@ -7,6 +7,7 @@ use App\Modules\Cart\CartLine;
 use App\Modules\Checkout\Enums\PaymentMethod;
 use App\Modules\Checkout\Support\ShippingMethods;
 use App\Modules\Localization\Support\Locales;
+use App\Modules\Payments\Contracts\PaymentGateway;
 use App\Modules\Shared\Support\Nip;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
@@ -50,7 +51,10 @@ class PlaceOrderRequest extends FormRequest
             'locker_code' => ['exclude_unless:shipping_method,parcel_locker', 'nullable', 'regex:/^[A-Z0-9-]{4,16}$/'],
             // Only the ways to pay in the currency of the basket: BLIK never takes euro.
             'payment_method' => ['required', Rule::in(array_column(PaymentMethod::for(Locales::currency()), 'value'))],
-            'blik_code' => ['exclude_unless:payment_method,blik', 'required', 'digits:6'],
+            // Without BLIK Level 0 the code is typed on Przelewy24's page, not here.
+            'blik_code' => $this->container->make(PaymentGateway::class)->takesBlikCode()
+                ? ['exclude_unless:payment_method,blik', 'required', 'digits:6']
+                : ['exclude'],
             'expected_total' => ['required', 'integer'],
             'accept_terms' => ['accepted'],
             ...$this->deviationKeys()->mapWithKeys(fn (string $key) => ['accept_deviations.'.$key => ['accepted']])->all(),
