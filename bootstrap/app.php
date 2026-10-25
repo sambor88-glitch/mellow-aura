@@ -24,6 +24,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(SecurityHeaders::class);
         // The customer's own address behind Cloudflare, so limits count per customer (see Cloudflare).
         $middleware->trustProxies(at: Cloudflare::PROXIES);
+        // Przelewy24 has no session and no token; its notification proves itself with a signature instead.
+        $middleware->validateCsrfTokens(except: ['przelewy24/powiadomienie']);
         $middleware->redirectGuestsTo(fn () => route('admin.login'));
         $middleware->redirectUsersTo(fn () => route('admin.dashboard'));
     })

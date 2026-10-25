@@ -116,6 +116,11 @@ class CheckoutController extends Controller
         // The cart is emptied on the confirmation page, so the purchase for Google Analytics is kept here.
         $request->session()->put('checkout.analytics', ['order' => $order->number, 'value' => $subtotal, 'items' => $this->analyticsItems($lines)]);
 
+        // A card or an online transfer is finished on Przelewy24's page, which sends the customer back to the confirmation.
+        if ($payment->redirectTo !== null) {
+            return redirect()->away($payment->redirectTo);
+        }
+
         return to_route('checkout.confirmation');
     }
 
