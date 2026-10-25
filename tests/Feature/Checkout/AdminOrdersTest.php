@@ -61,6 +61,7 @@ class AdminOrdersTest extends TestCase
             'shipping_address' => ['street' => 'Długa 1', 'postal_code' => '30-001', 'city' => 'Kraków'],
             'note' => 'To prezent, dołóż kartkę',
             'invoice_nip' => '1111111111',
+            'locker_code' => 'KRA01M',
         ], PaymentStatus::Paid, [['Kubki z cytatem', 'Twój tekst', 1, 7900, 'KAWA <B>NAJPIERW</B>', 1]]);
 
         $this->actingAs(User::factory()->create())
@@ -70,6 +71,7 @@ class AdminOrdersTest extends TestCase
             ->assertSee('href="mailto:ania@example.com"', false)
             ->assertSee('600 100 200')
             ->assertSee('InPost Paczkomat')
+            ->assertSeeInOrder(['Paczkomat', 'KRA01M'])
             ->assertSee('Długa 1, 30-001 Kraków')
             ->assertSee('To prezent, dołóż kartkę')
             ->assertSee('1111111111')
