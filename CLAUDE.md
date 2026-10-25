@@ -171,7 +171,7 @@ Szczegóły w `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html`. Tu zasady,
 - Problemy z kopią idą przez `Monitoring\Support\Alerts`, nie przez maile paczki. Wdrożenie i odtwarzanie: `infra/backups/README.md`.
 
 ## Repozytorium
-
+- Publiczne: `sambor88-glitch/mellow-aura`, wypychanie przez SSH. Gałąź robocza `dev`, produkcja `main` — szczegóły w „Gałęzie i środowiska”.
 - Publiczne: `sambor88-glitch/mellow-aura`, gałąź `main`, wypychanie przez SSH.
 - Nigdy nie commituj `uploads/` (surowe zrzuty mogą zawierać dane klientek), `.env` ani kluczy — są w `.gitignore`.
 - Projekt w Claude Design czyta z tego repozytorium (`github.md`). Zmianę w `.dc.html` wypchnij, a przed pracą

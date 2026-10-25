@@ -170,15 +170,6 @@
 }
 
 @layer base {
-    /*
-     * The slogan rows, glow orbs and grain reach past the screen on purpose; clip (not hidden) keeps them from widening
-     * the page without making a scroll container, so sticky headers and pinned sections still work (MA-81).
-     */
-    html,
-    body {
-        overflow-x: clip;
-    }
-
     body {
         background: var(--color-sand);
         color: var(--color-ink);
@@ -546,8 +537,11 @@
     }
 
     @media (min-width: 768px) {
+        /* The track slides by transform, so it may stick out sideways; clip keeps the page from scrolling with it
+           while the cards can still lift on hover. */
         .motion .aura-track-wrap {
-            overflow: visible;
+            overflow-x: clip;
+            overflow-y: visible;
             scroll-snap-type: none;
         }
     }

@@ -7,6 +7,7 @@ use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
 use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Mail\OrderConfirmed;
+use App\Modules\Checkout\Mail\OrderUnavailable;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Payments\Models\PaymentAttempt;
 use App\Modules\Payments\Models\PaymentEvent;
@@ -85,6 +86,29 @@ class Przelewy24NotificationTest extends TestCase
         $this->assertSame(1, PaymentEvent::count());
         // Only the verify calls: faking verify after setUp clears what was recorded before it, the register call too.
         $this->assertCount(1, Http::recorded(fn (Request $request) => str_contains($request->url(), 'transaction/verify')));
+    }
+
+    public function test_two_people_paying_for_the_last_piece_one_gets_it_and_the_other_is_told_about_the_refund(): void
+    {
+        $this->variant->update(['stock' => 1]);
+        $first = $this->attempt;
+
+        // A second customer, in her own browser, checks out while the piece is still on the shelf.
+        $this->flushSession();
+        $this->postJson('/koszyk', ['variant_id' => $this->variant->id]);
+        $this->post('/zamowienie', $this->form());
+        $second = PaymentAttempt::query()->whereKeyNot($first->id)->sole();
+
+        $this->verifyAnswers();
+        $this->notify(['sessionId' => $first->session_id, 'orderId' => 555])->assertOk();
+        $this->notify(['sessionId' => $second->session_id, 'orderId' => 556])->assertOk();
+
+        $this->assertSame(0, $this->variant->fresh()->stock);
+        $this->assertFalse($first->order->fresh()->hasShortage());
+        $this->assertSame(PaymentStatus::Paid, $second->order->fresh()->payment_status);
+        $this->assertTrue($second->order->fresh()->hasShortage());
+        Mail::assertQueued(OrderConfirmed::class, fn (OrderConfirmed $mail) => $mail->order->is($first->order));
+        Mail::assertQueued(OrderUnavailable::class, fn (OrderUnavailable $mail) => $mail->order->is($second->order));
     }
 
     public function test_a_wrong_signature_is_refused_and_written_down_without_touching_the_order(): void
