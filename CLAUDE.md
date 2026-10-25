@@ -250,4 +250,14 @@ npm install && npm run dev        # Vite na Macu, nie w kontenerze
   z InPost Managera (Moje konto → API), `INPOST_SHIPX_SANDBOX=true` dla konta testowego. Bez nich panel mówi,
   żeby nadać paczkę w InPost Managerze. Paczki Kasia nadaje w paczkomacie z ustawień (`parcel_locker_code`).
   Nie było jeszcze uruchomione na prawdziwym ShipX — konto InPost czeka na MA-27.
+- Statusy ShipX (MA-133): `shipping:sync` co 15 minut pyta ShipX o przesyłki w drodze (bez statusu końcowego,
+  nie starsze niż 21 dni, zamówienie niezakończone) przez `Shipping\Actions\RefreshShipment`. Mapa statusów
+  i polskie nazwy na karcie „InPost”: `Shipping\Support\ShipXStatus`. Paczka nadana lub w drodze → „Wysłane”
+  z numerem i mailem do klientki (raz — tylko gdy zamówienie nie ma jeszcze `shipped_at`), `delivered` → „Zakończone”,
+  zwrot, odmowa, niedoręczenie, anulowana etykieta → „Problem” z notatką. Zamówienie zmienia się tylko przy nowym
+  statusie ShipX i tylko przez `Checkout\Actions\ChangeOrderStatus`; zakończonego nic nie rusza. Brak odpowiedzi
+  nic nie zmienia; trzy przebiegi z rzędu bez żadnej odpowiedzi → alert z `Monitoring\Support\Alerts`.
+  Bez webhooka ShipX — jego wywołania nie mają podpisu, a odpytywanie wystarcza.
+  Wymaga harmonogramu na Forge: serwer → Scheduler, `php artisan schedule:run` co minutę jako `forge`
+  (alert „Harmonogram nie działa” mówi, gdy go brakuje). Bez kluczy ShipX komenda nic nie robi.
 - Tokenów, haseł i kluczy nie wklejamy do czatu, Jiry ani repozytorium. Na zrzutach ekranu zamazujemy.
