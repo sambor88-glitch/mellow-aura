@@ -238,4 +238,8 @@ npm install && npm run dev        # Vite na Macu, nie w kontenerze
   i sprawdzenie Postmark → Activity.
 - Log aplikacji: Forge → strona → Observe → Logs → Site Log. Wpisy z alertów zaczynają się od `Błąd:` i `Komunikat:`.
 - Mapa paczkomatów w kasie (MA-72): `INPOST_GEOWIDGET_TOKEN` z InPost Managera. Pusty token = samo pole na kod paczkomatu.
+- Nadawanie paczek z panelu (MA-132, moduł `Shipping`): `INPOST_SHIPX_TOKEN` i `INPOST_SHIPX_ORGANIZATION_ID`
+  z InPost Managera (Moje konto → API), `INPOST_SHIPX_SANDBOX=true` dla konta testowego. Bez nich panel mówi,
+  żeby nadać paczkę w InPost Managerze. Paczki Kasia nadaje w paczkomacie z ustawień (`parcel_locker_code`).
+  Nie było jeszcze uruchomione na prawdziwym ShipX — konto InPost czeka na MA-27.
 - Tokenów, haseł i kluczy nie wklejamy do czatu, Jiry ani repozytorium. Na zrzutach ekranu zamazujemy.

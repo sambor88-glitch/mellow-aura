@@ -18,6 +18,11 @@ return [
     'inpost' => [
         'geowidget_token' => env('INPOST_GEOWIDGET_TOKEN'),
         'geowidget_sandbox' => (bool) env('INPOST_GEOWIDGET_SANDBOX', false),
+        // ShipX (Shipping module): parcels and labels from the panel. Without the token and the organization id
+        // the panel has no „Nadaj w InPost” and Kasia sends parcels from InPost Manager, as before.
+        'shipx_token' => env('INPOST_SHIPX_TOKEN'),
+        'shipx_organization_id' => env('INPOST_SHIPX_ORGANIZATION_ID'),
+        'shipx_sandbox' => (bool) env('INPOST_SHIPX_SANDBOX', false),
     ],
 
     'postmark' => [

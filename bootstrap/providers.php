@@ -14,6 +14,7 @@ use App\Modules\MugConfigurator\MugConfiguratorServiceProvider;
 use App\Modules\Payments\PaymentsServiceProvider;
 use App\Modules\Settings\SettingsServiceProvider;
 use App\Modules\Shared\SharedServiceProvider;
+use App\Modules\Shipping\ShippingServiceProvider;
 use App\Modules\Workshops\WorkshopsServiceProvider;
 use App\Providers\AppServiceProvider;
 
@@ -27,6 +28,7 @@ return [
     CartServiceProvider::class,
     CheckoutServiceProvider::class,
     PaymentsServiceProvider::class,
+    ShippingServiceProvider::class,
     GiftsServiceProvider::class,
     MugConfiguratorServiceProvider::class,
     ContentServiceProvider::class,
