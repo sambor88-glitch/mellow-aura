@@ -12,13 +12,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('categories', function (Blueprint $table) {
-            $table->text('intro')->nullable()->after('seo_description');
-        });
-
-        Schema::table('category_translations', function (Blueprint $table) {
-            $table->text('intro')->nullable()->after('seo_description');
-        });
+        // MySQL does not roll back ALTER TABLE, so a deploy that failed halfway may have left one
+        // of the columns behind without recording the migration. Add only what is missing.
+        foreach (['categories', 'category_translations'] as $tableName) {
+            if (! Schema::hasColumn($tableName, 'intro')) {
+                Schema::table($tableName, function (Blueprint $table) {
+                    $table->text('intro')->nullable()->after('seo_description');
+                });
+            }
+        }
     }
 
     public function down(): void
