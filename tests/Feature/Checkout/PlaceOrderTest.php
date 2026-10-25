@@ -245,6 +245,22 @@ class PlaceOrderTest extends TestCase
         $this->assertNull(Order::sole()->locker_code);
     }
 
+    public function test_a_pickup_in_the_studio_is_not_promised_a_parcel(): void
+    {
+        Setting::create(['key' => 'dispatch_days_min', 'value' => 3]);
+        Setting::create(['key' => 'dispatch_days_max', 'value' => 5]);
+        $this->postJson('/koszyk', ['variant_id' => $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3)->id]);
+
+        $this->post('/zamowienie', $this->form(['shipping_method' => 'studio_pickup', 'expected_total' => 23900]))
+            ->assertRedirect('/zamowienie/potwierdzenie');
+
+        $this->get('/zamowienie/potwierdzenie')->assertOk()
+            ->assertSee('Odbiór w pracowni')
+            ->assertDontSee('Pakuję')
+            ->assertDontSee('zdjęcie paczki')
+            ->assertDontSee('dni roboczych');
+    }
+
     public function test_the_confirmation_belongs_to_the_session_that_paid(): void
     {
         $this->get('/zamowienie/potwierdzenie')->assertRedirect(route('shop.index'));

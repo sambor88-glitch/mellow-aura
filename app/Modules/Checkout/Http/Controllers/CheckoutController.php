@@ -171,7 +171,8 @@ class CheckoutController extends Controller
                 ? AnalyticsItem::params((int) $analytics['value'], $analytics['items'], ['transaction_id' => $order->number, 'shipping' => $order->shipping_gross / 100])
                 : null,
             'shippingLabel' => app(ShippingMethods::class)->label($order->shipping_method),
-            'parcel' => $order->sendsParcel(),
+            // A pickup in the studio is never packed for the post: no parcel photo, no shipping time.
+            'parcel' => $order->sendsParcel() && $order->shipping_method !== 'studio_pickup',
         ])->header('X-Robots-Tag', self::ROBOTS);
     }
 
