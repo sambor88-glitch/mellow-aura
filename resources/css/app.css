@@ -537,8 +537,11 @@
     }
 
     @media (min-width: 768px) {
+        /* The track slides by transform, so it may stick out sideways; clip keeps the page from scrolling with it
+           while the cards can still lift on hover. */
         .motion .aura-track-wrap {
-            overflow: visible;
+            overflow-x: clip;
+            overflow-y: visible;
             scroll-snap-type: none;
         }
     }

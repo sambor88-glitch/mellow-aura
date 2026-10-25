@@ -30,7 +30,7 @@
     </div>
     <div class="flex items-baseline justify-between gap-3">
         <span class="font-serif text-[22px] leading-[1.15] font-light">{{ $product->name }}</span>
-        <span class="text-[10px] tracking-[0.22em] whitespace-nowrap text-label uppercase">{{ $product->category->name }}</span>
+        <span class="min-w-0 text-right text-[10px] tracking-[0.22em] text-label uppercase">{{ $product->category->name }}</span>
     </div>
     @if ($withVariantCount && $variants > 1)
         <div class="mt-1 text-[12px] text-label">{{ $variantsLabel }}</div>
