@@ -218,6 +218,14 @@ class OrderEmailsTest extends TestCase
             ->assertSeeInHtml('zwrócisz jej 115,00 zł');
     }
 
+    public function test_the_locker_the_customer_picked_is_in_her_mail_and_in_kasias(): void
+    {
+        $order = $this->placeOrder($this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3), ['locker_code' => 'KRA01M'])->load('items');
+
+        (new OrderConfirmed($order))->assertSeeInHtml('Paczkomat KRA01M')->assertSeeInText('Paczkomat KRA01M');
+        (new NewOrderReceived($order))->assertSeeInHtml('Paczkomat KRA01M')->assertDontSeeInHtml('ustalimy paczkomat');
+    }
+
     public function test_a_pickup_gets_no_address_and_the_customers_text_is_escaped(): void
     {
         $mug = $this->variant('Kubki z cytatem', 'Twój tekst', 7900, stock: null, product: ['stamp_enabled' => true]);

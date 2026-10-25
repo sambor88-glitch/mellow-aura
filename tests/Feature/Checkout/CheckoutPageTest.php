@@ -5,8 +5,10 @@ namespace Tests\Feature\Checkout;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
+use App\Modules\Checkout\Support\LockerMap;
 use App\Modules\Settings\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\App;
 use Tests\TestCase;
 
 class CheckoutPageTest extends TestCase
@@ -63,6 +65,24 @@ class CheckoutPageTest extends TestCase
             ->assertSee('geowidget.inpost.pl', false)
             // The map loads only when it is opened: no InPost script in the page itself.
             ->assertDontSee('<script src="https://geowidget.inpost.pl', false);
+    }
+
+    public function test_the_map_speaks_the_pages_language_and_uses_inposts_sandbox_when_asked(): void
+    {
+        config(['services.inpost.geowidget_token' => 'test-token', 'services.inpost.geowidget_sandbox' => true]);
+        App::setLocale('en');
+
+        $this->assertSame([
+            'token' => 'test-token',
+            'script' => 'https://sandbox-easy-geowidget-sdk.easypack24.net/inpost-geowidget.js',
+            'style' => 'https://sandbox-easy-geowidget-sdk.easypack24.net/inpost-geowidget.css',
+            'language' => 'en',
+        ], LockerMap::config());
+
+        config(['services.inpost.geowidget_sandbox' => false]);
+        App::setLocale('pl');
+
+        $this->assertSame(['https://geowidget.inpost.pl/inpost-geowidget.js', 'pl'], [LockerMap::config()['script'], LockerMap::config()['language']]);
     }
 
     public function test_the_checkout_is_never_indexed(): void
