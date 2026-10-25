@@ -32,6 +32,7 @@ return [
     'delivery_way' => 'Sposób dostawy',
     'locker' => 'Paczkomat',
     'locker_placeholder' => 'np. KRA01M',
+    'locker_by_phone' => 'Dobiorę po numerze telefonu',
     'locker_hint' => 'Nie wiesz? Zostaw puste — dobiorę najbliższy po numerze telefonu',
     'locker_map' => 'Wybierz na mapie',
     'locker_dialog' => 'Wybierz paczkomat',

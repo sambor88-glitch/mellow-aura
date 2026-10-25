@@ -32,6 +32,7 @@ return [
     'delivery_way' => 'Delivery',
     'locker' => 'Parcel locker',
     'locker_placeholder' => 'e.g. KRA01M',
+    'locker_by_phone' => 'I’ll pick one by your phone number',
     'locker_hint' => 'Not sure? Leave it empty — I’ll pick the nearest one by your phone number',
     'locker_map' => 'Choose on the map',
     'locker_dialog' => 'Choose a parcel locker',
