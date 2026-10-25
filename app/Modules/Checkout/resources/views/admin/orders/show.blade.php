@@ -186,6 +186,8 @@
                 @endif
             </section>
 
+            @includeIf('shipping::admin.order-shipment', ['order' => $order, 'card' => $card, 'action' => $action])
+
             <section class="{{ $card }}">
                 <h2 class="mb-4 font-serif text-[23px]">Kontakt</h2>
                 <div class="grid gap-2 text-[14px]">
