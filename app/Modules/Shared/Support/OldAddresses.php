@@ -33,6 +33,16 @@ class OldAddresses
     ];
 
     /**
+     * @var array<string, string> old path prefix => route name, for an old address missing from TARGETS that
+     *                            would otherwise end in a 404. Only prefixes the new site doesn't use: an unknown
+     *                            /produkt/… stays a 404, because new product addresses share that prefix.
+     */
+    private const FALLBACKS = [
+        '/kategoria/' => 'shop.index',
+        '/strona/' => 'home',
+    ];
+
+    /**
      * The new address for an old path, or null when the path isn't an old one or its page is gone.
      */
     public static function target(string $path): ?string
@@ -41,6 +51,22 @@ class OldAddresses
         [$name, $parameters] = self::TARGETS[$key] ?? [null, []];
 
         return $name !== null && Route::has($name) ? route($name, $parameters) : null;
+    }
+
+    /**
+     * The page for an old path that found nothing on the new site, by the part of the shop it came from.
+     */
+    public static function fallback(string $path): ?string
+    {
+        $key = '/'.trim(mb_strtolower(rawurldecode($path)), '/');
+
+        foreach (self::FALLBACKS as $prefix => $name) {
+            if (str_starts_with($key, $prefix) && Route::has($name)) {
+                return route($name);
+            }
+        }
+
+        return null;
     }
 
     /**

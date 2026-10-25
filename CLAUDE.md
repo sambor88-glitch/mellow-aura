@@ -206,6 +206,14 @@ a jedna wypychała na gałąź cudzego PR-a. Zasady, żeby praca się nie dublow
   była praca, osobny worklog. Czas i godzina startu z godzin wiadomości w sesji (`list_events`), nie z szacunku.
   Przerwy dłuższe niż 15 minut bez wiadomości nie wchodzą do czasu. Praca bez zadania w Jirze — najpierw
   zadanie z estymatą, potem worklog.
+- Zanim zaproponujesz zadanie MA, sprawdź, czy już nie weszło. Status w Jirze nie wystarcza, bo bywa
+  w tyle za kodem. Sprawdź trzy miejsca:
+  - gałąź `dev`, nie `main`: `git log origin/dev --grep MA-<n>` i szukanie po kodzie;
+  - otwarte i zmergowane PR z numerem zadania;
+  - opis zadania w Jirze, czyli definicję ukończenia.
+- Zadanie, którego kod już jest, a w Jirze jest otwarte, porządkujesz zamiast je proponować:
+  - całość zrobiona i jest worklog → „Gotowe”;
+  - kod jest, a zostały kroki poza kodem → „W toku” i komentarz, co jest, a co zostaje.
 
 ## Komendy
 
