@@ -9,3 +9,5 @@ Route::delete('/kubek-z-napisem/zdjecie', [MugSettingsController::class, 'resetP
 Route::put('/kubek-z-napisem/rozmiary', [MugSettingsController::class, 'sizes'])->name('mug.sizes');
 Route::put('/kubek-z-napisem/napis', [MugSettingsController::class, 'look'])->name('mug.look');
 Route::put('/kubek-z-napisem/teksty', [MugSettingsController::class, 'texts'])->name('mug.texts');
+Route::post('/kubek-z-napisem/z-bliska/{slot}', [MugSettingsController::class, 'letteringPhoto'])->whereIn('slot', ['closeup', 'fired'])->name('mug.lettering');
+Route::delete('/kubek-z-napisem/z-bliska/{slot}', [MugSettingsController::class, 'removeLetteringPhoto'])->whereIn('slot', ['closeup', 'fired'])->name('mug.lettering.remove');
