@@ -184,6 +184,8 @@
             </div>
         </div>
 
+        <x-catalog::category-links :slugs="['kubki-i-filizanki', 'talerze-i-miski']" :heading="__('catalog::shop.ready_heading')" class="mt-14" />
+
         {{-- On a phone the price and the button stay at the bottom (mellowaura-aplikacja), out of the way while typing
              and while the form's own button is in view. Empty, the button says what is missing. --}}
         <div x-data="buyBar('#mug-form [type=submit]')" x-cloak x-bind:class="(shown && ! writing) || 'invisible translate-y-full'"

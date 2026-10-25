@@ -37,4 +37,6 @@ return [
     'favorites_empty_text' => 'Kliknij serce przy produkcie, a zapiszę go tutaj. Rzeczy, których już nie ma na półce, tu się nie pokazują.',
     'favorites_empty_cta' => 'Zobacz, co jest w pracowni',
     'count' => ':shown z :total produktów na półce',
+    'category_link' => ':category w sklepie',
+    'ready_heading' => 'Gotowe od ręki w sklepie',
 ];

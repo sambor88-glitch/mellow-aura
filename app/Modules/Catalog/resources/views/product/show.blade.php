@@ -129,6 +129,17 @@
                     <p class="mb-[26px] text-[16.5px] leading-[1.72] text-pretty text-lead">{{ $product->description }}</p>
                 @endif
 
+                {{-- A product that a service makes from the customer's own thing leads to that service (MA-116). --}}
+                @php($service = match ($product->category?->getRawOriginal('slug')) {
+                    'kubki-i-filizanki' => 'mug',
+                    'talerze-i-miski', 'wazony-i-patery' => 'imprint',
+                    'jedwab' => 'scarf',
+                    default => null,
+                })
+                @if ($service)
+                    <x-shared::service-links :services="[$service]" :heading="__('shared::services.product_heading')" class="mb-[26px]" />
+                @endif
+
                 @if ($dimensions || $product->food_contact)
                     <div class="mb-[30px]">
                         <div class="flex flex-wrap gap-2">

@@ -37,4 +37,6 @@ return [
     'favorites_empty_text' => 'Tap the heart on a piece and I’ll keep it here. Pieces no longer on the shelf don’t show up.',
     'favorites_empty_cta' => 'See what’s in the studio',
     'count' => ':shown of :total pieces on the shelf',
+    'category_link' => ':category in the shop',
+    'ready_heading' => 'Ready to ship from the shop',
 ];

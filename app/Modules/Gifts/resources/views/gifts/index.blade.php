@@ -103,5 +103,7 @@
                 <a href="{{ route('vouchers.index') }}" class="flex-none rounded-full bg-rose px-[30px] py-[15px] text-[14.5px] text-ink hover:bg-sand hover:text-ink">Zobacz vouchery</a>
             </div>
         @endif
+
+        <x-shared::service-links :services="['mug', 'imprint', 'scarf']" :heading="__('shared::services.gifts_heading')" class="mt-[60px]" />
     </div>
 </x-shared::layout>

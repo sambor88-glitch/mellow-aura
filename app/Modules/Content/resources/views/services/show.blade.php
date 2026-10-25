@@ -14,6 +14,7 @@
             'other' => [Service::Imprint, 'Odcisk Twojej rośliny →'],
             'examplesLead' => 'Tkaniny, które do mnie przyszły, obok tego, co z nich uszyłam. Przeciągnij uchwyt na zdjęciu, żeby zobaczyć zmianę.',
             'pricesHeading' => 'Co wychodzi z jednej apaszki',
+            'shop' => ['jedwab', 'kosmetyczki-i-piorniki'],
         ],
         Service::Imprint => [
             'title' => 'Talerz z odciskiem Twojego kwiatu — pamiątka na lata',
@@ -25,6 +26,7 @@
             'other' => [Service::Scarf, 'Z Twojej apaszki →'],
             'examplesLead' => 'Rośliny, które do mnie przyszły, obok ceramiki, na której zostawiły ślad. Przeciągnij uchwyt na zdjęciu, żeby zobaczyć zmianę.',
             'pricesHeading' => 'Na czym odciskam',
+            'shop' => ['talerze-i-miski', 'wazony-i-patery'],
         ],
     };
     $contactUrl = route('content.contact', ['temat' => 'Zamówienie indywidualne']);
@@ -136,6 +138,7 @@
                     @include('content::services.'.$service->value.'-card')
                 </div>
             </div>
+            <x-catalog::category-links :slugs="$page['shop']" :heading="__('catalog::shop.ready_heading')" class="mt-12" />
         </div>
     </div>
 </x-shared::layout>
