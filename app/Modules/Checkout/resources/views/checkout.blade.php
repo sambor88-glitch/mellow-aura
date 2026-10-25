@@ -93,7 +93,7 @@
                             </div>
                             <input id="blik_code" name="blik_code" x-ref="blik" x-bind:value="blik"
                                    x-on:input="blik = $el.value = $el.value.replace(/\D/g, '').slice(0, 6)"
-                                   inputmode="numeric" autocomplete="one-time-code" placeholder="• • • • • •" aria-describedby="blik_code-note"
+                                   inputmode="numeric" autocomplete="one-time-code" placeholder="••••••" aria-describedby="blik_code-note"
                                    @error('blik_code') aria-invalid="true" @enderror
                                    x-bind:class="blik.length === 6 && 'border-navy shadow-[0_0_0_4px_rgb(36_65_126/.14)]'"
                                    @class([
