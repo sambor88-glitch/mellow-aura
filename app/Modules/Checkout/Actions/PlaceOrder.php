@@ -34,6 +34,7 @@ class PlaceOrder
                 'phone' => substr((string) preg_replace('/\D+/', '', $data['phone']), -9),
                 'shipping_method' => $data['shipping_method'],
                 'shipping_address' => $address ?: null,
+                'locker_code' => $data['shipping_method'] === 'parcel_locker' ? ($data['locker_code'] ?? null) : null,
                 'shipping_gross' => $shippingGross,
                 'total_gross' => $lines->sum(fn (CartLine $line) => $line->total()) + $shippingGross,
                 // The cart counts in the currency of the page, so the order is paid in it and speaks its language.

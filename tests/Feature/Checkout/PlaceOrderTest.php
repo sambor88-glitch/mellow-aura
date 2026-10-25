@@ -211,6 +211,36 @@ class PlaceOrderTest extends TestCase
         $this->assertSame([0, 47800, PaymentMethod::Card], [$order->shipping_gross, $order->total_gross, $order->payment_method]);
     }
 
+    public function test_the_parcel_locker_is_optional_and_saved_in_capitals_without_spaces(): void
+    {
+        $vase = $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 5);
+
+        $this->postJson('/koszyk', ['variant_id' => $vase->id]);
+        $this->from('/zamowienie')
+            ->followingRedirects()
+            ->post('/zamowienie', $this->form(['locker_code' => 'kra 01m?']))
+            ->assertSee('Kod paczkomatu to litery i cyfry, np. KRA01M — sprawdź go albo zostaw puste');
+        $this->assertSame(0, Order::count());
+
+        $this->post('/zamowienie', $this->form(['locker_code' => ' kra 01m ']))->assertRedirect('/zamowienie/potwierdzenie');
+        $this->assertSame('KRA01M', Order::sole()->locker_code);
+
+        // Left empty, Kasia picks the nearest by the phone number.
+        $this->postJson('/koszyk', ['variant_id' => $vase->id]);
+        $this->post('/zamowienie', $this->form(['locker_code' => '']))->assertRedirect('/zamowienie/potwierdzenie');
+        $this->assertNull(Order::latest('id')->first()->locker_code);
+    }
+
+    public function test_a_locker_typed_before_switching_to_pickup_is_not_saved(): void
+    {
+        $this->postJson('/koszyk', ['variant_id' => $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3)->id]);
+
+        $this->post('/zamowienie', $this->form(['shipping_method' => 'studio_pickup', 'locker_code' => 'not a code', 'expected_total' => 23900]))
+            ->assertRedirect('/zamowienie/potwierdzenie');
+
+        $this->assertNull(Order::sole()->locker_code);
+    }
+
     public function test_the_confirmation_belongs_to_the_session_that_paid(): void
     {
         $this->get('/zamowienie/potwierdzenie')->assertRedirect(route('shop.index'));

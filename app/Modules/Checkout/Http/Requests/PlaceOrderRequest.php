@@ -17,6 +17,7 @@ use Illuminate\Validation\Rule;
  * Three fields, delivery, payment and accepting the terms are required, and so is accepting each unexpected
  * feature of a product in the cart (terms §4.5). A cart of vouchers sent as PDFs has no delivery to choose.
  * The address, NIP and note are optional, but an address has to be whole and a NIP has to add up.
+ * So is the parcel locker: without one Kasia picks the nearest by the phone number.
  */
 class PlaceOrderRequest extends FormRequest
 {
@@ -46,6 +47,7 @@ class PlaceOrderRequest extends FormRequest
             'shipping_method' => $this->needsDelivery()
                 ? ['required', Rule::in($this->container->make(ShippingMethods::class)->all()->keys())]
                 : ['exclude'],
+            'locker_code' => ['exclude_unless:shipping_method,parcel_locker', 'nullable', 'regex:/^[A-Z0-9-]{4,16}$/'],
             // Only the ways to pay in the currency of the basket: BLIK never takes euro.
             'payment_method' => ['required', Rule::in(array_column(PaymentMethod::for(Locales::currency()), 'value'))],
             'blik_code' => ['exclude_unless:payment_method,blik', 'required', 'digits:6'],
@@ -80,6 +82,7 @@ class PlaceOrderRequest extends FormRequest
             'note.max' => $t('note_max'),
             'shipping_method.required' => $t('shipping_method'),
             'shipping_method.in' => $t('shipping_method'),
+            'locker_code.regex' => $t('locker_code'),
             'payment_method.required' => $t('payment_method'),
             'payment_method.in' => $t('payment_method'),
             'blik_code.required' => $t('blik_code'),
@@ -116,6 +119,8 @@ class PlaceOrderRequest extends FormRequest
         $this->merge([
             'blik_code' => preg_replace('/\D+/', '', (string) $this->input('blik_code')),
             'invoice_nip' => preg_replace('/\D+/', '', (string) $this->input('invoice_nip')) ?: null,
+            // Typed by hand as „kra 01m” or picked on the map: InPost's codes are capitals without spaces.
+            'locker_code' => strtoupper((string) preg_replace('/\s+/', '', (string) $this->input('locker_code'))) ?: null,
             // The iPhone's number pad has no dash, so „30001” and „30 001” count as 30-001.
             'postal_code' => preg_match('/^\s*(\d{2})[\s-]*(\d{3})\s*$/', $postalCode, $digits) ? $digits[1].'-'.$digits[2] : $this->input('postal_code'),
         ]);

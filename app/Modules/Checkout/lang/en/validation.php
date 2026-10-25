@@ -19,6 +19,7 @@ return [
     'nip_checksum' => 'This NIP doesn’t add up — check the digits',
     'note_max' => 'The note fits in :max characters',
     'shipping_method' => 'Choose how I should send your parcel',
+    'locker_code' => 'A locker code is letters and digits, e.g. KRA01M — check it or leave it empty',
     'payment_method' => 'Choose how you’d like to pay',
     'blik_code' => 'Enter the 6-digit code from your banking app',
     'accept_terms' => 'Tick the box to accept the terms — I can’t take the order without it',
