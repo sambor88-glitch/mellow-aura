@@ -103,5 +103,7 @@
                 </div>
             </div>
         @endif
+
+        <x-shared::service-links :services="['mug', 'imprint', 'scarf']" :heading="__('shared::services.gifts_heading')" class="mt-[60px]" />
     </div>
 </x-shared::layout>
