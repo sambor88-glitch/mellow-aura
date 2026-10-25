@@ -106,6 +106,18 @@ class PaymentFlowTest extends TestCase
             ->assertSessionHasErrors(['blik_code' => 'Bank odrzucił kod.']);
     }
 
+    public function test_the_stand_in_leaves_a_bank_transfer_waiting_for_the_money(): void
+    {
+        $variant = $this->cartWithAVase();
+
+        $this->post('/zamowienie', $this->form(['payment_method' => 'bank_transfer', 'blik_code' => '']))
+            ->assertRedirect(route('checkout.confirmation'));
+
+        $this->get('/zamowienie/potwierdzenie')->assertOk()->assertSee('Dziękuję. Czekam na przelew.');
+        $this->assertSame(PaymentStatus::Pending, Order::sole()->payment_status);
+        $this->assertSame(3, $variant->fresh()->stock);
+    }
+
     /**
      * A gateway that answers whatever the test needs, so no test talks to a real provider.
      */
