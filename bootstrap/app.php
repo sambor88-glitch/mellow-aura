@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\NoIndex;
+use App\Modules\Shared\Http\Middleware\ProtectStaging;
 use App\Modules\Shared\Http\Middleware\RedirectOldAddresses;
 use App\Modules\Shared\Http\Middleware\SecurityHeaders;
 use App\Modules\Shared\Support\Cloudflare;
@@ -16,6 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // First of all: without the staging password nothing else runs, not even a redirect.
+        $middleware->prepend(ProtectStaging::class);
         $middleware->append(NoIndex::class);
         $middleware->append(RedirectOldAddresses::class);
         $middleware->append(SecurityHeaders::class);

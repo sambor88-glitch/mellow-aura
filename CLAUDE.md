@@ -203,4 +203,24 @@ npm install && npm run dev        # Vite na Macu, nie w kontenerze
 - `dev` → staging na Forge (`mellowaura-dev.on-forge.com`), auto-deploy po każdym pushu, `APP_ENV=staging`, `APP_NOINDEX=true`,
   `APP_LOCALES=pl,en`, dostęp za hasłem.
 - `main` → produkcja `mellow-aura.com` (strona produkcyjna powstaje przy starcie), `APP_NOINDEX=false`.
-- Pracujesz na `dev`; do `main` scalasz dopiero przetestowane zmiany.
+  Do startu `mellow-aura.com` przekierowuje do starego sklepu na SumUp.
+- Pracujesz na `dev`; do `main` scalasz dopiero przetestowane zmiany. `main` ma tylko szkielet z tygodnia 1.
+
+## Staging na Forge — stan na 25.10.2026
+
+- Na Forge jest jedna strona: `mellowaura-dev.on-forge.com`. Drugą (`mellow-aura-staging.on-forge.com`) Maciej usunął 25.10.
+  Nie zakładaj drugiej strony stagingu.
+- Hasło: `Shared\Http\Middleware\ProtectStaging` (MA-168), zmienne `STAGING_USER` (domyślnie `mellowaura`) i `STAGING_PASSWORD`.
+  Bez hasła przechodzą `/up` i webhook płatności (`ProtectStaging::OPEN`). Przy zamianie Stripe na Przelewy24 wpisz tam
+  adres powiadomień Przelewy24, inaczej płatności na stagingu przestaną się potwierdzać.
+- Bez kluczy bramki płatności kasa płaci sama: zamówienie od razu ma status „Zapłacone”, pieniądze nie są pobierane.
+- Maile: Postmark (`MAIL_MAILER=postmark`, `POSTMARK_API_KEY`), konto na kasia@mellow-aura.com, serwer „My First Server”.
+  `MAIL_REDIRECT_TO=kasia@mellow-aura.com` — każdy mail ze stagingu trafia do Kasi z adresatem w temacie `[do: …]`.
+  Wniosek o zatwierdzenie konta wysłany 25.10 (wg Macieja; odpowiedź Postmarka do sprawdzenia). Do zatwierdzenia maile dochodzą tylko na adresy @mellow-aura.com.
+- Worker kolejki: Forge → strona → Processes (`queue:work database`). Deploy wysyła `queue:restart`, ale 25.10 worker
+  i tak został na starym wdrożeniu bez tokenu Postmarka (w logu `User is not set`, maile zamówień nie wychodziły).
+  Po każdej zmianie w Environment: Deploy, potem **Restart workera w Processes**, potem próbne zamówienie
+  i sprawdzenie Postmark → Activity.
+- Log aplikacji: Forge → strona → Observe → Logs → Site Log. Wpisy z alertów zaczynają się od `Błąd:` i `Komunikat:`.
+- Mapa paczkomatów w kasie (MA-72): `INPOST_GEOWIDGET_TOKEN` z InPost Managera. Pusty token = samo pole na kod paczkomatu.
+- Tokenów, haseł i kluczy nie wklejamy do czatu, Jiry ani repozytorium. Na zrzutach ekranu zamazujemy.
