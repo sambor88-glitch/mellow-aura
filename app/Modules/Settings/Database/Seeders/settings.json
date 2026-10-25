@@ -12,6 +12,14 @@
         "value": 5
     },
     {
+        "key": "vat_rate",
+        "value": 0
+    },
+    {
+        "key": "vat_exemption",
+        "value": "zwolnienie podmiotowe, art. 113 ust. 1 ustawy o VAT"
+    },
+    {
         "key": "shipping_methods",
         "value": [
             {

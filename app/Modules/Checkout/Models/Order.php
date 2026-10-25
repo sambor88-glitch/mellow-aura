@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
-    'number', 'status', 'name', 'email', 'phone', 'shipping_method', 'shipping_address', 'locker_code', 'tracking_number',
-    'shipping_gross', 'total_gross', 'currency', 'locale', 'payment_method', 'payment_status', 'payment_provider_id', 'paid_at', 'shipped_at', 'completed_at',
+    'number', 'status', 'name', 'email', 'phone', 'shipping_method', 'shipping_address', 'delivery_country', 'locker_code', 'tracking_number',
+    'shipping_gross', 'total_gross', 'currency', 'eur_rate', 'eur_rate_on', 'locale', 'payment_method', 'payment_status', 'payment_provider_id', 'paid_at', 'shipped_at', 'completed_at',
     'note', 'problem_note', 'invoice_nip', 'terms_version', 'terms_accepted_at',
 ])]
 class Order extends Model
@@ -76,6 +76,8 @@ class Order extends Model
         return [
             'status' => OrderStatus::class,
             'shipping_address' => 'array',
+            'eur_rate' => 'decimal:4',
+            'eur_rate_on' => 'date',
             'shipping_gross' => 'integer',
             'total_gross' => 'integer',
             'payment_method' => PaymentMethod::class,

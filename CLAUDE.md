@@ -134,6 +134,9 @@ Szczegóły w `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html`. Tu zasady,
   z nich metody nie ma w angielskiej kasie. Darmowa wysyłka działa tylko w złotych.
 - Każde zamówienie zapisuje kraj dostawy i stawkę VAT na pozycji — także wtedy, gdy stawka wynosi zero.
   Bez tego nie da się odtworzyć obrotu WSTO, a próg 10 000 EUR rocznie przekracza się niezauważenie.
+  Zapisuje to `Checkout\Actions\PlaceOrder` przez `Checkout\Support\OrderTax`: `orders.delivery_country` (na razie zawsze `PL`,
+  kraj w kasie dojdzie z MA-128), `orders.eur_rate` i `eur_rate_on` (kurs NBP z chwili zamówienia), `order_items.vat_rate`
+  i `vat_exemption` z ustawień `vat_rate` i `vat_exemption`. Licznik WSTO i kafelek w panelu czekają na MA-121.
 
 ## Treści i dane
 
