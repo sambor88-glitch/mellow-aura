@@ -23,6 +23,13 @@ class TestGateway implements PaymentGateway
 
     public function start(Order $order, ?string $blikCode): StartedPayment
     {
+        // Like Przelewy24Gateway: a bank transfer waits for the money, so staging shows that path too.
+        if ($order->payment_method === PaymentMethod::BankTransfer) {
+            OrderPlaced::dispatch($order);
+
+            return StartedPayment::done();
+        }
+
         if ($order->payment_method === PaymentMethod::Blik && $blikCode === SimulatePayment::UNCONFIRMED_BLIK_CODE) {
             OrderPlaced::dispatch($order);
 
