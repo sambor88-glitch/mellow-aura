@@ -200,7 +200,7 @@ class ShipmentTest extends TestCase
      */
     private function order(array $attributes = []): Order
     {
-        return Order::create([
+        $order = Order::create([
             'status' => OrderStatus::InProgress,
             'name' => 'Anna Nowak',
             'email' => 'ania@example.com',
@@ -213,5 +213,8 @@ class ShipmentTest extends TestCase
             'paid_at' => now(),
             ...$attributes,
         ]);
+
+        // PlaceOrder numbers an order after saving it; the test does the same.
+        return tap($order)->update(['number' => 'MA-2026-'.(1000 + $order->id)]);
     }
 }
