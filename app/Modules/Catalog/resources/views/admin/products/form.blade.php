@@ -5,6 +5,7 @@
 @use('App\Modules\Catalog\Enums\Recipient')
 @use('App\Modules\Catalog\Models\ExchangeRate')
 @use('App\Modules\Shared\Support\Money')
+@use('App\Modules\Shared\Support\Seo')
 @inject('settings', 'App\Modules\Settings\Settings')
 @php
     // Several forms share one page, so old input and errors only count for the form they came from.
@@ -219,6 +220,10 @@
         {!! $error('description') !!}
     </div>
 
+    <x-shared::seo-field name="seo_description" :id="$formKey.'-seo-description'" label="Opis dla Google" :limit="155" :max="255" :rows="2" :bag="$formKey"
+                         :value="$old('seo_description', $product?->seo_description)"
+                         :placeholder="Seo::description($product?->description) ?? 'z początku opisu, ucięty na granicy słowa'" />
+
     <x-shared::field name="care_note" :id="$formKey.'-care'" label="Pielęgnacja — zdanie na karcie produktu" :value="$old('care_note', $product?->care_note)" :bag="$formKey"
                      placeholder="np. Zmywarka tak, złoto tylko ręcznie" hint="Puste pole nie pokaże się na stronie" />
 
@@ -297,6 +302,11 @@
                     <div lang="pl">{!! $error('en.'.$field) !!}</div>
                 </div>
             @endforeach
+            <div lang="pl">
+                <x-shared::seo-field name="en[seo_description]" error-key="en.seo_description" :id="$formKey.'-en-seo-description'" label="Opis dla Google po angielsku"
+                                     :limit="155" :max="255" :rows="2" :bag="$formKey" :value="$en('seo_description')"
+                                     :placeholder="Seo::description($english?->description) ?? 'from the start of the description, cut at a word'" />
+            </div>
         </div>
     </details>
 
