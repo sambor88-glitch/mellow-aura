@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 
 /** A category in one language other than Polish (see Shared\Models\Concerns\HasTranslations). */
-#[Fillable(['locale', 'slug', 'name', 'seo_title', 'seo_description'])]
+#[Fillable(['locale', 'slug', 'name', 'seo_title', 'seo_description', 'intro'])]
 class CategoryTranslation extends Model {}

@@ -10,14 +10,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['slug', 'name', 'group', 'sort_order', 'seo_title', 'seo_description'])]
+#[Fillable(['slug', 'name', 'group', 'sort_order', 'seo_title', 'seo_description', 'intro'])]
 class Category extends Model
 {
     /** @use HasFactory<CategoryFactory> */
     use HasFactory, HasTranslations;
 
     /** Read in the language of the page; the Polish text lives in the columns themselves. */
-    protected array $translatable = ['slug', 'name', 'seo_title', 'seo_description'];
+    protected array $translatable = ['slug', 'name', 'seo_title', 'seo_description', 'intro'];
 
     /**
      * @return HasMany<Product, $this>

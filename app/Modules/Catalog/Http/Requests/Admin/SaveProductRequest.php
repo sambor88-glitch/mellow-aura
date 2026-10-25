@@ -40,6 +40,8 @@ class SaveProductRequest extends FormRequest
             'name' => ['required', 'string', 'max:120'],
             'category_id' => ['required', 'integer', Rule::exists('categories', 'id')],
             'description' => ['nullable', 'string', 'max:2000'],
+            // Google cuts after 155 characters; the counter warns, the column takes up to 255.
+            'seo_description' => ['nullable', 'string', 'max:255'],
             'care_note' => ['nullable', 'string', 'max:200'],
             'food_contact' => ['nullable', Rule::enum(FoodContact::class)],
             'deviation' => ['nullable', 'string', 'max:160'],
@@ -73,6 +75,7 @@ class SaveProductRequest extends FormRequest
             'en' => ['nullable', 'array'],
             'en.name' => ['nullable', 'string', 'max:120'],
             'en.description' => ['nullable', 'string', 'max:2000'],
+            'en.seo_description' => ['nullable', 'string', 'max:255'],
             'en.care_note' => ['nullable', 'string', 'max:200'],
             // A feature to confirm and the safety warnings must reach an English buyer too: the checkout asks to accept
             // the first, and product safety law wants the second in the buyer's language.
@@ -101,6 +104,7 @@ class SaveProductRequest extends FormRequest
             'category_id.integer' => $category,
             'category_id.exists' => $category,
             'description.max' => 'Opis zmieszczę do :max znaków',
+            'seo_description.max' => 'Opis dla Google zmieszczę do :max znaków — Google i tak pokaże tylko pierwsze 155',
             'care_note.max' => 'Zdanie o pielęgnacji zmieszczę do :max znaków',
             'food_contact.enum' => 'Wybierz z listy, czy to naczynie do jedzenia',
             'deviation.max' => 'Tę cechę zmieszczę do :max znaków — napisz ją krócej',
@@ -125,6 +129,7 @@ class SaveProductRequest extends FormRequest
             'photo_alts.*.max' => 'Opis zdjęcia zmieszczę do :max znaków',
             'en.name.max' => 'Angielską nazwę zmieszczę do :max znaków',
             'en.description.max' => 'Angielski opis zmieszczę do :max znaków',
+            'en.seo_description.max' => 'Angielski opis dla Google zmieszczę do :max znaków — Google i tak pokaże tylko pierwsze 155',
             'en.care_note.max' => 'Zdanie o pielęgnacji po angielsku zmieszczę do :max znaków',
             'en.deviation.required' => 'Produkt ma angielską nazwę i cechę do potwierdzenia — wpisz ją też po angielsku, bo klientka z zagranicy musi ją zaakceptować przy zamówieniu',
             'en.deviation.max' => 'Tę cechę po angielsku zmieszczę do :max znaków — napisz ją krócej',
@@ -141,7 +146,7 @@ class SaveProductRequest extends FormRequest
      * The validated form in the shape SaveProduct takes: prices in grosze, empty dimensions left out,
      * photo descriptions keyed by photo id.
      *
-     * @return array{name: string, category_id: int, description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, euro_from_rate: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels: array<string, string>, price_gross: int, compare_at_price: ?int, prices: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post: bool, media_id: ?int}>, photo_alts: array<int, string>}
+     * @return array{name: string, category_id: int, description: ?string, seo_description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, euro_from_rate: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels: array<string, string>, price_gross: int, compare_at_price: ?int, prices: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post: bool, media_id: ?int}>, photo_alts: array<int, string>}
      */
     public function product(): array
     {
@@ -151,6 +156,7 @@ class SaveProductRequest extends FormRequest
             'name' => $data['name'],
             'category_id' => (int) $data['category_id'],
             'description' => $data['description'] ?? null,
+            'seo_description' => filled($data['seo_description'] ?? null) ? trim($data['seo_description']) : null,
             'care_note' => $data['care_note'] ?? null,
             'food_contact' => $data['food_contact'] ?? null,
             'deviation' => $data['deviation'] ?? null,
@@ -185,7 +191,7 @@ class SaveProductRequest extends FormRequest
             'photo_alts' => array_map(fn (mixed $alt) => trim((string) $alt), (array) ($data['photo_alts'] ?? [])),
             'translations' => ['en' => array_map(
                 fn (mixed $value) => filled($value) ? trim((string) $value) : null,
-                Arr::only((array) ($data['en'] ?? []), ['name', 'description', 'care_note', 'deviation', 'size_tolerance', 'safety_warnings']),
+                Arr::only((array) ($data['en'] ?? []), ['name', 'description', 'seo_description', 'care_note', 'deviation', 'size_tolerance', 'safety_warnings']),
             )],
         ];
     }

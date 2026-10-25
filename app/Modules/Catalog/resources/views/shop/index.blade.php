@@ -50,9 +50,11 @@
         </h1>
 
         <p x-cloak x-show="favorites" class="mb-[26px] max-w-[58ch] text-[16.5px] text-muted">{{ __('catalog::shop.favorites_intro') }}</p>
-        @unless ($category)
+        @if (! $category)
             <p x-show="! favorites" class="mb-[26px] max-w-[58ch] text-[16.5px] text-muted">{{ __('catalog::shop.intro') }}</p>
-        @endunless
+        @elseif (filled($category->intro))
+            <p x-show="! favorites" class="mb-[26px] max-w-[58ch] text-[16.5px] text-muted">{{ $category->intro }}</p>
+        @endif
 
         @if ($shortcuts)
             <div x-show="! favorites" class="mb-10 flex flex-wrap gap-2.5">
