@@ -47,3 +47,8 @@ WYPCHNIJ.md
 _ide_helper.php
 Homestead.json
 Homestead.yaml
+
+# Terraform: the state holds the backup key in plain text — never in Git
+.terraform/
+*.tfstate
+*.tfstate.*

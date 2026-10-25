@@ -47,6 +47,17 @@ return [
             'report' => false,
         ],
 
+        // The backup bucket in eu-central-1 (infra/backups), with its own key that can write and read only there.
+        'backups' => [
+            'driver' => 's3',
+            'key' => env('BACKUP_AWS_ACCESS_KEY_ID'),
+            'secret' => env('BACKUP_AWS_SECRET_ACCESS_KEY'),
+            'region' => env('BACKUP_AWS_REGION', 'eu-central-1'),
+            'bucket' => env('BACKUP_AWS_BUCKET'),
+            'throw' => true,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

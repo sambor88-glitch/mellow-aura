@@ -3,6 +3,8 @@
 namespace App\Modules\Monitoring;
 
 use App\Modules\Monitoring\Console\CheckQueueCommand;
+use App\Modules\Monitoring\Console\VerifyBackupCommand;
+use App\Modules\Monitoring\Listeners\ReportBackupProblem;
 use App\Modules\Monitoring\Listeners\ReportFailedJob;
 use App\Modules\Monitoring\Listeners\WatchScheduler;
 use App\Modules\Monitoring\Support\Alerts;
@@ -16,6 +18,9 @@ use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Events\Looping;
 use Illuminate\Queue\Queue;
 use Illuminate\Support\Facades\Event;
+use Spatie\Backup\Events\BackupHasFailed;
+use Spatie\Backup\Events\CleanupHasFailed;
+use Spatie\Backup\Events\UnhealthyBackupWasFound;
 use Throwable;
 
 /**
@@ -35,6 +40,13 @@ class MonitoringServiceProvider extends ModuleServiceProvider
 
             // A failed job keeps the mail's recipients and content, so it goes after 30 days, like the server logs.
             $schedule->command('queue:prune-failed', ['--hours' => 24 * 30])->daily();
+
+            // Backups at night, when nobody shops: old archives go first, so the new one always has room.
+            // The morning check raises an alert if last night's archive is missing; the drill restores one every week.
+            $schedule->command('backup:clean')->dailyAt('02:40')->withoutOverlapping();
+            $schedule->command('backup:run')->dailyAt('02:50')->withoutOverlapping();
+            $schedule->command('backup:monitor')->dailyAt('08:50');
+            $schedule->command(VerifyBackupCommand::class)->weeklyOn(1, '04:20')->withoutOverlapping();
         });
 
         $this->callAfterResolving(ExceptionHandler::class, function (ExceptionHandler $handler) {
@@ -61,9 +73,10 @@ class MonitoringServiceProvider extends ModuleServiceProvider
 
         Event::listen(JobFailed::class, ReportFailedJob::class);
         Event::listen(Looping::class, WatchScheduler::class);
+        Event::listen([BackupHasFailed::class, CleanupHasFailed::class, UnhealthyBackupWasFound::class], ReportBackupProblem::class);
 
         if ($this->app->runningInConsole()) {
-            $this->commands([CheckQueueCommand::class]);
+            $this->commands([CheckQueueCommand::class, VerifyBackupCommand::class]);
         }
     }
 }

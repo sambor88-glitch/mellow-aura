@@ -157,6 +157,14 @@ Szczegóły w `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html`. Tu zasady,
   Przejścia między stronami to linki `<a href>`, nie `onClick`.
 - Bez `AggregateRating` dla samej MellowAury — Google nie pokazuje gwiazdek za opinie o własnej firmie.
 
+## Kopie zapasowe
+
+- Co noc `backup:run` (spatie/laravel-backup): zrzut bazy i `storage/app/{public,private}` w archiwum z hasłem
+  `BACKUP_ARCHIVE_PASSWORD`, na dysk `backups` (S3 eu-central-1, bucket i klucz z `infra/backups`, Terraform).
+- W poniedziałek `monitoring:verify-backup` odtwarza najnowszą kopię w osobnej bazie `DB_RESTORE_DATABASE` i sprawdza
+  tabele i zdjęcia. Ta baza nigdy nie może być bazą sklepu — komenda usuwa w niej wszystkie tabele.
+- Problemy z kopią idą przez `Monitoring\Support\Alerts`, nie przez maile paczki. Wdrożenie i odtwarzanie: `infra/backups/README.md`.
+
 ## Repozytorium
 
 - Publiczne: `sambor88-glitch/mellow-aura`, gałąź `main`, wypychanie przez SSH.
