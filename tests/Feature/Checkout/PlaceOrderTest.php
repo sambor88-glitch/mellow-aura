@@ -213,9 +213,7 @@ class PlaceOrderTest extends TestCase
 
     public function test_the_parcel_locker_is_optional_and_saved_in_capitals_without_spaces(): void
     {
-        $vase = $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 5);
-
-        $this->postJson('/koszyk', ['variant_id' => $vase->id]);
+        $this->postJson('/koszyk', ['variant_id' => $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3)->id]);
         $this->from('/zamowienie')
             ->followingRedirects()
             ->post('/zamowienie', $this->form(['locker_code' => 'kra 01m?']))
@@ -224,11 +222,15 @@ class PlaceOrderTest extends TestCase
 
         $this->post('/zamowienie', $this->form(['locker_code' => ' kra 01m ']))->assertRedirect('/zamowienie/potwierdzenie');
         $this->assertSame('KRA01M', Order::sole()->locker_code);
+    }
 
-        // Left empty, Kasia picks the nearest by the phone number.
-        $this->postJson('/koszyk', ['variant_id' => $vase->id]);
+    public function test_an_empty_parcel_locker_leaves_the_choice_to_kasia(): void
+    {
+        $this->postJson('/koszyk', ['variant_id' => $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3)->id]);
+
         $this->post('/zamowienie', $this->form(['locker_code' => '']))->assertRedirect('/zamowienie/potwierdzenie');
-        $this->assertNull(Order::latest('id')->first()->locker_code);
+
+        $this->assertNull(Order::sole()->locker_code);
     }
 
     public function test_a_locker_typed_before_switching_to_pickup_is_not_saved(): void
