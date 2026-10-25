@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Catalog\Http\Controllers\Admin\CategoryController;
 use App\Modules\Catalog\Http\Controllers\Admin\ProductController;
 use App\Modules\Catalog\Http\Controllers\Admin\ProductPhotoController;
 use Illuminate\Support\Facades\Route;
@@ -15,3 +16,6 @@ Route::post('/produkty/{product}/widocznosc', [ProductController::class, 'toggle
 Route::post('/produkty/{product}/zdjecia', [ProductPhotoController::class, 'store'])->whereNumber('product')->name('products.photos.store');
 Route::post('/produkty/{product}/zdjecia/{media}/przesun', [ProductPhotoController::class, 'move'])->whereNumber(['product', 'media'])->scopeBindings()->name('products.photos.move');
 Route::delete('/produkty/{product}/zdjecia/{media}', [ProductPhotoController::class, 'destroy'])->whereNumber(['product', 'media'])->scopeBindings()->name('products.photos.destroy');
+
+Route::get('/kategorie', [CategoryController::class, 'index'])->name('categories.index');
+Route::put('/kategorie/{category}', [CategoryController::class, 'update'])->whereNumber('category')->name('categories.update');
