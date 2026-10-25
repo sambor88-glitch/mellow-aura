@@ -21,7 +21,7 @@ return [
     'delivery' => [
         'email' => 'Na adres :email',
         'locker' => 'Paczkomat :code',
-        'locker_by_phone' => 'Paczkomat dobiorę po numerze telefonu :phone',
+        'locker_to_agree' => 'Napiszę do Ciebie i ustalimy paczkomat',
         'courier' => 'Adres dostawy potwierdzę z Tobą przed wysyłką',
         'pickup' => 'Napiszę, kiedy i gdzie możesz odebrać zamówienie',
     ],

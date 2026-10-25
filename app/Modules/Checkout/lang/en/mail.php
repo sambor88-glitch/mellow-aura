@@ -20,7 +20,7 @@ return [
     'delivery' => [
         'email' => 'To :email',
         'locker' => 'Parcel locker :code',
-        'locker_by_phone' => 'I’ll find your parcel locker by your phone number, :phone',
+        'locker_to_agree' => 'I’ll write to you and we’ll agree on a parcel locker',
         'courier' => 'I’ll confirm the delivery address with you before sending',
         'pickup' => 'I’ll write to you about when and where to pick it up',
     ],

@@ -232,7 +232,7 @@ class PlaceOrderTest extends TestCase
         $this->post('/zamowienie', $this->form(['locker_code' => '']))->assertRedirect('/zamowienie/potwierdzenie');
 
         $this->assertNull(Order::sole()->locker_code);
-        $this->get('/zamowienie/potwierdzenie')->assertSeeInOrder(['Paczkomat', 'Dobiorę po numerze telefonu']);
+        $this->get('/zamowienie/potwierdzenie')->assertSeeInOrder(['Paczkomat', 'Napiszę do Ciebie i ustalimy']);
     }
 
     public function test_a_locker_typed_before_switching_to_pickup_is_not_saved(): void

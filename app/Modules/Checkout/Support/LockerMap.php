@@ -9,7 +9,7 @@ use App\Modules\Localization\Support\Locales;
  * the map, so nobody who picks the courier or leaves the choice to Kasia talks to InPost's servers.
  *
  * The token is issued in InPost Manager for the shop's domain; without one there is no map and the customer
- * types the locker's code, or leaves it empty and Kasia picks the nearest by the phone number.
+ * types the locker's code, or leaves it empty and Kasia agrees on one with the customer.
  */
 class LockerMap
 {
