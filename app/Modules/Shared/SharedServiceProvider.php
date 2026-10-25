@@ -2,6 +2,7 @@
 
 namespace App\Modules\Shared;
 
+use App\Modules\Shared\Console\LaunchCheckCommand;
 use App\Modules\Shared\Listeners\RedirectMailToOneInbox;
 use App\Modules\Shared\Support\MerchantFeed;
 use App\Modules\Shared\Support\SitemapPages;
@@ -21,5 +22,9 @@ class SharedServiceProvider extends ModuleServiceProvider
         parent::boot();
 
         Event::listen(MessageSending::class, RedirectMailToOneInbox::class);
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([LaunchCheckCommand::class]);
+        }
     }
 }
