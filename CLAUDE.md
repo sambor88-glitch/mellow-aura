@@ -23,6 +23,10 @@ Laravel 13 + Blade, Alpine.js, GSAP z ScrollTrigger, Lenis i three.js (tylko kub
 sitemap, schema-org. Serwer na Forge, przed nim Cloudflare. PHP 8.4 lokalnie i na serwerze.
 Bez Next.js, Astro i WooCommerce — uzasadnienie w planie, punkt 3.
 
+Płatności tylko przez Przelewy24 (BLIK, karta, szybki przelew) plus przelew tradycyjny. **Bez Stripe** — decyzja Macieja.
+Kod Stripe na `dev` (`Payments\Gateways\StripeGateway`, webhook `/stripe/webhook`, paczka `stripe/stripe-php`, commit `83bea2b`)
+jest do usunięcia i zastąpienia bramką Przelewy24. Dopóki to nie nastąpi, `dev` nie idzie do `main`.
+
 ## Moduły
 
 Kod jest modularny: każdy obszar sklepu to osobny moduł w `app/Modules/<Name>`, w przestrzeni nazw
