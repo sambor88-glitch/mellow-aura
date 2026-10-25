@@ -170,6 +170,15 @@
 }
 
 @layer base {
+    /*
+     * The slogan rows, glow orbs and grain reach past the screen on purpose; clip (not hidden) keeps them from widening
+     * the page without making a scroll container, so sticky headers and pinned sections still work (MA-81).
+     */
+    html,
+    body {
+        overflow-x: clip;
+    }
+
     body {
         background: var(--color-sand);
         color: var(--color-ink);
