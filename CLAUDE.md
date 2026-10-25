@@ -173,6 +173,20 @@ Szczegóły w `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html`. Tu zasady,
   tabele i zdjęcia. Ta baza nigdy nie może być bazą sklepu — komenda usuwa w niej wszystkie tabele.
 - Problemy z kopią idą przez `Monitoring\Support\Alerts`, nie przez maile paczki. Wdrożenie i odtwarzanie: `infra/backups/README.md`.
 
+## Praca w kilku sesjach naraz
+
+Kilka sesji Claude pracuje na tym repozytorium równolegle. 25.10 dwie sesje zrobiły to samo zadanie (MA-81, MA-133),
+a jedna wypychała na gałąź cudzego PR-a. Zasady, żeby praca się nie dublowała:
+
+- Zadania rozdziela jedna sesja-koordynator (25.10: „Dalej do kodowania”). Nowe sesje do zadań MA zakłada ona
+  albo Maciej mówi jej o każdej sesji, którą otworzył sam.
+- Przed startem pracy zadanie dostaje w Jirze status „W toku” i komentarz „Robi: sesja <link do sesji>”.
+  Zadanie „W toku” z linkiem do innej sesji nie jest zaczynane drugi raz — najpierw pytanie do Macieja.
+- Przed zaproponowaniem zadania sprawdź też działające sesje (`list_sessions`, tytuły z numerem MA), nie tylko kod
+  na `dev` i PR-y.
+- Sesja wypycha tylko na swoją gałąź. Cudzego PR-a nie zmienia — opisuje problem w komentarzu do PR-a albo
+  mówi koordynatorowi.
+
 ## Repozytorium
 - Publiczne: `sambor88-glitch/mellow-aura`, wypychanie przez SSH. Gałąź robocza `dev`, produkcja `main` — szczegóły w „Gałęzie i środowiska”.
 - Publiczne: `sambor88-glitch/mellow-aura`, gałąź `main`, wypychanie przez SSH.
