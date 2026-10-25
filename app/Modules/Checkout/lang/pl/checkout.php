@@ -72,9 +72,12 @@ return [
 
     // The confirmation page.
     'thanks_waiting' => 'Dziękuję. Czekam na przelew.',
+    'thanks_confirming' => 'Dziękuję. Czekam na potwierdzenie.',
     'thanks_packing' => 'Dziękuję. Pakuję.',
     'thanks' => 'Dziękuję.',
     'waiting_text' => 'Zamówienie :number czeka na przelew. Dane do przelewu są w mailu, który właśnie wyszedł. Zabieram się za nie, gdy tylko pieniądze dojdą.',
+    'confirming_text' => 'Zamówienie :number czeka, aż Przelewy24 potwierdzi płatność. Zwykle trwa to kilka sekund. Gdy potwierdzenie dojdzie, dostaniesz ode mnie maila.',
+    'check_again' => 'Sprawdź jeszcze raz',
     'paid_parcel_text' => 'Zamówienie :number jest opłacone. Dostaniesz maila z potwierdzeniem, a ode mnie zdjęcie paczki przed wysłaniem — zawijam każdą sztukę osobno.',
     'paid_text' => 'Zamówienie :number jest opłacone. Dostaniesz maila z potwierdzeniem.',
     'shortage' => 'Ktoś kupił ostatnią sztukę chwilę przed Tobą. Napiszę do Ciebie, żeby ustalić, co dalej — mogę zrobić kolejną albo oddać pieniądze.',

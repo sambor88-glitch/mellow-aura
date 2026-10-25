@@ -70,9 +70,12 @@ return [
     'bank_refused' => 'Your bank didn’t confirm the payment. Your basket is untouched — please try again',
 
     'thanks_waiting' => 'Thank you. Waiting for your payment.',
+    'thanks_confirming' => 'Thank you. Waiting for confirmation.',
     'thanks_packing' => 'Thank you. I’m packing.',
     'thanks' => 'Thank you.',
     'waiting_text' => 'Order :number is waiting for your payment. I’ll start on it as soon as the money arrives.',
+    'confirming_text' => 'Order :number is waiting for Przelewy24 to confirm the payment. It usually takes a few seconds. Once it does, I’ll send you an e-mail.',
+    'check_again' => 'Check again',
     'paid_parcel_text' => 'Order :number is paid. You’ll get a confirmation e-mail, and a photo of your parcel from me before it leaves — I wrap every piece on its own.',
     'paid_text' => 'Order :number is paid. You’ll get a confirmation e-mail.',
     'shortage' => 'Someone bought the last piece just before you. I’ll write to you to agree what’s next — I can make another one or give your money back.',

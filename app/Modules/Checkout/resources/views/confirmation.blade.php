@@ -24,12 +24,16 @@
                 </svg>
             @endif
             <h1 class="mb-5 animate-[auraBlurIn_1.2s_var(--ease-clay)_.6s_both] font-serif text-[length:clamp(52px,8vw,120px)] leading-[.92] font-light tracking-[-0.03em] text-balance">
-                {{ $t(match (true) { ! $paid => 'thanks_waiting', $parcel => 'thanks_packing', default => 'thanks' }) }}
+                {{ $t(match (true) { ! $paid && $byTransfer => 'thanks_waiting', ! $paid => 'thanks_confirming', $parcel => 'thanks_packing', default => 'thanks' }) }}
             </h1>
             <p class="mx-auto mb-8 max-w-[48ch] text-[17px] leading-[1.7] text-lead">
-                @if (! $paid)
+                @if (! $paid && $byTransfer)
                     {{-- The money is not in yet, so the page must not say „opłacone”. --}}
                     {!! $withNumber('waiting_text') !!}
+                @elseif (! $paid)
+                    {{-- Back from Przelewy24's page before its notification: no transfer to make, only a moment to wait. --}}
+                    {!! $withNumber('confirming_text') !!}
+                    <a href="{{ route('checkout.confirmation') }}" class="mt-2 block text-graphite underline underline-offset-4 hover:text-ink">{{ $t('check_again') }}</a>
                 @elseif ($parcel)
                     {!! $withNumber('paid_parcel_text') !!}
                 @else
