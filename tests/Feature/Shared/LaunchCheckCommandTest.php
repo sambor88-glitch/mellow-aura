@@ -15,6 +15,7 @@ class LaunchCheckCommandTest extends TestCase
             'https://www.mellow-aura.com/' => Http::response('', 301, ['Location' => 'https://mellow-aura.com/']),
             'https://mellow-aura.com/robots.txt' => Http::response("User-agent: *\nDisallow: /panel\n"),
             'https://mellow-aura.com/sitemap.xml' => Http::response(self::SITEMAP),
+            'https://mellow-aura.com/en' => Http::response('', 404),
             'https://mellow-aura.com/sklep' => Http::response('<title>Sklep — ceramika | MellowAura</title><a href="/sklep/kubki">Kubki</a>'),
             'https://mellow-aura.com/' => Http::response('<title>MellowAura — ceramika i rękodzieło z jedwabiu, Kraków</title>'),
         ]);
@@ -22,6 +23,25 @@ class LaunchCheckCommandTest extends TestCase
         $this->artisan('seo:launch-check', ['url' => 'https://mellow-aura.com'])
             ->expectsOutputToContain('Produkcja nie ma noindex')
             ->expectsOutputToContain('Druga wersja domeny przekierowuje 301')
+            ->expectsOutputToContain('/en → kod 404')
+            ->assertSuccessful();
+    }
+
+    public function test_an_english_version_switched_on_too_early_stops_the_launch(): void
+    {
+        $this->fakeProductionWithEnglish();
+
+        $this->artisan('seo:launch-check', ['url' => 'https://mellow-aura.com'])
+            ->expectsOutputToContain('/en → kod 200')
+            ->assertFailed();
+    }
+
+    public function test_the_english_option_accepts_an_english_version_on_production(): void
+    {
+        $this->fakeProductionWithEnglish();
+
+        $this->artisan('seo:launch-check', ['url' => 'https://mellow-aura.com', '--english' => true])
+            ->doesntExpectOutputToContain('Wersja angielska wyłączona')
             ->assertSuccessful();
     }
 
@@ -74,5 +94,17 @@ class LaunchCheckCommandTest extends TestCase
         $this->artisan('seo:launch-check', ['url' => 'https://mellowaura-dev.on-forge.com', '--staging' => true, '--auth' => 'kasia:tajne'])
             ->expectsOutputToContain('bez hasła kod 401')
             ->assertSuccessful();
+    }
+
+    private function fakeProductionWithEnglish(): void
+    {
+        Http::fake([
+            'https://www.mellow-aura.com/' => Http::response('', 301, ['Location' => 'https://mellow-aura.com/']),
+            'https://mellow-aura.com/robots.txt' => Http::response("User-agent: *\nDisallow: /panel\n"),
+            'https://mellow-aura.com/sitemap.xml' => Http::response(self::SITEMAP),
+            'https://mellow-aura.com/en' => Http::response('<title>MellowAura — handmade ceramics, Kraków</title>'),
+            'https://mellow-aura.com/sklep' => Http::response('<title>Sklep — ceramika | MellowAura</title>'),
+            'https://mellow-aura.com/' => Http::response('<title>MellowAura — ceramika i rękodzieło z jedwabiu, Kraków</title>'),
+        ]);
     }
 }

@@ -104,6 +104,9 @@ Szczegóły w `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html`. Tu zasady,
   w którym strona istnieje, z tymi samymi odnośnikami co jej `hreflang` (`Locales::versions`). Nie dodawaj `Url::create(route(...))` ręcznie.
 - Teksty interfejsu w `lang/pl` i `lang/en` modułu, jako `__('modul::plik.klucz')`. Moduł wczytuje je sam.
 - `APP_LOCALES` włącza języki: produkcja `pl`, lokalnie i staging `pl,en`. Testy chodzą z `pl,en`.
+  Na start (30.11) tylko `pl` — angielski czeka na VAT w UE, regulamin EN i wysyłkę do UE (MA-121, MA-122, MA-128,
+  MA-131). Ta sama strona na Forge zostaje produkcją, więc przy przełączeniu domeny zmień `APP_LOCALES` na `pl`;
+  `php artisan seo:launch-check` sprawdza, że `/en` daje 404 (MA-186).
 - Waluta wynika z języka: PL to PLN, EN to EUR. Nie ma osobnego przełącznika waluty i nie ma koszyka
   z mieszanymi walutami.
 - Cenę w euro produkt ma na jeden z dwóch sposobów. Domyślnie wpisuje ją Kasia w panelu. Z zaznaczonym

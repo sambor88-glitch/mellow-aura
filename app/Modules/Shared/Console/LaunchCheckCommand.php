@@ -10,7 +10,8 @@ use Illuminate\Support\Str;
 /**
  * The launch gate from MA-114, run against the live site from outside, the way Google sees it: headers, robots.txt,
  * one host, the sitemap, a 200 and a title of its own on every page in it, and links instead of click handlers.
- * Staging must say noindex everywhere; production must not say it anywhere.
+ * Staging must say noindex everywhere; production must not say it anywhere. Production also keeps /en/ off
+ * (APP_LOCALES=pl, MA-186) until EU VAT, the English terms and EU shipping are settled; --english lifts that.
  *
  *   php artisan seo:launch-check https://mellow-aura.com
  *   php artisan seo:launch-check https://mellowaura-dev.on-forge.com --staging
@@ -21,7 +22,8 @@ class LaunchCheckCommand extends Command
         {url : Adres strony, np. https://mellow-aura.com}
         {--staging : Sprawdź staging — wtedy noindex i hasło są wymagane, a nie zakazane}
         {--auth= : login:hasło do stagingu, żeby sprawdzić strony za hasłem}
-        {--limit=200 : Najwięcej adresów z mapy strony do sprawdzenia}';
+        {--limit=200 : Najwięcej adresów z mapy strony do sprawdzenia}
+        {--english : Wersja angielska jest już włączona na produkcji — nie wymagaj 404 pod /en}';
 
     protected $description = 'Brama startowa SEO: nagłówki, robots.txt, jedna domena, mapa strony i tytuły';
 
@@ -41,6 +43,11 @@ class LaunchCheckCommand extends Command
         $staging
             ? $this->record('Staging ma noindex w nagłówku X-Robots-Tag', str_contains(strtolower((string) $home->header('X-Robots-Tag')), 'noindex'), (string) $home->header('X-Robots-Tag'))
             : $this->record('Produkcja nie ma noindex', ! $noindexHome, $noindexHome ? 'noindex w nagłówku albo w <meta name="robots">' : 'brak');
+
+        if (! $staging && ! $this->option('english')) {
+            $english = $client()->get($base.'/en');
+            $this->record('Wersja angielska wyłączona (APP_LOCALES=pl)', $english->status() === 404, '/en → kod '.$english->status());
+        }
 
         if ($staging) {
             $stranger = $anonymous()->get($base.'/');
