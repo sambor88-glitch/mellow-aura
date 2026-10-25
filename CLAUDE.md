@@ -216,6 +216,9 @@ npm install && npm run dev        # Vite na Macu, nie w kontenerze
   Bez hasła przechodzą tylko `/up` i powiadomienie Przelewy24 `/przelewy24/powiadomienie` (`ProtectStaging::OPEN`).
 - Bez kluczy bramki płatności kasa płaci sama: zamówienie od razu ma status „Zapłacone”, pieniądze nie są pobierane.
   Z kluczami `PRZELEWY24_*` (sandbox: `PRZELEWY24_SANDBOX=true`) płaci `Payments\Gateways\Przelewy24Gateway`.
+  Kody BLIK na próbę (`Checkout\Actions\SimulatePayment`): `000000` — bank odrzuca, `111111` — nikt nie potwierdza
+  w aplikacji, więc widać ekran `/zamowienie/blik` z licznikiem 2 minut i polem na nowy kod (MA-101).
+  `PRZELEWY24_BLIK_ON_SITE=false` — BLIK na stronie P24 zamiast kodu w kasie, dopóki P24 nie włączy BLIK Level 0.
 - Maile: Postmark (`MAIL_MAILER=postmark`, `POSTMARK_API_KEY`), konto na kasia@mellow-aura.com, serwer „My First Server”.
   `MAIL_REDIRECT_TO=kasia@mellow-aura.com` — każdy mail ze stagingu trafia do Kasi z adresatem w temacie `[do: …]`.
   Wniosek o zatwierdzenie konta wysłany 25.10 (wg Macieja; odpowiedź Postmarka do sprawdzenia). Do zatwierdzenia maile dochodzą tylko na adresy @mellow-aura.com.

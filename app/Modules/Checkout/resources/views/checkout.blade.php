@@ -84,8 +84,8 @@
                         @enderror
                     </fieldset>
 
-                    {{-- BLIK only in złoty (PaymentMethod::for). --}}
-                    @if ($paymentMethods->contains(PaymentMethod::Blik))
+                    {{-- BLIK only in złoty (PaymentMethod::for), and its code here only with BLIK Level 0. --}}
+                    @if ($blikCode && $paymentMethods->contains(PaymentMethod::Blik))
                         <div x-show="payment === 'blik'" x-transition:enter="transition duration-500 ease-clay" x-transition:enter-start="opacity-0 blur-sm -translate-y-2" class="glass mb-4 rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]">
                             <div class="mb-3.5 flex items-center gap-3">
                                 <span class="rounded-full bg-navy px-3 py-[5px] text-[12px] font-medium tracking-[0.06em] text-white">BLIK</span>

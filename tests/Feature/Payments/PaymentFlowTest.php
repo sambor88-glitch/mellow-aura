@@ -122,6 +122,16 @@ class PaymentFlowTest extends TestCase
                 return $this->start;
             }
 
+            public function chargeBlik(Order $order, string $blikCode): StartedPayment
+            {
+                return $this->start;
+            }
+
+            public function takesBlikCode(): bool
+            {
+                return true;
+            }
+
             public function state(Order $order): PaymentState
             {
                 return $this->state;

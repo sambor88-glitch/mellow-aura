@@ -21,6 +21,18 @@ interface PaymentGateway
     public function start(Order $order, ?string $blikCode): StartedPayment;
 
     /**
+     * A new BLIK code for an order that is still unpaid: the first one ran out or the bank refused it.
+     * The same order and the same cart, only a new try at the payment.
+     */
+    public function chargeBlik(Order $order, string $blikCode): StartedPayment;
+
+    /**
+     * Whether the checkout asks for the BLIK code on its own page (BLIK Level 0). Without it the customer
+     * picks BLIK and types the code on the gateway's page.
+     */
+    public function takesBlikCode(): bool;
+
+    /**
      * What the provider says about a payment. Asked when the customer is back in the shop and the
      * webhook has not arrived yet; the provider decides, never the browser.
      */

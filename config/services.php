@@ -31,6 +31,8 @@ return [
         'crc' => env('PRZELEWY24_CRC'),
         'api_key' => env('PRZELEWY24_API_KEY'),
         'sandbox' => (bool) env('PRZELEWY24_SANDBOX', false),
+        // BLIK code typed in the shop (Level 0). False sends BLIK to Przelewy24's page until they switch Level 0 on.
+        'blik_on_site' => (bool) env('PRZELEWY24_BLIK_ON_SITE', true),
     ],
 
     'resend' => [
