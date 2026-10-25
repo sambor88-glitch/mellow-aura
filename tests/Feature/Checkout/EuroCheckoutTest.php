@@ -8,18 +8,14 @@ use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
 use App\Modules\Checkout\Actions\IssueCertificates;
-use App\Modules\Checkout\Enums\PaymentMethod;
 use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Mail\OrderConfirmed;
 use App\Modules\Checkout\Mail\ParcelOnItsWay;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Checkout\Support\CertificatePdf;
-use App\Modules\Monitoring\Support\Alerts;
-use App\Modules\Payments\Gateways\StripeGateway;
 use App\Modules\Settings\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
-use Stripe\StripeClient;
 use Tests\TestCase;
 
 /**
@@ -176,40 +172,6 @@ class EuroCheckoutTest extends TestCase
             ]);
     }
 
-    public function test_stripe_is_asked_for_the_currency_of_the_order(): void
-    {
-        $asked = [];
-        $stripe = new class(['api_key' => 'sk_test_x']) extends StripeClient
-        {
-            public ?object $intents = null;
-
-            public function __get($name)
-            {
-                return $name === 'paymentIntents' ? $this->intents : parent::__get($name);
-            }
-        };
-        $stripe->intents = new class($asked)
-        {
-            public function __construct(public array &$asked) {}
-
-            public function create(array $params): object
-            {
-                $this->asked[] = $params;
-
-                return (object) ['id' => 'pi_test', 'client_secret' => 'pi_test_secret'];
-            }
-        };
-        $gateway = new StripeGateway($stripe, app(Alerts::class));
-
-        $euro = $this->order(['currency' => 'EUR', 'total_gross' => 4350, 'payment_method' => PaymentMethod::Card]);
-        $zloty = $this->order(['total_gross' => 25500, 'payment_method' => PaymentMethod::Blik]);
-
-        $this->assertSame('pi_test_secret', $gateway->start($euro, null)->clientSecret);
-        $gateway->start($zloty, '123456');
-
-        $this->assertSame([['eur', 4350, ['card']], ['pln', 25500, ['blik']]], array_map(fn (array $params) => [$params['currency'], $params['amount'], $params['payment_method_types']], $asked));
-    }
-
     public function test_the_panel_sets_the_euro_price_of_each_delivery(): void
     {
         $this->actingAs(User::factory()->create())
@@ -238,22 +200,6 @@ class EuroCheckoutTest extends TestCase
 
         $methods = collect(Setting::query()->where('key', 'shipping_methods')->sole()->value)->keyBy('code');
         $this->assertSame([1200, 900, 0], [$methods['parcel_locker']['price_eur'], $methods['courier']['price_eur'], $methods['studio_pickup']['price_eur']]);
-    }
-
-    /** @param  array<string, mixed>  $attributes */
-    private function order(array $attributes): Order
-    {
-        return Order::create([
-            'number' => 'MA-2026-'.random_int(1000, 9999),
-            'status' => 'new',
-            'name' => 'Anna Smith',
-            'email' => 'anna@example.com',
-            'phone' => '600100200',
-            'shipping_method' => 'parcel_locker',
-            'shipping_gross' => 0,
-            'payment_status' => PaymentStatus::Pending,
-            ...$attributes,
-        ])->fresh();
     }
 
     private function basket(int $quantity = 1): ProductVariant

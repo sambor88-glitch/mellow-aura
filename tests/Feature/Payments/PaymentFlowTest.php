@@ -9,7 +9,6 @@ use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Payments\Contracts\PaymentGateway;
 use App\Modules\Payments\Enums\PaymentState;
-use App\Modules\Payments\Gateways\StripeGateway;
 use App\Modules\Payments\Gateways\TestGateway;
 use App\Modules\Payments\Support\StartedPayment;
 use App\Modules\Settings\Models\Setting;
@@ -18,10 +17,10 @@ use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 /**
- * The half of the payment the customer sees: the browser confirms with the gateway, and the shop
- * waits with the cart until somebody says the money is in.
+ * The half of the payment the customer sees: the gateway takes the payment, and the shop waits
+ * with the cart until somebody says the money is in.
  */
-class StripeCheckoutTest extends TestCase
+class PaymentFlowTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -36,37 +35,29 @@ class StripeCheckoutTest extends TestCase
         ]]);
     }
 
-    public function test_the_keys_decide_who_takes_the_payment(): void
+    public function test_until_przelewy24_is_connected_the_stand_in_takes_the_payment(): void
     {
         $this->assertInstanceOf(TestGateway::class, app(PaymentGateway::class));
-
-        config(['services.stripe.key' => 'pk_test_x', 'services.stripe.secret' => 'sk_test_x']);
-
-        $this->assertInstanceOf(StripeGateway::class, app(PaymentGateway::class));
     }
 
-    public function test_with_keys_the_card_is_typed_into_stripes_own_field(): void
+    public function test_the_checkout_loads_nothing_from_stripe(): void
     {
-        config(['services.stripe.key' => 'pk_test_x', 'services.stripe.secret' => 'sk_test_x']);
         $this->cartWithAVase();
 
         $this->get('/zamowienie')
             ->assertOk()
             ->assertSee('BLIK')
             ->assertSee('Przelew tradycyjny')
-            ->assertSee('Visa, Mastercard')
-            ->assertSee('x-ref="card"', false)
-            ->assertSee('js.stripe.com', false);
+            ->assertDontSee('js.stripe.com', false);
     }
 
-    public function test_the_browser_finishes_the_payment_and_the_cart_waits_until_it_does(): void
+    public function test_the_cart_waits_until_the_payment_is_confirmed(): void
     {
-        $this->gatewayThat(start: StartedPayment::confirmInBrowser('pi_test_secret'), state: PaymentState::Pending);
+        $this->gatewayThat(start: StartedPayment::done(), state: PaymentState::Pending);
         $variant = $this->cartWithAVase();
 
-        $this->postJson('/zamowienie', $this->form())
-            ->assertOk()
-            ->assertJson(['secret' => 'pi_test_secret', 'next' => route('checkout.confirmation')]);
+        $this->post('/zamowienie', $this->form())
+            ->assertRedirect(route('checkout.confirmation'));
 
         // Nothing has been paid yet, so the shelf and the cart stay exactly as they were.
         $this->assertSame(PaymentStatus::Pending, Order::sole()->payment_status);
@@ -74,11 +65,11 @@ class StripeCheckoutTest extends TestCase
         $this->get('/zamowienie')->assertOk()->assertSee('Wazony');
     }
 
-    public function test_coming_back_to_the_shop_settles_the_payment_even_before_stripe_calls(): void
+    public function test_coming_back_to_the_shop_settles_the_payment_even_before_the_gateway_calls(): void
     {
-        $this->gatewayThat(start: StartedPayment::confirmInBrowser('pi_test_secret'), state: PaymentState::Succeeded);
+        $this->gatewayThat(start: StartedPayment::done(), state: PaymentState::Succeeded);
         $variant = $this->cartWithAVase();
-        $this->postJson('/zamowienie', $this->form())->assertOk();
+        $this->post('/zamowienie', $this->form())->assertRedirect(route('checkout.confirmation'));
 
         $this->get('/zamowienie/potwierdzenie')
             ->assertOk()
@@ -92,9 +83,9 @@ class StripeCheckoutTest extends TestCase
 
     public function test_a_payment_the_bank_refused_sends_the_customer_back_with_the_cart_untouched(): void
     {
-        $this->gatewayThat(start: StartedPayment::confirmInBrowser('pi_test_secret'), state: PaymentState::Failed);
+        $this->gatewayThat(start: StartedPayment::done(), state: PaymentState::Failed);
         $variant = $this->cartWithAVase();
-        $this->postJson('/zamowienie', $this->form())->assertOk();
+        $this->post('/zamowienie', $this->form())->assertRedirect(route('checkout.confirmation'));
 
         $this->get('/zamowienie/potwierdzenie')
             ->assertRedirect('/zamowienie')
@@ -116,7 +107,7 @@ class StripeCheckoutTest extends TestCase
     }
 
     /**
-     * A gateway that answers whatever the test needs, so no test talks to Stripe.
+     * A gateway that answers whatever the test needs, so no test talks to a real provider.
      */
     private function gatewayThat(StartedPayment $start, PaymentState $state): void
     {
@@ -126,7 +117,7 @@ class StripeCheckoutTest extends TestCase
 
             public function start(Order $order, ?string $blikCode): StartedPayment
             {
-                $order->update(['payment_provider_id' => 'pi_test']);
+                $order->update(['payment_provider_id' => 'test_payment']);
 
                 return $this->start;
             }

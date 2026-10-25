@@ -9,8 +9,8 @@ use App\Modules\Payments\Support\StartedPayment;
 /**
  * One payment, from „Płacę” to the answer from the bank.
  *
- * Which gateway answers depends on the keys: with them Stripe, without them the stand-in that lets
- * the whole path be walked on a laptop and on staging. Nothing outside this module knows which one it is.
+ * Przelewy24 takes the payments (MA-167); until then the stand-in lets the whole path be walked on a
+ * laptop and on staging. Nothing outside this module knows which one it is.
  */
 interface PaymentGateway
 {

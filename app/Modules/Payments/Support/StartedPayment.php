@@ -8,7 +8,6 @@ namespace App\Modules\Payments\Support;
 final class StartedPayment
 {
     private function __construct(
-        public readonly ?string $clientSecret = null,
         public readonly ?string $error = null,
     ) {}
 
@@ -19,15 +18,6 @@ final class StartedPayment
     public static function done(): self
     {
         return new self;
-    }
-
-    /**
-     * The browser hands the BLIK code or the card to the gateway with this secret, so the card
-     * number and the code never pass through our server.
-     */
-    public static function confirmInBrowser(string $clientSecret): self
-    {
-        return new self(clientSecret: $clientSecret);
     }
 
     /**

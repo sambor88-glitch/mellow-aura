@@ -17,10 +17,8 @@ use App\Modules\Content\Support\LegalDocument;
 use App\Modules\Localization\Support\Locales;
 use App\Modules\Payments\Contracts\PaymentGateway;
 use App\Modules\Payments\Enums\PaymentState;
-use App\Modules\Payments\Support\StripeKeys;
 use App\Modules\Settings\Settings;
 use App\Modules\Shared\Support\AnalyticsItem;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -78,13 +76,11 @@ class CheckoutController extends Controller
                 'prices' => $methods->map(fn (array $method) => $method['price']),
                 // What the pay button and the pill say, in the language of the page.
                 'texts' => __('checkout::checkout.js'),
-                // With keys the browser hands the code to Stripe itself; without them the shop pays itself.
-                'stripeKey' => StripeKeys::publishable(),
             ],
         ])->header('X-Robots-Tag', self::ROBOTS);
     }
 
-    public function store(PlaceOrderRequest $request, Cart $cart, ShippingMethods $shipping, PlaceOrder $placeOrder, PaymentGateway $gateway): RedirectResponse|JsonResponse
+    public function store(PlaceOrderRequest $request, Cart $cart, ShippingMethods $shipping, PlaceOrder $placeOrder, PaymentGateway $gateway): RedirectResponse
     {
         $lines = $cart->lines();
 
@@ -119,11 +115,6 @@ class CheckoutController extends Controller
         $request->session()->put('checkout.order', $order->number);
         // The cart is emptied on the confirmation page, so the purchase for Google Analytics is kept here.
         $request->session()->put('checkout.analytics', ['order' => $order->number, 'value' => $subtotal, 'items' => $this->analyticsItems($lines)]);
-
-        // The browser finishes the payment with the gateway and only then goes to the confirmation.
-        if ($payment->clientSecret !== null) {
-            return response()->json(['secret' => $payment->clientSecret, 'next' => route('checkout.confirmation')]);
-        }
 
         return to_route('checkout.confirmation');
     }
@@ -162,8 +153,8 @@ class CheckoutController extends Controller
     }
 
     /**
-     * The ways to pay in the currency of the basket (PaymentMethod::for). The card is paid in a Stripe field on
-     * this page, BLIK with the code from our own field and Przelewy24 by sending the customer to their bank.
+     * The ways to pay in the currency of the basket (PaymentMethod::for). BLIK takes the code from our own field;
+     * the rest go through Przelewy24 (MA-167).
      *
      * @return Collection<int, PaymentMethod>
      */

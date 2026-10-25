@@ -10,7 +10,7 @@ use App\Modules\Payments\Enums\PaymentState;
 use App\Modules\Payments\Support\StartedPayment;
 
 /**
- * Stands in for Stripe while the shop has no keys, so the whole purchase path can be walked on a
+ * Stands in for Przelewy24 until its gateway is connected (MA-167), so the whole purchase path can be walked on a
  * laptop and on staging. It never runs in production — SimulatePayment throws there.
  */
 class TestGateway implements PaymentGateway

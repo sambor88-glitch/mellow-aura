@@ -3,7 +3,7 @@
 namespace App\Modules\Payments\Enums;
 
 /**
- * What the provider says about one payment. Deliberately narrower than Stripe's own statuses:
+ * What the provider says about one payment. Deliberately narrower than the provider's own statuses:
  * everything that is neither money in nor a final refusal is „still going”.
  */
 enum PaymentState: string
