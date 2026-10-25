@@ -207,6 +207,8 @@ npm install && npm run dev        # Vite na Macu, nie w kontenerze
 - `compose.yaml` buduje `runtimes/8.4`, tak jak na Forge. Sail przy instalacji wybiera najnowsze PHP — nie zmieniaj na 8.5.
 - `npm` uruchamiaj tylko na Macu: `node_modules` z macOS nie działa w kontenerze z Linuksem.
 - Composer i Artisan tylko przez `./vendor/bin/sail`, żeby zależności liczyły się dla PHP 8.4.
+- Testy potrzebują Vite: działającego `npm run dev` albo zbudowanego `npm run build`. Bez żadnego z nich część testów
+  stron pada z `ViteManifestNotFoundException`. CI przed testami robi `npm ci && npm run build`.
 
 ## Gałęzie i środowiska
 
