@@ -55,4 +55,30 @@ class Product extends Model implements HasMedia
     {
         $query->where('is_published', true);
     }
+
+    /**
+     * Products with at least one piece left in any variant — the prototype's `live` list.
+     */
+    public function scopeInStock(Builder $query): void
+    {
+        $query->whereHas('variants', fn (Builder $variants) => $variants->where('stock', '>', 0));
+    }
+
+    /**
+     * Variant that carries the headline price: the cheapest one.
+     */
+    public function headlineVariant(): ?ProductVariant
+    {
+        return $this->variants->sortBy('price_gross')->first();
+    }
+
+    public function hasPriceRange(): bool
+    {
+        return $this->variants->pluck('price_gross')->unique()->count() > 1;
+    }
+
+    public function url(): string
+    {
+        return url('/produkt/'.$this->slug);
+    }
 }

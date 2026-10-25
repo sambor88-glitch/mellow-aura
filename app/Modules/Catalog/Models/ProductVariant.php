@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 /**
  * Size or version of a product with its own price and stock. Amounts in grosze.
@@ -79,6 +80,26 @@ class ProductVariant extends Model
         $prices = array_filter([$inForceAtStart, $changedInWindow], fn ($price) => $price !== null);
 
         return $prices === [] ? null : (int) min($prices);
+    }
+
+    /**
+     * Lowest price from the 30 days before the current price came in, shown next to
+     * a struck-through price (Omnibus). Null when the variant is not discounted.
+     * With no earlier price on record the current one is the lowest of the period.
+     */
+    public function lowestPriceBeforeDiscount(): ?int
+    {
+        if (! $this->isDiscounted()) {
+            return null;
+        }
+
+        $discountedSince = $this->priceHistory()->latest('valid_from')->latest('id')->value('valid_from');
+
+        $lowest = $discountedSince === null
+            ? null
+            : $this->lowestPriceBefore(Carbon::parse($discountedSince));
+
+        return $lowest ?? $this->price_gross;
     }
 
     private function recordPrice(): void
