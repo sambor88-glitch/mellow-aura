@@ -24,12 +24,16 @@
                 </svg>
             @endif
             <h1 class="mb-5 animate-[auraBlurIn_1.2s_var(--ease-clay)_.6s_both] font-serif text-[length:clamp(52px,8vw,120px)] leading-[.92] font-light tracking-[-0.03em] text-balance">
-                {{ $t(match (true) { ! $paid => 'thanks_waiting', $parcel => 'thanks_packing', default => 'thanks' }) }}
+                {{ $t(match (true) { ! $paid && $byTransfer => 'thanks_waiting', ! $paid => 'thanks_confirming', $parcel => 'thanks_packing', default => 'thanks' }) }}
             </h1>
             <p class="mx-auto mb-8 max-w-[48ch] text-[17px] leading-[1.7] text-lead">
-                @if (! $paid)
+                @if (! $paid && $byTransfer)
                     {{-- The money is not in yet, so the page must not say „opłacone”. --}}
                     {!! $withNumber('waiting_text') !!}
+                @elseif (! $paid)
+                    {{-- Back from Przelewy24's page before its notification: no transfer to make, only a moment to wait. --}}
+                    {!! $withNumber('confirming_text') !!}
+                    <a href="{{ route('checkout.confirmation') }}" class="mt-2 block text-graphite underline underline-offset-4 hover:text-ink">{{ $t('check_again') }}</a>
                 @elseif ($parcel)
                     {!! $withNumber('paid_parcel_text') !!}
                 @else
@@ -46,6 +50,10 @@
                 <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">{{ $t($paid ? 'paid' : 'to_pay') }}</span><span>{{ $order->money($order->total_gross) }}</span></div>
                 @if ($shippingLabel)
                     <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">{{ $t('delivery') }}</span><span>{{ $shippingLabel }}</span></div>
+                @endif
+                {{-- The locker the customer picked, or the promise to pick one, so a typo can still be caught (MA-72). --}}
+                @if ($order->shipping_method === 'parcel_locker')
+                    <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">{{ $t('locker') }}</span><span class="select-all">{{ $order->locker_code ?? $t('locker_by_phone') }}</span></div>
                 @endif
                 @if ($parcel && ($dispatch = DispatchTime::label($settings)))
                     <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">{{ $t('dispatch') }}</span><span>{{ $dispatch }}</span></div>

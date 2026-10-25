@@ -142,6 +142,8 @@ class Przelewy24GatewayTest extends TestCase
         $this->post('/zamowienie', $this->form(['payment_method' => 'bank_transfer', 'blik_code' => '']))
             ->assertRedirect(route('checkout.confirmation'));
 
+        $this->get('/zamowienie/potwierdzenie')->assertOk()->assertSee('Dziękuję. Czekam na przelew.')->assertDontSee('Sprawdź jeszcze raz');
+
         Http::assertNothingSent();
         $this->assertSame(PaymentStatus::Pending, Order::sole()->payment_status);
         Mail::assertQueued(OrderAwaitingPayment::class);
@@ -159,7 +161,12 @@ class Przelewy24GatewayTest extends TestCase
         $this->post('/zamowienie', $this->form(['payment_method' => 'card', 'blik_code' => '']));
 
         // Status 1 is money Przelewy24 holds but nobody verified yet: the order keeps waiting for the notification.
-        $this->get('/zamowienie/potwierdzenie')->assertOk();
+        // A card has no transfer to make: the page waits for Przelewy24, it does not ask for a transfer.
+        $this->get('/zamowienie/potwierdzenie')->assertOk()
+            ->assertSee('Dziękuję. Czekam na potwierdzenie.')
+            ->assertSee('czeka, aż Przelewy24 potwierdzi płatność', false)
+            ->assertSee('Sprawdź jeszcze raz')
+            ->assertDontSee('Czekam na przelew');
         $this->assertSame(PaymentStatus::Pending, Order::sole()->payment_status);
         $this->assertSame(3, $variant->fresh()->stock);
 

@@ -165,6 +165,8 @@ class CheckoutController extends Controller
         return response()->view('checkout::confirmation', [
             'order' => $order,
             'paid' => $order->payment_status === PaymentStatus::Paid,
+            // Unpaid by bank transfer waits for the money; unpaid otherwise waits for Przelewy24's word on it.
+            'byTransfer' => $order->payment_method === PaymentMethod::BankTransfer,
             'purchase' => ($analytics['order'] ?? null) === $order->number
                 ? AnalyticsItem::params((int) $analytics['value'], $analytics['items'], ['transaction_id' => $order->number, 'shipping' => $order->shipping_gross / 100])
                 : null,

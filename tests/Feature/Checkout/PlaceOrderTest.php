@@ -222,6 +222,7 @@ class PlaceOrderTest extends TestCase
 
         $this->post('/zamowienie', $this->form(['locker_code' => ' kra 01m ']))->assertRedirect('/zamowienie/potwierdzenie');
         $this->assertSame('KRA01M', Order::sole()->locker_code);
+        $this->get('/zamowienie/potwierdzenie')->assertSeeInOrder(['Paczkomat', 'KRA01M']);
     }
 
     public function test_an_empty_parcel_locker_leaves_the_choice_to_kasia(): void
@@ -231,6 +232,7 @@ class PlaceOrderTest extends TestCase
         $this->post('/zamowienie', $this->form(['locker_code' => '']))->assertRedirect('/zamowienie/potwierdzenie');
 
         $this->assertNull(Order::sole()->locker_code);
+        $this->get('/zamowienie/potwierdzenie')->assertSeeInOrder(['Paczkomat', 'Dobiorę po numerze telefonu']);
     }
 
     public function test_a_locker_typed_before_switching_to_pickup_is_not_saved(): void

@@ -32,6 +32,7 @@ return [
     'delivery_way' => 'Sposób dostawy',
     'locker' => 'Paczkomat',
     'locker_placeholder' => 'np. KRA01M',
+    'locker_by_phone' => 'Dobiorę po numerze telefonu',
     'locker_hint' => 'Nie wiesz? Zostaw puste — dobiorę najbliższy po numerze telefonu',
     'locker_map' => 'Wybierz na mapie',
     'locker_dialog' => 'Wybierz paczkomat',
@@ -71,9 +72,12 @@ return [
 
     // The confirmation page.
     'thanks_waiting' => 'Dziękuję. Czekam na przelew.',
+    'thanks_confirming' => 'Dziękuję. Czekam na potwierdzenie.',
     'thanks_packing' => 'Dziękuję. Pakuję.',
     'thanks' => 'Dziękuję.',
     'waiting_text' => 'Zamówienie :number czeka na przelew. Dane do przelewu są w mailu, który właśnie wyszedł. Zabieram się za nie, gdy tylko pieniądze dojdą.',
+    'confirming_text' => 'Zamówienie :number czeka, aż Przelewy24 potwierdzi płatność. Zwykle trwa to kilka sekund. Gdy potwierdzenie dojdzie, dostaniesz ode mnie maila.',
+    'check_again' => 'Sprawdź jeszcze raz',
     'paid_parcel_text' => 'Zamówienie :number jest opłacone. Dostaniesz maila z potwierdzeniem, a ode mnie zdjęcie paczki przed wysłaniem — zawijam każdą sztukę osobno.',
     'paid_text' => 'Zamówienie :number jest opłacone. Dostaniesz maila z potwierdzeniem.',
     'shortage' => 'Ktoś kupił ostatnią sztukę chwilę przed Tobą. Napiszę do Ciebie, żeby ustalić, co dalej — mogę zrobić kolejną albo oddać pieniądze.',
