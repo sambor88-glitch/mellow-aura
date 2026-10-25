@@ -24,6 +24,15 @@ return [
         'key' => env('POSTMARK_API_KEY'),
     ],
 
+    // Przelewy24 (Payments\Gateways\Przelewy24Gateway). Without the merchant id, CRC and API key the shop pays itself.
+    'przelewy24' => [
+        'merchant_id' => env('PRZELEWY24_MERCHANT_ID'),
+        'pos_id' => env('PRZELEWY24_POS_ID'),
+        'crc' => env('PRZELEWY24_CRC'),
+        'api_key' => env('PRZELEWY24_API_KEY'),
+        'sandbox' => (bool) env('PRZELEWY24_SANDBOX', false),
+    ],
+
     'resend' => [
         'key' => env('RESEND_API_KEY'),
     ],

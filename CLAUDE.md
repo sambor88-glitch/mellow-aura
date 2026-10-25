@@ -24,8 +24,10 @@ sitemap, schema-org. Serwer na Forge, przed nim Cloudflare. PHP 8.4 lokalnie i n
 Bez Next.js, Astro i WooCommerce — uzasadnienie w planie, punkt 3.
 
 Płatności tylko przez Przelewy24 (BLIK, karta, szybki przelew) plus przelew tradycyjny. **Bez Stripe** — decyzja Macieja.
-Stripe usunięty (MA-167). Do czasu podłączenia bramki Przelewy24 płaci `Payments\Gateways\TestGateway`, który nie działa
-na produkcji — dlatego `dev` nie idzie do `main`, dopóki bramki nie ma.
+Stripe usunięty (MA-167). Bramka `Payments\Gateways\Przelewy24Gateway` (rejestracja, BLIK kodem, strona P24,
+powiadomienie z podpisem i `transaction/verify`) jest w kodzie, ale nie była jeszcze uruchomiona na sandboxie — konto P24
+czeka na JDG Kasi (MA-26, MA-98). Bez kluczy płaci `Payments\Gateways\TestGateway`, który nie działa na produkcji —
+dlatego `dev` nie idzie do `main`, dopóki bramka nie przejdzie testów w sandboxie.
 
 ## Moduły
 
@@ -211,9 +213,9 @@ npm install && npm run dev        # Vite na Macu, nie w kontenerze
 - Na Forge jest jedna strona: `mellowaura-dev.on-forge.com`. Drugą (`mellow-aura-staging.on-forge.com`) Maciej usunął 25.10.
   Nie zakładaj drugiej strony stagingu.
 - Hasło: `Shared\Http\Middleware\ProtectStaging` (MA-168), zmienne `STAGING_USER` (domyślnie `mellowaura`) i `STAGING_PASSWORD`.
-  Bez hasła przechodzi tylko `/up` (`ProtectStaging::OPEN`). Przy podłączaniu Przelewy24 dopisz tam adres powiadomień
-  (urlStatus), inaczej płatności na stagingu nie będą się potwierdzać.
+  Bez hasła przechodzą tylko `/up` i powiadomienie Przelewy24 `/przelewy24/powiadomienie` (`ProtectStaging::OPEN`).
 - Bez kluczy bramki płatności kasa płaci sama: zamówienie od razu ma status „Zapłacone”, pieniądze nie są pobierane.
+  Z kluczami `PRZELEWY24_*` (sandbox: `PRZELEWY24_SANDBOX=true`) płaci `Payments\Gateways\Przelewy24Gateway`.
 - Maile: Postmark (`MAIL_MAILER=postmark`, `POSTMARK_API_KEY`), konto na kasia@mellow-aura.com, serwer „My First Server”.
   `MAIL_REDIRECT_TO=kasia@mellow-aura.com` — każdy mail ze stagingu trafia do Kasi z adresatem w temacie `[do: …]`.
   Wniosek o zatwierdzenie konta wysłany 25.10 (wg Macieja; odpowiedź Postmarka do sprawdzenia). Do zatwierdzenia maile dochodzą tylko na adresy @mellow-aura.com.

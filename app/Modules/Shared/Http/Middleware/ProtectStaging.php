@@ -10,14 +10,13 @@ use Symfony\Component\HttpFoundation\Response;
  * Keeps the staging site to Kasia and the people building it: with STAGING_PASSWORD set, every page asks for
  * a login and password (HTTP basic auth). Without it, locally and in production, the site is open.
  *
- * Forge's health check comes from a server that knows no password, so it passes. The payment gateway's
- * notification address joins it here when Przelewy24 is connected (MA-167): it proves itself with a signature.
- * The 401 page says noindex too, as it never reaches NoIndex.
+ * Forge's health check and Przelewy24's payment notification come from servers that know no password, so they
+ * pass; the notification proves itself with a signature. The 401 page says noindex too, as it never reaches NoIndex.
  */
 class ProtectStaging
 {
     /** @var list<string> */
-    private const OPEN = ['up'];
+    private const OPEN = ['up', 'przelewy24/powiadomienie'];
 
     public function handle(Request $request, Closure $next): Response
     {
