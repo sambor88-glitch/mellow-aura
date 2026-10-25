@@ -42,4 +42,15 @@ class OldAddressesTest extends TestCase
         $this->get('/nie-ma-takiej-strony')->assertNotFound();
         $this->assertNull(OldAddresses::target('/produkt/wazony'));
     }
+
+    public function test_an_old_address_missing_from_the_list_goes_to_its_section_instead_of_a_404(): void
+    {
+        $this->get('/kategoria/akcesoria?utm_source=google')
+            ->assertStatus(301)
+            ->assertRedirect(route('shop.index').'?utm_source=google');
+        $this->get('/strona/nowa-strona')->assertStatus(301)->assertRedirect(route('home'));
+        $this->get('/nie-ma-takiej-strony')->assertNotFound();
+        $this->get('/produkt/miska-dodana-po-liscie')->assertNotFound();
+        $this->assertNotSame(301, $this->post('/kategoria/akcesoria')->getStatusCode());
+    }
 }
