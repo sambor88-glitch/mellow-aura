@@ -2,6 +2,7 @@
 @use('App\Modules\Shipping\Http\Controllers\Admin\ShipmentController')
 @use('App\Modules\Shipping\Models\Shipment')
 @use('App\Modules\Shipping\Support\ShipXClient')
+@use('App\Modules\Shipping\Support\ShipXStatus')
 {{-- „Nadaj w InPost” on the order (MA-132), next to the order's status. Only for a paid parcel that travels with InPost. --}}
 @if (ShipmentController::sendable($order))
     @php
@@ -19,6 +20,7 @@
             <p class="text-[13.5px] leading-[1.55] text-label">Nadawanie z panelu włączy się, gdy na serwerze będzie klucz ShipX z InPost Managera. Do tego czasu nadaj paczkę w InPost Managerze, a numer wpisz w „Status”.</p>
         @elseif ($shipment)
             <dl class="grid gap-2 text-[13.5px]">
+                <div class="{{ $row }}"><dt class="text-label">W InPost</dt><dd>{{ ShipXStatus::label($shipment->status) }}</dd></div>
                 <div class="{{ $row }}"><dt class="text-label">Rozmiar</dt><dd>{{ $shipment->sizeLabel() }}</dd></div>
                 @if ($shipment->target_point)
                     <div class="{{ $row }}"><dt class="text-label">Paczkomat</dt><dd class="select-all">{{ $shipment->target_point }}</dd></div>
@@ -34,7 +36,7 @@
                     <input type="hidden" name="tracking_number" value="{{ $shipment->tracking_number }}">
                     <button class="w-full rounded-full bg-ink p-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Wysłane — powiadom klientkę</button>
                 </form>
-                <p class="mt-1.5 text-[12.5px] text-hint">Klientka dostanie maila z numerem przesyłki.</p>
+                <p class="mt-1.5 text-[12.5px] text-hint">Klientka dostanie maila z numerem przesyłki. Możesz też nic nie klikać — gdy InPost odbierze paczkę, mail pójdzie sam.</p>
             @endif
         @else
             <form method="post" action="{{ route('admin.orders.shipment.store', $order) }}" class="grid gap-3">

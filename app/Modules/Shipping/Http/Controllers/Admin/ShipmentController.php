@@ -8,6 +8,7 @@ use App\Modules\Checkout\Models\Order;
 use App\Modules\Shipping\Actions\CreateShipment;
 use App\Modules\Shipping\Actions\RefreshShipment;
 use App\Modules\Shipping\Exceptions\ShipmentRefused;
+use App\Modules\Shipping\Exceptions\ShipXUnavailable;
 use App\Modules\Shipping\Http\Requests\Admin\CreateShipmentRequest;
 use App\Modules\Shipping\Models\Shipment;
 use App\Modules\Shipping\Support\ShipXClient;
@@ -17,7 +18,7 @@ use Illuminate\Http\Response;
 
 /**
  * „Nadaj w InPost” on an order in the panel (MA-132): the parcel goes to ShipX in one click, the label comes back
- * as a PDF to print. The order's own status still moves only when Kasia says the parcel is on its way.
+ * as a PDF to print. The order moves to „Wysłane” when Kasia says so or when ShipX sees the parcel leave (MA-133).
  */
 class ShipmentController extends Controller
 {
@@ -46,7 +47,11 @@ class ShipmentController extends Controller
         $shipment = Shipment::latestFor($order);
         abort_if($shipment === null || ! ShipXClient::configured(), 404);
 
-        $shipment = $refresh($shipment);
+        try {
+            $shipment = $refresh($shipment);
+        } catch (ShipXUnavailable) {
+            // The label may still come; the call below says if it does not.
+        }
 
         if ($shipment->isPreparing()) {
             return to_route('admin.orders.show', $order)->with('panel_status', 'InPost jeszcze przygotowuje etykietę. Spróbuj za minutę.');
