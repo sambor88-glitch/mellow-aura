@@ -17,6 +17,7 @@ use App\Modules\Content\Support\LegalDocument;
 use App\Modules\Localization\Support\Locales;
 use App\Modules\Payments\Contracts\PaymentGateway;
 use App\Modules\Payments\Enums\PaymentState;
+use App\Modules\Payments\Przelewy24\Account;
 use App\Modules\Payments\Support\StripeKeys;
 use App\Modules\Settings\Settings;
 use App\Modules\Shared\Support\AnalyticsItem;
@@ -79,7 +80,8 @@ class CheckoutController extends Controller
                 // What the pay button and the pill say, in the language of the page.
                 'texts' => __('checkout::checkout.js'),
                 // With keys the browser hands the code to Stripe itself; without them the shop pays itself.
-                'stripeKey' => StripeKeys::publishable(),
+                // Przelewy24 takes the payment on its own page, so the Stripe field stays off once it is set up.
+                'stripeKey' => Account::configured() ? null : StripeKeys::publishable(),
             ],
         ])->header('X-Robots-Tag', self::ROBOTS);
     }
@@ -119,6 +121,11 @@ class CheckoutController extends Controller
         $request->session()->put('checkout.order', $order->number);
         // The cart is emptied on the confirmation page, so the purchase for Google Analytics is kept here.
         $request->session()->put('checkout.analytics', ['order' => $order->number, 'value' => $subtotal, 'items' => $this->analyticsItems($lines)]);
+
+        // The customer pays on the provider's page, which sends them back to the confirmation.
+        if ($payment->redirectUrl !== null) {
+            return redirect()->away($payment->redirectUrl);
+        }
 
         // The browser finishes the payment with the gateway and only then goes to the confirmation.
         if ($payment->clientSecret !== null) {

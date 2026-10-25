@@ -28,6 +28,15 @@ return [
         'key' => env('RESEND_API_KEY'),
     ],
 
+    // All four from the Przelewy24 merchant panel. POS id defaults to the merchant id.
+    'przelewy24' => [
+        'merchant_id' => env('P24_MERCHANT_ID'),
+        'pos_id' => env('P24_POS_ID'),
+        'crc' => env('P24_CRC'),
+        'api_key' => env('P24_API_KEY'),
+        'sandbox' => env('P24_SANDBOX', true),
+    ],
+
     'stripe' => [
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),

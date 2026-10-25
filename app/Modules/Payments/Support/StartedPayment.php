@@ -10,6 +10,7 @@ final class StartedPayment
     private function __construct(
         public readonly ?string $clientSecret = null,
         public readonly ?string $error = null,
+        public readonly ?string $redirectUrl = null,
     ) {}
 
     /**
@@ -28,6 +29,14 @@ final class StartedPayment
     public static function confirmInBrowser(string $clientSecret): self
     {
         return new self(clientSecret: $clientSecret);
+    }
+
+    /**
+     * The customer pays on the provider's own page and comes back to the confirmation from there.
+     */
+    public static function redirect(string $url): self
+    {
+        return new self(redirectUrl: $url);
     }
 
     /**

@@ -26,6 +26,9 @@ Bez Next.js, Astro i WooCommerce — uzasadnienie w planie, punkt 3.
 Płatności tylko przez Przelewy24 (BLIK, karta, szybki przelew) plus przelew tradycyjny. **Bez Stripe** — decyzja Macieja.
 Kod Stripe na `dev` (`Payments\Gateways\StripeGateway`, webhook `/stripe/webhook`, paczka `stripe/stripe-php`, commit `83bea2b`)
 jest do usunięcia i zastąpienia bramką Przelewy24. Dopóki to nie nastąpi, `dev` nie idzie do `main`.
+Bramka Przelewy24 jest w `Payments\Gateways\Przelewy24Gateway` (MA-100): klient REST w `Payments\Przelewy24`,
+każda próba płatności w tabeli `payments`, zmienne `P24_*` w `.env`. Z kompletem `P24_*` wygrywa z Stripe;
+bez nich zostaje bramka testowa. Powiadomienie i `verify` — MA-102, kod BLIK na naszej stronie — MA-101.
 
 ## Moduły
 
