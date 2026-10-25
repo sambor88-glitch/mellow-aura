@@ -29,6 +29,7 @@ class Menu
             ['label' => 'Wypały', 'route' => 'admin.firing.edit', 'active' => 'admin.firing.*', 'description' => 'Cennik wypałów na zlecenie i notka o wsadzie.'],
             ['label' => 'Usługi', 'route' => 'admin.services.edit', 'active' => 'admin.services.*', 'description' => 'Apaszka i odcisk rośliny: zdjęcia przed i po, teksty, cennik i kroki.'],
             ['label' => 'Treści', 'route' => 'admin.content.edit', 'active' => 'admin.content.*', 'description' => 'Teksty na stronach, częste pytania, fakty o pracowni, zamówienia indywidualne, karty dla lokali i sprawy w formularzu.'],
+            ['label' => 'Google', 'route' => 'admin.seo-pages.edit', 'active' => 'admin.seo-pages.*', 'description' => 'Tytuł i opis każdej strony stałej w wynikach wyszukiwania.'],
             ['label' => 'Ustawienia', 'route' => 'admin.settings.edit', 'active' => 'admin.settings.*', 'description' => 'E-mail, próg darmowej wysyłki i kod Paczkomatu.'],
             ['label' => 'Konta', 'route' => 'admin.accounts.index', 'active' => 'admin.accounts.*', 'description' => 'Kto ma dostęp do panelu: Ty i osoba, która pomaga przy zamówieniach.'],
         ], fn (array $section) => Route::has($section['route']) && PanelAccess::allows(auth()->user(), $section['route'])));

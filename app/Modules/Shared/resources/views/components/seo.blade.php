@@ -2,7 +2,17 @@
 @use('App\Modules\Shared\Support\BusinessStructuredData')
 @inject('settings', 'App\Modules\Settings\Settings')
 @use('App\Modules\Localization\Support\Locales')
-@php($alternates = Locales::alternates(request()))
+@use('App\Modules\Shared\Support\Seo')
+@inject('pageSeo', 'App\Modules\Shared\Support\PageSeo')
+@php
+    $alternates = Locales::alternates(request());
+    // A fixed page takes its title and description from the panel („Google”) where they are filled in.
+    $routeName = request()->route()?->getName();
+    $pageSeo->rememberComposed($routeName, $title, $description);
+    $custom = $pageSeo->custom($routeName);
+    $title = $custom['title'] ?? $title;
+    $description = $custom['description'] !== null ? Seo::description($custom['description']) : $description;
+@endphp
 <title>{{ $title }}</title>
 @if ($description)
     <meta name="description" content="{{ $description }}">
