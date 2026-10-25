@@ -47,12 +47,14 @@ php artisan serve                                 # http://localhost:8000
 php artisan test
 ```
 
-### Staging na Forge — krok po kroku
+### Strona na Forge — krok po kroku
 
-1. Forge → serwer → **New Site**: domena `staging.mellow-aura.com`, PHP 8.4, katalog `/public`, nowa baza MySQL.
+Do startu sklepu jest jedna strona: `https://mellowaura-dev.on-forge.com` (darmowa domena Forge, za hasłem i z `noindex`).
+
+1. Forge → serwer → **New Site**: domena `mellowaura-dev.on-forge.com`, PHP 8.4, katalog `/public`, nowa baza MySQL.
 2. **Git Repository**: `sambor88-glitch/mellow-aura`, gałąź `main` (do czasu scalenia — gałąź z PR), bez instalacji Composera z kreatora.
 3. **Environment**: wklej `.env.example` i zmień:
-   `APP_ENV=staging`, `APP_DEBUG=false`, `APP_URL=https://staging.mellow-aura.com`,
+   `APP_ENV=staging`, `APP_DEBUG=false`, `APP_URL=https://mellowaura-dev.on-forge.com`,
    dane bazy z Forge, `STAGING_PASSWORD=<hasło>` (tylko tutaj, nie w repo).
 4. **Deploy Script** — domyślny z Forge, a w części `artisan` dopisz:
    ```bash
@@ -61,10 +63,10 @@ php artisan test
    $FORGE_PHP artisan storage:link
    $FORGE_PHP artisan optimize
    ```
-5. **SSL**: Let's Encrypt. W Cloudflare rekord `staging` jako A na IP serwera.
+5. **SSL**: Let's Encrypt w Forge. Domena `on-forge.com` nie potrzebuje rekordu w Cloudflare.
 6. Pierwszy deploy, potem raz przez SSH jako `forge` (nie root):
-   `cd ~/staging.mellow-aura.com && php artisan db:seed --force`.
-7. Sprawdź: `https://staging.mellow-aura.com` pyta o hasło (login `mellowaura`), a odpowiedź ma nagłówek
+   `cd ~/mellowaura-dev.on-forge.com && php artisan db:seed --force`.
+7. Sprawdź: `https://mellowaura-dev.on-forge.com` pyta o hasło (login `mellowaura`), a odpowiedź ma nagłówek
    `X-Robots-Tag: noindex, nofollow` (`curl -I`).
 
 ## Stan projektu
