@@ -100,6 +100,8 @@ Szczegóły w `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html`. Tu zasady,
 - `route('shop.index')` na angielskiej stronie sam daje `/en/shop`. Nie pisz `route('en.…')` ani `url('/')` —
   do strony głównej prowadzi `route('home')`.
 - Sprawdzając bieżącą stronę, pytaj o obie nazwy: `request()->routeIs($p, Locales::current().'.'.$p)`.
+- Strona w sitemap.xml trafia przez `SitemapPages::routes()` albo `SitemapPages::versions()` — wpis dla każdego języka,
+  w którym strona istnieje, z tymi samymi odnośnikami co jej `hreflang` (`Locales::versions`). Nie dodawaj `Url::create(route(...))` ręcznie.
 - Teksty interfejsu w `lang/pl` i `lang/en` modułu, jako `__('modul::plik.klucz')`. Moduł wczytuje je sam.
 - `APP_LOCALES` włącza języki: produkcja `pl`, lokalnie i staging `pl,en`. Testy chodzą z `pl,en`.
 - Waluta wynika z języka: PL to PLN, EN to EUR. Nie ma osobnego przełącznika waluty i nie ma koszyka

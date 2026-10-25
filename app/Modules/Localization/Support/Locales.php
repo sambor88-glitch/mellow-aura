@@ -131,6 +131,36 @@ class Locales
     }
 
     /**
+     * A page in every language it exists in: its route has a twin there and every translated model in its address
+     * (a product, a category) is written in that language. Each address is built in its own language.
+     *
+     * @param  array<int|string, mixed>  $parameters
+     * @return array<string, string> locale => absolute URL, the default language first
+     */
+    public static function versions(string $baseName, array $parameters = []): array
+    {
+        $urls = [];
+
+        foreach (self::enabled() as $locale) {
+            $name = self::nameFor($baseName, $locale);
+
+            if ($name === null) {
+                continue;
+            }
+
+            foreach ($parameters as $parameter) {
+                if (is_object($parameter) && method_exists($parameter, 'availableIn') && ! $parameter->availableIn($locale)) {
+                    continue 2;
+                }
+            }
+
+            $urls[$locale] = self::within($locale, fn () => app('url')->exactRoute($name, $parameters));
+        }
+
+        return $urls;
+    }
+
+    /**
      * The same page in every language it exists in, for hreflang. Empty when the page has no twin:
      * a single-language page has nothing to point to.
      *
@@ -145,12 +175,7 @@ class Locales
             return [];
         }
 
-        $urls = [];
-        foreach (self::enabled() as $locale) {
-            if (self::existsIn($request, $locale)) {
-                $urls[$locale] = self::urlIn($route, self::nameFor($base, $locale), $locale);
-            }
-        }
+        $urls = self::versions($base, $route->parameters());
 
         return count($urls) > 1 ? $urls : [];
     }
