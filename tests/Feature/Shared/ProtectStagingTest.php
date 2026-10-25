@@ -37,12 +37,10 @@ class ProtectStagingTest extends TestCase
         $this->withBasicAuth('mellowaura', 'secret')->get('/panel')->assertRedirect(route('admin.login'));
     }
 
-    public function test_stripe_and_the_health_check_pass_without_the_password(): void
+    public function test_the_health_check_passes_without_the_password(): void
     {
-        config(['staging.user' => 'mellowaura', 'staging.password' => 'secret', 'services.stripe.webhook_secret' => 'whsec_test']);
+        config(['staging.user' => 'mellowaura', 'staging.password' => 'secret']);
 
         $this->get('/up')->assertOk();
-        // Stripe gets past the password and is then judged by its signature, which this call lacks.
-        $this->postJson('/stripe/webhook', [])->assertStatus(400);
     }
 }

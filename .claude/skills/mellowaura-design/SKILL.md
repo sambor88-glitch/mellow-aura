@@ -201,7 +201,7 @@ focus: obrys atramentowy + `box-shadow: 0 0 0 4px rgba(36,65,126,.14)`.
 
 **Kod BLIK:** sześć osobnych kratek `4/5`, Newsreader 34 px, przerwa po trzeciej. Kursor sam przeskakuje dalej,
 wklejenie całego kodu wypełnia wszystkie. Wypełniona kratka lekko podskakuje (`pop`).
-W aplikacji kasa ma na razie **jedno** duże pole BLIK, bo jest powiązane ze Stripe w `resources/js/checkout.js` — kratki to osobna zmiana w tym skrypcie.
+W aplikacji kasa ma na razie **jedno** duże pole BLIK (`resources/js/checkout.js`) — kratki to osobna zmiana w tym skrypcie.
 
 **Wybór (warianty, dostawa):** pigułki z `aria-pressed` albo kafle z `role="radio"`. Wybrany = atrament z lnianym tekstem.
 

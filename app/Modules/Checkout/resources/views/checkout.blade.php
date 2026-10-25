@@ -14,12 +14,6 @@
 @endphp
 
 <x-shared::layout :title="$t('title')" :noindex="true">
-    @if ($config['stripeKey'])
-        {{-- Only here, only when the shop can really charge: the payment page is the one place that needs it. --}}
-        <x-slot:head>
-            <script src="https://js.stripe.com/v3/"></script>
-        </x-slot:head>
-    @endif
     @if ($analytics)
         <x-consent::analytics-event name="begin_checkout" :params="$analytics" />
     @endif
@@ -112,15 +106,6 @@
                             @else
                                 <p id="blik_code-note" x-text="blik.length === 6 ? @js($t('blik_ready')) : @js($t('blik_hint'))" class="mt-2.5 text-center text-[12.5px] text-navy-hint">{{ $t('blik_hint') }}</p>
                             @enderror
-                        </div>
-                    @endif
-
-                    @if ($config['stripeKey'] && $paymentMethods->contains(PaymentMethod::Card))
-                        {{-- Stripe draws the card field in its own frame, so the number never passes through this page. --}}
-                        <div x-show="payment === 'card'" x-cloak class="glass mb-4 rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]">
-                            <div class="mb-3.5 text-[13.5px] text-navy-text">{{ $t('card_label') }}</div>
-                            <div x-ref="card" class="rounded-[18px] border border-navy-line bg-white p-[18px]"></div>
-                            <p class="mt-2.5 text-[12.5px] text-label">{{ $t('card_hint') }}</p>
                         </div>
                     @endif
 
