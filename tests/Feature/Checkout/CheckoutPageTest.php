@@ -50,7 +50,7 @@ class CheckoutPageTest extends TestCase
 
         $this->get('/zamowienie')
             ->assertSee('name="locker_code"', false)
-            ->assertSee('Nie wiesz? Zostaw puste — dobiorę najbliższy po numerze telefonu')
+            ->assertSee('Nie wiesz? Zostaw puste — napiszę do Ciebie i ustalimy paczkomat')
             ->assertDontSee('Wybierz na mapie')
             ->assertDontSee('geowidget');
 

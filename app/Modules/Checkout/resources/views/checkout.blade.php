@@ -131,7 +131,7 @@
                                 <p class="mt-2 text-[13px] text-error">{{ $message }}</p>
                             @enderror
 
-                            {{-- Optional: without a locker Kasia picks the nearest by the phone number. --}}
+                            {{-- Optional: without a locker Kasia agrees on one with the customer. --}}
                             @if ($methods->has('parcel_locker'))
                                 <div x-show="shipping === 'parcel_locker'" @if ($selectedShipping !== 'parcel_locker') x-cloak @endif class="mt-4 border-t border-line pt-4">
                                     <x-shared::field name="locker_code" :label="$t('locker')" :hint="$t('locker_hint')" x-ref="locker" x-model="locker" x-on:input="lockerAddress = ''"

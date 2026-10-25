@@ -61,7 +61,7 @@ class OrderEmailsTest extends TestCase
         $mail->assertHasSubject('Zamówienie '.$order->number.' jest opłacone');
         $mail->assertHasReplyTo('kasia@example.com');
         $mail->assertSeeInOrderInHtml(['Dziękuję. Pakuję.', $order->number, 'Wazony', 'Niski 16 cm', '239,00 zł', 'Kubki z cytatem', 'JESZCZE NIE TERAZ', '79,00 zł', '318,00 zł', 'InPost Paczkomat', '16,00 zł', '334,00 zł']);
-        $mail->assertSeeInHtml('Paczkomat dobiorę po numerze telefonu 600100200');
+        $mail->assertSeeInHtml('Napiszę do Ciebie i ustalimy paczkomat');
         $mail->assertSeeInHtml('Możesz też napisać na WhatsAppie: +48 600 700 800.');
         $mail->assertDontSeeInHtml('Ktoś kupił ostatnią sztukę');
         $mail->assertSeeInText('Napis: „JESZCZE NIE TERAZ”');

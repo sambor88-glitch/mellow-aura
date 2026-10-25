@@ -112,7 +112,7 @@ class EuroCheckoutTest extends TestCase
                 && $mail->envelope()->subject === 'Order '.$order->number.' is paid'
                 && str_contains($html, '<html lang="en">')
                 && str_contains($html, 'Thank you. I’m packing.')
-                && str_contains($html, 'I’ll find your parcel locker by your phone number, 600100200')
+                && str_contains($html, 'I’ll write to you and we’ll agree on a parcel locker')
                 && str_contains($html, 'InPost parcel locker')
                 && str_contains($html, '<strong>Total</strong>')
                 && str_contains($html, '€43.50')

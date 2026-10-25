@@ -18,7 +18,7 @@ use Illuminate\Validation\Rule;
  * Three fields, delivery, payment and accepting the terms are required, and so is accepting each unexpected
  * feature of a product in the cart (terms §4.5). A cart of vouchers sent as PDFs has no delivery to choose.
  * The address, NIP and note are optional, but an address has to be whole and a NIP has to add up.
- * So is the parcel locker: without one Kasia picks the nearest by the phone number.
+ * So is the parcel locker: without one Kasia agrees on it with the customer.
  */
 class PlaceOrderRequest extends FormRequest
 {
