@@ -6,6 +6,9 @@ uploads/
 __pycache__/
 *.pyc
 
+# Lokalne kopie repozytorium (git bundle) — zostają tylko na dysku
+*.bundle
+
 # Śmieci systemowe
 .DS_Store
 Thumbs.db

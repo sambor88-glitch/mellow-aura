@@ -158,6 +158,19 @@ Szczegóły w `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html`. Tu zasady,
 - Projekt w Claude Design czyta z tego repozytorium (`github.md`). Zmianę w `.dc.html` wypchnij, a przed pracą
   w Claude Design pobierz aktualną wersję z repo, żeby się nie rozjechały.
 
+## Jira i czas pracy
+
+- Zadania są w Jirze, projekt MA. Każde nowe zadanie i podzadanie dostaje estymatę (`Original Estimate`)
+  od razu przy zakładaniu. Bez estymaty zadanie nie istnieje.
+- Każda praca nad zadaniem ma worklog z prawdziwym czasem i datą. Zadanie nie przechodzi na „Gotowe”
+  bez worklogu.
+- Czas mierzymy od 24.10.2026. Worklogi sprzed tej daty nie są prawdziwym pomiarem — nie licz z nich godzin.
+- Raport godzin jest co poniedziałek: zalogowany czas a estymata, zadania bez estymaty, zamknięte bez worklogu.
+- Worklogi loguje Claude sam, bez pytania Macieja. Pod koniec pracy w sesji: dla każdego zadania, nad którym
+  była praca, osobny worklog. Czas i godzina startu z godzin wiadomości w sesji (`list_events`), nie z szacunku.
+  Przerwy dłuższe niż 15 minut bez wiadomości nie wchodzą do czasu. Praca bez zadania w Jirze — najpierw
+  zadanie z estymatą, potem worklog.
+
 ## Komendy
 
 Lokalnie wszystko działa w Dockerze (Laravel Sail), bo PHP na Macu to nie 8.4. Strona: http://localhost:8000,
