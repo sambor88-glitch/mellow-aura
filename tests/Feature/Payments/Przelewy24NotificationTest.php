@@ -83,7 +83,8 @@ class Przelewy24NotificationTest extends TestCase
 
         $this->assertSame(2, $this->variant->fresh()->stock);
         $this->assertSame(1, PaymentEvent::count());
-        Http::assertSentCount(2); // register and one verify
+        // Only the verify calls: faking verify after setUp clears what was recorded before it, the register call too.
+        $this->assertCount(1, Http::recorded(fn (Request $request) => str_contains($request->url(), 'transaction/verify')));
     }
 
     public function test_a_wrong_signature_is_refused_and_written_down_without_touching_the_order(): void
