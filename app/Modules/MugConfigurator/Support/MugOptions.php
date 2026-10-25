@@ -18,6 +18,9 @@ class MugOptions
     /** Kasia's photo from zdjecia/, until she uploads the side photo of a plain mug. */
     public const DEFAULT_PHOTO = 'zdjecia/kubek-cappuccino.webp';
 
+    /** Close-ups of a real, fired text: slot => setting with the photo's path (ReplaceLetteringPhoto). */
+    public const LETTERING_PHOTOS = ['closeup' => 'mug_lettering_closeup_image', 'fired' => 'mug_lettering_fired_image'];
+
     public const MAX_LINES = 6;
 
     public const MAX_CHARS_PER_LINE = 30;
@@ -143,6 +146,18 @@ class MugOptions
     public function photoUrl(): ?string
     {
         return SitePhoto::url($this->photoPath());
+    }
+
+    public function letteringPhotoPath(string $slot): ?string
+    {
+        $path = $this->settings->get(self::LETTERING_PHOTOS[$slot]);
+
+        return is_string($path) ? $path : null;
+    }
+
+    public function letteringPhotoUrl(string $slot): ?string
+    {
+        return SitePhoto::url($this->letteringPhotoPath($slot));
     }
 
     /**

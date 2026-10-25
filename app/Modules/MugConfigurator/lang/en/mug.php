@@ -2,6 +2,12 @@
 
 return [
     'name' => 'Custom text mug',
+    'technique_eyebrow' => 'the text up close',
+    'technique_heading' => 'Stamped into clay, :em',
+    'technique_heading_em' => 'not printed',
+    'closeup_alt' => 'Letters stamped into the clay, photographed against the light to show how deep they go',
+    'fired_alt' => 'A finished text on a mug after firing',
+    'fired_caption' => 'This is what a finished text looks like after firing — the letters sit in the wall, not on it.',
     'alt' => 'A mug with a text stamped into the clay',
     'details' => '“:text” · :size · :glaze inside',
     'added' => 'Your mug is in the basket',

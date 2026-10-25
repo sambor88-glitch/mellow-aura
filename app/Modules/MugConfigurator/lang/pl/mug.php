@@ -2,6 +2,12 @@
 
 return [
     'name' => 'Kubek z napisem',
+    'technique_eyebrow' => 'napis z bliska',
+    'technique_heading' => 'Napis wbity w glinę, :em',
+    'technique_heading_em' => 'nie nadrukowany',
+    'closeup_alt' => 'Napis wbity w glinę, sfotografowany pod światło — widać, jak głęboko litery wchodzą w ściankę',
+    'fired_alt' => 'Gotowy napis na kubku po wypale',
+    'fired_caption' => 'Tak wygląda gotowy napis po wypale — litery są wgłębione w ściance, nie leżą na niej.',
     'alt' => 'Kubek z wbijanym w glinę napisem',
     'details' => '„:text” · :size · wnętrze :glaze',
     'added' => 'Kubek z Twoim napisem w koszyku',

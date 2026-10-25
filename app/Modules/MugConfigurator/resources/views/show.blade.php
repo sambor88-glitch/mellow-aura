@@ -25,6 +25,10 @@
     $leadTime = $polish ? $settings->get('text_mug_lead_time') : null;
     $bulkOrder = $polish ? $settings->get('text_mug_bulk_order') : null;
     $refusals = $polish ? $settings->get('text_mug_refusals') : null;
+    $technique = $polish ? $settings->get('text_mug_technique') : null;
+    // Kasia's close-ups of a real, fired text (MA-113): proof that the letters are stamped in, not printed.
+    $closeup = $options->letteringPhotoUrl('closeup');
+    $fired = $options->letteringPhotoUrl('fired');
     $freeShipping = $polish ? $settings->get('free_shipping_threshold') : null;
 
     $eyebrow = 'text-[13.5px] font-medium text-graphite';
@@ -82,6 +86,13 @@
                 </div>
                 @if ($note)
                     <p class="mt-3 text-[12.5px] leading-[1.6] text-hint">{{ $note }}</p>
+                @endif
+                {{-- The preview is set in a font; the mug is a groove in clay. A real text closes that gap. --}}
+                @if ($fired)
+                    <figure class="mt-5 flex items-center gap-4">
+                        <img src="{{ $fired }}" alt="{{ $t('fired_alt') }}" loading="lazy" width="320" height="240" class="block aspect-[4/3] w-[clamp(120px,32%,180px)] flex-none rounded-[18px] object-cover">
+                        <figcaption class="min-w-0 text-[13.5px] leading-[1.55] text-lead">{{ $t('fired_caption') }}</figcaption>
+                    </figure>
                 @endif
             </div>
 
@@ -183,6 +194,24 @@
                 @endif
             </div>
         </div>
+
+        @if ($technique || $closeup)
+            <section aria-labelledby="mug-technique" class="mt-20 flex flex-wrap items-center gap-[clamp(24px,5vw,72px)]">
+                @if ($closeup)
+                    <img src="{{ $closeup }}" alt="{{ $t('closeup_alt') }}" loading="lazy" width="1200" height="900"
+                         class="block aspect-[4/3] min-w-0 flex-[1_1_320px] rounded-[24px] object-cover">
+                @endif
+                <div class="min-w-0 flex-[1_1_360px]">
+                    <p class="eyebrow mb-[22px]">{{ $t('technique_eyebrow') }}</p>
+                    <h2 id="mug-technique" class="mb-6 font-serif text-[length:clamp(36px,4.6vw,64px)] leading-[.98] font-light tracking-[-0.02em] text-balance">
+                        {!! str_replace(':em', '<em class="text-brown italic">'.e($t('technique_heading_em')).'</em>', e($t('technique_heading'))) !!}
+                    </h2>
+                    @if ($technique)
+                        <p class="max-w-[46ch] text-[16.5px] leading-[1.68] text-pretty whitespace-pre-line text-lead">{{ $technique }}</p>
+                    @endif
+                </div>
+            </section>
+        @endif
 
         <x-catalog::category-links :slugs="['kubki-i-filizanki', 'talerze-i-miski']" :heading="__('catalog::shop.ready_heading')" class="mt-14" />
 

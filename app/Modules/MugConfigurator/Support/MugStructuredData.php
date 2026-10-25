@@ -67,8 +67,11 @@ class MugStructuredData
             $group->description((string) $lead);
         }
 
-        if ($photo) {
-            $group->image($photo);
+        // Kasia's close-ups of a real, fired text belong to the product too (MA-113).
+        $images = array_values(array_filter([$photo, $options->letteringPhotoUrl('closeup'), $options->letteringPhotoUrl('fired')]));
+
+        if ($images !== []) {
+            $group->image(count($images) === 1 ? $images[0] : $images);
         }
 
         return $group->toScript().BreadcrumbStructuredData::for([

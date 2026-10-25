@@ -37,6 +37,13 @@
         ['text_mug_lead_time', 'Czas realizacji — obok „na zamówienie”', 1],
         ['text_mug_bulk_order', '„Zamawiasz więcej?”', 2],
         ['text_mug_refusals', '„Czego nie wbiję”', 2],
+        ['text_mug_technique', '„Napis wbity w glinę” — jak powstaje napis i czemu nie zejdzie w zmywarce. Stoi pod konfiguratorem obok zdjęcia pod światło', 5],
+    ];
+
+    $letteringErrors = $errors->getBag('napis-z-bliska');
+    $letteringSlots = [
+        'closeup' => ['Napis pod światło', 'Zdjęcie z boku, pod światło, tak żeby było widać, jak głęboko litery wchodzą w ściankę. Stoi przy opisie pod konfiguratorem.'],
+        'fired' => ['Gotowy napis po wypale', 'Prawdziwy napis na kubku po wypale. Stoi pod podglądem, żeby było widać, jak czcionka z podglądu wygląda w glinie.'],
     ];
 
     $card = 'scroll-mt-6 rounded-[4px] border border-line bg-cream px-[26px] py-7';
@@ -78,6 +85,40 @@
                         <button class="min-h-11 pt-2.5 text-[12.5px] text-label hover:text-ink">Przywróć domyślne zdjęcie</button>
                     </form>
                 @endunless
+            </section>
+
+            <section id="z-bliska" class="{{ $card }}">
+                <h2 class="{{ $heading }}">Napis z bliska</h2>
+                <p class="{{ $intro }}">Dwa zdjęcia prawdziwego napisu — dowód, że litery są wbite w glinę, a nie nadrukowane. Bez zdjęcia jego miejsce na stronie zostaje puste.</p>
+                @foreach ($letteringSlots as $slot => [$title, $hint])
+                    <div class="@unless ($loop->first) mt-6 border-t border-line pt-5 @endunless">
+                        <h3 class="mb-1 text-[15px] text-ink">{{ $title }}</h3>
+                        <p class="mb-3 text-[13px] leading-[1.55] text-label">{{ $hint }}</p>
+                        @if ($lettering[$slot])
+                            <img src="{{ $lettering[$slot] }}" alt="{{ $title }}" width="1200" height="900" class="mb-3 block max-h-[200px] w-full rounded-[3px] bg-line-soft object-cover">
+                        @endif
+                        <form method="post" action="{{ route('admin.mug.lettering', $slot) }}" enctype="multipart/form-data" novalidate x-data="{ sending: false }">
+                            @csrf
+                            <label class="block cursor-pointer rounded-[4px] border border-dashed border-line-strong bg-linen p-4 text-center transition duration-300 hover:border-ink hover:bg-sand-dark active:scale-[.98] has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy">
+                                <span class="block text-[14px] text-lead" x-text="sending ? 'Wgrywam zdjęcie…' : @js($lettering[$slot] ? 'Wgraj inne zdjęcie' : 'Wybierz zdjęcie z telefonu albo komputera')">{{ $lettering[$slot] ? 'Wgraj inne zdjęcie' : 'Wybierz zdjęcie z telefonu albo komputera' }}</span>
+                                <span class="mt-1 block text-[12.5px] text-hint">JPG, PNG albo WebP, do 15 MB</span>
+                                <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" class="sr-only"
+                                       x-on:change="if ($el.files.length) { sending = true; $el.form.requestSubmit() }">
+                            </label>
+                            <noscript><button class="{{ $button }}">Wgraj wybrane zdjęcie</button></noscript>
+                        </form>
+                        @if ($lettering[$slot])
+                            <form method="post" action="{{ route('admin.mug.lettering.remove', $slot) }}">
+                                @csrf
+                                @method('DELETE')
+                                <button class="min-h-11 pt-2.5 text-[12.5px] text-label hover:text-ink">Zdejmij zdjęcie ze strony</button>
+                            </form>
+                        @endif
+                    </div>
+                @endforeach
+                @if ($letteringErrors->has('photo'))
+                    <p role="alert" class="mt-3 text-[13px] text-error">{{ $letteringErrors->first('photo') }}</p>
+                @endif
             </section>
 
             <form id="rozmiary" method="post" action="{{ route('admin.mug.sizes') }}" novalidate class="{{ $card }}" x-data="{ chars: @js((string) $maxChars), lines: @js((string) $maxLines) }">

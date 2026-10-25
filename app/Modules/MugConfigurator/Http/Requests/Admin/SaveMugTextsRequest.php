@@ -17,6 +17,8 @@ class SaveMugTextsRequest extends FormRequest
         'text_mug_lead_time' => 60,
         'text_mug_bulk_order' => 200,
         'text_mug_refusals' => 200,
+        // Under the configurator, next to the close-up against the light (MA-113).
+        'text_mug_technique' => 600,
     ];
 
     /** @var string */
