@@ -192,6 +192,12 @@
                     <div>{{ $order->name }}</div>
                     <a href="mailto:{{ $order->email }}" class="[overflow-wrap:anywhere]">{{ $order->email }}</a>
                     <a href="tel:+48{{ $order->phone }}" class="tabular-nums">{{ trim(chunk_split($order->phone, 3, ' ')) }}</a>
+                    @php($vat = $order->items->first())
+                    {{-- What the invoice needs, as it was when the order was placed (MA-129). --}}
+                    <p class="mt-2 border-t border-divider pt-2.5 text-[12.5px] leading-[1.5] text-label">
+                        Dostawa do: {{ $order->delivery_country }}@if ($vat) · VAT: {{ $vat->vat_exemption ? 'zw. — '.$vat->vat_exemption : rtrim(rtrim($vat->vat_rate, '0'), '.').'%' }}@endif
+                        @if ($order->eur_rate) · kurs EUR (NBP): {{ str_replace('.', ',', $order->eur_rate) }} z {{ $order->eur_rate_on?->format('j.m.Y') }}@endif
+                    </p>
                     @if ($order->terms_version)
                         <p class="mt-2 border-t border-divider pt-2.5 text-[12.5px] leading-[1.5] text-label">
                             Regulamin zaakceptowany: {{ $order->terms_version }}, {{ $order->terms_accepted_at?->format('j.m.Y, H:i') }}

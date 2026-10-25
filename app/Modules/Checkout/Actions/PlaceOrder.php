@@ -6,6 +6,7 @@ use App\Modules\Cart\CartLine;
 use App\Modules\Checkout\Enums\OrderStatus;
 use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Models\Order;
+use App\Modules\Checkout\Support\OrderTax;
 use App\Modules\Localization\Support\Locales;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -18,6 +19,8 @@ use Illuminate\Support\Facades\DB;
  */
 class PlaceOrder
 {
+    public function __construct(private OrderTax $tax) {}
+
     /**
      * @param  Collection<string, CartLine>  $lines
      * @param  array<string, mixed>  $data  validated checkout fields
@@ -34,11 +37,13 @@ class PlaceOrder
                 'phone' => substr((string) preg_replace('/\D+/', '', $data['phone']), -9),
                 'shipping_method' => $data['shipping_method'],
                 'shipping_address' => $address ?: null,
+                'delivery_country' => OrderTax::DOMESTIC,
                 'locker_code' => $data['shipping_method'] === 'parcel_locker' ? ($data['locker_code'] ?? null) : null,
                 'shipping_gross' => $shippingGross,
                 'total_gross' => $lines->sum(fn (CartLine $line) => $line->total()) + $shippingGross,
                 // The cart counts in the currency of the page, so the order is paid in it and speaks its language.
                 'currency' => Locales::currency(),
+                ...$this->tax->euroRate(),
                 'locale' => Locales::current(),
                 'payment_method' => $data['payment_method'],
                 'payment_status' => PaymentStatus::Pending,
@@ -50,6 +55,10 @@ class PlaceOrder
 
             $order->update(['number' => 'MA-'.$order->created_at->year.'-'.(1000 + $order->id)]);
 
+            // The same rate and basis for every item: one seller, one tax status at the moment of the order.
+            $vatRate = $this->tax->vatRate();
+            $vatExemption = $this->tax->vatExemption();
+
             foreach ($lines->flatMap(fn (CartLine $line) => $line->orderItems()) as $item) {
                 $order->items()->create([
                     'product_variant_id' => $item->variantId,
@@ -58,6 +67,8 @@ class PlaceOrder
                     'variant_label' => $item->label,
                     'quantity' => $item->quantity,
                     'unit_price_gross' => $item->unitPrice,
+                    'vat_rate' => $vatRate,
+                    'vat_exemption' => $vatExemption,
                     'custom_text' => $item->customText,
                     'custom_glaze' => $item->customGlaze,
                     // The checkout only lets an order through once each such feature is accepted.
