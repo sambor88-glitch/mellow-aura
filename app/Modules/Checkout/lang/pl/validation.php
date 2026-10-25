@@ -19,6 +19,7 @@ return [
     'nip_checksum' => 'Ten NIP się nie zgadza — sprawdź cyfry',
     'note_max' => 'Dopisek zmieszczę do :max znaków',
     'shipping_method' => 'Wybierz, jak mam wysłać paczkę',
+    'locker_code' => 'Kod paczkomatu to litery i cyfry, np. KRA01M — sprawdź go albo zostaw puste',
     'payment_method' => 'Wybierz, jak chcesz zapłacić',
     'blik_code' => 'Wpisz 6-cyfrowy kod z aplikacji banku',
     'accept_terms' => 'Zaznacz akceptację regulaminu — bez niej nie mogę przyjąć zamówienia',

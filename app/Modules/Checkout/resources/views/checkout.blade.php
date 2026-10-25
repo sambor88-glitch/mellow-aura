@@ -145,7 +145,39 @@
                             @error('shipping_method')
                                 <p class="mt-2 text-[13px] text-error">{{ $message }}</p>
                             @enderror
+
+                            {{-- Optional: without a locker Kasia picks the nearest by the phone number. --}}
+                            @if ($methods->has('parcel_locker'))
+                                <div x-show="shipping === 'parcel_locker'" @if ($selectedShipping !== 'parcel_locker') x-cloak @endif class="mt-4 border-t border-line pt-4">
+                                    <x-shared::field name="locker_code" :label="$t('locker')" :hint="$t('locker_hint')" x-ref="locker" x-model="locker" x-on:input="lockerAddress = ''"
+                                                     autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="16" :placeholder="$t('locker_placeholder')" />
+                                    @if ($config['lockerMap'])
+                                        <div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+                                            <button type="button" x-on:click="openLockerMap()"
+                                                    class="min-h-11 rounded-full border border-glass-line bg-cream/60 px-6 text-[14px] text-ink transition-colors duration-300 hover:border-ink hover:bg-cream">
+                                                {{ $t('locker_map') }}
+                                            </button>
+                                            <p x-text="lockerAddress" aria-live="polite" class="min-w-0 flex-1 text-[13px] text-label"></p>
+                                        </div>
+                                    @endif
+                                </div>
+                            @endif
                         </fieldset>
+
+                        @if ($config['lockerMap'] && $methods->has('parcel_locker'))
+                            {{-- InPost's own map, drawn on the first opening (resources/js/checkout.js). Esc, × or a click beside it closes it. --}}
+                            <dialog x-ref="lockers" aria-labelledby="lockers-title" x-on:click.self="$el.close()"
+                                    class="fixed inset-0 size-full max-h-none max-w-none animate-ma-in items-center justify-center bg-ink/28 p-2.5 text-ink backdrop-blur-[6px] open:flex backdrop:bg-transparent">
+                                <div class="flex h-[min(760px,100%)] w-[min(1080px,100%)] flex-col overflow-hidden rounded-[26px] border border-glass-line bg-cream">
+                                    <div class="flex items-center justify-between gap-3 border-b border-line px-[clamp(16px,3vw,26px)] py-3">
+                                        <h2 id="lockers-title" class="font-serif text-[28px] leading-none font-light">{{ $t('locker_dialog') }}</h2>
+                                        <button type="button" x-on:click="$refs.lockers.close()" aria-label="{{ $t('locker_close') }}"
+                                                class="grid size-11 place-items-center rounded-full border border-line-strong text-[20px] leading-none text-ink transition-colors duration-300 hover:border-ink hover:bg-sand-dark">×</button>
+                                    </div>
+                                    <div x-ref="lockerMap" class="min-h-0 flex-1"></div>
+                                </div>
+                            </dialog>
+                        @endif
                     @else
                         {{-- Vouchers sent as PDFs alone: the e-mail is the delivery, so there is nothing to choose. --}}
                         <div class="glass rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]">

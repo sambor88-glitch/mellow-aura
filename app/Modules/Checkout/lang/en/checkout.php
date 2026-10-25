@@ -32,6 +32,12 @@ return [
     'card_label' => 'Card details',
     'card_hint' => 'Your card number goes straight to the payment provider, never to me',
     'delivery_way' => 'Delivery',
+    'locker' => 'Parcel locker',
+    'locker_placeholder' => 'e.g. KRA01M',
+    'locker_hint' => 'Not sure? Leave it empty — I’ll pick the nearest one by your phone number',
+    'locker_map' => 'Choose on the map',
+    'locker_dialog' => 'Choose a parcel locker',
+    'locker_close' => 'Close the map',
     'delivery' => 'Delivery',
     'delivery_email' => 'By e-mail, as a PDF',
     'delivery_email_note' => 'Right after payment — print it or pass it on',
@@ -50,6 +56,7 @@ return [
     'wrapping' => 'I wrap ceramics in wood wool and a double box',
 
     'js' => [
+        'locker_map_failed' => 'The map of lockers didn’t load. Type the locker’s code or leave it empty',
         'paying' => 'Paying…',
         'pay' => 'Pay :amount',
         'blik_missing' => 'Enter your BLIK code to pay',

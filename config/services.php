@@ -14,6 +14,12 @@ return [
     |
     */
 
+    // The map of InPost lockers on the checkout. Without a token the customer types the locker's code herself.
+    'inpost' => [
+        'geowidget_token' => env('INPOST_GEOWIDGET_TOKEN'),
+        'geowidget_sandbox' => (bool) env('INPOST_GEOWIDGET_SANDBOX', false),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

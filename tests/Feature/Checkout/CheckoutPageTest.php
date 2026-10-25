@@ -44,6 +44,27 @@ class CheckoutPageTest extends TestCase
             ->assertSee('name="expected_total" value="25500"', false);
     }
 
+    public function test_the_parcel_locker_can_be_typed_and_picked_on_inposts_map_only_with_a_token(): void
+    {
+        $this->postJson('/koszyk', ['variant_id' => $this->variant('Wazony', 'Niski 16 cm', 23900)->id]);
+
+        $this->get('/zamowienie')
+            ->assertSee('name="locker_code"', false)
+            ->assertSee('Nie wiesz? Zostaw puste — dobiorę najbliższy po numerze telefonu')
+            ->assertDontSee('Wybierz na mapie')
+            ->assertDontSee('geowidget');
+
+        config(['services.inpost.geowidget_token' => 'test-token']);
+
+        $this->get('/zamowienie')
+            ->assertSee('Wybierz na mapie')
+            ->assertSee('aria-labelledby="lockers-title"', false)
+            ->assertSee('test-token', false)
+            ->assertSee('geowidget.inpost.pl', false)
+            // The map loads only when it is opened: no InPost script in the page itself.
+            ->assertDontSee('<script src="https://geowidget.inpost.pl', false);
+    }
+
     public function test_the_checkout_is_never_indexed(): void
     {
         config(['app.noindex' => false]);

@@ -6,15 +6,38 @@
 let stripe = null;
 let card = null;
 
+// InPost's map comes from their servers on the first opening, once per page.
+let geowidget = null;
+const POINT_EVENT = 'mellowauraLocker';
+
+const loadGeowidget = ({ script, style }) => {
+    geowidget ??= new Promise((resolve, reject) => {
+        const link = Object.assign(document.createElement('link'), { rel: 'stylesheet', href: style });
+        const tag = Object.assign(document.createElement('script'), { src: script, async: true });
+        tag.addEventListener('load', () => customElements.whenDefined('inpost-geowidget').then(resolve));
+        tag.addEventListener('error', () => {
+            geowidget = null;
+            tag.remove();
+            reject(new Error('geowidget'));
+        });
+        document.head.append(link, tag);
+    });
+
+    return geowidget;
+};
+
 // A sentence from the page's language, with :amount filled in.
 const say = (texts, key, amount = '') => (texts[key] ?? key).replace(':amount', amount);
 
-export default ({ accepted, deviations, payment, shipping, subtotal, freeFrom, prices, stripeKey, texts }) => ({
+export default ({ accepted, deviations, payment, shipping, locker, lockerMap, subtotal, freeFrom, prices, stripeKey, texts }) => ({
     accepted,
     // A product with a feature nobody would expect has its own checkbox, keyed by the cart line.
     deviations: { ...deviations },
     payment,
     shipping,
+    // The parcel locker's code, typed or picked on the map, and the address the map gave with it.
+    locker,
+    lockerAddress: '',
     blik: '',
     cardComplete: false,
     submitting: false,
@@ -73,6 +96,50 @@ export default ({ accepted, deviations, payment, shipping, subtotal, freeFrom, p
         if (stripeKey && this.$refs.card) {
             this.mountCard();
         }
+
+        // Geowidget v5 fires an event of this name on the document; older builds call a global function of it.
+        if (lockerMap) {
+            document.addEventListener(POINT_EVENT, (event) => this.pickLocker(event.detail));
+            window[POINT_EVENT] = (point) => this.pickLocker(point);
+        }
+    },
+
+    // The map is InPost's own element; it tells us the chosen point with an event on the document.
+    async openLockerMap() {
+        this.$refs.lockers.showModal();
+
+        if (this.$refs.lockerMap.firstElementChild) {
+            return;
+        }
+
+        try {
+            await loadGeowidget(lockerMap);
+        } catch {
+            this.$refs.lockers.close();
+            this.$store.cart.say(say(texts, 'locker_map_failed'));
+            this.$refs.locker.focus();
+
+            return;
+        }
+
+        const map = document.createElement('inpost-geowidget');
+        map.setAttribute('token', lockerMap.token);
+        map.setAttribute('language', lockerMap.language);
+        // Lockers and the points where a parcel can be collected; the shop sends nothing cash on delivery.
+        map.setAttribute('config', 'parcelcollect');
+        map.setAttribute('onpoint', POINT_EVENT);
+        this.$refs.lockerMap.append(map);
+    },
+
+    pickLocker(point) {
+        if (!point?.name) {
+            return;
+        }
+
+        this.locker = String(point.name).toUpperCase();
+        this.lockerAddress = [point.address?.line1, point.address?.line2].filter(Boolean).join(', ');
+        this.$refs.lockers.close();
+        this.$refs.locker.focus();
     },
 
     // Stripe's own field: the card number is typed into Stripe's frame, never into our page.

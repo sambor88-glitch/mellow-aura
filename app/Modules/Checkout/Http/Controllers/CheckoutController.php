@@ -11,6 +11,7 @@ use App\Modules\Checkout\Enums\PaymentMethod;
 use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Http\Requests\PlaceOrderRequest;
 use App\Modules\Checkout\Models\Order;
+use App\Modules\Checkout\Support\LockerMap;
 use App\Modules\Checkout\Support\ShippingMethods;
 use App\Modules\Content\Support\LegalDocument;
 use App\Modules\Localization\Support\Locales;
@@ -69,6 +70,9 @@ class CheckoutController extends Controller
                     ->all(),
                 'payment' => $selectedPayment,
                 'shipping' => $selectedShipping,
+                'locker' => (string) old('locker_code', ''),
+                // InPost's map of lockers, or null without a token: then the code is typed by hand.
+                'lockerMap' => LockerMap::config(),
                 'subtotal' => $subtotal,
                 'freeFrom' => $shipping->freeFrom(),
                 'prices' => $methods->map(fn (array $method) => $method['price']),
