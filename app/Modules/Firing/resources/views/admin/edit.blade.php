@@ -13,7 +13,7 @@
     $input = 'w-full min-w-0 rounded-[4px] border bg-white px-3 py-2.5 text-[15px] text-ink placeholder:text-hint focus:border-ink';
     $label = 'mb-1 block text-[12.5px] text-graphite';
 @endphp
-<x-admin::layout title="Wypały" lead="Cennik na stronie wypałów na zlecenie. Formularz zgłoszenia wsadu dojdzie po świętach — do tego czasu klienci piszą na WhatsAppie albo przez formularz.">
+<x-admin::layout title="Wypały" lead="Cennik na stronie wypałów na zlecenie. Z niego formularz „Zgłoś wsad” liczy klientom wycenę — zgłoszenie dostajesz mailem.">
     <form id="cennik" method="post" action="{{ route('admin.firing.update') }}" novalidate class="max-w-[880px] scroll-mt-6 rounded-[4px] border border-line bg-cream p-[22px]">
         @csrf
         @method('PUT')
@@ -40,6 +40,22 @@
                     @endif
                 </div>
             @endforeach
+        </div>
+
+        <div class="mb-5 min-w-0 max-w-[320px]">
+            <label for="wypaly-load-day" class="{{ $label }}">Dzień, w którym zbierasz wsad</label>
+            <select id="wypaly-load-day" name="kiln_load_weekday"
+                    @class([$input, 'border-error' => $bag->has('kiln_load_weekday'), 'border-line' => ! $bag->has('kiln_load_weekday')])>
+                <option value="">Bez stałego dnia — umawiam się mailem</option>
+                @foreach ([1 => 'poniedziałek', 2 => 'wtorek', 3 => 'środa', 4 => 'czwartek', 5 => 'piątek', 6 => 'sobota', 7 => 'niedziela'] as $day => $dayName)
+                    <option value="{{ $day }}" @selected((string) old('kiln_load_weekday', $loadWeekday) === (string) $day)>{{ $dayName }}</option>
+                @endforeach
+            </select>
+            @if ($bag->has('kiln_load_weekday'))
+                <p class="mt-1.5 text-[13px] text-error">{{ $bag->first('kiln_load_weekday') }}</p>
+            @else
+                <p class="mt-1.5 text-[12.5px] text-label">Formularz pokaże klientom cztery najbliższe takie dni do wyboru.</p>
+            @endif
         </div>
 
         <div class="grid gap-3">

@@ -354,6 +354,10 @@
         ]
     },
     {
+        "key": "kiln_load_weekday",
+        "value": null
+    },
+    {
         "key": "kiln_form_kinds",
         "value": [
             "Biskwitowy",
