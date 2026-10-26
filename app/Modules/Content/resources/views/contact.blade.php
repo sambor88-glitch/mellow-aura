@@ -9,6 +9,8 @@
     $topics = (array) $settings->get('contact_form_topics', []);
     // A link such as /kontakt?temat=Wypał moich prac picks the topic in advance.
     $chosenTopic = old('topic', in_array(request()->query('temat'), $topics, true) ? request()->query('temat') : null);
+    // A link from a workshop date starts the message with the workshop and the date.
+    $startedMessage = old('message', is_string(request()->query('wiadomosc')) ? Str::limit(request()->query('wiadomosc'), 300, '') : '');
     $company = collect(['company_name', 'company_nip', 'company_regon', 'company_address'])->mapWithKeys(fn (string $key) => [$key => $settings->get($key)]);
 
     $description = match (true) {
@@ -109,7 +111,7 @@
                                           'w-full min-w-0 resize-y rounded-[4px] border bg-white px-4 py-[14px] text-[15px] leading-[1.6] text-ink focus:border-ink pointer-coarse:text-[16px]',
                                           'border-error' => $errors->has('message'),
                                           'border-line' => ! $errors->has('message'),
-                                      ])>{{ old('message') }}</textarea>
+                                      ])>{{ $startedMessage }}</textarea>
                             @error('message')
                                 <p id="contact-message-error" class="mt-1.5 text-[13px] text-error">{{ $message }}</p>
                             @enderror

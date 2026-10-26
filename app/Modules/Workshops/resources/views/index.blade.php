@@ -17,6 +17,11 @@
             <p class="mb-[52px] max-w-[56ch] text-[17px] leading-[1.7] text-pretty text-lead">{{ $lead }}</p>
         @endif
 
+        @if ($hero !== null)
+            <img src="{{ $hero }}" alt="" width="1280" height="520"
+                 class="mb-[76px] block h-[clamp(240px,40vh,460px)] w-full rounded-[4px] bg-line-soft object-cover">
+        @endif
+
         @if ($workshops->isNotEmpty())
             <div class="mb-[76px] grid grid-cols-[repeat(auto-fit,minmax(290px,1fr))] gap-[22px]">
                 @foreach ($workshops as $workshop)
@@ -55,9 +60,50 @@
 
         <div class="flex flex-wrap gap-11">
             <div class="min-w-0 flex-[1_1_420px]">
+                @if ($dates->isNotEmpty())
+                    <section aria-labelledby="workshop-dates" class="mb-14">
+                        <h2 id="workshop-dates" class="mb-2 font-serif text-[length:clamp(28px,3.4vw,40px)] font-light">Najbliższe terminy</h2>
+                        <p class="mb-[26px] text-[15.5px] text-muted">Wybierz termin, a potem zostaw kontakt — potwierdzam rezerwację wiadomością.</p>
+                        <ul class="grid gap-3">
+                            @foreach ($dates as ['date' => $date, 'workshop' => $workshop])
+                                @php
+                                    $when = $date->dayLabel().', '.$date->timeLabel();
+                                    $dateUrl = route('content.contact', [
+                                        'temat' => 'Warsztaty i terminy',
+                                        'wiadomosc' => 'Chcę się zapisać: '.$workshop['name'].', '.$when.'. Liczba osób: ',
+                                    ]).'#formularz';
+                                @endphp
+                                <li class="flex flex-wrap items-center gap-4 rounded-[4px] border border-divider bg-cream px-[22px] py-5">
+                                    <div class="min-w-0 flex-[1_1_200px]">
+                                        <div class="font-serif text-[19px] leading-[1.2]">
+                                            <time datetime="{{ $date->starts_at->toIso8601String() }}">{{ $date->dayLabel() }}</time>
+                                        </div>
+                                        <div class="mt-[3px] text-[13.5px] text-muted">{{ $date->timeLabel() }} &middot; {{ $workshop['name'] }}</div>
+                                    </div>
+                                    <div class="flex flex-none items-center gap-5">
+                                        <div class="text-right">
+                                            <div @class(['text-[12.5px]', 'text-error' => $date->seatsLeft() <= 1, 'text-success-text' => $date->seatsLeft() > 1])>{{ $date->seatsLeftLabel() }}</div>
+                                            <div class="mt-0.5 text-[14px] tabular-nums">{{ Money::format($workshop['price_gross']) }}@if ($workshop['unit_label']) / {{ $workshop['unit_label'] }}@endif</div>
+                                        </div>
+                                        @if ($date->seatsLeft() > 0)
+                                            <a href="{{ $dateUrl }}" aria-label="Wybieram: {{ $workshop['name'] }}, {{ $when }}"
+                                               data-analytics-click="{{ json_encode(['name' => 'workshop_booking', 'params' => ['method' => 'contact_form']]) }}"
+                                               class="rounded-full border border-ink px-5 py-2.5 text-[13px] text-ink transition duration-300 hover:bg-ink hover:text-linen active:scale-[.97]">Wybieram</a>
+                                        @endif
+                                    </div>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </section>
+                @endif
+
                 <h2 class="mb-2 font-serif text-[length:clamp(28px,3.4vw,40px)] font-light">Jak się zapisać</h2>
                 <p class="mb-6 max-w-[52ch] text-[15.5px] leading-[1.65] text-muted">
-                    Zapisy przez stronę dopiero przygotowuję. Na razie napisz, który warsztat Cię ciekawi i ile osób przyjdzie — ustalimy termin.
+                    @if ($dates->isNotEmpty())
+                        Zapisy przez stronę dopiero przygotowuję. Na razie wybierz termin albo napisz, który warsztat Cię ciekawi i ile osób przyjdzie.
+                    @else
+                        Zapisy przez stronę dopiero przygotowuję. Na razie napisz, który warsztat Cię ciekawi i ile osób przyjdzie — ustalimy termin.
+                    @endif
                 </p>
                 @if ($location)
                     <p class="mb-6 max-w-[52ch] text-[15px] leading-[1.65] text-lead">Pracownia: {{ $location }}. Dokładny adres podaję po zapisie.</p>
@@ -85,5 +131,19 @@
                 </div>
             </div>
         </div>
+
+        @if ($gallery->isNotEmpty())
+            <div class="pt-[76px]">
+                <div class="mb-5 flex flex-wrap items-baseline justify-between gap-4">
+                    <h2 class="font-serif text-[length:clamp(28px,3.4vw,40px)] font-light">Pracownia</h2>
+                    <a href="{{ route('content.studio') }}" class="border-b border-line-strong pb-[3px] text-[13.5px] tracking-[0.06em]">Zobacz pracownię →</a>
+                </div>
+                <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3.5">
+                    @foreach ($gallery as $photo)
+                        <img src="{{ $photo['url'] }}" alt="{{ $photo['alt'] }}" loading="lazy" width="600" height="600" class="block aspect-square w-full rounded-[4px] bg-line-soft object-cover">
+                    @endforeach
+                </div>
+            </div>
+        @endif
     </div>
 </x-shared::layout>
