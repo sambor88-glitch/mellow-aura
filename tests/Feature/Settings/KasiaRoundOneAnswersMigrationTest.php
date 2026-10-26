@@ -61,7 +61,8 @@ class KasiaRoundOneAnswersMigrationTest extends TestCase
         ], array_column(Setting::find('material_tiles')->value, 'text'));
         $this->assertStringContainsString('Kubek z Twoim napisem to 4–8 tygodni, duże i skomplikowane projekty 6–12 tygodni', Setting::find('faq_items')->value[0]['answer']);
         $this->assertSame('gotowe w 4–8 tygodni', Setting::find('text_mug_lead_time')->value);
-        $this->assertSame(['Lepienie kubków', '2 godziny', 22000], array_values(array_intersect_key(Setting::find('workshop_types')->value[0], array_flip(['name', 'duration_label', 'price_gross']))));
+        $workshop = Setting::find('workshop_types')->value[0];
+        $this->assertSame(['Lepienie kubków', '2 godziny', 22000], [$workshop['name'], $workshop['duration_label'], $workshop['price_gross']]);
         $this->assertStringStartsWith('Dwie godziny', Setting::find('voucher_workshop_notes')->value['voucher-lepienie']['expect']);
         $this->assertSame(15, Setting::find('euro_markup_percent')->value);
     }
