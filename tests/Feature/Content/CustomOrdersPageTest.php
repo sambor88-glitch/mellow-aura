@@ -33,7 +33,7 @@ class CustomOrdersPageTest extends TestCase
             ->assertSeeInOrder(['Piszesz, czego szukasz', 'Dostajesz szkic i cenę', 'Do pięciu dni roboczych i za darmo.', 'Akceptujesz i płacisz BLIK-iem', 'Całość po akceptacji szkicu i ceny.', 'w dwóch ratach', 'Lepienie, dwa wypały, wysyłka', 'Przed wysyłką dostajesz zdjęcia gotowej pracy.', 'robię od nowa albo oddaję całą wpłatę.'])
             ->assertDontSee('Zaliczka')
             ->assertSee('alt="Kubek z wbijanym napisem"', false)
-            ->assertSeeInOrder(['Opowiedz o pomyśle', 'Zdjęcia inspiracji — najłatwiej wysłać je na WhatsAppie', 'href="https://wa.me/48600100200"', 'Napisz na WhatsAppie', 'href="'.e(route('content.contact', ['temat' => 'Zamówienie indywidualne'])).'"', 'Napisz przez formularz', 'Woli Ci się pisać na WhatsAppie?'], false);
+            ->assertSeeInOrder(['Opowiedz o pomyśle', 'action="'.route('custom-orders.store').'"', 'Wyślij pomysł', 'Woli Ci się pisać na WhatsAppie?', 'href="https://wa.me/48600100200"'], false);
 
         // No price list: every piece is quoted, so the markup names the service without offers.
         $service = $this->structuredData($response->getContent())->firstWhere('@type', 'Service');
@@ -52,8 +52,7 @@ class CustomOrdersPageTest extends TestCase
             ->assertDontSee('Bez nazwy')
             ->assertDontSee('Serwis na wesele, kubek z tekstem')
             ->assertDontSee('wa.me')
-            ->assertSee('Zdjęcia inspiracji, jeśli je masz')
-            ->assertSee('Napisz przez formularz');
+            ->assertSee('Wyślij pomysł');
     }
 
     public function test_the_home_page_shop_and_footer_lead_here(): void
