@@ -6,6 +6,12 @@
     $withNumber = fn (string $key) => str_replace(':number', '<strong class="font-medium select-all">'.e($order->number).'</strong>', e($t($key)));
     $waiting = $secondsLeft > 0;
     $refused = $order->payment_status === PaymentStatus::Failed || $errors->has('blik_code');
+    // A workshop booking and a custom order's payment have no cart to wait, so they say what does.
+    $retryText = ($refused ? 'refused_text' : 'expired_text').match (true) {
+        $booking !== null => '_booking',
+        $customOrderPayment !== null => '_custom_order',
+        default => '',
+    };
     $glass = 'glass rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]';
 @endphp
 <x-shared::layout :title="$t('title')" :noindex="true">
@@ -37,7 +43,7 @@
             </div>
         @else
             <h1 class="mb-4 font-serif text-[length:clamp(40px,6vw,72px)] leading-[.96] font-light tracking-[-0.02em] text-balance">{{ $t($refused ? 'refused_heading' : 'expired_heading') }}</h1>
-            <p class="mb-8 max-w-[48ch] text-[16.5px] leading-[1.7] text-lead">{!! $withNumber(($refused ? 'refused_text' : 'expired_text').($booking ? '_booking' : '')) !!}</p>
+            <p class="mb-8 max-w-[48ch] text-[16.5px] leading-[1.7] text-lead">{!! $withNumber($retryText) !!}</p>
 
             <form method="post" action="{{ route('checkout.blik.retry') }}" novalidate x-data="{ code: '' }" class="{{ $glass }}">
                 @csrf
@@ -63,7 +69,7 @@
                     {{ $t('pay', ['amount' => $order->money($order->total_gross)]) }}
                 </button>
             </form>
-            {{-- Back to the checkout with the cart as it was, or to the workshop's form: another way to pay is a new order there. --}}
+            {{-- Back to the checkout with the cart as it was, the workshop's form or the payment link: another way to pay is a new order there. --}}
             <p class="mt-6 text-center text-[14px]"><a href="{{ $otherUrl }}" class="text-graphite underline underline-offset-4 hover:text-ink">{{ $t('other') }}</a></p>
         @endif
     </div>

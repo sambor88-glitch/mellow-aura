@@ -27,7 +27,7 @@ class CustomOrderRequestController extends Controller
         $status = CustomOrderStatus::tryFrom((string) $request->query('status'));
 
         $requests = CustomOrderRequest::query()
-            ->with('media')
+            ->with(['media', 'paymentLinks'])
             ->when($status !== null && ! in_array($status, CustomOrderStatus::open(), true),
                 fn ($query) => $query->where('status', $status)->latest('updated_at')->limit(self::CLOSED_SHOWN),
                 fn ($query) => $query->whereIn('status', $status ? [$status] : CustomOrderStatus::open())->orderBy('created_at')->orderBy('id'),

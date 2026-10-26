@@ -5,6 +5,8 @@ namespace App\Modules\CustomOrders\Models;
 use App\Modules\CustomOrders\Enums\BriefKind;
 use App\Modules\CustomOrders\Enums\CustomOrderStatus;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -37,6 +39,42 @@ class CustomOrderRequest extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('photos')->useDisk('local')->acceptsMimeTypes(['image/webp']);
+    }
+
+    /**
+     * The links Kasia sent for this idea, newest first.
+     *
+     * @return HasMany<PaymentLink, $this>
+     */
+    public function paymentLinks(): HasMany
+    {
+        return $this->hasMany(PaymentLink::class)->latest('id');
+    }
+
+    /**
+     * Every try to pay one of its links, paid or not.
+     *
+     * @return HasManyThrough<CustomOrderPayment, PaymentLink, $this>
+     */
+    public function payments(): HasManyThrough
+    {
+        return $this->hasManyThrough(CustomOrderPayment::class, PaymentLink::class, secondKey: 'custom_order_payment_link_id');
+    }
+
+    /**
+     * What came in through the links, in grosze.
+     */
+    public function paidAmount(): int
+    {
+        return (int) $this->payments()->whereNotNull('custom_order_payments.paid_at')->sum('custom_order_payments.amount');
+    }
+
+    /**
+     * What is left of the quote, in grosze: the default amount of the next link. Null without a quote.
+     */
+    public function amountDue(): ?int
+    {
+        return $this->quote === null ? null : max(0, $this->quote - $this->paidAmount());
     }
 
     /**

@@ -6,6 +6,7 @@ use App\Modules\Checkout\Enums\OrderStatus;
 use App\Modules\Checkout\Enums\PaymentMethod;
 use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Support\ShippingMethods;
+use App\Modules\CustomOrders\Models\CustomOrderPayment;
 use App\Modules\Shared\Support\Money;
 use App\Modules\Workshops\Models\WorkshopBooking;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -45,6 +46,17 @@ class Order extends Model
     public function workshopBooking(): HasOne
     {
         return $this->hasOne(WorkshopBooking::class);
+    }
+
+    /**
+     * The custom order this order pays for, when it was placed from a payment link (CustomOrders, MA-144).
+     * Such an order has its own confirmation page and never touches the cart.
+     *
+     * @return HasOne<CustomOrderPayment, $this>
+     */
+    public function customOrderPayment(): HasOne
+    {
+        return $this->hasOne(CustomOrderPayment::class);
     }
 
     /**

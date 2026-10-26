@@ -1,4 +1,6 @@
 @use('App\Modules\CustomOrders\Enums\CustomOrderStatus')
+@use('App\Modules\CustomOrders\Enums\PaymentLinkStatus')
+@use('App\Modules\CustomOrders\Models\PaymentLink')
 @use('App\Modules\Shared\Support\Money')
 @php
     $filter = 'rounded-full border px-[18px] py-[9px] text-[13px]';
@@ -87,6 +89,50 @@
                         </div>
                         <button class="min-h-10 rounded-full border border-line-strong px-4 py-2 text-[12.5px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark">Zapisz</button>
                     </form>
+
+                    {{-- Payment links (MA-144): all of the quote, or half now and the rest before shipping. --}}
+                    @if ($idea->quote !== null && $idea->status->takesPayments())
+                        @php($due = $idea->amountDue())
+                        <div class="grid gap-2 border-t border-divider pt-3">
+                            @if ($idea->paymentLinks->isNotEmpty())
+                                <ul aria-label="Linki do płatności" class="grid gap-1 text-[13px] text-lead tabular-nums">
+                                    @foreach ($idea->paymentLinks as $link)
+                                        <li class="flex flex-wrap items-baseline gap-x-2">
+                                            <span class="text-ink">{{ Money::format($link->amount) }}</span>
+                                            <span>· wysłany {{ $link->created_at->format('j.m') }}</span>
+                                            @if ($link->status === PaymentLinkStatus::Paid)
+                                                <span class="rounded-full bg-success-soft px-2 py-[2px] text-[11.5px] text-success-text">Opłacony {{ $link->paid_at->format('j.m') }}</span>
+                                            @elseif ($link->status === PaymentLinkStatus::Open && $link->expires_at->isFuture())
+                                                <span class="rounded-full bg-navy-soft px-2 py-[2px] text-[11.5px] text-navy-text">Czeka do {{ $link->expires_at->format('j.m') }}</span>
+                                                <a href="{{ $link->url() }}" target="_blank" rel="noopener" class="text-[12.5px] [overflow-wrap:anywhere]">{{ $link->url() }}</a>
+                                            @else
+                                                <span class="rounded-full bg-linen px-2 py-[2px] text-[11.5px] text-label">Nieaktualny</span>
+                                            @endif
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @endif
+
+                            @if ($due === 0)
+                                <p class="text-[13px] text-success-text">Wycena opłacona w całości.</p>
+                            @else
+                                <form method="post" action="{{ route('admin.custom-orders.payment-links.store', $idea) }}" class="flex flex-wrap items-end gap-2"
+                                      x-data="{ amount: @js(Money::input($due)) }">
+                                    @csrf
+                                    <div class="min-w-0">
+                                        <label for="pomysl-{{ $idea->id }}-amount" class="mb-1 block text-[12px] text-label">Do zapłaty teraz (zł) — zostało {{ Money::format($due) }}</label>
+                                        <input id="pomysl-{{ $idea->id }}-amount" name="amount" type="text" inputmode="decimal" autocomplete="off" x-model="amount"
+                                               value="{{ Money::input($due) }}" class="{{ $field }} w-28 tabular-nums">
+                                    </div>
+                                    @if ($due >= 200)
+                                        <button type="button" x-on:click="amount = @js(Money::input(intdiv($due, 2)))" class="min-h-10 rounded-full border border-line-strong px-4 py-2 text-[12.5px] text-lead transition duration-300 hover:border-ink hover:text-ink">Połowa</button>
+                                    @endif
+                                    <button class="min-h-10 rounded-full bg-ink px-4 py-2 text-[12.5px] text-linen transition duration-300 hover:bg-graphite">Wyślij link do płatności</button>
+                                    <p class="basis-full text-[12px] text-hint">Link idzie mailem do {{ $idea->email }} i jest ważny {{ PaymentLink::VALID_DAYS }} dni. Nowy link zastępuje poprzedni nieopłacony.</p>
+                                </form>
+                            @endif
+                        </div>
+                    @endif
                 </article>
             @endforeach
         </div>

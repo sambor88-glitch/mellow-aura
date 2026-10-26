@@ -42,6 +42,14 @@ enum CustomOrderStatus: string
     }
 
     /**
+     * Whether a payment link can be sent and paid. A declined idea takes no money.
+     */
+    public function takesPayments(): bool
+    {
+        return $this !== self::Declined;
+    }
+
+    /**
      * The statuses still to work on, in the order the work goes.
      *
      * @return list<self>
