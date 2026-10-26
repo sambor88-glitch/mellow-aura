@@ -3,18 +3,19 @@
 namespace App\Modules\CustomOrders\Http\Requests\Admin;
 
 use App\Modules\CustomOrders\Models\CustomOrderRequest;
-use App\Modules\Shared\Support\Money;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 
 /**
- * The amount of a payment link, in złoty: at least 1 zł and at most what is left of the quote.
+ * Which part of the quote the link is for — Maciej's decision of 26.10, after the terms (custom orders, point 1):
+ * „Całość” is what is left of the quote, „Połowa” is half of it for a big order, only while nothing is paid yet.
+ * The second half is then „Całość”.
  */
 class SendPaymentLinkRequest extends FormRequest
 {
-    private const PRICE = '/^\d{1,6}([.,]\d{1,2})?$/';
+    public const FULL = 'full';
 
-    private const MIN = 100;
+    public const HALF = 'half';
 
     /** @var string */
     protected $errorBag = 'pomysl';
@@ -30,7 +31,7 @@ class SendPaymentLinkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'amount' => ['required', 'regex:'.self::PRICE],
+            'part' => ['required', 'in:'.self::FULL.','.self::HALF],
         ];
     }
 
@@ -40,7 +41,7 @@ class SendPaymentLinkRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'amount.*' => 'Wpisz kwotę do zapłaty, np. 450 albo 450,50',
+            'part.*' => 'Wybierz, czy link jest na całość, czy na połowę',
         ];
     }
 
@@ -56,23 +57,37 @@ class SendPaymentLinkRequest extends FormRequest
 
             $idea = $this->idea();
             $due = $idea->amountDue();
-            $amount = $this->amount();
 
             match (true) {
-                ! $idea->status->takesPayments() => $validator->errors()->add('amount', 'Pomysł jest odrzucony — zmień status, zanim wyślesz link'),
-                $due === null => $validator->errors()->add('amount', 'Najpierw zapisz wycenę'),
-                $due === 0 => $validator->errors()->add('amount', 'Wycena jest już opłacona w całości'),
-                $amount < self::MIN => $validator->errors()->add('amount', 'Link musi być na co najmniej '.Money::format(self::MIN)),
-                $amount > $due => $validator->errors()->add('amount', 'Do zapłaty zostało '.Money::format($due).' — wpisz tyle albo mniej'),
+                ! $idea->status->takesPayments() => $validator->errors()->add('part', 'Pomysł jest odrzucony — zmień status, zanim wyślesz link'),
+                $due === null => $validator->errors()->add('part', 'Najpierw zapisz wycenę'),
+                $due === 0 => $validator->errors()->add('part', 'Wycena jest już opłacona w całości'),
+                $this->validated('part') === self::HALF && ! self::halfAllowed($idea) => $validator->errors()->add('part', 'Połowę wysyłasz tylko jako pierwszą wpłatę — teraz wyślij resztę'),
                 default => null,
             };
         }];
     }
 
+    /**
+     * Half of the quote, rounded down: the rest link („Całość”) then takes the odd grosz, so both add up to it.
+     */
+    public static function half(CustomOrderRequest $idea): int
+    {
+        return intdiv((int) $idea->quote, 2);
+    }
+
+    /** Only as the first payment, and only when each half is at least 1 zł. */
+    public static function halfAllowed(CustomOrderRequest $idea): bool
+    {
+        return $idea->quote !== null && self::half($idea) >= 100 && $idea->paidAmount() === 0;
+    }
+
     /** In grosze. */
     public function amount(): int
     {
-        return Money::parse((string) $this->validated('amount'));
+        $idea = $this->idea();
+
+        return $this->validated('part') === self::HALF ? self::half($idea) : (int) $idea->amountDue();
     }
 
     protected function getRedirectUrl(): string

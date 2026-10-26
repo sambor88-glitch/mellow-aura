@@ -46,16 +46,15 @@ class PaymentLinkTest extends TestCase
     {
         $idea = $this->idea(['quote' => 90000, 'status' => CustomOrderStatus::Quoting]);
 
-        $this->post(route('admin.custom-orders.payment-links.store', $idea), ['amount' => '900'])->assertRedirect('/panel/logowanie');
+        $this->post(route('admin.custom-orders.payment-links.store', $idea), ['part' => 'full'])->assertRedirect('/panel/logowanie');
 
         $this->actingAs(User::factory()->create())
             ->get(route('admin.custom-orders.index'))
-            ->assertSee('Do zapłaty teraz (zł) — zostało 900,00 zł')
-            ->assertSee('value="900"', false)
-            ->assertSee('Połowa')
-            ->assertSee('Wyślij link do płatności');
+            ->assertSee('Wyślij link do płatności')
+            ->assertSee('Całość — 900,00 zł')
+            ->assertSee('Połowa — 450,00 zł');
 
-        $this->post(route('admin.custom-orders.payment-links.store', $idea), ['amount' => '900,00'])
+        $this->post(route('admin.custom-orders.payment-links.store', $idea), ['part' => 'full'])
             ->assertRedirect(route('admin.custom-orders.index').'#pomysl-'.$idea->id)
             ->assertSessionHas('panel_status', 'Link na 900,00 zł poszedł do ola@example.com.');
 
@@ -79,21 +78,18 @@ class PaymentLinkTest extends TestCase
             ->assertSee($link->url());
     }
 
-    public function test_the_amount_stays_within_what_is_left_of_the_quote(): void
+    public function test_a_link_needs_a_quote_and_an_idea_that_is_not_declined(): void
     {
         $this->actingAs(User::factory()->create());
         $idea = $this->idea(['quote' => 90000]);
 
-        foreach ([['901', 'Do zapłaty zostało 900,00 zł — wpisz tyle albo mniej'], ['0,50', 'Link musi być na co najmniej 1,00 zł'], ['abc', 'Wpisz kwotę do zapłaty, np. 450 albo 450,50']] as [$amount, $error]) {
-            $this->post(route('admin.custom-orders.payment-links.store', $idea), ['amount' => $amount])
-                ->assertRedirect(route('admin.custom-orders.index').'#pomysl-'.$idea->id)
-                ->assertSessionHasErrorsIn('pomysl', ['amount' => $error]);
-        }
-
-        $this->post(route('admin.custom-orders.payment-links.store', $this->idea()), ['amount' => '100'])
-            ->assertSessionHasErrorsIn('pomysl', ['amount' => 'Najpierw zapisz wycenę']);
-        $this->post(route('admin.custom-orders.payment-links.store', $this->idea(['quote' => 90000, 'status' => CustomOrderStatus::Declined])), ['amount' => '100'])
-            ->assertSessionHasErrorsIn('pomysl', ['amount' => 'Pomysł jest odrzucony — zmień status, zanim wyślesz link']);
+        $this->post(route('admin.custom-orders.payment-links.store', $idea), ['part' => 'some'])
+            ->assertRedirect(route('admin.custom-orders.index').'#pomysl-'.$idea->id)
+            ->assertSessionHasErrorsIn('pomysl', ['part' => 'Wybierz, czy link jest na całość, czy na połowę']);
+        $this->post(route('admin.custom-orders.payment-links.store', $this->idea()), ['part' => 'full'])
+            ->assertSessionHasErrorsIn('pomysl', ['part' => 'Najpierw zapisz wycenę']);
+        $this->post(route('admin.custom-orders.payment-links.store', $this->idea(['quote' => 90000, 'status' => CustomOrderStatus::Declined])), ['part' => 'full'])
+            ->assertSessionHasErrorsIn('pomysl', ['part' => 'Pomysł jest odrzucony — zmień status, zanim wyślesz link']);
 
         $this->assertSame(0, PaymentLink::query()->count());
         Mail::assertNothingQueued();
@@ -101,7 +97,7 @@ class PaymentLinkTest extends TestCase
 
     public function test_the_customer_pays_with_blik_and_the_work_starts(): void
     {
-        $link = $this->sendLink($this->idea(['quote' => 90000]), 90000);
+        $link = $this->sendLink($this->idea(['quote' => 90000]));
         $this->withSession(['cart' => ['wrap' => ['type' => 'gift_wrap', 'quantity' => 1]]]);
 
         $this->get($link->url())
@@ -147,30 +143,37 @@ class PaymentLinkTest extends TestCase
             ->assertDontSee('Wyślij link do płatności');
     }
 
-    public function test_a_big_order_is_paid_in_two_halves(): void
+    public function test_a_big_order_is_paid_in_two_halves_that_add_up_to_the_quote(): void
     {
-        $idea = $this->idea(['quote' => 240000]);
-        $this->pay($this->sendLink($idea, 120000));
+        // An odd grosz: the first half rounds down and the rest takes it.
+        $idea = $this->idea(['quote' => 240001]);
+        $this->pay($this->sendLink($idea, 'half'));
 
-        $this->assertSame([CustomOrderStatus::InProgress, 120000], [$idea->fresh()->status, $idea->fresh()->amountDue()]);
+        $this->assertSame([CustomOrderStatus::InProgress, 120000, 120001], [$idea->fresh()->status, $idea->fresh()->paidAmount(), $idea->fresh()->amountDue()]);
         $this->actingAs(User::factory()->create())
             ->get(route('admin.custom-orders.index'))
-            ->assertSee('zostało 1200,00 zł')
-            ->assertSee('value="1200"', false);
+            ->assertSee('Całość — 1200,01 zł')
+            ->assertDontSee('Połowa —');
+        // Half is only the first payment.
+        $this->post(route('admin.custom-orders.payment-links.store', $idea), ['part' => 'half'])
+            ->assertSessionHasErrorsIn('pomysl', ['part' => 'Połowę wysyłasz tylko jako pierwszą wpłatę — teraz wyślij resztę']);
 
         $this->flushSession();
-        $rest = $this->sendLink($idea, 120000);
+        $rest = $this->sendLink($idea, 'full');
+        $this->assertSame(120001, $rest->amount);
         Mail::assertQueued(PaymentLinkSent::class, fn (PaymentLinkSent $mail) => $mail->link->is($rest) && str_contains($mail->render(), 'Wycena'));
 
         $this->pay($rest);
 
         $this->assertSame([CustomOrderStatus::InProgress, 0], [$idea->fresh()->status, $idea->fresh()->amountDue()]);
         $this->assertSame([OrderStatus::Completed, OrderStatus::Completed], Order::query()->orderBy('id')->pluck('status')->all());
+        $this->post(route('admin.custom-orders.payment-links.store', $idea), ['part' => 'full'])
+            ->assertSessionHasErrorsIn('pomysl', ['part' => 'Wycena jest już opłacona w całości']);
     }
 
     public function test_a_refused_code_keeps_the_link_open(): void
     {
-        $link = $this->sendLink($this->idea(['quote' => 90000]), 90000);
+        $link = $this->sendLink($this->idea(['quote' => 90000]));
 
         $this->from($link->url())
             ->post(route('custom-orders.payment.store', $link->token), $this->form(['blik_code' => SimulatePayment::REJECTED_BLIK_CODE]))
@@ -184,7 +187,7 @@ class PaymentLinkTest extends TestCase
 
     public function test_a_code_waiting_for_the_bank_goes_to_the_blik_page_and_back_to_the_link(): void
     {
-        $link = $this->sendLink($this->idea(['quote' => 90000]), 90000);
+        $link = $this->sendLink($this->idea(['quote' => 90000]));
 
         $this->post(route('custom-orders.payment.store', $link->token), $this->form(['blik_code' => SimulatePayment::UNCONFIRMED_BLIK_CODE]))
             ->assertRedirect(route('checkout.blik'));
@@ -206,8 +209,8 @@ class PaymentLinkTest extends TestCase
     public function test_a_replaced_or_expired_link_takes_no_payment(): void
     {
         $idea = $this->idea(['quote' => 90000]);
-        $old = $this->sendLink($idea, 90000);
-        $new = $this->sendLink($idea, 45000);
+        $old = $this->sendLink($idea);
+        $new = $this->sendLink($idea, 'half');
 
         $this->assertSame([PaymentLinkStatus::Cancelled, PaymentLinkStatus::Open], [$old->fresh()->status, $new->fresh()->status]);
         $this->get($old->url())->assertOk()->assertSee('Ten link jest już nieaktualny')->assertDontSee('Płacę');
@@ -225,13 +228,13 @@ class PaymentLinkTest extends TestCase
     {
         config(['monitoring.alert_email' => 'alerty@example.com']);
         $idea = $this->idea(['quote' => 90000]);
-        $old = $this->sendLink($idea, 90000);
+        $old = $this->sendLink($idea);
 
         // A payment on the first link waits for the bank while Kasia sends a new one, and both come in.
         $this->post(route('custom-orders.payment.store', $old->token), $this->form(['blik_code' => SimulatePayment::UNCONFIRMED_BLIK_CODE]));
         $late = Order::sole();
         $this->flushSession();
-        $this->pay($this->sendLink($idea, 90000));
+        $this->pay($this->sendLink($idea));
 
         app(MarkOrderPaid::class)($late, 'test-late');
 
@@ -249,7 +252,7 @@ class PaymentLinkTest extends TestCase
     {
         config(['monitoring.alert_email' => 'alerty@example.com']);
         $idea = $this->idea(['quote' => 90000]);
-        $link = $this->sendLink($idea, 90000);
+        $link = $this->sendLink($idea);
 
         $this->post(route('custom-orders.payment.store', $link->token), $this->form(['blik_code' => SimulatePayment::UNCONFIRMED_BLIK_CODE]));
         $idea->update(['status' => CustomOrderStatus::Declined]);
@@ -277,10 +280,10 @@ class PaymentLinkTest extends TestCase
         ]);
     }
 
-    private function sendLink(CustomOrderRequest $idea, int $amount): PaymentLink
+    private function sendLink(CustomOrderRequest $idea, string $part = 'full'): PaymentLink
     {
         $this->actingAs(User::factory()->create())
-            ->post(route('admin.custom-orders.payment-links.store', $idea), ['amount' => (string) ($amount / 100)])
+            ->post(route('admin.custom-orders.payment-links.store', $idea), ['part' => $part])
             ->assertSessionHasNoErrors();
 
         return PaymentLink::query()->latest('id')->firstOrFail();

@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 /**
- * Sends the customer a link to pay $amount of the quote (MA-144): all of it, or half of a big one now and the
- * rest before shipping. One link at a time is open, so a link sent again cancels the one before. A new idea or one
+ * Sends the customer a link to pay $amount of the quote (MA-144): what is left of it, or half of a big one first
+ * (SendPaymentLinkRequest says which). One link at a time is open, so a link sent again cancels the one before. A new idea or one
  * being priced moves to „Zaliczka”, where it waits for the money.
  */
 class SendPaymentLink
