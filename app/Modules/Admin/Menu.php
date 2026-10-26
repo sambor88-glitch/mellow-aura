@@ -18,6 +18,7 @@ class Menu
     {
         return array_values(array_filter([
             ['label' => 'Zamówienia', 'route' => 'admin.orders.index', 'active' => 'admin.orders.*', 'description' => 'Kto zapłacił, co wysłać i jaki napis wbić w glinę.'],
+            ['label' => 'Zamówienia indywidualne', 'route' => 'admin.custom-orders.index', 'active' => 'admin.custom-orders.*', 'description' => 'Pomysły z formularza ze zdjęciami: wycena, zaliczka, realizacja i wysyłka.'],
             ['label' => 'Odstąpienia', 'route' => 'admin.withdrawals.index', 'active' => 'admin.withdrawals.*', 'description' => 'Oświadczenia z formularza „Odstąp od umowy tutaj” i termin zwrotu pieniędzy.'],
             ['label' => 'Reklamacje', 'route' => 'admin.complaints.index', 'active' => 'admin.complaints.*', 'description' => 'Odpowiedź w 14 dni z gotowym listem — przy odmowie z oświadczeniem o mediacji.'],
             ['label' => 'Niewysłane maile', 'route' => 'admin.failed-mails.index', 'active' => 'admin.failed-mails.*', 'description' => 'Maile ze sklepu, które nie wyszły mimo kilku prób. Wyślesz je jeszcze raz jednym kliknięciem.'],

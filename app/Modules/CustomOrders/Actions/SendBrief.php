@@ -3,6 +3,7 @@
 namespace App\Modules\CustomOrders\Actions;
 
 use App\Modules\CustomOrders\Enums\BriefKind;
+use App\Modules\CustomOrders\Enums\CustomOrderStatus;
 use App\Modules\CustomOrders\Mail\BriefConfirmed;
 use App\Modules\CustomOrders\Mail\BriefReceived;
 use App\Modules\CustomOrders\Models\CustomOrderRequest;
@@ -45,7 +46,7 @@ class SendBrief
                 'needed_by' => $this->optional($brief['needed_by'] ?? null),
                 'budget' => $this->optional($brief['budget'] ?? null),
                 'description' => trim($brief['description']),
-                'status' => CustomOrderRequest::STATUS_NEW,
+                'status' => CustomOrderStatus::New,
             ]);
 
             foreach ($webps as $index => $webp) {

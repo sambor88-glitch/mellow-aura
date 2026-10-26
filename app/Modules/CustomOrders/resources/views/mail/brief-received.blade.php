@@ -15,4 +15,5 @@
         @endif
         Odpisz na tego maila — trafi prosto do niej.
     </p>
+    <p style="margin: 12px 0 0;"><a href="{{ route('admin.custom-orders.index') }}#pomysl-{{ $customOrderRequest->id }}" style="color: #855F3D;">Pomysł w panelu →</a></p>
 </x-shared::mail.layout>

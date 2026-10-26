@@ -11,8 +11,8 @@ use Illuminate\Mail\Mailables\Envelope;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
- * An idea sent through the custom order form, for Kasia, with the customer's photos attached — until the list
- * in the panel (MA-143) the mail is the only place she sees them. Replying writes straight to the customer.
+ * An idea sent through the custom order form, for Kasia, with the customer's photos attached and a link to the idea
+ * in the panel. Replying writes straight to the customer.
  */
 class BriefReceived extends QueuedMail
 {
