@@ -37,7 +37,7 @@
             </div>
         @else
             <h1 class="mb-4 font-serif text-[length:clamp(40px,6vw,72px)] leading-[.96] font-light tracking-[-0.02em] text-balance">{{ $t($refused ? 'refused_heading' : 'expired_heading') }}</h1>
-            <p class="mb-8 max-w-[48ch] text-[16.5px] leading-[1.7] text-lead">{!! $withNumber($refused ? 'refused_text' : 'expired_text') !!}</p>
+            <p class="mb-8 max-w-[48ch] text-[16.5px] leading-[1.7] text-lead">{!! $withNumber(($refused ? 'refused_text' : 'expired_text').($booking ? '_booking' : '')) !!}</p>
 
             <form method="post" action="{{ route('checkout.blik.retry') }}" novalidate x-data="{ code: '' }" class="{{ $glass }}">
                 @csrf
@@ -63,8 +63,8 @@
                     {{ $t('pay', ['amount' => $order->money($order->total_gross)]) }}
                 </button>
             </form>
-            {{-- Back to the checkout with the cart as it was: another way to pay is a new order there. --}}
-            <p class="mt-6 text-center text-[14px]"><a href="{{ route('checkout.index') }}" class="text-graphite underline underline-offset-4 hover:text-ink">{{ $t('other') }}</a></p>
+            {{-- Back to the checkout with the cart as it was, or to the workshop's form: another way to pay is a new order there. --}}
+            <p class="mt-6 text-center text-[14px]"><a href="{{ $otherUrl }}" class="text-graphite underline underline-offset-4 hover:text-ink">{{ $t('other') }}</a></p>
         @endif
     </div>
 </x-shared::layout>

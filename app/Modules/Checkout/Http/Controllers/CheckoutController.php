@@ -151,6 +151,11 @@ class CheckoutController extends Controller
             return to_route('checkout.blik');
         }
 
+        // A workshop booking has its own confirmation with the date and the seats, and leaves the cart alone.
+        if ($order->workshopBooking()->exists()) {
+            return to_route('workshops.booking.confirmation');
+        }
+
         // The cart waited for this moment, so a payment the bank refused leaves it exactly as it was.
         if ($order->payment_status === PaymentStatus::Failed) {
             $request->session()->forget('checkout.order');
