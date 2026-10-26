@@ -65,8 +65,10 @@ app/Modules/Catalog/
 Pierwsza fala: `Shared` (układ strony, komponenty Blade, formatowanie kwot, SEO), `Localization` (prefiks
 `/en/`, slugi per język, przełącznik — wchodzi przed modułami z tłumaczonymi treściami), `Settings`, `Admin`,
 `Catalog`, `Cart`, `Checkout`, `Payments`, `Shipping`, `MugConfigurator`, `Gifts`, `Content`, `Consent` (zgody na cookies i Google Analytics),
-`Monitoring` (niewysłane maile w panelu, alerty o błędach, pilnowanie kolejki i harmonogramu).
-Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
+`Monitoring` (niewysłane maile w panelu, alerty o błędach, pilnowanie kolejki i harmonogramu),
+`CustomOrders` (zamówienia indywidualne: formularz ze zdjęciami, panel z wyceną, zaliczka — przed startem
+z decyzji Macieja 26.10, epik MA-16).
+Po świętach: `Workshops`, `Firing`, `Journal`.
 
 ## Sesja i cache w plikach
 
