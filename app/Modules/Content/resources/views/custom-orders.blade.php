@@ -17,7 +17,7 @@
 @endphp
 
 <x-shared::layout title="Zamówienia indywidualne — ceramika na zamówienie"
-                  description="Serwis na wesele, kubek z Twoim napisem, forma dekoracyjna. Bezpłatny szkic i wycena w pięć dni, płatność BLIK-iem, realizacja około czterech tygodni."
+                  description="Serwis na wesele, urna dla kota, kubek z Twoim napisem. Bezpłatny szkic i wycena w pięć dni, płatność BLIK-iem, realizacja około czterech tygodni."
                   :canonical="route('custom-orders.index')">
     <x-slot:head>{!! $structuredData !!}</x-slot:head>
     <div class="mx-auto max-w-[1280px] animate-ma-view px-7 pt-14 pb-24">
