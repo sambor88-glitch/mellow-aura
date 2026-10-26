@@ -18,7 +18,7 @@ export default ({ maxLines, maxChars, prices, texts, glazes, size, glaze, ink })
         // The field has focus: on a phone the small preview shows above it and the bottom bar steps aside.
         writing: false,
         limitNotice: '',
-        // The photo with the text on it until the 3D mug has loaded; then either one, by choice.
+        // Kasia's photo with the text on it comes first; the 3D mug, once loaded, waits behind its button.
         view: 'photo',
         has3d: false,
 
@@ -48,7 +48,6 @@ export default ({ maxLines, maxChars, prices, texts, glazes, size, glaze, ink })
                 mug = createMug(this.$refs.stage3d, { ink, glaze: this.glazeHex });
                 mug.setText(this.text.split('\n'), false);
                 this.has3d = true;
-                this.view = '3d';
                 this.$watch('text', (value) => mug.setText(value.split('\n'), true));
                 this.$watch('glaze', () => mug.setGlaze(this.glazeHex));
             } catch {

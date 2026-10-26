@@ -60,12 +60,12 @@
 
         <div class="flex flex-wrap items-start gap-[clamp(28px,5vw,72px)]">
             <div class="min-w-0 flex-[1_1_440px] min-[852px]:sticky min-[852px]:top-24">
-                {{-- Two previews once the 3D mug has loaded: the model and Kasia's photo with the text on it. --}}
+                {{-- Two previews once the 3D mug has loaded: Kasia's photo with the text on it, shown first, and the model. --}}
                 <div x-cloak x-show="has3d" role="group" aria-label="{{ $t('preview') }}" class="glass mb-3 inline-flex gap-1 rounded-full p-1">
-                    <button type="button" x-on:click="view = '3d'" x-bind:aria-pressed="view === '3d'"
-                            class="min-h-10 rounded-full px-4 text-[13px] text-graphite transition-colors duration-300 aria-pressed:bg-ink aria-pressed:text-linen">{{ $t('model') }}</button>
                     <button type="button" x-on:click="view = 'photo'" x-bind:aria-pressed="view === 'photo'"
                             class="min-h-10 rounded-full px-4 text-[13px] text-graphite transition-colors duration-300 aria-pressed:bg-ink aria-pressed:text-linen">{{ $t('on_photo') }}</button>
+                    <button type="button" x-on:click="view = '3d'" x-bind:aria-pressed="view === '3d'"
+                            class="min-h-10 rounded-full px-4 text-[13px] text-graphite transition-colors duration-300 aria-pressed:bg-ink aria-pressed:text-linen">{{ $t('model') }}</button>
                 </div>
                 <div x-ref="stage3d" x-cloak x-show="view === '3d'" role="img" x-bind:aria-label="@js($t('preview_label')) + (text.trim() || @js($t('preview_empty')))"
                      class="relative aspect-square w-full cursor-grab touch-pan-y overflow-hidden rounded-[26px] border border-glass-line bg-[radial-gradient(ellipse_at_50%_42%,rgb(252_249_244/.95),rgb(243_237_228/.55)_60%,rgb(237_228_216/.25))] active:cursor-grabbing">
