@@ -2,48 +2,37 @@
 
 namespace App\Modules\Catalog\Actions;
 
-use App\Modules\Catalog\Exceptions\InsufficientStock;
 use App\Modules\Catalog\Models\ProductVariant;
 use Illuminate\Support\Facades\DB;
 use LogicException;
 
 /**
- * Takes items off the shelf. Called by Payments when a payment is confirmed,
- * inside the same transaction as the confirmation — never from a queued listener.
+ * Takes sold pieces off the shelf once a payment is confirmed — never when the customer clicks
+ * „Płacę”, or abandoned checkouts would empty the shelf. It runs inside the payment's transaction
+ * and locks the variant row, so two payments for the last one-off can't both take it.
  */
 class DecrementStock
 {
     /**
-     * @param  array<int, int>  $quantities  variant id => quantity
-     *
-     * @throws InsufficientStock when any variant has less than requested; nothing is changed then
+     * Returns how many pieces were missing: 0 when all were on the shelf or the variant has no stock tracking.
      */
-    public function handle(array $quantities): void
+    public function __invoke(int $variantId, int $quantity): int
     {
-        if (DB::transactionLevel() === 0) {
-            throw new LogicException('DecrementStock must run inside the payment confirmation transaction.');
+        throw_if(DB::transactionLevel() === 0, LogicException::class, 'DecrementStock must run inside the payment transaction.');
+
+        $variant = ProductVariant::query()->lockForUpdate()->find($variantId);
+
+        if ($variant === null) {
+            return $quantity;
         }
 
-        // Lock in id order so two webhooks for overlapping orders cannot deadlock.
-        ksort($quantities);
-
-        $variants = ProductVariant::query()
-            ->whereKey(array_keys($quantities))
-            ->orderBy('id')
-            ->lockForUpdate()
-            ->get()
-            ->keyBy('id');
-
-        foreach ($quantities as $variantId => $quantity) {
-            $available = $variants->get($variantId)?->stock ?? 0;
-
-            if ($quantity > $available) {
-                throw InsufficientStock::for($variantId, $quantity, $available);
-            }
+        if ($variant->stock === null) {
+            return 0;
         }
 
-        foreach ($quantities as $variantId => $quantity) {
-            $variants->get($variantId)->decrement('stock', $quantity);
-        }
+        $taken = min($variant->stock, $quantity);
+        $variant->update(['stock' => $variant->stock - $taken]);
+
+        return $quantity - $taken;
     }
 }

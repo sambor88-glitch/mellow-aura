@@ -14,8 +14,30 @@ return [
     |
     */
 
+    // The map of InPost lockers on the checkout. Without a token the customer types the locker's code herself.
+    'inpost' => [
+        'geowidget_token' => env('INPOST_GEOWIDGET_TOKEN'),
+        'geowidget_sandbox' => (bool) env('INPOST_GEOWIDGET_SANDBOX', false),
+        // ShipX (Shipping module): parcels and labels from the panel. Without the token and the organization id
+        // the panel has no „Nadaj w InPost” and Kasia sends parcels from InPost Manager, as before.
+        'shipx_token' => env('INPOST_SHIPX_TOKEN'),
+        'shipx_organization_id' => env('INPOST_SHIPX_ORGANIZATION_ID'),
+        'shipx_sandbox' => (bool) env('INPOST_SHIPX_SANDBOX', false),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
+    ],
+
+    // Przelewy24 (Payments\Gateways\Przelewy24Gateway). Without the merchant id, CRC and API key the shop pays itself.
+    'przelewy24' => [
+        'merchant_id' => env('PRZELEWY24_MERCHANT_ID'),
+        'pos_id' => env('PRZELEWY24_POS_ID'),
+        'crc' => env('PRZELEWY24_CRC'),
+        'api_key' => env('PRZELEWY24_API_KEY'),
+        'sandbox' => (bool) env('PRZELEWY24_SANDBOX', false),
+        // BLIK code typed in the shop (Level 0). False sends BLIK to Przelewy24's page until they switch Level 0 on.
+        'blik_on_site' => (bool) env('PRZELEWY24_BLIK_ON_SITE', true),
     ],
 
     'resend' => [

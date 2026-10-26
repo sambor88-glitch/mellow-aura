@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'shop' => 'Sklep',
+    'studio' => 'Pracownia',
+    'contact' => 'Kontakt',
+    'all' => 'Wszystkie produkty',
+    'mug' => 'Kubek z napisem',
+    'gift_finder' => 'Szukam prezentu',
+    'bundles' => 'Zestawy prezentowe',
+    'vouchers' => 'Vouchery na warsztaty',
+    'shipping' => 'Wysyłka i zwroty',
+    'workshops' => 'Warsztaty i cennik',
+    'custom_orders' => 'Zamówienia indywidualne',
+    'scarf' => 'Z Twojej apaszki',
+    'imprint' => 'Odcisk Twojej rośliny',
+    'b2b' => 'Dla kawiarni i restauracji',
+    'firing' => 'Wypały na zlecenie',
+    'panel' => 'Mój panel',
+    'write' => 'Napisz do mnie',
+    'by_appointment' => 'Pracownia na zapisy',
+    'faq' => 'FAQ',
+    'terms' => 'Regulamin',
+    'privacy' => 'Polityka prywatności',
+    'withdrawal' => 'Odstąp od umowy tutaj',
+    'cookies' => 'Ustawienia cookies',
+    'payments' => 'BLIK · Przelewy24 · karta',
+];

@@ -1,84 +1,125 @@
 @inject('settings', 'App\Modules\Settings\Settings')
+@use('App\Modules\Localization\Support\Locales')
 @php
-    $instagram = ltrim((string) $settings->get('contact.instagram', ''), '@');
-    $facebook = $settings->get('contact.facebook_url');
-    $phone = $settings->get('contact.phone');
-    $whatsapp = $phone ? 'https://wa.me/'.preg_replace('/\D/', '', $phone) : null;
-    $email = $settings->get('contact.email');
-    $tagline = $settings->get('texts.footer_tagline');
-    $city = $settings->get('location.short');
+    // A link shows up once its page exists in the language of this page; an empty setting is not shown.
+    // On an English page the studio services held in Polish drop out on their own.
+    $link = fn (string $key, string $route, mixed $parameters = []) => Locales::has($route, Locales::current())
+        ? [__('shared::footer.'.$key), route($route, $parameters)]
+        : null;
+    $polish = Locales::current() === Locales::default();
+
+    $shopLinks = array_filter([
+        $link('all', 'shop.index'),
+        $link('mug', 'mug.index'),
+        $link('gift_finder', 'gifts.index'),
+        $link('bundles', 'bundles.index'),
+        // The voucher category is Polish-only, like the workshops it pays for.
+        $link('vouchers', 'vouchers.index') ?? ($polish ? $link('vouchers', 'shop.category', 'vouchery') : null),
+        $link('shipping', 'content.faq'),
+    ]);
+
+    $studioLinks = array_filter([
+        $link('workshops', 'workshops.index'),
+        $link('custom_orders', 'custom-orders.index'),
+        $link('scarf', 'content.scarf'),
+        $link('imprint', 'content.imprint'),
+        $link('b2b', 'content.b2b'),
+        $link('firing', 'firing.index'),
+    ]);
+
+    $tagline = $settings->get('text_footer_tagline');
+    $instagram = $settings->get('instagram_handle');
+    $phone = $settings->get('contact_phone');
+    $email = $settings->get('contact_email');
+    $city = $settings->get('footer_city');
+    $nip = $settings->get('company_nip');
+    $whatsApp = $phone ? 'https://wa.me/'.preg_replace('/\D+/', '', $phone) : null;
+
+    $social = array_filter([
+        'Instagram' => $instagram ? 'https://www.instagram.com/'.ltrim($instagram, '@').'/' : null,
+        'Facebook' => $settings->get('facebook_url'),
+        'WhatsApp' => $whatsApp,
+    ]);
 @endphp
-<footer class="ma-footer focus-on-dark">
-    <div class="ma-footer__inner">
-        <div class="ma-footer__brand">
-            <div class="ma-footer__logo">mellowaura</div>
+<footer class="focus-on-dark mt-auto overflow-hidden rounded-t-[36px] bg-ink text-on-dark print:hidden">
+    <div class="mx-auto flex max-w-[1280px] flex-wrap gap-12 px-7 pt-16 pb-[30px]">
+        <div class="min-w-0 flex-[1_1_280px]">
+            <div class="mb-3.5 font-serif text-[25px] tracking-[0.16em] text-sand uppercase">mellowaura</div>
             @if ($tagline)
-                <p class="ma-footer__tagline">{{ $tagline }}</p>
+                <p lang="en" class="mb-5 max-w-[34ch] text-[14.5px] leading-[1.7] text-on-dark-muted">{{ $tagline }}</p>
             @endif
-            <div class="ma-footer__socials">
-                @if ($instagram !== '')
-                    <a href="https://www.instagram.com/{{ $instagram }}/" target="_blank" rel="noopener" class="ma-footer__social">Instagram</a>
-                @endif
-                @if ($facebook)
-                    <a href="{{ $facebook }}" target="_blank" rel="noopener" class="ma-footer__social">Facebook</a>
-                @endif
-                @if ($whatsapp)
-                    <a href="{{ $whatsapp }}" target="_blank" rel="noopener" class="ma-footer__social">WhatsApp</a>
-                @endif
-            </div>
+            @if ($social)
+                <div class="flex flex-wrap gap-3">
+                    @foreach ($social as $label => $href)
+                        <a href="{{ $href }}" target="_blank" rel="noopener" class="rounded-full border border-line-dark px-[17px] py-[9px] text-[12.5px] text-sand hover:border-rose hover:text-rose">{{ $label }}</a>
+                    @endforeach
+                </div>
+            @endif
         </div>
 
-        <nav class="ma-footer__column" aria-labelledby="footer-shop">
-            <h2 id="footer-shop" class="ma-footer__heading">Sklep</h2>
-            <div class="ma-footer__links">
-                <a href="{{ url('/sklep') }}">Wszystkie produkty</a>
-                <a href="{{ url('/kubek-z-napisem') }}">Kubek z napisem</a>
-                <a href="{{ url('/prezenty') }}">Szukam prezentu</a>
-                <a href="{{ url('/zestawy-prezentowe') }}">Zestawy prezentowe</a>
-                <a href="{{ url('/sklep') }}">Ceramika</a>
-                <a href="{{ url('/sklep') }}">Rękodzieło</a>
-                <a href="{{ url('/voucher-na-warsztaty-ceramiczne') }}">Vouchery na warsztaty</a>
-                <a href="{{ url('/wysylka-i-pielegnacja') }}">Wysyłka i zwroty</a>
+        @if ($shopLinks)
+            <div class="flex-[0_1_170px]">
+                <div class="mb-4 text-[10.5px] tracking-[0.24em] text-label-dark uppercase">{{ __('shared::footer.shop') }}</div>
+                <div class="flex flex-col gap-[11px] text-[14.5px]">
+                    @foreach ($shopLinks as [$label, $href])
+                        <a href="{{ $href }}" class="text-on-dark hover:text-rose">{{ $label }}</a>
+                    @endforeach
+                </div>
             </div>
-        </nav>
+        @endif
 
-        <nav class="ma-footer__column" aria-labelledby="footer-studio">
-            <h2 id="footer-studio" class="ma-footer__heading">Pracownia</h2>
-            <div class="ma-footer__links">
-                <a href="{{ url('/warsztaty-ceramiczne-krakow') }}">Warsztaty i cennik</a>
-                <a href="{{ url('/zamowienia-indywidualne') }}">Zamówienia indywidualne</a>
-                <a href="{{ url('/z-twojej-apaszki') }}">Z Twojej apaszki</a>
-                <a href="{{ url('/odcisk-twojej-rosliny') }}">Odcisk Twojej rośliny</a>
-                <a href="{{ url('/ceramika-dla-gastronomii') }}">Dla kawiarni i restauracji</a>
-                <a href="{{ url('/wypal-ceramiki-krakow') }}">Wypały na zlecenie</a>
-                <a href="{{ url('/panel') }}" class="ma-footer__link--quiet" rel="nofollow">Mój panel</a>
+        @if ($studioLinks || Route::has('admin.dashboard'))
+            <div class="flex-[0_1_170px]">
+                <div class="mb-4 text-[10.5px] tracking-[0.24em] text-label-dark uppercase">{{ __('shared::footer.studio') }}</div>
+                <div class="flex flex-col gap-[11px] text-[14.5px]">
+                    @foreach ($studioLinks as [$label, $href])
+                        <a href="{{ $href }}" class="text-on-dark hover:text-rose">{{ $label }}</a>
+                    @endforeach
+                    @if (Route::has('admin.dashboard'))
+                        <a href="{{ route('admin.dashboard') }}" class="text-label-dark hover:text-rose">{{ __('shared::footer.panel') }}</a>
+                    @endif
+                </div>
             </div>
-        </nav>
+        @endif
 
-        <div class="ma-footer__column ma-footer__column--wide">
-            <h2 class="ma-footer__heading">Kontakt</h2>
-            <div class="ma-footer__links">
-                @if ($whatsapp)
-                    <a href="{{ $whatsapp }}" target="_blank" rel="noopener">{{ $phone }}</a>
+        <div class="flex-[0_1_200px]">
+            <div class="mb-4 text-[10.5px] tracking-[0.24em] text-label-dark uppercase">{{ __('shared::footer.contact') }}</div>
+            <div class="flex flex-col gap-[11px] text-[14.5px] text-on-dark-muted">
+                @if ($whatsApp)
+                    <a href="{{ $whatsApp }}" target="_blank" rel="noopener" class="text-on-dark hover:text-rose">{{ $phone }}</a>
                 @endif
                 @if ($email)
-                    <a href="mailto:{{ $email }}">{{ $email }}</a>
+                    <a href="mailto:{{ $email }}" class="text-on-dark [overflow-wrap:anywhere] hover:text-rose">{{ $email }}</a>
                 @endif
-                <a href="{{ url('/kontakt') }}">Napisz do mnie</a>
+                @if ($write = $link('write', 'content.contact'))
+                    <a href="{{ $write[1] }}" class="text-on-dark hover:text-rose">{{ $write[0] }}</a>
+                @endif
                 @if ($city)
                     <span>{{ $city }}</span>
                 @endif
-                <span>Pracownia na zapisy</span>
+                <span>{{ __('shared::footer.by_appointment') }}</span>
             </div>
         </div>
     </div>
-    <div class="ma-footer__bottom">
-        <span>© {{ now()->year }} MellowAura &middot; Katarzyna Samborska</span>
-        <div class="ma-footer__legal">
-            <a href="{{ url('/wysylka-i-pielegnacja') }}">FAQ</a>
-            <span>Regulamin</span>
-            <span>Polityka prywatności</span>
-            <span>BLIK &middot; Przelewy24 &middot; karta</span>
+
+    {{-- The word mark bleeding off the bottom; its letters rise with the scroll (resources/js/aura.js). --}}
+    <div data-aura-giant aria-hidden="true" class="overflow-hidden pb-[.06em] text-center font-serif text-[clamp(80px,19.5vw,330px)] leading-[.8] font-light tracking-[-0.045em] whitespace-nowrap text-sand">
+        @foreach (mb_str_split('Mellow') as $letter)<span class="inline-block">{{ $letter }}</span>@endforeach<em class="text-rose">@foreach (mb_str_split('Aura') as $letter)<span class="inline-block">{{ $letter }}</span>@endforeach</em>
+    </div>
+
+    <div class="mx-auto flex max-w-[1280px] flex-wrap justify-between gap-x-7 gap-y-4 border-t border-divider-dark px-7 pt-[22px] pb-10 text-[12.5px] text-label-dark">
+        <span>© {{ now()->year }} MellowAura &middot; Katarzyna Samborska{{ $nip ? ' · NIP '.$nip : '' }}</span>
+        <div class="flex flex-wrap gap-[22px]">
+            @foreach (array_filter([$link('faq', 'content.faq'), $link('terms', 'content.terms'), $link('privacy', 'content.privacy'), $link('withdrawal', 'withdrawal.create')]) as [$label, $href])
+                <a href="{{ $href }}" class="text-label-dark hover:text-rose">{{ $label }}</a>
+            @endforeach
+            @if ($cookies = $link('cookies', 'consent.edit'))
+                {{-- With the banner on the page, the link opens it in place. --}}
+                <a href="{{ $cookies[1] }}" data-consent-open class="text-label-dark hover:text-rose">{{ $cookies[0] }}</a>
+            @endif
+            @if ($payments = __('shared::footer.payments'))
+                <span>{{ $payments }}</span>
+            @endif
         </div>
     </div>
 </footer>

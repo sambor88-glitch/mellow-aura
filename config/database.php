@@ -62,6 +62,26 @@ return [
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
+            // The nightly backup reads a consistent snapshot without locking the shop's tables.
+            'dump' => [
+                'use_single_transaction',
+            ],
+        ],
+
+        // An empty database next to the shop's, where the weekly check loads the latest backup (monitoring:verify-backup).
+        // Never the shop's own database: the check drops every table in it first.
+        'restore_check' => [
+            'driver' => env('DB_RESTORE_CONNECTION', 'mysql'),
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '3306'),
+            'database' => env('DB_RESTORE_DATABASE'),
+            'username' => env('DB_USERNAME', 'root'),
+            'password' => env('DB_PASSWORD', ''),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => env('DB_CHARSET', 'utf8mb4'),
+            'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
+            'prefix' => '',
+            'strict' => false,
         ],
 
         'mariadb' => [

@@ -34,6 +34,16 @@ class UserFactory extends Factory
     }
 
     /**
+     * An account that only helps with the orders.
+     */
+    public function helper(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'helper',
+        ]);
+    }
+
+    /**
      * Indicate that the model's email address should be unverified.
      */
     public function unverified(): static

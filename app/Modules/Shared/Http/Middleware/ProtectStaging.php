@@ -7,30 +7,34 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Keeps the staging site private and out of search engines.
+ * Keeps the staging site to Kasia and the people building it: with STAGING_PASSWORD set, every page asks for
+ * a login and password (HTTP basic auth). Without it, locally and in production, the site is open.
  *
- * Active only when STAGING_PASSWORD is set. Every response, including the
- * 401 challenge, carries X-Robots-Tag: noindex.
+ * Forge's health check and Przelewy24's payment notification come from servers that know no password, so they
+ * pass; the notification proves itself with a signature. The 401 page says noindex too, as it never reaches NoIndex.
  */
 class ProtectStaging
 {
+    /** @var list<string> */
+    private const OPEN = ['up', 'przelewy24/powiadomienie'];
+
     public function handle(Request $request, Closure $next): Response
     {
         $password = (string) config('staging.password');
 
-        if ($password === '') {
+        if ($password === '' || $request->is(self::OPEN) || $this->knows($request, $password)) {
             return $next($request);
         }
 
-        $authorized = hash_equals((string) config('staging.user'), (string) $request->getUser())
+        return response('Staging — dostęp tylko z hasłem.', 401, [
+            'WWW-Authenticate' => 'Basic realm="MellowAura staging", charset="UTF-8"',
+            'X-Robots-Tag' => 'noindex, nofollow',
+        ]);
+    }
+
+    private function knows(Request $request, string $password): bool
+    {
+        return hash_equals((string) config('staging.user'), (string) $request->getUser())
             && hash_equals($password, (string) $request->getPassword());
-
-        $response = $authorized
-            ? $next($request)
-            : response('Staging — dostęp tylko z hasłem.', 401, ['WWW-Authenticate' => 'Basic realm="MellowAura staging"']);
-
-        $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
-
-        return $response;
     }
 }

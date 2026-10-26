@@ -8,10 +8,13 @@ description: Ekrany dotykowe i zachowanie na telefonie — układ płynny bez pu
 Większość osób wchodzi na MellowAurę z Instagrama, czyli z telefonu trzymanego w jednej ręce,
 często w ruchu. Ekran telefonu jest wersją podstawową, komputer to wariant rozszerzony — nie odwrotnie.
 
-## Ten projekt nie ma punktów łamania — i tak ma zostać
+## Układ płynny, zapytania medialne tylko przy zmianie zachowania
 
-W całym `MellowAura.dc.html` jest **jedno** zapytanie medialne: `prefers-reduced-motion`.
-Cała reszta układa się płynnie. Zanim napiszesz `@media`, sprawdź, czy nie wystarczy jedno z trzech:
+Układ nadal płynie sam. W kierunku „Aura” (`Aura - strona glowna.html`, `Aura - ekrany.html`) jest kilka
+zapytań medialnych, ale każde zmienia **zachowanie**, nie tylko ułożenie: inny kadr hero i mniej pływających
+zdjęć na telefonie, sklep przewijany w poziomie dopiero od 768 px, menu zamiast linków poniżej 920 px,
+przypięty pasek zakupu poniżej 760 px — plus `prefers-reduced-motion` i `pointer: fine`.
+Zanim napiszesz kolejne `@media`, sprawdź, czy nie wystarczy jedno z trzech:
 
 | Narzędzie | Zapis | Efekt |
 | --- | --- | --- |
@@ -22,7 +25,16 @@ Cała reszta układa się płynnie. Zanim napiszesz `@media`, sprawdź, czy nie 
 Do tego **`min-width: 0` na każdym elemencie w kolumnie elastycznej**. Bez tego długa nazwa produktu
 rozpycha stronę i pojawia się poziome przewijanie — najczęstsza usterka mobilna w tym projekcie.
 
-Zapytanie medialne piszesz dopiero wtedy, gdy zmienia się kolejność albo znika cały element.
+Zapytanie medialne piszesz dopiero wtedy, gdy zmienia się kolejność, znika cały element albo zmienia się zachowanie.
+
+## Efekty Aury na telefonie
+
+- Na dotyku nie ma kursora: bez mokrej gliny, magnesów, poświaty za kursorem i płynnego wypełnienia przycisków
+  (to wszystko wisi na `<html class="fine">`). Zostają: intro, litery z rozmycia, rosnący kadr, paralaksa przy przewijaniu,
+  kubek 3D (obrót przeciągnięciem palca w poziomie, `touch-action: pan-y`), przejście do produktu, szklany koszyk.
+- Sklep na telefonie przewija się palcem w bok ze `scroll-snap`, bez przypinania sekcji.
+- `backdrop-filter` i plamy z `blur(90px)` najbardziej obciążają słabsze telefony. Sprawdź na telefonie Kasi,
+  zanim uznasz ekran za gotowy.
 
 ## Cele dotykowe
 
@@ -33,10 +45,15 @@ Zapytanie medialne piszesz dopiero wtedy, gdy zmienia się kolejność albo znik
 
 ## Pola formularza
 
-- **`font-size: 15px` to minimum.** Poniżej 16 px Safari na iPhonie sam przybliża stronę przy kliknięciu
-  w pole i użytkownik ląduje w przypadkowym powiększeniu. W projekcie pola mają `15px` — nie zmniejszaj.
+- **Na ekranie dotykowym pole ma co najmniej 16 px.** Poniżej 16 px Safari na iPhonie sam przybliża stronę przy kliknięciu
+  w pole i użytkownik ląduje w przypadkowym powiększeniu. Pola z projektu mają `15px`, więc w aplikacji dostają
+  `text-[15px] pointer-coarse:text-[16px]`: komputer zostaje przy projekcie, telefon nie przybliża. Nie zmniejszaj.
 - `type` steruje klawiaturą: `type="tel"` do telefonu i kodu BLIK, `type="email"` do adresu,
   `inputmode="numeric"` do liczby sztuk.
+- Klawiatura numeryczna iPhone'a nie ma myślnika ani spacji. Pole z `inputmode="numeric"` na kod pocztowy czy NIP
+  przyjmuje same cyfry, a serwer dokłada myślnik sam („30001” → „30-001”).
+- Pole, które skrypt czyści ze spacji (kod BLIK), nie dostaje `maxlength`. Przeglądarka ucina wklejone „123 456”
+  do „123 45”, zanim skrypt wyrzuci spację, i zostaje pięć cyfr. Długość przycina skrypt i sprawdza serwer.
 - `autocomplete` skraca płacenie o minutę: `name`, `email`, `tel`, `street-address`, `postal-code`.
 - Etykieta nad polem, nie tylko `placeholder` — po wpisaniu treści placeholder znika razem z informacją, co to za pole.
 
@@ -55,6 +72,17 @@ Na karcie produktu cena i „Do koszyka" nie mogą wyjechać poza ekran przy prz
 ```
 
 `env(safe-area-inset-bottom)` odsuwa przycisk od paska gestów na iPhonie. Bez tego palec trafia w pasek systemowy.
+
+W aplikacji (`catalog::product.show`, `resources/js/buy-bar.js`) pasek wysyła formularz karty przez `form="add-to-cart"`.
+Znika, gdy przycisk formularza jest na ekranie, żeby dwa „Do koszyka” nie stały naraz. Od 872 px zdjęcie
+i formularz stoją obok siebie, więc pasek znika zapytaniem medialnym (`min-[872px]:hidden`).
+
+## Nagłówek na telefonie
+
+Nagłówek z prototypu zawija się na telefonie w cztery wiersze: logo, dwa wiersze menu, koszyk. Ma wtedy 218 px,
+czyli ponad ćwierć ekranu. Przy przewijaniu na ekranie zostaje tylko wiersz z koszykiem, a logo i menu odjeżdżają
+razem ze stroną. Nagłówek dostaje wtedy ujemne `top` z `resources/js/header.js`. Gdy wszystko mieści się
+w jednym wierszu (komputer, tablet), nagłówek przykleja się cały, jak w prototypie.
 
 ## Warstwy — trzymaj tę skalę
 

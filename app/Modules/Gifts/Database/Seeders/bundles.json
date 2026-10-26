@@ -1,0 +1,35 @@
+[
+    {
+        "name": "Kubek i scrunchie w jednym kolorze",
+        "description": "Mój znak firmowy: glina i jedwab dobrane w jeden odcień. Kubek 300 ml i scrunchie w rozmiarze średnim, zapakowane razem.",
+        "discount_percent": 10,
+        "is_published": true,
+        "sort_order": 1,
+        "parts": [
+            { "product": "kubki-malowane", "variant": "300 ml" },
+            { "product": "scrunchies", "variant": "Średnia" }
+        ]
+    },
+    {
+        "name": "Poranek we dwoje",
+        "description": "Dwie filiżanki z talerzykami i talerz deserowy z odciskiem roślinnym. Na parapetówkę albo pierwszą wspólną kuchnię.",
+        "discount_percent": 10,
+        "is_published": true,
+        "sort_order": 2,
+        "parts": [
+            { "product": "zestaw-4-filizanek", "variant": "Zestaw 2 szt." },
+            { "product": "talerze", "variant": "Deserowy 18 cm" }
+        ]
+    },
+    {
+        "name": "Wieczorny rytuał",
+        "description": "Kadzielnica ze złoconym kołnierzem i muszla, na której zostawiasz pierścionki na noc. Dla kogoś, kto lubi wieczory bez telefonu.",
+        "discount_percent": 10,
+        "is_published": true,
+        "sort_order": 3,
+        "parts": [
+            { "product": "kadzielnice", "variant": "Pszczoły ze złotem" },
+            { "product": "podstawki-pod-bizuterie", "variant": "Mała" }
+        ]
+    }
+]

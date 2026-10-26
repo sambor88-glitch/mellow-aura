@@ -2,6 +2,9 @@
 
 namespace App\Modules\Catalog\Enums;
 
+/**
+ * Occasions for the gift finder, in the order the panel shows them.
+ */
 enum Occasion: string
 {
     case Birthday = 'birthday';
@@ -10,7 +13,7 @@ enum Occasion: string
     case Housewarming = 'housewarming';
     case Anniversary = 'anniversary';
     case Christmas = 'christmas';
-    case ForYourself = 'for_yourself';
+    case SelfGift = 'self_gift';
 
     public function label(): string
     {
@@ -21,7 +24,7 @@ enum Occasion: string
             self::Housewarming => 'Parapetówka',
             self::Anniversary => 'Rocznica',
             self::Christmas => 'Święta',
-            self::ForYourself => 'Dla siebie',
+            self::SelfGift => 'Dla siebie',
         };
     }
 }

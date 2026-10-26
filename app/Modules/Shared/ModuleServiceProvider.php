@@ -3,79 +3,63 @@
 namespace App\Modules\Shared;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use ReflectionClass;
 
 /**
- * Base provider for every module in app/Modules/<Name>.
+ * Base provider for app/Modules/<Name>. A module provider only extends this class
+ * and is registered in bootstrap/providers.php.
  *
- * Loads the module's routes, views and migrations by convention, so a module
- * provider only has to extend this class and be listed in bootstrap/providers.php.
+ * Loads, when present: routes/web.php, routes/admin.php (prefix /panel, name admin.*, signed-in accounts allowed there),
+ * resources/views (namespace = snake-case module name), resources/views/components as
+ * anonymous Blade components (<x-module::name>), lang (translations as __('module::file.key')), Database/Migrations,
+ * and points model factories at Database/Factories.
  */
 abstract class ModuleServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        $this->bootRoutes();
+        $dir = dirname((new ReflectionClass(static::class))->getFileName());
+        $name = class_basename((new ReflectionClass(static::class))->getNamespaceName());
+        $alias = Str::snake($name, '-');
 
-        // Only existing directories: view:cache fails on a registered path that is missing.
-        if (is_dir($views = $this->modulePath('resources/views'))) {
-            $this->loadViewsFrom($views, $this->viewNamespace());
+        if (is_file($dir.'/routes/web.php')) {
+            Route::middleware('web')->group($dir.'/routes/web.php');
         }
 
-        if (is_dir($migrations = $this->modulePath('Database/Migrations'))) {
-            $this->loadMigrationsFrom($migrations);
-        }
-    }
-
-    /**
-     * Points Laravel at App\Modules\<Name>\Database\Factories\<Model>Factory
-     * for models in App\Modules\<Name>\Models. Registered once, by Shared.
-     */
-    public static function registerFactoryResolver(): void
-    {
-        Factory::guessFactoryNamesUsing(function (string $modelName): string {
-            if (preg_match('/^App\\\\Modules\\\\(\w+)\\\\Models\\\\(.+)$/', $modelName, $matches)) {
-                return "App\\Modules\\{$matches[1]}\\Database\\Factories\\{$matches[2]}Factory";
-            }
-
-            $model = Str::startsWith($modelName, 'App\\Models\\')
-                ? Str::after($modelName, 'App\\Models\\')
-                : Str::after($modelName, 'App\\');
-
-            return 'Database\\Factories\\'.$model.'Factory';
-        });
-    }
-
-    protected function bootRoutes(): void
-    {
-        if ($this->app->routesAreCached()) {
-            return;
-        }
-
-        if (is_file($web = $this->modulePath('routes/web.php'))) {
-            Route::middleware('web')->group($web);
-        }
-
-        if (is_file($admin = $this->modulePath('routes/admin.php'))) {
-            Route::middleware(['web', 'auth'])
+        if (is_file($dir.'/routes/admin.php')) {
+            // „panel-route” (Admin module) keeps a helper's account to the screens it may open.
+            Route::middleware(['web', 'auth', 'can:panel-route'])
                 ->prefix('panel')
                 ->name('admin.')
-                ->group($admin);
+                ->group($dir.'/routes/admin.php');
         }
-    }
 
-    protected function modulePath(string $path = ''): string
-    {
-        $directory = dirname((new ReflectionClass(static::class))->getFileName());
+        if (is_dir($dir.'/resources/views')) {
+            $this->loadViewsFrom($dir.'/resources/views', $alias);
+        }
 
-        return $path === '' ? $directory : $directory.'/'.$path;
-    }
+        if (is_dir($dir.'/resources/views/components')) {
+            Blade::anonymousComponentPath($dir.'/resources/views/components', $alias);
+        }
 
-    protected function viewNamespace(): string
-    {
-        return Str::lower(basename($this->modulePath()));
+        if (is_dir($dir.'/lang')) {
+            $this->loadTranslationsFrom($dir.'/lang', $alias);
+        }
+
+        if (is_dir($dir.'/Database/Migrations')) {
+            $this->loadMigrationsFrom($dir.'/Database/Migrations');
+        }
+
+        Factory::guessFactoryNamesUsing(function (string $model): string {
+            if (preg_match('/^App\\\\Modules\\\\([^\\\\]+)\\\\Models\\\\(.+)$/', $model, $m)) {
+                return "App\\Modules\\{$m[1]}\\Database\\Factories\\{$m[2]}Factory";
+            }
+
+            return 'Database\\Factories\\'.class_basename($model).'Factory';
+        });
     }
 }

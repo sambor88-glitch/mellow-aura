@@ -7,15 +7,17 @@ use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * One value Kasia changes in the panel: thresholds, prices, contact data, texts.
- *
- * @property string $key
- * @property mixed $value
+ * Everything the owner edits in the panel. An empty value is not shown on the site.
  */
-#[Table(key: 'key', keyType: 'string', incrementing: false)]
+#[Table('settings', key: 'key', keyType: 'string', incrementing: false)]
 #[Fillable(['key', 'value'])]
 class Setting extends Model
 {
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
     protected function casts(): array
     {
         return [

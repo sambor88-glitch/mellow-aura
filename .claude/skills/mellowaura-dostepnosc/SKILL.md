@@ -130,11 +130,18 @@ i osoby z drżeniem rąk.
 
 ## Ruch
 
-Blok `@media (prefers-reduced-motion: reduce)` jest w `<helmet>` i wyłącza wszystkie cztery
-animacje. **Nie usuwaj go** — dla osób z zaburzeniami przedsionkowymi ruchomy interfejs
-wywołuje realne mdłości.
+Kierunek „Aura” rusza się dużo: intro, paralaksa, przypięte sekcje, kubek 3D. Tym ważniejsze jest wyłączanie.
 
-Nic nie miga częściej niż trzy razy na sekundę.
+- Blok `@media (prefers-reduced-motion: reduce)` wyłącza wszystkie animacje, przejścia i animacje View Transitions.
+  **Nie usuwaj go** — dla osób z zaburzeniami przedsionkowymi ruchomy interfejs wywołuje realne mdłości.
+- Przy ograniczonym ruchu skrypt nie dodaje `<html class="motion">`: nie ma intro, płynnego przewijania (Lenis),
+  przypinania sekcji ani paralaksy, kubek 3D stoi i pokazuje napis od razu. Strona jest kompletna bez nich.
+- Intro zawsze ma przycisk „Pomiń” i pokazuje się tylko przy pierwszej wizycie.
+- Nic nie miga częściej niż trzy razy na sekundę. Ziarno przesuwa się skokowo, ale ma krycie 8–9 % — nie liczy się jako miganie.
+- Treść nigdy nie czeka na przewinięcie w stanie niewidocznym — czytnik ekranu i powiększenie muszą ją widzieć od razu.
+- Przypięte sekcje (hero, sklep w poziomie) przewijają stronę do elementu, który dostał fokus z klawiatury.
+- Tekst na szkle nad zdjęciem wymaga ciemnego szkła albo przyciemnienia pod spodem; kontrastu nie da się tam policzyć
+  raz na zawsze, bo zależy od zdjęcia — sprawdzaj na najjaśniejszym zdjęciu, jakie może tam trafić.
 
 ## Cele dotykowe
 
@@ -157,4 +164,5 @@ W `<meta name="viewport">` nigdy nie może pojawić się `user-scalable=no` ani 
 4. Każde zdjęcie ma sensowny `alt`?
 5. Każdy przycisk ze znakiem ma `aria-label`?
 6. Czy którakolwiek informacja istnieje wyłącznie jako kolor?
-7. Czy focus jest widoczny na każdym elemencie, także na ciemnym tle? Ciemna płaszczyzna ma klasę `focus-on-dark`?
+7. Czy focus jest widoczny na każdym elemencie, także na ciemnym tle i na ciemnym szkle? Ciemna płaszczyzna ma klasę `focus-on-dark`?
+8. Włącz w systemie ograniczenie ruchu i przeładuj — strona jest kompletna i nic się nie rusza?

@@ -2,6 +2,9 @@
 
 namespace App\Modules\Catalog\Enums;
 
+/**
+ * Who a gift is for, in the gift finder.
+ */
 enum Recipient: string
 {
     case ForHer = 'for_her';

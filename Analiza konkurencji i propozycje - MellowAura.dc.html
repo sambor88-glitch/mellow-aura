@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300&family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<script src="./doc-page.js"></script>
+<style>
+  doc-page:not(:defined) { visibility: hidden; }
+  body { font-family: "Instrument Sans", system-ui, sans-serif; color: #2F2620; }
+  a { color: #24417E; text-decoration: none; }
+  a:hover { color: #855F3D; }
+</style>
+</helmet>
+
+<doc-page margin="0.7in">
+  <div slot="header" style="display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 8px; border-bottom: 1px solid #E2D7C7; font-size: 9pt; color: #726456">
+    <span style="font-family: Newsreader, serif; letter-spacing: 0.16em; text-transform: uppercase; color: #2F2620">mellowaura</span>
+    <span>Konkurencja, nastroje, propozycje &middot; audyt edytowalności</span>
+  </div>
+  <div slot="footer" style="display: flex; justify-content: space-between; padding-top: 8px; border-top: 1px solid #E2D7C7; font-size: 8.5pt; color: #726456">
+    <span>Katarzyna Samborska &middot; MellowAura, Kraków</span>
+    <span>Wersja 1.0 &middot; 17 września 2026</span>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px">
+    <span style="width: 34px; height: 1px; background: #B98E64; display: inline-block"></span>
+    <span style="font-size: 8pt; letter-spacing: 0.28em; text-transform: uppercase; color: #855F3D">dokument decyzyjny dla właścicielki</span>
+  </div>
+
+  <h1 style="font-family: Newsreader, serif; font-weight: 300; font-size: 28pt; line-height: 1.1; margin: 0 0 10px">Czym wyróżnić MellowAurę,<br />gdy w Krakowie jest siedem pracowni</h1>
+  <p style="font-size: 11.5pt; line-height: 1.6; color: #5C5043; margin: 0 0 8px; max-width: 62ch">Sprawdziłem wszystkie krakowskie pracownie ceramiki z warsztatami, polskie sklepy z ceramiką handmade i usługi, z którymi konkurujesz na trzy autorskie oferty. Do tego nastroje, na których ludzie dziś kupują. Na końcu odpowiedź na pytanie o panel: <strong style="font-weight: 500">nie, nie wszystko na stronie da się zmienić bez programisty</strong> — jest lista i kolejność.</p>
+  <p style="font-size: 10pt; line-height: 1.55; color: #726456; margin: 0 0 24px; max-width: 62ch">Ceny i funkcje konkurencji spisane z ich stron 17 września 2026. Szacunki godzin są moje i dotyczą jednej osoby pracującej po pracy. Żadnej liczby w tym dokumencie nie wymyśliłem — źródła na końcu, a tam, gdzie dane są słabe, napisałem to wprost.</p>
+
+  <div style="background: #EDF0E9; border-radius: 4px; padding: 20px 24px; margin-bottom: 26px">
+    <div style="font-family: Newsreader, serif; font-size: 15pt; margin-bottom: 8px">Sześć zdań, jeśli nie masz czasu na resztę</div>
+    <ol style="font-size: 10.5pt; line-height: 1.68; color: #41563A; margin: 0; padding-left: 20px">
+      <li>Warsztatami nie wygrasz — konkurencja ma większe sale, kalendarze z koszykiem i karnety. Twoje sześć miejsc to nie jest mniejsza wersja ich oferty, to inna oferta.</li>
+      <li>Wygrasz trzema rzeczami, których nikt w Polsce nie broni w wyszukiwaniu: <strong style="font-weight: 500">napis wbijany w glinę</strong>, <strong style="font-weight: 500">odcisk rośliny z bukietu</strong> i <strong style="font-weight: 500">szycie z tkaniny przysłanej przez klientkę</strong>.</li>
+      <li>Na odcisk rośliny konkurujesz nie z ceramikami, a z pracowniami konserwacji bukietów — i musisz pisać ich językiem, bo tam ludzie szukają.</li>
+      <li>Polskie sklepy z ceramiką handmade są ubogie w mechanikę sprzedaży. Powiadomienie o powrocie wyprzedanego unikatu i data graniczna „zdążę na święta” to dwa tanie ruchy, które robią różnicę w grudniu.</li>
+      <li>Nastrój roku jest po Twojej stronie: ludzie płacą za dowód ludzkiej ręki. Napisz „bez AI” wprost i pokaż proces, nie tylko produkt.</li>
+      <li>Panel daje 23 pola tekstowe. Poza nimi na stronie siedzi około sześćdziesięciu dłuższych bloków tekstu wpisanych w kod — w tym wszystkie obietnice terminów, które zmieniają się w grudniu.</li>
+    </ol>
+  </div>
+
+  <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">1. Warsztaty w Krakowie — rynek jest zajęty i sprofesjonalizowany</h2>
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 14px">Siedem pracowni prowadzi warsztaty ceramiczne w Krakowie i większość ma stronę lepszą niż przeciętny sklep rękodzielniczy: kalendarz terminów, koszyk, karnety, vouchery cyfrowe. To nie jest rynek, na który się wchodzi ceną.</p>
+  <table style="width: 100%; border-collapse: collapse; font-size: 9pt; line-height: 1.45">
+    <thead>
+      <tr style="background: #F3EDE4">
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500; width: 18%">Pracownia</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500; width: 34%">Czym wygrywa</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500; width: 25%">Ceny (wrzesień 2026)</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500">Czego nie ma</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">ŁYKO Ceramika</strong></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Najmocniejsza sprzedaż online w mieście: wybierasz termin z kalendarza i wrzucasz do koszyka. Karnet na „ceramiczny cowork”, siedem rodzajów zajęć, grupy 4–8 osób.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Wieczór z gliną 240 zł, kurs ze szkliwieniem 380 zł, toczenie 240 zł, kurs toczenia 590 zł, technologia szkliw 990 zł. Vouchery 240–1790 zł.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Usług z materiału klienta. Personalizacji napisu.</td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">CAHA ART</strong></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Miejsce: XIX-wieczny fort przy Kamiennej. Rynek firmowy — na stronie chwalą się warsztatami dla ABB, Motoroli, PepsiCo, Heinekena, HSBC, Cisco i Philip Morris. 103 opinie Google.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Cennik w kartach produktów, nie na stronie głównej.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Wąskiej specjalizacji — oferta jest szeroka i dla wszystkich.</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Echoes Ceramics</strong></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Kazimierz, czyli ruch turystyczny. Zajęcia po polsku i angielsku, grupy prywatne 3–15 osób, cykliczne „Glina i Wino”, poczęstunek w cenie.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Talerz 1,5 h — 220 zł, kubek 2,5 h — 270 zł, firmowe 1 h — 210 zł/os., dla dwojga 2 h — 690 zł/para.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Własnej linii produktów z charakterem.</td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Biały Królik</strong></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Model karnetowy dla stałych: bez sztywnego programu, własne projekty, grupy do 7 osób, Krowoderska.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Pojedyncze 210–250 zł, karnet 4 zajęcia 790 zł, 6 zajęć 1140 zł (ważny 4 miesiące).</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Rezerwacji online z kalendarzem.</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Klika Ceramika</strong></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Kursy modułowe z poziomami trudności (od podstaw do masterclass) i zaplecze fundacji. Sprzedaje też warsztat kintsugi.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Moduły rozpisane na terminy w roku.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Oferty prezentowej — to szkoła, nie sklep.</td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Huta Ceramiki</strong></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Technika RAKU jako wyróżnik, sklep z pracami 99–590 zł, vouchery cyfrowe, sesje otwarte.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Produkty 99–590 zł.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Stałej dostępności — na stronie widnieją przerwy urlopowe.</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Smak Sztuki</strong></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Dzieci, młodzież i urodziny — segment, w którym nikt inny nie jest tak wyraźny. Materiały i wypał w cenie.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">200 zł za 2 h od osoby.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Oferty dla dorosłych z charakterem pracowni autorskiej.</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size: 10.5pt; line-height: 1.6; color: #6B5D4F; margin: 12px 0 0"><strong style="font-weight: 500">Wypał na zlecenie jest już zajęty.</strong> W Krakowie robi to co najmniej pięć pracowni: Terra-Art (trzy piece), 1000 Stopni, Kaliente (30 zł/kg biskwit, 40 zł/kg szkliwo), Ceramilo i ŻyWa Pracownia. Wszystkie liczą <strong style="font-weight: 500">na kilogramy</strong>, Ty liczysz na litry. To nie wada — objętość jest uczciwsza przy dużych, lekkich formach — ale klient nie umie tego przeliczyć i pójdzie tam, gdzie rozumie cenę. Patrz propozycja 6.6.</p>
+
+  <div style="background: #F7ECE9; border: 1px solid #E0C3BC; border-radius: 4px; padding: 18px 22px; margin: 18px 0 0">
+    <div style="font-family: Newsreader, serif; font-size: 14pt; margin-bottom: 6px">Co z tego wynika dla Twoich warsztatów</div>
+    <p style="font-size: 10.5pt; line-height: 1.6; color: #5C5043; margin: 0 0 6px">Twoje 220 zł za 2,5 godziny z dwoma wypałami i szkliwieniem na drugim spotkaniu jest w dolnej połowie rynku, a zawiera więcej niż większość ofert w tej cenie. Ceny nie podnoś przed styczniem, ale przestań sprzedawać „warsztaty ceramiczne” — tę frazę wygrają pracownie z salą i kalendarzem.</p>
+    <p style="font-size: 10.5pt; line-height: 1.6; color: #5C5043; margin: 0">Sprzedawaj to, czego oni nie mają: <strong style="font-weight: 500">jeden stół, sześć osób, adres podawany po zapisie, sesja 1:1 i warsztat dla pary</strong>. „Kameralnie” to nie jest przepraszanie za rozmiar, to jest produkt — i jedyny segment, w którym home studio bije salę.</p>
+  </div>
+
+  <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">2. Sklepy z ceramiką handmade — słabe w mechanice sprzedaży</h2>
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">Ruch prezentowy w Polsce przechodzi przez dwa targowiska: <strong style="font-weight: 500">Pakamera</strong> i <strong style="font-weight: 500">art-Madam</strong>. Tam trafia klientka, która nie zna żadnej pracowni z nazwy. Poza nimi jest kilkanaście pracowni z własnymi sklepami — Manou, TOceramics, Faramuszka, ulepianki, Lamabo, Pot Pot, GajaArte.</p>
+  <ul style="font-size: 10.5pt; line-height: 1.62; margin: 0 0 12px; padding-left: 20px">
+    <li style="margin-bottom: 5px"><strong style="font-weight: 500">Personalizacja napisu istnieje, ale robiona jest farbą albo nadrukiem.</strong> Manou oferuje napis małymi i wielkimi literami z polskimi znakami, Faramuszka nanosi tekst na porcelanę, ulepianki przyjmują zamówienia na napis przez Facebooka, GajaArte robi logo dla kawiarni. Napisu <strong style="font-weight: 500">wbijanego stemplem w surową glinę</strong> nie sprzedaje jako kategorii nikt, kogo znalazłem — a to inna rzecz fizycznie: nie zetrze się i widać ją pod światło.</li>
+    <li style="margin-bottom: 5px"><strong style="font-weight: 500">Mechanika sklepów jest uboga.</strong> Sprawdziłem najbardziej dopracowany z nich (ulepianki, na Shopify): darmowa wysyłka od 350 zł i zapis na social media. Bez powiadomień o powrocie towaru, bez zestawów prezentowych, bez klubu, bez pakowania na prezent jako wyboru w koszyku. Twój prototyp ma już więcej.</li>
+    <li><strong style="font-weight: 500">„Drugi gatunek” to język fabryk.</strong> Kategorię „II gatunek” prowadzą sklepy bolesławieckie — przy ceramice fabrycznej to ma sens, bo wzór jest powtarzalny i widać odstępstwo. U Ciebie każda sztuka jest jedna, więc nie masz od czego odstąpić. Nie kopiuj tego.</li>
+  </ul>
+
+  <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">3. Twoje cztery fosy — i z kim naprawdę walczysz</h2>
+  <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; line-height: 1.45">
+    <thead>
+      <tr style="background: #F3EDE4">
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500; width: 22%">Oferta</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500; width: 36%">Z kim faktycznie konkurujesz</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500">Co z tym zrobić</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Kubek z wbijanym napisem</strong></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Z kubkami z nadrukiem i malowanym napisem — czyli z produktem tańszym i gorszym, który wygląda podobnie na miniaturze w Google.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Cała komunikacja musi pokazywać <em style="font-style: italic">głębię odcisku</em>: zdjęcie pod światło, palec w literze, zdanie „nie zetrze się w zmywarce”. Bez tego jesteś droższym kubkiem z napisem.</td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Odcisk rośliny z bukietu</strong></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Nie z ceramikami. Z pracowniami konserwacji bukietów: Kraftowe Studio, Kwiatowa Historia, Colie (biżuteria z kwiatów ślubnych) — żywica, ramki 3D, obrazy. Oni już mają ruch z frazy „pamiątka z bukietu ślubnego”.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Pisz ich słowami („konserwacja bukietu”, „pamiątka z bukietu”), ale sprzedawaj różnicę: <strong style="font-weight: 500">u nich kwiat leży za szkłem, u Ciebie zostaje talerz, z którego się je</strong>. Do tego cena niższa niż obraz z żywicy.</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Szycie z tkaniny klientki</strong></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Z pracowniami krawieckimi, które robią przeróbki (HandyCraftStudio), i z markami upcyclingowymi szyjącymi z <em style="font-style: italic">własnych</em> materiałów (Revolverino, Nie-raz). Usługi „przyślij swoją apaszkę” z jawnym cennikiem nie znalazłem.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">To najczystsza luka, jaką masz. Kosztuje Cię tylko zdjęcia „przed i po” — bez nich sekcja się nie pokaże i strona wygląda na niedokończoną.</td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Glina i jedwab w jednym odcieniu</strong></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Z nikim. Pracownie robią albo ceramikę, albo tekstylia — dobranie szkliwa do tkaniny wymaga dwóch rzemiosł w jednej parze rąk.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">To jest zdanie na stronę główną i na targi. Zestawy w jednym kolorze są najtrudniejsze do skopiowania w krótkim czasie — trzymaj je jako flagowy produkt prezentowy.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">4. Na czym ludzie dziś podejmują decyzję</h2>
+  <div style="font-size: 10.5pt; line-height: 1.62">
+    <p style="margin: 0 0 9px"><strong style="font-weight: 500">1. Dowód ludzkiej ręki stał się argumentem cenowym.</strong> Po dwóch latach zalewu treściami z AI branża opisuje powrót popytu na to, co „niedoskonałe” i wyraźnie ludzkie (Digiday, 2026). Twardych liczb dla Polski nie ma — krążące w sieci procenty pochodzą z nierecenzowanych preprintów i blogów agencji, więc nie buduj na nich prezentacji. Kierunek jest jednak jednoznaczny i darmowy do wykorzystania: <strong style="font-weight: 500">napisz wprost, że nie ma tu ani jednego zdjęcia i ani jednego zdania z AI</strong>, i pokaż proces, nie tylko efekt. Prototyp już to robi w tekstach o wypale — brakuje jednego zdania, które to nazywa.</p>
+    <p style="margin: 0 0 9px"><strong style="font-weight: 500">2. Samotność jest masowa i to ona sprzedaje warsztaty.</strong> Instytut Pokolenia w badaniu z 2022 roku podał, że 53% dorosłych Polaków doświadcza samotności, a 35% nie ma nikogo, do kogo mogłoby się zwrócić o pomoc. WHO w 2023 uznała samotność za zagrożenie dla zdrowia publicznego. Ludzie nie kupują „nauki lepienia” — kupują dwie godziny przy stole z kimś, kto na nich patrzy. <strong style="font-weight: 500">Twoja strona musi wprost pozwalać przyjść samej</strong>: dziś opisuje warsztaty dla par, rodzin i grup, a osoba sama nie znajduje zdania skierowanego do siebie.</p>
+    <p style="margin: 0 0 9px"><strong style="font-weight: 500">3. Doświadczenie wypiera rzecz, ale prezent musi mieć formę.</strong> Voucher jest najlepiej sprzedającym się produktem pracowni w grudniu — i jednocześnie najgorszym prezentem do wręczenia, jeśli jest e-mailem. Masz już voucher do druku; dołóż informację, <strong style="font-weight: 500">co obdarowana osoba trzyma w ręku</strong>, i możliwość wysłania go e-mailem w wybranym dniu.</p>
+    <p style="margin: 0 0 9px"><strong style="font-weight: 500">4. Pamięć i żałoba to najmocniejszy motyw w Twojej ofercie.</strong> Rynek pamiątek po zwierzakach w Polsce jest już skomercjalizowany (Esthima, Pet Memoria, urnapsa.pl) i brzmi jak katalog: rozmiary, rasy, warianty. Ty masz odcisk łapki i ręce, które go zrobią — plus zdanie o kwiatku z wieńca, które już jest w tekstach usługi. W prototypie „urna dla kota” jest wymieniona jednym słowem w formularzu zamówień indywidualnych. To za mało na ofertę, za dużo na przypadek.</p>
+    <p style="margin: 0"><strong style="font-weight: 500">5. Prezent ślubny przesuwa się z koperty na listę.</strong> Pary mieszkają razem przed ślubem, mają wyposażenie i wybierają mniej rzeczy, ale lepszych; listy prezentów online wchodzą do Polski jako alternatywa dla kopert. Serwis ceramiczny na liście prezentów to dokładnie ten produkt — a żadna krakowska pracownia nie daje parze narzędzia do zrobienia takiej listy.</p>
+  </div>
+
+  <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">5. Propozycje do 10 listopada — tanie i pod grudzień</h2>
+  <p style="font-size: 10.5pt; line-height: 1.6; color: #6B5D4F; margin: 0 0 14px">Plan wdrożenia ma osiem tygodni wypełnionych i bufor już nadgryziony. To poniżej razem daje <strong style="font-weight: 500">25–30 godzin</strong>, których w planie nie ma. Nie bierz wszystkiego. Moja kolejność: pozycje 1, 3 i 5 na pewno (razem około 6 godzin), potem 2 i 4, a 6 i 7 tylko jeśli tydzień 8 nie spłonie.</p>
+  <table style="width: 100%; border-collapse: collapse; font-size: 9pt; line-height: 1.45">
+    <thead>
+      <tr style="background: #F3EDE4">
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500; width: 4%">#</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500; width: 24%">Co</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500; width: 40%">Dlaczego to zarabia</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500; width: 10%">Szacunek</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500">Od Ciebie</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">1</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Data graniczna „zdążę na święta”</strong> — pole w panelu (data + zdanie), pasek na karcie produktu, w koszyku i przy zakupie</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Najczęstszy powód porzucenia koszyka w grudniu to pytanie bez odpowiedzi: „czy zdąży”. Osobne daty dla rzeczy z półki, kubka z napisem i zamówienia indywidualnego zamieniają wahanie w decyzję — albo uczciwie przekierowują na voucher.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">3–4 h</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Trzy realne daty cięcia</td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">2</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">„Powiadom mnie, gdy wróci”</strong> na wyprzedanym unikacie — e-mail klientki, lista w panelu</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Sprzedajesz rzeczy po jednej sztuce, więc sklep świeci pustkami dokładnie tam, gdzie był popyt. Dziś ten ruch znika bezpowrotnie. Zysk jest podwójny: odzyskane zamówienia i twarda lista, <em style="font-style: italic">co lepić w styczniu</em>. Na polskich platformach to standard, w pracowniach — rzadkość.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">6–8 h</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Nic</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">3</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">„Została ostatnia sztuka”</strong> — etykieta liczona ze stanu magazynowego</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Stan masz już w panelu, brakuje tylko napisu. Prawdziwa rzadkość działa mocniej niż sztuczny licznik i nie kosztuje wiarygodności, bo wynika z liczby, nie z chwytu.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">1–2 h</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Nic</td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">4</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">„Co teraz jest w piecu”</strong> — jedno pole w panelu, pasek na stronie głównej</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Jedno zdanie raz w tygodniu („w piecu 14 kubków, otwieram w czwartek”) daje stronie puls, którego nie da żadna galeria. Buduje też nawyk powracania — i jest zapowiedzią mechaniki z punktu 6.7.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">2 h</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Zdanie raz w tygodniu</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">5</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">„Jedna para rąk, bez AI”</strong> — zdanie w stopce, akapit na <code>/o-mnie</code>, znak na karcie produktu</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Jedyny darmowy sposób, żeby wejść w nastrój roku. Konkurencja tego nie napisze, bo część zdjęć produktowych i opisów bierze z generatorów. Ty masz na to prawo — i dowody.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">1 h</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Zgoda na to zdanie</td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">6</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Strona prezentów firmowych</strong> — progi ilościowe, termin grudniowy, logo w spodzie, faktura 14 dni</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Jedno zamówienie na 30 kubków z logo to przychód całego targu. CAHA pokazuje, że firmy w Krakowie kupują ceramikę — tylko kupują u nich warsztat, bo nikt nie sprzedaje im prezentu. Strona dla gastronomii jest już w planie: ta jest jej wariantem, nie nową budową.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">5–6 h</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Minimalna ilość, cena, termin</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">7</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Voucher wysyłany w wybranym dniu</strong> — „dostarcz e-mailem 24 grudnia o 9:00”</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Ratuje zakupy z 23 grudnia i zdejmuje z kupującego obowiązek pamiętania. Voucher i tak wchodzi w pierwszej fali, więc to dopisek do gotowego mechanizmu, nie nowy produkt.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">3–4 h</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Nic</td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">8</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Zdjęcie z dłonią przy każdym produkcie</strong></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Zero godzin kodu. Największy hamulec zakupu ceramiki online to „nie wiem, jakie to jest duże” — wymiary w centymetrach tego nie rozwiązują, dłoń rozwiązuje. Zmniejsza też zwroty i rozczarowania przy prezencie.</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">0 h</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Po jednym zdjęciu na produkt</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">6. Styczeń–luty — nowe linie przychodu</h2>
+  <p style="font-size: 10.5pt; line-height: 1.6; color: #6B5D4F; margin: 0 0 14px">Kolejność jest moja i wynika z jednego kryterium: ile pieniędzy wnosi jedna godzina pracy poza sezonem prezentowym.</p>
+  <div style="font-size: 10.5pt; line-height: 1.62">
+    <p style="margin: 0 0 10px"><strong style="font-weight: 500">6.1. Klub — „Półka Kasi”.</strong> Cztery przesyłki w roku, jedna po każdym większym wypale: kubek albo drobna forma, zawsze inna, zawsze jedna. Model jest sprawdzony w pracowniach zagranicznych (Wolf Ceramics, 23 Pots, Didem Mert — od kwartalnych paczek do abonamentu miesięcznego). <strong style="font-weight: 500">Sprzedaj to jako produkt z czterema wysyłkami, przedpłacony z góry</strong> — wtedy nie potrzebujesz płatności cyklicznych ani zgód na obciążanie karty. To nie jest wybór z wygody: <strong style="font-weight: 500">BLIK w Stripe nie obsługuje płatności cyklicznych</strong>, więc klub rozliczany co miesiąc musiałby iść wyłącznie z karty — czyli odciąłby metodę, którą płaci większość Twoich klientek. Daje przewidywalny przychód w lutym i marcu i odpowiada na pytanie „co lepić, gdy nie ma zamówień”. Szacunek: 10–14 godzin.</p>
+    <p style="margin: 0 0 10px"><strong style="font-weight: 500">6.2. Lista prezentów dla pary.</strong> Para wybiera rzeczy z Twojego sklepu, dostaje link, goście kupują i widzą, co już kupione. W prototypie masz ulubione zapisywane w przeglądarce — wystarczy dać im numer i adres, żeby dały się wysłać. Trend jest realny (koperta ustępuje liście), a produkt idealny: serwis na wesele to dokładnie to, o co pary proszą zamiast czterech tosterów. <strong style="font-weight: 500">Żadna krakowska pracownia tego nie ma.</strong> Szacunek: 10–12 godzin. Uwaga: wymaga zamówień z rezerwacją sztuki, więc rób to po stanach magazynowych, nie przed.</p>
+    <p style="margin: 0 0 10px"><strong style="font-weight: 500">6.3. Pamiątki pożegnalne.</strong> Osobna strona, spokojny język, trzy rzeczy: urna dla zwierzaka, odcisk łapki w glinie, kwiat z wieńca. Rynek w Polsce istnieje i jest katalogowy — Ty masz rękę i technikę odcisku, którą już opanowałaś. Trzy zasady, bez których tego nie otwieraj: <strong style="font-weight: 500">limit zleceń na miesiąc napisany na stronie</strong> (to obciąża emocjonalnie), telefon zamiast formularza jako pierwszy kontakt, i zero zdjęć cudzych zwierząt. Szacunek: 6–8 godzin plus Twoje zdjęcia.</p>
+    <p style="margin: 0 0 10px"><strong style="font-weight: 500">6.4. Naprawa złotem — „szpital ceramiki”.</strong> Przyjmujesz stłuczoną rzecz z domu, wyceniasz po zdjęciu, zrastasz i wykańczasz złotem. Pasuje do wszystkiego, co już robisz: apaszka babci, kwiat z bukietu, rzeczy, które zostają w rodzinie. W Krakowie Klika sprzedaje <em style="font-style: italic">warsztat</em> kintsugi, usługę naprawy prowadzi pracownia w Warszawie, zestawy DIY leżą na Allegro po 99 zł — <strong style="font-weight: 500">miejsca na usługę w Krakowie nikt nie zajął</strong>. Komponent „przed i po” masz już w prototypie. Szacunek: 4–6 godzin, jeśli oprzesz to na formularzu usług, które już są.</p>
+    <p style="margin: 0 0 10px"><strong style="font-weight: 500">6.5. Paszport przedmiotu.</strong> Numer z certyfikatu unikatu plus kod QR prowadzący na stronę tej jednej sztuki: data wypału, szkliwo, nazwa rośliny, jak myć, link do „zrób mi podobny”. Zamienia papier w paczce w adres, który ludzie pokazują znajomym, i rozwiązuje przy okazji numerację z punktu 7 specyfikacji. Szacunek: 8–10 godzin.</p>
+    <p style="margin: 0 0 10px"><strong style="font-weight: 500">6.6. Kalkulator wypału.</strong> Klient podaje wysokość, szerokość i głębokość pracy, dostaje cenę. Cała krakowska konkurencja liczy na kilogramy, Ty na litry — nikt tego nie przeliczy w głowie, a formularz bez ceny odstrasza. Trzy pola i mnożenie. Szacunek: 3 godziny.</p>
+    <p style="margin: 0"><strong style="font-weight: 500">6.7. Otwarcie pieca jako wydarzenie.</strong> Zapisani dostają zdjęcia z otwarcia i dwanaście godzin pierwszeństwa, zanim rzeczy pojawią się w sklepie. To najlepsza mechanika sprzedaży dla jednej pary rąk: nie musisz mieć stanu magazynowego, wystarczy rytm. Newsletter jest w planie na styczeń, więc to dopisek do niego, nie nowe narzędzie. Szacunek: 4–5 godzin ponad newsletter.</p>
+  </div>
+
+  <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">7. Czego nie robić</h2>
+  <div style="background: #EDE4D8; border-radius: 4px; padding: 18px 22px; font-size: 10.5pt; line-height: 1.62">
+    <p style="margin: 0 0 8px"><strong style="font-weight: 500">Nie buduj kalendarza rezerwacji z płatnością.</strong> ŁYKO i Echoes mają go, bo mają salę i kilkadziesiąt terminów w miesiącu. Przy jednym stole i sześciu miejscach terminarz to dwa tygodnie pracy, żeby zastąpić wiadomość na WhatsAppie, która działa i buduje relację. Plan wdrożenia mówi to samo i ma rację.</p>
+    <p style="margin: 0 0 8px"><strong style="font-weight: 500">Nie wchodź w wieczory panieńskie i integracje firmowe.</strong> To gra o metry kwadratowe, a Ty masz home studio z adresem podawanym po zapisie. Firmy obsługuj prezentem (5.6), nie warsztatem.</p>
+    <p style="margin: 0 0 8px"><strong style="font-weight: 500">Nie zakładaj kategorii „drugi gatunek”.</strong> Podkopuje zdanie „każda sztuka jest jedna”, na którym stoi cała strona. Rzeczy, które Ci się nie podobają, sprzedawaj z nazwy i z opisem — „z półki próbnej, szkliwo spłynęło nierówno” — a nie jako gatunek gorszy.</p>
+    <p style="margin: 0 0 8px"><strong style="font-weight: 500">Nie dopisuj gwiazdek ani liczby opinii, dopóki nie masz wizytówki Google.</strong> Google nie pokaże gwiazdek za opinie o sobie samej, a wymyślone opinie kosztują dokładnie tyle, ile całe pozycjonowanie na „ludzką rękę”.</p>
+    <p style="margin: 0"><strong style="font-weight: 500">Nie generuj zdjęć ani opisów w AI — nawet jako zaślepek.</strong> Przy tym pozycjonowaniu to jedyny błąd, którego nie da się odkupić. Pusty kafelek jest lepszy niż wygenerowany kubek.</p>
+  </div>
+
+  <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">8. Co uatrakcyjni samą stronę</h2>
+  <p style="font-size: 10.5pt; line-height: 1.6; color: #6B5D4F; margin: 0 0 12px">Drobiazgi bez nowych funkcji sprzedażowych — każdy da się zrobić w godzinę albo dwie, a razem zmieniają wrażenie z „ładna strona” na „ta pracownia naprawdę istnieje”.</p>
+  <ul style="font-size: 10.5pt; line-height: 1.62; margin: 0; padding-left: 20px">
+    <li style="margin-bottom: 6px"><strong style="font-weight: 500">Osiem sekund wideo: stempel wchodzi w glinę.</strong> Jedno ujęcie z telefonu, bez dźwięku, w pętli, na stronie głównej. Najmocniejszy dowód ręki, jaki możesz mieć, i jedyna rzecz w tym dokumencie, której konkurencja nie skopiuje w tygodniu. Musi mieć alternatywę dla osób z wyłączonymi animacjami — zasada jest już w projekcie.</li>
+    <li style="margin-bottom: 6px"><strong style="font-weight: 500">Po wpisaniu napisu pokaż zdjęcie prawdziwego odcisku.</strong> Podgląd w konfiguratorze składa się z czcionki, a produkt jest wgłębieniem w glinie. Jedno Twoje zdjęcie gotowego napisu pod podglądem zamyka różnicę między oczekiwaniem a paczką — i jest dokładnie tym, czego nadrukowa konkurencja pokazać nie może.</li>
+    <li style="margin-bottom: 6px"><strong style="font-weight: 500">Trzy sylwetki kubka obok siebie z pojemnością.</strong> Rozmiar to pierwsze pytanie i jedyny powód zwrotu przy kubkach.</li>
+    <li style="margin-bottom: 6px"><strong style="font-weight: 500">Ulubione do udostępnienia linkiem.</strong> Dziś działają bez konta i zostają w przeglądarce. Link zamienia je w „to chcę na urodziny” wysłane mamie — czyli w cudzy zakup.</li>
+    <li style="margin-bottom: 6px"><strong style="font-weight: 500">Sekcja „co pękło” w dzienniku.</strong> Pokazanie nieudanego wypału robi dla zaufania więcej niż dziesięć ładnych zdjęć i siedzi dokładnie w nastroju, o którym jest punkt 4.1. Masz już na to gotowy szkielet wpisów.</li>
+    <li><strong style="font-weight: 500">Zdanie dla osoby, która przychodzi sama.</strong> Na stronie warsztatów, wprost, bez zdrobnień. Dziś każda oferta mówi „para”, „rodzina”, „grupa”.</li>
+  </ul>
+
+  <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">9. Audyt edytowalności — odpowiedź jest „nie”</h2>
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">Panel z prototypu jest mocny w tym, co się zmienia codziennie: produkty, ceny, stany, terminy, zdjęcia. Zakładka <strong style="font-weight: 500">Treści</strong> i zakładka <strong style="font-weight: 500">Usługi</strong> dają razem <strong style="font-weight: 500">23 pola tekstowe</strong>. Poza nimi na stronie siedzi <strong style="font-weight: 500">około sześćdziesięciu dłuższych bloków tekstu wpisanych w kod</strong> — nagłówki sekcji, wstępy, opisy procesów i, co najgorsze, wszystkie obietnice terminów.</p>
+
+  <div style="background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 16px 20px; font-size: 10pt; line-height: 1.6; margin-bottom: 16px">
+    <div style="font-size: 8.5pt; letter-spacing: 0.16em; text-transform: uppercase; color: #726456; margin-bottom: 7px">co zmieniasz sama, bez programisty</div>
+    Produkty: nazwa, zdjęcia z kolejnością, cena, rozmiary z cenami, stan, kolejność w sklepie, widoczność, kategoria, „dla kogo”, okazje, notka o pielęgnacji, wymiary &middot; duże zdjęcie strony głównej i treść etykiety &middot; ceny pięciu warsztatów, terminy z liczbą miejsc, zdjęcia pracowni &middot; konfigurator kubka w całości: zdjęcie, położenie i wielkość napisu, kolor, rozmiary z pojemnością i ceną, limit znaków i linii &middot; cenniki usług apaszki i rośliny z ceną przekreśloną, galerie „przed i po” &middot; zestawy: nazwa, opis, rabat, ukrycie &middot; ceny pięciu wypałów i lista rodzajów w formularzu &middot; FAQ w całości &middot; kafelki o materiale &middot; listy w formularzach i przedziały budżetu &middot; próg darmowej wysyłki, ceny dostawy, pakowanie, zaliczka, telefon, e-mail, profile, opis lokalizacji, adres do maili, kod Paczkomatu &middot; dziennik, wydarzenia, opinie, kanał Instagrama &middot; 23 pola tekstowe (strona główna, o mnie, kontakt, wypały, stopka, kubek, zestawy, pakowanie, apaszka, roślina).
+  </div>
+
+  <p style="font-size: 10.5pt; line-height: 1.6; color: #6B5D4F; margin: 0 0 10px">Poniżej to, czego nie zmienisz. Kolumna „obiecane” rozstrzyga, czy to dziura między specyfikacją a prototypem (do nadrobienia we wdrożeniu), czy nowe życzenie (do decyzji).</p>
+  <table style="width: 100%; border-collapse: collapse; font-size: 9pt; line-height: 1.45">
+    <thead>
+      <tr style="background: #F3EDE4">
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500; width: 30%">Czego nie zmienisz</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500; width: 22%">Gdzie to widać</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500; width: 15%">Obiecane w specyfikacji?</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500">Waga</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Obietnice terminów</strong>: „3–5 dni roboczych”, „około trzech tygodni”, „dwa tygodnie”, „ważny rok”, „14 dni na zwrot”, „wsad raz w tygodniu”</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">FAQ, karty usług, voucher, koszyk</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Nie</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Najwyższa — w grudniu zmieniasz je co tydzień, a każda z nich jest obietnicą handlową</td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Cena przekreślona przy produkcie</strong> i najniższa cena z 30 dni</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Sklep, karta produktu</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Baza w planie ma <code>compare_at_price</code> i <code>price_history</code>, panel nie ma pola</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Najwyższa — to przepis, nie wygoda; usługi mają pole „było”, produkty nie</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Opis istniejącego produktu</strong> (nowy produkt ma pole opisu, edycja już nie)</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Karta produktu</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Nie</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Wysoka — opisy poprawia się po pierwszych pytaniach klientek</td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Tytuł i opis dla Google</strong>: strony stałe, kategorie, produkty</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Wyniki wyszukiwania</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Kategorie i produkty tak, strony stałe nie</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Wysoka — bez tego każda zmiana frazy wymaga programisty</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Warsztaty</strong>: nazwa, czas trwania, liczebność grupy, cztery punkty „co w cenie”, zdanie opisu</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><code>/warsztaty-ceramiczne-krakow</code></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Obiecane są tylko ceny i terminy</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Wysoka — pierwsza rzecz, którą zechcesz przestawić po dziesięciu grupach</td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Lista okazji</strong> — siedem na stałe: urodziny, Dzień Matki, ślub, parapetówka, rocznica, święta, dla siebie</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Filtr „Szukam prezentu”, panel produktu</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Specyfikacja zapisuje liczbę siedem</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Wysoka — brakuje Walentynek, Dnia Ojca, komunii, Mikołajek, chrzcin</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Kroki procesu w usługach</strong> z czasami (apaszka, roślina, zamówienia indywidualne)</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Trzy strony usług</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Tak — „kroki edytowane jako lista”</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Wysoka — dziura między dokumentem a prototypem</td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Nagłówki i wstępy sekcji</strong>: strona główna, sklep, prezenty, vouchery, dziennik, kontakt, pracownia</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Wszędzie</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Nie</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Średnia — to największa objętościowo grupa: około czterdziestu bloków</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Cała strona dla gastronomii</strong>, w tym progi „od dwunastu sztuk” i „faktura 14 dni”</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><code>/ceramika-dla-gastronomii</code></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Nie</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Średnia — warunki handlowe B2B zmieniają się najczęściej</td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Nazwy i notatki pięciu usług wypału</strong> (ceny tak, nazwy nie)</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><code>/wypal-ceramiki-krakow</code></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Obiecany jest tylko cennik</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Średnia</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Skład zestawu prezentowego</strong> — które produkty wchodzą (nazwa, opis i rabat są edytowalne)</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><code>/zestawy-prezentowe</code></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Nie</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Średnia — po sprzedaniu unikatu z zestawu zestaw przestaje mieć sens</td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Teksty certyfikatu i vouchera do druku</strong></td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Paczka, PDF</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Nie</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Średnia</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Paleta szkliw (5) i kolorów napisu (6)</strong> — wybierasz, ale nie dopiszesz nowego odcienia</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Konfigurator, karta produktu</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Wybór tak, edycja palety nie</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Niska — ale zapytasz o to przy pierwszym nowym szkliwie</td>
+      </tr>
+      <tr style="background: #FCF9F4">
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Nazwy metod dostawy i lista płatności</strong> (ceny tak, nazwy nie)</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Koszyk, zakup</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Ceny tak</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Niska</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top"><strong style="font-weight: 500">Menu, stopka, lista wymiarów</strong> (sześć pozycji)</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Wszędzie</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Nie</td>
+        <td style="padding: 8px; border: 1px solid #E2D7C7; vertical-align: top">Niska — i tak powinno być decyzją projektową, nie codzienną</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 18px 0 8px"><strong style="font-weight: 500">Osiem pozycji do panelu, w tej kolejności.</strong> Razem około 27 godzin. Żadna z nich nie wymaga nowej architektury: wszystkie to kolejne wiersze w tabeli <code>settings</code>, którą plan już przewiduje.</p>
+  <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; line-height: 1.45">
+    <thead>
+      <tr style="background: #F3EDE4">
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500; width: 6%">Kolej</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500; width: 44%">Co dopisać</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500; width: 12%">Szacunek</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #E2D7C7; font-weight: 500">Dlaczego tu</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style="padding: 7px 8px; border: 1px solid #E2D7C7">1</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">Zakładka „Terminy i obietnice”: czasy realizacji, ważność vouchera, dni na zwrot, dzień wsadu do pieca, daty graniczne przed świętami</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">3 h</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">Zmieniasz to najczęściej i najbardziej boli, gdy jest nieprawdą</td></tr>
+      <tr style="background: #FCF9F4"><td style="padding: 7px 8px; border: 1px solid #E2D7C7">2</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">Pole „było” przy wariancie produktu + automatyczna najniższa cena z 30 dni z <code>price_history</code></td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">4 h</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">Przepis, nie wygoda — inaczej nie zrobisz Black Friday zgodnie z prawem</td></tr>
+      <tr><td style="padding: 7px 8px; border: 1px solid #E2D7C7">3</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">Opis produktu w edycji, obok nazwy i ceny</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">1 h</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">Najtańsza pozycja na liście</td></tr>
+      <tr style="background: #FCF9F4"><td style="padding: 7px 8px; border: 1px solid #E2D7C7">4</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">Tytuł i opis dla Google: strony stałe, kategorie, produkty, z licznikiem znaków (60 / 155)</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">5 h</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">Bez tego każda zmiana frazy to zgłoszenie do programisty</td></tr>
+      <tr><td style="padding: 7px 8px; border: 1px solid #E2D7C7">5</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">Lista okazji jako lista edytowalna, tak jak kategorie</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">2 h</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">Walentynki są w lutym, komunie w maju — bez tego filtr prezentów zamarza</td></tr>
+      <tr style="background: #FCF9F4"><td style="padding: 7px 8px; border: 1px solid #E2D7C7">6</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">Warsztaty: nazwa, czas, liczebność, punkty „co w cenie”, zdanie opisu; dodawanie i usuwanie typów</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">3 h</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">Oferta warsztatów będzie się zmieniać częściej niż produkty</td></tr>
+      <tr><td style="padding: 7px 8px; border: 1px solid #E2D7C7">7</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">Kroki procesu w usługach jako lista z tytułem i opisem</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">3 h</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">Specyfikacja to już obiecuje — to dług, nie życzenie</td></tr>
+      <tr style="background: #FCF9F4"><td style="padding: 7px 8px; border: 1px solid #E2D7C7">8</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">Rozszerzenie zakładki „Treści” z 23 do około 45 pól: nagłówki i wstępy pozostałych sekcji</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">6 h</td><td style="padding: 7px 8px; border: 1px solid #E2D7C7">Najwięcej tekstu, ale najmniej pilne: te zdania są dobre i mogą poczekać</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size: 10pt; line-height: 1.6; color: #6B5D4F; margin: 12px 0 0">Jedna uwaga architektoniczna, żeby to nie spuchło: pola tekstowe trzymaj w <code>settings</code> pod kluczami, nie w osobnych migracjach, i <strong style="font-weight: 500">puste pole niech zawsze znaczy „nie pokazuj”</strong> — ta zasada jest już w projekcie przy kafelkach o materiale i przy galeriach „przed i po”. Dzięki niej dopisanie pola nigdy nie psuje strony.</p>
+
+  <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">10. Jedna decyzja poza treścią: gdzie to stoi</h2>
+  <p style="font-size: 10.5pt; line-height: 1.62; margin: 0 0 10px">Plan wdrożenia zakłada Forge i Cloudflare, a Twoja zasada mówi, że projekty deweloperskie stoją na AWS i tam mają konfigurację. To nie jest sprzeczność, ale trzeba to rozstrzygnąć teraz, w pierwszym tygodniu, a nie w listopadzie: <strong style="font-weight: 500">Forge umie zarządzać maszyną EC2 w Twoim koncie AWS</strong>. Serwer jest wtedy w AWS, a Forge zostaje tylko panelem do wdrożeń.</p>
+  <ul style="font-size: 10.5pt; line-height: 1.62; margin: 0 0 10px; padding-left: 20px">
+    <li style="margin-bottom: 5px"><strong style="font-weight: 500">Zrób od razu:</strong> maszyna EC2 zarządzana z Forge i <strong style="font-weight: 500">zdjęcia w S3 za CloudFrontem</strong>. Biblioteka do zdjęć z planu (Spatie medialibrary) obsługuje S3 zmianą jednej konfiguracji, a przenoszenie zdjęć z dysku serwera po starcie to jedyna rzecz z tej listy, która później naprawdę boli.</li>
+    <li style="margin-bottom: 5px"><strong style="font-weight: 500">Zostaw na po świętach:</strong> maile. Plan przewiduje Postmark albo Resend, bo działają od pierwszego dnia; Amazon SES startuje w trybie piaskownicy i wyjście z niego to wniosek i oczekiwanie — w tygodniu, w którym czekasz na InPost i na weryfikację wypłat w Stripe, to jeden wniosek za dużo.</li>
+    <li><strong style="font-weight: 500">Świadomie odłóż:</strong> baza w RDS i przeniesienie sesji z plików. Przy jednym serwerze i siedemnastu produktach RDS to koszt bez korzyści, ale pamiętaj o zasadzie z <code>CLAUDE.md</code>: <strong style="font-weight: 500">sesja i cache w plikach przestają działać z chwilą drugiego serwera</strong>. Jeśli AWS ma docelowo znaczyć skalowanie, ta decyzja wraca — i wtedy wraca też Redis albo ElastiCache.</li>
+  </ul>
+  <p style="font-size: 10.5pt; line-height: 1.62; margin: 0">Cokolwiek wybierzesz, trzeba to dopisać do <code>CLAUDE.md</code> i do planu — dziś oba mówią „Forge”, więc każda następna sesja będzie zakładała Forge.</p>
+
+  <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">11. Co zrobić w tym tygodniu</h2>
+  <div style="background: #EDF0E9; border-radius: 4px; padding: 18px 22px; font-size: 10.5pt; line-height: 1.68; color: #41563A">
+    <strong style="font-weight: 500">1.</strong> Podaj trzy daty graniczne przed świętami — dla rzeczy z półki, kubka z napisem i zamówienia indywidualnego. To najtańsza rzecz w całym dokumencie i najwięcej zmienia w grudniu.<br />
+    <strong style="font-weight: 500">2.</strong> Nagraj osiem sekund, jak stempel wchodzi w glinę, i zrób po jednym zdjęciu każdego produktu w dłoni. Kod na to poczeka, zdjęcia nie — bez nich trzy najlepsze strony nie mają czym przekonywać.<br />
+    <strong style="font-weight: 500">3.</strong> Zdecyduj o dwóch rzeczach, które wymagają Ciebie, nie programisty: czy wchodzimy w pamiątki pożegnalne (i ile zleceń na miesiąc), oraz czy serwer stoi na AWS.
+  </div>
+
+  <h2 style="font-family: Newsreader, serif; font-weight: 400; font-size: 16pt; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #E2D7C7">Źródła</h2>
+  <p style="font-size: 9.5pt; line-height: 1.6; color: #6B5D4F; margin: 0 0 8px">Strony konkurencji odwiedzone 17 września 2026; ceny i funkcje mogły się od tego dnia zmienić.</p>
+  <div style="font-size: 9pt; line-height: 1.62; color: #5C5043">
+    <p style="margin: 0 0 6px"><strong style="font-weight: 500">Warsztaty w Krakowie:</strong> <a href="https://lykoceramika.pl/">lykoceramika.pl</a> &middot; <a href="https://www.caha.art/">caha.art</a> &middot; <a href="https://www.echoesceramics.pl/">echoesceramics.pl</a> &middot; <a href="https://bialykrolikceramika.pl/warsztaty/">bialykrolikceramika.pl</a> &middot; <a href="https://klikaceramika.pl/">klikaceramika.pl</a> &middot; <a href="https://www.hutaceramiki.com/">hutaceramiki.com</a> &middot; <a href="https://www.smaksztuki.pl/pl/i/Warsztaty-ceramiczne/29">smaksztuki.pl</a> &middot; <a href="https://laglina.pl/">laglina.pl</a></p>
+    <p style="margin: 0 0 6px"><strong style="font-weight: 500">Wypał na zlecenie:</strong> <a href="https://www.terra-art.pl/">terra-art.pl</a> &middot; <a href="http://1000stopniceramika.pl/oferta/wypal-w-piecu-ceramicznym/">1000stopniceramika.pl</a> &middot; <a href="https://kaliente.pl/wypal-ceramiki/">kaliente.pl</a> &middot; <a href="https://ceramilo.pl/sklep/wypal-prac-ceramicznych-stworzonych-poza-pracownia/">ceramilo.pl</a></p>
+    <p style="margin: 0 0 6px"><strong style="font-weight: 500">Sklepy i personalizacja:</strong> <a href="https://www.pakamera.pl/">pakamera.pl</a> &middot; <a href="https://art-madam.pl/ceramika/">art-madam.pl</a> &middot; <a href="https://manou.pl/kubek-bez-ucha-z-twoim-napisem">manou.pl</a> &middot; <a href="https://toceramics.pl/sklep/ogolna/kubek-z-personalizowanym-napisem/">toceramics.pl</a> &middot; <a href="https://faramuszka.pl/sklep/personalizacja-kubka/">faramuszka.pl</a> &middot; <a href="https://ulepianki.pl/">ulepianki.pl</a> &middot; <a href="https://gajaarte.pl/">gajaarte.pl</a></p>
+    <p style="margin: 0 0 6px"><strong style="font-weight: 500">Usługi, z którymi konkurujesz na odcisk i tkaninę:</strong> <a href="https://kraftowestudio.pl/konserwacja-bukietow">kraftowestudio.pl</a> &middot; <a href="https://www.kwiatowahistoria.pl/slubna-pamiatka/">kwiatowahistoria.pl</a> &middot; <a href="https://colie.pl/bizuteria-z-kwiatow-slubnych/">colie.pl</a> &middot; <a href="https://handycraftstudio.pl/">handycraftstudio.pl</a> &middot; <a href="https://revolverino.pl/">revolverino.pl</a> &middot; <a href="https://nie-raz.pl/">nie-raz.pl</a></p>
+    <p style="margin: 0 0 6px"><strong style="font-weight: 500">Pamiątki pożegnalne i naprawa:</strong> <a href="https://esthima.pl/">esthima.pl</a> &middot; <a href="https://petmemoria.pl/kategoria-produktu/urny/">petmemoria.pl</a> &middot; <a href="https://www.urnapsa.pl/">urnapsa.pl</a> &middot; <a href="https://kin-tsugi.pl/">kin-tsugi.pl</a> &middot; <a href="https://klikaceramika.pl/produkt/kintsugi-sztuka-naprawiania-ceramiki/">klikaceramika.pl (warsztat kintsugi)</a></p>
+    <p style="margin: 0 0 6px"><strong style="font-weight: 500">Klub i subskrypcje w pracowniach zagranicznych:</strong> <a href="https://wolfceramics.com/products/mug-club">wolfceramics.com</a> &middot; <a href="https://23pots.com/products/mug-life-club-1">23pots.com</a> &middot; <a href="https://www.didemmert.com/shop/mug-of-the-month-club">didemmert.com</a> &middot; <a href="https://ceramicartsnetwork.org/pottery-making-illustrated/pottery-making-illustrated-article/Mug-Club">ceramicartsnetwork.org (jak to poprowadzić)</a></p>
+    <p style="margin: 0 0 6px"><strong style="font-weight: 500">Nastroje i dane:</strong> <a href="https://forumprzeciwdepresji.pl/3619/samotnosc-po-cichu-nowa-epidemia-zdrowia-psychicznego">Forum Przeciw Depresji — samotność w Polsce (dane Instytutu Pokolenia, 2022)</a> &middot; <a href="https://strefawiedzy.swps.pl/artykuly/epidemia-samotnosci-a-potrzeba-wspolczucia">Uniwersytet SWPS — epidemia samotności</a> &middot; <a href="https://digiday.com/media/after-an-oversaturation-of-ai-generated-content-creators-authenticity-and-messiness-are-in-high-demand/">Digiday — popyt na treści nieidealne i ludzkie</a> &middot; <a href="https://prezentokracja.pl/blog/co-na-slub-zamiast-koperty">Prezenty ślubne zamiast koperty</a> &middot; <a href="https://portal.janachowska.pl/lista-prezentow-slubnych-2/">Listy prezentów ślubnych w Polsce</a></p>
+    <p style="margin: 0"><strong style="font-weight: 500">Mechanika sklepu — jak to robią platformy:</strong> <a href="https://www.idosell.com/pl/baza-wiedzy/zwiekszanie-sprzedazy-w-sklepie-internetowym/personalizowane-wiadomosci-do-twoich-klientow/powiadomienia-e-mail-sms-i-web-push-o-ponownej-dostepnosci-towaru/">IdoSell — powiadomienia o ponownej dostępności</a> &middot; <a href="https://www.shoper.pl/learn/artykul/powiadomienie-o-dostepnosci">Shoper — powiadomienie o dostępności</a></p>
+    <p style="margin: 10px 0 0; font-size: 8.5pt; color: #726456">Czego świadomie nie użyłem: krążących w sieci liczb o „premii za rękę ludzką” (72,9%, 66%) — pochodzą z nierecenzowanego preprintu i blogów agencji i nie dały się potwierdzić w źródle. Podobnie wielkość rynku ceramiki handmade i „szczyt wyszukiwań w lutym” — to dane serwisów agregujących, dobre jako kierunek, złe jako liczba w prezentacji.</p>
+  </div>
+</doc-page>
+
+</x-dc>
+</body>
+</html>

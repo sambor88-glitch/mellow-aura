@@ -8,6 +8,6 @@ class SettingsServiceProvider extends ModuleServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton(Settings::class);
+        $this->app->scoped(Settings::class);
     }
 }

@@ -3,13 +3,8 @@
 return [
 
     /*
-    |--------------------------------------------------------------------------
-    | Staging protection
-    |--------------------------------------------------------------------------
-    |
-    | When a password is set, every request needs HTTP basic auth and every
-    | response gets X-Robots-Tag: noindex. Set it only on the staging site.
-    |
+    | The staging site's login (Shared\Http\Middleware\ProtectStaging). Set the password only on staging:
+    | empty, the site is open, as it is locally and in production.
     */
 
     'user' => env('STAGING_USER', 'mellowaura'),

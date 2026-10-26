@@ -7,17 +7,23 @@
     "license": "MIT",
     "require": {
         "php": "^8.4",
+        "dompdf/dompdf": "^3.1",
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",
+        "league/flysystem-aws-s3-v3": "^3.35",
+        "spatie/laravel-backup": "^10.3",
         "spatie/laravel-medialibrary": "^11.23",
-        "symfony/http-client": "^7.4",
-        "symfony/postmark-mailer": "^7.4"
+        "spatie/laravel-sitemap": "^8.2",
+        "spatie/schema-org": "^5.0",
+        "symfony/http-client": "^8.1",
+        "symfony/postmark-mailer": "^8.1"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
         "laravel/pail": "^1.2.5",
         "laravel/pao": "^1.0.6",
         "laravel/pint": "^1.27",
+        "laravel/sail": "^1.67",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
         "phpunit/phpunit": "^12.5.12"
