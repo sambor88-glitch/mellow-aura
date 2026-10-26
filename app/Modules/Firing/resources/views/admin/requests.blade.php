@@ -40,7 +40,7 @@
                                 <p class="mt-1 text-[13px] text-label tabular-nums">{{ collect([
                                     trans_choice('{1} :count zgłoszenie|[2,4] :count zgłoszenia|[5,*] :count zgłoszeń', $load['requests']->count()),
                                     $load['kilograms'] ? $load['kilograms'].' kg' : null,
-                                    'z cennika '.Money::format($load['quote']),
+                                    $load['quote'] > 0 ? 'z cennika '.Money::format($load['quote']) : null,
                                     $load['unpriced'] ? $load['unpriced'].' do wyceny' : null,
                                 ])->filter()->join(' · ') }}</p>
                                 @unless ($load['date'])
