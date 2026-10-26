@@ -36,19 +36,21 @@ class CustomOrdersPanelTest extends TestCase
         $this->idea(['name' => 'Basia', 'kind' => BriefKind::Scarf, 'status' => CustomOrderStatus::Quoting, 'quote' => 45050, 'notes' => 'Zadzwonić w piątek']);
         Carbon::setTestNow('2026-10-22 10:00');
         $this->idea(['name' => 'Celina', 'status' => CustomOrderStatus::Shipped]);
+        $this->idea(['name' => 'Dorota', 'status' => CustomOrderStatus::Declined]);
 
         $this->get('/panel/zamowienia-indywidualne')->assertRedirect('/panel/logowanie');
 
         $this->actingAs(User::factory()->create())
             ->get('/panel/zamowienia-indywidualne')
             ->assertOk()
-            ->assertSeeInOrder(['Zamówienia indywidualne', 'Do zrobienia (2)', 'Nowe (1)', 'Wycena (1)', 'Zaliczka (0)', 'W realizacji (0)', 'Wysłane'])
+            ->assertSeeInOrder(['Zamówienia indywidualne', 'Do zrobienia (2)', 'Nowe (1)', 'Wycena (1)', 'Zaliczka (0)', 'W realizacji (0)', 'Wysłane (1)', 'Odrzucone (1)'])
             ->assertSeeInOrder([
                 'Ola', 'Kubki z napisem · ile: 6 · budżet: ok. 600 zł',
                 'Basia', 'Opaska z Twojej apaszki · wycena 450,50 zł', 'Wycena', 'value="450,50"', 'Zadzwonić w piątek',
             ], false)
             ->assertSee('Sześć kubków &lt;b&gt;na ślub&lt;/b&gt;', false)
-            ->assertDontSee('Celina');
+            ->assertDontSee('Celina')
+            ->assertDontSee('Dorota');
 
         $this->get('/panel/zamowienia-indywidualne?status=quoting')
             ->assertSee('Basia')
@@ -56,6 +58,11 @@ class CustomOrdersPanelTest extends TestCase
 
         $this->get('/panel/zamowienia-indywidualne?status=shipped')
             ->assertSee('Celina')
+            ->assertDontSee('Basia');
+
+        $this->get('/panel/zamowienia-indywidualne?status=declined')
+            ->assertSee('Dorota')
+            ->assertDontSee('Celina')
             ->assertDontSee('Basia');
 
         $this->get('/panel/zamowienia-indywidualne?status=deposit')
@@ -87,6 +94,10 @@ class CustomOrdersPanelTest extends TestCase
         $this->patch('/panel/zamowienia-indywidualne/'.$idea->id, ['status' => 'quoting', 'quote' => '12.345'])
             ->assertSessionHasErrors('quote', null, 'pomysl');
         $this->assertSame(CustomOrderStatus::Deposit, $idea->fresh()->status);
+
+        $this->patch('/panel/zamowienia-indywidualne/'.$idea->id, ['status' => 'declined', 'quote' => '', 'notes' => 'Za mało czasu przed ślubem'])
+            ->assertSessionHas('panel_status', 'Zapisane. Ola — odrzucone.');
+        $this->assertSame(CustomOrderStatus::Declined, $idea->fresh()->status);
     }
 
     public function test_photos_from_the_private_disk_show_only_to_the_owner_and_only_under_their_idea(): void

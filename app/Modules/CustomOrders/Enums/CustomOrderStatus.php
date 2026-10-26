@@ -3,8 +3,8 @@
 namespace App\Modules\CustomOrders\Enums;
 
 /**
- * Where an idea stands: just sent, being priced, waiting for the deposit, being made, and shipped — the last one
- * leaves the list of work.
+ * Where an idea stands: just sent, being priced, waiting for the deposit, being made, and shipped. Shipped and declined
+ * ones leave the list of work.
  */
 enum CustomOrderStatus: string
 {
@@ -13,6 +13,7 @@ enum CustomOrderStatus: string
     case Deposit = 'deposit';
     case InProgress = 'in_progress';
     case Shipped = 'shipped';
+    case Declined = 'declined';
 
     public function label(): string
     {
@@ -22,6 +23,7 @@ enum CustomOrderStatus: string
             self::Deposit => 'Zaliczka',
             self::InProgress => 'W realizacji',
             self::Shipped => 'Wysłane',
+            self::Declined => 'Odrzucone',
         };
     }
 
@@ -35,7 +37,7 @@ enum CustomOrderStatus: string
             self::Quoting => 'bg-sand-dark text-lead',
             self::Deposit => 'bg-navy-soft text-navy-text',
             self::InProgress => 'bg-success-soft text-success-text',
-            self::Shipped => 'bg-linen text-label',
+            self::Shipped, self::Declined => 'bg-linen text-label',
         };
     }
 

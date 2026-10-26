@@ -11,7 +11,7 @@
     <nav aria-label="Status" class="mb-6 flex flex-wrap gap-2">
         <a href="{{ route('admin.custom-orders.index') }}" @if ($current === null) aria-current="page" @endif class="{{ $filter }} {{ $current === null ? $filterOn : $filterOff }}">Do zrobienia ({{ $openCount }})</a>
         @foreach (CustomOrderStatus::cases() as $status)
-            <a href="{{ route('admin.custom-orders.index', ['status' => $status->value]) }}" @if ($current === $status) aria-current="page" @endif class="{{ $filter }} {{ $current === $status ? $filterOn : $filterOff }}">{{ $status->label() }}@unless ($status === CustomOrderStatus::Shipped) ({{ (int) ($counts[$status->value] ?? 0) }})@endunless</a>
+            <a href="{{ route('admin.custom-orders.index', ['status' => $status->value]) }}" @if ($current === $status) aria-current="page" @endif class="{{ $filter }} {{ $current === $status ? $filterOn : $filterOff }}">{{ $status->label() }} ({{ (int) ($counts[$status->value] ?? 0) }})</a>
         @endforeach
     </nav>
 

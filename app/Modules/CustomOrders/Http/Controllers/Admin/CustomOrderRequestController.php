@@ -14,12 +14,13 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * „Zamówienia indywidualne” in the panel: ideas from the form with the customer's photos, Kasia's price and note.
- * The list shows the work still to do, oldest first; one status at a time through the tabs, shipped ones on their own.
+ * The list shows the work still to do, oldest first; one status at a time through the tabs. Shipped and declined ideas
+ * leave it for their own tabs, newest first.
  */
 class CustomOrderRequestController extends Controller
 {
-    /** How many shipped ideas the „Wysłane” tab shows. */
-    private const SHIPPED_SHOWN = 50;
+    /** How many ideas the „Wysłane” and „Odrzucone” tabs show. */
+    private const CLOSED_SHOWN = 50;
 
     public function index(Request $request): View
     {
@@ -27,8 +28,8 @@ class CustomOrderRequestController extends Controller
 
         $requests = CustomOrderRequest::query()
             ->with('media')
-            ->when($status === CustomOrderStatus::Shipped,
-                fn ($query) => $query->where('status', $status)->latest('updated_at')->limit(self::SHIPPED_SHOWN),
+            ->when($status !== null && ! in_array($status, CustomOrderStatus::open(), true),
+                fn ($query) => $query->where('status', $status)->latest('updated_at')->limit(self::CLOSED_SHOWN),
                 fn ($query) => $query->whereIn('status', $status ? [$status] : CustomOrderStatus::open())->orderBy('created_at')->orderBy('id'),
             )
             ->get();
