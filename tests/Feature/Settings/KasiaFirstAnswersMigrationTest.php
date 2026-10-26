@@ -78,7 +78,7 @@ class KasiaFirstAnswersMigrationTest extends TestCase
 
         $this->get('/pracownia')->assertSee('Od 5 lat')->assertSee('Prace do odbioru po ~4 tygodniach.')->assertDontSee('Od 6 lat');
         $this->get('/o-mnie')->assertDontSee('Kamionka')->assertDontSee('końcówek bel');
-        $this->get('/wysylka-i-pielegnacja')->assertSee('Zamówienia indywidualne to około 4 tygodnie')->assertDontSee('nic nie dotarło stłuczone');
+        $this->get('/wysylka-i-pielegnacja')->assertSee('Kubek z Twoim napisem to 4–8 tygodni')->assertDontSee('nic nie dotarło stłuczone');
         $this->get('/warsztaty-ceramiczne-krakow')->assertSee('grupa do 6 osób')->assertSee('od 5 lat, do 3 par')->assertDontSee('grupa do 8 osób');
         $this->get('/odcisk-twojej-rosliny')->assertSee('Cztery, pięć tygodni.');
         $this->get('/wypal-ceramiki-krakow')->assertDontSee('Wsad zbieram');

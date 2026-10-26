@@ -179,7 +179,7 @@
             <input type="checkbox" name="euro_from_rate" value="1" x-model="fromRate" @checked($fromRate) class="mt-[3px] size-4 flex-none accent-ink">
             <span>Cena w euro z kursu NBP
                 <span class="mt-0.5 block text-[12.5px] leading-[1.5] text-hint">
-                    Liczy się sama z ceny w złotych po średnim kursie NBP{{ $euroMarkup ? ', z narzutem '.$euroMarkup.'%' : '' }} i zmienia się razem z kursem. Zaokrąglam w górę, do końcówki ,90@if ($euroRate) — dziś 239 zł to {{ Money::input(ConvertEuroPrices::euro(23900, $euroRate->tenThousandths(), $euroMarkup)) }} €@endif. Narzut ustawiasz nad listą produktów.
+                    Liczy się sama z ceny w złotych po średnim kursie NBP{{ $euroMarkup ? ', z narzutem '.$euroMarkup.'%' : '' }} i zmienia się razem z kursem. Zaokrąglam w górę, do końcówki ,90{{ $euroRate ? ' — dziś 239 zł to '.Money::input(ConvertEuroPrices::euro(23900, $euroRate->tenThousandths(), $euroMarkup)).' €' : '' }}. Narzut ustawiasz nad listą produktów.
                     @if ($euroRate)
                         Kurs z {{ $euroRate->effective_on->format('d.m.Y') }}: {{ str_replace('.', ',', $euroRate->rate) }} zł.
                     @else
