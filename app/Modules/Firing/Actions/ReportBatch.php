@@ -2,6 +2,7 @@
 
 namespace App\Modules\Firing\Actions;
 
+use App\Modules\Firing\Enums\FiringRequestStatus;
 use App\Modules\Firing\Mail\BatchReportConfirmed;
 use App\Modules\Firing\Mail\BatchReported;
 use App\Modules\Firing\Models\FiringRequest;
@@ -38,7 +39,7 @@ class ReportBatch
             'quote' => $service === null ? null : FiringQuote::for($service, $quantity),
             'drop_off_on' => $customer['drop_off_on'] ?? null,
             'message' => filled($customer['message'] ?? null) ? trim($customer['message']) : null,
-            'status' => FiringRequest::STATUS_NEW,
+            'status' => FiringRequestStatus::New,
         ]);
 
         try {

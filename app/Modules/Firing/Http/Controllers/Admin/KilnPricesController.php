@@ -14,8 +14,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 /**
- * „Wypały” in the panel: the price list on the firing page and the day batches are collected. The list of batches
- * reported through the form comes with MA-149; until then they arrive by mail.
+ * „Wypały” in the panel: the price list on the firing page and the day batches are collected. The batches
+ * themselves are on „Zgłoszenia do wypału” (FiringRequestController).
  */
 class KilnPricesController extends Controller
 {
