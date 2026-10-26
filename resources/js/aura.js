@@ -48,19 +48,44 @@ export default function aura() {
     addEventListener('load', () => ScrollTrigger.refresh());
 }
 
-/* The header pill slides away while scrolling down and comes back on the way up or with keyboard focus. */
+/*
+ * The header pill slides away while scrolling down and comes back on the way up or with keyboard focus.
+ * It leaves only after 60 px down and never while a finger is on it: a tap on a phone drifts the page a few
+ * pixels, and the pill used to slide out from under the finger, so „Menu” missed the tap (MA-203).
+ */
 function header() {
     const el = document.querySelector('[data-aura-header]');
     if (! el) {
         return;
     }
 
+    // Where the page last moved up from: the pill leaves once the page is 60 px further down.
+    let turn = 0;
+    let touched = false;
+
     ScrollTrigger.create({
         start: 0,
         end: 'max',
-        onUpdate: (self) => el.classList.toggle('is-away', self.direction === 1 && self.scroll() > 240),
+        onUpdate: (self) => {
+            const y = self.scroll();
+            if (self.direction === -1 || y <= 240) {
+                turn = y;
+                el.classList.remove('is-away');
+            } else if (! touched && y - turn > 60) {
+                el.classList.add('is-away');
+            }
+        },
     });
     el.addEventListener('focusin', () => el.classList.remove('is-away'));
+    el.addEventListener('touchstart', () => {
+        touched = true;
+    }, { passive: true });
+    addEventListener('touchend', () => {
+        touched = false;
+    }, { passive: true });
+    addEventListener('touchcancel', () => {
+        touched = false;
+    }, { passive: true });
 }
 
 /* Home hero: the framed photo grows to the whole screen, the word mark blurs apart, then the copy comes in. */
