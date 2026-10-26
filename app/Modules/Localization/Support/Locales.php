@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\App;
  */
 class Locales
 {
+    /** The language the visitor picked with the switch, written by resources/js/locale.js. */
+    public const CHOICE_COOKIE = 'mellowaura-locale';
+
     public static function default(): string
     {
         return config('localization.default');
@@ -209,11 +212,17 @@ class Locales
     }
 
     /**
-     * The language the browser asks for first among the ones the site speaks, from Accept-Language.
-     * Never the visitor's country: a Polish customer on holiday in Spain still gets Polish.
+     * The language the visitor picked with the switch, or else the one the browser asks for first among the ones
+     * the site speaks, from Accept-Language. A choice wins over everything. Never the visitor's country:
+     * a Polish customer on holiday in Spain still gets Polish.
      */
     public static function preferred(Request $request): ?string
     {
+        $chosen = $request->cookie(self::CHOICE_COOKIE);
+        if (is_string($chosen) && self::isEnabled($chosen)) {
+            return $chosen;
+        }
+
         foreach ($request->getLanguages() as $language) {
             $short = strtolower(substr($language, 0, 2));
             if (self::isEnabled($short)) {
