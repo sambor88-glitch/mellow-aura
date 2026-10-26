@@ -247,7 +247,7 @@
                             <span x-text="label">{{ $t('pay', ['amount' => $money($subtotal + $shippingGross)]) }}</span>
                         </button>
                         <div class="mt-3.5 flex flex-wrap justify-center gap-3 text-[11.5px] tracking-[0.08em] text-label uppercase">
-                            {!! collect($t('badges'))->map(fn (string $badge) => '<span>'.e($badge).'</span>')->join('<span>&middot;</span>') !!}
+                            {!! collect(config('services.przelewy24.wallets') ? __('checkout::checkout.wallet_badges') : [])->merge($t('badges'))->map(fn (string $badge) => '<span>'.e($badge).'</span>')->join('<span>&middot;</span>') !!}
                         </div>
                         @if ($needsDelivery)
                             <p class="mt-3 text-center text-[12px] leading-[1.5] text-hint">{{ $t('wrapping') }}</p>

@@ -85,6 +85,17 @@ class CheckoutPageTest extends TestCase
         $this->assertSame(['https://geowidget.inpost.pl/inpost-geowidget.js', 'pl'], [LockerMap::config()['script'], LockerMap::config()['language']]);
     }
 
+    public function test_apple_pay_and_google_pay_are_promised_only_once_przelewy24_switches_them_on(): void
+    {
+        $this->postJson('/koszyk', ['variant_id' => $this->variant('Wazony', 'Niski 16 cm', 23900)->id]);
+
+        $this->get('/zamowienie')->assertSee('Przelewy24')->assertDontSee('Apple Pay')->assertDontSee('Google Pay');
+
+        config(['services.przelewy24.wallets' => true]);
+
+        $this->get('/zamowienie')->assertSeeInOrder(['Apple Pay', 'Google Pay', 'Przelewy24']);
+    }
+
     public function test_the_checkout_is_never_indexed(): void
     {
         config(['app.noindex' => false]);

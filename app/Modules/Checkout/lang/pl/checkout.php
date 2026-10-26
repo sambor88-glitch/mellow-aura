@@ -51,7 +51,8 @@ return [
     'privacy' => 'Dane zapisuję tylko na czas realizacji — szczegóły w :link.',
     'privacy_link' => 'polityce prywatności',
     'pay' => 'Płacę :amount',
-    'badges' => ['Apple Pay', 'Google Pay', 'Przelewy24'],
+    'badges' => ['Przelewy24'],
+    'wallet_badges' => ['Apple Pay', 'Google Pay'],
     'wrapping' => 'Ceramikę zawijam w wióry i podwójny karton',
 
     // Said by the pay button and the pill at the bottom of the screen (resources/js/checkout.js).
