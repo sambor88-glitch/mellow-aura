@@ -25,7 +25,7 @@ class Menu
             ['label' => 'Kategorie', 'route' => 'admin.categories.index', 'active' => 'admin.categories.*', 'description' => 'Tytuł i opis każdej półki w Google oraz wstęp nad produktami.'],
             ['label' => 'Kubek z napisem', 'route' => 'admin.mug.edit', 'active' => 'admin.mug.*', 'description' => 'Zdjęcie pod napisy, rozmiary z cenami i limit znaków.'],
             ['label' => 'Prezenty i zestawy', 'route' => 'admin.gifts.edit', 'active' => 'admin.gifts.*', 'description' => 'Zestawy z rabatem, „Szukam prezentu” i vouchery.'],
-            ['label' => 'Warsztaty', 'route' => 'admin.workshops.edit', 'active' => 'admin.workshops.*', 'description' => 'Cennik warsztatów na stronie. Zapisy i terminy dojdą po świętach.'],
+            ['label' => 'Warsztaty', 'route' => 'admin.workshops.edit', 'active' => 'admin.workshops.*', 'description' => 'Cennik warsztatów i terminarz z liczbą miejsc.'],
             ['label' => 'Wypały', 'route' => 'admin.firing.edit', 'active' => 'admin.firing.*', 'description' => 'Cennik wypałów na zlecenie i notka o wsadzie.'],
             ['label' => 'Usługi', 'route' => 'admin.services.edit', 'active' => 'admin.services.*', 'description' => 'Apaszka i odcisk rośliny: zdjęcia przed i po, teksty, cennik i kroki.'],
             ['label' => 'Treści', 'route' => 'admin.content.edit', 'active' => 'admin.content.*', 'description' => 'Teksty na stronach, częste pytania, fakty o pracowni, zamówienia indywidualne, karty dla lokali i sprawy w formularzu.'],
