@@ -349,6 +349,18 @@
         animation: auraGrain 1.2s steps(6) infinite;
     }
 
+    /*
+     * On a touch screen the orbs and the grain stay where they are. Either one moving makes the phone redraw every
+     * glass layer above it in every frame: a mid-range phone fell to 17 frames a second while doing nothing, and
+     * „Menu” and „Koszyk” answered a tap late or not at all (MA-203). Standing still they look the same.
+     */
+    @media (pointer: coarse) {
+        .aura-orb,
+        .aura-grain {
+            animation: none;
+        }
+    }
+
     .aura-cursor {
         position: fixed;
         left: 0;

@@ -35,6 +35,8 @@ Zapytanie medialne piszesz dopiero wtedy, gdy zmienia się kolejność, znika ca
 - Sklep na telefonie przewija się palcem w bok ze `scroll-snap`, bez przypinania sekcji.
 - `backdrop-filter` i plamy z `blur(90px)` najbardziej obciążają słabsze telefony. Sprawdź na telefonie Kasi,
   zanim uznasz ekran za gotowy.
+- Nic nie animuje się bez końca pod szkłem: plamy poświaty i ziarno na dotyku stoją (MA-203). Nowy efekt
+  w pętli sprawdź w Chrome jako telefon ze spowolnionym CPU (4×) — strona w bezruchu ma mieć 60 klatek.
 
 ## Cele dotykowe
 
