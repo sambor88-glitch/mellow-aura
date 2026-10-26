@@ -84,6 +84,7 @@ class PlaceOrderTest extends TestCase
         $mug->update(['price_gross' => 9900]);
         $vase->product->update(['name' => 'Wazony rzeźbione']);
         $this->assertSame([23900, 7900], $order->items()->orderBy('id')->pluck('unit_price_gross')->all());
+        $this->assertSame(['PLN', 'PLN'], $order->items()->orderBy('id')->pluck('currency')->all());
         $this->assertSame('Wazony', $order->items()->orderBy('id')->value('product_name'));
 
         // The confirmed payment took the vase off the shelf; the mug with the customer's text has no stock.
