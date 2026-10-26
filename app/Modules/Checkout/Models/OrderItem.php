@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
-    'product_variant_id', 'product_name', 'variant_label', 'quantity', 'missing_quantity', 'is_made_to_order', 'unit_price_gross', 'vat_rate', 'vat_exemption',
+    'product_variant_id', 'product_name', 'variant_label', 'quantity', 'missing_quantity', 'is_made_to_order', 'unit_price_gross', 'currency', 'vat_rate', 'vat_exemption',
     'custom_text', 'custom_glaze', 'accepted_deviation', 'recipient_name', 'sender_name', 'dedication',
 ])]
 class OrderItem extends Model

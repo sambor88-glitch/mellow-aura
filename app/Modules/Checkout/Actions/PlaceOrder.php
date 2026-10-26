@@ -67,6 +67,7 @@ class PlaceOrder
                     'variant_label' => $item->label,
                     'quantity' => $item->quantity,
                     'unit_price_gross' => $item->unitPrice,
+                    'currency' => $order->currency,
                     'vat_rate' => $vatRate,
                     'vat_exemption' => $vatExemption,
                     'custom_text' => $item->customText,

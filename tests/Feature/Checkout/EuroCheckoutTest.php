@@ -83,7 +83,7 @@ class EuroCheckoutTest extends TestCase
 
         $order = Order::sole();
         $this->assertSame(['EUR', 'en', 4350, 450], [$order->currency, $order->locale, $order->total_gross, $order->shipping_gross]);
-        $this->assertSame([3900], $order->items->pluck('unit_price_gross')->all());
+        $this->assertSame([[3900, 'EUR']], $order->items->map(fn ($item) => [$item->unit_price_gross, $item->currency])->all());
         $this->assertSame(PaymentStatus::Paid, $order->payment_status);
 
         $this->get('/en/checkout/confirmation')
