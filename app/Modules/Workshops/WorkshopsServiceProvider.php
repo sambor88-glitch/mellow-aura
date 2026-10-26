@@ -6,8 +6,8 @@ use App\Modules\Shared\ModuleServiceProvider;
 use App\Modules\Shared\Support\SitemapPages;
 
 /**
- * Workshops. Before the holidays: the price list page and its editor in the panel.
- * Booking dates and places come after the holidays.
+ * Workshops: the price list page, and in the panel the price list and the calendar of dates.
+ * Booking online comes after the holidays.
  */
 class WorkshopsServiceProvider extends ModuleServiceProvider
 {

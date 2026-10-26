@@ -8,18 +8,24 @@ use App\Modules\Settings\Settings;
 use App\Modules\Shared\Support\Money;
 use App\Modules\Shared\Support\OfferPrices;
 use App\Modules\Workshops\Http\Requests\Admin\SaveWorkshopTypesRequest;
+use App\Modules\Workshops\Models\WorkshopDate;
 use App\Modules\Workshops\Support\WorkshopTypes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 /**
- * „Warsztaty” in the panel: the price list on the workshops page. Dates and places come after the holidays.
+ * „Warsztaty” in the panel: the price list on the workshops page and the calendar of dates with their seats.
  */
 class WorkshopPricesController extends Controller
 {
-    public function edit(Settings $settings): View
+    public function edit(Settings $settings, WorkshopTypes $types): View
     {
+        // Code => name of every workshop that can get a date. A date whose workshop left the price list keeps its row with a note.
+        $names = $types->all()->mapWithKeys(fn (array $type) => [WorkshopTypes::key($type) => $type['name']]);
+
         return view('workshops::admin.edit', [
+            'names' => $names,
+            'dates' => WorkshopDate::query()->upcoming()->get(),
             'lead' => $settings->get('text_workshops_lead'),
             'workshops' => collect((array) $settings->get('workshop_types', []))
                 ->filter(fn (mixed $type) => is_array($type))
