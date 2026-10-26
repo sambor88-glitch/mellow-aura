@@ -35,6 +35,40 @@ class WorkshopDate extends Model
     }
 
     /**
+     * Seats still free on this date. Until bookings arrive with MA-136 every seat is free;
+     * the page and the structured data read free seats only from here.
+     */
+    public function seatsLeft(): int
+    {
+        return max(0, (int) $this->seats);
+    }
+
+    /** „ostatnie miejsce”, „3 wolne miejsca”, „5 wolnych miejsc”. */
+    public function seatsLeftLabel(): string
+    {
+        $left = $this->seatsLeft();
+
+        return match (true) {
+            $left === 0 => 'brak miejsc',
+            $left === 1 => 'ostatnie miejsce',
+            in_array($left % 10, [2, 3, 4], true) && ! in_array($left % 100, [12, 13, 14], true) => $left.' wolne miejsca',
+            default => $left.' wolnych miejsc',
+        };
+    }
+
+    /** „sob. 31 października”. */
+    public function dayLabel(): string
+    {
+        return $this->starts_at->locale('pl')->isoFormat('ddd[.] D MMMM');
+    }
+
+    /** „11:00 – 13:30”, or the start alone when the end is not set. */
+    public function timeLabel(): string
+    {
+        return $this->starts_at->format('H:i').($this->ends_at ? ' – '.$this->ends_at->format('H:i') : '');
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
