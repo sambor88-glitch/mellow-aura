@@ -71,3 +71,58 @@ jobs:
 
       - name: Migrations and seeders on MySQL
         run: php artisan migrate:fresh --seed --force
+
+  # The whole purchase in Chromium, at 1280 px and as an iPhone 13 (tests/e2e, MA-198).
+  # Runs next to `tests` on SQLite, so it does not make that job longer.
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, pdo_sqlite, gd, exif, intl
+          coverage: none
+
+      - uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+
+      - run: composer install --no-interaction --prefer-dist --no-progress
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci && npm run build
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          # The panel account's password lives only in this run.
+          password=$(openssl rand -hex 16)
+          echo "::add-mask::$password"
+          echo "E2E_ADMIN_PASSWORD=$password" >> "$GITHUB_ENV"
+
+      - name: Purchase in the browser
+        run: npx playwright test
+
+      - name: Screenshots, traces and the log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-results
+          path: |
+            test-results/
+            playwright-report/
+            storage/logs/laravel.log
+          retention-days: 7
