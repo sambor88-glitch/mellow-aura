@@ -641,7 +641,7 @@
     },
     {
         "key": "text_scarf_lead",
-        "value": "Przyślij mi tkaninę, która coś dla Ciebie znaczy — jedwabną apaszkę po mamie, sukienkę z pierwszej pracy, koszulę, której nie da się już nosić. Uszyję z niej opaskę i scrunchies."
+        "value": "Nie wiesz, co zrobić z apaszką po babci? Przyślij mi tkaninę, która coś dla Ciebie znaczy — jedwabną apaszkę po mamie, sukienkę z pierwszej pracy, koszulę, której nie da się już nosić. Przeszyję ją na opaskę i scrunchies z Twojej własnej tkaniny."
     },
     {
         "key": "text_scarf_lead_2",
@@ -657,7 +657,7 @@
     },
     {
         "key": "text_imprint_lead",
-        "value": "Przyślij zasuszoną roślinę — kwiat z bukietu ślubnego, gałązkę z wieńca, listek z pierwszego wspólnego mieszkania. Odciskam ją w surowej glinie i wypalam."
+        "value": "Nie wiesz, co zrobić z bukietem po weselu? Przyślij zasuszoną roślinę — kwiat z bukietu ślubnego, gałązkę z wieńca, listek z pierwszego wspólnego mieszkania. Odciskam ją w surowej glinie i wypalam. Zostaje naczynie, z którego jesz, a nie kwiat za szkłem — i taniej niż obraz z żywicy."
     },
     {
         "key": "text_imprint_lead_2",
@@ -763,7 +763,7 @@
     },
     {
         "key": "text_custom_orders_lead",
-        "value": "Serwis na wesele, kubek z tekstem, którego nikt inny nie zrozumie, patera pod tort na chrzciny. Opowiedz mi, co masz w głowie — wycenę i szkic dostaniesz w ciągu pięciu dni."
+        "value": "Serwis na wesele, kubek z tekstem, którego nikt inny nie zrozumie, urna dla kota, patera pod tort na chrzciny. Opowiedz mi, co masz w głowie — wycenę i szkic dostaniesz w ciągu pięciu dni."
     },
     {
         "key": "custom_order_steps",

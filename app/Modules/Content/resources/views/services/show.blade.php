@@ -5,8 +5,9 @@
 @php
     $page = match ($service) {
         Service::Scarf => [
-            'title' => 'Opaska z Twojej apaszki — szyję z Twojej tkaniny',
-            'description' => 'Przyślij apaszkę babci albo sukienkę, z której wyrosłaś. Uszyję z niej opaskę i scrunchies — rzecz, która zostaje w rodzinie zamiast leżeć w szafie.',
+            'title' => 'Przeszycie apaszki po babci — opaska z Twojej tkaniny',
+            'description' => 'Co zrobić z apaszką po babci? Przeszyję ją na opaskę i scrunchies z Twojej własnej tkaniny. Upcycling jedwabiu na zamówienie z jawnym cennikiem.',
+            'serviceName' => 'Opaska z Twojej apaszki',
             'eyebrow' => 'usługa &middot; z Twojej tkaniny',
             'photo' => 'zdjecia/opaska-jedwab.webp',
             'photoAlt' => 'Opaska i scrunchie uszyte z jedwabnej apaszki',
@@ -17,8 +18,9 @@
             'shop' => ['jedwab', 'kosmetyczki-i-piorniki'],
         ],
         Service::Imprint => [
-            'title' => 'Talerz z odciskiem Twojego kwiatu — pamiątka na lata',
-            'description' => 'Zasuszony kwiat z bukietu ślubnego albo z pożegnania odciskam w glinie i wypalam. Roślina znika w piecu, rysunek zostaje na zawsze.',
+            'title' => 'Pamiątka z bukietu ślubnego — kwiat odciśnięty w glinie',
+            'description' => 'Co zrobić z bukietem po weselu? Odciskam zasuszony kwiat w glinie i wypalam. Zostaje talerz, z którego jesz, a nie kwiat za szkłem.',
+            'serviceName' => 'Talerz z odciskiem Twojego kwiatu',
             'eyebrow' => 'usługa &middot; z Twojej rośliny',
             'photo' => 'zdjecia/talerz-niebieski-odcisk.webp',
             'photoAlt' => 'Talerz z odciskiem prawdziwej rośliny',
@@ -34,8 +36,8 @@
 @endphp
 
 <x-shared::layout :title="$page['title']" :description="$page['description']" :canonical="route($service->route())">
-    {{-- For Google the service is named like the page title: „Opaska z Twojej apaszki”. --}}
-    <x-slot:head>{!! ServiceStructuredData::for(Str::before($page['title'], ' — '), route($service->route()), $lead, $prices->map(fn (array $row) => [$row['label'], $row['price_gross']])) !!}</x-slot:head>
+    {{-- For Google the service keeps the name of the thing made, „Opaska z Twojej apaszki”; the title speaks the searcher's words. --}}
+    <x-slot:head>{!! ServiceStructuredData::for($page['serviceName'], route($service->route()), $lead, $prices->map(fn (array $row) => [$row['label'], $row['price_gross']])) !!}</x-slot:head>
     <div class="animate-ma-view pb-24">
         <div class="mx-auto max-w-[1280px] px-7 pt-14">
             <div class="flex flex-wrap items-center gap-14">

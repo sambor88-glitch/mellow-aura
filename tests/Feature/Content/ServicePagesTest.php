@@ -29,7 +29,7 @@ class ServicePagesTest extends TestCase
     {
         $response = $this->get('/z-twojej-apaszki')
             ->assertOk()
-            ->assertSee('<title>Opaska z Twojej apaszki — szyję z Twojej tkaniny</title>', false)
+            ->assertSee('<title>Przeszycie apaszki po babci — opaska z Twojej tkaniny</title>', false)
             ->assertSee('<link rel="canonical" href="'.route('content.scarf').'">', false)
             ->assertSeeInOrder(['usługa &middot; z Twojej tkaniny', "Apaszka babci\nnie musi leżeć\nw szafie", 'Przyślij mi tkaninę, która coś dla Ciebie znaczy', 'Szyję z tkanin z drugiego obiegu'], false)
             ->assertSeeInOrder(['href="'.route('content.contact', ['temat' => 'Zamówienie indywidualne']).'"', 'Napisz, co chcesz przysłać', 'href="'.route('content.imprint').'"', 'Odcisk Twojej rośliny →'], false)
@@ -57,7 +57,7 @@ class ServicePagesTest extends TestCase
 
         $this->get('/odcisk-twojej-rosliny')
             ->assertOk()
-            ->assertSee('<title>Talerz z odciskiem Twojego kwiatu — pamiątka na lata</title>', false)
+            ->assertSee('<title>Pamiątka z bukietu ślubnego — kwiat odciśnięty w glinie</title>', false)
             ->assertSeeInOrder(["Kwiat z bukietu\nzostanie w glinie", 'Przyślij zasuszoną roślinę', 'Napisz, co chcesz odcisnąć', 'href="'.route('content.scarf').'"'], false)
             ->assertSeeInOrder(['Szybciej na WhatsAppie:', 'href="https://wa.me/48600100200"', '+48 600 100 200</a>'], false)
             ->assertSeeInOrder(['Suszysz roślinę płasko', 'Dwa wypały i wysyłka', 'Paczki do mnie: Paczkomat KRA01M.'])
