@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Localization;
 
+use App\Modules\Localization\Support\Locales;
 use App\Modules\Settings\Database\Seeders\SettingsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -107,6 +108,33 @@ class EnglishVersionTest extends TestCase
         // Nothing to offer where there is no English page.
         $this->get('/warsztaty-ceramiczne-krakow', ['Accept-Language' => 'en-GB'])
             ->assertDontSee('This page is also available in English.');
+    }
+
+    public function test_a_chosen_language_wins_over_the_browser_language(): void
+    {
+        // Picked Polish with the switch on an English browser: nothing more is offered, and nothing redirects.
+        $this->withUnencryptedCookie(Locales::CHOICE_COOKIE, 'pl')
+            ->get('/sklep', ['Accept-Language' => 'en-GB,en;q=0.9'])
+            ->assertOk()
+            ->assertDontSee('This page is also available in English.');
+
+        // Picked English: a Polish page offers the English one even to a Polish browser.
+        $this->withUnencryptedCookie(Locales::CHOICE_COOKIE, 'en')
+            ->get('/sklep', ['Accept-Language' => 'pl-PL'])
+            ->assertSee('This page is also available in English.');
+
+        // A language the site does not speak is no choice; the browser decides again.
+        $this->withUnencryptedCookie(Locales::CHOICE_COOKIE, 'de')
+            ->get('/sklep', ['Accept-Language' => 'en'])
+            ->assertSee('This page is also available in English.');
+    }
+
+    public function test_the_switch_and_the_bar_remember_the_choice(): void
+    {
+        $this->get('/sklep', ['Accept-Language' => 'en'])
+            ->assertSee('hreflang="en" lang="en" data-locale-choice="en"', false)
+            ->assertSee('hreflang="en" data-locale-choice="en"', false)
+            ->assertSee('x-on:click="open = false" data-locale-choice="pl"', false);
     }
 
     public function test_redirects_after_a_form_stay_in_the_language_of_the_form(): void
