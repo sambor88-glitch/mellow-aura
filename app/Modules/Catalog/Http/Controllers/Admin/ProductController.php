@@ -4,6 +4,7 @@ namespace App\Modules\Catalog\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Catalog\Actions\AddProductPhotos;
+use App\Modules\Catalog\Actions\ConvertEuroPrices;
 use App\Modules\Catalog\Actions\MoveProduct;
 use App\Modules\Catalog\Actions\SaveProduct;
 use App\Modules\Catalog\Http\Requests\Admin\PhotoRules;
@@ -19,7 +20,7 @@ use Illuminate\View\View;
 
 /**
  * Products in the panel, like the prototype's „Produkty” tab: a form to add one, the home page hero,
- * and the whole offer with order, visibility, photos and an edit form under each product.
+ * the markup on euro prices that follow the NBP rate, and the whole offer with order, visibility, photos and an edit form under each product.
  */
 class ProductController extends Controller
 {
@@ -35,6 +36,7 @@ class ProductController extends Controller
             'categories' => Category::query()->orderBy('sort_order')->get(),
             'heroSlug' => $settings->get('home_hero_product'),
             'heroBadge' => $settings->get('home_hero_badge'),
+            'euroMarkup' => $settings->get(ConvertEuroPrices::MARKUP),
             'photoLimits' => PhotoRules::limits(),
         ]);
     }
@@ -93,5 +95,27 @@ class ProductController extends Controller
         ]);
 
         return to_route('admin.products.index')->with('panel_status', 'Zapisane. Strona główna już to pokazuje.');
+    }
+
+    /**
+     * The markup on euro prices counted from the NBP rate. Saving it recounts them at once, so the English shop
+     * does not wait for the next hourly rate.
+     */
+    public function euroMarkup(Request $request, SaveSettings $saveSettings, ConvertEuroPrices $convertEuroPrices): RedirectResponse
+    {
+        $data = $request->validate([
+            ConvertEuroPrices::MARKUP => ['nullable', 'integer', 'min:0', 'max:100'],
+        ], [
+            ConvertEuroPrices::MARKUP.'.integer' => 'Wpisz pełną liczbę procent, np. 15',
+            ConvertEuroPrices::MARKUP.'.min' => 'Wpisz pełną liczbę procent, np. 15',
+            ConvertEuroPrices::MARKUP.'.max' => 'Narzut może wynieść najwyżej :max%',
+        ]);
+
+        $saveSettings([ConvertEuroPrices::MARKUP => isset($data[ConvertEuroPrices::MARKUP]) ? (int) $data[ConvertEuroPrices::MARKUP] : null]);
+        $convertEuroPrices();
+
+        return to_route('admin.products.index')
+            ->withFragment('ceny-w-euro')
+            ->with('panel_status', 'Zapisane. Ceny w euro z kursu NBP już liczą się z tym narzutem.');
     }
 }

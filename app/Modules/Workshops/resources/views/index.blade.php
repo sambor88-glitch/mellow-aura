@@ -7,7 +7,7 @@
 @endphp
 
 <x-shared::layout title="Warsztaty ceramiczne Kraków — kameralnie, do 6 osób"
-                  description="Warsztaty ceramiczne w Krakowie: lepienie z ręki, szkliwienie, sesje 1:1, dla par i rodzin. Glina, narzędzia i dwa wypały w cenie. Terminy i cennik."
+                  description="Warsztaty ceramiczne w Krakowie: lepienie kubków, szkliwienie, sesje 1:1, dla par i rodzin. Glina, narzędzia i dwa wypały w cenie. Terminy i cennik."
                   :canonical="route('workshops.index')">
     <x-slot:head>{!! $structuredData !!}</x-slot:head>
     <div class="mx-auto max-w-[1280px] animate-ma-view px-7 pt-14 pb-24">

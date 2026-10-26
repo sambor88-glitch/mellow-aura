@@ -24,7 +24,7 @@
             <h2 class="text-[11.5px] tracking-[0.16em] text-label uppercase">Cennik wypałów</h2>
             <a href="{{ route('firing.index') }}" target="_blank" rel="noopener" class="text-[13px]">Zobacz stronę →</a>
         </div>
-        <p class="mb-4 max-w-[62ch] text-[13.5px] leading-[1.6] text-muted">Usługa bez nazwy albo ceny nie pokaże się na stronie. „Za” to dopisek przy cenie, np. / l albo / szt. — przy cenie za całość zostaw puste.</p>
+        <p class="mb-4 max-w-[62ch] text-[13.5px] leading-[1.6] text-muted">Usługa bez nazwy albo ceny nie pokaże się na stronie. „Za” to dopisek przy cenie, np. / kg albo / szt. — przy cenie za całość zostaw puste.</p>
         @if ($bag->any())
             <p role="alert" class="mb-3.5 rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text">Popraw zaznaczone pola, żeby zapisać.</p>
         @endif
@@ -67,12 +67,12 @@
                         </div>
                         <div class="min-w-0">
                             <label for="{{ $id }}-unit" class="{{ $label }}">Za</label>
-                            <input id="{{ $id }}-unit" name="{{ $name }}[unit_label]" value="{{ $row['unit_label'] ?? '' }}" maxlength="20" placeholder="/ l"
+                            <input id="{{ $id }}-unit" name="{{ $name }}[unit_label]" value="{{ $row['unit_label'] ?? '' }}" maxlength="20" placeholder="/ kg"
                                    @class([$input, 'border-error' => $has('unit_label'), 'border-line' => ! $has('unit_label')])>
                         </div>
                         <div class="min-w-0">
                             <label for="{{ $id }}-note" class="{{ $label }}">Dopisek pod nazwą</label>
-                            <input id="{{ $id }}-note" name="{{ $name }}[note]" value="{{ $row['note'] ?? '' }}" maxlength="120" placeholder="np. liczony od litra zajętego miejsca"
+                            <input id="{{ $id }}-note" name="{{ $name }}[note]" value="{{ $row['note'] ?? '' }}" maxlength="120" placeholder="np. liczony od wagi prac"
                                    @class([$input, 'border-error' => $has('note'), 'border-line' => ! $has('note')])>
                         </div>
                         <div class="min-w-0">

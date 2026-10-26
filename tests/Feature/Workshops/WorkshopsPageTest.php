@@ -28,7 +28,7 @@ class WorkshopsPageTest extends TestCase
             ->assertSee('<title>Warsztaty ceramiczne Kraków — kameralnie, do 6 osób</title>', false)
             ->assertSee('<link rel="canonical" href="'.route('workshops.index').'">', false)
             ->assertSeeInOrder(['warsztaty &middot; cennik', 'Zanurz dłonie<br>w glinie', 'Ceny zawierają glinę, narzędzia, szkliwa i wypały.'], false)
-            ->assertSeeInOrder(['Lepienie z ręki', '220,00 zł', 'os.', '2,5 godziny', 'grupa do 6 osób', 'Pierwszy raz w glinie', 'Glina i wszystkie narzędzia', 'Herbata i coś słodkiego'])
+            ->assertSeeInOrder(['Lepienie kubków', '220,00 zł', 'os.', '2 godziny', 'grupa do 6 osób', 'Pierwszy raz w glinie', 'Glina i wszystkie narzędzia', 'Herbata i coś słodkiego'])
             ->assertSeeInOrder(['Warsztat dla pary', '390,00 zł', 'para', 'Rodzinnie z dzieckiem', '260,00 zł', 'dorosły + dziecko'])
             ->assertSeeInOrder(['Jak się zapisać', 'Pracownia: Kraków, okolice Błoń Krakowskich. Dokładny adres podaję po zapisie.'])
             ->assertSee('href="https://wa.me/48600100200"', false)
@@ -43,7 +43,7 @@ class WorkshopsPageTest extends TestCase
         $service = $this->structuredData($response->getContent())->firstWhere('@type', 'Service');
         $this->assertSame(['Warsztaty ceramiczne w Krakowie', route('workshops.index'), url('/').'/#business', 'Kraków'], [$service['name'], $service['url'], $service['provider']['@id'], $service['areaServed']['name']]);
         $this->assertSame([
-            ['Lepienie z ręki', '220.00', 'os.'],
+            ['Lepienie kubków', '220.00', 'os.'],
             ['Szkliwienie i malowanie', '160.00', 'os.'],
             ['Sesja indywidualna 1:1', '420.00', 'os.'],
             ['Warsztat dla pary', '390.00', 'para'],
@@ -78,7 +78,7 @@ class WorkshopsPageTest extends TestCase
     public function test_the_studio_and_home_pages_lead_here(): void
     {
         $this->get('/pracownia')->assertSeeInOrder(['href="'.route('workshops.index').'"', 'Terminy i cennik'], false);
-        $this->get('/')->assertSeeTextInOrder(['Zanurz dłonie w glinie', 'Lepienie z ręki'])->assertSee('href="'.route('workshops.index').'"', false);
+        $this->get('/')->assertSeeTextInOrder(['Zanurz dłonie w glinie', 'Lepienie kubków'])->assertSee('href="'.route('workshops.index').'"', false);
     }
 
     /**

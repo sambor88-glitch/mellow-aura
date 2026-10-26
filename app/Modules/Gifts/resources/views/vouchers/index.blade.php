@@ -1,5 +1,5 @@
 @php
-    $description = 'Voucher na lepienie z ręki, warsztat dla pary albo kwotowy. PDF z imieniem i dedykacją zaraz po opłaceniu, ważny '.$validity.', termin do wyboru.';
+    $description = 'Voucher na lepienie kubków, warsztat dla pary albo kwotowy. PDF z imieniem i dedykacją zaraz po opłaceniu, ważny '.$validity.', termin do wyboru.';
     $chip = 'rounded-full bg-sand-dark px-[13px] py-1.5 text-[12px] tracking-[0.08em] text-muted uppercase';
     $steps = [
         ['Wybierasz voucher', 'Wpisujesz imię obdarowanej osoby, swoje i dedykację. Przed zapłatą widzisz, jak będzie wyglądał.'],

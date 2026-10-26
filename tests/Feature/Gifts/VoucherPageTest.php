@@ -38,7 +38,7 @@ class VoucherPageTest extends TestCase
         $response = $this->get('/voucher-na-warsztaty-ceramiczne')
             ->assertOk()
             ->assertSee('<title>Voucher na warsztaty ceramiczne w Krakowie | MellowAura</title>', false)
-            ->assertSee('<meta name="description" content="Voucher na lepienie z ręki, warsztat dla pary albo kwotowy. PDF z imieniem i dedykacją zaraz po opłaceniu, ważny rok, termin do wyboru.">', false)
+            ->assertSee('<meta name="description" content="Voucher na lepienie kubków, warsztat dla pary albo kwotowy. PDF z imieniem i dedykacją zaraz po opłaceniu, ważny rok, termin do wyboru.">', false)
             ->assertSee('<link rel="canonical" href="'.route('vouchers.index').'">', false)
             ->assertSeeInOrder(['prezent &middot; voucher', 'Voucher na warsztaty ceramiczne w Krakowie', 'Prezent bez rozmiaru.', 'ważny rok'], false)
             ->assertSeeInOrder(['href="'.route('product.show', $couple).'"', 'Voucher — warsztat dla pary', 'Trzy godziny we dwoje.', 'href="'.route('product.show', $amount).'"', 'Voucher kwotowy'], false)
