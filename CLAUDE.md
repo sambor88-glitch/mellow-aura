@@ -27,7 +27,7 @@ Płatności tylko przez Przelewy24 (BLIK, karta, szybki przelew) plus przelew tr
 Stripe usunięty (MA-167). Bramka `Payments\Gateways\Przelewy24Gateway` (rejestracja, BLIK kodem, strona P24,
 powiadomienie z podpisem i `transaction/verify`) jest w kodzie, ale nie była jeszcze uruchomiona na sandboxie — konto P24
 czeka na JDG Kasi (MA-26, MA-98). Bez kluczy płaci `Payments\Gateways\TestGateway`, który nie działa na produkcji —
-dlatego domena nie przechodzi na nową stronę, dopóki bramka nie przejdzie testów w sandboxie.
+dlatego strona nie przejdzie na `mellow-aura.com` (`APP_ENV=production`), dopóki bramka nie przejdzie testów w sandboxie.
 
 ## Moduły
 
@@ -188,7 +188,7 @@ a jedna wypychała na gałąź cudzego PR-a. Zasady, żeby praca się nie dublow
   mówi koordynatorowi.
 
 ## Repozytorium
-- Publiczne: `sambor88-glitch/mellow-aura`, wypychanie przez SSH. Jedna gałąź `main` — szczegóły w „Gałęzie i środowiska”.
+- Publiczne: `sambor88-glitch/mellow-aura`, gałąź `main`, wypychanie przez SSH — szczegóły w „Gałęzie i środowiska”.
 - Nigdy nie commituj `uploads/` (surowe zrzuty mogą zawierać dane klientek), `.env` ani kluczy — są w `.gitignore`.
 - Projekt w Claude Design czyta z tego repozytorium (`github.md`). Zmianę w `.dc.html` wypchnij, a przed pracą
   w Claude Design pobierz aktualną wersję z repo, żeby się nie rozjechały.
@@ -241,13 +241,13 @@ npm install && npm run dev        # Vite na Macu, nie w kontenerze
 
 ## Gałęzie i środowiska
 
-- Jedna gałąź: `main`. Bez `dev`. Każda sesja pracuje na swojej gałęzi i robi PR do `main`; scalenie, gdy CI jest zielone.
-- `main` → strona na Forge (`mellowaura-dev.on-forge.com`), auto-deploy po każdym pushu, `APP_ENV=staging`, `APP_NOINDEX=true`,
-  `APP_LOCALES=pl,en`, dostęp za hasłem. Do startu to nie jest produkcja.
-- Przy starcie ta sama strona dostaje domenę `mellow-aura.com` i `APP_NOINDEX=false`.
-  Do startu `mellow-aura.com` przekierowuje do starego sklepu na SumUp.
-- 26.10.2026 gałąź `dev` (cała praca od tygodnia 1) weszła do `main`, a równoległy szkielet z `main` odpadł.
-  Nie zakładaj `dev` ponownie i nie wypychaj na nią.
+- Jedna gałąź `main`, bez `dev` (decyzja Macieja 26.10). Każda sesja pracuje na swojej gałęzi, a do `main`
+  wchodzi przez PR, gdy przejdą testy w CI.
+- `main` → jedyna strona na Forge (`mellowaura-dev.on-forge.com`), auto-deploy po każdym pushu, `APP_ENV=staging`,
+  `APP_NOINDEX=true`, `APP_LOCALES=pl,en`, dostęp za hasłem. To jeszcze nie produkcja.
+- Przy starcie Maciej przenosi tę stronę na `mellow-aura.com` (`APP_ENV=production`, `APP_NOINDEX=false`, `APP_LOCALES=pl`).
+  Do startu `mellow-aura.com` przekierowuje do starego sklepu na SumUp. Drugiej strony (stagingu) nie zakładamy
+  przed startem — po starcie wracamy do tematu.
 
 ## Staging na Forge — stan na 25.10.2026
 
