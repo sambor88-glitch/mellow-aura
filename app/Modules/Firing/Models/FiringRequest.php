@@ -2,12 +2,13 @@
 
 namespace App\Modules\Firing\Models;
 
+use App\Modules\Firing\Enums\FiringRequestStatus;
 use App\Modules\Shared\Support\Money;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
- * A batch reported through the firing form. Its list in the panel comes with MA-149.
+ * A batch reported through the firing form. Kasia works through them in the panel, grouped by the day they come in.
  *
  * @property int $id
  * @property string $name
@@ -21,12 +22,10 @@ use Illuminate\Support\Carbon;
  * @property ?int $quote
  * @property ?Carbon $drop_off_on
  * @property ?string $message
- * @property string $status
+ * @property FiringRequestStatus $status
  */
 class FiringRequest extends Model
 {
-    public const STATUS_NEW = 'new';
-
     protected $guarded = ['id'];
 
     protected function casts(): array
@@ -36,6 +35,7 @@ class FiringRequest extends Model
             'unit_price' => 'integer',
             'quote' => 'integer',
             'drop_off_on' => 'date',
+            'status' => FiringRequestStatus::class,
         ];
     }
 

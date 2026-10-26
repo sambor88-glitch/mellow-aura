@@ -55,7 +55,7 @@ class BatchFormTest extends TestCase
 
         $batch = FiringRequest::sole();
         $this->assertSame(['bisque_firing', 'Wypał biskwitowy', 'kg', '2.50', 3000, 7500, '2026-11-05', 'new'],
-            [$batch->service_code, $batch->service_label, $batch->unit, $batch->quantity, $batch->unit_price, $batch->quote, $batch->drop_off_on->toDateString(), $batch->status]);
+            [$batch->service_code, $batch->service_label, $batch->unit, $batch->quantity, $batch->unit_price, $batch->quote, $batch->drop_off_on->toDateString(), $batch->status->value]);
 
         Mail::assertQueued(BatchReported::class, fn (BatchReported $mail) => $mail->hasTo('kasia@example.com')
             && $mail->hasReplyTo('ola@example.com', 'Ola')

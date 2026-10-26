@@ -12,4 +12,5 @@
         <p style="margin: 0 0 6px; color: #5C5043;">Telefon: {{ $firingRequest->phone }}</p>
     @endif
     <p style="margin: 18px 0 0; color: #5C5043;">Klientka dostała tę samą wycenę mailem. Odpisz na tego maila — trafi prosto do niej. Napisz, gdzie ma przywieźć prace.</p>
+    <p style="margin: 12px 0 0;"><a href="{{ route('admin.firing.requests.index') }}#zgloszenie-{{ $firingRequest->id }}" style="color: #855F3D;">Zgłoszenie w panelu →</a></p>
 </x-shared::mail.layout>
