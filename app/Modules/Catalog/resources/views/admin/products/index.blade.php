@@ -33,6 +33,18 @@
                 <p class="mt-3 text-[12.5px] leading-[1.5] text-hint">Sekcja „Co teraz jest w pracowni” pokazuje cztery pierwsze widoczne produkty z listy poniżej — strzałkami ▲▼ ustawiasz kolejność. Pole „szt.” to stan magazynowy: po zejściu do zera produkt sam znika ze sklepu.</p>
             </div>
 
+            <div id="ceny-w-euro" class="mb-[22px] rounded-[4px] border border-line bg-cream px-[22px] py-6">
+                <h2 class="mb-1 font-serif text-[23px]">Ceny w euro</h2>
+                <p class="mb-[18px] text-[13.5px] text-label">Dotyczy produktów z zaznaczonym „Cena w euro z kursu NBP”: cena w złotych po kursie, plus narzut, w górę do końcówki ,90.</p>
+                <form method="post" action="{{ route('admin.products.euro-markup') }}" novalidate class="flex flex-wrap items-end gap-3">
+                    @csrf
+                    @method('PUT')
+                    <x-shared::field name="euro_markup_percent" id="euro-markup" label="Narzut w procentach" :value="old('euro_markup_percent', $euroMarkup)" inputmode="numeric" placeholder="np. 15" class="flex-[0_1_200px]" />
+                    <button class="min-h-11 rounded-full border border-line-strong px-5 py-3 text-[13.5px] text-ink hover:border-ink hover:bg-sand-dark">Zapisz</button>
+                </form>
+                <p class="mt-3 text-[12.5px] leading-[1.5] text-hint">Puste pole to bez narzutu. Ceny w euro wpisane ręcznie zostają, jak są.</p>
+            </div>
+
             <h2 class="mb-3.5 text-[11.5px] tracking-[0.16em] text-label uppercase">Wszystko, co masz w ofercie</h2>
             <div class="overflow-hidden rounded-[4px] border border-line bg-cream">
                 @foreach ($products as $product)

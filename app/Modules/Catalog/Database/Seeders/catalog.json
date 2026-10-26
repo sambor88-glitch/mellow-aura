@@ -644,9 +644,9 @@
         },
         {
             "slug": "voucher-lepienie",
-            "name": "Voucher na warsztat — lepienie z ręki",
+            "name": "Voucher na warsztat — lepienie kubków",
             "category": "vouchery",
-            "description": "Dwie i pół godziny przy stole w mojej pracowni, glina, narzędzia i dwa wypały w cenie. Voucher dostajesz w PDF do wydruku albo wyślę go pocztą na ładnym papierze. Ważny rok — termin obdarowana osoba wybiera sama.",
+            "description": "Dwie godziny przy stole w mojej pracowni, glina, narzędzia i dwa wypały w cenie. Voucher dostajesz w PDF do wydruku albo wyślę go pocztą na ładnym papierze. Ważny rok — termin obdarowana osoba wybiera sama.",
             "dimensions": null,
             "care_note": null,
             "is_published": true,

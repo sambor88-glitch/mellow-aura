@@ -2,9 +2,9 @@
 @php
     // The topic name matches the contact form's list from the panel; if it is renamed, the form simply opens without it.
     $contactUrl = route('content.contact', ['temat' => 'Wypał moich prac']);
-    // The lowest price per litre comes from the panel, like every number on the page.
-    $fromPerLitre = $prices->where('unit', 'litre')->min('price_gross');
-    $description = 'Wypał biskwitowy i na ostro do 1240°C, wypał złota, cała półka na wyłączność.'.($fromPerLitre ? ' Cennik od '.Money::input($fromPerLitre).' zł za litr.' : '');
+    // The lowest price per kilogram comes from the panel, like every number on the page.
+    $fromPerKilogram = $prices->where('unit', 'kg')->min('price_gross');
+    $description = 'Wypał biskwitowy i na ostro do 1240°C, wypał złota, cała półka na wyłączność.'.($fromPerKilogram ? ' Cennik od '.Money::input($fromPerKilogram).' zł za kilogram.' : '');
 @endphp
 
 <x-shared::layout title="Wypał ceramiki Kraków — cennik wypałów na zlecenie" :description="$description" :canonical="route('firing.index')">
@@ -52,7 +52,7 @@
             <div class="min-w-[280px] flex-[0_1_320px]">
                 <div class="rounded-[4px] border border-divider bg-cream px-7 py-[30px]">
                     <h2 class="mb-2.5 font-serif text-[23px]">Zgłoś wsad</h2>
-                    <p class="mb-5 text-[14.5px] leading-[1.6] text-muted">Napisz, ile prac, jakie rozmiary i jaka glina — odpiszę z terminem wsadu.</p>
+                    <p class="mb-5 text-[14.5px] leading-[1.6] text-muted">Napisz, ile prac, ile mniej więcej ważą i jaka glina — odpiszę z terminem wsadu.</p>
                     <div class="grid gap-3">
                         @if ($phone)
                             <a href="https://wa.me/{{ preg_replace('/\D+/', '', $phone) }}" target="_blank" rel="noopener"

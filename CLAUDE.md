@@ -111,7 +111,8 @@ Szczegóły w `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html`. Tu zasady,
   z mieszanymi walutami.
 - Cenę w euro produkt ma na jeden z dwóch sposobów. Domyślnie wpisuje ją Kasia w panelu. Z zaznaczonym
   „Cena w euro z kursu NBP” (`products.euro_from_rate`) liczy ją `Catalog\Actions\ConvertEuroPrices` z ceny w złotych
-  po średnim kursie NBP (tabela A, `exchange_rates`), zaokrągloną do pełnego euro z końcówką ,90. Kurs pobiera co godzinę
+  po średnim kursie NBP (tabela A, `exchange_rates`), plus narzut z panelu (`euro_markup_percent`, Produkty → „Ceny w euro”,
+  decyzja Kasi: 15%), zaokrągloną w górę do końcówki ,90. Kurs pobiera co godzinę
   `catalog:euro-rate`. Przeliczona cena zapisuje się w `prices` jak każda inna — nigdy nie liczymy jej w locie przy wyświetlaniu,
   bo koszyk, zamówienie i Omnibus muszą widzieć tę samą kwotę.
 - Cena w złotych zostaje w wariancie (`price_gross`, `compare_at_price`), tak jak polski tekst zostaje w tabeli

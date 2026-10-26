@@ -28,9 +28,9 @@ class FiringPageTest extends TestCase
         $response = $this->get('/wypal-ceramiki-krakow')
             ->assertOk()
             ->assertSee('<title>Wypał ceramiki Kraków — cennik wypałów na zlecenie</title>', false)
-            ->assertSee('<meta name="description" content="Wypał biskwitowy i na ostro do 1240°C, wypał złota, cała półka na wyłączność. Cennik od 40 zł za litr.">', false)
+            ->assertSee('<meta name="description" content="Wypał biskwitowy i na ostro do 1240°C, wypał złota, cała półka na wyłączność. Cennik od 30 zł za kilogram.">', false)
             ->assertSeeInOrder(['wypały na zlecenie', 'Wypalę Twoje prace', 'Lepisz w domu i nie masz pieca?'])
-            ->assertSeeInOrder(['Wypał biskwitowy do 1000°C', 'liczony od litra zajętego miejsca', '40,00 zł / l', 'Cała półka na wyłączność', '180,00 zł', 'Szkliwienie przeze mnie'])
+            ->assertSeeInOrder(['Wypał biskwitowy', 'liczony od wagi prac', '30,00 zł / kg', 'Wypał niskotemperaturowy do 1050°C', '40,00 zł / kg', 'Wypał wysokotemperaturowy do 1240°C', '50,00 zł / kg', 'Cała półka na wyłączność', '180,00 zł', 'Szkliwienie przeze mnie'])
             ->assertSee('Wsad zbieram raz w tygodniu, zwykle w czwartek.')
             ->assertSeeInOrder(['Zgłoś wsad', 'href="https://wa.me/48600100200"', 'href="'.e(route('content.contact', ['temat' => 'Wypał moich prac'])).'"'], false);
 
@@ -39,8 +39,9 @@ class FiringPageTest extends TestCase
         $service = $this->structuredData($response->getContent())->firstWhere('@type', 'Service');
         $this->assertSame('Wypał ceramiki na zlecenie w Krakowie', $service['name']);
         $this->assertSame([
-            ['Wypał biskwitowy do 1000°C', '40.00', 'l'],
-            ['Wypał na ostro do 1240°C', '60.00', 'l'],
+            ['Wypał biskwitowy', '30.00', 'kg'],
+            ['Wypał niskotemperaturowy do 1050°C', '40.00', 'kg'],
+            ['Wypał wysokotemperaturowy do 1240°C', '50.00', 'kg'],
             ['Wypał złota, trzeci wypał', '35.00', 'szt.'],
             ['Cała półka na wyłączność', '180.00', null],
             ['Szkliwienie przeze mnie', '25.00', 'szt.'],
@@ -51,12 +52,12 @@ class FiringPageTest extends TestCase
     {
         $this->actingAs(User::factory()->create())
             ->put('/panel/wypaly', ['prices' => [
-                ['label' => 'Wypał biskwitowy do 1000°C', 'price' => '35', 'unit_label' => '/ l', 'code' => 'bisque_firing', 'unit' => 'litre', 'compare_at' => '45'],
+                ['label' => 'Wypał biskwitowy', 'price' => '25', 'unit_label' => '/ kg', 'code' => 'bisque_firing', 'unit' => 'kg', 'compare_at' => '35'],
             ]])
             ->assertRedirect('/panel/wypaly#cennik');
 
         $this->get('/wypal-ceramiki-krakow')
-            ->assertSeeInOrder(['Wypał biskwitowy do 1000°C', '35,00 zł / l', '45,00 zł', 'Najniższa cena z 30 dni przed obniżką: 40,00 zł']);
+            ->assertSeeInOrder(['Wypał biskwitowy', '25,00 zł / kg', '35,00 zł', 'Najniższa cena z 30 dni przed obniżką: 30,00 zł']);
     }
 
     public function test_the_panel_saves_the_price_list_and_the_sentences(): void
@@ -66,13 +67,13 @@ class FiringPageTest extends TestCase
         $this->actingAs(User::factory()->create())
             ->get('/panel/wypaly')
             ->assertOk()
-            ->assertSeeInOrder(['Lepisz w domu', 'value="Wypał biskwitowy do 1000°C"', 'value="40"', 'value="/ l"', 'Nowa usługa — nazwa'], false);
+            ->assertSeeInOrder(['Lepisz w domu', 'value="Wypał biskwitowy"', 'value="30"', 'value="/ kg"', 'Nowa usługa — nazwa'], false);
 
         $this->put('/panel/wypaly', [
             'text_kiln_lead' => 'Nie masz pieca?',
             'text_kiln_note' => '',
             'prices' => [
-                ['label' => 'Wypał biskwitowy', 'price' => '45', 'unit_label' => '/ l', 'note' => '', 'code' => 'bisque_firing', 'unit' => 'litre'],
+                ['label' => 'Wypał biskwitowy', 'price' => '45', 'unit_label' => '/ kg', 'note' => '', 'code' => 'bisque_firing', 'unit' => 'kg'],
                 ['label' => 'Cała półka', 'price' => '180', 'code' => 'private_shelf', 'remove' => '1'],
                 ['label' => 'Wypał raku', 'price' => '90,50', 'unit_label' => '', 'note' => 'w ogrodzie', 'code' => '', 'unit' => ''],
                 ['label' => '', 'price' => ''],
@@ -84,7 +85,7 @@ class FiringPageTest extends TestCase
         $this->assertSame('Nie masz pieca?', Setting::find('text_kiln_lead')->value);
         $this->assertNull(Setting::find('text_kiln_note')->value);
         $this->assertEquals([
-            ['code' => 'bisque_firing', 'label' => 'Wypał biskwitowy', 'note' => null, 'price_gross' => 4500, 'compare_at_price' => null, 'unit' => 'litre', 'unit_label' => '/ l'],
+            ['code' => 'bisque_firing', 'label' => 'Wypał biskwitowy', 'note' => null, 'price_gross' => 4500, 'compare_at_price' => null, 'unit' => 'kg', 'unit_label' => '/ kg'],
             ['code' => 'wypal_raku', 'label' => 'Wypał raku', 'note' => 'w ogrodzie', 'price_gross' => 9050, 'compare_at_price' => null, 'unit' => null, 'unit_label' => null],
         ], Setting::find('kiln_prices')->value);
 
@@ -92,6 +93,6 @@ class FiringPageTest extends TestCase
             ->put('/panel/wypaly', ['prices' => [['label' => 'Wypał', 'price' => 'drogo']]])
             ->assertSee('Wpisz cenę, np. 40 albo 40,50');
 
-        $this->get('/wypal-ceramiki-krakow')->assertSeeInOrder(['Wypał biskwitowy', '45,00 zł / l', 'Wypał raku', '90,50 zł'])->assertDontSee('Cała półka');
+        $this->get('/wypal-ceramiki-krakow')->assertSeeInOrder(['Wypał biskwitowy', '45,00 zł / kg', 'Wypał raku', '90,50 zł'])->assertDontSee('Cała półka');
     }
 }

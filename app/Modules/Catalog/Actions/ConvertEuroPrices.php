@@ -5,15 +5,21 @@ namespace App\Modules\Catalog\Actions;
 use App\Modules\Catalog\Models\ExchangeRate;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
+use App\Modules\Settings\Settings;
 use Illuminate\Support\Facades\DB;
 
 /**
  * Sets the euro prices of products marked euro_from_rate from their złoty prices at the latest NBP rate,
- * rounded to the nearest whole euro and ending in .90 (239 zł at 4.2653 → €55.90). A price that did not move
- * after rounding is left alone, so price_history only learns real changes and Omnibus counts them per currency.
+ * plus the markup from the panel (euro_markup_percent), rounded up to the next price ending in .90
+ * (239 zł at 4.2653 plus 15% → €64.90). A price that did not move after rounding is left alone, so price_history
+ * only learns real changes and Omnibus counts them per currency.
  */
 class ConvertEuroPrices
 {
+    public const MARKUP = 'euro_markup_percent';
+
+    public function __construct(private Settings $settings) {}
+
     /**
      * @return int how many euro prices were created or changed
      */
@@ -30,23 +36,28 @@ class ConvertEuroPrices
             ->when($product, fn ($variants) => $variants->where('product_id', $product->id))
             ->get();
 
-        return DB::transaction(fn () => $variants->sum(fn (ProductVariant $variant) => $this->convert($variant, $rate->tenThousandths())));
+        $this->settings->refresh();
+        $markup = (int) $this->settings->get(self::MARKUP, 0);
+
+        return DB::transaction(fn () => $variants->sum(fn (ProductVariant $variant) => $this->convert($variant, $rate->tenThousandths(), $markup)));
     }
 
     /**
-     * Grosze to euro cents: the nearest whole euro, minus ten cents, never below €0.90.
+     * Grosze to euro cents with the markup in percent: the lowest price ending in .90 that is not below the exact
+     * amount, never below €0.90. The rate is in ten-thousandths of a złoty, so grosze × (100 + markup) / rate is euros.
      */
-    public static function euro(int $grosze, int $rate): int
+    public static function euro(int $grosze, int $rate, int $markup = 0): int
     {
-        $euros = intdiv(2 * $grosze * 100 + $rate, 2 * $rate);
+        // The smallest whole euro n with n − 0.10 ≥ the exact amount, in integers only.
+        $euros = intdiv($grosze * (100 + $markup) * 10 + $rate + 10 * $rate - 1, 10 * $rate);
 
         return max(1, $euros) * 100 - 10;
     }
 
-    private function convert(ProductVariant $variant, int $rate): int
+    private function convert(ProductVariant $variant, int $rate, int $markup): int
     {
-        $amount = self::euro($variant->price_gross, $rate);
-        $compareAt = $variant->compare_at_price === null ? null : self::euro($variant->compare_at_price, $rate);
+        $amount = self::euro($variant->price_gross, $rate, $markup);
+        $compareAt = $variant->compare_at_price === null ? null : self::euro($variant->compare_at_price, $rate, $markup);
 
         $price = $variant->prices()->firstOrNew(['currency' => 'EUR']);
         // Rounding can bring the two together; a „before” price no higher than the price is no reduction.
