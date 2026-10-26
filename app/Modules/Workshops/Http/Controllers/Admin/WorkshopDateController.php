@@ -21,6 +21,12 @@ class WorkshopDateController extends Controller
 
     public function destroy(WorkshopDate $date): RedirectResponse
     {
+        // Someone paid for or is paying for a seat; the date stays until the bookings are cancelled (MA-139).
+        if ($date->bookings()->exists()) {
+            return to_route('admin.workshops.edit')->withFragment('terminy')
+                ->with('panel_status', 'Na ten termin są już zapisy — nie usuwam go z terminarza');
+        }
+
         $date->delete();
 
         return to_route('admin.workshops.edit')->withFragment('terminy')->with('panel_status', 'Termin usunięty z terminarza');

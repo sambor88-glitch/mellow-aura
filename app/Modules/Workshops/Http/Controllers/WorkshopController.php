@@ -13,7 +13,7 @@ use Illuminate\View\View;
 
 /**
  * /warsztaty-ceramiczne-krakow: the price list and the upcoming dates from the panel, with the studio's photos.
- * Until booking online arrives (MA-136), a date is taken on WhatsApp or through the contact form.
+ * A date is booked and paid on its own form (BookingController); a question still goes to WhatsApp or the contact form.
  */
 class WorkshopController extends Controller
 {
@@ -27,7 +27,7 @@ class WorkshopController extends Controller
         $byCode = $workshops->keyBy(fn (array $workshop) => WorkshopTypes::key($workshop));
 
         // A date whose workshop is no longer in the price list has no name or price to show.
-        $dates = WorkshopDate::query()->upcoming()->get()
+        $dates = WorkshopDate::query()->upcoming()->withTakenSeats()->get()
             ->filter(fn (WorkshopDate $date) => $byCode->has($date->workshop_code))
             ->map(fn (WorkshopDate $date) => ['date' => $date, 'workshop' => $byCode->get($date->workshop_code)])
             ->values();

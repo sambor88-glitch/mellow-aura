@@ -21,7 +21,7 @@ class WorkshopsPageTest extends TestCase
         $this->seed(SettingsSeeder::class);
     }
 
-    public function test_the_page_shows_the_price_list_from_the_panel_and_how_to_sign_up_before_booking_online(): void
+    public function test_the_page_shows_the_price_list_from_the_panel_and_how_to_sign_up(): void
     {
         $this->settings(['contact_phone' => '+48 600 100 200']);
 
@@ -35,7 +35,7 @@ class WorkshopsPageTest extends TestCase
             ->assertSeeInOrder(['Jak się zapisać', 'Pracownia: Kraków, okolice Błoń Krakowskich. Dokładny adres podaję po zapisie.'])
             ->assertSee('href="https://wa.me/48600100200"', false)
             ->assertSee('href="'.e(route('content.contact', ['temat' => 'Warsztaty i terminy'])).'"', false)
-            // Until workshops are booked on the site, writing about one counts as workshop_booking in Google Analytics.
+            // Writing about a workshop on WhatsApp or through the form counts as workshop_booking in Google Analytics.
             ->assertSee('data-analytics-click="'.e(json_encode(['name' => 'workshop_booking', 'params' => ['method' => 'whatsapp']])).'"', false)
             ->assertSee('data-analytics-click="'.e(json_encode(['name' => 'workshop_booking', 'params' => ['method' => 'contact_form']])).'"', false)
             ->assertDontSee('Najbliższe terminy');
@@ -53,11 +53,11 @@ class WorkshopsPageTest extends TestCase
         ], $this->serviceOffers($service));
     }
 
-    public function test_the_upcoming_dates_come_from_the_calendar_with_free_seats_and_a_link_to_the_form(): void
+    public function test_the_upcoming_dates_come_from_the_calendar_with_free_seats_and_a_link_to_the_booking_form(): void
     {
         $this->travelTo(CarbonImmutable::parse('2026-10-26 12:00', 'Europe/Warsaw'));
         WorkshopDate::factory()->create(['workshop_code' => 'glazing', 'starts_at' => '2026-11-03 18:00', 'ends_at' => '2026-11-03 20:00', 'seats' => 5]);
-        WorkshopDate::factory()->create(['workshop_code' => 'hand_building', 'starts_at' => '2026-10-31 11:00', 'ends_at' => '2026-10-31 13:30', 'seats' => 1]);
+        $first = WorkshopDate::factory()->create(['workshop_code' => 'hand_building', 'starts_at' => '2026-10-31 11:00', 'ends_at' => '2026-10-31 13:30', 'seats' => 1]);
         WorkshopDate::factory()->create(['workshop_code' => 'hand_building', 'starts_at' => '2026-11-07 11:00', 'ends_at' => null, 'seats' => 3]);
         WorkshopDate::factory()->create(['workshop_code' => 'hand_building', 'starts_at' => '2026-10-26 10:00', 'seats' => 4]);
         WorkshopDate::factory()->create(['workshop_code' => 'removed_from_price_list', 'starts_at' => '2026-11-10 11:00', 'seats' => 4]);
@@ -71,7 +71,7 @@ class WorkshopsPageTest extends TestCase
                 'sob. 7 listopada', '11:00 &middot; Lepienie kubków', '3 wolne miejsca',
                 'Jak się zapisać',
             ], false)
-            ->assertSee('href="'.e(route('content.contact', ['temat' => 'Warsztaty i terminy', 'wiadomosc' => 'Chcę się zapisać: Lepienie kubków, sob. 31 października, 11:00 – 13:30. Liczba osób: '])).'#formularz"', false)
+            ->assertSee('href="'.route('workshops.booking.create', $first).'" aria-label="Wybieram: Lepienie kubków, sob. 31 października, 11:00 – 13:30"', false)
             ->assertDontSee('pon. 26 października')
             ->assertDontSee('10 listopada');
 

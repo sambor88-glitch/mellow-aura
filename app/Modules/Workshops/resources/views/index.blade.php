@@ -63,15 +63,11 @@
                 @if ($dates->isNotEmpty())
                     <section aria-labelledby="workshop-dates" class="mb-14">
                         <h2 id="workshop-dates" class="mb-2 font-serif text-[length:clamp(28px,3.4vw,40px)] font-light">Najbliższe terminy</h2>
-                        <p class="mb-[26px] text-[15.5px] text-muted">Wybierz termin, a potem zostaw kontakt — potwierdzam rezerwację wiadomością.</p>
+                        <p class="mb-[26px] text-[15.5px] text-muted">Wybierz termin i zapłać BLIK-iem, kartą albo przez Przelewy24 — miejsce jest Twoje od razu.</p>
                         <ul class="grid gap-3">
                             @foreach ($dates as ['date' => $date, 'workshop' => $workshop])
                                 @php
                                     $when = $date->dayLabel().', '.$date->timeLabel();
-                                    $dateUrl = route('content.contact', [
-                                        'temat' => 'Warsztaty i terminy',
-                                        'wiadomosc' => 'Chcę się zapisać: '.$workshop['name'].', '.$when.'. Liczba osób: ',
-                                    ]).'#formularz';
                                 @endphp
                                 <li class="flex flex-wrap items-center gap-4 rounded-[4px] border border-divider bg-cream px-[22px] py-5">
                                     <div class="min-w-0 flex-[1_1_200px]">
@@ -86,8 +82,7 @@
                                             <div class="mt-0.5 text-[14px] tabular-nums">{{ Money::format($workshop['price_gross']) }}@if ($workshop['unit_label']) / {{ $workshop['unit_label'] }}@endif</div>
                                         </div>
                                         @if ($date->seatsLeft() > 0)
-                                            <a href="{{ $dateUrl }}" aria-label="Wybieram: {{ $workshop['name'] }}, {{ $when }}"
-                                               data-analytics-click="{{ json_encode(['name' => 'workshop_booking', 'params' => ['method' => 'contact_form']]) }}"
+                                            <a href="{{ route('workshops.booking.create', $date) }}" aria-label="Wybieram: {{ $workshop['name'] }}, {{ $when }}"
                                                class="rounded-full border border-ink px-5 py-2.5 text-[13px] text-ink transition duration-300 hover:bg-ink hover:text-linen active:scale-[.97]">Wybieram</a>
                                         @endif
                                     </div>
@@ -100,9 +95,9 @@
                 <h2 class="mb-2 font-serif text-[length:clamp(28px,3.4vw,40px)] font-light">Jak się zapisać</h2>
                 <p class="mb-6 max-w-[52ch] text-[15.5px] leading-[1.65] text-muted">
                     @if ($dates->isNotEmpty())
-                        Zapisy przez stronę dopiero przygotowuję. Na razie wybierz termin albo napisz, który warsztat Cię ciekawi i ile osób przyjdzie.
+                        Wybierz termin powyżej i zapłać przy zapisie. Nie widzisz pasującego albo przychodzi większa grupa? Napisz, który warsztat Cię ciekawi i ile osób przyjdzie.
                     @else
-                        Zapisy przez stronę dopiero przygotowuję. Na razie napisz, który warsztat Cię ciekawi i ile osób przyjdzie — ustalimy termin.
+                        Napisz, który warsztat Cię ciekawi i ile osób przyjdzie — ustalimy termin.
                     @endif
                 </p>
                 @if ($location)
