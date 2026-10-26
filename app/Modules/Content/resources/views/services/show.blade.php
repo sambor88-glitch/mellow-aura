@@ -12,6 +12,7 @@
             'photo' => 'zdjecia/opaska-jedwab.webp',
             'photoAlt' => 'Opaska i scrunchie uszyte z jedwabnej apaszki',
             'cta' => 'Napisz, co chcesz przysłać',
+            'brief' => 'apaszka',
             'other' => [Service::Imprint, 'Odcisk Twojej rośliny →'],
             'examplesLead' => 'Tkaniny, które do mnie przyszły, obok tego, co z nich uszyłam. Przeciągnij uchwyt na zdjęciu, żeby zobaczyć zmianę.',
             'pricesHeading' => 'Co wychodzi z jednej apaszki',
@@ -25,13 +26,15 @@
             'photo' => 'zdjecia/talerz-niebieski-odcisk.webp',
             'photoAlt' => 'Talerz z odciskiem prawdziwej rośliny',
             'cta' => 'Napisz, co chcesz odcisnąć',
+            'brief' => 'odcisk',
             'other' => [Service::Scarf, 'Z Twojej apaszki →'],
             'examplesLead' => 'Rośliny, które do mnie przyszły, obok ceramiki, na której zostawiły ślad. Przeciągnij uchwyt na zdjęciu, żeby zobaczyć zmianę.',
             'pricesHeading' => 'Na czym odciskam',
             'shop' => ['talerze-i-miski', 'wazony-i-patery'],
         ],
     };
-    $contactUrl = route('content.contact', ['temat' => 'Zamówienie indywidualne']);
+    // The custom order form opens with this service chosen (CustomOrders\Enums\BriefKind::slug).
+    $briefUrl = route('custom-orders.index', ['usluga' => $page['brief']]).'#formularz';
     $label = 'pointer-events-none absolute top-2.5 rounded-full bg-cream/92 px-[11px] py-1 text-[10.5px] tracking-[0.14em] text-ink uppercase transition-opacity duration-250';
 @endphp
 
@@ -51,7 +54,7 @@
                         <p class="mb-[34px] max-w-[46ch] text-[16px] leading-[1.7] text-lead">{{ $lead2 }}</p>
                     @endif
                     <div class="flex flex-wrap gap-3.5">
-                        <a href="{{ $contactUrl }}" class="rounded-full bg-ink px-8 py-4 text-[14px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">{{ $page['cta'] }}</a>
+                        <a href="{{ $briefUrl }}" class="rounded-full bg-ink px-8 py-4 text-[14px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">{{ $page['cta'] }}</a>
                         <a href="{{ route($page['other'][0]->route()) }}" class="rounded-full border border-line-strong px-8 py-4 text-[14px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark hover:text-ink active:scale-[.98]">{{ $page['other'][1] }}</a>
                     </div>
                     @if ($phone)
