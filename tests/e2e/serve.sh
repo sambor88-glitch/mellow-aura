@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Starts the shop for the Playwright checkout test: a fresh SQLite database with the seeders,
+# a panel account and `php artisan serve`. Playwright runs it through webServer in playwright.config.js.
+# Environment variables beat .env, so a developer's own .env and database stay untouched.
+set -euo pipefail
+
+cd "$(dirname "$0")/../.."
+
+: "${E2E_PORT:=8123}"
+: "${E2E_ADMIN_EMAIL:=e2e@mellow-aura.test}"
+: "${E2E_ADMIN_PASSWORD:?Set E2E_ADMIN_PASSWORD (at least 12 characters) for the panel account}"
+
+export APP_ENV=local
+export APP_DEBUG=true
+export APP_URL="http://127.0.0.1:${E2E_PORT}"
+export APP_LOCALES=pl,en
+export STAGING_PASSWORD=
+export DB_CONNECTION=sqlite
+export DB_DATABASE="$PWD/storage/e2e/database.sqlite"
+export DB_URL=
+export SESSION_DRIVER=file
+export CACHE_STORE=file
+export QUEUE_CONNECTION=sync
+export MAIL_MAILER=log
+export MAIL_REDIRECT_TO=
+export LOG_CHANNEL=single
+export LOG_LEVEL=debug
+# No payment keys: TestGateway pays every order at once.
+export PRZELEWY24_MERCHANT_ID= PRZELEWY24_POS_ID= PRZELEWY24_CRC= PRZELEWY24_API_KEY=
+
+mkdir -p storage/e2e
+rm -f "$DB_DATABASE"
+touch "$DB_DATABASE"
+# The test reads the mails from this log, so it starts empty.
+: > storage/logs/laravel.log
+
+php artisan storage:link --no-interaction || true
+php artisan migrate:fresh --seed --force --no-interaction
+printf '%s\n' "$E2E_ADMIN_PASSWORD" | php artisan admin:user "$E2E_ADMIN_EMAIL" --name=E2E --role=owner
+
+exec php artisan serve --host=127.0.0.1 --port="$E2E_PORT" --no-reload
