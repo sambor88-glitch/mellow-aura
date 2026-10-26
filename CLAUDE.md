@@ -27,7 +27,7 @@ Płatności tylko przez Przelewy24 (BLIK, karta, szybki przelew) plus przelew tr
 Stripe usunięty (MA-167). Bramka `Payments\Gateways\Przelewy24Gateway` (rejestracja, BLIK kodem, strona P24,
 powiadomienie z podpisem i `transaction/verify`) jest w kodzie, ale nie była jeszcze uruchomiona na sandboxie — konto P24
 czeka na JDG Kasi (MA-26, MA-98). Bez kluczy płaci `Payments\Gateways\TestGateway`, który nie działa na produkcji —
-dlatego `dev` nie idzie do `main`, dopóki bramka nie przejdzie testów w sandboxie.
+dlatego strona nie przejdzie na `mellow-aura.com` (`APP_ENV=production`), dopóki bramka nie przejdzie testów w sandboxie.
 
 ## Moduły
 
@@ -183,13 +183,12 @@ a jedna wypychała na gałąź cudzego PR-a. Zasady, żeby praca się nie dublow
 - Przed startem pracy zadanie dostaje w Jirze status „W toku” i komentarz „Robi: sesja <link do sesji>”.
   Zadanie „W toku” z linkiem do innej sesji nie jest zaczynane drugi raz — najpierw pytanie do Macieja.
 - Przed zaproponowaniem zadania sprawdź też działające sesje (`list_sessions`, tytuły z numerem MA), nie tylko kod
-  na `dev` i PR-y.
+  na `main` i PR-y.
 - Sesja wypycha tylko na swoją gałąź. Cudzego PR-a nie zmienia — opisuje problem w komentarzu do PR-a albo
   mówi koordynatorowi.
 
 ## Repozytorium
-- Publiczne: `sambor88-glitch/mellow-aura`, wypychanie przez SSH. Gałąź robocza `dev`, produkcja `main` — szczegóły w „Gałęzie i środowiska”.
-- Publiczne: `sambor88-glitch/mellow-aura`, gałąź `main`, wypychanie przez SSH.
+- Publiczne: `sambor88-glitch/mellow-aura`, gałąź `main`, wypychanie przez SSH — szczegóły w „Gałęzie i środowiska”.
 - Nigdy nie commituj `uploads/` (surowe zrzuty mogą zawierać dane klientek), `.env` ani kluczy — są w `.gitignore`.
 - Projekt w Claude Design czyta z tego repozytorium (`github.md`). Zmianę w `.dc.html` wypchnij, a przed pracą
   w Claude Design pobierz aktualną wersję z repo, żeby się nie rozjechały.
@@ -208,7 +207,7 @@ a jedna wypychała na gałąź cudzego PR-a. Zasady, żeby praca się nie dublow
   zadanie z estymatą, potem worklog.
 - Zanim zaproponujesz zadanie MA, sprawdź, czy już nie weszło. Status w Jirze nie wystarcza, bo bywa
   w tyle za kodem. Sprawdź trzy miejsca:
-  - gałąź `dev`, nie `main`: `git log origin/dev --grep MA-<n>` i szukanie po kodzie;
+  - gałąź `main`: `git log origin/main --grep MA-<n>` i szukanie po kodzie;
   - otwarte i zmergowane PR z numerem zadania;
   - opis zadania w Jirze, czyli definicję ukończenia.
 - Zadanie, którego kod już jest, a w Jirze jest otwarte, porządkujesz zamiast je proponować:
@@ -242,11 +241,13 @@ npm install && npm run dev        # Vite na Macu, nie w kontenerze
 
 ## Gałęzie i środowiska
 
-- `dev` → staging na Forge (`mellowaura-dev.on-forge.com`), auto-deploy po każdym pushu, `APP_ENV=staging`, `APP_NOINDEX=true`,
-  `APP_LOCALES=pl,en`, dostęp za hasłem.
-- `main` → produkcja `mellow-aura.com` (strona produkcyjna powstaje przy starcie), `APP_NOINDEX=false`.
-  Do startu `mellow-aura.com` przekierowuje do starego sklepu na SumUp.
-- Pracujesz na `dev`; do `main` scalasz dopiero przetestowane zmiany. `main` ma tylko szkielet z tygodnia 1.
+- Jedna gałąź `main`, bez `dev` (decyzja Macieja 26.10). Każda sesja pracuje na swojej gałęzi, a do `main`
+  wchodzi przez PR, gdy przejdą testy w CI.
+- `main` → jedyna strona na Forge (`mellowaura-dev.on-forge.com`), auto-deploy po każdym pushu, `APP_ENV=staging`,
+  `APP_NOINDEX=true`, `APP_LOCALES=pl,en`, dostęp za hasłem. To jeszcze nie produkcja.
+- Przy starcie Maciej przenosi tę stronę na `mellow-aura.com` (`APP_ENV=production`, `APP_NOINDEX=false`, `APP_LOCALES=pl`).
+  Do startu `mellow-aura.com` przekierowuje do starego sklepu na SumUp. Drugiej strony (stagingu) nie zakładamy
+  przed startem — po starcie wracamy do tematu.
 
 ## Staging na Forge — stan na 25.10.2026
 

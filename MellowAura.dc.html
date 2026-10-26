@@ -879,9 +879,55 @@
             <div style="display: flex; justify-content: space-between; gap: 20px; padding: 20px 24px; border-bottom: 1px solid #EDE4D8"><div><div style="font-size: 16px">{{ k.name }}</div><div style="font-size: 13.5px; color: #726456; margin-top: 3px">{{ k.note }}</div></div><div style="font-size: 16px; white-space: nowrap">{{ k.priceLabel }}</div></div>
           </sc-for>
         </div>
-        <div style="font-size: 13px; color: #736454; margin-top: 14px; line-height: 1.6">{{ tKilnNote }}</div>
+        <sc-if value="{{ hasKilnWhy }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-top: 40px">
+          <h2 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(24px, 3vw, 32px); line-height: 1.2; margin: 0 0 12px">Dlaczego litry, a nie kilogramy</h2>
+          <p style="font-size: 15.5px; line-height: 1.7; color: #5C5043; max-width: 58ch; margin: 0">{{ tKilnWhy }}</p>
+        </div>
+        </sc-if>
+        <sc-if value="{{ kcAvailable }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-top: 32px; background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; padding: 28px 26px">
+          <h2 style="font-family: Newsreader, serif; font-weight: 300; font-size: 23px; margin: 0 0 6px">Policz, ile zapłacisz</h2>
+          <p style="font-size: 14px; line-height: 1.6; color: #6B5D4F; margin: 0 0 20px">Zmierz pracę w najszerszym miejscu, razem z uchem i stopką.</p>
+          <label for="kiln-calc-kind" style="display: block; font-size: 13.5px; color: #4A3E33; margin-bottom: 6px">Rodzaj wypału</label>
+          <select id="kiln-calc-kind" value="{{ kcKind }}" onChange="{{ onKcKind }}" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 13px 15px; font-size: 16px; color: #2F2620; margin-bottom: 16px">
+            <sc-for list="{{ kcKinds }}" as="o" hint-placeholder-count="2">
+              <option value="{{ o.id }}">{{ o.label }}</option>
+            </sc-for>
+          </select>
+          <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+            <sc-for list="{{ kcDims }}" as="d" hint-placeholder-count="3">
+              <div style="min-width: 0">
+                <label for="{{ d.id }}" style="display: block; font-size: 13.5px; color: #4A3E33; margin-bottom: 6px">{{ d.label }}</label>
+                <input id="{{ d.id }}" value="{{ d.val }}" onChange="{{ d.onChange }}" inputmode="decimal" autocomplete="off" placeholder="cm" aria-describedby="kiln-calc-unit" style="width: 100%; min-width: 0; background: #fff; border: 1px solid #DCD0BE; border-radius: 4px; padding: 13px 15px; font-size: 16px; color: #2F2620" style-focus="border-color: #2F2620; outline: none" />
+              </div>
+            </sc-for>
+          </div>
+          <div id="kiln-calc-unit" style="font-size: 12.5px; color: #736454; margin-top: 8px">W centymetrach. 1 litr to 1000 cm³.</div>
+          <div aria-live="polite" style="margin-top: 20px; background: #F7F2EA; border: 1px solid #E6DCCD; border-radius: 4px; padding: 18px 20px">
+            <sc-if value="{{ kcReady }}" hint-placeholder-val="{{ true }}">
+              <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 16px">
+                <span style="font-size: 16px">{{ kcLitres }}</span>
+                <span style="font-family: Newsreader, serif; font-size: 28px; line-height: 1.1">{{ kcPrice }}</span>
+              </div>
+              <div style="font-size: 13px; color: #736454; margin-top: 6px; line-height: 1.5">{{ kcFormula }}</div>
+            </sc-if>
+            <sc-if value="{{ kcEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size: 14px; color: #6B5D4F; line-height: 1.6">Wpisz trzy wymiary, a policzę litry i cenę.</div>
+            </sc-if>
+          </div>
+        </div>
+        </sc-if>
       </div>
       <div style="flex: 0 1 320px; min-width: 280px">
+        <sc-if value="{{ hasKilnFacts }}" hint-placeholder-val="{{ true }}">
+        <div style="border: 1px solid #E2D7C7; border-radius: 4px; background: #FCF9F4; margin-bottom: 22px">
+          <div style="padding: 18px 24px; border-bottom: 1px solid #E2D7C7; background: #F7F2EA; font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #726456">Zanim przywieziesz</div>
+          <sc-for list="{{ kilnFacts }}" as="f" hint-placeholder-count="4">
+            <div style="padding: 16px 24px; border-bottom: 1px solid #EDE4D8"><div style="font-size: 12.5px; color: #726456; margin-bottom: 3px">{{ f.label }}</div><div style="font-size: 15px; line-height: 1.55">{{ f.val }}</div></div>
+          </sc-for>
+        </div>
+        </sc-if>
         <div style="background: #FCF9F4; border: 1px solid #E2D7C7; border-radius: 4px; padding: 30px 28px">
           <div style="font-family: Newsreader, serif; font-size: 23px; margin-bottom: 18px">Zgłoś wsad</div>
           <div style="display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px">
@@ -1574,7 +1620,7 @@
             </div>
           </sc-for>
         </div>
-        <div style="font-size: 13px; color: #726456; margin-top: 14px; line-height: 1.6">Zmiana ceny tutaj przestawia cennik na stronie „Wypały" natychmiast.</div>
+        <div style="font-size: 13px; color: #726456; margin-top: 14px; line-height: 1.6">Zmiana ceny tutaj przestawia cennik i kalkulator na stronie „Wypały" natychmiast. Kalkulator liczy usługi z ceną za litr. Dzień wsadu, czas odbioru i to, co przyjmujesz, zmienisz w zakładce „Treści".</div>
 
         <div style="font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #726456; margin: 34px 0 14px">Rodzaje wypału w formularzu „Zgłoś wsad"</div>
         <div style="background: #FCF9F4; border: 1px solid #DCD0BE; border-radius: 4px; overflow: hidden">
@@ -2479,7 +2525,7 @@ const ROUTES = {
   custom: { path: '/zamowienia-indywidualne', title: 'Zamówienia indywidualne — ceramika na zamówienie',
     desc: 'Serwis na wesele, kubek z Twoim napisem, forma dekoracyjna. Szkic i wycena w pięć dni, zaliczka BLIK-iem, realizacja około trzech tygodni.' },
   kiln: { path: '/wypal-ceramiki-krakow', title: 'Wypał ceramiki Kraków — cennik wypałów na zlecenie',
-    desc: 'Wypał biskwitowy i na ostro do 1240°C, wypał złota, cała półka na wyłączność. Cennik od 40 zł za litr. Wsad zbieram raz w tygodniu.' },
+    desc: 'Wypał biskwitowy i na ostro do 1240°C, wypał złota, cała półka na wyłączność. Cennik od {kilnFrom} za litr. Wsad zbieram raz w tygodniu.' },
   b2b: { path: '/ceramika-dla-gastronomii', title: 'Ceramika dla kawiarni i restauracji | MellowAura',
     desc: 'Powtarzalne formy w ręcznej ceramice dla gastronomii: próbka przed serią, dosypka po stłuczkach, logo w spodzie, faktura z terminem 14 dni.' },
   about: { path: '/o-mnie', title: 'O mnie — Kasia Samborska, pracownia MellowAura | Kraków',
@@ -2511,7 +2557,11 @@ const TEXTS = {
   aboutP1: 'Tworzę MellowAura – kameralną pracownię, w której powstają przedmioty z duszą. To miejsce, gdzie sztuka spotyka się z uważnością, a codzienność nabiera miękkich, zmysłowych kształtów.',
   aboutP2: 'Zajmuję się ceramiką i rękodziełem tekstylnym – każda z tych dziedzin daje mi coś innego, ale łączy je to samo: praca w skupieniu, z dbałością o detale, fakturę i jakość materiału. W mojej pracowni powstają ręcznie formowane naczynia, autorskie formy użytkowe, ale także opaski, scrunchie i ozdoby do włosów, szyte z wyselekcjonowanych, naturalnych tkanin – takich jak jedwab, len czy bawełna.',
   aboutP3: 'Lubię łączyć surowość z miękkością, prostotę z symboliką, dotyk z emocją. MellowAura to zaproszenie do spokoju i piękna – zaklętego w przedmiotach, które towarzyszą nam na co dzień.',
-  kilnNote: 'Wsad zbieram raz w tygodniu, zwykle w czwartek. Prace odbierzesz po 5–7 dniach. Nie przyjmuję gliny nieznanego pochodzenia ani prac grubszych niż 2 cm w ściance.',
+  kilnWhy: 'W piecu kończy się miejsce, nie udźwig półki. Dlatego liczę za litry, które praca zajmuje, a nie za kilogramy. Ciężki, zwarty kubek nie kosztuje więcej tylko dlatego, że ma grubą ściankę, a cenę sprawdzisz linijką — bez wagi i bez pytania mnie o wycenę.',
+  kilnLoadDay: 'Raz w tygodniu, zwykle w czwartek',
+  kilnPickup: 'Po 5–7 dniach od wsadu',
+  kilnAccept: 'Prace z gliny o znanym pochodzeniu, ze ścianką do 2 cm',
+  kilnRefuse: 'Gliny nieznanego pochodzenia i prac ze ścianką grubszą niż 2 cm',
   contactLead: 'Odpisuję zwykle tego samego dnia, chyba że stoję przy piecu. Wtedy wieczorem.',
   footerTagline: 'A little bit of magic. Home studio in Cracow. Ceramic & jewelry. Less waste silk scrunchies.',
   mugH1: 'Kubek, który mówi to,\nco myślisz',
@@ -2702,6 +2752,7 @@ class Component extends DCLogic {
     gals: {}, cardIdx: {}, baPos: {}, favs: [], sound: true, typeMap: {}, whoMap: {}, care: {}, ba: { scarf: [], imprint: [] },
     adminTab: 'produkty', prices: {}, vprices: {}, vlist: {}, names: {}, wsPrices: {}, kilnPrices: {},
     kilnKinds: ['Biskwitowy', 'Na ostro', 'Złoto', 'Nie wiem, doradź'], newKilnKind: '', kilnKind: '',
+    kilnCalc: { kind: '', h: '', w: '', d: '' },
     cfg: Object.assign({}, CFG_SEED), lists: { custom: LISTS_SEED.custom.slice(), contact: LISTS_SEED.contact.slice(), types: LISTS_SEED.types.slice(), who: LISTS_SEED.who.slice() },
     newList: { custom: '', contact: '', types: '', who: '' }, customKind: '', contactKind: '',
     budgets: BUDGETS_SEED.map(b => Object.assign({}, b)),
@@ -3069,7 +3120,32 @@ class Component extends DCLogic {
     if (j < 0 || j >= a.length) return;
     [a[i], a[j]] = [a[j], a[i]]; this.setKilnKinds(a);
   };
-  kilnP = (k) => { const o = this.state.kilnPrices[k.id]; return (o === undefined || o === '' || isNaN(parseFloat(o))) ? k.price : parseFloat(o); };
+  kilnP = (k) => { const o = this.state.kilnPrices[k.id]; const n = parseFloat(String(o).replace(',', '.')); return (o === undefined || o === '' || isNaN(n)) ? k.price : n; };
+  kilnPerLitre = () => KILN.filter(k => k.unit === '/ l');
+  setKc = (k, v) => this.setState({ kilnCalc: Object.assign({}, this.state.kilnCalc, { [k]: v }) });
+  kilnCalc = () => {
+    const kinds = this.kilnPerLitre(), c = this.state.kilnCalc;
+    const sel = kinds.find(k => k.id === c.kind) || kinds[0];
+    const num = v => { const n = parseFloat(String(v).replace(',', '.')); return isFinite(n) && n > 0 ? n : 0; };
+    const cm = n => String(n).replace('.', ',');
+    const h = num(c.h), w = num(c.w), d = num(c.d);
+    const ready = !!(sel && h && w && d);
+    // Volume rounded up to 0.1 l, so the price always matches the litres shown
+    const litres = ready ? Math.ceil(h * w * d / 100 - 1e-9) / 10 : 0;
+    const rate = sel ? this.kilnP(sel) : 0;
+    const litresLabel = litres.toFixed(1).replace('.', ',') + ' l';
+    return {
+      kcAvailable: kinds.length > 0, kcKind: sel ? sel.id : '', kcReady: ready, kcEmpty: !ready,
+      kcKinds: kinds.map(k => ({ id: k.id, label: k.name + ' — ' + zl(this.kilnP(k)) + ' ' + k.unit })),
+      onKcKind: e => this.setKc('kind', e.target.value),
+      kcDims: [['h', 'Wysokość'], ['w', 'Szerokość'], ['d', 'Głębokość']].map(f => ({
+        id: 'kiln-calc-' + f[0], label: f[1], val: c[f[0]],
+        onChange: e => this.setKc(f[0], e.target.value.replace(/[^\d,.]/g, '').slice(0, 5)) })),
+      kcLitres: litresLabel,
+      kcPrice: zl(Math.round(litres * rate * 100) / 100),
+      kcFormula: ready ? cm(h) + ' × ' + cm(w) + ' × ' + cm(d) + ' cm = ' + litresLabel + ' · ' + zl(rate) + ' za litr' : ''
+    };
+  };
   setMap = (map, id, v) => this.setState({ [map]: Object.assign({}, this.state[map], { [id]: v }) });
 
   addSlot = () => {
@@ -3190,7 +3266,10 @@ class Component extends DCLogic {
     const title = prod ? fit([prod.name + kind + ' | MellowAura', prod.name + kind, prod.name + ' | MellowAura', prod.name])
       : entry ? fit([entry.title + ' | Dziennik MellowAura', entry.title + ' | MellowAura', entry.title])
       : r.title;
-    const desc = prod ? (clip(prod.desc) || r.desc) : entry ? (clip(entry.lead) || r.desc) : r.desc;
+    const litreRates = this.kilnPerLitre().map(k => this.kilnP(k));
+    const kilnFrom = litreRates.length ? String(Math.min(...litreRates)).replace('.', ',') + ' zł' : '';
+    const routeDesc = clip(r.desc.replace(kilnFrom ? '{kilnFrom}' : ' Cennik od {kilnFrom} za litr.', kilnFrom));
+    const desc = prod ? (clip(prod.desc) || routeDesc) : entry ? (clip(entry.lead) || routeDesc) : routeDesc;
     const path = prod ? '/produkt/' + prod.id : entry ? '/dziennik/' + this.slug(entry.title) : r.path;
     document.title = title;
     const meta = (name, content, prop) => {
@@ -3602,6 +3681,11 @@ class Component extends DCLogic {
       workshops: WORKSHOPS.map(w => ({ name: w.name, short: w.short, duration: w.duration, people: w.people,
         priceLabel: zl(this.wsPrice(w)), unit: '/ ' + w.unit, incl: w.incl.map(i => ({ t: i })) })),
       kilnRows: KILN.map(k => ({ name: k.name, note: k.note, priceLabel: zl(this.kilnP(k)) + ' ' + k.unit })),
+      ...this.kilnCalc(),
+      tKilnWhy: this.t('kilnWhy'), hasKilnWhy: !!String(this.t('kilnWhy') || '').trim(),
+      kilnFacts: [['kilnLoadDay', 'Dzień wsadu'], ['kilnPickup', 'Odbiór'], ['kilnAccept', 'Przyjmuję'], ['kilnRefuse', 'Nie przyjmuję']]
+        .map(f => ({ label: f[1], val: String(this.t(f[0]) || '').trim() })).filter(f => f.val),
+      hasKilnFacts: [['kilnLoadDay'], ['kilnPickup'], ['kilnAccept'], ['kilnRefuse']].some(f => String(this.t(f[0]) || '').trim()),
       kilnKinds: s.kilnKinds.map(label => ({ label })),
       tabU: s.adminTab === 'ustawienia', tabT: s.adminTab === 'tresci',
       phone: s.cfg.phone, waHref: 'https://wa.me/' + this.waDigits(),
@@ -3619,7 +3703,7 @@ class Component extends DCLogic {
       baScarfEdit: this.baEdit('scarf'), baImprintEdit: this.baEdit('imprint'),
       addBaScarf: () => this.addBa('scarf'), addBaImprint: () => this.addBa('imprint'),
       tHomeKasiaH2: this.t('homeKasiaH2'), tHomeKasiaP: this.t('homeKasiaP'), tAboutP1: this.t('aboutP1'), tAboutP2: this.t('aboutP2'), tAboutP3: this.t('aboutP3'),
-      tKilnNote: this.t('kilnNote'), tContactLead: this.t('contactLead'), tFooterTagline: this.t('footerTagline'),
+      tContactLead: this.t('contactLead'), tFooterTagline: this.t('footerTagline'),
       scarfFromLabel: 'od ' + zl(Math.min.apply(null, s.scarfRows.map(r => this.num(r.p, Infinity)))),
       imprintFromLabel: 'od ' + zl(Math.min.apply(null, s.imprintRows.map(r => this.num(r.p, Infinity)))),
       materials: s.materials.filter(m => m.t.trim() && m.d.trim()).map(m => ({ t: m.t, d: m.d })),
@@ -3642,7 +3726,9 @@ class Component extends DCLogic {
       contentFields: [
         ['homeKasiaH2', 'Główna — nagłówek sekcji „Cześć, jestem Kasia"', 2], ['homeKasiaP', 'Główna — akapit pod nagłówkiem', 3],
         ['aboutP1', 'O mnie — akapit wstępny', 3], ['aboutP2', 'O mnie — akapit drugi', 5], ['aboutP3', 'O mnie — akapit trzeci', 3],
-        ['contactLead', 'Kontakt — zdanie pod nagłówkiem', 2], ['kilnNote', 'Wypały — notka pod cennikiem', 3], ['footerTagline', 'Stopka — hasło pod logo', 2]
+        ['contactLead', 'Kontakt — zdanie pod nagłówkiem', 2], ['kilnWhy', 'Wypały — dlaczego litry, a nie kilogramy', 4],
+        ['kilnLoadDay', 'Wypały — dzień wsadu', 1], ['kilnPickup', 'Wypały — czas odbioru', 1],
+        ['kilnAccept', 'Wypały — co przyjmuję', 2], ['kilnRefuse', 'Wypały — czego nie przyjmuję', 2], ['footerTagline', 'Stopka — hasło pod logo', 2]
       ].map(f => ({ label: f[1], val: this.t(f[0]), rows: f[2], onChange: e => this.setTxt(f[0], e.target.value) })),
       faqAdmin: s.faqList.map((f, i) => ({
         q: f.q, a: f.a,

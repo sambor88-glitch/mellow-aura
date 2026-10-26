@@ -17,6 +17,9 @@ Thumbs.db
 .thumbnail
 WYPCHNIJ.md
 
+# Kopie repozytorium z git bundle (np. mellow-aura-dev.bundle)
+*.bundle
+
 # Klucze i hasła (Przelewy24, InPost, poczta) — nigdy do publicznego repozytorium
 .env
 .env.*
