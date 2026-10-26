@@ -1,3 +1,4 @@
+@use('App\Modules\Catalog\Actions\ConvertEuroPrices')
 @use('App\Modules\Catalog\Enums\Dimension')
 @use('App\Modules\Catalog\Enums\FoodContact')
 @use('App\Modules\Catalog\Enums\GoogleCategory')
@@ -42,6 +43,7 @@
     $exactPiece = $mine ? (bool) old('is_exact_piece') : (bool) $product?->is_exact_piece;
     $fromRate = $mine ? (bool) old('euro_from_rate') : (bool) $product?->euro_from_rate;
     $euroRate = ExchangeRate::for('EUR');
+    $euroMarkup = (int) $settings->get(ConvertEuroPrices::MARKUP, 0);
     $foodContact = (string) $old('food_contact', $product?->food_contact?->value);
     $googleCategory = (string) $old('google_category', $product?->google_category?->value);
     $showInGoogle = $mine ? (bool) old('show_in_google') : ($product?->show_in_google ?? true);
@@ -177,7 +179,7 @@
             <input type="checkbox" name="euro_from_rate" value="1" x-model="fromRate" @checked($fromRate) class="mt-[3px] size-4 flex-none accent-ink">
             <span>Cena w euro z kursu NBP
                 <span class="mt-0.5 block text-[12.5px] leading-[1.5] text-hint">
-                    Liczy się sama z ceny w złotych po średnim kursie NBP i zmienia się razem z kursem. Zaokrąglam do pełnego euro, z końcówką ,90 — np. 239 zł to około 55,90 €.
+                    Liczy się sama z ceny w złotych po średnim kursie NBP{{ $euroMarkup ? ', z narzutem '.$euroMarkup.'%' : '' }} i zmienia się razem z kursem. Zaokrąglam w górę, do końcówki ,90{{ $euroRate ? ' — dziś 239 zł to '.Money::input(ConvertEuroPrices::euro(23900, $euroRate->tenThousandths(), $euroMarkup)).' €' : '' }}. Narzut ustawiasz nad listą produktów.
                     @if ($euroRate)
                         Kurs z {{ $euroRate->effective_on->format('d.m.Y') }}: {{ str_replace('.', ',', $euroRate->rate) }} zł.
                     @else

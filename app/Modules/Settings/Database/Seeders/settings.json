@@ -310,7 +310,7 @@
         "key": "voucher_workshop_notes",
         "value": {
             "voucher-lepienie": {
-                "expect": "Dwie i pół godziny przy stole w mojej pracowni, w grupie do sześciu osób.",
+                "expect": "Dwie godziny przy stole w mojej pracowni, w grupie do sześciu osób.",
                 "activities": "Pierwszy raz w glinie: płat, wałek i szczypanie.",
                 "takeaway": "Dwie własne rzeczy z gliny — po szkliwieniu na następnym spotkaniu i dwóch wypałach.",
                 "preparation": "Nie musisz nic umieć ani nic przynosić. Glina, narzędzia, herbata i coś słodkiego czekają na miejscu."
@@ -388,7 +388,7 @@
         "value": [
             {
                 "title": "Glina",
-                "text": "Nierówne krawędzie zostawiam, bo tak wygląda ręka."
+                "text": "Szamot i porcelana. Nierówne krawędzie zostawiam, bo tak wygląda ręka."
             },
             {
                 "title": "Jedwab",
@@ -408,11 +408,11 @@
             },
             {
                 "title": "Zmywarka",
-                "text": null
+                "text": "Można myć w zmywarce. Złocone rzeczy tylko ręcznie."
             },
             {
                 "title": "Mikrofalówka",
-                "text": null
+                "text": "Można używać w mikrofalówce, poza rzeczami ze złotem."
             },
             {
                 "title": "Atest szkliw",
@@ -420,7 +420,7 @@
             },
             {
                 "title": "Pakowanie",
-                "text": "Papier pakowy i wióry albo inne wypełnienie. Wysyłam InPostem, z numerem do śledzenia."
+                "text": "Zamówienia są dobrze zabezpieczone przed wysyłką. Wysyłam InPostem, z numerem do śledzenia."
             }
         ]
     },
@@ -429,7 +429,7 @@
         "value": [
             {
                 "question": "Jak szybko wyślesz zamówienie?",
-                "answer": "Rzeczy, które są na stanie, pakuję w 3–5 dni roboczych. Zamówienia indywidualne to około 4 tygodnie, bo każda praca przechodzi przez dwa wypały."
+                "answer": "Rzeczy, które są na stanie, pakuję w 3–5 dni roboczych. Kubek z Twoim napisem to 4–8 tygodni, duże i skomplikowane projekty 6–12 tygodni, bo każda praca przechodzi przez dwa wypały."
             },
             {
                 "question": "Czy mogę zapłacić BLIK-iem?",
@@ -437,7 +437,7 @@
             },
             {
                 "question": "Ceramika do zmywarki i mikrofalówki?",
-                "answer": "Szkliwione naczynia bez złota myj spokojnie w zmywarce na krótkim programie. Wszystko ze złotą krawędzią — tylko ręcznie i nigdy w mikrofalówce, bo złoto to prawdziwy metal."
+                "answer": "Tak — szkliwione naczynia bez złota możesz myć w zmywarce i używać w mikrofalówce. Wszystko ze złotą krawędzią myj tylko ręcznie i nie wkładaj do mikrofalówki, bo złoto to prawdziwy metal."
             },
             {
                 "question": "Dlaczego mój kubek różni się od zdjęcia?",
@@ -605,7 +605,7 @@
     },
     {
         "key": "text_mug_lead_time",
-        "value": "gotowe w 4 tygodnie"
+        "value": "gotowe w 4–8 tygodni"
     },
     {
         "key": "text_mug_bulk_order",
@@ -782,7 +782,7 @@
             },
             {
                 "title": "Lepienie, dwa wypały, wysyłka",
-                "text": "Około czterech tygodni, przy dużych serwisach dłużej. Przed wysyłką dostajesz zdjęcia gotowej pracy. Jeśli coś pęknie w piecu, robię od nowa albo oddaję całą wpłatę."
+                "text": "Kubek 4–8 tygodni, duże i skomplikowane projekty 6–12 tygodni. Przed wysyłką dostajesz zdjęcia gotowej pracy. Jeśli coś pęknie w piecu, robię od nowa albo oddaję całą wpłatę."
             }
         ]
     },
@@ -824,19 +824,27 @@
         "value": [
             {
                 "code": "bisque_firing",
-                "label": "Wypał biskwitowy do 1000°C",
-                "note": "liczony od litra zajętego miejsca",
+                "label": "Wypał biskwitowy",
+                "note": "liczony od wagi prac",
+                "price_gross": 3000,
+                "unit": "kg",
+                "unit_label": "/ kg"
+            },
+            {
+                "code": "low_firing",
+                "label": "Wypał niskotemperaturowy do 1050°C",
+                "note": "prace poszkliwione przez Ciebie",
                 "price_gross": 4000,
-                "unit": "litre",
-                "unit_label": "/ l"
+                "unit": "kg",
+                "unit_label": "/ kg"
             },
             {
                 "code": "glaze_firing",
-                "label": "Wypał na ostro do 1240°C",
+                "label": "Wypał wysokotemperaturowy do 1240°C",
                 "note": "prace poszkliwione przez Ciebie",
-                "price_gross": 6000,
-                "unit": "litre",
-                "unit_label": "/ l"
+                "price_gross": 5000,
+                "unit": "kg",
+                "unit_label": "/ kg"
             },
             {
                 "code": "gold_firing",
@@ -865,12 +873,16 @@
         ]
     },
     {
+        "key": "euro_markup_percent",
+        "value": 15
+    },
+    {
         "key": "workshop_types",
         "value": [
             {
                 "code": "hand_building",
-                "name": "Lepienie z ręki",
-                "duration_label": "2,5 godziny",
+                "name": "Lepienie kubków",
+                "duration_label": "2 godziny",
                 "group_label": "grupa do 6 osób",
                 "price_gross": 22000,
                 "unit": "person",
