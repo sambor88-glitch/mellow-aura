@@ -49,25 +49,117 @@
                 @endif
             </div>
 
-            <div class="min-w-[280px] flex-[0_1_320px]">
-                <div class="rounded-[4px] border border-divider bg-cream px-7 py-[30px]">
+            <div class="min-w-[290px] flex-[0_1_380px]">
+                <div id="zglos-wsad" class="scroll-mt-6 rounded-[4px] border border-divider bg-cream px-7 py-[30px]">
                     <h2 class="mb-2.5 font-serif text-[23px]">Zgłoś wsad</h2>
-                    <p class="mb-5 text-[14.5px] leading-[1.6] text-muted">Napisz, ile prac, ile mniej więcej ważą i jaka glina — odpiszę z terminem wsadu.</p>
-                    <div class="grid gap-3">
+                    @if ($reported)
+                        <div role="status" class="mb-5 rounded-[4px] border border-line-strong bg-sand-dark p-4 text-[14px] leading-[1.6] text-graphite">
+                            <p>Mam Twoje zgłoszenie{{ $reported->quote !== null ? ' — wycena '.Money::format($reported->quote) : '' }}. Potwierdzenie poszło na {{ $reported->email }}. Odpiszę z terminem i miejscem, gdzie przywieziesz prace.</p>
+                        </div>
+                    @elseif (session('firing_throttled'))
+                        <p role="alert" class="mb-5 rounded-[4px] border border-alert-line bg-alert p-4 text-[14px] leading-[1.6] text-alert-text">
+                            Mam już od Ciebie kilka zgłoszeń i na wszystkie odpiszę. Kolejne wyślesz za godzinę{{ $phone ? ', a jeśli to pilne, napisz na WhatsApp '.$phone : '' }}.
+                        </p>
+                    @else
+                        <p class="mb-5 text-[14.5px] leading-[1.6] text-muted">Wybierz wypał i wpisz, ile mniej więcej ważą prace. Wycenę z cennika zobaczysz od razu, a ja odpiszę z terminem.</p>
+                    @endif
+
+                    @if ($prices->isNotEmpty())
+                        @php
+                            $select = 'w-full min-w-0 rounded-[14px] border bg-white px-4 py-[15px] text-[15px] text-lead focus:border-ink pointer-coarse:text-[16px]';
+                        @endphp
+                        <form method="post" action="{{ route('firing.store') }}" novalidate class="grid gap-[13px]"
+                              x-data="firingQuote(@js($services), @js(old('service', '')), @js(old('quantity', '')))">
+                            @csrf
+                            <x-shared::field name="name" id="firing-name" label="Imię" autocomplete="given-name" maxlength="120" />
+                            <x-shared::field name="email" id="firing-email" label="E-mail" type="email" autocomplete="email" hint="Na ten adres wyślę wycenę" />
+                            <x-shared::field name="phone" id="firing-phone" label="Telefon" type="tel" autocomplete="tel" maxlength="40" hint="Nieobowiązkowe — gdyby trzeba było szybko coś ustalić" />
+
+                            <div class="min-w-0">
+                                <label for="firing-service" class="mb-1.5 block text-[13.5px] text-graphite">Rodzaj wypału</label>
+                                <select id="firing-service" name="service" x-model="service"
+                                        @error('service') aria-invalid="true" aria-describedby="firing-service-error" @enderror
+                                        @class([$select, 'border-error' => $errors->has('service'), 'border-line' => ! $errors->has('service')])>
+                                    <option value="">Wybierz</option>
+                                    @foreach ($services as $service)
+                                        <option value="{{ $service['code'] }}" @selected(old('service') === $service['code'])>{{ $service['label'] }}</option>
+                                    @endforeach
+                                    <option value="advice" @selected(old('service') === 'advice')>Nie wiem, doradź</option>
+                                </select>
+                                @error('service')
+                                    <p id="firing-service-error" class="mt-1.5 text-[13px] text-error">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Without JavaScript the field stays visible with a label for both; the server asks for it only when the service needs it. --}}
+                            <div class="min-w-0" x-show="byAmount">
+                                <label for="firing-quantity" class="mb-1.5 block text-[13.5px] text-graphite" x-text="unit === 'piece' ? 'Ile prac?' : 'Ile ważą prace, w kg?'">Waga w kg albo liczba prac</label>
+                                <input id="firing-quantity" name="quantity" x-model="quantity" inputmode="decimal" value="{{ old('quantity') }}" maxlength="6"
+                                       :placeholder="unit === 'piece' ? '4' : '2,5'"
+                                       @error('quantity') aria-invalid="true" aria-describedby="firing-quantity-error" @else aria-describedby="firing-quantity-note" @enderror
+                                       @class([$select, 'text-ink placeholder:text-hint', 'border-error' => $errors->has('quantity'), 'border-line' => ! $errors->has('quantity')])>
+                                @error('quantity')
+                                    <p id="firing-quantity-error" class="mt-1.5 text-[13px] text-error">{{ $message }}</p>
+                                @else
+                                    <p id="firing-quantity-note" class="mt-1.5 text-[12.5px] text-hint" x-show="unit !== 'piece'">Wystarczy z grubsza — np. z wagi kuchennej</p>
+                                @enderror
+                            </div>
+
+                            @if ($loadDays->isNotEmpty())
+                                <div class="min-w-0">
+                                    <label for="firing-day" class="mb-1.5 block text-[13.5px] text-graphite">Kiedy przywieziesz prace?</label>
+                                    <select id="firing-day" name="drop_off_on"
+                                            @error('drop_off_on') aria-invalid="true" aria-describedby="firing-day-error" @enderror
+                                            @class([$select, 'border-error' => $errors->has('drop_off_on'), 'border-line' => ! $errors->has('drop_off_on')])>
+                                        <option value="">Wybierz dzień</option>
+                                        @foreach ($loadDays as $date => $label)
+                                            <option value="{{ $date }}" @selected(old('drop_off_on') === $date)>{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('drop_off_on')
+                                        <p id="firing-day-error" class="mt-1.5 text-[13px] text-error">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            @endif
+
+                            <div class="min-w-0">
+                                <label for="firing-message" class="mb-1.5 block text-[13.5px] text-graphite">Coś jeszcze?</label>
+                                <textarea id="firing-message" name="message" rows="3" maxlength="2000" placeholder="Ile prac, jaka glina, czym szkliwione"
+                                          @error('message') aria-invalid="true" aria-describedby="firing-message-error" @enderror
+                                          @class([
+                                              'w-full min-w-0 resize-y rounded-[4px] border bg-white px-4 py-[14px] text-[15px] leading-[1.6] text-ink placeholder:text-hint focus:border-ink pointer-coarse:text-[16px]',
+                                              'border-error' => $errors->has('message'),
+                                              'border-line' => ! $errors->has('message'),
+                                          ])>{{ old('message') }}</textarea>
+                                @error('message')
+                                    <p id="firing-message-error" class="mt-1.5 text-[13px] text-error">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div x-show="service" x-cloak aria-live="polite" class="flex items-baseline justify-between gap-4 rounded-[4px] border border-sand-dark bg-linen px-4 py-3.5">
+                                <span class="text-[13.5px] text-label">Wycena z cennika</span>
+                                <span class="text-right text-[17px] tabular-nums" x-text="quoteLabel"></span>
+                            </div>
+
+                            {{-- Hidden from people; a bot fills it in. --}}
+                            <div aria-hidden="true" class="absolute -left-[9999px]">
+                                <label for="firing-website">Strona internetowa</label>
+                                <input id="firing-website" name="website" tabindex="-1" autocomplete="off">
+                            </div>
+                            <button class="rounded-full bg-ink p-4 text-[14.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Wyślij zgłoszenie</button>
+                            <p class="text-[12px] leading-[1.5] text-hint">Zgłoszenie trafi prosto do mnie, a Ty dostaniesz kopię z wyceną. Więcej o danych w <a href="{{ route('content.privacy') }}">polityce prywatności</a>.</p>
+                        </form>
+                    @endif
+
+                    <div class="mt-5 grid gap-3 border-t border-divider pt-5">
+                        <p class="text-[13.5px] leading-[1.6] text-muted">Wolisz najpierw zapytać?</p>
                         @if ($phone)
                             <a href="https://wa.me/{{ preg_replace('/\D+/', '', $phone) }}" target="_blank" rel="noopener"
-                               class="rounded-full bg-ink p-[15px] text-center text-[14.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Napisz na WhatsAppie</a>
+                               class="rounded-full border border-line-strong p-[13px] text-center text-[14px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark hover:text-ink active:scale-[.98]">Napisz na WhatsAppie</a>
                         @endif
                         <a href="{{ $contactUrl }}"
-                           @class([
-                               'rounded-full p-[15px] text-center text-[14.5px] transition duration-300 active:scale-[.98]',
-                               'border border-line-strong text-ink hover:border-ink hover:bg-sand-dark hover:text-ink' => $phone,
-                               'bg-ink text-linen hover:bg-rose hover:text-ink' => ! $phone,
-                           ])>Napisz przez formularz</a>
+                           class="rounded-full border border-line-strong p-[13px] text-center text-[14px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark hover:text-ink active:scale-[.98]">Napisz przez formularz</a>
                     </div>
-                    @if ($phone)
-                        <p class="mt-3.5 text-[12.5px] text-hint">WhatsApp: {{ $phone }}</p>
-                    @endif
                 </div>
             </div>
         </div>
