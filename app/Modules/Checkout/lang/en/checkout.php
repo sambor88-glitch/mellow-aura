@@ -52,6 +52,7 @@ return [
     'privacy_link' => 'privacy policy',
     'pay' => 'Pay :amount',
     'badges' => ['Visa', 'Mastercard'],
+    'wallet_badges' => ['Apple Pay', 'Google Pay'],
     'wrapping' => 'I wrap ceramics in wood wool and a double box',
 
     'js' => [

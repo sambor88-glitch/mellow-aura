@@ -602,7 +602,7 @@
               <div style="display: flex; justify-content: space-between; font-family: Newsreader, serif; font-size: 21px; padding-top: 14px; border-top: 1px solid #E2D7C7"><span>Razem</span><span>{{ totalLabel }}</span></div>
               <button onClick="{{ payNow }}" style="width: 100%; margin-top: 20px; background: {{ payBigBg }}; color: #F7F2EA; border: 0; border-radius: 999px; padding: 17px; font-size: 15px; letter-spacing: 0.02em" style-hover="background: #2F2620">{{ payBigLabel }}</button>
               <div style="display: flex; justify-content: center; gap: 12px; margin-top: 14px; font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #726456; flex-wrap: wrap">
-                <span>Apple Pay</span><span>&middot;</span><span>Google Pay</span><span>&middot;</span><span>Przelewy24</span>
+                <span>Przelewy24</span>
               </div>
               <div style="font-size: 12px; color: #736454; text-align: center; margin-top: 12px; line-height: 1.5">Ceramikę zawijam w wióry i podwójny karton</div>
             </div>
@@ -2543,7 +2543,7 @@ const TEXTS = {
 
 const FAQ_SEED = [
   { q: 'Jak szybko wyślesz zamówienie?', a: 'Rzeczy, które są na stanie, pakuję w 3–5 dni roboczych. Ceramika jedzie w papierze, wiórach i podwójnym kartonie — do tej pory nic nie dotarło stłuczone. Zamówienia indywidualne to około 3 tygodnie, bo każda praca przechodzi przez dwa wypały.' },
-  { q: 'Czy mogę zapłacić BLIK-iem?', a: 'Tak, BLIK jest pierwszą opcją w koszyku — wpisujesz sześciocyfrowy kod z aplikacji banku i zamówienie jest opłacone od razu. Poza tym: Przelewy24, karta, Apple Pay, Google Pay i zwykły przelew.' },
+  { q: 'Czy mogę zapłacić BLIK-iem?', a: 'Tak, BLIK jest pierwszą opcją w koszyku — wpisujesz sześciocyfrowy kod z aplikacji banku i zamówienie jest opłacone od razu. Poza tym: Przelewy24, karta i zwykły przelew.' },
   { q: 'Ceramika do zmywarki i mikrofalówki?', a: 'Szkliwione naczynia bez złota myj spokojnie w zmywarce na krótkim programie. Wszystko ze złotą krawędzią — tylko ręcznie i nigdy w mikrofalówce, bo złoto to prawdziwy metal.' },
   { q: 'Dlaczego mój kubek różni się od zdjęcia?', a: 'Bo nie jest odlewem. Szkliwo płynie inaczej w każdym wypale, glina inaczej chwyta kolor. Różnica w odcieniu, wielkości do pół centymetra i drobne nierówności to nie wada — to dowód, że to zrobiła ręka.' },
   { q: 'Zwroty i wymiany', a: 'Masz 14 dni na odesłanie rzeczy kupionej w sklepie, w stanie nienaruszonym. Nie dotyczy to zamówień indywidualnych i kubków z Twoim tekstem, bo powstały tylko dla Ciebie.' },
@@ -3515,7 +3515,7 @@ class Component extends DCLogic {
     const pays = [
       { id: 'blik', label: 'BLIK', note: 'Kod z aplikacji banku' },
       { id: 'p24', label: 'Przelewy24', note: 'Przelew online z 380 banków' },
-      { id: 'karta', label: 'Karta', note: 'Visa, Mastercard, Apple Pay' },
+      { id: 'karta', label: 'Karta', note: 'Visa, Mastercard' },
       { id: 'przelew', label: 'Przelew tradycyjny', note: 'Wysyłka po zaksięgowaniu' }
     ].map(m => ({ id: m.id, label: m.label, note: m.note, bd: s.pay === m.id ? '#24417E' : '#DCD0BE',
       bg: s.pay === m.id ? '#F0F3FA' : '#FCF9F4', dot: s.pay === m.id ? '#24417E' : 'transparent',
