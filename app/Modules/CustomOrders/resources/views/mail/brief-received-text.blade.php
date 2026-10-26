@@ -16,3 +16,4 @@ Telefon: {!! $customOrderRequest->phone !!}
 Zdjęcia od klientki są w załącznikach.
 @endif
 Odpisz na tego maila — trafi prosto do niej.
+Pomysł w panelu: {!! route('admin.custom-orders.index') !!}#pomysl-{!! $customOrderRequest->id !!}

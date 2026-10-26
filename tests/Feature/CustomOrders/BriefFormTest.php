@@ -3,6 +3,7 @@
 namespace Tests\Feature\CustomOrders;
 
 use App\Modules\CustomOrders\Enums\BriefKind;
+use App\Modules\CustomOrders\Enums\CustomOrderStatus;
 use App\Modules\CustomOrders\Mail\BriefConfirmed;
 use App\Modules\CustomOrders\Mail\BriefReceived;
 use App\Modules\CustomOrders\Models\CustomOrderRequest;
@@ -72,7 +73,7 @@ class BriefFormTest extends TestCase
         ]))->assertRedirect(route('custom-orders.index').'#formularz');
 
         $brief = CustomOrderRequest::sole();
-        $this->assertSame(['Ola', 'ola@example.com', '600 100 200', BriefKind::Tableware, '12', 'na 14 lutego', null, 'Serwis na 12 osób, szkliwo jak morze', 'new'],
+        $this->assertSame(['Ola', 'ola@example.com', '600 100 200', BriefKind::Tableware, '12', 'na 14 lutego', null, 'Serwis na 12 osób, szkliwo jak morze', CustomOrderStatus::New],
             [$brief->name, $brief->email, $brief->phone, $brief->kind, $brief->quantity, $brief->needed_by, $brief->budget, $brief->description, $brief->status]);
 
         // Shrunk to 2400 px and saved again as WebP on the private disk, never on the public one.

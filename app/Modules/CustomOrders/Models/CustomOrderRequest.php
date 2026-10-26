@@ -3,12 +3,14 @@
 namespace App\Modules\CustomOrders\Models;
 
 use App\Modules\CustomOrders\Enums\BriefKind;
+use App\Modules\CustomOrders\Enums\CustomOrderStatus;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
- * An idea for a custom piece sent through the form, with the customer's photos. Its list in the panel comes with MA-143.
+ * An idea for a custom piece sent through the form, with the customer's photos. Kasia works through them
+ * in the panel „Zamówienia indywidualne”, where she writes her price and a note only she sees.
  *
  * @property int $id
  * @property string $name
@@ -19,13 +21,13 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property ?string $needed_by
  * @property ?string $budget
  * @property string $description
- * @property string $status
+ * @property ?int $quote
+ * @property ?string $notes
+ * @property CustomOrderStatus $status
  */
 class CustomOrderRequest extends Model implements HasMedia
 {
     use InteractsWithMedia;
-
-    public const STATUS_NEW = 'new';
 
     protected $guarded = ['id'];
 
@@ -59,6 +61,8 @@ class CustomOrderRequest extends Model implements HasMedia
     {
         return [
             'kind' => BriefKind::class,
+            'quote' => 'integer',
+            'status' => CustomOrderStatus::class,
         ];
     }
 }
