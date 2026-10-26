@@ -4,6 +4,9 @@
  * Sliding it away while scrolling down is motion, so resources/js/aura.js does that.
  */
 export default () => ({
+    // The full-screen menu below 920 px.
+    menu: false,
+
     init() {
         const measure = () => {
             document.documentElement.style.scrollPaddingTop = this.$el.offsetHeight + 12 + 'px';
