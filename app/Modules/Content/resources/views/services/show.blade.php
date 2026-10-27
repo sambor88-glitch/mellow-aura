@@ -2,7 +2,7 @@
 @use('App\Modules\Shared\Support\FocalPoint')
 @use('App\Modules\Shared\Support\Money')
 @use('App\Modules\Shared\Support\ServiceStructuredData')
-@use('Illuminate\Support\Facades\Vite')
+@inject('pagePhotos', 'App\Modules\Content\Support\PagePhotos')
 @php
     $page = match ($service) {
         Service::Scarf => [
@@ -10,7 +10,7 @@
             'description' => 'Co zrobić z apaszką po babci? Przeszyję ją na opaskę i scrunchies z Twojej własnej tkaniny. Upcycling jedwabiu na zamówienie z jawnym cennikiem.',
             'serviceName' => 'Opaska z Twojej apaszki',
             'eyebrow' => 'usługa &middot; z Twojej tkaniny',
-            'photo' => 'zdjecia/opaska-jedwab.webp',
+            'photo' => 'service-scarf',
             'photoAlt' => 'Opaska i scrunchie uszyte z jedwabnej apaszki',
             'cta' => 'Napisz, co chcesz przysłać',
             'brief' => 'apaszka',
@@ -24,7 +24,7 @@
             'description' => 'Co zrobić z bukietem po weselu? Odciskam zasuszony kwiat w glinie i wypalam. Zostaje talerz, z którego jesz, a nie kwiat za szkłem.',
             'serviceName' => 'Talerz z odciskiem Twojego kwiatu',
             'eyebrow' => 'usługa &middot; z Twojej rośliny',
-            'photo' => 'zdjecia/talerz-niebieski-odcisk.webp',
+            'photo' => 'service-imprint',
             'photoAlt' => 'Talerz z odciskiem prawdziwej rośliny',
             'cta' => 'Napisz, co chcesz odcisnąć',
             'brief' => 'odcisk',
@@ -63,7 +63,9 @@
                     @endif
                 </div>
                 <div class="min-w-0 flex-[1_1_320px]">
-                    <img src="{{ Vite::asset($page['photo']) }}" alt="{{ $page['photoAlt'] }}" width="600" height="800" class="block aspect-[3/4] w-full rounded-[20px] bg-line-soft object-cover">
+                    @if (($photo = $pagePhotos->get($page['photo']))->exists())
+                        <img src="{{ $photo->url }}" alt="{{ $photo->alt($page['photoAlt']) }}" width="600" height="800" style="{{ $photo->style() }}" class="block aspect-[3/4] w-full rounded-[20px] bg-line-soft object-cover">
+                    @endif
                 </div>
             </div>
         </div>

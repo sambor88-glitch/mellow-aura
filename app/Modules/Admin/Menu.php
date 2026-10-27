@@ -31,6 +31,7 @@ class Menu
             ['label' => 'Wypały', 'route' => 'admin.firing.edit', 'active' => 'admin.firing.edit', 'description' => 'Cennik wypałów na zlecenie, dzień wsadu i notka pod cennikiem.'],
             ['label' => 'Usługi', 'route' => 'admin.services.edit', 'active' => 'admin.services.*', 'description' => 'Apaszka i odcisk rośliny: zdjęcia przed i po, teksty, cennik i kroki.'],
             ['label' => 'Treści', 'route' => 'admin.content.edit', 'active' => 'admin.content.*', 'description' => 'Teksty na stronach, częste pytania, fakty o pracowni, zamówienia indywidualne, karty dla lokali i sprawy w formularzu.'],
+            ['label' => 'Zdjęcia stron', 'route' => 'admin.page-photos.edit', 'active' => 'admin.page-photos.*', 'description' => 'Zdjęcia na stronie głównej, „O mnie”, kontakcie, usługach i pozostałych stronach: podmiana i kadr każdego miejsca.'],
             ['label' => 'Google', 'route' => 'admin.seo-pages.edit', 'active' => 'admin.seo-pages.*', 'description' => 'Tytuł i opis każdej strony stałej w wynikach wyszukiwania.'],
             ['label' => 'Ustawienia', 'route' => 'admin.settings.edit', 'active' => 'admin.settings.*', 'description' => 'E-mail, próg darmowej wysyłki i kod Paczkomatu.'],
             ['label' => 'Konta', 'route' => 'admin.accounts.index', 'active' => 'admin.accounts.*', 'description' => 'Kto ma dostęp do panelu: Ty i osoba, która pomaga przy zamówieniach.'],

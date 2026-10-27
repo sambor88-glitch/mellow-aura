@@ -2,8 +2,10 @@
 
 use App\Modules\Content\Http\Controllers\Admin\ContentController;
 use App\Modules\Content\Http\Controllers\Admin\InstagramFeedController;
+use App\Modules\Content\Http\Controllers\Admin\PagePhotoController;
 use App\Modules\Content\Http\Controllers\Admin\ServiceExampleController;
 use App\Modules\Content\Http\Controllers\Admin\ServicesController;
+use App\Modules\Content\Support\PagePhotos;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/tresci', [ContentController::class, 'edit'])->name('content.edit');
@@ -25,3 +27,11 @@ Route::whereIn('service', ['apaszka', 'odcisk'])->group(function () {
 Route::put('/uslugi/przed-i-po/{example}', [ServiceExampleController::class, 'update'])->whereNumber('example')->name('services.examples.update');
 Route::post('/uslugi/przed-i-po/{example}/kolejnosc', [ServiceExampleController::class, 'move'])->whereNumber('example')->name('services.examples.move');
 Route::delete('/uslugi/przed-i-po/{example}', [ServiceExampleController::class, 'destroy'])->whereNumber('example')->name('services.examples.destroy');
+
+Route::get('/zdjecia-stron', [PagePhotoController::class, 'edit'])->name('page-photos.edit');
+Route::whereIn('place', PagePhotos::keys())->group(function () {
+    Route::post('/zdjecia-stron/{place}', [PagePhotoController::class, 'store'])->name('page-photos.store');
+    Route::put('/zdjecia-stron/{place}', [PagePhotoController::class, 'update'])->name('page-photos.update');
+    Route::delete('/zdjecia-stron/{place}', [PagePhotoController::class, 'destroy'])->name('page-photos.destroy');
+    Route::post('/zdjecia-stron/{place}/przywroc', [PagePhotoController::class, 'restore'])->name('page-photos.restore');
+});

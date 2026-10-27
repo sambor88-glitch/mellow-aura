@@ -1,9 +1,9 @@
 @use('App\Modules\Catalog\Support\ProductPhoto')
 @use('App\Modules\Shared\Support\DispatchTime')
 @use('App\Modules\Shared\Support\Money')
-@use('Illuminate\Support\Facades\Vite')
 @use('App\Modules\Localization\Support\Locales')
 @inject('settings', 'App\Modules\Settings\Settings')
+@inject('pagePhotos', 'App\Modules\Content\Support\PagePhotos')
 @php
     // A section or button that leads to another page shows up once that page exists in the language of this page,
     // so the English home page has no sections for services held in Polish.
@@ -13,7 +13,8 @@
     $em = fn (string $key, string $class = 'text-brown italic') => new Illuminate\Support\HtmlString(
         str_replace(':em', '<em class="'.$class.'">'.e($t($key.'_em')).'</em>', e($t($key)))
     );
-    $photo = fn (string $file) => Vite::asset('zdjecia/'.$file);
+    // Photos by place, from the panel's „Zdjęcia stron”; a place without a photo is left out.
+    $photo = fn (string $place) => $pagePhotos->get($place);
 
     $heroImage = $hero?->getFirstMedia('images');
     // Kasia writes these in Polish in the panel. Until the panel has English versions (MA-126) an English page
@@ -25,8 +26,8 @@
 
     $lowestPrice = fn (mixed $rows) => collect(is_array($rows) ? $rows : [])->pluck('price_gross')->filter()->min();
     $services = array_filter([
-        $link('content.scarf') ? [$link('content.scarf'), 'opaska-jedwab.webp', $t('scarf_alt'), $t('scarf_material'), $t('scarf_title'), $t('scarf_text'), $lowestPrice($settings->get('scarf_service_prices'))] : null,
-        $link('content.imprint') ? [$link('content.imprint'), 'talerz-niebieski-odcisk.webp', $t('imprint_alt'), $t('imprint_material'), $t('imprint_title'), $t('imprint_text'), $lowestPrice($settings->get('imprint_service_prices'))] : null,
+        $link('content.scarf') ? [$link('content.scarf'), 'home-scarf', $t('scarf_alt'), $t('scarf_material'), $t('scarf_title'), $t('scarf_text'), $lowestPrice($settings->get('scarf_service_prices'))] : null,
+        $link('content.imprint') ? [$link('content.imprint'), 'home-imprint', $t('imprint_alt'), $t('imprint_material'), $t('imprint_title'), $t('imprint_text'), $lowestPrice($settings->get('imprint_service_prices'))] : null,
     ]);
 
     $workshopsUrl = $link('workshops.index');
@@ -38,15 +39,17 @@
         $link('firing.index') ? [$link('firing.index'), false, $t('card_firing_eyebrow'), $t('card_firing_title'), $t('card_firing_text')] : null,
     ]);
 
-    // Photos floating around the hero frame: file, class, scroll speed, depth under the mouse.
+    // Photos floating around the hero frame: place, class, scroll speed, depth under the mouse.
     $floats = [
-        ['misa-laguna.webp', 'aura-float-1', 1.4, 30],
-        ['podstawki-muszle-roz.webp', 'aura-float-3', 1.1, 22],
-        ['opaska-jedwab.webp', 'aura-float-5', 2.2, 40],
-        ['kubek-cappuccino.webp', 'aura-float-2', 0.9, 26],
-        ['wazon-rzezbiony.webp', 'aura-float-4', 1.8, 46],
-        ['kadzielnica-pszczoly.webp', 'aura-float-6', 1.3, 34],
+        ['home-float-1', 'aura-float-1', 1.4, 30],
+        ['home-float-2', 'aura-float-3', 1.1, 22],
+        ['home-float-3', 'aura-float-5', 2.2, 40],
+        ['home-float-4', 'aura-float-2', 0.9, 26],
+        ['home-float-5', 'aura-float-4', 1.8, 46],
+        ['home-float-6', 'aura-float-6', 1.3, 34],
     ];
+    $heroPhoto = $photo('home-hero');
+    $kasiaPhoto = $photo('home-kasia');
     $instagramHandle = ltrim((string) $settings->get('instagram_handle'), '@');
     $dispatch = DispatchTime::label($settings, short: true);
 
@@ -65,17 +68,21 @@
     <section id="aura-hero" class="aura-hero relative -mt-[78px]" aria-labelledby="hero-title">
         <div class="aura-hero-pin">
             <div class="aura-scene">
-                @foreach ($floats as [$file, $class, $speed, $depth])
+                @foreach ($floats as [$place, $class, $speed, $depth])
+                    @continue (! ($float = $photo($place))->exists())
                     <div class="aura-float {{ $class }}" data-speed="{{ $speed }}" data-depth="{{ $depth }}" aria-hidden="true">
-                        <div class="size-full"><img src="{{ $photo($file) }}" alt="" width="400" height="500" @if ($loop->index > 2) loading="lazy" @endif></div>
+                        <div class="size-full"><img src="{{ $float->url }}" alt="" width="400" height="500" style="{{ $float->style() }}" @if ($loop->index > 2) loading="lazy" @endif></div>
                     </div>
                 @endforeach
 
                 {{-- On a phone the frame shows only the middle half of the screen and the plate sits at the bottom of the photo,
-                     so the photo starts a third higher; aura.js brings it back as the frame opens. --}}
+                     so the photo starts a third higher; aura.js brings it back as the frame opens. The point in view is set
+                     in the panel twice, for a computer and for a phone, where the frame is narrow and tall. --}}
                 <div class="aura-frame">
-                    <img src="{{ $photo('kasia-talerz-zloto.webp') }}" alt="{{ $t('hero_alt') }}" fetchpriority="high" width="1200" height="1500"
-                         class="size-full origin-[50%_75%] scale-[1.28] object-cover object-[50%_82%] max-[760px]:-translate-y-[32%]">
+                    @if ($heroPhoto->exists())
+                        <img src="{{ $heroPhoto->url }}" alt="{{ $heroPhoto->alt($t('hero_alt')) }}" fetchpriority="high" width="1200" height="1500" style="{{ $heroPhoto->styleVariables() }}"
+                             class="size-full origin-[50%_75%] scale-[1.28] object-cover object-(--focus) max-[760px]:-translate-y-[32%] max-[760px]:object-(--focus-phone)">
+                    @endif
                 </div>
                 <div class="aura-scrim"></div>
 
@@ -147,9 +154,11 @@
                         @endif
                     </div>
                 </div>
-                <div class="aspect-[3/4] min-w-0 flex-[0_1_300px] overflow-hidden rounded-[200px_200px_16px_16px]">
-                    <img src="{{ $photo('zestaw-filizanka-talerz.webp') }}" alt="{{ $t('kasia_alt') }}" loading="lazy" width="600" height="800" data-aura-parallax="8" class="size-full object-cover">
-                </div>
+                @if ($kasiaPhoto->exists())
+                    <div class="aspect-[3/4] min-w-0 flex-[0_1_300px] overflow-hidden rounded-[200px_200px_16px_16px]">
+                        <img src="{{ $kasiaPhoto->url }}" alt="{{ $kasiaPhoto->alt($t('kasia_alt')) }}" loading="lazy" width="600" height="800" data-aura-parallax="8" style="{{ $kasiaPhoto->style() }}" class="size-full object-cover">
+                    </div>
+                @endif
             </div>
         </section>
     @endif
@@ -194,8 +203,9 @@
         <section class="mx-auto max-w-[1360px] px-[clamp(18px,4vw,48px)] pt-20 sm:pt-[clamp(90px,14vh,150px)]" aria-labelledby="gifts-title">
             <div class="glass flex flex-wrap overflow-hidden rounded-[26px]">
                 <div class="flex min-w-0 flex-[1_1_300px] gap-1.5 p-1.5">
-                    @foreach ([['kubek-cappuccino.webp', $t('gifts_mug_alt')], ['scrunchies-fiolet.webp', $t('gifts_scrunchies_alt')]] as [$file, $alt])
-                        <div class="aspect-square w-1/2 overflow-hidden rounded-[20px]"><img src="{{ $photo($file) }}" alt="{{ $alt }}" loading="lazy" width="600" height="600" data-aura-parallax="6" class="size-full object-cover"></div>
+                    @foreach ([['home-gifts-1', $t('gifts_mug_alt')], ['home-gifts-2', $t('gifts_scrunchies_alt')]] as [$place, $alt])
+                        @continue (! ($gift = $photo($place))->exists())
+                        <div class="aspect-square w-1/2 overflow-hidden rounded-[20px]"><img src="{{ $gift->url }}" alt="{{ $gift->alt($alt) }}" loading="lazy" width="600" height="600" data-aura-parallax="6" style="{{ $gift->style() }}" class="size-full object-cover"></div>
                     @endforeach
                 </div>
                 <div class="flex min-w-0 flex-[1_1_360px] flex-col justify-center px-[clamp(24px,4vw,48px)] py-11">
@@ -225,9 +235,12 @@
                 <p class="m-0 max-w-[40ch] text-[16.5px] text-lead">{{ $t('own_text') }}</p>
             </div>
             <div data-aura-rise class="flex flex-wrap gap-[clamp(16px,2vw,28px)]">
-                @foreach ($services as [$url, $file, $alt, $material, $title, $text, $from])
+                @foreach ($services as [$url, $place, $alt, $material, $title, $text, $from])
+                    @php($servicePhoto = $photo($place))
                     <a href="{{ $url }}" class="group relative block h-[clamp(460px,72vh,700px)] min-w-0 flex-[1_1_420px] overflow-hidden rounded-[24px] text-sand hover:text-sand focus-visible:outline-offset-4">
-                        <img src="{{ $photo($file) }}" alt="{{ $alt }}" loading="lazy" width="900" height="1200" data-aura-parallax="6" class="absolute inset-x-0 -top-[8%] h-[116%] w-full object-cover">
+                        @if ($servicePhoto->exists())
+                            <img src="{{ $servicePhoto->url }}" alt="{{ $servicePhoto->alt($alt) }}" loading="lazy" width="900" height="1200" data-aura-parallax="6" style="{{ $servicePhoto->style() }}" class="absolute inset-x-0 -top-[8%] h-[116%] w-full object-cover">
+                        @endif
                         <span class="absolute inset-0 bg-linear-to-b from-transparent from-40% to-ink/55"></span>
                         <span class="glass-dark absolute inset-x-3.5 bottom-3.5 z-2 block rounded-[18px] px-6 py-[22px] transition-transform duration-800 ease-clay group-hover:-translate-y-2">
                             <span class="text-[10.5px] tracking-[0.26em] text-on-dark uppercase">{{ $material }}</span>
@@ -273,8 +286,9 @@
                     </div>
                 </div>
                 <div aria-hidden="true" class="relative h-[clamp(460px,70vh,680px)] min-w-0 flex-[1_1_420px]">
-                    @foreach ([['zestaw-flatlay.webp', 'top-[6%] left-0 h-[70%] w-[58%]'], ['patera-czarna-kolce.webp', 'top-0 right-0 h-[44%] w-[38%]'], ['kubek-nie-powinnam.webp', 'right-[6%] bottom-0 h-[46%] w-[46%]']] as [$file, $place])
-                        <div class="absolute overflow-hidden rounded-[20px] {{ $place }}"><img src="{{ $photo($file) }}" alt="" loading="lazy" width="800" height="1000" data-aura-parallax="{{ 6 + $loop->index * 4 }}" class="size-full object-cover"></div>
+                    @foreach ([['home-workshops-1', 'top-[6%] left-0 h-[70%] w-[58%]'], ['home-workshops-2', 'top-0 right-0 h-[44%] w-[38%]'], ['home-workshops-3', 'right-[6%] bottom-0 h-[46%] w-[46%]']] as [$place, $position])
+                        @continue (! ($collage = $photo($place))->exists())
+                        <div class="absolute overflow-hidden rounded-[20px] {{ $position }}"><img src="{{ $collage->url }}" alt="" loading="lazy" width="800" height="1000" data-aura-parallax="{{ 6 + $loop->index * 4 }}" style="{{ $collage->style() }}" class="size-full object-cover"></div>
                     @endforeach
                 </div>
             </div>

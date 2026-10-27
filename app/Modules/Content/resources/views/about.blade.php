@@ -1,4 +1,4 @@
-@use('Illuminate\Support\Facades\Vite')
+@inject('pagePhotos', 'App\Modules\Content\Support\PagePhotos')
 @inject('settings', 'App\Modules\Settings\Settings')
 @php
     $lead = $settings->get('text_about_paragraph_1');
@@ -34,13 +34,16 @@
                     </div>
                 </div>
                 <div class="min-w-0 flex-[1_1_340px]">
-                    <img src="{{ Vite::asset('zdjecia/kasia-talerz-zloto.webp') }}" alt="Kasia trzymająca talerz ze złoconą krawędzią"
-                         width="600" height="800" class="block aspect-[3/4] w-full rounded-[20px] bg-line-soft object-cover">
-                    <div class="mt-3.5 flex gap-3.5">
-                        <img src="{{ Vite::asset('zdjecia/kubek-ochujeje.webp') }}" alt="Kubek z wbijanym tekstem" loading="lazy"
-                             width="600" height="600" class="block aspect-square min-w-0 flex-1 rounded-[20px] bg-line-soft object-cover">
-                        <img src="{{ Vite::asset('zdjecia/kadzielnica-pszczoly.webp') }}" alt="Kadzielnica ze złoconym kołnierzem" loading="lazy"
-                             width="600" height="600" class="block aspect-square min-w-0 flex-1 rounded-[20px] bg-line-soft object-cover">
+                    @if (($main = $pagePhotos->get('about-main'))->exists())
+                        <img src="{{ $main->url }}" alt="{{ $main->alt('Kasia trzymająca talerz ze złoconą krawędzią') }}"
+                             width="600" height="800" style="{{ $main->style() }}" class="mb-3.5 block aspect-[3/4] w-full rounded-[20px] bg-line-soft object-cover">
+                    @endif
+                    <div class="flex gap-3.5">
+                        @foreach ([['about-detail-1', 'Kubek z wbijanym tekstem'], ['about-detail-2', 'Kadzielnica ze złoconym kołnierzem']] as [$place, $alt])
+                            @continue (! ($detail = $pagePhotos->get($place))->exists())
+                            <img src="{{ $detail->url }}" alt="{{ $detail->alt($alt) }}" loading="lazy"
+                                 width="600" height="600" style="{{ $detail->style() }}" class="block aspect-square min-w-0 flex-1 rounded-[20px] bg-line-soft object-cover">
+                        @endforeach
                     </div>
                 </div>
             </div>
