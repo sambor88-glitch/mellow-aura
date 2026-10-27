@@ -5,12 +5,14 @@ namespace App\Modules\Checkout\Http\Requests\Admin;
 use App\Modules\Checkout\Enums\OrderStatus;
 use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Models\Order;
+use Closure;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
  * A status Kasia can set by hand, only on a paid order. „Wysłane” only fits a parcel that travels,
- * so an order collected at the studio or vouchers sent as PDFs go straight to „Zakończone”.
+ * so an order collected at the studio or vouchers sent as PDFs go straight to „Zakończone”. Only the moves
+ * the panel's buttons offer pass (`OrderStatus::canBecome`) — a double tap or a stale tab is turned back.
  */
 class ChangeOrderStatusRequest extends FormRequest
 {
@@ -32,7 +34,13 @@ class ChangeOrderStatusRequest extends FormRequest
         }
 
         return [
-            'status' => ['required', Rule::enum(OrderStatus::class)->only($allowed)],
+            'status' => ['required', Rule::enum(OrderStatus::class)->only($allowed), function (string $attribute, mixed $value, Closure $fail) use ($order) {
+                $next = OrderStatus::tryFrom((string) $value);
+
+                if ($next !== null && ! $order->status->canBecome($next)) {
+                    $fail('Zamówienie jest już „'.$order->status->label().'” — odśwież stronę i sprawdź, co się zmieniło');
+                }
+            }],
             'tracking_number' => ['nullable', 'regex:/^[A-Z0-9]{8,40}$/'],
             'problem_note' => ['nullable', 'string', 'max:500'],
         ];

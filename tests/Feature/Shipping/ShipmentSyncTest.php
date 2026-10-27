@@ -130,6 +130,24 @@ class ShipmentSyncTest extends TestCase
         Mail::assertNotQueued(ParcelOnItsWay::class);
     }
 
+    public function test_an_order_kasia_sent_and_took_back_by_mistake_brings_no_second_mail(): void
+    {
+        $order = $this->order();
+        $this->shipment($order, 'confirmed');
+        $this->shipx(['taken_by_courier']);
+        $this->actingAs(User::factory()->create());
+
+        // MA-223: „Wysłane” by hand, then „Wróć do W realizacji” — the date and the number stay with the order.
+        $this->patch('/panel/zamowienia/'.$order->number.'/status', ['status' => 'shipped', 'tracking_number' => self::TRACKING]);
+        $this->patch('/panel/zamowienia/'.$order->number.'/status', ['status' => 'in_progress']);
+        $this->assertNotNull($order->fresh()->shipped_at);
+
+        $this->artisan('shipping:sync')->assertSuccessful();
+
+        $this->assertSame(self::TRACKING, $order->fresh()->tracking_number);
+        Mail::assertQueued(ParcelOnItsWay::class, 1);
+    }
+
     public function test_a_problem_kasia_marked_after_sending_keeps_her_note(): void
     {
         $order = $this->order(['status' => OrderStatus::Problem, 'shipped_at' => now()->subDay(), 'problem_note' => 'pęknięty kubek']);

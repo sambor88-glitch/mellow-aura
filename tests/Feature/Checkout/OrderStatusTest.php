@@ -94,6 +94,79 @@ class OrderStatusTest extends TestCase
         Mail::assertNothingQueued();
     }
 
+    public function test_a_second_tap_on_sent_brings_no_second_mail_and_keeps_the_tracking_number(): void
+    {
+        Mail::fake();
+        $order = $this->order();
+        $this->actingAs(User::factory()->create());
+        $url = '/panel/zamowienia/'.$order->number;
+
+        $this->patch($url.'/status', ['status' => 'shipped', 'tracking_number' => '620012345678901'])->assertRedirect($url);
+        $sentAt = $order->fresh()->shipped_at;
+
+        // The double tap on a phone: the same form, sent again from the page that still shows „W realizacji”.
+        $this->from($url)->patch($url.'/status', ['status' => 'shipped', 'tracking_number' => ''])
+            ->assertSessionHasErrors(['status' => 'Zamówienie jest już „Wysłane” — odśwież stronę i sprawdź, co się zmieniło']);
+
+        $order->refresh();
+        $this->assertSame([OrderStatus::Shipped, '620012345678901'], [$order->status, $order->tracking_number]);
+        $this->assertEquals($sentAt, $order->shipped_at);
+        Mail::assertQueuedCount(1);
+    }
+
+    public function test_going_back_to_the_studio_keeps_the_number_and_sending_again_brings_no_second_mail(): void
+    {
+        Mail::fake();
+        $order = $this->order();
+        $this->actingAs(User::factory()->create());
+        $url = '/panel/zamowienia/'.$order->number;
+
+        $this->patch($url.'/status', ['status' => 'shipped', 'tracking_number' => '620012345678901']);
+        $sentAt = $order->fresh()->shipped_at;
+
+        $this->get($url)->assertSeeInOrder(['Wróć do „W realizacji”', 'Na pewno?', 'Tak, wróć', 'Anuluj']);
+        $this->patch($url.'/status', ['status' => 'in_progress'])->assertSessionHas('panel_status', 'Z powrotem w realizacji.');
+
+        $order->refresh();
+        $this->assertSame([OrderStatus::InProgress, '620012345678901'], [$order->status, $order->tracking_number]);
+        $this->assertEquals($sentAt, $order->shipped_at);
+
+        $this->get($url)
+            ->assertSee('Puste pole zostawia numer 620012345678901')
+            ->assertSee('Znowu wysłane — bez drugiego maila');
+
+        $this->patch($url.'/status', ['status' => 'shipped', 'tracking_number' => ''])
+            ->assertSessionHas('panel_status', 'Znowu wysłane — klientka dostała maila za pierwszym razem, drugi nie wyjdzie.');
+
+        $order->refresh();
+        $this->assertSame([OrderStatus::Shipped, '620012345678901'], [$order->status, $order->tracking_number]);
+        $this->assertEquals($sentAt, $order->shipped_at);
+        Mail::assertQueuedCount(1);
+    }
+
+    public function test_only_the_moves_the_panel_offers_are_let_through(): void
+    {
+        Mail::fake();
+        $this->actingAs(User::factory()->create());
+
+        foreach ([
+            [OrderStatus::Completed, 'shipped', 'Zamówienie jest już „Zakończone” — odśwież stronę i sprawdź, co się zmieniło'],
+            [OrderStatus::Completed, 'completed', 'Zamówienie jest już „Zakończone” — odśwież stronę i sprawdź, co się zmieniło'],
+            [OrderStatus::Problem, 'problem', 'Zamówienie jest już „Problem” — odśwież stronę i sprawdź, co się zmieniło'],
+            [OrderStatus::InProgress, 'in_progress', 'Zamówienie jest już „W realizacji” — odśwież stronę i sprawdź, co się zmieniło'],
+            [OrderStatus::InProgress, 'new', 'Tego statusu nie da się ustawić przy tym zamówieniu'],
+        ] as [$from, $to, $message]) {
+            $order = $this->order(['status' => $from]);
+
+            $this->from('/panel/zamowienia/'.$order->number)
+                ->patch('/panel/zamowienia/'.$order->number.'/status', ['status' => $to])
+                ->assertSessionHasErrors(['status' => $message]);
+            $this->assertSame($from, $order->fresh()->status, $from->value.' → '.$to);
+        }
+
+        Mail::assertNothingQueued();
+    }
+
     public function test_a_pickup_at_the_studio_is_never_sent_and_an_unpaid_order_waits_for_its_payment(): void
     {
         $pickup = $this->order(['shipping_method' => 'studio_pickup', 'shipping_gross' => 0]);
