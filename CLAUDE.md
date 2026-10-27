@@ -3,6 +3,13 @@
 Sklep i strona pracowni ceramiki Kasi Samborskiej z Krakowa. W repozytorium jest prototyp, dokumentacja
 i szkielet aplikacji Laravel 13 (katalogi `app/`, `config/`, `public/` itd.). Serwer serwuje wyłącznie `public/`.
 
+## Język odpowiedzi
+
+Decyzja Macieja 27.10: **Claude zawsze pisze po polsku** — w każdej sesji, wątku i podsesji, także po
+powiadomieniach z GitHuba, harmonogramu i innych sesji. Dotyczy czatu, komentarzy i worklogów w Jirze, tytułów
+i opisów PR-ów, komentarzy na GitHubie, wiadomości commitów, raportów i wiadomości do innych sesji.
+Po angielsku zostaje tylko kod (sekcja „Język kodu”) i terminy techniczne z krótkim polskim wyjaśnieniem.
+
 ## Źródła prawdy
 
 | Plik | Rozstrzyga |
