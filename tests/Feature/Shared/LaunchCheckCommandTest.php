@@ -11,14 +11,7 @@ class LaunchCheckCommandTest extends TestCase
 
     public function test_a_healthy_production_passes_every_check(): void
     {
-        Http::fake([
-            'https://www.mellow-aura.com/' => Http::response('', 301, ['Location' => 'https://mellow-aura.com/']),
-            'https://mellow-aura.com/robots.txt' => Http::response("User-agent: *\nDisallow: /panel\n"),
-            'https://mellow-aura.com/sitemap.xml' => Http::response(self::SITEMAP),
-            'https://mellow-aura.com/en' => Http::response('', 404),
-            'https://mellow-aura.com/sklep' => Http::response('<title>Sklep — ceramika | MellowAura</title><a href="/sklep/kubki">Kubki</a>'),
-            'https://mellow-aura.com/' => Http::response('<title>MellowAura — ceramika i rękodzieło z jedwabiu, Kraków</title>'),
-        ]);
+        $this->fakeHealthyProduction();
 
         $this->artisan('seo:launch-check', ['url' => 'https://mellow-aura.com'])
             ->expectsOutputToContain('Produkcja nie ma noindex')
@@ -54,6 +47,8 @@ class LaunchCheckCommandTest extends TestCase
             'https://mellowaura-dev.on-forge.com/*' => Http::response('<title>Sklep</title>'),
             'https://mellow-aura.com/sklep' => Http::response('<title>MellowAura</title><a onclick="go()">Dalej</a>'),
             'https://mellow-aura.com/' => Http::response('<title>MellowAura</title>', 200, ['X-Robots-Tag' => 'noindex, nofollow']),
+            'https://mellow-aura.com/regulamin' => Http::response('<title>Regulamin sklepu | MellowAura</title>'),
+            'https://mellow-aura.com/polityka-prywatnosci' => Http::response('<title>Polityka prywatności | MellowAura</title>'),
         ]);
 
         $this->artisan('seo:launch-check', ['url' => 'https://mellow-aura.com'])
@@ -62,6 +57,30 @@ class LaunchCheckCommandTest extends TestCase
             ->expectsOutputToContain('200 → brak')
             ->expectsOutputToContain('z innej domeny: https://mellowaura-dev.on-forge.com/sklep')
             ->expectsOutputToContain('powtórzone: „MellowAura”')
+            ->expectsOutputToContain('https://mellow-aura.com/sklep')
+            ->assertFailed();
+    }
+
+    public function test_legal_pages_with_the_lawyers_notes_stop_the_launch(): void
+    {
+        $this->fakeHealthyProduction([
+            'https://mellow-aura.com/regulamin' => Http::response('<title>Regulamin sklepu | MellowAura</title><mark>decyzja Kasi</mark>'),
+        ]);
+
+        $this->artisan('seo:launch-check', ['url' => 'https://mellow-aura.com'])
+            ->expectsOutputToContain('Regulamin i polityka bez notatek roboczych')
+            ->expectsOutputToContain('/regulamin')
+            ->assertFailed();
+    }
+
+    public function test_a_noindex_page_in_the_sitemap_stops_the_launch(): void
+    {
+        $this->fakeHealthyProduction([
+            'https://mellow-aura.com/sklep' => Http::response('<title>Sklep — ceramika | MellowAura</title>', 200, ['X-Robots-Tag' => 'noindex']),
+        ]);
+
+        $this->artisan('seo:launch-check', ['url' => 'https://mellow-aura.com'])
+            ->expectsOutputToContain('Mapa strony nie ma stron z noindex')
             ->expectsOutputToContain('https://mellow-aura.com/sklep')
             ->assertFailed();
     }
@@ -96,6 +115,23 @@ class LaunchCheckCommandTest extends TestCase
             ->assertSuccessful();
     }
 
+    /**
+     * @param  array<string, mixed>  $overrides
+     */
+    private function fakeHealthyProduction(array $overrides = []): void
+    {
+        Http::fake($overrides + [
+            'https://www.mellow-aura.com/' => Http::response('', 301, ['Location' => 'https://mellow-aura.com/']),
+            'https://mellow-aura.com/robots.txt' => Http::response("User-agent: *\nDisallow: /panel\n"),
+            'https://mellow-aura.com/sitemap.xml' => Http::response(self::SITEMAP),
+            'https://mellow-aura.com/en' => Http::response('', 404),
+            'https://mellow-aura.com/sklep' => Http::response('<title>Sklep — ceramika | MellowAura</title>'),
+            'https://mellow-aura.com/' => Http::response('<title>MellowAura — ceramika i rękodzieło z jedwabiu, Kraków</title>'),
+            'https://mellow-aura.com/regulamin' => Http::response('<title>Regulamin sklepu | MellowAura</title>'),
+            'https://mellow-aura.com/polityka-prywatnosci' => Http::response('<title>Polityka prywatności | MellowAura</title>'),
+        ]);
+    }
+
     private function fakeProductionWithEnglish(): void
     {
         Http::fake([
@@ -105,6 +141,8 @@ class LaunchCheckCommandTest extends TestCase
             'https://mellow-aura.com/en' => Http::response('<title>MellowAura — handmade ceramics, Kraków</title>'),
             'https://mellow-aura.com/sklep' => Http::response('<title>Sklep — ceramika | MellowAura</title>'),
             'https://mellow-aura.com/' => Http::response('<title>MellowAura — ceramika i rękodzieło z jedwabiu, Kraków</title>'),
+            'https://mellow-aura.com/regulamin' => Http::response('<title>Regulamin sklepu | MellowAura</title>'),
+            'https://mellow-aura.com/polityka-prywatnosci' => Http::response('<title>Polityka prywatności | MellowAura</title>'),
         ]);
     }
 }

@@ -5,11 +5,13 @@ namespace App\Modules\Shared\Console;
 use Illuminate\Console\Command;
 use Illuminate\Http\Client\Factory as Http;
 use Illuminate\Http\Client\Response;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
 /**
  * The launch gate from MA-114, run against the live site from outside, the way Google sees it: headers, robots.txt,
- * one host, the sitemap, a 200 and a title of its own on every page in it, and links instead of click handlers.
+ * one host, the sitemap, a 200 and a title of its own on every page in it, links instead of click handlers, and terms and
+ * a privacy policy without the lawyer's notes.
  * Staging must say noindex everywhere; production must not say it anywhere. Production also keeps /en/ off
  * (APP_LOCALES=pl, MA-186) until EU VAT, the English terms and EU shipping are settled; --english lifts that.
  *
@@ -118,6 +120,22 @@ class LaunchCheckCommand extends Command
             $this->record('Mapa strony nie ma stron z noindex', $noindexed === [], $noindexed ? implode(', ', array_slice($noindexed, 0, 5)) : 'brak');
         }
         $this->record('Przejścia to linki <a href>, nie onclick', $clickHandlers === [], $clickHandlers ? implode(', ', array_slice($clickHandlers, 0, 5)) : 'brak onclick w linkach');
+
+        // A legal page still carrying the lawyer's notes (<mark>) is a draft, whatever its header says (MA-220).
+        $drafts = [];
+        foreach (['content.terms', 'content.privacy'] as $name) {
+            if (! Route::has($name)) {
+                continue;
+            }
+
+            $path = route($name, absolute: false);
+            $page = $client()->get($base.$path);
+
+            if (! $page->successful() || str_contains($page->body(), '<mark')) {
+                $drafts[] = $path.($page->successful() ? '' : ' ('.$page->status().')');
+            }
+        }
+        $this->record('Regulamin i polityka bez notatek roboczych <mark>', $drafts === [], $drafts ? implode(', ', $drafts) : 'brak');
 
         $this->table(['', 'Punkt', 'Wynik'], array_map(fn (array $row) => [$row[1] ? '✓' : '✗', $row[0], $row[2]], $this->results));
         $this->line('Search Console, Bing i przekierowania ze SumUp (punkty 7–8) sprawdź ręcznie.');

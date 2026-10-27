@@ -30,7 +30,7 @@ class SitemapTest extends TestCase
         $response = $this->get('/sitemap.xml')->assertOk()->assertHeader('Content-Type', 'text/xml; charset=utf-8');
         $xml = $response->getContent();
 
-        foreach (['home', 'shop.index', 'content.about', 'content.studio', 'content.scarf', 'content.imprint', 'content.faq', 'content.contact', 'content.terms', 'content.privacy', 'workshops.index', 'firing.index', 'mug.index', 'gifts.index', 'bundles.index'] as $route) {
+        foreach (['home', 'shop.index', 'content.about', 'content.studio', 'content.scarf', 'content.imprint', 'content.faq', 'content.contact', 'workshops.index', 'firing.index', 'mug.index', 'gifts.index', 'bundles.index'] as $route) {
             $this->assertStringContainsString('<loc>'.route($route).'</loc>', $xml, $route);
         }
 
@@ -40,6 +40,11 @@ class SitemapTest extends TestCase
         // A sold piece keeps its page, so it stays in the map; a draft doesn't.
         $this->assertStringContainsString('<loc>'.route('product.show', $sold).'</loc>', $xml);
         $this->assertStringNotContainsString('/produkt/kosmetyczki', $xml);
+
+        // The terms and the privacy policy are drafts with notes for the lawyer and noindex (MA-220).
+        foreach (['content.terms', 'content.privacy'] as $route) {
+            $this->assertStringNotContainsString(route($route), $xml, $route);
+        }
 
         foreach (['/zamowienie<', '/panel', '/ustawienia-cookies', '/odstapienie-od-umowy', '/voucher/'] as $private) {
             $this->assertStringNotContainsString(url('/').$private, $xml, $private);
