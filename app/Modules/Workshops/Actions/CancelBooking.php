@@ -30,6 +30,11 @@ class CancelBooking
     public function __invoke(WorkshopBooking $booking, bool $notify = true): bool
     {
         return DB::transaction(function () use ($booking, $notify) {
+            // A booking without its date was cancelled before the date was deleted.
+            if ($booking->workshop_date_id === null) {
+                return false;
+            }
+
             WorkshopDate::query()->lockForUpdate()->findOrFail($booking->workshop_date_id);
             $booking = WorkshopBooking::query()->with(['order', 'workshopDate'])->findOrFail($booking->id);
             $was = $booking->status;

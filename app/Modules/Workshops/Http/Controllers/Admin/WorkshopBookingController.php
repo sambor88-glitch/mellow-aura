@@ -35,11 +35,13 @@ class WorkshopBookingController extends Controller
         $paid = $booking->status->isPaid();
         $cancelled = $cancelBooking($booking, $request->boolean('notify'));
 
-        return to_route('admin.workshops.dates.bookings', $booking->workshop_date_id)
-            ->with('panel_status', match (true) {
-                ! $cancelled => 'Ten zapis był już zwolniony — nic nie zmieniam.',
-                $paid => 'Zapis anulowany, miejsce wolne. Zamówienie '.$booking->order->number.' czeka na zwrot wpłaty w „Problem”.',
-                default => 'Zapis anulowany, miejsce wolne.',
-            });
+        // A booking whose date was deleted has no list to go back to.
+        $back = $booking->workshop_date_id ? to_route('admin.workshops.dates.bookings', $booking->workshop_date_id) : to_route('admin.workshops.edit');
+
+        return $back->with('panel_status', match (true) {
+            ! $cancelled => 'Ten zapis był już zwolniony — nic nie zmieniam.',
+            $paid => 'Zapis anulowany, miejsce wolne. Zamówienie '.$booking->order->number.' czeka na zwrot wpłaty w „Problem”.',
+            default => 'Zapis anulowany, miejsce wolne.',
+        });
     }
 }

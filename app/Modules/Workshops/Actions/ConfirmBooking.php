@@ -15,7 +15,8 @@ use Illuminate\Support\Facades\DB;
  *
  * A payment after the hold ran out still gets the seats when nobody took them meanwhile. When someone did, the
  * booking is overbooked: the money came in for a seat that is gone, and Kasia hears about it to return it.
- * A booking Kasia cancelled before the payment came stays cancelled: she hears about the money to return.
+ * A booking Kasia cancelled before the payment came stays cancelled, also when she has deleted its date since:
+ * she hears about the money to return.
  */
 class ConfirmBooking
 {
@@ -33,13 +34,17 @@ class ConfirmBooking
                 return $booking?->status;
             }
 
-            if ($booking->status === BookingStatus::Cancelled) {
+            if ($booking->status === BookingStatus::Cancelled || $booking->workshop_date_id === null) {
                 DB::afterCommit(fn () => $this->alerts->send(
                     'workshop-cancelled-paid:'.$order->number,
                     'Płatność za anulowany zapis — do zwrotu',
                     $order->number.' ('.$order->name.', '.$order->email.'): przyszła płatność za zapis na warsztat, który anulowałaś w panelu. '
                         .'Zwróć wpłatę '.$order->money($order->total_gross).'.',
                 ));
+
+                if ($booking->status !== BookingStatus::Cancelled) {
+                    $booking->update(['status' => BookingStatus::Cancelled, 'cancelled_at' => now()]);
+                }
 
                 return BookingStatus::Cancelled;
             }

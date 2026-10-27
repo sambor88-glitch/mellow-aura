@@ -7,7 +7,6 @@ use App\Modules\Workshops\Enums\BookingStatus;
 use App\Modules\Workshops\Http\Requests\Admin\StoreWorkshopDateRequest;
 use App\Modules\Workshops\Models\WorkshopDate;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\DB;
 
 /**
  * The workshop calendar in the panel: add a date, remove a date nobody is booked on.
@@ -29,11 +28,8 @@ class WorkshopDateController extends Controller
                 ->with('panel_status', 'Na ten termin są zapisy — anuluj je w „Zapisy”, zanim usuniesz termin');
         }
 
-        // Cancelled bookings go with the date; their orders keep the workshop, the price and the customer.
-        DB::transaction(function () use ($date) {
-            $date->bookings()->delete();
-            $date->delete();
-        });
+        // Cancelled bookings stay without their date, so a payment that still comes for one is flagged for a refund.
+        $date->delete();
 
         return to_route('admin.workshops.edit')->withFragment('terminy')->with('panel_status', 'Termin usunięty z terminarza');
     }

@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Modules\Checkout\Actions\MarkOrderPaid;
 use App\Modules\Checkout\Actions\SimulatePayment;
 use App\Modules\Checkout\Enums\OrderStatus;
+use App\Modules\Checkout\Mail\NewOrderReceived;
+use App\Modules\Checkout\Mail\OrderConfirmed;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Monitoring\Mail\Alert;
 use App\Modules\Settings\Database\Seeders\SettingsSeeder;
@@ -164,7 +166,7 @@ class WorkshopBookingsPanelTest extends TestCase
         Mail::assertNotQueued(BookingCancelled::class);
     }
 
-    public function test_a_date_with_only_cancelled_bookings_can_be_removed_and_the_order_stays(): void
+    public function test_a_date_with_only_cancelled_bookings_can_be_removed_and_the_bookings_stay(): void
     {
         $date = $this->date(seats: 2);
         $booking = $this->book($date);
@@ -177,8 +179,38 @@ class WorkshopBookingsPanelTest extends TestCase
         $this->delete(route('admin.workshops.dates.destroy', $date))->assertSessionHas('panel_status', 'Termin usunięty z terminarza');
 
         $this->assertModelMissing($date);
-        $this->assertSame(0, WorkshopBooking::query()->count());
-        $this->assertModelExists($booking->order);
+        $booking->refresh();
+        $this->assertNull($booking->workshop_date_id);
+        $this->assertSame(BookingStatus::Cancelled, $booking->status);
+        $this->assertTrue($booking->order->workshopBooking->is($booking));
+
+        // Cancelling it again does nothing.
+        $this->post(route('admin.workshops.bookings.cancel', $booking))
+            ->assertSessionHas('panel_status', 'Ten zapis był już zwolniony — nic nie zmieniam.');
+    }
+
+    public function test_a_late_payment_for_a_cancelled_booking_whose_date_is_gone_is_flagged_for_a_refund(): void
+    {
+        $date = $this->date(seats: 1);
+        $booking = $this->book($date, ['blik_code' => SimulatePayment::UNCONFIRMED_BLIK_CODE]);
+
+        $this->actingAs($this->owner)->post(route('admin.workshops.bookings.cancel', $booking));
+        $this->delete(route('admin.workshops.dates.destroy', $date));
+        $this->assertModelMissing($date);
+
+        $order = app(MarkOrderPaid::class)($booking->order, 'test-late');
+
+        $this->assertSame(BookingStatus::Cancelled, $booking->fresh()->status);
+        $this->assertSame(OrderStatus::Problem, $order->status);
+        $this->assertSame('Płatność za zapis na warsztat, który anulowałaś w panelu. Zwróć wpłatę.', $order->problem_note);
+        Mail::assertSent(Alert::class, fn (Alert $alert) => str_contains($alert->envelope()->subject, 'Płatność za anulowany zapis'));
+        // Not the shop's order mails: the order still books a workshop.
+        Mail::assertNotQueued(OrderConfirmed::class);
+        Mail::assertNotQueued(NewOrderReceived::class);
+
+        // Her browser coming back from the payment lands on the workshops page, not on an error.
+        $this->withSession(['checkout.order' => $order->number])->get(route('workshops.booking.confirmation'))
+            ->assertRedirect(route('workshops.index'));
     }
 
     /**

@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * Seats on one workshop date, booked by one order. The order holds the price, the customer and the payment;
  * the booking holds the seats.
  *
+ * @property ?int $workshop_date_id null once Kasia deleted the date of a cancelled booking
  * @property BookingStatus $status
  * @property CarbonImmutable $expires_at
  * @property ?CarbonImmutable $confirmed_at

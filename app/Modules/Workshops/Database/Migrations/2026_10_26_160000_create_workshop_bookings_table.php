@@ -14,11 +14,11 @@ return new class extends Migration
         // Seats taken on a date by one order. A held booking counts until expires_at; the payment confirms it.
         Schema::create('workshop_bookings', function (Blueprint $table) {
             $table->id();
-            // A date with bookings is never deleted from the calendar, unless all are cancelled (WorkshopDateController::destroy).
+            // A date with bookings is never deleted from the calendar (WorkshopDateController::destroy).
             $table->foreignId('workshop_date_id')->constrained()->restrictOnDelete();
             $table->foreignId('order_id')->unique()->constrained()->cascadeOnDelete();
             $table->unsignedTinyInteger('seats');
-            // held, confirmed, released, overbooked, cancelled (BookingStatus).
+            // held, confirmed, released, overbooked (BookingStatus).
             $table->string('status', 20);
             $table->dateTime('expires_at');
             $table->dateTime('confirmed_at')->nullable();
