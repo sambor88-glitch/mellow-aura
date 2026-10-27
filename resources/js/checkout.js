@@ -25,7 +25,46 @@ const loadGeowidget = ({ script, style }) => {
 // A sentence from the page's language, with :amount filled in.
 const say = (texts, key, amount = '') => (texts[key] ?? key).replace(':amount', amount);
 
-export default ({ accepted, deviations, payment, blikCode, shipping, locker, lockerMap, subtotal, freeFrom, prices, texts }) => ({
+// The same checks as PlaceOrderRequest, for the fields above the BLIK code. The server checks them all again.
+const PHONE = /^(\+?48)?[\s-]*(\d[\s-]*){9}$/;
+const EMAIL = /^[^\s@]+@[^\s@]+$/;
+const POSTAL_CODE = /^\s*\d{2}[\s-]*\d{3}\s*$/;
+const LOCKER_CODE = /^[A-Z0-9-]{4,16}$/;
+
+// The first field that would come back from the server, in the order of the screen: [field, sentence key].
+const firstGap = (form, shipping) => {
+    const value = (name) => (form.elements[name]?.value ?? '').trim();
+    const checks = [
+        ['email', () => value('email') !== ''],
+        ['email', () => EMAIL.test(value('email')), 'email_format'],
+        ['phone', () => value('phone') !== ''],
+        ['phone', () => PHONE.test(value('phone')), 'phone_format'],
+        ['name', () => value('name') !== ''],
+    ];
+
+    if (shipping === 'courier') {
+        checks.push(
+            ['street', () => value('street') !== ''],
+            ['postal_code', () => value('postal_code') !== ''],
+            ['postal_code', () => POSTAL_CODE.test(value('postal_code')), 'postal_code_format'],
+            ['city', () => value('city') !== ''],
+        );
+    }
+
+    if (shipping === 'parcel_locker') {
+        checks.push(['locker_code', () => {
+            const code = value('locker_code').replace(/\s+/g, '').toUpperCase();
+
+            return code === '' || LOCKER_CODE.test(code);
+        }, 'locker_code_format']);
+    }
+
+    const gap = checks.find(([name, passes]) => form.elements[name] && !passes());
+
+    return gap && [form.elements[gap[0]], gap[2] ?? gap[0]];
+};
+
+export default ({ accepted, deviations, payment, blikCode, shipping, locker, lockerMap, subtotal, freeFrom, prices, texts, fieldTexts }) => ({
     accepted,
     // A product with a feature nobody would expect has its own checkbox, keyed by the cart line.
     deviations: { ...deviations },
@@ -58,21 +97,21 @@ export default ({ accepted, deviations, payment, blikCode, shipping, locker, loc
         return this.accepted && this.deviationsAccepted && !this.needsBlikCode;
     },
 
-    // What the pay button says: the amount, or what is still missing.
+    // What the pay button says: the amount, or what is still missing, in the order of the screen.
     get label() {
         if (this.submitting) {
             return say(texts, 'paying');
-        }
-
-        if (this.needsBlikCode) {
-            return say(texts, 'blik_missing');
         }
 
         if (!this.deviationsAccepted) {
             return say(texts, 'deviation_missing');
         }
 
-        return this.accepted ? say(texts, 'pay', this.$store.cart.format(this.total)) : say(texts, 'terms_missing');
+        if (!this.accepted) {
+            return say(texts, 'terms_missing');
+        }
+
+        return this.needsBlikCode ? say(texts, 'blik_missing') : say(texts, 'pay', this.$store.cart.format(this.total));
     },
 
     init() {
@@ -123,6 +162,7 @@ export default ({ accepted, deviations, payment, blikCode, shipping, locker, loc
         this.$refs.locker.focus();
     },
 
+    // Everything above the BLIK code first: the code lives 2 minutes and is lost on any mistake the server finds.
     submit(event) {
         if (this.submitting) {
             event.preventDefault();
@@ -130,10 +170,12 @@ export default ({ accepted, deviations, payment, blikCode, shipping, locker, loc
             return;
         }
 
-        if (this.needsBlikCode) {
+        const gap = firstGap(this.$el, this.shipping);
+
+        if (gap) {
             event.preventDefault();
-            this.$store.cart.say(say(texts, 'blik_short'));
-            this.$refs.blik.focus();
+            this.$store.cart.say(fieldTexts[gap[1]]);
+            gap[0].focus();
 
             return;
         }
@@ -150,6 +192,14 @@ export default ({ accepted, deviations, payment, blikCode, shipping, locker, loc
             event.preventDefault();
             this.$store.cart.say(say(texts, 'terms_short'));
             this.$refs.terms.focus();
+
+            return;
+        }
+
+        if (this.needsBlikCode) {
+            event.preventDefault();
+            this.$store.cart.say(say(texts, 'blik_short'));
+            this.$refs.blik.focus();
 
             return;
         }

@@ -39,8 +39,8 @@
                     <div class="glass mb-4 rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]">
                         <h2 class="mb-4 flex items-baseline gap-3 font-serif text-[30px] leading-none font-light"><span aria-hidden="true" class="text-[22px] text-rose italic">i</span>{{ $t('contact') }}</h2>
                         <div class="grid gap-[13px]">
-                            <x-shared::field name="phone" :label="$t('phone')" type="tel" autocomplete="tel" :hint="$t($needsDelivery ? 'phone_hint_parcel' : 'phone_hint')" />
                             <x-shared::field name="email" :label="$t('email')" type="email" autocomplete="email" :hint="$t('email_hint')" />
+                            <x-shared::field name="phone" :label="$t('phone')" type="tel" autocomplete="tel" :hint="$t($needsDelivery ? 'phone_hint_parcel' : 'phone_hint')" />
                             <x-shared::field name="name" :label="$t('name')" autocomplete="name" />
                         </div>
 
@@ -58,53 +58,9 @@
                         </details>
                     </div>
 
-                    <fieldset class="glass mb-4 rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]">
-                        <legend class="float-left mb-4 flex w-full items-baseline gap-3 font-serif text-[30px] leading-none font-light"><span aria-hidden="true" class="text-[22px] text-rose italic">ii</span>{{ $t('payment') }}</legend>
-                        <div class="clear-both grid gap-2.5">
-                            @foreach ($paymentMethods as $method)
-                                <label class="{{ $radio }} py-[15px] has-checked:border-navy has-checked:bg-navy-soft">
-                                    <input type="radio" name="payment_method" value="{{ $method->value }}" x-model="payment" @checked($selectedPayment === $method->value) class="sr-only">
-                                    <span class="grid size-4 flex-none place-items-center rounded-full border border-label"><span class="size-2 rounded-full group-has-checked:bg-navy"></span></span>
-                                    <span class="min-w-0 flex-1">
-                                        <span class="block text-[15px]">{{ $method->title() }}</span>
-                                        <span class="mt-0.5 block text-[12.5px] text-label">{{ $method->hint() }}</span>
-                                    </span>
-                                </label>
-                            @endforeach
-                        </div>
-                        @error('payment_method')
-                            <p class="mt-2 text-[13px] text-error">{{ $message }}</p>
-                        @enderror
-                    </fieldset>
-
-                    {{-- BLIK only in złoty (PaymentMethod::for), and its code here only with BLIK Level 0. --}}
-                    @if ($blikCode && $paymentMethods->contains(PaymentMethod::Blik))
-                        <div x-show="payment === 'blik'" x-transition:enter="transition duration-500 ease-clay" x-transition:enter-start="opacity-0 blur-sm -translate-y-2" class="glass mb-4 rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]">
-                            <div class="mb-3.5 flex items-center gap-3">
-                                <span class="rounded-full bg-navy px-3 py-[5px] text-[12px] font-medium tracking-[0.06em] text-white">BLIK</span>
-                                <label for="blik_code" class="text-[13.5px] text-navy-text">{{ $t('blik_label') }}</label>
-                            </div>
-                            <input id="blik_code" name="blik_code" x-ref="blik" x-bind:value="blik"
-                                   x-on:input="blik = $el.value = $el.value.replace(/\D/g, '').slice(0, 6)"
-                                   inputmode="numeric" autocomplete="one-time-code" placeholder="••••••" aria-describedby="blik_code-note"
-                                   @error('blik_code') aria-invalid="true" @enderror
-                                   x-bind:class="blik.length === 6 && 'border-navy shadow-[0_0_0_4px_rgb(36_65_126/.14)]'"
-                                   @class([
-                                       'w-full min-w-0 rounded-[18px] border bg-white p-[18px] text-center font-serif text-[36px] leading-none font-light tracking-[0.45em] text-ink tabular-nums transition-[border-color,box-shadow] duration-300 placeholder:text-line-strong focus:border-navy focus:shadow-[0_0_0_4px_rgb(36_65_126/.14)] focus:outline-none',
-                                       'border-error' => $errors->has('blik_code'),
-                                       'border-navy-line' => ! $errors->has('blik_code'),
-                                   ])>
-                            @error('blik_code')
-                                <p id="blik_code-note" class="mt-2.5 text-center text-[13px] text-error">{{ $message }}</p>
-                            @else
-                                <p id="blik_code-note" x-text="blik.length === 6 ? @js($t('blik_ready')) : @js($t('blik_hint'))" class="mt-2.5 text-center text-[12.5px] text-navy-hint">{{ $t('blik_hint') }}</p>
-                            @enderror
-                        </div>
-                    @endif
-
                     @if ($needsDelivery)
-                        <fieldset class="glass rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]">
-                            <legend class="float-left mb-4 flex w-full items-baseline gap-3 font-serif text-[30px] leading-none font-light"><span aria-hidden="true" class="text-[22px] text-rose italic">iii</span>{{ $t('delivery_way') }}</legend>
+                        <fieldset class="glass mb-4 rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]">
+                            <legend class="float-left mb-4 flex w-full items-baseline gap-3 font-serif text-[30px] leading-none font-light"><span aria-hidden="true" class="text-[22px] text-rose italic">ii</span>{{ $t('delivery_way') }}</legend>
                             <div class="clear-both grid gap-2.5">
                                 @foreach ($methods as $method)
                                     <label class="{{ $radio }} py-4 has-checked:border-ink has-checked:bg-sand-dark">
@@ -170,8 +126,8 @@
                         @endif
                     @else
                         {{-- Vouchers sent as PDFs alone: the e-mail is the delivery, so there is nothing to choose. --}}
-                        <div class="glass rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]">
-                            <div class="mb-4 flex items-baseline gap-3 font-serif text-[30px] leading-none font-light"><span aria-hidden="true" class="text-[22px] text-rose italic">iii</span>{{ $t('delivery') }}</div>
+                        <div class="glass mb-4 rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]">
+                            <div class="mb-4 flex items-baseline gap-3 font-serif text-[30px] leading-none font-light"><span aria-hidden="true" class="text-[22px] text-rose italic">ii</span>{{ $t('delivery') }}</div>
                             <div class="flex items-center gap-3.5 rounded-[18px] border border-ink bg-cream px-[18px] py-4">
                                 <span class="min-w-0 flex-1">
                                     <span class="block text-[15px]">{{ $t('delivery_email') }}</span>
@@ -181,6 +137,25 @@
                             </div>
                         </div>
                     @endif
+
+                    <fieldset class="glass rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]">
+                        <legend class="float-left mb-4 flex w-full items-baseline gap-3 font-serif text-[30px] leading-none font-light"><span aria-hidden="true" class="text-[22px] text-rose italic">iii</span>{{ $t('payment') }}</legend>
+                        <div class="clear-both grid gap-2.5">
+                            @foreach ($paymentMethods as $method)
+                                <label class="{{ $radio }} py-[15px] has-checked:border-navy has-checked:bg-navy-soft">
+                                    <input type="radio" name="payment_method" value="{{ $method->value }}" x-model="payment" @checked($selectedPayment === $method->value) class="sr-only">
+                                    <span class="grid size-4 flex-none place-items-center rounded-full border border-label"><span class="size-2 rounded-full group-has-checked:bg-navy"></span></span>
+                                    <span class="min-w-0 flex-1">
+                                        <span class="block text-[15px]">{{ $method->title() }}</span>
+                                        <span class="mt-0.5 block text-[12.5px] text-label">{{ $method->hint() }}</span>
+                                    </span>
+                                </label>
+                            @endforeach
+                        </div>
+                        @error('payment_method')
+                            <p class="mt-2 text-[13px] text-error">{{ $message }}</p>
+                        @enderror
+                    </fieldset>
                 </div>
 
                 <div class="min-w-[260px] flex-[1_1_340px] min-[900px]:sticky min-[900px]:top-24">
@@ -244,6 +219,36 @@
                             @if (Route::has('content.privacy'))
                                 <p class="mt-2 text-[12px] leading-[1.5] text-hint">{!! $withLink($t('privacy'), ':link', '<a href="'.e(route('content.privacy')).'" target="_blank" rel="noopener">'.e($t('privacy_link')).'</a>') !!}</p>
                             @endif
+                        @endif
+
+                        {{-- BLIK only in złoty (PaymentMethod::for), and its code here only with BLIK Level 0.
+                             The code lives 2 minutes, so it is the last thing typed, right above the button. --}}
+                        @if ($blikCode && $paymentMethods->contains(PaymentMethod::Blik))
+                            @php
+                                // The code is never flashed back: after any mistake elsewhere it has to be typed again.
+                                $elsewhere = collect($errors->keys())->contains(fn (string $field) => $field !== 'blik_code');
+                                $blikError = $elsewhere ? $t('blik_retype') : $errors->first('blik_code');
+                                $blikNote = $blikError ?: $t('blik_hint');
+                            @endphp
+                            <div x-show="payment === 'blik'" x-transition:enter="transition duration-500 ease-clay" x-transition:enter-start="opacity-0 blur-sm -translate-y-2"
+                                 @if ($selectedPayment !== PaymentMethod::Blik->value) x-cloak @endif class="mt-5 rounded-[20px] border border-navy-line bg-navy-soft p-4">
+                                <div class="mb-3 flex items-center gap-3">
+                                    <span class="rounded-full bg-navy px-3 py-[5px] text-[12px] font-medium tracking-[0.06em] text-white">BLIK</span>
+                                    <label for="blik_code" class="text-[13.5px] text-navy-text">{{ $t('blik_label') }}</label>
+                                </div>
+                                <input id="blik_code" name="blik_code" x-ref="blik" x-bind:value="blik"
+                                       x-on:input="blik = $el.value = $el.value.replace(/\D/g, '').slice(0, 6)"
+                                       inputmode="numeric" autocomplete="one-time-code" placeholder="••••••" aria-describedby="blik_code-note"
+                                       @if ($blikError) aria-invalid="true" @endif
+                                       x-bind:class="blik.length === 6 && 'border-navy shadow-[0_0_0_4px_rgb(36_65_126/.14)]'"
+                                       @class([
+                                           'w-full min-w-0 rounded-[18px] border bg-white px-3 py-4 text-center font-serif text-[34px] leading-none font-light tracking-[0.4em] text-ink tabular-nums transition-[border-color,box-shadow] duration-300 placeholder:text-line-strong focus:border-navy focus:shadow-[0_0_0_4px_rgb(36_65_126/.14)] focus:outline-none',
+                                           'border-error' => $blikError,
+                                           'border-navy-line' => ! $blikError,
+                                       ])>
+                                <p id="blik_code-note" x-text="blik.length === 6 ? @js($t('blik_ready')) : @js($blikNote)" x-bind:class="blik.length === 6 && 'text-navy-hint!'"
+                                   @class(['mt-2.5 text-center', 'text-[13px] text-error' => $blikError, 'text-[12.5px] text-navy-hint' => ! $blikError])>{{ $blikNote }}</p>
+                            </div>
                         @endif
 
                         {{-- The button breathes once the form is ready (mellowaura-design, „Kod BLIK”). --}}

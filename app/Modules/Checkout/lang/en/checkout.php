@@ -30,6 +30,8 @@ return [
     'blik_label' => 'Type the code from your banking app',
     'blik_hint' => '6 digits, valid for 2 minutes',
     'blik_ready' => 'Code ready — confirm it in your app',
+    // After a mistake elsewhere: the code is not kept, so it has to be typed again.
+    'blik_retype' => 'Fix the fields above and enter a new BLIK code',
     'delivery_way' => 'Delivery',
     'locker' => 'Parcel locker',
     'locker_placeholder' => 'e.g. KRA01M',

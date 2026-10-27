@@ -78,6 +78,19 @@ class CheckoutController extends Controller
                 'prices' => $methods->map(fn (array $method) => $method['price']),
                 // What the pay button and the pill say, in the language of the page.
                 'texts' => __('checkout::checkout.js'),
+                // What the server would say about the fields above the BLIK code, said before the code is typed.
+                'fieldTexts' => collect([
+                    'email' => 'email_required',
+                    'email_format' => 'email_email',
+                    'phone' => $needsDelivery ? 'phone_required_parcel' : 'phone_required',
+                    'phone_format' => 'phone_regex',
+                    'name' => 'name_required',
+                    'street' => 'street_required',
+                    'postal_code' => 'postal_code_required',
+                    'postal_code_format' => 'postal_code_regex',
+                    'city' => 'city_required',
+                    'locker_code_format' => 'locker_code',
+                ])->map(fn (string $key) => __('checkout::validation.'.$key)),
             ],
         ])->header('X-Robots-Tag', self::ROBOTS);
     }

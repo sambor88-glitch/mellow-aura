@@ -30,6 +30,8 @@ return [
     'blik_label' => 'Przepisz kod z aplikacji banku',
     'blik_hint' => '6 cyfr, ważne 2 minuty',
     'blik_ready' => 'Kod gotowy — potwierdzisz w aplikacji',
+    // After a mistake elsewhere: the code is not kept, so it has to be typed again.
+    'blik_retype' => 'Popraw pola wyżej i wpisz nowy kod BLIK',
     'delivery_way' => 'Sposób dostawy',
     'locker' => 'Paczkomat',
     'locker_placeholder' => 'np. KRA01M',
