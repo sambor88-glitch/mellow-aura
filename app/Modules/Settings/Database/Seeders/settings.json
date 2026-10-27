@@ -580,6 +580,10 @@
         "value": "Ceny zawierają glinę, narzędzia, szkliwa i wypały. Nie musisz nic umieć ani nic przynosić."
     },
     {
+        "key": "workshop_what_to_bring",
+        "value": []
+    },
+    {
         "key": "text_contact_lead",
         "value": "Odpisuję zwykle tego samego dnia, chyba że stoję przy piecu. Wtedy wieczorem."
     },

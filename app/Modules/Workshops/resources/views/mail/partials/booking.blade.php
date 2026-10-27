@@ -11,3 +11,12 @@
 @else
     <p style="margin: 0 0 22px; color: #5C5043;">Adres pracowni wyślę Ci osobnym mailem przed warsztatem.</p>
 @endif
+
+@if ($whatToBring)
+    <div style="margin: 0 0 6px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #726456;">Co zabrać ze sobą</div>
+    <ul style="margin: 0 0 22px; padding: 0 0 0 18px; color: #2F2620;">
+        @foreach ($whatToBring as $item)
+            <li style="margin: 0 0 2px;">{{ $item }}</li>
+        @endforeach
+    </ul>
+@endif

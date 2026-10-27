@@ -42,6 +42,7 @@ class WorkshopEmailsTest extends TestCase
         $this->seed(SettingsSeeder::class);
         $this->setting('contact_email', 'kasia@example.com');
         $this->setting('studio_address', self::ADDRESS);
+        $this->setting('workshop_what_to_bring', ['Ubranie, którego nie szkoda pobrudzić', 'Spięte włosy']);
         config(['monitoring.alert_email' => 'alerty@example.com']);
         $this->travelTo(CarbonImmutable::parse('2026-10-26 12:00', 'Europe/Warsaw'));
     }
@@ -61,6 +62,8 @@ class WorkshopEmailsTest extends TestCase
             $mail->assertSeeInOrderInHtml(['Lepienie kubków', 'sob. 31 października, 11:00 – 13:00', 'Liczba osób: 2', '440,00 zł', self::ADDRESS]);
             $mail->assertSeeInText(self::ADDRESS);
             $mail->assertSeeInHtml('Dzień przed warsztatem przypomnę Ci o nim mailem.');
+            $mail->assertSeeInOrderInHtml(['Co zabrać ze sobą', 'Ubranie, którego nie szkoda pobrudzić', 'Spięte włosy']);
+            $mail->assertSeeInText('- Spięte włosy');
 
             return $mail->hasTo('ania@example.com') && $mail->hasReplyTo('kasia@example.com') && count($mail->attachments()) === 1;
         });
@@ -144,7 +147,7 @@ class WorkshopEmailsTest extends TestCase
         Mail::assertQueued(BookingReminder::class, 1);
         Mail::assertQueued(BookingReminder::class, function (BookingReminder $mail) {
             $mail->assertHasSubject('Jutro warsztat · 11:00');
-            $mail->assertSeeInOrderInHtml(['sob. 31 października, 11:00 – 13:00', self::ADDRESS]);
+            $mail->assertSeeInOrderInHtml(['sob. 31 października, 11:00 – 13:00', self::ADDRESS, 'Spięte włosy']);
 
             return $mail->hasTo('ania@example.com');
         });
@@ -166,12 +169,26 @@ class WorkshopEmailsTest extends TestCase
         Mail::assertNotQueued(BookingReminder::class);
     }
 
+    public function test_without_a_list_in_the_panel_the_mail_has_no_what_to_bring_part(): void
+    {
+        $this->setting('workshop_what_to_bring', []);
+
+        $this->post(route('workshops.booking.store', $this->date(seats: 3)), $this->form());
+
+        Mail::assertQueued(BookingConfirmed::class, function (BookingConfirmed $mail) {
+            $mail->assertDontSeeInHtml('Co zabrać');
+            $mail->assertDontSeeInText('CO ZABRAĆ');
+
+            return true;
+        });
+    }
+
     public function test_the_reminder_runs_every_hour(): void
     {
         $this->artisan('schedule:list')->expectsOutputToContain('workshops:send-reminders');
     }
 
-    private function setting(string $key, string $value): void
+    private function setting(string $key, mixed $value): void
     {
         Setting::query()->updateOrCreate(['key' => $key], ['value' => $value]);
         app(Settings::class)->refresh();

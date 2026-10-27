@@ -10,3 +10,10 @@ Adres dostajesz tylko w mailu — nie ma go na stronie, więc nie podawaj go dal
 @else
 Adres pracowni wyślę Ci osobnym mailem przed warsztatem.
 @endif
+@if ($whatToBring)
+
+CO ZABRAĆ ZE SOBĄ
+@foreach ($whatToBring as $item)
+- {!! $item !!}
+@endforeach
+@endif

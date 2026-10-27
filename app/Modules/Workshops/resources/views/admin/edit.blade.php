@@ -42,6 +42,17 @@
             @endif
         </div>
 
+        <div class="mb-5 min-w-0">
+            <label for="warsztaty-zabrac" class="{{ $label }}">Co zabrać ze sobą — po jednym w linii</label>
+            <textarea id="warsztaty-zabrac" name="workshop_what_to_bring" rows="3" maxlength="400" aria-describedby="warsztaty-zabrac-podpowiedz"
+                      placeholder="np. ubranie, którego nie szkoda pobrudzić"
+                      @class([$input, 'resize-y leading-[1.6]', 'border-error' => $bag->has('workshop_what_to_bring'), 'border-line' => ! $bag->has('workshop_what_to_bring')])>{{ old('workshop_what_to_bring', $whatToBring) }}</textarea>
+            <p id="warsztaty-zabrac-podpowiedz" class="mt-1.5 text-[13px] text-muted">Trafi tylko do maila po zapisie i do przypomnienia dzień przed. Puste pole — w mailu nie ma tej części.</p>
+            @if ($bag->has('workshop_what_to_bring'))
+                <p class="mt-1.5 text-[13px] text-error">{{ $bag->first('workshop_what_to_bring') }}</p>
+            @endif
+        </div>
+
         <div class="grid gap-3">
             @foreach ($rows as $index => $row)
                 @php

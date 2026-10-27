@@ -44,6 +44,7 @@ class AdminWorkshopsTest extends TestCase
         $this->actingAs($this->owner)
             ->put('/panel/warsztaty', [
                 'text_workshops_lead' => ' Wszystko w cenie. ',
+                'workshop_what_to_bring' => "Fartuch\r\n\r\n Spięte włosy ",
                 'workshops' => [
                     ['name' => 'Lepienie z ręki', 'price' => '230,50', 'unit_label' => 'os.', 'duration_label' => '2,5 godziny', 'group_label' => '', 'summary' => 'Płat i wałek.', 'includes' => "Glina\r\n\r\n Dwa wypały ", 'code' => 'hand_building', 'unit' => 'person'],
                     ['name' => 'Szkliwienie', 'price' => '160', 'code' => 'glazing', 'unit' => 'person', 'remove' => '1'],
@@ -54,6 +55,7 @@ class AdminWorkshopsTest extends TestCase
             ->assertSessionHas('panel_status', 'Zapisane. Cennik warsztatów już tak wygląda.');
 
         $this->assertSame('Wszystko w cenie.', Setting::find('text_workshops_lead')->value);
+        $this->assertSame(['Fartuch', 'Spięte włosy'], Setting::find('workshop_what_to_bring')->value);
         $types = Setting::find('workshop_types')->value;
         $this->assertSame(['Lepienie z ręki', 'Koło garncarskie'], array_column($types, 'name'));
         $this->assertEquals([
