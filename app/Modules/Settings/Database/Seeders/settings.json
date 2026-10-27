@@ -313,13 +313,13 @@
                 "expect": "Dwie godziny przy stole w mojej pracowni, w grupie do sześciu osób.",
                 "activities": "Pierwszy raz w glinie: płat, wałek i szczypanie.",
                 "takeaway": "Dwie własne rzeczy z gliny — po szkliwieniu na następnym spotkaniu i dwóch wypałach.",
-                "preparation": "Nie musisz nic umieć ani nic przynosić. Glina, narzędzia, herbata i coś słodkiego czekają na miejscu."
+                "preparation": "Nie musisz nic umieć. Glina, narzędzia, herbata i coś słodkiego czekają na miejscu."
             },
             "voucher-para": {
                 "expect": "Trzy godziny, dwa stanowiska obok siebie i jeden wieczór bez telefonu.",
                 "activities": "Każde z Was lepi swój kubek — cztery dłonie, dwa kubki.",
                 "takeaway": "Dwa kubki do codziennego użytku, po dwóch wypałach.",
-                "preparation": "Nie musicie nic umieć ani nic przynosić. Glina, narzędzia i wino albo herbata czekają na miejscu."
+                "preparation": "Nie musicie nic umieć. Glina, narzędzia i wino albo herbata czekają na miejscu."
             }
         }
     },
@@ -577,7 +577,7 @@
     },
     {
         "key": "text_workshops_lead",
-        "value": "Ceny zawierają glinę, narzędzia, szkliwa i wypały. Nie musisz nic umieć ani nic przynosić."
+        "value": "Ceny zawierają glinę, narzędzia, szkliwa i wypały. Nie musisz nic umieć — wszystko, czego potrzebujesz do pracy, czeka w pracowni."
     },
     {
         "key": "workshop_what_to_bring",
