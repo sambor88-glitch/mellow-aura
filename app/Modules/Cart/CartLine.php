@@ -61,6 +61,14 @@ abstract class CartLine
     }
 
     /**
+     * The inline style that keeps the point of the photo set in the panel inside the small frame, if there is one.
+     */
+    public function thumbnailStyle(): ?string
+    {
+        return null;
+    }
+
+    /**
      * Features of the pieces in this line nobody would expect, e.g. „nie do zmywarki”, keyed by the product they
      * belong to. The terms want the customer to accept them with a separate checkbox at checkout.
      *

@@ -16,10 +16,10 @@
         @if ($image)
             <img src="{{ $image->getAvailableUrl(['card']) }}" alt="{{ $image->getCustomProperty('alt') ?: $product->name }}" @unless ($eager) loading="lazy" @endunless
                  @if ($srcset) srcset="{{ $srcset }}" sizes="(min-width: 640px) 400px, {{ $phoneColumns > 1 ? 'calc(50vw - 35px)' : 'calc(100vw - 56px)' }}" @endif
-                 width="1200" height="1500" class="block aspect-[4/5] w-full object-cover saturate-[.8] transition-[transform,filter] duration-[1.1s] ease-clay group-hover:scale-[1.06] group-hover:saturate-100">
+                 width="1200" height="1500" style="{{ \App\Modules\Shared\Support\FocalPoint::style($image) }}" class="block aspect-[4/5] w-full object-cover saturate-[.8] transition-[transform,filter] duration-[1.1s] ease-clay group-hover:scale-[1.06] group-hover:saturate-100">
             @if ($second)
                 <span class="absolute inset-0">
-                    <img src="{{ $second->getAvailableUrl(['card']) }}" alt="" loading="lazy" width="1200" height="1500"
+                    <img src="{{ $second->getAvailableUrl(['card']) }}" alt="" loading="lazy" width="1200" height="1500" style="{{ \App\Modules\Shared\Support\FocalPoint::style($second) }}"
                          class="size-full object-cover [clip-path:circle(0%_at_50%_60%)] transition-[clip-path] duration-900 ease-clay group-hover:[clip-path:circle(75%_at_50%_60%)] group-focus-within:[clip-path:circle(75%_at_50%_60%)]">
                 </span>
             @endif

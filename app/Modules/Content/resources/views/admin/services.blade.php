@@ -1,5 +1,6 @@
 @use('App\Modules\Content\Enums\Service')
 @use('App\Modules\Content\Http\Requests\Admin\SaveServiceTextsRequest')
+@use('App\Modules\Shared\Support\FocalPoint')
 @php
     $card = 'scroll-mt-6 rounded-[4px] border border-line bg-cream p-[22px]';
     $heading = 'text-[11.5px] tracking-[0.16em] text-label uppercase';
@@ -55,7 +56,7 @@
             <h2 class="{{ $heading }} mb-1.5">Przed i po</h2>
             <p class="{{ $intro }}">
                 {{ $isScarf ? 'Zdjęcie tkaniny, którą dostałaś, obok tego, co z niej uszyłaś.' : 'Zdjęcie przysłanej rośliny obok gotowej ceramiki.' }}
-                Oba zdjęcia przytnę do tego samego pionowego kadru 4:5, więc najlepiej robić je w pionie. Bez par sekcja na stronie się nie pokazuje.
+                Strona pokazuje oba zdjęcia w tym samym pionowym kadrze 4:5, więc najlepiej robić je w pionie. Jeśli coś ważnego się ucina, przesuń kadr suwakami pod zdjęciem. Bez par sekcja na stronie się nie pokazuje.
             </p>
 
             @if ($examples->isEmpty())
@@ -70,12 +71,18 @@
                             $bag = $errors->getBag('para-'.$example->id);
                         @endphp
                         <article id="para-{{ $example->id }}" class="scroll-mt-6 rounded-[4px] border border-sand-dark bg-linen p-3.5">
-                            <div class="flex flex-wrap gap-3.5">
-                                <div class="flex flex-none gap-2">
+                            <form method="post" action="{{ route('admin.services.examples.update', $example) }}" novalidate class="flex flex-wrap gap-3.5">
+                                @csrf
+                                @method('PUT')
+                                <div class="flex w-[240px] max-w-full flex-none gap-2">
                                     @foreach (['before' => 'przed', 'after' => 'po'] as $side => $word)
-                                        <figure class="m-0 w-[84px]">
+                                        <figure class="m-0 min-w-0 flex-1">
                                             @if ($media = $example->getFirstMedia($side))
-                                                <img src="{{ $media->getAvailableUrl(['thumb']) }}" alt="{{ $example->alt($side) }}" loading="lazy" width="240" height="300" class="block aspect-[4/5] w-full rounded-[3px] bg-line-soft object-cover">
+                                                @php
+                                                    $point = $bag->any() ? old('focus.'.$side, FocalPoint::of($media)) : FocalPoint::of($media);
+                                                @endphp
+                                                <x-shared::focus-picker name="focus[{{ $side }}]" :src="$media->getAvailableUrl(['thumb'])" :x="$point['x'] ?? 50" :y="$point['y'] ?? 50"
+                                                                        label="Kadr zdjęcia „{{ $word }}”" :frames="['aspect-[4/5]' => null]" />
                                             @else
                                                 <div class="grid aspect-[4/5] w-full place-items-center rounded-[3px] border border-dashed border-line-strong text-center text-[11px] text-error">brak zdjęcia</div>
                                             @endif
@@ -83,9 +90,7 @@
                                         </figure>
                                     @endforeach
                                 </div>
-                                <form method="post" action="{{ route('admin.services.examples.update', $example) }}" novalidate class="grid min-w-0 flex-[1_1_300px] content-start gap-2">
-                                    @csrf
-                                    @method('PUT')
+                                <div class="grid min-w-0 flex-[1_1_300px] content-start gap-2">
                                     @if ($bag->any())
                                         <p role="alert" class="rounded-[4px] border border-alert-line bg-alert px-3 py-2 text-[13px] text-alert-text">{{ $bag->first() }}</p>
                                     @endif
@@ -109,10 +114,10 @@
                                         </div>
                                     </details>
                                     <div class="flex flex-wrap items-center gap-2">
-                                        <button class="min-h-11 rounded-full border border-ink px-4 text-[13px] text-ink hover:bg-sand-dark">Zapisz opis</button>
+                                        <button class="min-h-11 rounded-full border border-ink px-4 text-[13px] text-ink hover:bg-sand-dark">Zapisz opis i kadr</button>
                                     </div>
-                                </form>
-                            </div>
+                                </div>
+                            </form>
                             <div class="mt-2.5 flex flex-wrap items-center gap-2 border-t border-dashed border-sand-dark pt-2.5">
                                 @unless ($loop->first)
                                     <form method="post" action="{{ route('admin.services.examples.move', $example) }}">

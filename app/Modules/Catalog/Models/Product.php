@@ -45,7 +45,8 @@ class Product extends Model implements HasMedia
      */
     public function registerMediaConversions(?Media $media = null): void
     {
-        $this->addMediaConversion('thumb')->fit(Fit::Crop, 300, 375)->format('webp')->quality(80)->nonQueued();
+        // Not cut: the frame on the page cuts it, around the point set in the panel (FocalPoint).
+        $this->addMediaConversion('thumb')->fit(Fit::Max, 400, 500)->format('webp')->quality(80)->nonQueued();
         $this->addMediaConversion('phone')->fit(Fit::Max, 720, 900)->format('webp')->quality(80)->nonQueued();
         $this->addMediaConversion('card')->fit(Fit::Max, 1200, 1500)->format('webp')->quality(82)->nonQueued();
     }
