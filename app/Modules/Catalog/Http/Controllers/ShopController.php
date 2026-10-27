@@ -46,12 +46,14 @@ class ShopController extends Controller
             ->map(fn (Category $item) => [$item, $live->filter(fn (Product $product) => $this->inCategory($product, $item))->count()])
             ->filter(fn (array $pair) => $pair[1] > 0 || $pair[0]->is($category))
             ->map(fn (array $pair) => [
-                'label' => $pair[0]->name.' ('.$pair[1].')',
+                'label' => $pair[0]->name,
+                'count' => $pair[1],
                 'url' => $withQuery(route('shop.category', $pair[0]), ['q' => $search, 'sort' => $sort]),
                 'active' => $pair[0]->is($category),
             ])
             ->prepend([
-                'label' => __('catalog::shop.all', ['count' => $live->count()]),
+                'label' => __('catalog::shop.all'),
+                'count' => $live->count(),
                 'url' => $withQuery(route('shop.index'), ['q' => $search, 'sort' => $sort]),
                 'active' => $category === null,
             ])

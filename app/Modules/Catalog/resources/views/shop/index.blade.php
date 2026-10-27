@@ -57,16 +57,23 @@
         @endif
 
         @if ($shortcuts)
-            <div x-show="! favorites" class="mb-10 flex flex-wrap gap-2.5">
-                @foreach ($shortcuts as [$label, $route])
-                    <a href="{{ route($route) }}" class="rounded-full border border-line bg-sand-dark px-[18px] py-2.5 text-[13px] text-ink transition-[border-color,background-color,transform] duration-300 hover:border-ink hover:text-ink active:scale-[.98]">{{ __('catalog::shop.shortcut_'.$label) }}</a>
-                @endforeach
-            </div>
+            {{-- On a phone both rows below swipe sideways in one line, so the first products show on the first screen. --}}
+            <section x-show="! favorites" aria-labelledby="shop-shortcuts" class="mb-8 md:mb-10">
+                <h2 id="shop-shortcuts" class="mb-2.5 text-[11px] tracking-[0.14em] text-hint uppercase">{{ __('catalog::shop.shortcuts_heading') }}</h2>
+                <div class="-mx-7 flex snap-x snap-mandatory scroll-px-7 gap-2.5 overflow-x-auto px-7 pb-1 [scrollbar-width:none] md:mx-0 md:flex-wrap md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
+                    @foreach ($shortcuts as [$label, $route])
+                        <a href="{{ route($route) }}" class="flex w-[156px] shrink-0 snap-start flex-col rounded-[18px] border border-line bg-cream/60 px-3.5 py-3 text-ink transition-[border-color,background-color,transform] duration-300 hover:border-ink hover:text-ink active:scale-[.98] md:w-[178px]">
+                            <span class="text-[14px] leading-[1.25] font-medium">{{ __('catalog::shop.shortcut_'.$label) }}</span>
+                            <span class="mt-1 text-[12.5px] leading-[1.3] text-muted">{{ __('catalog::shop.shortcut_'.$label.'_note') }}&nbsp;<span aria-hidden="true" class="text-lead">→</span></span>
+                        </a>
+                    @endforeach
+                </div>
+            </section>
         @endif
 
         <div class="mb-[34px] flex flex-wrap items-center justify-between gap-[18px] border-b border-divider pb-5">
-            <div class="flex flex-wrap items-center gap-2.5">
-                <form method="get" action="{{ $baseUrl }}" role="search" class="flex min-w-0 flex-[0_1_240px] items-center gap-2 rounded-full border border-line bg-cream px-3.5 py-2 focus-within:border-ink">
+            <div class="flex min-w-0 basis-full flex-wrap items-center gap-2.5 md:basis-auto">
+                <form method="get" action="{{ $baseUrl }}" role="search" class="flex min-w-0 flex-[1_1_100%] items-center gap-2 rounded-full border border-line bg-cream px-3.5 py-2 focus-within:border-ink md:flex-[0_1_240px]">
                     <span aria-hidden="true" class="text-[13px] text-hint">⌕</span>
                     <input type="text" name="q" value="{{ $search }}" enterkeyhint="search" placeholder="{{ __('catalog::shop.search_placeholder') }}" aria-label="{{ __('catalog::shop.search_label') }}" class="min-w-0 flex-1 border-0 bg-transparent py-0.5 text-[13.5px] text-ink focus:outline-none pointer-coarse:text-[16px]">
                     @if ($sort !== '')
@@ -77,23 +84,27 @@
                     @endif
                 </form>
 
-                @foreach ($chips as $chip)
-                    <a href="{{ $chip['url'] }}" @if ($chip['active']) aria-current="page" x-bind:aria-current="favorites ? 'false' : 'page'" x-bind:class="favorites && 'border-line-strong! bg-transparent! text-lead!'" @endif @class([
-                        'rounded-full border px-5 py-2.5 text-[13.5px] tracking-[0.03em]',
-                        'border-ink bg-ink text-linen hover:text-linen' => $chip['active'],
-                        'border-line-strong text-lead hover:text-navy' => ! $chip['active'],
-                    ])>{{ $chip['label'] }}</a>
-                @endforeach
-                <a href="#ulubione" x-cloak x-show="$store.favorites.count > 0 || favorites" x-bind:aria-current="favorites ? 'page' : 'false'"
-                   x-bind:class="favorites ? 'border-ink bg-ink text-linen hover:text-linen' : 'border-line-strong text-lead hover:text-navy'"
-                   class="rounded-full border px-5 py-2.5 text-[13.5px] tracking-[0.03em]">♥ {{ __('catalog::shop.favorites_chip') }} (<span x-text="savedHere"></span>)</a>
+                {{-- On a wide screen md:contents drops this box, so the chips wrap next to the search as before. --}}
+                <div x-init="const chip = $el.querySelector('[aria-current=page]'); if (chip && chip.offsetLeft + chip.offsetWidth > $el.clientWidth) $el.scrollLeft = chip.offsetLeft - 28"
+                     class="relative -mx-7 flex w-[calc(100%+56px)] snap-x snap-mandatory scroll-px-7 gap-2 overflow-x-auto px-7 pb-1 [scrollbar-width:none] md:contents [&::-webkit-scrollbar]:hidden">
+                    @foreach ($chips as $chip)
+                        <a href="{{ $chip['url'] }}" @if ($chip['active']) aria-current="page" x-bind:aria-current="favorites ? 'false' : 'page'" x-bind:class="favorites && 'border-line-strong! bg-transparent! text-lead!'" @endif @class([
+                            'shrink-0 snap-start rounded-full border px-5 py-2.5 text-[13.5px] tracking-[0.03em] whitespace-nowrap',
+                            'border-ink bg-ink text-linen hover:text-linen' => $chip['active'],
+                            'border-line-strong text-lead hover:text-navy' => ! $chip['active'],
+                        ])>{{ $chip['label'] }} <span class="ml-0.5 text-[12px] opacity-85">{{ $chip['count'] }}</span></a>
+                    @endforeach
+                    <a href="#ulubione" x-cloak x-show="$store.favorites.count > 0 || favorites" x-bind:aria-current="favorites ? 'page' : 'false'"
+                       x-bind:class="favorites ? 'border-ink bg-ink text-linen hover:text-linen' : 'border-line-strong text-lead hover:text-navy'"
+                       class="shrink-0 snap-start rounded-full border px-5 py-2.5 text-[13.5px] tracking-[0.03em] whitespace-nowrap">♥ {{ __('catalog::shop.favorites_chip') }} <span class="ml-0.5 text-[12px] opacity-85" x-text="savedHere"></span></a>
+                </div>
             </div>
 
-            <div class="flex flex-wrap items-center gap-1.5">
-                <span class="mr-1.5 text-[12px] tracking-[0.12em] text-hint uppercase">{{ __('catalog::shop.sort') }}</span>
+            <div class="-mx-7 flex w-[calc(100%+56px)] items-center gap-1.5 overflow-x-auto px-7 [scrollbar-width:none] md:mx-0 md:w-auto md:flex-wrap md:overflow-visible md:px-0 [&::-webkit-scrollbar]:hidden">
+                <span class="mr-1.5 shrink-0 text-[12px] tracking-[0.12em] text-hint uppercase">{{ __('catalog::shop.sort') }}</span>
                 @foreach ($sorts as $option)
                     <a href="{{ $option['url'] }}" @if ($option['active']) aria-current="true" @endif @class([
-                        'rounded-full px-3.5 py-2 text-[13px] hover:text-navy',
+                        'shrink-0 rounded-full px-3.5 py-2 text-[13px] whitespace-nowrap hover:text-navy',
                         'bg-sand-dark text-ink' => $option['active'],
                         'text-label' => ! $option['active'],
                     ])>{{ $option['label'] }}</a>
