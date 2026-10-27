@@ -14,7 +14,7 @@
         </p>
 
         @if ($document->isDraft())
-            <p role="note" class="mb-10 max-w-[70ch] rounded-[4px] border border-dashed border-line-strong bg-linen px-5 py-4 text-[14.5px] leading-[1.6] text-graphite">
+            <p role="note" class="mb-10 max-w-[70ch] rounded-[20px] border border-dashed border-line-strong bg-linen px-5 py-4 text-[14.5px] leading-[1.6] text-graphite">
                 To projekt, który sprawdza jeszcze prawnik. <mark class="rounded-[3px] bg-rose/34 px-1 text-ink">Zaznaczone miejsca</mark> uzupełnię przed startem sklepu.
             </p>
         @endif
@@ -37,7 +37,7 @@
                 </nav>
             @endif
 
-            <article class="legal-document min-w-0 flex-[3_1_560px] rounded-[4px] border border-line bg-cream px-5 py-8 sm:px-12 sm:py-11">
+            <article class="legal-document min-w-0 flex-[3_1_560px] rounded-[20px] border border-line bg-cream px-5 py-8 sm:px-12 sm:py-11">
                 {!! $document->html($settings) !!}
             </article>
         </div>

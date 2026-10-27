@@ -19,24 +19,25 @@
         <div class="flex flex-wrap gap-11">
             <div class="min-w-0 flex-[1_1_420px]">
                 @if ($prices->isNotEmpty())
-                    <table class="w-full overflow-hidden rounded-[4px] border border-divider bg-cream">
+                    <table class="w-full overflow-hidden rounded-[20px] border border-divider bg-cream">
                         <thead>
                             <tr class="border-b border-divider bg-linen text-[11.5px] tracking-[0.16em] text-label uppercase">
-                                <th scope="col" class="px-6 py-5 text-left font-normal">usługa</th>
-                                <th scope="col" class="px-6 py-5 text-right font-normal">cena</th>
+                                <th scope="col" class="px-4 py-5 text-left font-normal sm:px-6">usługa</th>
+                                <th scope="col" class="px-4 py-5 text-right font-normal sm:px-6">cena</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($prices as $price)
                                 <tr class="border-b border-sand-dark last:border-b-0">
-                                    <td class="px-6 py-5 align-top">
+                                    <td class="px-4 py-5 align-top hyphens-auto sm:px-6" lang="pl">
                                         <div class="text-[16px]">{{ $price['label'] }}</div>
                                         @if ($price['note'])
                                             <div class="mt-[3px] text-[13.5px] text-label">{{ $price['note'] }}</div>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-5 text-right align-top text-[16px] whitespace-nowrap tabular-nums">
-                                        {{ Money::format($price['price_gross']) }}{{ $price['unit_label'] ? ' '.$price['unit_label'] : '' }}
+                                    {{-- The unit goes under the price on a phone: side by side the table was wider than the screen. --}}
+                                    <td class="px-4 py-5 text-right align-top text-[16px] whitespace-nowrap tabular-nums sm:px-6">
+                                        {{ Money::format($price['price_gross']) }}@if ($price['unit_label'])<span class="block text-[12.5px] text-label sm:inline sm:text-[16px] sm:text-[color:inherit]"><span class="hidden sm:inline"> </span>{{ $price['unit_label'] }}</span>@endif
                                         <x-shared::price-before-reduction :was="$price['was']" :lowest="$price['lowest']" class="mt-1 ml-auto max-w-[22ch] whitespace-normal" />
                                     </td>
                                 </tr>
@@ -50,14 +51,14 @@
             </div>
 
             <div class="min-w-[290px] flex-[0_1_380px]">
-                <div id="zglos-wsad" class="scroll-mt-6 rounded-[4px] border border-divider bg-cream px-7 py-[30px]">
+                <div id="zglos-wsad" class="scroll-mt-6 rounded-[20px] border border-divider bg-cream px-7 py-[30px]">
                     <h2 class="mb-2.5 font-serif text-[23px]">Zgłoś wsad</h2>
                     @if ($reported)
-                        <div role="status" class="mb-5 rounded-[4px] border border-line-strong bg-sand-dark p-4 text-[14px] leading-[1.6] text-graphite">
+                        <div role="status" class="mb-5 rounded-[20px] border border-line-strong bg-sand-dark p-4 text-[14px] leading-[1.6] text-graphite">
                             <p>Mam Twoje zgłoszenie{{ $reported->quote !== null ? ' — wycena '.Money::format($reported->quote) : '' }}. Potwierdzenie poszło na {{ $reported->email }}. Odpiszę z terminem i miejscem, gdzie przywieziesz prace.</p>
                         </div>
                     @elseif (session('firing_throttled'))
-                        <p role="alert" class="mb-5 rounded-[4px] border border-alert-line bg-alert p-4 text-[14px] leading-[1.6] text-alert-text">
+                        <p role="alert" class="mb-5 rounded-[20px] border border-alert-line bg-alert p-4 text-[14px] leading-[1.6] text-alert-text">
                             Mam już od Ciebie kilka zgłoszeń i na wszystkie odpiszę. Kolejne wyślesz za godzinę{{ $phone ? ', a jeśli to pilne, napisz na WhatsApp '.$phone : '' }}.
                         </p>
                     @else
@@ -127,7 +128,7 @@
                                 <textarea id="firing-message" name="message" rows="3" maxlength="2000" placeholder="Ile prac, jaka glina, czym szkliwione"
                                           @error('message') aria-invalid="true" aria-describedby="firing-message-error" @enderror
                                           @class([
-                                              'w-full min-w-0 resize-y rounded-[4px] border bg-white px-4 py-[14px] text-[15px] leading-[1.6] text-ink placeholder:text-hint focus:border-ink pointer-coarse:text-[16px]',
+                                              'w-full min-w-0 resize-y rounded-[20px] border bg-white px-4 py-[14px] text-[15px] leading-[1.6] text-ink placeholder:text-hint focus:border-ink pointer-coarse:text-[16px]',
                                               'border-error' => $errors->has('message'),
                                               'border-line' => ! $errors->has('message'),
                                           ])>{{ old('message') }}</textarea>
@@ -136,7 +137,7 @@
                                 @enderror
                             </div>
 
-                            <div x-show="service" x-cloak aria-live="polite" class="flex items-baseline justify-between gap-4 rounded-[4px] border border-sand-dark bg-linen px-4 py-3.5">
+                            <div x-show="service" x-cloak aria-live="polite" class="flex items-baseline justify-between gap-4 rounded-[20px] border border-sand-dark bg-linen px-4 py-3.5">
                                 <span class="text-[13.5px] text-label">Wycena z cennika</span>
                                 <span class="text-right text-[17px] tabular-nums" x-text="quoteLabel"></span>
                             </div>

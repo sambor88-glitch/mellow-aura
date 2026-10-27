@@ -1,6 +1,6 @@
 @php
-    $row = 'rounded-[4px] border border-divider bg-cream px-6 py-5';
-    $radio = 'group flex cursor-pointer items-start gap-3.5 rounded-[4px] border border-line bg-white px-[18px] py-4 has-checked:border-ink has-checked:bg-sand-dark has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy';
+    $row = 'rounded-[20px] border border-divider bg-cream px-6 py-5';
+    $radio = 'group flex cursor-pointer items-start gap-3.5 rounded-[20px] border border-line bg-white px-[18px] py-4 has-checked:border-ink has-checked:bg-sand-dark has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy';
 @endphp
 
 <x-shared::layout title="Ustawienia cookies | MellowAura" :noindex="true">
@@ -17,7 +17,7 @@
         </p>
 
         @if (session('consent_saved'))
-            <p role="status" class="mb-6 rounded-[4px] border border-line-strong bg-sand-dark p-4 text-[14px] leading-[1.6] text-graphite">
+            <p role="status" class="mb-6 rounded-[20px] border border-line-strong bg-sand-dark p-4 text-[14px] leading-[1.6] text-graphite">
                 Zapisane. {{ $analytics ? 'Statystyki są włączone.' : 'Zostają tylko niezbędne pliki.' }}
             </p>
         @endif
@@ -33,7 +33,7 @@
         </div>
 
         @if ($needed)
-            <form method="post" action="{{ route('consent.store') }}" class="rounded-[4px] border border-divider bg-cream px-[30px] py-8">
+            <form method="post" action="{{ route('consent.store') }}" class="rounded-[20px] border border-divider bg-cream px-[30px] py-8">
                 @csrf
                 <fieldset>
                     <legend class="mb-3 font-serif text-[21px]">Statystyki — Google Analytics</legend>

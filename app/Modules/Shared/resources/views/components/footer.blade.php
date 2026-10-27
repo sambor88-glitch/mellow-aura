@@ -58,7 +58,7 @@
         </div>
 
         @if ($shopLinks)
-            <div class="flex-[0_1_170px]">
+            <div class="basis-full sm:flex-[0_1_170px]">
                 <div class="mb-4 text-[10.5px] tracking-[0.24em] text-label-dark uppercase">{{ __('shared::footer.shop') }}</div>
                 <div class="flex flex-col gap-[11px] text-[14.5px]">
                     @foreach ($shopLinks as [$label, $href])
@@ -69,7 +69,7 @@
         @endif
 
         @if ($studioLinks || Route::has('admin.dashboard'))
-            <div class="flex-[0_1_170px]">
+            <div class="basis-full sm:flex-[0_1_170px]">
                 <div class="mb-4 text-[10.5px] tracking-[0.24em] text-label-dark uppercase">{{ __('shared::footer.studio') }}</div>
                 <div class="flex flex-col gap-[11px] text-[14.5px]">
                     @foreach ($studioLinks as [$label, $href])
@@ -82,7 +82,7 @@
             </div>
         @endif
 
-        <div class="flex-[0_1_200px]">
+        <div class="basis-full sm:flex-[0_1_200px]">
             <div class="mb-4 text-[10.5px] tracking-[0.24em] text-label-dark uppercase">{{ __('shared::footer.contact') }}</div>
             <div class="flex flex-col gap-[11px] text-[14.5px] text-on-dark-muted">
                 @if ($whatsApp)

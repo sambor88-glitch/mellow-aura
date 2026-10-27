@@ -98,7 +98,7 @@
 
             <div class="min-w-0 flex-[1_1_360px]">
                 <p class="eyebrow mb-4">{{ $t('made_to_order') }} @if ($leadTime) &middot; {{ $leadTime }} @endif</p>
-                <h1 class="mb-5 font-serif text-[length:clamp(44px,5.6vw,88px)] leading-[.94] font-light tracking-[-0.025em] whitespace-pre-line"><span class="blur-in">{{ $heading }}</span></h1>
+                <h1 class="mb-5 font-serif text-[length:clamp(44px,5.6vw,88px)] leading-[.94] font-light tracking-[-0.025em] text-balance md:whitespace-pre-line"><span class="blur-in">{{ $heading }}</span></h1>
                 @if ($lead)
                     <p class="mb-8 max-w-[46ch] text-[16.5px] leading-[1.7] text-pretty text-lead">{{ $lead }}</p>
                 @endif
@@ -140,9 +140,10 @@
 
                     <fieldset class="mb-[30px]">
                         <legend class="mb-3 {{ $eyebrow }}">{{ $t('size') }}</legend>
-                        <div class="flex flex-wrap gap-2.5">
+                        {{-- Equal tiles on a phone, so three sizes never break into two rows of two widths. --}}
+                        <div class="grid grid-cols-[repeat(auto-fit,minmax(92px,1fr))] gap-2.5 sm:flex sm:flex-wrap">
                             @foreach ($sizes as $size)
-                                <label class="glass group flex cursor-pointer flex-col rounded-[20px] px-[18px] py-3 text-left text-lead transition-[border-color,background-color] duration-300 hover:border-ink has-checked:border-ink has-checked:bg-ink has-checked:text-linen has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy">
+                                <label class="glass group flex cursor-pointer flex-col rounded-[20px] px-3 py-3 text-center sm:px-[18px] sm:text-left text-lead transition-[border-color,background-color] duration-300 hover:border-ink has-checked:border-ink has-checked:bg-ink has-checked:text-linen has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy">
                                     <input type="radio" name="size" value="{{ $size['label'] }}" x-model="size" @checked($size['label'] === $startSize['label']) class="sr-only">
                                     <span class="text-[13.5px]">{{ $size['name'] }}</span>
                                     <span class="mt-[3px] text-[12.5px] text-label group-has-checked:text-line-strong">{{ $money($size['price']) }}</span>
