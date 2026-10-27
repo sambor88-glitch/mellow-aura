@@ -101,11 +101,14 @@ class WorkshopVoucherBookingTest extends TestCase
         $expired = $this->voucher(['valid_until' => '2026-10-25']);
         $couples = $this->voucher(['workshop_code' => 'couples']);
         $amount = $this->voucher(['workshop_code' => null, 'seats' => null]);
+        // Terms §8.6: the workshop itself has to fall within the voucher's validity.
+        $endsBefore = $this->voucher(['valid_until' => '2026-10-30']);
 
         $refusals = [
             'MA-ZZZZ-ZZZZ' => 'Nie znajduję takiego kodu. Przepisz go z vouchera — wygląda tak: MA-7KQ2-9XHT.',
             $expired->code => 'Ten voucher był ważny do 25 października 2026. Napisz do mnie — coś wymyślimy.',
             $couples->code => 'Ten voucher jest na warsztat „Warsztat dla pary”. Wybierz termin tego warsztatu.',
+            $endsBefore->code => 'Ten voucher jest ważny do 30 października 2026 — wybierz termin do tego dnia.',
             $amount->code => 'Tym voucherem nie zapiszesz się przez stronę — napisz do mnie, a zapiszę Cię sama.',
         ];
 
@@ -161,8 +164,15 @@ class WorkshopVoucherBookingTest extends TestCase
         $this->post(route('workshops.booking.store', $date), $this->form(['voucher_code' => $voucher->code]));
         $booking = WorkshopBooking::sole();
 
+        // A voucher used by a booking that stands stays used, whatever the panel form says.
         $this->actingAs(User::factory()->create())
-            ->get(route('admin.workshops.dates.bookings', $date))
+            ->get(route('admin.gifts.edit', ['kod' => $voucher->code]))
+            ->assertSeeInOrder(['Wykorzystany', 'zapis', $booking->order->number])
+            ->assertDontSee('zapisałam ręcznie');
+        $this->put(route('admin.gifts.voucher.update', $voucher), ['workshop_code' => 'hand_building', 'seats' => '2', 'valid_until' => '2027-10-26']);
+        $this->assertNotNull($voucher->fresh()->redeemed_at);
+
+        $this->get(route('admin.workshops.dates.bookings', $date))
             ->assertSee('voucher '.$voucher->code)
             ->assertSee('Wyślij klientce maila, że voucher znów jest ważny')
             ->assertDontSee('Anulowanie opłaconego zapisu nie oddaje pieniędzy samo');
@@ -180,22 +190,26 @@ class WorkshopVoucherBookingTest extends TestCase
             ->assertSeeInHtml('Twój voucher '.$voucher->code.' znów jest ważny — do 26 października 2027.')
             ->assertDontSeeInHtml('Zwrócę Ci');
 
-        // The code books again.
+        // The mail tells how the voucher stood when it came back, even if the code books again before the queue sends it.
+        $queued = new BookingCancelled($booking->fresh());
+
         $this->post(route('workshops.booking.store', $date), $this->form(['voucher_code' => $voucher->code]))
             ->assertRedirect(route('workshops.booking.confirmation'));
         $this->assertNotNull($voucher->fresh()->redeemed_at);
+        $queued->assertSeeInHtml('znów jest ważny');
     }
 
     public function test_a_voucher_that_ran_out_meanwhile_comes_back_for_kasia_to_extend(): void
     {
         $date = $this->date(seats: 4, startsAt: '2026-11-20 11:00');
-        $voucher = $this->voucher(['valid_until' => '2026-10-30']);
-        $this->post(route('workshops.booking.store', $date), $this->form(['voucher_code' => $voucher->code]));
-        $this->travelTo(CarbonImmutable::parse('2026-11-02 12:00', 'Europe/Warsaw'));
+        $voucher = $this->voucher(['valid_until' => '2026-11-20']);
+        $this->post(route('workshops.booking.store', $date), $this->form(['voucher_code' => $voucher->code]))->assertRedirect(route('workshops.booking.confirmation'));
+        $this->travelTo(CarbonImmutable::parse('2026-11-01 12:00', 'Europe/Warsaw'));
+        $voucher->update(['valid_until' => '2026-10-31']);
 
         $this->actingAs(User::factory()->create())->post(route('admin.workshops.bookings.cancel', WorkshopBooking::sole()), ['notify' => '1']);
 
-        (new BookingCancelled(WorkshopBooking::sole()))->assertSeeInHtml('Jego ważność minęła 30 października 2026');
+        (new BookingCancelled(WorkshopBooking::sole()))->assertSeeInHtml('Jego ważność minęła 31 października 2026');
         $this->get(route('admin.gifts.edit', ['kod' => $voucher->code]))
             ->assertSee('Wygasł')
             ->assertSee('przesuń datę niżej');

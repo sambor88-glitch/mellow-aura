@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Modules\Catalog\Enums\CategoryGroup;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Gifts\Actions\SaveBundle;
+use App\Modules\Gifts\Actions\SaveVoucher;
 use App\Modules\Gifts\Http\Requests\Admin\SaveBundleRequest;
 use App\Modules\Gifts\Http\Requests\Admin\SaveBundleTextsRequest;
 use App\Modules\Gifts\Http\Requests\Admin\SaveGiftFinderRequest;
@@ -30,7 +31,7 @@ class GiftsController extends Controller
 {
     public function edit(Request $request, Settings $settings): View
     {
-        $code = trim((string) $request->query('kod'));
+        $code = is_string($typed = $request->query('kod')) ? trim($typed) : '';
 
         return view('gifts::admin.edit', [
             'voucherCode' => $code,
@@ -109,9 +110,9 @@ class GiftsController extends Controller
         return to_route('admin.gifts.edit')->withFragment('vouchery')->with('panel_status', 'Zapisane. Nowe vouchery już tak wyglądają.');
     }
 
-    public function updateVoucher(SaveVoucherRequest $request, Voucher $voucher): RedirectResponse
+    public function updateVoucher(SaveVoucherRequest $request, Voucher $voucher, SaveVoucher $saveVoucher): RedirectResponse
     {
-        $voucher->update($request->voucher());
+        $saveVoucher($voucher, $request->voucher());
 
         return redirect()->to(url()->previous().'#'.$request->formKey())->with('panel_status', 'Voucher '.$voucher->code.' zapisany.');
     }

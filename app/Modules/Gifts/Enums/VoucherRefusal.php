@@ -16,6 +16,9 @@ enum VoucherRefusal
     /** Past its valid_until. */
     case Expired;
 
+    /** Still valid, but the workshop starts after its valid_until (terms §8.6: the date must fall within it). */
+    case EndsBeforeDate;
+
     /** For a different workshop than the date's. */
     case OtherWorkshop;
 
