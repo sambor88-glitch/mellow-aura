@@ -23,15 +23,17 @@
             <p class="mb-10 max-w-[54ch] text-[17px] leading-[1.7] text-lead">{{ $lead }}</p>
         @endif
 
-        <div class="mb-[38px] rounded-[4px] border border-divider bg-cream px-6 py-[26px]">
+        <div class="mb-[38px] rounded-[20px] border border-divider bg-cream px-6 py-[26px]">
             @foreach ($filters as $legend => $chips)
                 @continue($chips->count() < 2)
                 <nav aria-label="{{ $legend }}" @class(['mb-[22px]' => ! $loop->last])>
                     <div class="mb-3 text-[11.5px] tracking-[0.16em] text-label uppercase">{{ $legend }}</div>
-                    <div class="flex flex-wrap gap-[9px]">
+                    {{-- On a phone each filter is one row swiped sideways, like the categories in the shop. --}}
+                    <div x-init="const chip = $el.querySelector('[aria-current=true]'); if (chip && chip.offsetLeft + chip.offsetWidth > $el.clientWidth) $el.scrollLeft = chip.offsetLeft - 24"
+                         class="relative -mx-6 flex snap-x snap-mandatory scroll-px-6 gap-[9px] overflow-x-auto px-6 pb-1 [scrollbar-width:none] md:mx-0 md:flex-wrap md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
                         @foreach ($chips as $chip)
                             <a href="{{ $chip['url'] }}" @if ($chip['active']) aria-current="true" @endif @class([
-                                'rounded-full border px-[17px] py-[9px] text-[13px]',
+                                'shrink-0 snap-start rounded-full border px-[17px] py-[9px] text-[13px] whitespace-nowrap',
                                 'border-ink bg-ink text-linen hover:text-linen' => $chip['active'],
                                 'border-line-strong text-lead hover:border-ink hover:text-ink' => ! $chip['active'],
                             ])>{{ $chip['label'] }}</a>
@@ -44,7 +46,7 @@
         <div class="mb-6 text-[13.5px] text-label" role="status">{{ $countLabel }}</div>
 
         @if ($count === 0)
-            <div class="rounded-[4px] bg-sand-dark px-9 py-11 text-center">
+            <div class="rounded-[20px] bg-sand-dark px-9 py-11 text-center">
                 <h2 class="mb-2 font-serif text-[26px] font-normal">Nic nie pasuje do tych warunków</h2>
                 <p class="mb-[22px] text-[15.5px] text-lead">Poluzuj budżet albo napisz do mnie — zrobię coś na zamówienie w Twojej kwocie.</p>
                 @if (Route::has('custom-orders.index'))
@@ -55,7 +57,7 @@
             </div>
         @endif
 
-        <div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-x-[26px] gap-y-[30px]">
+        <div class="grid grid-cols-2 gap-x-3.5 gap-y-8 sm:grid-cols-[repeat(auto-fill,minmax(240px,1fr))] sm:gap-x-[26px] sm:gap-y-[30px]">
             @foreach ($ideas as $product)
                 @php
                     $image = $product->getFirstMedia('images');
@@ -64,29 +66,29 @@
                 @endphp
                 <div class="animate-ma-up" style="animation-delay: {{ min($loop->index, 11) * 0.06 }}s">
                     <a href="{{ route('product.show', $product) }}" class="group block text-ink hover:text-ink">
-                        <div class="relative mb-3.5 overflow-hidden rounded-[6px] bg-line-soft transition-[box-shadow,transform] duration-500 ease-clay group-hover:-translate-y-1 group-hover:shadow-card-hover">
+                        <div class="relative mb-3.5 overflow-hidden rounded-[18px] bg-line-soft transition-[box-shadow,transform] duration-500 ease-clay group-hover:-translate-y-1 group-hover:shadow-card-hover">
                             @if ($image)
                                 <img src="{{ $image->getAvailableUrl(['card']) }}" alt="{{ $image->getCustomProperty('alt') ?: $product->name }}" @if ($loop->index >= 2) loading="lazy" @endif
-                                     @if ($srcset) srcset="{{ $srcset }}" sizes="(min-width: 640px) 400px, calc(100vw - 56px)" @endif
+                                     @if ($srcset) srcset="{{ $srcset }}" sizes="(min-width: 640px) 400px, calc(50vw - 35px)" @endif
                                      width="1200" height="1500" class="block aspect-[4/5] w-full object-cover">
                             @else
                                 <div class="aspect-[4/5] w-full"></div>
                             @endif
                         </div>
-                        <div class="mb-[5px] text-[10px] tracking-[0.22em] text-hint uppercase">{{ $product->category->name }}</div>
-                        <div class="mb-1.5 font-serif text-[20px] leading-[1.25]">{{ $product->name }}</div>
+                        <div class="mb-[5px] truncate text-[10px] tracking-[0.2em] text-hint uppercase">{{ $product->category->name }}</div>
+                        <div class="mb-1.5 font-serif text-[length:clamp(18px,4.8vw,20px)] leading-[1.2] text-balance">{{ $product->name }}</div>
                     </a>
                     <div class="mb-3 text-[14px] text-lead"><x-catalog::price-label :product="$product" /></div>
                     @if ($variant)
                         <form method="post" action="{{ route('cart.store') }}" x-data x-on:submit.prevent="$store.cart.send($el)">
                             @csrf
                             <input type="hidden" name="variant_id" value="{{ $variant->id }}">
-                            <button class="min-h-11 rounded-full border border-line-strong px-[18px] py-[9px] text-[13px] text-ink transition duration-300 hover:border-ink hover:bg-ink hover:text-linen active:scale-[.97]">
+                            <button class="min-h-11 w-full rounded-full border border-line-strong px-[18px] sm:w-auto py-[9px] text-[13px] text-ink transition duration-300 hover:border-ink hover:bg-ink hover:text-linen active:scale-[.97]">
                                 Do koszyka<span class="sr-only">: {{ $product->name }}{{ $product->variants->count() > 1 ? ', '.$variant->label : '' }}</span>
                             </button>
                         </form>
                     @else
-                        <a href="{{ route('product.show', $product) }}" class="inline-flex min-h-11 items-center rounded-full border border-line-strong px-[18px] py-[9px] text-[13px] text-ink transition duration-300 hover:border-ink hover:bg-ink hover:text-linen active:scale-[.97]">
+                        <a href="{{ route('product.show', $product) }}" class="inline-flex min-h-11 w-full items-center justify-center rounded-full sm:w-auto border border-line-strong px-[18px] py-[9px] text-[13px] text-ink transition duration-300 hover:border-ink hover:bg-ink hover:text-linen active:scale-[.97]">
                             Wybierz napis<span class="sr-only">: {{ $product->name }}</span>
                         </a>
                     @endif
@@ -95,7 +97,7 @@
         </div>
 
         @if ($voucherCategory)
-            <div class="focus-on-dark mt-[60px] flex flex-wrap items-center justify-between gap-[30px] rounded-[4px] bg-ink px-9 py-10 text-on-dark">
+            <div class="focus-on-dark mt-[60px] flex flex-wrap items-center justify-between gap-[30px] rounded-[20px] bg-ink px-9 py-10 text-on-dark">
                 <div class="min-w-0 flex-[1_1_320px]">
                     <h2 class="mb-2 font-serif text-[length:clamp(24px,3vw,32px)] leading-[1.2] font-normal text-cream">Nie wiesz, co wybrać?</h2>
                     <p class="text-[15.5px] text-on-dark-muted">{{ collect([$voucherNote, 'Ważny '.$voucherValidity.'.'])->filter()->join(' ') }}</p>

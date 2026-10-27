@@ -24,7 +24,7 @@
                     <a href="{{ $contactUrl }}" class="inline-block rounded-full bg-rose px-8 py-4 text-[14.5px] text-ink transition duration-300 hover:bg-sand hover:text-ink active:scale-[.97]">Poproś o wycenę</a>
                 </div>
                 <div class="min-w-0 flex-[1_1_320px]">
-                    <img src="{{ Vite::asset('zdjecia/kubek-cappuccino.webp') }}" alt="Kawa w ręcznie robionym kubku" width="600" height="750" class="block aspect-[4/5] w-full rounded-[4px] bg-divider-dark object-cover">
+                    <img src="{{ Vite::asset('zdjecia/kubek-cappuccino.webp') }}" alt="Kawa w ręcznie robionym kubku" width="600" height="750" class="block aspect-[4/5] w-full rounded-[20px] bg-divider-dark object-cover">
                 </div>
             </div>
         </div>
@@ -34,7 +34,7 @@
                 <h2 class="sr-only">Jak pracuję z lokalami</h2>
                 <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,240px),1fr))] gap-[22px]">
                     @foreach ($facts as $fact)
-                        <div class="rounded-[4px] border border-divider bg-cream px-7 py-[30px]">
+                        <div class="rounded-[20px] border border-divider bg-cream px-7 py-[30px]">
                             <h3 class="mb-2.5 font-serif text-[23px] leading-[1.2] font-normal">{{ $fact['title'] }}</h3>
                             @if (filled($fact['text'] ?? null))
                                 <p class="text-[14.5px] leading-[1.62] text-muted">{{ $fact['text'] }}</p>
@@ -46,7 +46,7 @@
         @endif
 
         <div class="mx-auto max-w-[1280px] px-7 pt-11 pb-24">
-            <div class="flex flex-wrap items-center justify-between gap-[30px] rounded-[4px] bg-sand-dark px-[clamp(22px,4vw,40px)] py-11">
+            <div class="flex flex-wrap items-center justify-between gap-[30px] rounded-[20px] bg-sand-dark px-[clamp(22px,4vw,40px)] py-11">
                 <div class="min-w-0 flex-[1_1_340px]">
                     <h2 class="mb-2 font-serif text-[length:clamp(24px,3vw,34px)] leading-[1.2] font-light text-balance">{{ $ctaHeading ?: 'Porozmawiajmy o Waszym lokalu' }}</h2>
                     @if ($cta)

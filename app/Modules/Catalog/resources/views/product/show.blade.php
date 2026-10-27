@@ -142,12 +142,13 @@
 
                 @if ($dimensions || $product->food_contact)
                     <div class="mb-[30px]">
-                        <div class="flex flex-wrap gap-2">
+                        {{-- Two even columns on a phone: label on the left, value on the right. --}}
+                        <div class="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
                             @foreach ($dimensions as $label => $value)
-                                <span class="glass flex items-baseline gap-2 rounded-full px-3.5 py-2 text-[13px]"><span class="text-label">{{ $label }}</span><span class="text-ink">{{ $value }}</span></span>
+                                <span class="glass flex items-baseline justify-between gap-2 rounded-full px-3.5 py-2 text-[13px] sm:justify-start"><span class="text-label">{{ $label }}</span><span class="text-ink">{{ $value }}</span></span>
                             @endforeach
                             @if ($product->food_contact)
-                                <span class="glass rounded-full px-3.5 py-2 text-[13px] text-ink">{{ $product->food_contact->label() }}</span>
+                                <span class="glass col-span-2 rounded-full px-3.5 py-2 text-center text-[13px] text-ink sm:text-left">{{ $product->food_contact->label() }}</span>
                             @endif
                         </div>
                         @if ($dimensions && $tolerance && $isGoods)
@@ -158,7 +159,7 @@
 
                 @if ($product->variants->count() > 1)
                     <div class="mb-3 text-[13.5px] font-medium text-graphite">{{ __('catalog::product.size_and_price') }}</div>
-                    <div class="mb-[30px] flex flex-wrap gap-2.5">
+                    <div class="mb-[30px] grid grid-cols-[repeat(auto-fit,minmax(92px,1fr))] gap-2.5 sm:flex sm:flex-wrap">
                         @foreach ($product->variants as $option)
                             <a href="{{ $canonical }}?wariant={{ $option->id }}" @if ($option->is($variant)) aria-current="true" @endif @class([
                                 'block rounded-[20px] border px-[18px] py-3 text-left transition-[border-color,background-color] duration-300',
@@ -228,11 +229,12 @@
                                 <button type="button" x-on:click="quantity++" @if ($variant->stock !== null) x-bind:disabled="quantity >= {{ $variant->stock }}" @endif
                                         aria-label="{{ __('catalog::product.more') }}" class="h-[46px] w-11 text-[18px] text-muted disabled:cursor-not-allowed disabled:text-line-strong">+</button>
                             </div>
-                            <button type="submit" data-magnet class="fill-btn min-h-[54px] flex-[1_1_200px] rounded-full bg-ink px-5 py-4 text-[14.5px] font-medium tracking-[0.03em] whitespace-nowrap text-linen transition duration-300 [--fill:var(--color-rose)] hover:bg-rose hover:text-ink active:scale-[.97]">
+                            {{-- On a phone the button takes its own full row and the heart stays beside the quantity, not alone below. --}}
+                            <button type="submit" data-magnet class="fill-btn min-h-[54px] flex-[1_1_200px] rounded-full max-sm:order-last max-sm:basis-full bg-ink px-5 py-4 text-[14.5px] font-medium tracking-[0.03em] whitespace-nowrap text-linen transition duration-300 [--fill:var(--color-rose)] hover:bg-rose hover:text-ink active:scale-[.97]">
                                 {{ __('catalog::product.add_to_cart') }} &middot; <span x-text="$store.cart.format({{ $variant->price() }} * quantity)">{{ $price($variant) }}</span>
                             </button>
                             <x-catalog::favorite-button :product="$product"
-                                                        class="glass size-[54px] flex-none rounded-full text-[20px] hover:border-ink" />
+                                                        class="glass size-[54px] flex-none rounded-full text-[20px] hover:border-ink max-sm:ml-auto" />
                         </div>
                     </form>
                 @endif
@@ -309,7 +311,7 @@
             <div class="mt-[clamp(90px,14vh,150px)]">
                 <p class="eyebrow mb-[18px]">{{ __('catalog::product.related_eyebrow') }}</p>
                 <h2 class="mb-9 font-serif text-[length:clamp(36px,4.4vw,64px)] leading-[.98] font-light tracking-[-0.02em]">{{ __('catalog::product.related_title') }}</h2>
-                <div data-aura-rise class="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-[clamp(16px,2vw,28px)]">
+                <div data-aura-rise class="grid grid-cols-2 gap-x-3.5 gap-y-8 sm:grid-cols-[repeat(auto-fill,minmax(230px,1fr))] sm:gap-[clamp(16px,2vw,28px)]">
                     @foreach ($related as $item)
                         @php($cover = $item->getFirstMedia('images'))
                         <a href="{{ route('product.show', $item) }}" class="group block text-ink hover:text-ink">
@@ -317,13 +319,13 @@
                                 @if ($cover)
                                     @php($srcset = ProductPhoto::srcset($cover))
                                     <img src="{{ $cover->getAvailableUrl(['card']) }}" alt="{{ $cover->getCustomProperty('alt') ?: $item->name }}" loading="lazy"
-                                         @if ($srcset) srcset="{{ $srcset }}" sizes="(min-width: 640px) 300px, calc(100vw - 56px)" @endif
+                                         @if ($srcset) srcset="{{ $srcset }}" sizes="(min-width: 640px) 300px, calc(50vw - 35px)" @endif
                                          width="1200" height="1500" class="block aspect-[4/5] w-full object-cover transition-transform duration-[1.1s] ease-clay group-hover:scale-[1.06]">
                                 @else
                                     <div class="aspect-[4/5] w-full"></div>
                                 @endif
                             </div>
-                            <div class="font-serif text-[22px] leading-[1.15] font-light">{{ $item->name }}</div>
+                            <div class="font-serif text-[length:clamp(18px,4.8vw,22px)] leading-[1.15] font-light text-balance">{{ $item->name }}</div>
                             <div class="mt-[3px] text-[13.5px] text-muted"><x-catalog::price-label :product="$item" /></div>
                         </a>
                     @endforeach

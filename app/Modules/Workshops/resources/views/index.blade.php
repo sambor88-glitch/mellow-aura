@@ -19,23 +19,24 @@
 
         @if ($hero !== null)
             <img src="{{ $hero }}" alt="" width="1280" height="520"
-                 class="mb-[76px] block h-[clamp(240px,40vh,460px)] w-full rounded-[4px] bg-line-soft object-cover">
+                 class="mb-[76px] block h-[clamp(240px,40vh,460px)] w-full rounded-[20px] bg-line-soft object-cover">
         @endif
 
         @if ($workshops->isNotEmpty())
             <div class="mb-[76px] grid grid-cols-[repeat(auto-fit,minmax(290px,1fr))] gap-[22px]">
                 @foreach ($workshops as $workshop)
-                    <article class="flex animate-ma-up flex-col rounded-[4px] border border-divider bg-cream px-7 py-[30px]" style="animation-delay: {{ $loop->index * 0.06 }}s">
-                        <div class="mb-3.5 flex items-start justify-between gap-3.5">
-                            <h2 class="min-w-0 font-serif text-[26px] leading-[1.15]">{{ $workshop['name'] }}</h2>
-                            <div class="flex-none text-right">
+                    <article class="flex animate-ma-up flex-col rounded-[20px] border border-divider bg-cream px-7 py-[30px]" style="animation-delay: {{ $loop->index * 0.06 }}s">
+                        {{-- On a phone the price goes under the name, so the name keeps the whole width. --}}
+                        <div class="mb-3.5 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3.5">
+                            <h2 class="min-w-0 font-serif text-[26px] leading-[1.15] text-balance">{{ $workshop['name'] }}</h2>
+                            <div class="flex flex-none items-baseline gap-1.5 sm:block sm:text-right">
                                 <div class="font-serif text-[25px] leading-none tabular-nums">{{ Money::format($workshop['price_gross']) }}</div>
                                 @if ($workshop['unit_label'])
-                                    <div class="mt-1 text-[11.5px] text-label">{{ $workshop['unit_label'] }}</div>
+                                    <div class="text-[12.5px] text-label sm:mt-1 sm:text-[11.5px]"><span class="sm:hidden">/ </span>{{ $workshop['unit_label'] }}</div>
                                 @endif
                             </div>
                         </div>
-                        <x-shared::price-before-reduction :was="$workshop['was']" :lowest="$workshop['lowest']" class="-mt-1.5 mb-3.5 text-right" />
+                        <x-shared::price-before-reduction :was="$workshop['was']" :lowest="$workshop['lowest']" class="-mt-1.5 mb-3.5 sm:text-right" />
                         @if ($workshop['duration_label'] || $workshop['group_label'])
                             <div class="mb-4 flex flex-wrap gap-2">
                                 @foreach (array_filter([$workshop['duration_label'], $workshop['group_label']]) as $fact)
@@ -69,7 +70,7 @@
                                 @php
                                     $when = $date->dayLabel().', '.$date->timeLabel();
                                 @endphp
-                                <li class="flex flex-wrap items-center gap-4 rounded-[4px] border border-divider bg-cream px-[22px] py-5">
+                                <li class="flex flex-wrap items-center gap-4 rounded-[20px] border border-divider bg-cream px-[22px] py-5">
                                     <div class="min-w-0 flex-[1_1_200px]">
                                         <div class="font-serif text-[19px] leading-[1.2]">
                                             <time datetime="{{ $date->starts_at->toIso8601String() }}">{{ $date->dayLabel() }}</time>
@@ -108,7 +109,7 @@
                 @endif
             </div>
             <div class="min-w-[280px] flex-[0_1_340px]">
-                <div class="focus-on-dark rounded-[4px] bg-ink px-7 py-[30px] text-divider">
+                <div class="focus-on-dark rounded-[20px] bg-ink px-7 py-[30px] text-divider">
                     <div class="mb-[18px] text-[11px] tracking-[0.2em] text-gold uppercase">zapisy</div>
                     <p class="mb-5 font-serif text-[21px] leading-[1.4] text-cream">Napisz, który warsztat i ile osób — odpiszę z wolnymi terminami.</p>
                     <div class="grid gap-3">
@@ -135,7 +136,7 @@
                 </div>
                 <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3.5">
                     @foreach ($gallery as $photo)
-                        <img src="{{ $photo['url'] }}" alt="{{ $photo['alt'] }}" loading="lazy" width="600" height="600" class="block aspect-square w-full rounded-[4px] bg-line-soft object-cover">
+                        <img src="{{ $photo['url'] }}" alt="{{ $photo['alt'] }}" loading="lazy" width="600" height="600" class="block aspect-square w-full rounded-[20px] bg-line-soft object-cover">
                     @endforeach
                 </div>
             </div>

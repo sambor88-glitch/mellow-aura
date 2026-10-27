@@ -31,7 +31,7 @@
 
                 @if ($steps->isNotEmpty())
                     <h2 class="sr-only">Jak powstaje zamówienie</h2>
-                    <ol class="mb-11 grid gap-px overflow-hidden rounded-[4px] border border-divider bg-divider">
+                    <ol class="mb-11 grid gap-px overflow-hidden rounded-[20px] border border-divider bg-divider">
                         @foreach ($steps as $step)
                             <li class="flex items-baseline gap-5 bg-cream px-[26px] py-6">
                                 <span aria-hidden="true" class="w-[26px] flex-none font-serif text-[22px] text-gold">{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
@@ -46,22 +46,23 @@
                     </ol>
                 @endif
 
-                <div class="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-3.5">
+                {{-- Two to a row on a phone; an odd last photo takes the whole row instead of standing alone. --}}
+                <div class="grid grid-cols-2 gap-3.5 sm:grid-cols-[repeat(auto-fit,minmax(160px,1fr))] max-sm:[&>*:last-child:nth-child(odd)]:col-span-2 max-sm:[&>*:last-child:nth-child(odd)]:aspect-[2/1]">
                     @foreach ($photos as [$photo, $alt])
-                        <img src="{{ Vite::asset($photo) }}" alt="{{ $alt }}" loading="lazy" width="600" height="600" class="block aspect-square w-full rounded-[4px] bg-line-soft object-cover">
+                        <img src="{{ Vite::asset($photo) }}" alt="{{ $alt }}" loading="lazy" width="600" height="600" class="block aspect-square w-full rounded-[20px] bg-line-soft object-cover">
                     @endforeach
                 </div>
             </div>
 
             <div class="min-w-0 flex-[1_1_340px]">
-                <div id="formularz" class="scroll-mt-6 rounded-[4px] border border-divider bg-cream px-[30px] py-8">
+                <div id="formularz" class="scroll-mt-6 rounded-[20px] border border-divider bg-cream px-[30px] py-8">
                     <h2 class="mb-1.5 font-serif text-[25px] font-normal">Opowiedz o pomyśle</h2>
                     @if ($sent)
-                        <div role="status" class="mt-4 mb-6 rounded-[4px] border border-line-strong bg-sand-dark p-4 text-[14px] leading-[1.6] text-graphite">
+                        <div role="status" class="mt-4 mb-6 rounded-[20px] border border-line-strong bg-sand-dark p-4 text-[14px] leading-[1.6] text-graphite">
                             <p>Mam Twój pomysł. Potwierdzenie poszło na {{ $sent->email }} — jeśli go nie widzisz, zajrzyj do spamu. Odpiszę ze szkicem i wyceną.</p>
                         </div>
                     @elseif (session('brief_throttled'))
-                        <p role="alert" class="mt-4 mb-6 rounded-[4px] border border-alert-line bg-alert p-4 text-[14px] leading-[1.6] text-alert-text">
+                        <p role="alert" class="mt-4 mb-6 rounded-[20px] border border-alert-line bg-alert p-4 text-[14px] leading-[1.6] text-alert-text">
                             Mam już od Ciebie kilka wiadomości i na wszystkie odpiszę. Kolejną wyślesz za godzinę{{ $whatsApp ? ', a jeśli to pilne, napisz na WhatsApp '.$phone : '' }}.
                         </p>
                     @else
@@ -110,7 +111,7 @@
                                 <textarea id="brief-description" name="description" rows="5" maxlength="3000" placeholder="Kolor, kształt, dla kogo, skąd inspiracja"
                                           @error('description') aria-invalid="true" aria-describedby="brief-description-error" @enderror
                                           @class([
-                                              'w-full min-w-0 resize-y rounded-[4px] border bg-white px-4 py-[14px] text-[15px] leading-[1.6] text-ink placeholder:text-hint focus:border-ink pointer-coarse:text-[16px]',
+                                              'w-full min-w-0 resize-y rounded-[20px] border bg-white px-4 py-[14px] text-[15px] leading-[1.6] text-ink placeholder:text-hint focus:border-ink pointer-coarse:text-[16px]',
                                               'border-error' => $errors->has('description'),
                                               'border-line' => ! $errors->has('description'),
                                           ])>{{ old('description') }}</textarea>
@@ -120,7 +121,7 @@
                             </div>
 
                             <div class="min-w-0">
-                                <label class="relative block cursor-pointer rounded-[4px] border border-dashed border-line-strong bg-linen p-[22px] text-center transition duration-300 hover:border-ink hover:bg-sand-dark active:scale-[.98] has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy">
+                                <label class="relative block cursor-pointer rounded-[20px] border border-dashed border-line-strong bg-linen p-[22px] text-center transition duration-300 hover:border-ink hover:bg-sand-dark active:scale-[.98] has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy">
                                     <span class="block text-[14px] text-lead" x-text="previews.length ? 'Dodaj kolejne zdjęcia' : 'Wybierz zdjęcia z telefonu albo komputera'">Wybierz zdjęcia z telefonu albo komputera</span>
                                     <span class="mt-1 block text-[12.5px] text-hint">Inspiracje, szkic, apaszka albo roślina — do {{ $photoLimits['maxFiles'] }} zdjęć</span>
                                     <input type="file" name="photos[]" x-ref="photos" accept="image/jpeg,image/png,image/webp" multiple x-on:change="add($el)" class="sr-only"
@@ -129,7 +130,7 @@
                                 <input type="hidden" name="photos_chosen" x-bind:value="previews.length">
                                 <div x-show="previews.length" x-cloak class="mt-2.5 flex flex-wrap gap-2">
                                     <template x-for="(url, index) in previews" x-bind:key="url">
-                                        <div class="relative h-[70px] w-[58px] rounded-[4px] border border-line bg-line-soft">
+                                        <div class="relative h-[70px] w-[58px] rounded-[20px] border border-line bg-line-soft">
                                             <img x-bind:src="url" x-bind:alt="'Zdjęcie ' + (index + 1)" width="58" height="70" class="size-full rounded-[3px] object-cover">
                                             <button type="button" x-on:click="remove(index)" x-bind:aria-label="'Nie wysyłaj zdjęcia ' + (index + 1)"
                                                     class="absolute top-[3px] right-[3px] grid size-5 place-items-center rounded-full bg-ink/75 text-[11px] leading-none text-linen transition-colors duration-300 after:absolute after:-inset-3 hover:bg-error">×</button>

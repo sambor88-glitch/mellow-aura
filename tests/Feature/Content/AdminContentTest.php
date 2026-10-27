@@ -37,7 +37,7 @@ class AdminContentTest extends TestCase
             ->get('/panel/tresci')
             ->assertOk()
             ->assertSee('>Treści</a>', false)
-            ->assertSeeInOrder(['Strona główna', 'Lubię łączyć surowość z miękkością', 'O mnie', 'href="'.route('content.about').'"', 'Tworzę MellowAura', 'Pracownia', 'Warsztaty, które uczą', 'Kontakt', 'Odpisuję zwykle tego samego dnia', 'Hasło pod logo', 'A little bit of magic'], false)
+            ->assertSeeInOrder(['Strona główna', 'Lubię łączyć surowość z miękkością', 'O mnie', 'href="'.route('content.about').'"', 'Tworzę MellowAura', 'Pracownia', 'Warsztaty, które uczą', 'Kontakt', 'Odpisuję zwykle tego samego dnia', 'Hasło pod logo', 'Domowa pracownia w Krakowie'], false)
             ->assertSeeInOrder(['Częste pytania', 'value="Jak szybko wyślesz zamówienie?"', 'Rzeczy, które są na stanie', 'value="Wysyłasz za granicę?"', 'placeholder="Nowe pytanie"'], false)
             ->assertSeeInOrder(['Pracownia — dobrze wiedzieć', 'value="Do 6 osób"', 'value="Przy jednym stole, bez tłoku."'], false)
             ->assertSeeInOrder(['Sprawy w formularzu kontaktowym', 'value="Zamówienie ze sklepu"', 'value="Współpraca albo prasa"'], false)

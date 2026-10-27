@@ -53,7 +53,7 @@
                     @if ($lead2)
                         <p class="mb-[34px] max-w-[46ch] text-[16px] leading-[1.7] text-lead">{{ $lead2 }}</p>
                     @endif
-                    <div class="flex flex-wrap gap-3.5">
+                    <div class="cta-row">
                         <a href="{{ $briefUrl }}" class="rounded-full bg-ink px-8 py-4 text-[14px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">{{ $page['cta'] }}</a>
                         <a href="{{ route($page['other'][0]->route()) }}" class="rounded-full border border-line-strong px-8 py-4 text-[14px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark hover:text-ink active:scale-[.98]">{{ $page['other'][1] }}</a>
                     </div>
@@ -62,14 +62,14 @@
                     @endif
                 </div>
                 <div class="min-w-0 flex-[1_1_320px]">
-                    <img src="{{ Vite::asset($page['photo']) }}" alt="{{ $page['photoAlt'] }}" width="600" height="800" class="block aspect-[3/4] w-full rounded-[4px] bg-line-soft object-cover">
+                    <img src="{{ Vite::asset($page['photo']) }}" alt="{{ $page['photoAlt'] }}" width="600" height="800" class="block aspect-[3/4] w-full rounded-[20px] bg-line-soft object-cover">
                 </div>
             </div>
         </div>
 
         @if ($steps->isNotEmpty())
             <div class="mx-auto max-w-[1280px] px-7 pt-[72px]">
-                <ol class="flex flex-wrap gap-px overflow-hidden rounded-[4px] border border-divider bg-divider">
+                <ol class="flex flex-wrap gap-px overflow-hidden rounded-[20px] border border-divider bg-divider">
                     @foreach ($steps as $step)
                         <li class="min-w-0 flex-[1_1_230px] bg-cream px-[26px] py-[30px]">
                             <div aria-hidden="true" class="mb-2 font-serif text-[20px] text-gold">{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</div>
@@ -90,7 +90,7 @@
                 <p class="mb-[26px] max-w-[52ch] text-[15.5px] leading-[1.6] text-muted">{{ $page['examplesLead'] }}</p>
                 <div class="grid grid-cols-[repeat(auto-fill,minmax(min(100%,340px),1fr))] gap-[26px]">
                     @foreach ($examples as $example)
-                        <figure x-data="beforeAfter" class="m-0 self-start overflow-hidden rounded-[4px] border border-divider bg-cream">
+                        <figure x-data="beforeAfter" class="m-0 self-start overflow-hidden rounded-[20px] border border-divider bg-cream">
                             <div x-on:pointerdown="start($event)" x-on:pointermove="drag($event)" x-on:pointerup="stop()" x-on:pointercancel="stop()"
                                  class="relative aspect-[4/5] cursor-ew-resize touch-none overflow-hidden bg-line-soft select-none">
                                 <img src="{{ $example->getFirstMedia('after')->getAvailableUrl(['card']) }}" alt="{{ $example->alt('after') }}" loading="lazy" draggable="false" width="960" height="1200" class="absolute inset-0 block size-full object-cover">
@@ -118,7 +118,7 @@
                 <div class="min-w-0 flex-[1_1_400px]">
                     @if ($prices->isNotEmpty())
                         <h2 class="mb-[22px] font-serif text-[length:clamp(28px,3.4vw,40px)] leading-[1.1] font-light text-pretty">{{ $page['pricesHeading'] }}</h2>
-                        <div class="overflow-hidden rounded-[4px] border border-divider bg-cream">
+                        <div class="overflow-hidden rounded-[20px] border border-divider bg-cream">
                             @foreach ($prices as $price)
                                 <div class="flex justify-between gap-5 border-b border-sand-dark px-6 py-5 last:border-b-0">
                                     <div class="min-w-0">

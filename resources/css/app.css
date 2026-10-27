@@ -170,6 +170,15 @@
 }
 
 @layer base {
+    /* Even lines in headings, no lone word in the last line of a paragraph (MA-209). A utility still wins. */
+    h1, h2, h3 {
+        text-wrap: balance;
+    }
+
+    p, li, dd, blockquote {
+        text-wrap: pretty;
+    }
+
     /*
      * The slogan rows, glow orbs and grain reach past the screen on purpose; clip (not hidden) keeps them from widening
      * the page without making a scroll container, so sticky headers and pinned sections still work (MA-81).
@@ -672,5 +681,27 @@
         backdrop-filter: none;
         background-color: var(--color-cream);
         animation: none;
+    }
+}
+
+/* A row of buttons: on a phone each one the full width, one under another, so no row ends ragged (MA-209). */
+@utility cta-row {
+    display: grid;
+    gap: 12px;
+
+    & > * {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    @media (min-width: 768px) {
+        display: flex;
+        flex-wrap: wrap;
+
+        & > * {
+            display: inline-flex;
+        }
     }
 }

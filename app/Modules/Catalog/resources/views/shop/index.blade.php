@@ -111,7 +111,7 @@
         </div>
 
         @if ($products->isEmpty())
-            <div class="rounded-[4px] bg-sand-dark px-9 py-11 text-center">
+            <div class="rounded-[20px] bg-sand-dark px-9 py-11 text-center">
                 <div class="mb-2 font-serif text-[26px]">{{ __('catalog::shop.empty_title') }}</div>
                 <p class="mb-[22px] text-[15.5px] text-lead">{{ __('catalog::shop.empty_text') }}</p>
                 @if (Locales::has('custom-orders.index', Locales::current()))
@@ -120,13 +120,13 @@
             </div>
         @endif
 
-        <div x-cloak x-show="favorites && savedHere === 0" class="rounded-[4px] bg-sand-dark px-9 py-11 text-center">
+        <div x-cloak x-show="favorites && savedHere === 0" class="rounded-[20px] bg-sand-dark px-9 py-11 text-center">
             <div class="mb-2 font-serif text-[26px]">{{ __('catalog::shop.favorites_empty_title') }}</div>
             <p class="mb-[22px] text-[15.5px] text-lead">{{ __('catalog::shop.favorites_empty_text') }}</p>
             <a href="{{ $baseUrl }}" class="inline-block rounded-full bg-ink px-7 py-3.5 text-[14px] text-linen hover:bg-rose hover:text-ink">{{ __('catalog::shop.favorites_empty_cta') }}</a>
         </div>
 
-        <div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-x-[26px] gap-y-[30px]">
+        <div class="grid grid-cols-2 gap-x-3.5 gap-y-8 sm:grid-cols-[repeat(auto-fill,minmax(240px,1fr))] sm:gap-x-[26px] sm:gap-y-[30px]">
             @foreach ($products as $product)
                 <div x-show="! favorites || $store.favorites.has({{ $product->id }})" class="min-w-0">
                     <x-catalog::product-card :product="$product" :delay="min($loop->index, 11) * 0.06" :eager="$loop->index < 2" />

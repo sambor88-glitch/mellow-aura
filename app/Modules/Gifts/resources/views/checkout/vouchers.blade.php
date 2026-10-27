@@ -6,7 +6,7 @@
 @endphp
 @if ($vouchers->isNotEmpty())
     {{-- Signed links for a day: the code alone is worth money. The same PDFs go out in a mail without prices. --}}
-    <div class="mx-auto mb-8 max-w-[48ch] rounded-[4px] border border-divider bg-cream px-6 py-5 text-left">
+    <div class="mx-auto mb-8 max-w-[48ch] rounded-[20px] border border-divider bg-cream px-6 py-5 text-left">
         <p class="mb-3.5 text-[15px] leading-[1.6] text-lead">
             {{ $vouchers->count() === 1
                 ? 'Voucher wysłałam Ci osobnym mailem, bez cen — możesz go przekazać dalej. PDF pobierzesz też od razu:'

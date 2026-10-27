@@ -2,7 +2,7 @@
 @php
     $email = $settings->get('contact_email');
     $scope = old('scope', 'whole');
-    $radio = 'group flex cursor-pointer items-center gap-3.5 rounded-[4px] border border-line bg-white px-[18px] py-4 has-checked:border-ink has-checked:bg-sand-dark has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy';
+    $radio = 'group flex cursor-pointer items-center gap-3.5 rounded-[20px] border border-line bg-white px-[18px] py-4 has-checked:border-ink has-checked:bg-sand-dark has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy';
 @endphp
 
 <x-shared::layout title="Odstąpienie od umowy | MellowAura" description="Formularz „Odstąp od umowy tutaj”: 14 dni od odebrania paczki, bez podawania przyczyny. Potwierdzenie z datą i godziną przyjdzie mailem." :noindex="true">
@@ -18,9 +18,9 @@
             Wszystkie zasady są w&nbsp;<a href="{{ route('content.terms') }}#regulamin-12-prawo-odstapienia-od-umowy">regulaminie, w&nbsp;§12</a>.
         </p>
 
-        <div class="rounded-[4px] border border-divider bg-cream px-[30px] py-8">
+        <div class="rounded-[20px] border border-divider bg-cream px-[30px] py-8">
             @if (session('withdrawal_throttled'))
-                <p role="alert" class="mb-5 rounded-[4px] border border-alert-line bg-alert p-4 text-[14px] leading-[1.6] text-alert-text">
+                <p role="alert" class="mb-5 rounded-[20px] border border-alert-line bg-alert p-4 text-[14px] leading-[1.6] text-alert-text">
                     Z tego urządzenia przyszło w ostatniej godzinie kilka oświadczeń. Kolejne wyślesz za godzinę{{ $email ? ' albo od razu mailem na '.$email : '' }} — Twoje dane są nadal w formularzu.
                 </p>
             @endif
@@ -53,7 +53,7 @@
                               aria-describedby="withdrawal-items-note"
                               @error('items') aria-invalid="true" @enderror
                               @class([
-                                  'w-full min-w-0 resize-y rounded-[4px] border bg-white px-4 py-[14px] text-[15px] leading-[1.6] text-ink placeholder:text-hint focus:border-ink pointer-coarse:text-[16px]',
+                                  'w-full min-w-0 resize-y rounded-[20px] border bg-white px-4 py-[14px] text-[15px] leading-[1.6] text-ink placeholder:text-hint focus:border-ink pointer-coarse:text-[16px]',
                                   'border-error' => $errors->has('items'),
                                   'border-line' => ! $errors->has('items'),
                               ])
