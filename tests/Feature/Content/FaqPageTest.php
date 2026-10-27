@@ -37,6 +37,14 @@ class FaqPageTest extends TestCase
             ->assertDontSee('w stanie nienaruszonym');
     }
 
+    public function test_the_seeded_answer_does_not_promise_shipping_abroad(): void
+    {
+        $this->get('/wysylka-i-pielegnacja')
+            ->assertOk()
+            ->assertSeeInOrder(['Wysyłasz za granicę?', 'Na razie wysyłam tylko w Polsce.'])
+            ->assertDontSee('Unii Europejskiej');
+    }
+
     public function test_an_empty_answer_price_or_address_does_not_show(): void
     {
         $this->settings([
