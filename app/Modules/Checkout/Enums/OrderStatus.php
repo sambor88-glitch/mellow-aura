@@ -26,6 +26,21 @@ enum OrderStatus: string
     }
 
     /**
+     * The moves Kasia can make from the panel, the same ones its buttons offer. A parcel goes out from the studio
+     * or after a problem, never twice in a row: a second tap on „Wysłane” would bring the customer a second mail.
+     */
+    public function canBecome(self $next): bool
+    {
+        return in_array($this, match ($next) {
+            self::Shipped => [self::InProgress, self::Problem],
+            self::Completed => [self::InProgress, self::Shipped, self::Problem],
+            self::Problem => [self::InProgress, self::Shipped, self::Completed],
+            self::InProgress => [self::Shipped, self::Completed, self::Problem],
+            self::New => [],
+        }, true);
+    }
+
+    /**
      * The chip's colors from the skill's table.
      */
     public function chipClass(): string
