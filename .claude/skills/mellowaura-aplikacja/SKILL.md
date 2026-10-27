@@ -37,6 +37,9 @@ Zapytanie medialne piszesz dopiero wtedy, gdy zmienia się kolejność, znika ca
   zanim uznasz ekran za gotowy.
 - Nic nie animuje się bez końca pod szkłem: plamy poświaty i ziarno na dotyku stoją (MA-203). Nowy efekt
   w pętli sprawdź w Chrome jako telefon ze spowolnionym CPU (4×) — strona w bezruchu ma mieć 60 klatek.
+- Nakładka na cały ekran (menu, koszyk, widok zdjęcia) na dotyku nie ma `backdrop-filter`, nie wygasza się z `opacity: 0`
+  i nie animuje `filter: blur`. iPhone potrafi jej wtedy nie narysować przez kilka sekund, choć jest otwarta
+  i łapie stuknięcia (MA-203). Gotowe klasy: `aura-overlay`, `aura-drawer-panel` w `resources/css/app.css`.
 
 ## Cele dotykowe
 

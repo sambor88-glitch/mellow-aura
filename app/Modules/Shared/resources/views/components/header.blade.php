@@ -52,7 +52,7 @@
         @if ($links)
             <nav id="menu" aria-label="{{ __('shared::header.menu') }}" x-cloak x-show="menu" x-trap.noscroll="menu" data-lenis-prevent
                  x-transition:enter="transition duration-500 ease-clay" x-transition:enter-start="opacity-0" x-transition:leave="transition duration-300" x-transition:leave-end="opacity-0"
-                 class="pointer-events-auto fixed inset-0 z-80 flex flex-col justify-center gap-1.5 bg-sand/72 px-[clamp(24px,8vw,80px)] pt-24 pb-10 backdrop-blur-[26px] min-[920px]:hidden">
+                 class="aura-overlay pointer-events-auto fixed inset-0 z-80 flex flex-col justify-center gap-1.5 bg-sand/72 px-[clamp(24px,8vw,80px)] pt-24 pb-10 backdrop-blur-[26px] min-[920px]:hidden">
                 <button type="button" x-on:click="menu = false; $refs.menuButton.focus()"
                         class="absolute top-[22px] right-[22px] flex min-h-11 items-center rounded-full border border-line-strong px-4 text-[13.5px] text-ink">{{ __('shared::header.close') }}</button>
                 @foreach ($links as $i => [$label, $route, $pattern])

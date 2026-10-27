@@ -210,6 +210,9 @@ W aplikacji kasa ma na razie **jedno** duże pole BLIK (`resources/js/checkout.j
 
 **Szuflada koszyka:** szkło jasne `rgba(252,249,244,.8)` + `blur(30px)`, oderwana 10 px od krawędzi, promień 26 px,
 wjeżdża z prawej z rozmycia; tło strony przyciemnia się i rozmywa `blur(6px)`.
+Na ekranie dotykowym (`pointer: coarse`) szuflada i menu pełnoekranowe (klasy `aura-overlay`, `aura-drawer-panel`)
+są pełne, bez `backdrop-filter`, bez wygaszania z zera i bez rozmytych liter: Safari na iPhonie zostawiało je
+otwarte, ale nienarysowane przez kilka sekund, a następne stuknięcia trafiały w niewidoczne „×” (MA-203).
 
 ## Efekty — katalog
 
