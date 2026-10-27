@@ -33,7 +33,7 @@ class BundlesPageTest extends TestCase
 
     public function test_the_page_shows_live_sets_with_the_price_and_what_they_save(): void
     {
-        $this->bundle('Kubek i scrunchie w jednym kolorze', [['Kubki malowane ręcznie', '300 ml', 7900], ['Scrunchies', 'Średnia', 6900]]);
+        $this->bundle('Kubek i scrunchie w jednym odcieniu', [['Kubki malowane ręcznie', '300 ml', 7900], ['Scrunchies', 'Średnia', 6900]]);
         $this->bundle('Ukryty zestaw', [['Wazony', 'Niski', 23900], ['Talerze', 'Deserowy', 11000]], published: false);
 
         $response = $this->get('/zestawy-prezentowe')
@@ -41,10 +41,32 @@ class BundlesPageTest extends TestCase
             ->assertSee('<title>Zestawy prezentowe — ceramika i jedwab w pudełku</title>', false)
             ->assertSee('<link rel="canonical" href="'.route('bundles.index').'">', false)
             ->assertSeeInOrder(['zestawy prezentowe', "Glina i jedwab\nw jednym pudełku", 'Dobieram odcień szkliwa do tkaniny.'])
-            ->assertSeeInOrder(['Kubek i scrunchie w jednym kolorze', 'Kubki malowane ręcznie', 'Scrunchies', '133,00 zł', 'osobno', '148,00 zł', 'taniej o 15,00 zł', 'Do koszyka'])
+            ->assertSeeInOrder(['Kubek i scrunchie w jednym odcieniu', 'Kubki malowane ręcznie', 'Scrunchies', '133,00 zł', 'osobno 148,00 zł · oszczędzasz 15,00 zł', 'Do koszyka'])
             ->assertDontSee('Ukryty zestaw');
 
         $this->assertStringNotContainsString('Zapakuj na prezent', $response->getContent());
+    }
+
+    public function test_the_parts_sum_is_never_shown_as_a_reduction(): void
+    {
+        $this->bundle('Kubek i scrunchie w jednym odcieniu', [['Kubki malowane ręcznie', '300 ml', 7900], ['Scrunchies', 'Średnia', 6900]]);
+
+        $content = $this->get('/zestawy-prezentowe')->assertOk()->assertSee('osobno 148,00 zł')->getContent();
+
+        $this->assertStringNotContainsString('line-through', $content);
+        $this->assertStringNotContainsString('<s>', $content);
+        $this->assertStringNotContainsStringIgnoringCase('taniej o', $content);
+    }
+
+    public function test_each_part_links_to_its_product_page(): void
+    {
+        $bundle = $this->bundle('Wieczorny rytuał', [['Kadzielnice', 'Pszczoły', 9900], ['Podstawki', 'Mała', 7900]]);
+
+        $response = $this->get('/zestawy-prezentowe')->assertOk();
+
+        foreach ($bundle->items as $item) {
+            $response->assertSee('href="'.route('product.show', $item->variant->product).'"', false);
+        }
     }
 
     public function test_without_sets_the_page_leads_to_the_shop(): void

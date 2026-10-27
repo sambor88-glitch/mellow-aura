@@ -28,7 +28,7 @@ class GiftsSeederTest extends TestCase
 
         $bundles = Bundle::query()->with('items.variant.product')->orderBy('sort_order')->get();
 
-        $this->assertSame(['Kubek i scrunchie w jednym kolorze', 'Poranek we dwoje', 'Wieczorny rytuał'], $bundles->pluck('name')->all());
+        $this->assertSame(['Kubek i scrunchie w jednym odcieniu', 'Poranek we dwoje', 'Wieczorny rytuał'], $bundles->pluck('name')->all());
         $this->assertSame(
             ['Kubki malowane ręcznie · 300 ml', 'Scrunchies w 3 rozmiarach · Średnia'],
             $bundles[0]->items->map(fn (BundleItem $item) => $item->variant->product->name.' · '.$item->variant->label)->all(),
