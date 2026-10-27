@@ -141,11 +141,15 @@
                     <fieldset class="mb-[30px]">
                         <legend class="mb-3 {{ $eyebrow }}">{{ $t('size') }}</legend>
                         {{-- Equal tiles on a phone, so three sizes never break into two rows of two widths. --}}
-                        <div class="grid grid-cols-[repeat(auto-fit,minmax(92px,1fr))] gap-2.5 sm:flex sm:flex-wrap">
+                        <div class="grid gap-2.5 sm:flex sm:flex-wrap" style="grid-template-columns: repeat({{ min(count($sizes), 3) }}, minmax(0, 1fr))">
                             @foreach ($sizes as $size)
-                                <label class="glass group flex cursor-pointer flex-col rounded-[20px] px-3 py-3 text-center sm:px-[18px] sm:text-left text-lead transition-[border-color,background-color] duration-300 hover:border-ink has-checked:border-ink has-checked:bg-ink has-checked:text-linen has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy">
+                                @php
+                                    // „Średni 300 ml”: the volume on its own line on a phone, so every tile breaks the same way.
+                                    [$sizeName, $sizeVolume] = preg_match('/^(.*\S)\s+(\d+\s*ml)$/u', $size['name'], $parts) ? [$parts[1], $parts[2]] : [$size['name'], null];
+                                @endphp
+                                <label class="glass group flex cursor-pointer flex-col rounded-[20px] px-2 py-3 text-center sm:px-[18px] sm:text-left text-lead transition-[border-color,background-color] duration-300 hover:border-ink has-checked:border-ink has-checked:bg-ink has-checked:text-linen has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy">
                                     <input type="radio" name="size" value="{{ $size['label'] }}" x-model="size" @checked($size['label'] === $startSize['label']) class="sr-only">
-                                    <span class="text-[13.5px]">{{ $size['name'] }}</span>
+                                    <span class="text-[13.5px]">{{ $sizeName }}@if ($sizeVolume)<span class="block sm:inline"><span class="hidden sm:inline"> </span>{{ $sizeVolume }}</span>@endif</span>
                                     <span class="mt-[3px] text-[12.5px] text-label group-has-checked:text-line-strong">{{ $money($size['price']) }}</span>
                                 </label>
                             @endforeach
@@ -178,7 +182,7 @@
                 @endif
 
                 @if ($bulkOrder || $refusals)
-                    <div class="mt-8 grid grid-cols-[repeat(auto-fit,minmax(170px,1fr))] gap-2.5 text-[13.5px] leading-[1.55] text-muted [&>div]:glass [&>div]:rounded-[18px] [&>div]:px-[18px] [&>div]:py-4">
+                    <div class="mt-8 grid grid-cols-[repeat(auto-fit,minmax(170px,1fr))] gap-2.5 text-[13.5px] leading-[1.55] text-muted [&>div]:text-pretty [&>div]:glass [&>div]:rounded-[18px] [&>div]:px-[18px] [&>div]:py-4">
                         @if ($bulkOrder)
                             <div>
                                 <div class="mb-1 text-ink">{{ $t('bulk') }}</div>
