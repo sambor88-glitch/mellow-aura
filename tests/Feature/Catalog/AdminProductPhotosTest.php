@@ -49,7 +49,8 @@ class AdminProductPhotosTest extends TestCase
         $this->assertSame('image/webp', $first->mime_type);
         $this->assertSame([2400, 1800], array_slice(getimagesize($first->getPath()), 0, 2));
         $this->assertSame([800, 1000], array_slice(getimagesize($second->getPath()), 0, 2));
-        $this->assertSame([300, 375], array_slice(getimagesize($first->getPath('thumb')), 0, 2));
+        // The thumbnail keeps the whole photo; the frame on the page cuts it around the point set in the panel.
+        $this->assertSame([400, 300], array_slice(getimagesize($first->getPath('thumb')), 0, 2));
         $this->assertTrue($first->hasGeneratedConversion('card'));
         // No description yet: the shop describes the photo with the product name.
         $this->assertNull($first->getCustomProperty('alt'));
@@ -111,7 +112,7 @@ class AdminProductPhotosTest extends TestCase
         [$first, $second] = $this->product->fresh()->getMedia('images')->all();
         $second->setCustomProperty('alt', 'Stary opis')->save();
 
-        $this->get('/panel/produkty')->assertSee('Opisy zdjęć')->assertSee('name="photo_alts['.$first->id.']"', false);
+        $this->get('/panel/produkty')->assertSee('Opisy i kadr zdjęć')->assertSee('name="photo_alts['.$first->id.']"', false);
 
         $this->put('/panel/produkty/'.$this->product->id, [
             'form' => 'produkt-'.$this->product->id,
@@ -123,6 +124,48 @@ class AdminProductPhotosTest extends TestCase
 
         $this->assertSame('Miska od spodu, widać odcisk paproci', $first->fresh()->getCustomProperty('alt'));
         $this->assertFalse($second->fresh()->hasCustomProperty('alt'));
+    }
+
+    public function test_the_frame_of_each_photo_is_set_with_the_product_form_and_used_in_the_shop_and_the_basket(): void
+    {
+        $this->product->update(['is_published' => true]);
+        $this->actingAs($this->owner)->post($this->photosUrl(), ['photos' => [
+            UploadedFile::fake()->image('a.jpg', 1600, 1000),
+            UploadedFile::fake()->image('b.jpg'),
+        ]]);
+        [$first, $second] = $this->product->fresh()->getMedia('images')->all();
+        $second->setCustomProperty('focus', ['x' => 10, 'y' => 10])->save();
+
+        $this->get('/panel/produkty')
+            ->assertSee('Opisy i kadr zdjęć')
+            ->assertSee('name="photo_focus['.$first->id.'][y]"', false)
+            ->assertSee('object-position: 50% 50%', false);
+
+        $form = [
+            'form' => 'produkt-'.$this->product->id,
+            'name' => 'Miska z paprocią',
+            'category_id' => $this->product->category_id,
+            'is_published' => '1',
+            'variants' => [['id' => $this->variant->id, 'label' => '', 'price' => '120', 'stock' => '2']],
+        ];
+
+        $this->put('/panel/produkty/'.$this->product->id, [...$form, 'photo_focus' => [
+            $first->id => ['x' => '30', 'y' => '85'],
+            $second->id => ['x' => '50', 'y' => '50'],
+        ]])->assertSessionHasNoErrors();
+
+        $this->assertSame(['x' => 30, 'y' => 85], $first->fresh()->getCustomProperty('focus'));
+        // The middle is the default and leaves nothing behind.
+        $this->assertFalse($second->fresh()->hasCustomProperty('focus'));
+
+        $this->get('/sklep')->assertSee('style="object-position: 30% 85%"', false);
+        $this->get(route('product.show', $this->product))->assertSee('object-position: 30% 85%', false);
+
+        $this->postJson('/koszyk', ['variant_id' => $this->variant->id])->assertSee('object-position: 30% 85%', false);
+
+        $this->put('/panel/produkty/'.$this->product->id, [...$form, 'photo_focus' => [$first->id => ['x' => '130', 'y' => 'góra']]])
+            ->assertSessionHasErrorsIn('produkt-'.$this->product->id, ['photo_focus.'.$first->id.'.x' => 'Przesuń suwak kadru jeszcze raz']);
+        $this->assertSame(['x' => 30, 'y' => 85], $first->fresh()->getCustomProperty('focus'));
     }
 
     public function test_a_new_product_can_come_with_photos_and_the_shop_shows_the_smaller_copy(): void

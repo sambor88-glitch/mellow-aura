@@ -5,11 +5,12 @@ namespace App\Modules\Catalog\Actions;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductTranslation;
 use App\Modules\Catalog\Models\ProductVariant;
+use App\Modules\Shared\Support\FocalPoint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /**
- * Saves a product from the panel together with its sizes, the photo of each size and photo descriptions. A changed price lands
+ * Saves a product from the panel together with its sizes, the photo of each size, photo descriptions and focal points. A changed price lands
  * in price_history (the variant model records it), a size missing from the form is removed, and a new
  * product goes to the top of the list. The address (slug) is set once and survives renaming.
  *
@@ -24,7 +25,7 @@ class SaveProduct
     public function __construct(private ConvertEuroPrices $convertEuroPrices) {}
 
     /**
-     * @param  array{name: string, category_id: int, description: ?string, seo_description?: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, euro_from_rate?: bool, workshop_code?: ?string, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels?: array<string, string>, price_gross: int, compare_at_price: ?int, prices?: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post?: bool, voucher_seats?: ?int, media_id?: ?int}>, photo_alts?: array<int, string>, translations?: array<string, array<string, ?string>>}  $data
+     * @param  array{name: string, category_id: int, description: ?string, seo_description?: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, euro_from_rate?: bool, workshop_code?: ?string, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels?: array<string, string>, price_gross: int, compare_at_price: ?int, prices?: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post?: bool, voucher_seats?: ?int, media_id?: ?int}>, photo_alts?: array<int, string>, photo_focus?: array<int, array{x: int, y: int}>, translations?: array<string, array<string, ?string>>}  $data
      */
     public function __invoke(?Product $product, array $data): Product
     {
@@ -99,18 +100,23 @@ class SaveProduct
             }
 
             $alts = $data['photo_alts'] ?? [];
+            $focus = $data['photo_focus'] ?? [];
 
-            foreach ($alts ? $product->getMedia('images') : [] as $photo) {
-                if (! array_key_exists($photo->id, $alts)) {
-                    continue;
+            foreach ($alts || $focus ? $product->getMedia('images') : [] as $photo) {
+                if (array_key_exists($photo->id, $alts)) {
+                    // Without a description the page describes the photo with the product name.
+                    $alts[$photo->id] === ''
+                        ? $photo->forgetCustomProperty('alt')
+                        : $photo->setCustomProperty('alt', $alts[$photo->id]);
                 }
 
-                // Without a description the page describes the photo with the product name.
-                $alts[$photo->id] === ''
-                    ? $photo->forgetCustomProperty('alt')
-                    : $photo->setCustomProperty('alt', $alts[$photo->id]);
+                if (array_key_exists($photo->id, $focus)) {
+                    FocalPoint::set($photo, $focus[$photo->id]);
+                }
 
-                $photo->save();
+                if ($photo->isDirty()) {
+                    $photo->save();
+                }
             }
 
             return $product;

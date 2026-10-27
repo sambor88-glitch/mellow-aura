@@ -20,7 +20,7 @@
     @forelse ($lines as $line)
         <div class="flex animate-[auraItemIn_.6s_var(--ease-clay)_both] gap-3.5 border-b border-line py-4">
             @if ($thumbnail = $line->thumbnailUrl())
-                <img src="{{ $thumbnail }}" alt="{{ $line->thumbnailAlt() }}" width="74" height="92" class="h-[92px] w-[74px] flex-none rounded-[12px] object-cover">
+                <img src="{{ $thumbnail }}" alt="{{ $line->thumbnailAlt() }}" width="74" height="92" style="{{ $line->thumbnailStyle() }}" class="h-[92px] w-[74px] flex-none rounded-[12px] object-cover">
             @else
                 <div class="h-[92px] w-[74px] flex-none rounded-[12px] bg-linen"></div>
             @endif

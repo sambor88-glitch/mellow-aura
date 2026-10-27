@@ -8,6 +8,7 @@ use App\Modules\Catalog\Enums\GoogleCategory;
 use App\Modules\Catalog\Enums\Occasion;
 use App\Modules\Catalog\Enums\Recipient;
 use App\Modules\Shared\Rules\PriceBeforeReduction;
+use App\Modules\Shared\Support\FocalPoint;
 use App\Modules\Shared\Support\Money;
 use App\Modules\Workshops\Http\Controllers\BookingController;
 use App\Modules\Workshops\Support\WorkshopTypes;
@@ -75,6 +76,7 @@ class SaveProductRequest extends FormRequest
             'variants.*.media_id' => ['nullable', 'integer'],
             'photo_alts' => ['nullable', 'array'],
             'photo_alts.*' => ['nullable', 'string', 'max:160'],
+            ...FocalPoint::rules('photo_focus.*'),
             // The English version: optional, but once the product has an English name every size needs one too,
             // or the English page would show a size without a name.
             'en' => ['nullable', 'array'],
@@ -149,14 +151,15 @@ class SaveProductRequest extends FormRequest
             'variants.*.label_en.required' => 'Produkt ma angielską nazwę, więc nazwij każdy rozmiar także po angielsku — np. Small 12 cm',
             'variants.*.label_en.max' => 'Angielską nazwę rozmiaru zmieszczę do :max znaków',
             ...PhotoRules::messages(),
+            ...FocalPoint::messages('photo_focus.*'),
         ];
     }
 
     /**
      * The validated form in the shape SaveProduct takes: prices in grosze, empty dimensions left out,
-     * photo descriptions keyed by photo id.
+     * photo descriptions and focal points keyed by photo id.
      *
-     * @return array{name: string, category_id: int, description: ?string, seo_description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, euro_from_rate: bool, workshop_code: ?string, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels: array<string, string>, price_gross: int, compare_at_price: ?int, prices: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post: bool, voucher_seats: ?int, media_id: ?int}>, photo_alts: array<int, string>}
+     * @return array{name: string, category_id: int, description: ?string, seo_description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, euro_from_rate: bool, workshop_code: ?string, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels: array<string, string>, price_gross: int, compare_at_price: ?int, prices: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post: bool, voucher_seats: ?int, media_id: ?int}>, photo_alts: array<int, string>, photo_focus: array<int, array{x: int, y: int}>}
      */
     public function product(): array
     {
@@ -201,6 +204,7 @@ class SaveProductRequest extends FormRequest
                 'media_id' => filled($row['media_id'] ?? null) ? (int) $row['media_id'] : null,
             ], $data['variants']),
             'photo_alts' => array_map(fn (mixed $alt) => trim((string) $alt), (array) ($data['photo_alts'] ?? [])),
+            'photo_focus' => array_map(fn (array $point) => ['x' => (int) $point['x'], 'y' => (int) $point['y']], (array) ($data['photo_focus'] ?? [])),
             'translations' => ['en' => array_map(
                 fn (mixed $value) => filled($value) ? trim((string) $value) : null,
                 Arr::only((array) ($data['en'] ?? []), ['name', 'description', 'seo_description', 'care_note', 'deviation', 'size_tolerance', 'safety_warnings']),

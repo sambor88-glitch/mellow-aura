@@ -159,7 +159,7 @@ class AdminServicesTest extends TestCase
             ->assertSee('Nazwij ten krok, np. Przysyłasz tkaninę');
     }
 
-    public function test_a_pair_is_saved_as_webp_without_exif_and_cut_to_the_same_shape(): void
+    public function test_a_pair_is_saved_as_webp_without_exif_with_smaller_copies(): void
     {
         $response = $this->actingAs($this->owner)->post('/panel/uslugi/apaszka/przed-i-po', [
             'before' => UploadedFile::fake()->image('IMG_4821.jpg', 3200, 2400),
@@ -182,9 +182,10 @@ class AdminServicesTest extends TestCase
         // The phone photo is turned upright once and saved again without its EXIF data.
         $this->assertSame([300, 400], array_slice(getimagesize($after->getPath()), 0, 2));
         $this->assertDoesNotMatchRegularExpression('/exif/i', (string) file_get_contents($after->getPath()));
-        $this->assertSame([240, 300], array_slice(getimagesize($before->getPath('thumb')), 0, 2));
-        $this->assertSame([240, 300], array_slice(getimagesize($after->getPath('thumb')), 0, 2));
-        $this->assertSame([960, 1200], array_slice(getimagesize($before->getPath('card')), 0, 2));
+        // Smaller copies keep the whole photo: the 4:5 frame on the page cuts it around the point set in the panel.
+        $this->assertSame([240, 180], array_slice(getimagesize($before->getPath('thumb')), 0, 2));
+        $this->assertSame([225, 300], array_slice(getimagesize($after->getPath('thumb')), 0, 2));
+        $this->assertSame([960, 720], array_slice(getimagesize($before->getPath('card')), 0, 2));
 
         $this->get('/panel/uslugi')
             ->assertDontSee('Jeszcze nie ma par')
@@ -223,7 +224,7 @@ class AdminServicesTest extends TestCase
         $this->actingAs($this->owner)
             ->put('/panel/uslugi/przed-i-po/'.$example->id, ['caption' => 'Nowy podpis', 'before_alt' => ' Apaszka w kwiaty ', 'after_alt' => ''])
             ->assertRedirect('/panel/uslugi/apaszka#para-'.$example->id)
-            ->assertSessionHas('panel_status', 'Opis zapisany');
+            ->assertSessionHas('panel_status', 'Zapisane');
 
         $example->refresh();
         $this->assertSame(['Nowy podpis', 'Apaszka w kwiaty', null], [$example->caption, $example->before_alt, $example->after_alt]);
@@ -273,6 +274,31 @@ class AdminServicesTest extends TestCase
 
         $this->assertModelMissing($example);
         $this->assertFileDoesNotExist($path);
+    }
+
+    public function test_the_frame_of_each_photo_in_a_pair_is_set_in_the_panel_and_used_on_the_page(): void
+    {
+        $example = $this->pair(Service::Scarf);
+
+        $this->actingAs($this->owner)->get('/panel/uslugi')
+            ->assertSee('name="focus[before][y]"', false)
+            ->assertSee('name="focus[after][x]"', false)
+            ->assertSee('Zapisz opis i kadr');
+
+        $this->put('/panel/uslugi/przed-i-po/'.$example->id, ['caption' => 'Apaszka babci', 'focus' => [
+            'before' => ['x' => '50', 'y' => '20'],
+            'after' => ['x' => '50', 'y' => '50'],
+        ]])->assertSessionHasNoErrors();
+
+        $this->assertSame(['x' => 50, 'y' => 20], $example->getFirstMedia('before')->fresh()->getCustomProperty('focus'));
+        $this->assertFalse($example->getFirstMedia('after')->fresh()->hasCustomProperty('focus'));
+
+        $this->get(route('content.scarf'))
+            ->assertSee('style="object-position: 50% 20%; clip-path: inset(0 50% 0 0)"', false)
+            ->assertSee('style="object-position: 50% 50%"', false);
+
+        $this->put('/panel/uslugi/przed-i-po/'.$example->id, ['focus' => ['before' => ['x' => '50', 'y' => '101']]])
+            ->assertSessionHasErrorsIn('para-'.$example->id, ['focus.before.y' => 'Przesuń suwak kadru jeszcze raz']);
     }
 
     private function pair(Service $service): ServiceExample

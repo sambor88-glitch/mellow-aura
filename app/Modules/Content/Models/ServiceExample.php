@@ -29,12 +29,13 @@ class ServiceExample extends Model implements HasMedia
     }
 
     /**
-     * Both photos are cut to the same 4:5 shape, so the slider lays one exactly over the other.
+     * Not cut: the page shows both photos in the same 4:5 frame (object-cover), so the slider lays one exactly over
+     * the other, and the frame keeps the point of each photo set in the panel (FocalPoint).
      */
     public function registerMediaConversions(?Media $media = null): void
     {
-        $this->addMediaConversion('thumb')->fit(Fit::Crop, 240, 300)->format('webp')->quality(80)->nonQueued();
-        $this->addMediaConversion('card')->fit(Fit::Crop, 960, 1200)->format('webp')->quality(82)->nonQueued();
+        $this->addMediaConversion('thumb')->fit(Fit::Max, 240, 300)->format('webp')->quality(80)->nonQueued();
+        $this->addMediaConversion('card')->fit(Fit::Max, 960, 1200)->format('webp')->quality(82)->nonQueued();
     }
 
     public function isComplete(): bool

@@ -4,6 +4,7 @@
 @use('App\Modules\Catalog\Support\VariantAnalyticsItem')
 @use('App\Modules\Shared\Support\AnalyticsItem')
 @use('App\Modules\Shared\Support\DispatchTime')
+@use('App\Modules\Shared\Support\FocalPoint')
 @use('App\Modules\Shared\Support\Money')
 @use('App\Modules\Shared\Support\Seo')
 @inject('settings', 'App\Modules\Settings\Settings')
@@ -63,7 +64,7 @@
                             <img src="{{ $image->getAvailableUrl(['card']) }}" alt="{{ $image->getCustomProperty('alt') ?: $product->name }}"
                                  @if ($srcset) srcset="{{ $srcset }}" sizes="(min-width: 872px) 584px, calc(100vw - 56px)" @endif
                                  @if ($index === $firstPhoto) fetchpriority="high" @else loading="lazy" x-cloak @endif
-                                 x-show="active === {{ $index }}" width="1200" height="1200"
+                                 x-show="active === {{ $index }}" width="1200" height="1200" style="{{ FocalPoint::style($image) }}"
                                  x-transition:enter="transition duration-700 ease-clay" x-transition:enter-start="opacity-0 blur-md scale-105"
                                  x-transition:leave="transition duration-300 ease-in" x-transition:leave-end="opacity-0 blur-md"
                                  class="absolute inset-0 block size-full object-cover">
@@ -100,7 +101,7 @@
                                     x-bind:class="active === {{ $index }} ? 'border-ink opacity-100' : 'border-line opacity-65'"
                                     aria-label="{{ __('catalog::product.show_photo', ['number' => $loop->iteration]) }}"
                                     class="size-[74px] overflow-hidden rounded-[12px] border bg-transparent p-0 transition-[opacity,border-color,transform] duration-400 ease-clay hover:-translate-y-0.5 hover:opacity-100">
-                                <img src="{{ $image->getAvailableUrl(['thumb']) }}" alt="" loading="lazy" width="74" height="74" class="block size-full object-cover">
+                                <img src="{{ $image->getAvailableUrl(['thumb']) }}" alt="" loading="lazy" width="74" height="74" style="{{ FocalPoint::style($image) }}" class="block size-full object-cover">
                             </button>
                         @endforeach
                     </div>
@@ -320,7 +321,7 @@
                                     @php($srcset = ProductPhoto::srcset($cover))
                                     <img src="{{ $cover->getAvailableUrl(['card']) }}" alt="{{ $cover->getCustomProperty('alt') ?: $item->name }}" loading="lazy"
                                          @if ($srcset) srcset="{{ $srcset }}" sizes="(min-width: 640px) 300px, calc(50vw - 35px)" @endif
-                                         width="1200" height="1500" class="block aspect-[4/5] w-full object-cover transition-transform duration-[1.1s] ease-clay group-hover:scale-[1.06]">
+                                         width="1200" height="1500" style="{{ FocalPoint::style($cover) }}" class="block aspect-[4/5] w-full object-cover transition-transform duration-[1.1s] ease-clay group-hover:scale-[1.06]">
                                 @else
                                     <div class="aspect-[4/5] w-full"></div>
                                 @endif

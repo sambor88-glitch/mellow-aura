@@ -5,6 +5,7 @@
 @use('App\Modules\Catalog\Enums\Occasion')
 @use('App\Modules\Catalog\Enums\Recipient')
 @use('App\Modules\Catalog\Models\ExchangeRate')
+@use('App\Modules\Shared\Support\FocalPoint')
 @use('App\Modules\Shared\Support\Money')
 @use('App\Modules\Shared\Support\Seo')
 @use('App\Modules\Workshops\Support\WorkshopTypes')
@@ -340,17 +341,23 @@
 
     @if ($product?->getMedia('images')->isNotEmpty())
         <fieldset>
-            <legend class="{{ $legend }} mb-1">Opisy zdjęć — dla Google i czytników ekranu</legend>
-            <p class="mb-2.5 text-[12.5px] leading-[1.5] text-hint">Napisz, co widać: kolor, detal, np. „Piaskowy kubek z turkusowym wnętrzem”. Puste pole — strona opisze zdjęcie nazwą produktu.</p>
-            <div class="grid gap-2">
+            <legend class="{{ $legend }} mb-1">Opisy i kadr zdjęć</legend>
+            <p class="mb-2.5 text-[12.5px] leading-[1.5] text-hint">Opis jest dla Google i czytników ekranu. Napisz, co widać: kolor, detal, np. „Piaskowy kubek z turkusowym wnętrzem”. Puste pole — strona opisze zdjęcie nazwą produktu.</p>
+            <p class="mb-2.5 text-[12.5px] leading-[1.5] text-hint">Sklep tnie zdjęcia do pionu, a strona produktu do kwadratu. Jeśli coś ważnego się ucina, przesuń kadr suwakami.</p>
+            <div class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-3.5">
                 @foreach ($product->getMedia('images') as $photo)
-                    <div class="flex items-center gap-2.5">
-                        <img src="{{ $photo->getAvailableUrl(['thumb']) }}" alt="" width="38" height="46" class="h-[46px] w-[38px] flex-none rounded-[3px] bg-line-soft object-cover">
+                    @php
+                        $point = $old('photo_focus.'.$photo->id, FocalPoint::of($photo));
+                    @endphp
+                    <div class="min-w-0">
+                        <x-shared::focus-picker name="photo_focus[{{ $photo->id }}]" :src="$photo->getAvailableUrl(['thumb'])" :x="$point['x'] ?? 50" :y="$point['y'] ?? 50"
+                                                label="Kadr zdjęcia {{ $loop->iteration }}" :frames="['aspect-[4/5]' => 'w sklepie', 'aspect-square' => 'na stronie produktu']" />
                         <input name="photo_alts[{{ $photo->id }}]" value="{{ $old('photo_alts.'.$photo->id, $photo->getCustomProperty('alt')) }}" maxlength="160"
                                aria-label="Opis zdjęcia {{ $loop->iteration }}" placeholder="{{ $product->name }}"
-                               @class([$input, 'flex-1 px-3 py-2.5', 'border-error' => $bag->has('photo_alts.'.$photo->id), 'border-line' => ! $bag->has('photo_alts.'.$photo->id)])>
+                               @class([$input, 'mt-1.5 w-full px-3 py-2.5', 'border-error' => $bag->has('photo_alts.'.$photo->id), 'border-line' => ! $bag->has('photo_alts.'.$photo->id)])>
+                        {!! $error('photo_alts.'.$photo->id) !!}
+                        {!! $error('photo_focus.'.$photo->id.'.x') ?: $error('photo_focus.'.$photo->id.'.y') !!}
                     </div>
-                    {!! $error('photo_alts.'.$photo->id) !!}
                 @endforeach
             </div>
         </fieldset>

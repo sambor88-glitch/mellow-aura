@@ -7,6 +7,7 @@ use App\Modules\Cart\CartLine;
 use App\Modules\Cart\LineItem;
 use App\Modules\Catalog\Models\ProductVariant;
 use App\Modules\Catalog\Support\VariantAnalyticsItem;
+use App\Modules\Shared\Support\FocalPoint;
 
 /**
  * A size of a product from the catalogue, with the customer's own text when the product is stamped.
@@ -61,6 +62,11 @@ class ProductLine extends CartLine
     public function thumbnailAlt(): string
     {
         return $this->variant->photo()?->getCustomProperty('alt') ?: $this->name();
+    }
+
+    public function thumbnailStyle(): ?string
+    {
+        return ($photo = $this->variant->photo()) ? FocalPoint::style($photo) : null;
     }
 
     public function deviations(): array

@@ -70,7 +70,7 @@
                             @if ($image)
                                 <img src="{{ $image->getAvailableUrl(['card']) }}" alt="{{ $image->getCustomProperty('alt') ?: $product->name }}" @if ($loop->index >= 2) loading="lazy" @endif
                                      @if ($srcset) srcset="{{ $srcset }}" sizes="(min-width: 640px) 400px, calc(50vw - 35px)" @endif
-                                     width="1200" height="1500" class="block aspect-[4/5] w-full object-cover">
+                                     width="1200" height="1500" style="{{ \App\Modules\Shared\Support\FocalPoint::style($image) }}" class="block aspect-[4/5] w-full object-cover">
                             @else
                                 <div class="aspect-[4/5] w-full"></div>
                             @endif

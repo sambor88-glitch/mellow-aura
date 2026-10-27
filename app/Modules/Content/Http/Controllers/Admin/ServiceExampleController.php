@@ -7,12 +7,13 @@ use App\Modules\Content\Actions\AddServiceExample;
 use App\Modules\Content\Http\Requests\Admin\StoreServiceExampleRequest;
 use App\Modules\Content\Http\Requests\Admin\UpdateServiceExampleRequest;
 use App\Modules\Content\Models\ServiceExample;
+use App\Modules\Shared\Support\FocalPoint;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 /**
- * The „przed i po” pairs on a service page: add a pair, change its caption and descriptions, move it, delete it.
+ * The „przed i po” pairs on a service page: add a pair, change its caption, descriptions and frames, move it, delete it.
  */
 class ServiceExampleController extends Controller
 {
@@ -27,7 +28,14 @@ class ServiceExampleController extends Controller
     {
         $example->update($request->texts());
 
-        return $this->back($example, 'Opis zapisany');
+        foreach ($request->focus() as $side => $point) {
+            if ($media = $example->getFirstMedia($side)) {
+                FocalPoint::set($media, $point);
+                $media->save();
+            }
+        }
+
+        return $this->back($example, 'Zapisane');
     }
 
     public function move(Request $request, ServiceExample $example): RedirectResponse
