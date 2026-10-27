@@ -24,7 +24,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 #[Fillable([
     'slug', 'name', 'category_id', 'description', 'seo_description', 'dimensions', 'care_note',
     'food_contact', 'deviation', 'size_tolerance', 'safety_warnings', 'google_category', 'show_in_google',
-    'is_published', 'is_one_off', 'is_exact_piece', 'euro_from_rate', 'sort_order', 'stamp_enabled', 'occasions', 'recipients',
+    'is_published', 'is_one_off', 'is_exact_piece', 'euro_from_rate', 'sort_order', 'stamp_enabled', 'workshop_code', 'occasions', 'recipients',
 ])]
 class Product extends Model implements HasMedia
 {

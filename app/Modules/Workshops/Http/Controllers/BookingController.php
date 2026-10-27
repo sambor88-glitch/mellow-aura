@@ -9,6 +9,9 @@ use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Http\Controllers\BlikController;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Content\Support\LegalDocument;
+use App\Modules\Gifts\Enums\VoucherRefusal;
+use App\Modules\Gifts\Exceptions\VoucherNotAccepted;
+use App\Modules\Gifts\Models\Voucher;
 use App\Modules\Payments\Contracts\PaymentGateway;
 use App\Modules\Settings\Settings;
 use App\Modules\Workshops\Actions\PlaceBooking;
@@ -21,6 +24,7 @@ use App\Modules\Workshops\Support\WorkshopTypes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\RateLimiter;
 
 /**
  * Booking a seat on a workshop date (/warsztaty-ceramiczne-krakow/zapis/{date}). The booking is an order in Checkout
@@ -34,6 +38,9 @@ class BookingController extends Controller
     public const MAX_SEATS = 6;
 
     private const ROBOTS = 'noindex, nofollow';
+
+    /** Wrong voucher codes allowed from one address per minute. */
+    private const VOUCHER_ATTEMPTS = 5;
 
     /**
      * Paid online only: a bank transfer would hold a seat for days. BLIK, card and Przelewy24 (MA-136).
@@ -54,6 +61,13 @@ class BookingController extends Controller
         }
 
         $methods = collect(self::paymentMethods());
+        // „Mam voucher” only for a workshop that vouchers were issued for.
+        $takesVouchers = Voucher::query()->where('workshop_code', $date->workshop_code)->exists();
+
+        if ($takesVouchers) {
+            $methods->push(PaymentMethod::Voucher);
+        }
+
         $chosen = PaymentMethod::tryFrom((string) old('payment_method'));
 
         return response()->view('workshops::booking', [
@@ -77,6 +91,10 @@ class BookingController extends Controller
         }
 
         $data = $request->validated();
+
+        if ($data['payment_method'] === PaymentMethod::Voucher->value) {
+            return $this->storeWithVoucher($request, $date, $workshop, $data, $types, $placeBooking);
+        }
         $seats = (int) $data['seats'];
 
         // She pays the sum the screen showed. If Kasia changed the price meanwhile, show the new one first.
@@ -123,6 +141,58 @@ class BookingController extends Controller
     }
 
     /**
+     * A booking paid with a voucher code (MA-137): confirmed at once, or back to the form with why the code books
+     * nothing. Wrong codes from one address are limited, so codes cannot be guessed by trying.
+     *
+     * @param  array{name: string, price_gross: int}  $workshop
+     * @param  array<string, mixed>  $data
+     */
+    private function storeWithVoucher(Request $request, WorkshopDate $date, array $workshop, array $data, WorkshopTypes $types, PlaceBooking $placeBooking): RedirectResponse
+    {
+        $attempts = 'workshop-voucher:'.$request->ip();
+
+        if (RateLimiter::tooManyAttempts($attempts, self::VOUCHER_ATTEMPTS)) {
+            return back()->withInput()->withErrors(['voucher_code' => 'Za dużo prób z rzędu. Spróbuj znowu za minutę albo napisz do mnie.']);
+        }
+
+        try {
+            $booking = $placeBooking->withVoucher($date, $workshop, (string) $data['voucher_code'], [...$data, 'terms_version' => LegalDocument::terms()->versionLabel()]);
+        } catch (VoucherNotAccepted $refused) {
+            RateLimiter::hit($attempts);
+
+            return back()->withInput()->withErrors(['voucher_code' => $this->refusal($refused, $types)]);
+        }
+
+        if ($booking === null) {
+            $left = $date->seatsLeft();
+
+            return back()->withInput()->withErrors(['voucher_code' => $left === 0
+                ? 'Ktoś zajął ostatnie miejsce chwilę przed Tobą — wybierz inny termin.'
+                : 'Voucher jest na więcej miejsc, niż zostało na ten termin ('.$date->seatsLeftLabel().'). Wybierz inny termin.']);
+        }
+
+        $request->session()->put('checkout.order', $booking->order->number);
+
+        return to_route('workshops.booking.confirmation');
+    }
+
+    /** Why a code books nothing, in words. An unknown code says nothing about how close it was. */
+    private function refusal(VoucherNotAccepted $refused, WorkshopTypes $types): string
+    {
+        $voucherFor = $types->all()->first(fn (array $workshop) => WorkshopTypes::key($workshop) === $refused->voucher?->workshop_code)['name'] ?? null;
+
+        return match ($refused->reason) {
+            VoucherRefusal::Unknown => 'Nie znajduję takiego kodu. Przepisz go z vouchera — wygląda tak: MA-7KQ2-9XHT.',
+            VoucherRefusal::Redeemed => 'Ten voucher jest już wykorzystany. Jeśli to pomyłka, napisz do mnie.',
+            VoucherRefusal::Expired => 'Ten voucher był ważny do '.$refused->voucher->valid_until->translatedFormat('j F Y').'. Napisz do mnie — coś wymyślimy.',
+            VoucherRefusal::OtherWorkshop => $voucherFor !== null
+                ? 'Ten voucher jest na warsztat „'.$voucherFor.'”. Wybierz termin tego warsztatu.'
+                : 'Ten voucher jest na inny warsztat. Napisz do mnie, a zapiszę Cię sama.',
+            VoucherRefusal::NoWorkshop => 'Tym voucherem nie zapiszesz się przez stronę — napisz do mnie, a zapiszę Cię sama.',
+        };
+    }
+
+    /**
      * Where the booking ends: paid with her seats, paid too late for a full date, or still waiting for Przelewy24.
      * A failed payment frees the seats and goes back to the form.
      */
@@ -153,7 +223,7 @@ class BookingController extends Controller
         }
 
         /** @var WorkshopBooking $booking */
-        $booking = $booking->fresh(['workshopDate']);
+        $booking = $booking->fresh(['workshopDate', 'voucher']);
 
         return response()->view('workshops::booking-confirmation', [
             'order' => $order,

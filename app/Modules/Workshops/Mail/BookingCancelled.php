@@ -49,6 +49,8 @@ class BookingCancelled extends QueuedMail
             with: [
                 'order' => $this->booking->order,
                 'date' => $this->booking->workshopDate,
+                // A booking paid with a voucher gets the voucher back instead of a refund.
+                'voucher' => $this->booking->voucher,
                 'contactPhone' => $settings->get('contact_phone'),
                 'city' => $settings->get('footer_city'),
             ],

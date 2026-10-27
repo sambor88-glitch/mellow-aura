@@ -19,7 +19,7 @@ class WorkshopBookingController extends Controller
 {
     public function index(WorkshopDate $date, WorkshopTypes $types): View
     {
-        [$active, $inactive] = $date->bookings()->with('order')->orderBy('created_at')->orderBy('id')->get()
+        [$active, $inactive] = $date->bookings()->with(['order', 'voucher'])->orderBy('created_at')->orderBy('id')->get()
             ->partition(fn (WorkshopBooking $booking) => $booking->isActive());
 
         return view('workshops::admin.bookings', [
@@ -40,6 +40,7 @@ class WorkshopBookingController extends Controller
 
         return $back->with('panel_status', match (true) {
             ! $cancelled => 'Ten zapis był już zwolniony — nic nie zmieniam.',
+            $booking->voucher_id !== null => 'Zapis anulowany, miejsce wolne. Voucher '.$booking->voucher?->code.' znów można wykorzystać.',
             $paid => 'Zapis anulowany, miejsce wolne. Zamówienie '.$booking->order->number.' czeka na zwrot wpłaty w „Problem”.',
             default => 'Zapis anulowany, miejsce wolne.',
         });

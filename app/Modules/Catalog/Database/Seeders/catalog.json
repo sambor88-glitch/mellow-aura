@@ -653,6 +653,7 @@
             "is_one_off": false,
             "sort_order": 12,
             "stamp_enabled": false,
+            "workshop_code": "hand_building",
             "occasions": [
                 "birthday",
                 "christmas",
@@ -665,16 +666,19 @@
             "variants": [
                 {
                     "label": "Dla jednej osoby",
+                    "voucher_seats": 1,
                     "price_gross": 22000,
                     "stock": null
                 },
                 {
                     "label": "Dla dwóch osób",
+                    "voucher_seats": 2,
                     "price_gross": 42000,
                     "stock": null
                 },
                 {
                     "label": "Dla trzech osób",
+                    "voucher_seats": 3,
                     "price_gross": 60000,
                     "stock": null
                 }
@@ -698,6 +702,7 @@
             "is_one_off": false,
             "sort_order": 13,
             "stamp_enabled": false,
+            "workshop_code": "couples",
             "occasions": [
                 "anniversary",
                 "christmas",
@@ -709,11 +714,13 @@
             "variants": [
                 {
                     "label": "PDF do wydruku",
+                    "voucher_seats": 1,
                     "price_gross": 39000,
                     "stock": null
                 },
                 {
                     "label": "Wysyłka pocztą",
+                    "voucher_seats": 1,
                     "price_gross": 39000,
                     "stock": null,
                     "sent_by_post": true

@@ -10,23 +10,31 @@ use App\Modules\Gifts\Http\Requests\Admin\SaveBundleRequest;
 use App\Modules\Gifts\Http\Requests\Admin\SaveBundleTextsRequest;
 use App\Modules\Gifts\Http\Requests\Admin\SaveGiftFinderRequest;
 use App\Modules\Gifts\Http\Requests\Admin\SaveVoucherNotesRequest;
+use App\Modules\Gifts\Http\Requests\Admin\SaveVoucherRequest;
 use App\Modules\Gifts\Http\Requests\Admin\SaveVoucherSettingsRequest;
 use App\Modules\Gifts\Models\Bundle;
+use App\Modules\Gifts\Models\Voucher;
+use App\Modules\Gifts\Support\VoucherCode;
 use App\Modules\Settings\Actions\SaveSettings;
 use App\Modules\Settings\Settings;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 /**
  * „Prezenty i zestawy” in the panel: the gift sets with their parts and discounts, the sentences on
  * their page, the budgets in „Szukam prezentu”, the voucher settings and the workshop description on each
- * voucher. Each card saves on its own.
+ * voucher. Each card saves on its own. A voucher looked up by its code can be filled in or extended (MA-137).
  */
 class GiftsController extends Controller
 {
-    public function edit(Settings $settings): View
+    public function edit(Request $request, Settings $settings): View
     {
+        $code = trim((string) $request->query('kod'));
+
         return view('gifts::admin.edit', [
+            'voucherCode' => $code,
+            'foundVoucher' => $code === '' ? null : Voucher::query()->with(['orderItem.order', 'latestBooking.order'])->where('code', VoucherCode::normalize($code))->first(),
             'bundles' => Bundle::query()->with('items.variant.product')->orderBy('sort_order')->orderBy('id')->get(),
             // Every size from the shop except vouchers, grouped by product.
             'products' => Product::query()
@@ -99,6 +107,13 @@ class GiftsController extends Controller
         $saveSettings($request->settings());
 
         return to_route('admin.gifts.edit')->withFragment('vouchery')->with('panel_status', 'Zapisane. Nowe vouchery już tak wyglądają.');
+    }
+
+    public function updateVoucher(SaveVoucherRequest $request, Voucher $voucher): RedirectResponse
+    {
+        $voucher->update($request->voucher());
+
+        return redirect()->to(url()->previous().'#'.$request->formKey())->with('panel_status', 'Voucher '.$voucher->code.' zapisany.');
     }
 
     public function voucherNotes(SaveVoucherNotesRequest $request, SaveSettings $saveSettings): RedirectResponse

@@ -3,6 +3,7 @@
 namespace App\Modules\Workshops\Support;
 
 use App\Modules\Checkout\Models\Order;
+use App\Modules\Gifts\Models\Voucher;
 use App\Modules\Monitoring\Support\Alerts;
 use App\Modules\Settings\Settings;
 use App\Modules\Workshops\Models\WorkshopBooking;
@@ -22,6 +23,7 @@ class BookingDetails
      *     order: Order,
      *     date: WorkshopDate,
      *     workshop: string,
+     *     voucher: ?Voucher,
      *     address: ?string,
      *     whatToBring: list<string>,
      *     contactEmail: ?string,
@@ -38,6 +40,8 @@ class BookingDetails
             'order' => $order,
             'date' => $booking->workshopDate,
             'workshop' => (string) $order->items->sortBy('id')->first()?->product_name,
+            // Seats booked with a voucher code were not paid for here.
+            'voucher' => $booking->voucher,
             'address' => $this->address($order->number),
             'whatToBring' => array_values(array_filter((array) $this->settings->get('workshop_what_to_bring', []), 'filled')),
             'contactEmail' => $this->settings->get('contact_email'),

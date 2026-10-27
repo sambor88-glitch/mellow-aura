@@ -1,6 +1,6 @@
 @php
     $vouchers = \App\Modules\Gifts\Models\Voucher::query()
-        ->with('orderItem')
+        ->with(['orderItem', 'latestBooking.order'])
         ->whereIn('order_item_id', $order->items()->select('id'))
         ->orderBy('id')
         ->get();
@@ -21,6 +21,9 @@
                     @endif
                 </div>
                 <a href="{{ route('admin.vouchers.pdf', $voucher) }}" class="inline-flex min-h-11 items-center rounded-full border border-line-strong px-4 py-2 text-[13px] text-ink hover:border-ink hover:bg-sand hover:text-ink">Pobierz PDF</a>
+                <div class="w-full">
+                    @include('gifts::admin.voucher', ['voucher' => $voucher])
+                </div>
             </div>
         @endforeach
     </section>

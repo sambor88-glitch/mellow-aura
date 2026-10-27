@@ -4,7 +4,7 @@
 >
     <h1 style="margin: 0 0 12px; font-family: Georgia, 'Times New Roman', serif; font-weight: normal; font-size: 28px; line-height: 1.15; color: #2F2620;">Nowy zapis na warsztat</h1>
     <p style="margin: 0 0 22px; color: #5C5043;">
-        {{ $order->number }} · opłacone: {{ $order->money($order->total_gross) }}, {{ $order->payment_method->label() }}.
+        {{ $order->number }} · {{ $voucher ? 'voucher '.$voucher->code.', bez płatności' : 'opłacone: '.$order->money($order->total_gross).', '.$order->payment_method->label() }}.
         Odpowiedź na tego maila trafi prosto do osoby, która się zapisała.
     </p>
 

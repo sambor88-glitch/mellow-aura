@@ -26,7 +26,7 @@
                                 <a href="mailto:{{ $order->email }}">{{ $order->email }}</a>@if ($order->phone) · <a href="tel:{{ preg_replace('/[^\d+]/', '', $order->phone) }}">{{ $order->phone }}</a>@endif
                             </div>
                             <div class="mt-1 text-[12.5px] text-muted tabular-nums">
-                                <a href="{{ route('admin.orders.show', $order) }}">{{ $order->number }}</a> · {{ $order->money($order->total_gross) }} · zapis {{ $booking->created_at->format('j.m, H:i') }}
+                                <a href="{{ route('admin.orders.show', $order) }}">{{ $order->number }}</a> · {{ $booking->voucher ? 'voucher '.$booking->voucher->code : $order->money($order->total_gross) }} · zapis {{ $booking->created_at->format('j.m, H:i') }}
                             </div>
                         </div>
                         <span class="flex-none rounded-full px-3 py-[5px] text-[11.5px] {{ $booking->status->chipClass() }}">{{ $booking->status->label() }}</span>
@@ -36,7 +36,12 @@
                           x-data x-on:submit="confirm(@js('Anulować zapis: '.$order->name.'? Miejsce od razu wróci do zapisów.')) || $event.preventDefault()"
                           class="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-divider pt-3">
                         @csrf
-                        @if ($booking->status === BookingStatus::Confirmed)
+                        @if ($booking->status === BookingStatus::Confirmed && $booking->voucher)
+                            <label class="flex min-h-11 items-center gap-2 text-[13px] text-graphite">
+                                <input type="checkbox" name="notify" value="1" checked class="size-4 accent-ink">
+                                Wyślij klientce maila, że voucher znów jest ważny
+                            </label>
+                        @elseif ($booking->status === BookingStatus::Confirmed)
                             <label class="flex min-h-11 items-center gap-2 text-[13px] text-graphite">
                                 <input type="checkbox" name="notify" value="1" checked class="size-4 accent-ink">
                                 Wyślij klientce maila o anulowaniu i zwrocie
@@ -51,7 +56,7 @@
                 </li>
             @endforeach
         </ul>
-        @if ($active->contains(fn ($booking) => $booking->status->isPaid()))
+        @if ($active->contains(fn ($booking) => $booking->status->isPaid() && ! $booking->voucher))
             <p class="mt-4 max-w-[62ch] text-[13px] leading-[1.6] text-muted">Anulowanie opłaconego zapisu nie oddaje pieniędzy samo — zamówienie trafia do „Problem” z kwotą do zwrotu. Po przelewie zmień jego status na „Zakończone”.</p>
         @endif
     @endif

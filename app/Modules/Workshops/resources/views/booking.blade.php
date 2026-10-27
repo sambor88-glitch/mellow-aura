@@ -6,6 +6,7 @@
     $price = $workshop['price_gross'];
     $seats = (int) old('seats', 1);
     $seats = $seats >= 1 && $seats <= max(1, $maxSeats) ? $seats : 1;
+    $voucher = PaymentMethod::Voucher->value;
     $glass = 'glass mb-4 rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]';
     $radio = 'group flex cursor-pointer items-center gap-3.5 rounded-[18px] border border-line bg-cream/60 px-[18px] py-[15px] transition-[border-color,background-color,transform] duration-300 hover:-translate-y-0.5 hover:border-ink has-checked:border-navy has-checked:bg-navy-soft has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy';
 @endphp
@@ -39,7 +40,7 @@
                             <x-shared::field name="name" label="Imię i nazwisko" autocomplete="name" />
                             <x-shared::field name="email" label="E-mail" type="email" autocomplete="email" hint="Tu przyjdzie potwierdzenie zapisu" />
                             <x-shared::field name="phone" label="Telefon" type="tel" autocomplete="tel" hint="Na wypadek zmiany terminu" />
-                            <div class="min-w-0">
+                            <div x-show="payment !== @js($voucher)" @if ($selectedPayment === $voucher) x-cloak @endif class="min-w-0">
                                 <label for="seats" class="mb-1.5 block text-[13.5px] text-graphite">Ile miejsc @if ($workshop['unit_label'])<span class="text-label">({{ $workshop['unit_label'] }})</span>@endif</label>
                                 <select id="seats" name="seats" x-model.number="seats" aria-describedby="seats-note"
                                         @error('seats') aria-invalid="true" @enderror
@@ -103,6 +104,26 @@
                             @enderror
                         </div>
                     @endif
+
+                    {{-- With a voucher the code pays and the voucher says how many seats (MA-137). --}}
+                    @if ($paymentMethods->contains(PaymentMethod::Voucher))
+                        <div x-show="payment === @js($voucher)" @if ($selectedPayment !== $voucher) x-cloak @endif class="{{ $glass }}">
+                            <label for="voucher_code" class="mb-1.5 block text-[13.5px] text-graphite">Kod z vouchera</label>
+                            <input id="voucher_code" name="voucher_code" value="{{ old('voucher_code') }}" maxlength="30"
+                                   autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="MA-7KQ2-9XHT" aria-describedby="voucher_code-note"
+                                   @error('voucher_code') aria-invalid="true" @enderror
+                                   @class([
+                                       'w-full min-w-0 rounded-[14px] border bg-white px-4 py-[15px] font-serif text-[22px] tracking-[0.08em] text-ink uppercase placeholder:text-line-strong focus:border-ink pointer-coarse:text-[22px]',
+                                       'border-error' => $errors->has('voucher_code'),
+                                       'border-line' => ! $errors->has('voucher_code'),
+                                   ])>
+                            @error('voucher_code')
+                                <p id="voucher_code-note" role="alert" class="mt-1.5 text-[13px] text-error">{{ $message }}</p>
+                            @else
+                                <p id="voucher_code-note" class="mt-1.5 text-[12.5px] text-hint">Voucher rezerwuje tyle miejsc, na ile jest wystawiony, i wystarczy raz.</p>
+                            @enderror
+                        </div>
+                    @endif
                 </div>
 
                 <div class="min-w-[260px] flex-[1_1_340px] min-[900px]:sticky min-[900px]:top-24">
@@ -113,7 +134,11 @@
                             <div class="mt-0.5 text-[12.5px] text-label">{{ $when }}</div>
                             <div class="mt-1 text-[13px] text-muted">{{ Money::format($price) }}@if ($workshop['unit_label']) / {{ $workshop['unit_label'] }}@endif</div>
                         </div>
-                        <div class="flex items-baseline justify-between">
+                        <div x-show="payment === @js($voucher)" @if ($selectedPayment !== $voucher) x-cloak @endif class="flex items-baseline justify-between">
+                            <span class="text-[14.5px]">Płacisz voucherem</span>
+                            <span class="font-serif text-[40px] leading-none font-light tabular-nums">{{ Money::format(0) }}</span>
+                        </div>
+                        <div x-show="payment !== @js($voucher)" @if ($selectedPayment === $voucher) x-cloak @endif class="flex items-baseline justify-between">
                             <span class="text-[14.5px]">Do zapłaty</span>
                             <span x-text="format(total)" class="font-serif text-[40px] leading-none font-light tabular-nums">{{ Money::format($price * $seats) }}</span>
                         </div>
@@ -133,7 +158,8 @@
                         @enderror
 
                         <button type="submit" class="fill-btn mt-5 min-h-[60px] w-full rounded-full bg-navy p-[17px] text-[15px] font-medium tracking-[0.02em] text-linen transition duration-300 [--fill:var(--color-ink)] hover:bg-ink active:scale-[.97]">
-                            Rezerwuję i płacę <span x-text="format(total)">{{ Money::format($price * $seats) }}</span>
+                            <span x-show="payment !== @js($voucher)" @if ($selectedPayment === $voucher) x-cloak @endif>Rezerwuję i płacę <span x-text="format(total)">{{ Money::format($price * $seats) }}</span></span>
+                            <span x-show="payment === @js($voucher)" @if ($selectedPayment !== $voucher) x-cloak @endif>Zapisuję się z voucherem</span>
                         </button>
                         <p class="mt-3 text-center text-[12px] leading-[1.5] text-hint">
                             Trzymam miejsce {{ WorkshopBooking::HOLD_MINUTES }} minut na płatność.

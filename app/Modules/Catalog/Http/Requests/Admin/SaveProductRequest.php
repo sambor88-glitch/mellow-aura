@@ -9,6 +9,8 @@ use App\Modules\Catalog\Enums\Occasion;
 use App\Modules\Catalog\Enums\Recipient;
 use App\Modules\Shared\Rules\PriceBeforeReduction;
 use App\Modules\Shared\Support\Money;
+use App\Modules\Workshops\Http\Controllers\BookingController;
+use App\Modules\Workshops\Support\WorkshopTypes;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
@@ -66,6 +68,9 @@ class SaveProductRequest extends FormRequest
             'variants.*.compare_at_eur' => ['nullable', new PriceBeforeReduction('price_eur')],
             'variants.*.stock' => ['nullable', 'integer', 'min:0', 'max:9999'],
             'variants.*.sent_by_post' => ['nullable', 'boolean'],
+            // A workshop voucher: which workshop from the price list, and how many seats each size books.
+            'workshop_code' => ['nullable', 'string', Rule::in(app(WorkshopTypes::class)->all()->map(WorkshopTypes::key(...))->all())],
+            'variants.*.voucher_seats' => ['nullable', 'integer', 'min:1', 'max:'.BookingController::MAX_SEATS],
             // Only a photo of this product; SaveProduct checks that it belongs here.
             'variants.*.media_id' => ['nullable', 'integer'],
             'photo_alts' => ['nullable', 'array'],
@@ -95,6 +100,7 @@ class SaveProductRequest extends FormRequest
         $category = 'Wybierz rodzaj — kategorię w sklepie';
         $price = 'Wpisz cenę, np. 79 albo 79,90';
         $stock = 'Stan to liczba sztuk — puste pole znaczy, że nie liczysz sztuk';
+        $seats = 'Wpisz liczbę miejsc od 1 do '.BookingController::MAX_SEATS;
         $dimension = 'W wymiarach wpisz tylko liczby, np. 24 albo 12,5';
 
         return [
@@ -126,6 +132,10 @@ class SaveProductRequest extends FormRequest
             'variants.*.stock.min' => $stock,
             'variants.*.stock.max' => $stock,
             'variants.*.media_id.integer' => 'Wybierz zdjęcie z listy',
+            'workshop_code.in' => 'Wybierz warsztat z cennika',
+            'variants.*.voucher_seats.integer' => $seats,
+            'variants.*.voucher_seats.min' => $seats,
+            'variants.*.voucher_seats.max' => $seats,
             'photo_alts.*.max' => 'Opis zdjęcia zmieszczę do :max znaków',
             'en.name.max' => 'Angielską nazwę zmieszczę do :max znaków',
             'en.description.max' => 'Angielski opis zmieszczę do :max znaków',
@@ -146,7 +156,7 @@ class SaveProductRequest extends FormRequest
      * The validated form in the shape SaveProduct takes: prices in grosze, empty dimensions left out,
      * photo descriptions keyed by photo id.
      *
-     * @return array{name: string, category_id: int, description: ?string, seo_description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, euro_from_rate: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels: array<string, string>, price_gross: int, compare_at_price: ?int, prices: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post: bool, media_id: ?int}>, photo_alts: array<int, string>}
+     * @return array{name: string, category_id: int, description: ?string, seo_description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, euro_from_rate: bool, workshop_code: ?string, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels: array<string, string>, price_gross: int, compare_at_price: ?int, prices: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post: bool, voucher_seats: ?int, media_id: ?int}>, photo_alts: array<int, string>}
      */
     public function product(): array
     {
@@ -168,6 +178,7 @@ class SaveProductRequest extends FormRequest
             'is_one_off' => $this->boolean('is_one_off'),
             'is_exact_piece' => $this->boolean('is_exact_piece'),
             'euro_from_rate' => $this->boolean('euro_from_rate'),
+            'workshop_code' => filled($data['workshop_code'] ?? null) ? $data['workshop_code'] : null,
             'dimensions' => array_filter(
                 Arr::only((array) ($data['dimensions'] ?? []), array_column(Dimension::cases(), 'value')),
                 fn (mixed $value) => filled($value),
@@ -186,6 +197,7 @@ class SaveProductRequest extends FormRequest
                 ]],
                 'stock' => isset($row['stock']) ? (int) $row['stock'] : null,
                 'sent_by_post' => (bool) ($row['sent_by_post'] ?? false),
+                'voucher_seats' => filled($row['voucher_seats'] ?? null) ? (int) $row['voucher_seats'] : null,
                 'media_id' => filled($row['media_id'] ?? null) ? (int) $row['media_id'] : null,
             ], $data['variants']),
             'photo_alts' => array_map(fn (mixed $alt) => trim((string) $alt), (array) ($data['photo_alts'] ?? [])),
