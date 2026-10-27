@@ -25,7 +25,7 @@
 
         @if ($vouchers->isNotEmpty())
             <h2 class="sr-only">Vouchery do wyboru</h2>
-            <div class="mb-[72px] grid grid-cols-[repeat(auto-fill,minmax(min(100%,260px),1fr))] gap-x-[26px] gap-y-10">
+            <div class="mb-[72px] grid grid-cols-[repeat(auto-fit,minmax(min(100%,260px),1fr))] gap-x-[26px] gap-y-10">
                 @foreach ($vouchers as $voucher)
                     <div class="min-w-0">
                         <x-catalog::product-card :phone-columns="1" :product="$voucher" :delay="$loop->index * 0.06" :eager="$loop->index < 2" :with-variant-count="false" />

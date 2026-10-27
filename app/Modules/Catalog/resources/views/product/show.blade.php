@@ -142,13 +142,13 @@
 
                 @if ($dimensions || $product->food_contact)
                     <div class="mb-[30px]">
-                        {{-- Two even columns on a phone: label on the left, value on the right. --}}
-                        <div class="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+                        {{-- Two even columns everywhere: label on the left, value on the right, an odd last one across. --}}
+                        <div class="grid grid-cols-2 gap-2 [&>*:last-child:nth-child(odd)]:col-span-2">
                             @foreach ($dimensions as $label => $value)
-                                <span class="glass flex items-baseline justify-between gap-2 rounded-full px-3.5 py-2 text-[13px] sm:justify-start"><span class="text-label">{{ $label }}</span><span class="text-ink">{{ $value }}</span></span>
+                                <span class="glass flex items-baseline justify-between gap-2 rounded-full px-3.5 py-2 text-[13px]"><span class="text-label">{{ $label }}</span><span class="text-ink">{{ $value }}</span></span>
                             @endforeach
                             @if ($product->food_contact)
-                                <span class="glass col-span-2 rounded-full px-3.5 py-2 text-center text-[13px] text-ink sm:text-left">{{ $product->food_contact->label() }}</span>
+                                <span class="glass col-span-2 rounded-full px-3.5 py-2 text-center text-[13px] text-ink">{{ $product->food_contact->label() }}</span>
                             @endif
                         </div>
                         @if ($dimensions && $tolerance && $isGoods)
@@ -246,7 +246,7 @@
                     </div>
                 @endif
 
-                <div class="grid grid-cols-[repeat(auto-fit,minmax(170px,1fr))] gap-2.5 text-[13.5px] leading-[1.55] text-muted [&>div]:glass [&>div]:rounded-[18px] [&>div]:px-[18px] [&>div]:py-4">
+                <div class="grid grid-cols-2 gap-2.5 text-[13.5px] leading-[1.55] text-muted [&>div:last-child:nth-child(odd)]:col-span-2 [&>div]:text-pretty [&>div]:glass [&>div]:rounded-[18px] [&>div]:px-[18px] [&>div]:py-4">
                     {{-- A voucher doesn't wait days for a parcel: its PDF comes by e-mail once it is paid. --}}
                     @if (! $product->isVoucher() && ($shippingNote = collect([DispatchTime::label($settings), $freeShipping ? __('catalog::product.free_from', ['price' => Money::format((int) $freeShipping)]) : null])->filter()->join(', ')))
                         <div>
