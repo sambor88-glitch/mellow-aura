@@ -88,6 +88,19 @@ class Przelewy24Gateway implements PaymentGateway
     }
 
     /**
+     * The customer cancelled on Przelewy24's page or closed it. Przelewy24 tells nothing about it, so the order
+     * waits as unpaid, and a new registered try on the same order sends her back to the page (MA-219).
+     */
+    public function resume(Order $order): StartedPayment
+    {
+        $attempt = $this->register($order, false);
+
+        return $attempt === null
+            ? StartedPayment::rejected(__('payments::gateway.down'))
+            : StartedPayment::redirect($this->client->paymentPage((string) $attempt->token));
+    }
+
+    /**
      * BLIK Level 0 has to be switched on by Przelewy24 for the shop. Until it is, PRZELEWY24_BLIK_ON_SITE=false
      * sends BLIK to Przelewy24's page, with BLIK already chosen (MA-101).
      */
@@ -144,7 +157,8 @@ class Przelewy24Gateway implements PaymentGateway
             'client' => Str::limit((string) $order->name, 40, ''),
             'country' => 'PL',
             'language' => $order->locale === 'en' ? 'en' : 'pl',
-            'urlReturn' => route('checkout.confirmation'),
+            // Signed with the order's number: the bank's app often opens it in another browser, without our session.
+            'urlReturn' => $order->confirmationUrl(),
             'urlStatus' => route('payments.przelewy24.notify'),
             'sign' => $this->client->sign([
                 'sessionId' => $sessionId,

@@ -139,6 +139,11 @@ class PaymentFlowTest extends TestCase
                 return $this->start;
             }
 
+            public function resume(Order $order): StartedPayment
+            {
+                return $this->start;
+            }
+
             public function takesBlikCode(): bool
             {
                 return true;

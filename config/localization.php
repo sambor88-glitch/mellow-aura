@@ -43,6 +43,7 @@ return [
             'checkout.index' => 'checkout',
             'checkout.store' => 'checkout',
             'checkout.confirmation' => 'checkout/confirmation',
+            'checkout.resume' => 'checkout/resume',
             'content.about' => 'about',
             'content.studio' => 'studio',
             'content.contact' => 'contact',

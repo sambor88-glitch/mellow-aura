@@ -27,6 +27,12 @@ interface PaymentGateway
     public function chargeBlik(Order $order, string $blikCode): StartedPayment;
 
     /**
+     * Another try at an unpaid order the customer left on the gateway's page: cancelled, closed or timed out.
+     * The same order and the same cart (MA-219).
+     */
+    public function resume(Order $order): StartedPayment;
+
+    /**
      * Whether the checkout asks for the BLIK code on its own page (BLIK Level 0). Without it the customer
      * picks BLIK and types the code on the gateway's page.
      */

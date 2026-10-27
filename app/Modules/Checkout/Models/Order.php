@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\URL;
 
 #[Fillable([
     'number', 'status', 'name', 'email', 'phone', 'shipping_method', 'shipping_address', 'delivery_country', 'locker_code', 'tracking_number',
@@ -65,6 +66,16 @@ class Order extends Model
     public function money(int $amount): string
     {
         return Money::format($amount, $this->currency ?? 'PLN');
+    }
+
+    /**
+     * The confirmation of this order, signed for a day (MA-219). Przelewy24 sends the customer back to it, often
+     * from the bank's app in another browser, where the session knows nothing of the order. The signature alone
+     * shows the number and the payment status, never the customer's details.
+     */
+    public function confirmationUrl(): string
+    {
+        return URL::temporarySignedRoute('checkout.confirmation', now()->addDay(), ['order' => $this->number]);
     }
 
     /**
