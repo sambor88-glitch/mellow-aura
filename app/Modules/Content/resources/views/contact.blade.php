@@ -1,4 +1,4 @@
-@use('Illuminate\Support\Facades\Vite')
+@inject('pagePhotos', 'App\Modules\Content\Support\PagePhotos')
 @inject('settings', 'App\Modules\Settings\Settings')
 @php
     $lead = $settings->get('text_contact_lead');
@@ -61,8 +61,10 @@
                     @endif
                 </div>
 
-                <img src="{{ Vite::asset('zdjecia/talerz-niebieski-odcisk.webp') }}" alt="Talerz z odciskiem roślinnym" loading="lazy"
-                     width="800" height="600" class="block aspect-[4/3] w-full rounded-[20px] bg-line-soft object-cover">
+                @if (($photo = $pagePhotos->get('contact'))->exists())
+                    <img src="{{ $photo->url }}" alt="{{ $photo->alt('Talerz z odciskiem roślinnym') }}" loading="lazy"
+                         width="800" height="600" style="{{ $photo->style() }}" class="block aspect-[4/3] w-full rounded-[20px] bg-line-soft object-cover">
+                @endif
             </div>
 
             <div class="min-w-[290px] flex-[1_1_340px]">

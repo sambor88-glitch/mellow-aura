@@ -3,8 +3,9 @@
     preview in the shapes the photo takes on the site. Sends {name}[x] and {name}[y], each 0–100.
 
     frames: aspect class => what the shape is, e.g. ['aspect-[4/5]' => 'w sklepie', 'aspect-square' => 'na karcie'].
+    step: 1 where a saved point is not a multiple of 5, so the slider does not round it off.
 --}}
-@props(['name', 'src', 'x' => 50, 'y' => 50, 'label', 'frames' => ['aspect-square' => null]])
+@props(['name', 'src', 'x' => 50, 'y' => 50, 'label', 'frames' => ['aspect-square' => null], 'step' => 5])
 @php
     $x = (int) $x;
     $y = (int) $y;
@@ -25,7 +26,7 @@
     @foreach (['y' => 'Góra — dół', 'x' => 'Lewo — prawo'] as $axis => $text)
         <label class="mt-1.5 block">
             <span class="block text-[12px] text-muted">{{ $text }}</span>
-            <input type="range" name="{{ $name }}[{{ $axis }}]" min="0" max="100" step="5" value="{{ $$axis }}" x-model.number="{{ $axis }}" class="h-11 w-full accent-ink">
+            <input type="range" name="{{ $name }}[{{ $axis }}]" min="0" max="100" step="{{ $step }}" value="{{ $$axis }}" x-model.number="{{ $axis }}" class="h-11 w-full accent-ink">
         </label>
     @endforeach
 </fieldset>

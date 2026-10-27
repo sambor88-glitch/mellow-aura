@@ -1,13 +1,14 @@
-@use('Illuminate\Support\Facades\Vite')
+@inject('pagePhotos', 'App\Modules\Content\Support\PagePhotos')
 @php
     // The topic name matches the contact form's list from the panel; if it is renamed, the form simply opens without it.
     $contactUrl = route('content.contact', ['temat' => 'Zamówienie indywidualne']);
     $whatsApp = $phone ? 'https://wa.me/'.preg_replace('/\D+/', '', $phone) : null;
-    $photos = [
-        ['zdjecia/zestaw-filizanka-talerz.webp', 'Filiżanka z talerzykiem z malowanym wzorem'],
-        ['zdjecia/kubek-krolowa-matka.webp', 'Kubek z wbijanym napisem'],
-        ['zdjecia/podstawki-muszle-roz.webp', 'Różowe podstawki pod biżuterię w kształcie muszli'],
-    ];
+    // Photos by place, from the panel's „Zdjęcia stron” (Content); a place without a photo is left out.
+    $photos = collect([
+        ['custom-orders-1', 'Filiżanka z talerzykiem z malowanym wzorem'],
+        ['custom-orders-2', 'Kubek z wbijanym napisem'],
+        ['custom-orders-3', 'Różowe podstawki pod biżuterię w kształcie muszli'],
+    ])->map(fn (array $row) => [$pagePhotos->get($row[0]), $row[1]])->filter(fn (array $row) => $row[0]->exists());
     $checklist = [
         'Co to ma być i ile sztuk',
         'Na kiedy tego potrzebujesz',
@@ -49,7 +50,7 @@
                 {{-- Two to a row on a phone; an odd last photo takes the whole row instead of standing alone. --}}
                 <div class="grid grid-cols-2 gap-3.5 sm:grid-cols-[repeat(auto-fit,minmax(160px,1fr))] max-sm:[&>*:last-child:nth-child(odd)]:col-span-2 max-sm:[&>*:last-child:nth-child(odd)]:aspect-[2/1]">
                     @foreach ($photos as [$photo, $alt])
-                        <img src="{{ Vite::asset($photo) }}" alt="{{ $alt }}" loading="lazy" width="600" height="600" class="block aspect-square w-full rounded-[20px] bg-line-soft object-cover">
+                        <img src="{{ $photo->url }}" alt="{{ $photo->alt($alt) }}" loading="lazy" width="600" height="600" style="{{ $photo->style() }}" class="block aspect-square w-full rounded-[20px] bg-line-soft object-cover">
                     @endforeach
                 </div>
             </div>
