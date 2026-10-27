@@ -313,13 +313,13 @@
                 "expect": "Dwie godziny przy stole w mojej pracowni, w grupie do sześciu osób.",
                 "activities": "Pierwszy raz w glinie: płat, wałek i szczypanie.",
                 "takeaway": "Dwie własne rzeczy z gliny — po szkliwieniu na następnym spotkaniu i dwóch wypałach.",
-                "preparation": "Nie musisz nic umieć ani nic przynosić. Glina, narzędzia, herbata i coś słodkiego czekają na miejscu."
+                "preparation": "Nie musisz nic umieć. Glina, narzędzia, herbata i coś słodkiego czekają na miejscu."
             },
             "voucher-para": {
                 "expect": "Trzy godziny, dwa stanowiska obok siebie i jeden wieczór bez telefonu.",
                 "activities": "Każde z Was lepi swój kubek — cztery dłonie, dwa kubki.",
                 "takeaway": "Dwa kubki do codziennego użytku, po dwóch wypałach.",
-                "preparation": "Nie musicie nic umieć ani nic przynosić. Glina, narzędzia i wino albo herbata czekają na miejscu."
+                "preparation": "Nie musicie nic umieć. Glina, narzędzia i wino albo herbata czekają na miejscu."
             }
         }
     },
@@ -352,6 +352,10 @@
             "Wypał moich prac",
             "Współpraca albo prasa"
         ]
+    },
+    {
+        "key": "kiln_load_weekday",
+        "value": null
     },
     {
         "key": "kiln_form_kinds",
@@ -573,7 +577,11 @@
     },
     {
         "key": "text_workshops_lead",
-        "value": "Ceny zawierają glinę, narzędzia, szkliwa i wypały. Nie musisz nic umieć ani nic przynosić."
+        "value": "Ceny zawierają glinę, narzędzia, szkliwa i wypały. Nie musisz nic umieć — wszystko, czego potrzebujesz do pracy, czeka w pracowni."
+    },
+    {
+        "key": "workshop_what_to_bring",
+        "value": []
     },
     {
         "key": "text_contact_lead",
@@ -581,7 +589,7 @@
     },
     {
         "key": "text_footer_tagline",
-        "value": "A little bit of magic. Home studio in Cracow. Ceramic & jewelry. Less waste silk scrunchies."
+        "value": "Domowa pracownia w Krakowie. Ceramika formowana w dłoniach i jedwabne dodatki z drugiego obiegu."
     },
     {
         "key": "text_mug_heading",
@@ -960,5 +968,53 @@
                 ]
             }
         ]
+    },
+    {
+        "key": "shop_shortcut_note_mug",
+        "value": "Twój tekst, Twój kolor"
+    },
+    {
+        "key": "shop_shortcut_note_bundles",
+        "value": "Gotowe do wręczenia"
+    },
+    {
+        "key": "shop_shortcut_note_gift_finder",
+        "value": "Pomogę wybrać"
+    },
+    {
+        "key": "shop_shortcut_note_scarf",
+        "value": "Opaska z Twojej tkaniny"
+    },
+    {
+        "key": "shop_shortcut_note_imprint",
+        "value": "Twoje kwiaty w ceramice"
+    },
+    {
+        "key": "shop_shortcut_note_custom_orders",
+        "value": "Opisz pomysł, wycenię"
+    },
+    {
+        "key": "shop_shortcut_note_mug_en",
+        "value": "Your words, your colour"
+    },
+    {
+        "key": "shop_shortcut_note_bundles_en",
+        "value": "Ready to give"
+    },
+    {
+        "key": "shop_shortcut_note_gift_finder_en",
+        "value": "I will help you choose"
+    },
+    {
+        "key": "shop_shortcut_note_scarf_en",
+        "value": "A headband from your fabric"
+    },
+    {
+        "key": "shop_shortcut_note_imprint_en",
+        "value": "Your flowers in clay"
+    },
+    {
+        "key": "shop_shortcut_note_custom_orders_en",
+        "value": "Describe it, I will quote"
     }
 ]

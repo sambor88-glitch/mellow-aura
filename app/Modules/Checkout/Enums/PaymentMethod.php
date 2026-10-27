@@ -9,6 +9,9 @@ enum PaymentMethod: string
     case Card = 'card';
     case BankTransfer = 'bank_transfer';
 
+    /** A workshop booked with a voucher code (MA-137): nothing to pay, so it is never listed in for(). */
+    case Voucher = 'voucher';
+
     /**
      * The ways to pay in a currency, in the order the checkout lists them (MA-105: BLIK, card, online transfer,
      * bank transfer last). BLIK takes only złoty, and a bank transfer goes to Kasia's złoty account; which
@@ -44,6 +47,7 @@ enum PaymentMethod: string
             self::OnlineTransfer => 'Przelewy24',
             self::Card => 'Karta',
             self::BankTransfer => 'Przelew tradycyjny',
+            self::Voucher => 'Voucher',
         };
     }
 }

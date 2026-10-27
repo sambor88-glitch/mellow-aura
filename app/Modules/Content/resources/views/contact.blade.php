@@ -9,6 +9,8 @@
     $topics = (array) $settings->get('contact_form_topics', []);
     // A link such as /kontakt?temat=Wypał moich prac picks the topic in advance.
     $chosenTopic = old('topic', in_array(request()->query('temat'), $topics, true) ? request()->query('temat') : null);
+    // A link from a workshop date starts the message with the workshop and the date.
+    $startedMessage = old('message', is_string(request()->query('wiadomosc')) ? Str::limit(request()->query('wiadomosc'), 300, '') : '');
     $company = collect(['company_name', 'company_nip', 'company_regon', 'company_address'])->mapWithKeys(fn (string $key) => [$key => $settings->get($key)]);
 
     $description = match (true) {
@@ -31,7 +33,7 @@
                     <p class="mb-10 max-w-[46ch] text-[17px] leading-[1.7] text-lead">{{ $lead }}</p>
                 @endif
 
-                <div class="mb-8 grid gap-px overflow-hidden rounded-[4px] border border-divider bg-divider">
+                <div class="mb-8 grid gap-px overflow-hidden rounded-[20px] border border-divider bg-divider">
                     @if ($phone)
                         <a href="https://wa.me/{{ preg_replace('/\D+/', '', $phone) }}" target="_blank" rel="noopener" class="{{ $channel }}">
                             <span class="min-w-0"><span class="{{ $channelLabel }}">whatsapp &middot; najszybciej</span><span class="text-[17px]">{{ $phone }}</span></span>
@@ -60,19 +62,19 @@
                 </div>
 
                 <img src="{{ Vite::asset('zdjecia/talerz-niebieski-odcisk.webp') }}" alt="Talerz z odciskiem roślinnym" loading="lazy"
-                     width="800" height="600" class="block aspect-[4/3] w-full max-w-[420px] rounded-[4px] bg-line-soft object-cover">
+                     width="800" height="600" class="block aspect-[4/3] w-full max-w-[420px] rounded-[20px] bg-line-soft object-cover">
             </div>
 
             <div class="min-w-[290px] flex-[1_1_340px]">
-                <div id="formularz" class="scroll-mt-6 rounded-[4px] border border-divider bg-cream px-[30px] py-8">
+                <div id="formularz" class="scroll-mt-6 rounded-[20px] border border-divider bg-cream px-[30px] py-8">
                     @if (session('contact_sent'))
-                        <p role="status" class="mb-5 rounded-[4px] border border-line-strong bg-sand-dark p-4 text-[14px] leading-[1.6] text-graphite">Wiadomość poszła. Odpisuję zwykle tego samego dnia.</p>
+                        <p role="status" class="mb-5 rounded-[20px] border border-line-strong bg-sand-dark p-4 text-[14px] leading-[1.6] text-graphite">Wiadomość poszła. Odpisuję zwykle tego samego dnia.</p>
                     @elseif (session('contact_failed'))
-                        <p role="alert" class="mb-5 rounded-[4px] border border-alert-line bg-alert p-4 text-[14px] leading-[1.6] text-alert-text">
+                        <p role="alert" class="mb-5 rounded-[20px] border border-alert-line bg-alert p-4 text-[14px] leading-[1.6] text-alert-text">
                             Coś się zacięło po mojej stronie i wiadomość nie wyszła. Twój tekst jest nadal w formularzu — spróbuj za chwilę{{ $phone ? ' albo napisz na WhatsApp '.$phone : '' }}.
                         </p>
                     @elseif (session('contact_throttled'))
-                        <p role="alert" class="mb-5 rounded-[4px] border border-alert-line bg-alert p-4 text-[14px] leading-[1.6] text-alert-text">
+                        <p role="alert" class="mb-5 rounded-[20px] border border-alert-line bg-alert p-4 text-[14px] leading-[1.6] text-alert-text">
                             Mam już od Ciebie kilka wiadomości i na wszystkie odpiszę. Kolejną wyślesz za godzinę{{ $phone ? ', a jeśli to pilne, napisz na WhatsApp '.$phone : '' }}.
                         </p>
                     @endif
@@ -87,7 +89,7 @@
                                 <select id="contact-topic" name="topic"
                                         @error('topic') aria-invalid="true" aria-describedby="contact-topic-error" @enderror
                                         @class([
-                                            'w-full min-w-0 rounded-[4px] border bg-white px-4 py-[15px] text-[15px] text-lead focus:border-ink pointer-coarse:text-[16px]',
+                                            'w-full min-w-0 rounded-[20px] border bg-white px-4 py-[15px] text-[15px] text-lead focus:border-ink pointer-coarse:text-[16px]',
                                             'border-error' => $errors->has('topic'),
                                             'border-line' => ! $errors->has('topic'),
                                         ])>
@@ -106,10 +108,10 @@
                             <textarea id="contact-message" name="message" rows="6" maxlength="3000"
                                       @error('message') aria-invalid="true" aria-describedby="contact-message-error" @enderror
                                       @class([
-                                          'w-full min-w-0 resize-y rounded-[4px] border bg-white px-4 py-[14px] text-[15px] leading-[1.6] text-ink focus:border-ink pointer-coarse:text-[16px]',
+                                          'w-full min-w-0 resize-y rounded-[20px] border bg-white px-4 py-[14px] text-[15px] leading-[1.6] text-ink focus:border-ink pointer-coarse:text-[16px]',
                                           'border-error' => $errors->has('message'),
                                           'border-line' => ! $errors->has('message'),
-                                      ])>{{ old('message') }}</textarea>
+                                      ])>{{ $startedMessage }}</textarea>
                             @error('message')
                                 <p id="contact-message-error" class="mt-1.5 text-[13px] text-error">{{ $message }}</p>
                             @enderror
@@ -125,7 +127,7 @@
                 </div>
 
                 @if ($company->filter()->isNotEmpty())
-                    <div class="mt-6 rounded-[4px] border border-divider px-[30px] py-6 text-[13.5px] leading-[1.7] text-muted">
+                    <div class="mt-6 rounded-[20px] border border-divider px-[30px] py-6 text-[13.5px] leading-[1.7] text-muted">
                         <div class="mb-1.5 text-[11px] tracking-[0.18em] text-label uppercase">sprzedawca</div>
                         @if ($company['company_name'])
                             <div class="text-ink">{{ $company['company_name'] }}</div>

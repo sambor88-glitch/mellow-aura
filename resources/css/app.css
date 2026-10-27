@@ -170,6 +170,15 @@
 }
 
 @layer base {
+    /* Even lines in headings, no lone word in the last line of a paragraph (MA-209). A utility still wins. */
+    h1, h2, h3 {
+        text-wrap: balance;
+    }
+
+    p, li, dd, blockquote {
+        text-wrap: pretty;
+    }
+
     /*
      * The slogan rows, glow orbs and grain reach past the screen on purpose; clip (not hidden) keeps them from widening
      * the page without making a scroll container, so sticky headers and pinned sections still work (MA-81).
@@ -347,6 +356,18 @@
         mix-blend-mode: multiply;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         animation: auraGrain 1.2s steps(6) infinite;
+    }
+
+    /*
+     * On a touch screen the orbs and the grain stay where they are. Either one moving makes the phone redraw every
+     * glass layer above it in every frame: a mid-range phone fell to 17 frames a second while doing nothing, and
+     * „Menu” and „Koszyk” answered a tap late or not at all (MA-203). Standing still they look the same.
+     */
+    @media (pointer: coarse) {
+        .aura-orb,
+        .aura-grain {
+            animation: none;
+        }
     }
 
     .aura-cursor {
@@ -627,5 +648,60 @@
 
     .aura-cursor {
         display: none;
+    }
+}
+
+/*
+ * The full-screen menu and the cart drawer on a touch screen: no blur behind them and no fade from nothing.
+ * iOS Safari left an overlay that faded in from opacity 0 with a backdrop-filter, and blurred text sliding over it,
+ * unpainted for seconds. The menu or the cart was open, so the next taps landed on it unseen — on the cart's „×”,
+ * which sits exactly where „Koszyk” is — and „Menu” seemed to answer one tap in five (MA-203). The drawer does not slide
+ * in either: inside the modal <dialog> Safari ran the slide backwards, off the left edge, and then left half a second of
+ * empty dimmed screen before the panel popped in. Unlayered, so it beats the utilities on those elements.
+ */
+@media (pointer: coarse) {
+    .aura-overlay {
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+        opacity: 1;
+        animation: none;
+        transition: none;
+    }
+
+    #menu.aura-overlay {
+        background-color: rgb(243 237 228 / .97);
+    }
+
+    .aura-overlay a {
+        filter: none;
+    }
+
+    .aura-drawer-panel {
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+        background-color: var(--color-cream);
+        animation: none;
+    }
+}
+
+/* A row of buttons: on a phone each one the full width, one under another, so no row ends ragged (MA-209). */
+@utility cta-row {
+    display: grid;
+    gap: 12px;
+
+    & > * {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    @media (min-width: 768px) {
+        display: flex;
+        flex-wrap: wrap;
+
+        & > * {
+            display: inline-flex;
+        }
     }
 }

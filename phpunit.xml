@@ -22,6 +22,7 @@
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <!-- The whole suite runs with the English twins in place, so no module breaks once staging turns them on. -->
         <env name="APP_LOCALES" value="pl,en"/>
+        <env name="APP_KEEP_SHORT_WORDS" value="false"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>
         <env name="CACHE_STORE" value="array"/>

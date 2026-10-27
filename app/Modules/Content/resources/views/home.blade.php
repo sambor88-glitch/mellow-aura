@@ -82,7 +82,8 @@
                     <div class="aura-mark-2"><span class="inline-block">@foreach (mb_str_split('Aura') as $i => $letter)<span class="blur-in" style="animation-delay: {{ .3 + $i * .04 }}s">{{ $letter }}</span>@endforeach</span></div>
                 </div>
 
-                <div data-hero-meta class="absolute inset-x-0 bottom-[22px] z-6 flex items-end justify-between px-[clamp(18px,4vw,48px)] text-[10.5px] tracking-[0.3em] text-label uppercase">
+                {{-- Hidden on a phone: it ran into the floating photos, and the eyebrow under the photo says the same. --}}
+                <div data-hero-meta class="absolute inset-x-0 bottom-[22px] z-6 hidden items-end sm:flex justify-between px-[clamp(18px,4vw,48px)] text-[10.5px] tracking-[0.3em] text-label uppercase">
                     <span>{{ $t('hero_meta') }}</span>
                     <span class="hidden items-center gap-3 sm:flex">{{ $t('scroll') }} <i class="h-[42px] w-px bg-linear-to-b from-brown to-transparent"></i></span>
                 </div>
@@ -93,7 +94,8 @@
                     <p class="eyebrow mb-[22px]">{{ $t('eyebrow') }}</p>
                     <h1 id="hero-title" class="max-w-[12ch] font-serif text-[length:clamp(42px,6.4vw,92px)] leading-[.96] font-light tracking-[-0.02em] text-balance">{{ $em('heading') }}</h1>
                     <p class="aura-lead mt-6 max-w-[46ch] text-[17.5px] leading-[1.68] text-pretty text-lead">{{ $t('lead') }}</p>
-                    <div class="mt-8 flex flex-wrap gap-3">
+                    {{-- On a phone an even grid: the main button across, the others in two equal columns, a single one across. --}}
+                    <div @class(['mt-8 grid grid-cols-2 gap-3 md:flex md:flex-wrap [&>*]:justify-center [&>*]:whitespace-nowrap max-md:[&>*]:px-4! [&>.aura-btn-main]:col-span-2', '[&>*:last-child]:col-span-2' => ! $workshopsUrl])>
                         @if ($mugUrl = $link('mug.index'))
                             <a href="{{ $mugUrl }}" data-magnet class="{{ $btnMain }}">{{ $t('cta_mug') }} <span aria-hidden="true">→</span></a>
                         @endif
@@ -102,7 +104,7 @@
                             <a href="{{ $workshopsUrl }}" data-magnet class="{{ $btnGlass }}">{{ $t('cta_workshops') }}</a>
                         @endif
                     </div>
-                    <div class="mt-8 flex flex-wrap items-stretch gap-3">
+                    <div class="mt-8 grid grid-cols-2 items-stretch gap-3 md:flex md:flex-wrap [&>*:last-child:nth-child(odd)]:col-span-2">
                         {{-- BLIK only where the price is in złoty: it does not exist in euro. --}}
                         @foreach (array_filter([['100%', $t('fact_handmade')], Locales::currency() === 'PLN' ? ['BLIK', $t('fact_blik')] : null, $dispatch ? [$dispatch, $t('fact_dispatch')] : null]) as [$value, $label])
                             <div class="aura-fact glass flex flex-col gap-1 rounded-2xl px-5 py-3.5">
@@ -126,7 +128,7 @@
     </section>
 
     @if ($kasiaHeading || $kasiaParagraph)
-        <section class="mx-auto max-w-[1360px] px-[clamp(18px,4vw,48px)] py-[clamp(110px,18vh,200px)]" aria-labelledby="kasia-title">
+        <section class="mx-auto max-w-[1360px] px-[clamp(18px,4vw,48px)] py-20 sm:py-[clamp(110px,18vh,200px)]" aria-labelledby="kasia-title">
             <div class="flex flex-wrap items-end gap-14">
                 <div class="min-w-0 flex-[1_1_520px]">
                     <p id="kasia-title" class="eyebrow mb-[22px]">{{ $t('kasia_eyebrow') }}</p>
@@ -187,7 +189,7 @@
     @endif
 
     @if (($bundlesUrl = $link('bundles.index')) || $link('gifts.index'))
-        <section class="mx-auto max-w-[1360px] px-[clamp(18px,4vw,48px)] pt-[clamp(90px,14vh,150px)]" aria-labelledby="gifts-title">
+        <section class="mx-auto max-w-[1360px] px-[clamp(18px,4vw,48px)] pt-20 sm:pt-[clamp(90px,14vh,150px)]" aria-labelledby="gifts-title">
             <div class="glass flex flex-wrap overflow-hidden rounded-[26px]">
                 <div class="flex min-w-0 flex-[1_1_300px] gap-1.5 p-1.5">
                     @foreach ([['kubek-cappuccino.webp', $t('gifts_mug_alt')], ['scrunchies-fiolet.webp', $t('gifts_scrunchies_alt')]] as [$file, $alt])
@@ -198,7 +200,7 @@
                     <p class="eyebrow mb-[18px]">{{ $t('gifts_eyebrow') }}</p>
                     <h2 id="gifts-title" class="mb-4 font-serif text-[length:clamp(32px,3.8vw,52px)] leading-[1.04] font-light">{{ $em('gifts_heading') }}</h2>
                     <p class="mb-7 max-w-[46ch] text-[16.5px] leading-[1.66] text-lead">{{ $t('gifts_text') }}</p>
-                    <div class="flex flex-wrap gap-3">
+                    <div class="cta-row">
                         @if ($bundlesUrl)
                             <a href="{{ $bundlesUrl }}" data-magnet class="{{ $btnMain }}">{{ $t('gifts_bundles') }} <span aria-hidden="true">→</span></a>
                         @endif
@@ -212,7 +214,7 @@
     @endif
 
     @if ($services)
-        <section class="mx-auto max-w-[1360px] px-[clamp(18px,4vw,48px)] pt-[clamp(90px,14vh,150px)]" aria-labelledby="own-title">
+        <section class="mx-auto max-w-[1360px] px-[clamp(18px,4vw,48px)] pt-20 sm:pt-[clamp(90px,14vh,150px)]" aria-labelledby="own-title">
             <div class="mb-10 flex flex-wrap items-end justify-between gap-x-10 gap-y-5">
                 <div>
                     <p class="eyebrow mb-[22px]">{{ $t('own_eyebrow') }}</p>
@@ -238,13 +240,13 @@
     @endif
 
     @if ($workshopsUrl && $workshops)
-        <section class="focus-on-dark relative mt-[clamp(90px,14vh,150px)] overflow-hidden rounded-t-[36px] bg-ink py-[clamp(100px,16vh,170px)] text-on-dark" aria-labelledby="workshops-title">
+        <section class="focus-on-dark relative mt-20 overflow-hidden rounded-t-[36px] bg-ink py-20 sm:mt-[clamp(90px,14vh,150px)] sm:py-[clamp(100px,16vh,170px)] text-on-dark" aria-labelledby="workshops-title">
             <div aria-hidden="true" class="aura-orb aura-orb-1 opacity-100 [background:radial-gradient(circle,rgb(214_163_156/.45),rgb(214_163_156/0)_65%)]"></div>
             <div aria-hidden="true" class="aura-orb aura-orb-2 opacity-100 [background:radial-gradient(circle,rgb(185_142_100/.4),rgb(185_142_100/0)_65%)]"></div>
             <div class="relative mx-auto flex max-w-[1360px] flex-wrap items-center gap-[clamp(40px,6vw,80px)] px-[clamp(18px,4vw,48px)]">
                 <div class="min-w-0 flex-[1_1_440px]">
                     <p class="eyebrow mb-[22px] text-label-dark [--eyebrow-dash:var(--color-rose)]">{{ $t('workshops_eyebrow') }}</p>
-                    <h2 id="workshops-title" class="font-serif text-[length:clamp(44px,6.2vw,96px)] leading-[.95] font-light tracking-[-0.02em] text-sand">{{ $em('workshops_heading', 'text-rose italic') }}</h2>
+                    <h2 id="workshops-title" class="font-serif text-[length:clamp(44px,6.2vw,96px)] leading-[.95] font-light tracking-[-0.02em] text-sand">{{ $em('workshops_heading', 'text-rose italic whitespace-nowrap') }}</h2>
                     <p class="mt-6 max-w-[44ch] text-[17.5px] leading-[1.68] text-on-dark-muted">{{ $t('workshops_text') }}</p>
                     <div data-aura-rise class="mt-9 grid gap-2.5">
                         @foreach ($workshops as $workshop)
@@ -279,7 +281,7 @@
 
     {{-- Photos saved on the shop's own disk, so looking at them sends nothing to Instagram (privacy policy §9). --}}
     @if ($instagramPosts->isNotEmpty())
-        <section class="mx-auto max-w-[1360px] px-[clamp(18px,4vw,48px)] pt-[clamp(90px,14vh,150px)]" aria-labelledby="instagram-title">
+        <section class="mx-auto max-w-[1360px] px-[clamp(18px,4vw,48px)] pt-20 sm:pt-[clamp(90px,14vh,150px)]" aria-labelledby="instagram-title">
             <div class="mb-8 flex flex-wrap items-end justify-between gap-5">
                 <div>
                     @if ($instagramHandle !== '')
@@ -303,7 +305,7 @@
                 <div data-aura-rise class="grid grid-cols-2 gap-2.5 min-[520px]:grid-cols-3 min-[980px]:grid-cols-6">
                     @foreach ($instagramPosts as $post)
                         <a href="{{ $post->permalink }}" target="_blank" rel="noopener" class="block overflow-hidden rounded-[14px] bg-linen">
-                            <img src="{{ $post->imageUrl() }}" alt="{{ $post->alt() }}" loading="lazy" width="1080" height="1080" class="block aspect-square w-full object-cover transition-transform duration-[1.1s] ease-clay hover:scale-[1.06]">
+                            <img src="{{ $post->imageUrl() }}" alt="{{ $post->alt() }}" loading="lazy" width="1080" height="1080" style="object-position: {{ $post->objectPosition() }}" class="block aspect-square w-full object-cover transition-transform duration-[1.1s] ease-clay hover:scale-[1.06]">
                         </a>
                     @endforeach
                 </div>
@@ -312,12 +314,12 @@
     @endif
 
     @if ($cards)
-        <section class="mx-auto max-w-[1360px] px-[clamp(18px,4vw,48px)] pt-[clamp(90px,14vh,150px)] pb-[clamp(90px,14vh,150px)]">
+        <section class="mx-auto max-w-[1360px] px-[clamp(18px,4vw,48px)] pt-20 sm:pt-[clamp(90px,14vh,150px)] pb-20 sm:pb-[clamp(90px,14vh,150px)]">
             <div data-aura-rise class="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-[clamp(16px,2vw,28px)]">
                 {{-- The first card stands out at rest; on hover every card fills with the same rose, text in ink and graphite. --}}
                 @foreach ($cards as [$url, $dark, $eyebrow, $title, $text])
                     <a href="{{ $url }}" @class([
-                        'group fill-btn flex min-h-[260px] flex-col justify-between rounded-[24px] px-8 py-[38px] transition-[background-color,border-color,color,transform] duration-500 ease-clay [--fill:var(--color-rose)] hover:-translate-y-1 hover:border-rose hover:bg-rose hover:text-ink',
+                        'group fill-btn flex flex-col justify-between gap-8 rounded-[24px] px-7 py-8 sm:min-h-[260px] sm:px-8 sm:py-[38px] transition-[background-color,border-color,color,transform] duration-500 ease-clay [--fill:var(--color-rose)] hover:-translate-y-1 hover:border-rose hover:bg-rose hover:text-ink',
                         'focus-on-dark bg-ink text-sand' => $dark,
                         'glass text-ink' => ! $dark,
                     ])>

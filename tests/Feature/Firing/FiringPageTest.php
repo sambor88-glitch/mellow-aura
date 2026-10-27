@@ -30,7 +30,7 @@ class FiringPageTest extends TestCase
             ->assertSee('<title>Wypał ceramiki Kraków — cennik wypałów na zlecenie</title>', false)
             ->assertSee('<meta name="description" content="Wypał biskwitowy i na ostro do 1240°C, wypał złota, cała półka na wyłączność. Cennik od 30 zł za kilogram.">', false)
             ->assertSeeInOrder(['wypały na zlecenie', 'Wypalę Twoje prace', 'Lepisz w domu i nie masz pieca?'])
-            ->assertSeeInOrder(['Wypał biskwitowy', 'liczony od wagi prac', '30,00 zł / kg', 'Wypał niskotemperaturowy do 1050°C', '40,00 zł / kg', 'Wypał wysokotemperaturowy do 1240°C', '50,00 zł / kg', 'Cała półka na wyłączność', '180,00 zł', 'Szkliwienie przeze mnie'])
+            ->assertSeeInOrder(['Wypał biskwitowy', 'liczony od wagi prac', '30,00 zł', '/ kg', 'Wypał niskotemperaturowy do 1050°C', '40,00 zł', '/ kg', 'Wypał wysokotemperaturowy do 1240°C', '50,00 zł', '/ kg', 'Cała półka na wyłączność', '180,00 zł', 'Szkliwienie przeze mnie'])
             ->assertSee('Wsad zbieram raz w tygodniu, zwykle w czwartek.')
             ->assertSeeInOrder(['Zgłoś wsad', 'href="https://wa.me/48600100200"', 'href="'.e(route('content.contact', ['temat' => 'Wypał moich prac'])).'"'], false);
 
@@ -57,7 +57,7 @@ class FiringPageTest extends TestCase
             ->assertRedirect('/panel/wypaly#cennik');
 
         $this->get('/wypal-ceramiki-krakow')
-            ->assertSeeInOrder(['Wypał biskwitowy', '25,00 zł / kg', '35,00 zł', 'Najniższa cena z 30 dni przed obniżką: 30,00 zł']);
+            ->assertSeeInOrder(['Wypał biskwitowy', '25,00 zł', '/ kg', '35,00 zł', 'Najniższa cena z 30 dni przed obniżką: 30,00 zł']);
     }
 
     public function test_the_panel_saves_the_price_list_and_the_sentences(): void
@@ -93,6 +93,6 @@ class FiringPageTest extends TestCase
             ->put('/panel/wypaly', ['prices' => [['label' => 'Wypał', 'price' => 'drogo']]])
             ->assertSee('Wpisz cenę, np. 40 albo 40,50');
 
-        $this->get('/wypal-ceramiki-krakow')->assertSeeInOrder(['Wypał biskwitowy', '45,00 zł / kg', 'Wypał raku', '90,50 zł'])->assertDontSee('Cała półka');
+        $this->get('/wypal-ceramiki-krakow')->assertSeeInOrder(['Wypał biskwitowy', '45,00 zł', '/ kg', 'Wypał raku', '90,50 zł'])->assertDontSee('Cała półka');
     }
 }

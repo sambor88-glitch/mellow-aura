@@ -60,12 +60,12 @@
 
         <div class="flex flex-wrap items-start gap-[clamp(28px,5vw,72px)]">
             <div class="min-w-0 flex-[1_1_440px] min-[852px]:sticky min-[852px]:top-24">
-                {{-- Two previews once the 3D mug has loaded: the model and Kasia's photo with the text on it. --}}
+                {{-- Two previews once the 3D mug has loaded: Kasia's photo with the text on it, shown first, and the model. --}}
                 <div x-cloak x-show="has3d" role="group" aria-label="{{ $t('preview') }}" class="glass mb-3 inline-flex gap-1 rounded-full p-1">
-                    <button type="button" x-on:click="view = '3d'" x-bind:aria-pressed="view === '3d'"
-                            class="min-h-10 rounded-full px-4 text-[13px] text-graphite transition-colors duration-300 aria-pressed:bg-ink aria-pressed:text-linen">{{ $t('model') }}</button>
                     <button type="button" x-on:click="view = 'photo'" x-bind:aria-pressed="view === 'photo'"
                             class="min-h-10 rounded-full px-4 text-[13px] text-graphite transition-colors duration-300 aria-pressed:bg-ink aria-pressed:text-linen">{{ $t('on_photo') }}</button>
+                    <button type="button" x-on:click="view = '3d'" x-bind:aria-pressed="view === '3d'"
+                            class="min-h-10 rounded-full px-4 text-[13px] text-graphite transition-colors duration-300 aria-pressed:bg-ink aria-pressed:text-linen">{{ $t('model') }}</button>
                 </div>
                 <div x-ref="stage3d" x-cloak x-show="view === '3d'" role="img" x-bind:aria-label="@js($t('preview_label')) + (text.trim() || @js($t('preview_empty')))"
                      class="relative aspect-square w-full cursor-grab touch-pan-y overflow-hidden rounded-[26px] border border-glass-line bg-[radial-gradient(ellipse_at_50%_42%,rgb(252_249_244/.95),rgb(243_237_228/.55)_60%,rgb(237_228_216/.25))] active:cursor-grabbing">
@@ -98,7 +98,7 @@
 
             <div class="min-w-0 flex-[1_1_360px]">
                 <p class="eyebrow mb-4">{{ $t('made_to_order') }} @if ($leadTime) &middot; {{ $leadTime }} @endif</p>
-                <h1 class="mb-5 font-serif text-[length:clamp(44px,5.6vw,88px)] leading-[.94] font-light tracking-[-0.025em] whitespace-pre-line"><span class="blur-in">{{ $heading }}</span></h1>
+                <h1 class="mb-5 font-serif text-[length:clamp(44px,5.6vw,88px)] leading-[.94] font-light tracking-[-0.025em] text-balance md:whitespace-pre-line"><span class="blur-in">{{ $heading }}</span></h1>
                 @if ($lead)
                     <p class="mb-8 max-w-[46ch] text-[16.5px] leading-[1.7] text-pretty text-lead">{{ $lead }}</p>
                 @endif
@@ -140,11 +140,16 @@
 
                     <fieldset class="mb-[30px]">
                         <legend class="mb-3 {{ $eyebrow }}">{{ $t('size') }}</legend>
-                        <div class="flex flex-wrap gap-2.5">
+                        {{-- Equal tiles on a phone, so three sizes never break into two rows of two widths. --}}
+                        <div class="grid gap-2.5 sm:flex sm:flex-wrap" style="grid-template-columns: repeat({{ min(count($sizes), 3) }}, minmax(0, 1fr))">
                             @foreach ($sizes as $size)
-                                <label class="glass group flex cursor-pointer flex-col rounded-[20px] px-[18px] py-3 text-left text-lead transition-[border-color,background-color] duration-300 hover:border-ink has-checked:border-ink has-checked:bg-ink has-checked:text-linen has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy">
+                                @php
+                                    // „Średni 300 ml”: the volume on its own line on a phone, so every tile breaks the same way.
+                                    [$sizeName, $sizeVolume] = preg_match('/^(.*\S)\s+(\d+\s*ml)$/u', $size['name'], $parts) ? [$parts[1], $parts[2]] : [$size['name'], null];
+                                @endphp
+                                <label class="glass group flex cursor-pointer flex-col rounded-[20px] px-2 py-3 text-center sm:px-[18px] sm:text-left text-lead transition-[border-color,background-color] duration-300 hover:border-ink has-checked:border-ink has-checked:bg-ink has-checked:text-linen has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy">
                                     <input type="radio" name="size" value="{{ $size['label'] }}" x-model="size" @checked($size['label'] === $startSize['label']) class="sr-only">
-                                    <span class="text-[13.5px]">{{ $size['name'] }}</span>
+                                    <span class="text-[13.5px]">{{ $sizeName }}@if ($sizeVolume)<span class="block sm:inline"><span class="hidden sm:inline"> </span>{{ $sizeVolume }}</span>@endif</span>
                                     <span class="mt-[3px] text-[12.5px] text-label group-has-checked:text-line-strong">{{ $money($size['price']) }}</span>
                                 </label>
                             @endforeach
@@ -177,7 +182,7 @@
                 @endif
 
                 @if ($bulkOrder || $refusals)
-                    <div class="mt-8 grid grid-cols-[repeat(auto-fit,minmax(170px,1fr))] gap-2.5 text-[13.5px] leading-[1.55] text-muted [&>div]:glass [&>div]:rounded-[18px] [&>div]:px-[18px] [&>div]:py-4">
+                    <div class="mt-8 grid grid-cols-[repeat(auto-fit,minmax(170px,1fr))] gap-2.5 text-[13.5px] leading-[1.55] text-muted [&>div]:text-pretty [&>div]:glass [&>div]:rounded-[18px] [&>div]:px-[18px] [&>div]:py-4">
                         @if ($bulkOrder)
                             <div>
                                 <div class="mb-1 text-ink">{{ $t('bulk') }}</div>

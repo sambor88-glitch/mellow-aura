@@ -51,7 +51,7 @@ class InstagramFeedTest extends TestCase
             ->assertDontSee('cdninstagram')
             ->assertDontSee('behold.pictures');
 
-        $this->get('/panel/tresci')->assertSeeInOrder(['Instagram na stronie głównej', 'value="'.self::FEED.'"', 'na stronie teraz'], false);
+        $this->get('/panel/tresci')->assertSeeInOrder(['Instagram na stronie głównej', 'value="'.self::FEED.'"', 'Na stronie teraz'], false);
     }
 
     public function test_a_hashtag_keeps_only_the_posts_that_carry_it(): void
@@ -64,6 +64,28 @@ class InstagramFeedTest extends TestCase
 
         $this->assertSame('#ZPracowni', Setting::find('instagram_feed_hashtag')->value);
         $this->assertSame(['1001'], InstagramPost::query()->pluck('external_id')->all());
+    }
+
+    public function test_kasia_moves_the_crop_of_a_photo_and_a_refresh_keeps_it(): void
+    {
+        $this->fakeFeed();
+        $user = User::factory()->create();
+        $this->actingAs($user)->put('/panel/tresci/instagram', ['instagram_feed_url' => self::FEED]);
+        $post = InstagramPost::query()->where('external_id', '1001')->sole();
+
+        // A new post keeps the middle of the photo.
+        $this->get('/')->assertSee('style="object-position: 50% 50%"', false);
+
+        $this->put('/panel/tresci/instagram', ['instagram_feed_url' => self::FEED, 'focus' => [$post->id => ['x' => 50, 'y' => 85]]])
+            ->assertSessionHasNoErrors();
+
+        $this->assertSame([50, 85], [$post->fresh()->focus_x, $post->fresh()->focus_y]);
+        $this->get('/')->assertSeeInOrder(['src="'.Storage::disk('public')->url('instagram/1001.webp').'"', 'style="object-position: 50% 85%"'], false);
+        $this->get('/panel/tresci')->assertSee('name="focus['.$post->id.'][y]" min="0" max="100" step="5" value="85"', false);
+
+        $this->put('/panel/tresci/instagram', ['instagram_feed_url' => self::FEED, 'focus' => [$post->id => ['x' => 50, 'y' => 140]]])
+            ->assertSessionHasErrorsIn('instagram', ['focus.'.$post->id.'.y' => 'Przesuń suwak kadru jeszcze raz']);
+        $this->assertSame(85, $post->fresh()->focus_y);
     }
 
     public function test_only_a_behold_address_is_accepted(): void

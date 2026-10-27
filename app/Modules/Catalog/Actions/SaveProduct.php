@@ -24,7 +24,7 @@ class SaveProduct
     public function __construct(private ConvertEuroPrices $convertEuroPrices) {}
 
     /**
-     * @param  array{name: string, category_id: int, description: ?string, seo_description?: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, euro_from_rate?: bool, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels?: array<string, string>, price_gross: int, compare_at_price: ?int, prices?: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post?: bool, media_id?: ?int}>, photo_alts?: array<int, string>, translations?: array<string, array<string, ?string>>}  $data
+     * @param  array{name: string, category_id: int, description: ?string, seo_description?: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, euro_from_rate?: bool, workshop_code?: ?string, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels?: array<string, string>, price_gross: int, compare_at_price: ?int, prices?: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post?: bool, voucher_seats?: ?int, media_id?: ?int}>, photo_alts?: array<int, string>, translations?: array<string, array<string, ?string>>}  $data
      */
     public function __invoke(?Product $product, array $data): Product
     {
@@ -46,6 +46,8 @@ class SaveProduct
                 'is_one_off' => $data['is_one_off'],
                 'is_exact_piece' => $data['is_exact_piece'],
                 'euro_from_rate' => $data['euro_from_rate'] ?? false,
+                // The workshop a voucher books; empty for an amount voucher and for everything else.
+                'workshop_code' => $data['workshop_code'] ?? null,
                 'dimensions' => $data['dimensions'] ?: null,
                 'occasions' => $data['occasions'],
                 'recipients' => $data['recipients'],
@@ -71,7 +73,7 @@ class SaveProduct
             $kept = [];
 
             foreach ($data['variants'] as $row) {
-                $values = ['label' => $row['label'], 'price_gross' => $row['price_gross'], 'compare_at_price' => $row['compare_at_price'] ?? null, 'stock' => $row['stock'], 'sent_by_post' => $row['sent_by_post'] ?? false, 'media_id' => in_array($row['media_id'] ?? null, $photoIds, true) ? $row['media_id'] : null];
+                $values = ['label' => $row['label'], 'price_gross' => $row['price_gross'], 'compare_at_price' => $row['compare_at_price'] ?? null, 'stock' => $row['stock'], 'sent_by_post' => $row['sent_by_post'] ?? false, 'voucher_seats' => $row['voucher_seats'] ?? null, 'media_id' => in_array($row['media_id'] ?? null, $photoIds, true) ? $row['media_id'] : null];
                 $variant = $row['id'] === null ? null : $existing->get($row['id']);
 
                 if ($variant !== null) {

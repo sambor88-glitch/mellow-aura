@@ -2,17 +2,35 @@
 
 namespace App\Modules\Workshops;
 
+use App\Modules\Checkout\Events\OrderPaid;
 use App\Modules\Shared\ModuleServiceProvider;
 use App\Modules\Shared\Support\SitemapPages;
+use App\Modules\Workshops\Console\SendRemindersCommand;
+use App\Modules\Workshops\Listeners\SendBookingEmails;
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Support\Facades\Event;
 
 /**
- * Workshops. Before the holidays: the price list page and its editor in the panel.
- * Booking dates and places come after the holidays.
+ * Workshops: the price list page, booking a date online with its mails, and in the panel the price list
+ * and the calendar of dates.
  */
 class WorkshopsServiceProvider extends ModuleServiceProvider
 {
     public function register(): void
     {
         $this->callAfterResolving(SitemapPages::class, fn (SitemapPages $pages) => $pages->routes('workshops.index'));
+        // The reminder about a day before each workshop (MA-138).
+        $this->callAfterResolving(Schedule::class, fn (Schedule $schedule) => $schedule->command(SendRemindersCommand::class)->hourly()->withoutOverlapping());
+    }
+
+    public function boot(): void
+    {
+        parent::boot();
+
+        Event::listen(OrderPaid::class, SendBookingEmails::class);
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([SendRemindersCommand::class]);
+        }
     }
 }

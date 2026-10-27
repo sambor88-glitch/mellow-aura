@@ -7,6 +7,7 @@
 @use('App\Modules\Catalog\Models\ExchangeRate')
 @use('App\Modules\Shared\Support\Money')
 @use('App\Modules\Shared\Support\Seo')
+@use('App\Modules\Workshops\Support\WorkshopTypes')
 @inject('settings', 'App\Modules\Settings\Settings')
 @php
     // Several forms share one page, so old input and errors only count for the form they came from.
@@ -26,10 +27,14 @@
             'compare_at_eur' => ($eurBefore = $variant->compareAtPrice('EUR')) === null ? '' : Money::input($eurBefore),
             'stock' => $variant->stock,
             'sent_by_post' => $variant->sent_by_post,
+            'voucher_seats' => $variant->voucher_seats,
             'media_id' => $variant->media_id,
         ])->all() ?? []);
     // A voucher goes out as a PDF by e-mail; a size ticked „pocztą” is printed and posted, so its buyer chooses a delivery.
     $isVoucher = (bool) $product?->isVoucher();
+    // A workshop voucher books its workshop on the site with the code (MA-137); without one it books nothing.
+    $workshops = $isVoucher ? app(WorkshopTypes::class)->all() : collect();
+    $workshopCode = (string) $old('workshop_code', $product?->workshop_code);
     // Several photos let each size open the gallery on its own one, e.g. a quote mug with its lettering.
     $photos = $product?->getMedia('images') ?? collect();
     // Spare rows for new sizes; left empty, they are not saved.
@@ -160,6 +165,11 @@
                         </select>
                     @endif
                     @if ($isVoucher)
+                        <span class="flex items-center gap-1.5">
+                            <input name="variants[{{ $index }}][voucher_seats]" value="{{ $row['voucher_seats'] ?? '' }}" inputmode="numeric" aria-label="Miejsc na warsztacie, rozmiar {{ $index + 1 }}" placeholder="1"
+                                   @class([$input, 'w-[52px] px-2.5 py-2.5 text-right', 'border-error' => $bag->has('variants.'.$index.'.voucher_seats'), 'border-line' => ! $bag->has('variants.'.$index.'.voucher_seats')])>
+                            <span class="text-[12.5px] text-label">miejsc</span>
+                        </span>
                         <label class="flex min-h-11 items-center gap-1.5 text-[12.5px] text-label">
                             <input type="checkbox" name="variants[{{ $index }}][sent_by_post]" value="1" @checked(! empty($row['sent_by_post'])) class="size-4 accent-ink"> pocztą
                         </label>
@@ -170,7 +180,7 @@
                         </label>
                     @endif
                 </div>
-                {!! $error('variants.'.$index.'.label') !!}{!! $error('variants.'.$index.'.label_en') !!}{!! $error('variants.'.$index.'.price') !!}{!! $error('variants.'.$index.'.compare_at') !!}{!! $error('variants.'.$index.'.price_eur') !!}{!! $error('variants.'.$index.'.compare_at_eur') !!}{!! $error('variants.'.$index.'.stock') !!}{!! $error('variants.'.$index.'.media_id') !!}
+                {!! $error('variants.'.$index.'.label') !!}{!! $error('variants.'.$index.'.label_en') !!}{!! $error('variants.'.$index.'.price') !!}{!! $error('variants.'.$index.'.compare_at') !!}{!! $error('variants.'.$index.'.price_eur') !!}{!! $error('variants.'.$index.'.compare_at_eur') !!}{!! $error('variants.'.$index.'.stock') !!}{!! $error('variants.'.$index.'.media_id') !!}{!! $error('variants.'.$index.'.voucher_seats') !!}
             @endforeach
         </div>
         {!! $error('variants') !!}
@@ -194,8 +204,24 @@
         @endif
         @if ($isVoucher)
             <p class="mt-1.5 text-[12.5px] leading-[1.5] text-hint">Voucher idzie mailem w PDF, bez kosztów dostawy. Zaznacz „pocztą” przy rozmiarze, który drukujesz i wysyłasz — wtedy zamówienie zapyta o dostawę.</p>
+            <p class="mt-1.5 text-[12.5px] leading-[1.5] text-hint">„Miejsc” to liczba miejsc, które voucher rezerwuje na warsztacie niżej — puste pole to jedno. Warsztat dla pary liczy parę jako jedno miejsce.</p>
         @endif
     </fieldset>
+
+    @if ($isVoucher)
+        <div class="min-w-0">
+            <label for="{{ $formKey }}-workshop" class="mb-1.5 block text-[13.5px] text-graphite">Na warsztat</label>
+            <select id="{{ $formKey }}-workshop" name="workshop_code" aria-describedby="{{ $formKey }}-workshop-note"
+                    @class([$input, 'w-full px-4 py-[13px]', 'border-error' => $bag->has('workshop_code'), 'border-line' => ! $bag->has('workshop_code')])>
+                <option value="">Żaden — voucher kwotowy</option>
+                @foreach ($workshops as $workshop)
+                    <option value="{{ WorkshopTypes::key($workshop) }}" @selected($workshopCode === WorkshopTypes::key($workshop))>{{ $workshop['name'] }}</option>
+                @endforeach
+            </select>
+            {!! $error('workshop_code') !!}
+            <p id="{{ $formKey }}-workshop-note" class="mt-1.5 text-[12.5px] leading-[1.5] text-hint">Z kodem takiego vouchera można się zapisać na stronie na termin tego warsztatu, bez płacenia. Voucher kwotowy rozliczasz ręcznie.</p>
+        </div>
+    @endif
 
     <fieldset>
         <legend class="{{ $legend }} mb-1">Wymiary — nieobowiązkowe</legend>

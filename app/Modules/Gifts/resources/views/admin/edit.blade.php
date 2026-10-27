@@ -130,6 +130,31 @@
                 <button class="{{ $button }}">Zapisz „Szukam prezentu”</button>
             </form>
 
+            <section id="sprawdz-voucher" class="{{ $card }}">
+                <h2 class="{{ $heading }}">Sprawdź voucher</h2>
+                <p class="{{ $intro }}">Wpisz kod z vouchera: zobaczysz, czy jest ważny i czy ktoś się nim już zapisał. Tu też uzupełnisz warsztat i miejsca, przedłużysz ważność albo oznaczysz voucher jako wykorzystany, gdy zapisujesz kogoś ręcznie — wtedy kod nie zadziała już na stronie.</p>
+                <form method="get" action="{{ route('admin.gifts.edit') }}#sprawdz-voucher" class="flex flex-wrap gap-2.5">
+                    <label for="sprawdz-kod" class="sr-only">Kod vouchera</label>
+                    <input id="sprawdz-kod" name="kod" value="{{ $voucherCode }}" maxlength="30" autocomplete="off" spellcheck="false" placeholder="MA-7KQ2-9XHT"
+                           class="{{ $input }} flex-[1_1_200px] border-line uppercase">
+                    <button class="min-h-11 rounded-full bg-ink px-5 text-[14px] text-linen hover:bg-rose hover:text-ink">Sprawdź</button>
+                </form>
+                @if ($voucherCode !== '' && $foundVoucher === null)
+                    <p role="status" class="mt-3.5 text-[13.5px] text-error">Nie ma vouchera z takim kodem.</p>
+                @elseif ($foundVoucher)
+                    <div class="mt-4 border-t border-sand-dark pt-4">
+                        <div class="font-serif text-[18px] tracking-[0.06em] select-all">{{ $foundVoucher->code }}</div>
+                        <div class="mt-0.5 mb-2 text-[13px] text-label">
+                            {{ collect([$foundVoucher->orderItem?->product_name, $foundVoucher->recipient_name ? 'dla: '.$foundVoucher->recipient_name : null])->filter()->join(' · ') }}
+                            @if ($foundVoucher->orderItem?->order)
+                                · kupiony w <a href="{{ route('admin.orders.show', $foundVoucher->orderItem->order) }}">{{ $foundVoucher->orderItem->order->number }}</a>
+                            @endif
+                        </div>
+                        @include('gifts::admin.voucher', ['voucher' => $foundVoucher])
+                    </div>
+                @endif
+            </section>
+
             <form id="vouchery" method="post" action="{{ route('admin.gifts.vouchers') }}" novalidate class="{{ $card }}">
                 @csrf
                 @method('PUT')

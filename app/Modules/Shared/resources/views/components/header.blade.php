@@ -21,10 +21,12 @@
     On a phone the pill has to fit in one row down to 320 px: below 520 px the language switch moves into the menu,
     the saved-items link stays in the shop and the wordmark and spacing tighten (mellowaura-aplikacja, „Nagłówek”).
 --}}
-<div x-data="stickyHeader" class="pointer-events-none sticky top-0 z-60 px-3 pt-3.5 print:hidden">
+{{-- The open menu lifts the whole header, its stacking context, over the language hint (z-61) and the consent
+     banner (z-70), which would otherwise cover „Zamknij” and the last links (MA-203). --}}
+<div x-data="stickyHeader" x-bind:style="menu && { zIndex: 90 }" class="pointer-events-none sticky top-0 z-60 px-3 pt-3.5 print:hidden">
     {{-- The menu lives beside the pill, not in it: the pill's backdrop-filter would make a fixed menu cover the pill
          instead of the screen, and its first links would end up above the top edge (MA-81). --}}
-    <div x-data="{ menu: false }" x-on:keydown.escape.window="if (menu) { menu = false; $refs.menuButton.focus() }">
+    <div x-on:keydown.escape.window="if (menu) { menu = false; $refs.menuButton.focus() }">
     <div data-aura-header
          class="glass pointer-events-auto mx-auto flex max-w-[1120px] items-center gap-2 rounded-full py-2 pr-2 pl-4 min-[520px]:gap-3 min-[520px]:pl-[22px] transition-[transform,opacity] duration-600 ease-clay [&.is-away]:-translate-y-[140%] [&.is-away]:opacity-0">
         <a href="{{ route('home') }}" class="min-w-0 font-serif text-[15px] leading-none tracking-[0.16em] whitespace-nowrap text-ink uppercase hover:text-ink min-[520px]:text-[18px] min-[520px]:tracking-[0.22em]">mellowaura</a>
@@ -50,7 +52,7 @@
         @if ($links)
             <nav id="menu" aria-label="{{ __('shared::header.menu') }}" x-cloak x-show="menu" x-trap.noscroll="menu" data-lenis-prevent
                  x-transition:enter="transition duration-500 ease-clay" x-transition:enter-start="opacity-0" x-transition:leave="transition duration-300" x-transition:leave-end="opacity-0"
-                 class="pointer-events-auto fixed inset-0 z-80 flex flex-col justify-center gap-1.5 bg-sand/72 px-[clamp(24px,8vw,80px)] pt-24 pb-10 backdrop-blur-[26px] min-[920px]:hidden">
+                 class="aura-overlay pointer-events-auto fixed inset-0 z-80 flex flex-col justify-center gap-1.5 bg-sand/72 px-[clamp(24px,8vw,80px)] pt-24 pb-10 backdrop-blur-[26px] min-[920px]:hidden">
                 <button type="button" x-on:click="menu = false; $refs.menuButton.focus()"
                         class="absolute top-[22px] right-[22px] flex min-h-11 items-center rounded-full border border-line-strong px-4 text-[13.5px] text-ink">{{ __('shared::header.close') }}</button>
                 @foreach ($links as $i => [$label, $route, $pattern])

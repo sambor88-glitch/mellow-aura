@@ -50,6 +50,15 @@ class BlikController extends Controller
             'order' => $order,
             // A refused code has no clock: the field for a new one is there straight away.
             'secondsLeft' => $order->payment_status === PaymentStatus::Pending ? $this->secondsLeft($request) : 0,
+            // A workshop booking goes back to its form, and a custom order's payment to its link, not to the cart,
+            // for another way to pay.
+            'booking' => $booking = $order->workshopBooking,
+            'customOrderPayment' => $payment = $order->customOrderPayment,
+            'otherUrl' => match (true) {
+                $booking !== null => $booking->workshop_date_id ? route('workshops.booking.create', $booking->workshop_date_id) : route('workshops.index'),
+                $payment !== null => $payment->paymentLink->url(),
+                default => route('checkout.index'),
+            },
         ])->header('X-Robots-Tag', self::ROBOTS);
     }
 

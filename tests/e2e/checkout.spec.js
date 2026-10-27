@@ -1,0 +1,188 @@
+import { readFileSync } from 'node:fs';
+import { expect, test } from '@playwright/test';
+
+// The whole purchase in a real browser, as a customer and then as Kasia in the panel:
+// shop → product → checkout with BLIK (TestGateway pays at once) → confirmation → empty cart
+// → panel order „Opłacone” → „Wysłane” → three mails to the customer in the log.
+
+const logFile = new URL('../../storage/logs/laravel.log', import.meta.url);
+
+/** Fails the test on a JavaScript error, console.error or a server error on any page. */
+function watchForErrors(page) {
+    const errors = [];
+
+    page.on('pageerror', (error) => errors.push(`pageerror: ${error.message}`));
+    page.on('console', (message) => {
+        if (message.type() === 'error') {
+            errors.push(`console.error: ${message.text()} (${message.location().url})`);
+        }
+    });
+    page.on('response', (response) => {
+        if (response.status() >= 500) {
+            errors.push(`HTTP ${response.status()}: ${response.request().method()} ${response.url()}`);
+        }
+    });
+
+    return errors;
+}
+
+/** No page may scroll sideways, on a phone least of all. */
+async function expectNoSideScroll(page) {
+    const { scrollWidth, innerWidth } = await page.evaluate(() => ({
+        scrollWidth: document.documentElement.scrollWidth,
+        innerWidth: window.innerWidth,
+    }));
+
+    expect(scrollWidth, `${page.url()} scrolls sideways`).toBeLessThanOrEqual(innerWidth);
+}
+
+/** Subjects of the mails the log mailer wrote for one recipient, decoded from MIME encoded-words. */
+function mailSubjectsFor(email) {
+    const decode = (subject) =>
+        // Whitespace between two encoded-words is folding, not text (RFC 2047, 6.2).
+        subject.replace(/\?=\s+=\?/g, '?==?').replace(/=\?utf-8\?([QB])\?([^?]*)\?=/gi, (_, encoding, text) =>
+            encoding.toUpperCase() === 'B'
+                ? Buffer.from(text, 'base64').toString('utf8')
+                : Buffer.from(
+                      text.replace(/_/g, ' ').replace(/=([0-9A-F]{2})/gi, (__, hex) => String.fromCharCode(parseInt(hex, 16))),
+                      'latin1',
+                  ).toString('utf8'),
+        );
+
+    // Every mail starts with its own log line; headers may fold onto the next line.
+    return readFileSync(logFile, 'utf8')
+        .split(/^\[\d{4}-\d{2}-\d{2} [^\]]+\] /m)
+        .map((entry) => entry.replace(/\r?\n[ \t]+/g, ' '))
+        .filter((entry) => new RegExp(`^To: .*${email.replace(/[.+]/g, '\\$&')}`, 'mi').test(entry))
+        .map((entry) => decode(entry.match(/^Subject: (.*)$/m)?.[1] ?? ''));
+}
+
+test('a customer buys a product and Kasia ships it', async ({ page }, testInfo) => {
+    const errors = watchForErrors(page);
+    const email = `e2e-${testInfo.project.name}-${Date.now()}@mellow-aura.test`;
+
+    await test.step('home page and shop', async () => {
+        await page.goto('/');
+        await expectNoSideScroll(page);
+
+        await page.goto('/sklep');
+        await expectNoSideScroll(page);
+    });
+
+    await test.step('add the first product in stock to the cart', async () => {
+        // Vouchers go by e-mail; the test needs a parcel. Unique pieces may be sold out, so look further.
+        const products = [
+            ...new Set(
+                await page
+                    .locator('a[href*="/produkt/"]')
+                    .evaluateAll((links) => links.map((link) => link.href).filter((href) => !href.includes('/produkt/voucher-'))),
+            ),
+        ];
+
+        let added = false;
+
+        for (const product of products) {
+            await page.goto(product);
+
+            const form = page.locator('#add-to-cart');
+
+            if ((await form.count()) === 0) {
+                continue;
+            }
+
+            await expectNoSideScroll(page);
+
+            const text = page.locator('[name="custom_text"]');
+
+            if (await text.isVisible()) {
+                await text.fill('Dla Ani');
+            }
+
+            const submit = page.locator('#add-to-cart button[type="submit"], button[type="submit"][form="add-to-cart"]').first();
+            const response = page.waitForResponse((r) => r.request().method() === 'POST' && new URL(r.url()).pathname === '/koszyk');
+
+            await submit.click();
+
+            if ((await response).ok()) {
+                added = true;
+                break;
+            }
+        }
+
+        expect(added, 'no product in the shop could go to the cart').toBe(true);
+    });
+
+    let orderNumber;
+
+    await test.step('checkout with BLIK and a parcel locker', async () => {
+        await page.goto('/zamowienie');
+        await expectNoSideScroll(page);
+
+        await page.locator('[name="name"]').fill('Anna Testowa');
+        await page.locator('[name="email"]').fill(email);
+        await page.locator('[name="phone"]').fill('600100200');
+        await page.locator('input[name="shipping_method"][value="parcel_locker"]').check({ force: true });
+
+        const locker = page.locator('[name="locker_code"]');
+
+        if (await locker.isVisible()) {
+            await locker.fill('KRA01M');
+        }
+
+        await page.locator('input[name="payment_method"][value="blik"]').check({ force: true });
+        await page.locator('#blik_code').fill('123456');
+
+        for (const deviation of await page.locator('[data-deviation]').all()) {
+            await deviation.check();
+        }
+
+        await page.locator('[name="accept_terms"]').check();
+        await page.locator('form[action$="/zamowienie"] button[type="submit"]').click();
+
+        await page.waitForURL('**/zamowienie/potwierdzenie');
+        await expectNoSideScroll(page);
+
+        orderNumber = (await page.locator('body').innerText()).match(/MA-\d{4}-\d{4}/)?.[0];
+        expect(orderNumber, 'the confirmation shows the order number').toBeTruthy();
+    });
+
+    await test.step('the cart is empty afterwards', async () => {
+        await page.goto('/zamowienie');
+        expect(new URL(page.url()).pathname).not.toBe('/zamowienie/potwierdzenie');
+        await expect(page.locator('form[action$="/zamowienie"]')).toHaveCount(0);
+    });
+
+    await test.step('Kasia sees the paid order in the panel and ships it', async () => {
+        await page.goto('/panel');
+        await page.locator('[name="email"]').fill(process.env.E2E_ADMIN_EMAIL ?? 'e2e@mellow-aura.test');
+        await page.locator('[name="password"]').fill(process.env.E2E_ADMIN_PASSWORD);
+        await page.getByRole('button', { name: 'Wejdź do panelu' }).click();
+        await expect(page.getByRole('button', { name: 'Wejdź do panelu' })).toHaveCount(0);
+
+        await page.goto(`/panel/zamowienia/${orderNumber}`);
+        await expect(page.locator('main')).toContainText('Opłacone');
+        await expectNoSideScroll(page);
+
+        const ship = page.locator('form', { has: page.locator('[name="tracking_number"]') }).first();
+
+        await ship.locator('[name="tracking_number"]').fill('620000000000000000000000');
+        await ship.getByRole('button', { name: 'Wysłane — powiadom klientkę' }).click();
+
+        await expect(page.locator('main')).toContainText('Wysłane');
+        await expectNoSideScroll(page);
+    });
+
+    await test.step('three mails reach the customer', async () => {
+        const subjects = mailSubjectsFor(email);
+
+        expect(subjects).toEqual(
+            expect.arrayContaining([
+                `Podsumowanie zamówienia ${orderNumber}`,
+                `Zamówienie ${orderNumber} jest opłacone`,
+                `Zamówienie ${orderNumber} jest w drodze`,
+            ]),
+        );
+    });
+
+    expect(errors, 'errors in the browser or on the server').toEqual([]);
+});

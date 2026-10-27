@@ -13,7 +13,7 @@
             Mail nie przyszedł w kwadrans? Zajrzyj do folderu ze spamem.
         </p>
 
-        <section aria-labelledby="tresc" class="mb-8 rounded-[4px] border border-divider bg-cream px-[30px] py-7">
+        <section aria-labelledby="tresc" class="mb-8 rounded-[20px] border border-divider bg-cream px-[30px] py-7">
             <h2 id="tresc" class="mb-3 text-[11.5px] tracking-[0.16em] text-label uppercase">Treść oświadczenia</h2>
             <p class="mb-5 font-serif text-[20px] leading-[1.5] whitespace-pre-line [overflow-wrap:anywhere]">{{ $withdrawal->statement() }}</p>
             <dl class="grid gap-2 border-t border-divider pt-4 text-[14px]">

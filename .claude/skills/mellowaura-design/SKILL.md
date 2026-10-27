@@ -156,6 +156,9 @@ Gradient wolno stosować w trzech miejscach: plamy poświaty, żar pieca, przyci
   26–32 s (`drift1–3`, `ease-in-out infinite alternate`). Treść leży na `z-index: 2`.
 - `.grain` — szum z `feTurbulence` jako SVG w `data:`, `opacity: .08–.09`, `mix-blend-mode: multiply`,
   przesuwany skokowo `steps(6)`. Zawsze `pointer-events: none`.
+- Na ekranie dotykowym (`pointer: coarse`) plamy i ziarno stoją. Ruch któregokolwiek z nich zmusza telefon
+  do przerysowania każdego szkła nad nim w każdej klatce — średni telefon spadał do 17 klatek na sekundę
+  w bezruchu, a „Menu” i „Koszyk” reagowały z opóźnieniem albo wcale (MA-203).
 - `.cursor-aura` — różowa poświata za kursorem, tylko przy `pointer: fine`.
 - Ciemna sekcja (warsztaty) ma własne dwie plamy w środku, bo globalne jej nie przebijają.
 
@@ -207,6 +210,9 @@ W aplikacji kasa ma na razie **jedno** duże pole BLIK (`resources/js/checkout.j
 
 **Szuflada koszyka:** szkło jasne `rgba(252,249,244,.8)` + `blur(30px)`, oderwana 10 px od krawędzi, promień 26 px,
 wjeżdża z prawej z rozmycia; tło strony przyciemnia się i rozmywa `blur(6px)`.
+Na ekranie dotykowym (`pointer: coarse`) szuflada i menu pełnoekranowe (klasy `aura-overlay`, `aura-drawer-panel`)
+są pełne i pojawiają się od razu: bez `backdrop-filter`, bez wygaszania z zera, bez rozmytych liter i bez wjazdu z boku: Safari na iPhonie zostawiało je
+otwarte, ale nienarysowane przez kilka sekund, a następne stuknięcia trafiały w niewidoczne „×” (MA-203).
 
 ## Efekty — katalog
 

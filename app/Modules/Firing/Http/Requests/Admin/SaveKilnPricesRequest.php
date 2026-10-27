@@ -9,8 +9,8 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 
 /**
- * The firing price list with the sentences above and under it. A row keeps its code and unit for the batch
- * form after the holidays; a new row gets a code from its name.
+ * The firing price list with the sentences above and under it, and the weekday Kasia collects batches. A row keeps
+ * its code and unit, which the batch form counts the quote with; a new row gets a code from its name.
  */
 class SaveKilnPricesRequest extends FormRequest
 {
@@ -38,6 +38,7 @@ class SaveKilnPricesRequest extends FormRequest
         return [
             'text_kiln_lead' => ['nullable', 'string', 'max:300'],
             'text_kiln_note' => ['nullable', 'string', 'max:400'],
+            'kiln_load_weekday' => ['nullable', 'integer', 'between:1,7'],
             'prices' => ['nullable', 'array', 'max:15'],
             'prices.*.label' => $row(['nullable', 'string', 'max:80', 'required_with:prices.*.price']),
             'prices.*.price' => $row(['nullable', 'regex:'.self::PRICE, 'required_with:prices.*.label']),
@@ -57,6 +58,7 @@ class SaveKilnPricesRequest extends FormRequest
         return [
             'text_kiln_lead.max' => 'Zdanie zmieszczę do :max znaków',
             'text_kiln_note.max' => 'Notkę zmieszczę do :max znaków',
+            'kiln_load_weekday.*' => 'Wybierz dzień z listy',
             'prices.max' => 'Zmieszczę do :max pozycji',
             'prices.*.label.required_with' => 'Wpisz nazwę usługi do tej ceny',
             'prices.*.label.max' => 'Nazwę zmieszczę do :max znaków',
@@ -68,13 +70,14 @@ class SaveKilnPricesRequest extends FormRequest
     }
 
     /**
-     * @return array{text_kiln_lead: ?string, text_kiln_note: ?string, kiln_prices: list<array<string, mixed>>}
+     * @return array{text_kiln_lead: ?string, text_kiln_note: ?string, kiln_load_weekday: ?int, kiln_prices: list<array<string, mixed>>}
      */
     public function settings(): array
     {
         return [
             'text_kiln_lead' => filled($lead = $this->validated('text_kiln_lead')) ? trim($lead) : null,
             'text_kiln_note' => filled($note = $this->validated('text_kiln_note')) ? trim($note) : null,
+            'kiln_load_weekday' => filled($day = $this->validated('kiln_load_weekday')) ? (int) $day : null,
             'kiln_prices' => array_map(fn (array $row) => [
                 'code' => $row['code'] ?? Str::slug((string) $row['label'], '_'),
                 'label' => $row['label'],

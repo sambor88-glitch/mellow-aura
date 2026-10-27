@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Middleware\NoIndex;
+use App\Modules\Localization\Support\Locales;
+use App\Modules\Shared\Http\Middleware\KeepShortWords;
 use App\Modules\Shared\Http\Middleware\ProtectStaging;
 use App\Modules\Shared\Http\Middleware\RedirectOldAddresses;
 use App\Modules\Shared\Http\Middleware\SecurityHeaders;
@@ -22,10 +24,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(NoIndex::class);
         $middleware->append(RedirectOldAddresses::class);
         $middleware->append(SecurityHeaders::class);
+        $middleware->append(KeepShortWords::class);
         // The customer's own address behind Cloudflare, so limits count per customer (see Cloudflare).
         $middleware->trustProxies(at: Cloudflare::PROXIES);
         // Przelewy24 has no session and no token; its notification proves itself with a signature instead.
         $middleware->validateCsrfTokens(except: ['przelewy24/powiadomienie']);
+        // Written by the browser on a click of the language switch, so it cannot be encrypted (see Locales::CHOICE_COOKIE).
+        $middleware->encryptCookies(except: [Locales::CHOICE_COOKIE]);
         $middleware->redirectGuestsTo(fn () => route('admin.login'));
         $middleware->redirectUsersTo(fn () => route('admin.dashboard'));
     })

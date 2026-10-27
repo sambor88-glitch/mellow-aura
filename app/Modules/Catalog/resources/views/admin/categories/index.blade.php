@@ -1,3 +1,5 @@
+@use('App\Modules\Catalog\Http\Requests\Admin\SaveShopShortcutsRequest')
+@use('App\Modules\Localization\Support\Locales')
 @use('App\Modules\Shared\Support\Seo')
 @php
     $card = 'scroll-mt-6 rounded-[4px] border border-line bg-cream p-[22px]';
@@ -5,6 +7,43 @@
 @endphp
 <x-admin::layout title="Kategorie" lead="Co Google pokazuje dla każdej półki w sklepie i krótki wstęp nad jej produktami. Puste pole — strona złoży tytuł i opis sama.">
     <div class="grid max-w-[880px] gap-[22px]">
+        @php
+            $bag = $errors->getBag('skroty');
+            $english = Locales::isEnabled('en');
+        @endphp
+        <form id="skroty" method="post" action="{{ route('admin.categories.shortcuts') }}" novalidate class="{{ $card }}">
+            @csrf
+            @method('PUT')
+            <div class="mb-1.5 flex flex-wrap items-baseline justify-between gap-3">
+                <h2 class="font-serif text-[23px]">Skróty nad sklepem</h2>
+                <a href="{{ route('shop.index') }}" target="_blank" rel="noopener" class="text-[13px]">/sklep — „Zrobię dla Ciebie”</a>
+            </div>
+            <p class="mb-4 text-[13.5px] text-muted">Krótki podpis pod nazwą każdej karty. Puste pole — karta pokaże samą nazwę.</p>
+            @if ($bag->any())
+                <p role="alert" class="mb-3.5 rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text">Popraw zaznaczone pola, żeby zapisać.</p>
+            @endif
+            <div class="grid gap-3.5">
+                @foreach ($shortcutNotes as $label => $note)
+                    <div @class(['grid gap-3', 'sm:grid-cols-2' => $english])>
+                        @foreach ($english ? ['pl', 'en'] : ['pl'] as $locale)
+                            @php
+                                $field = $locale.'.'.$label;
+                            @endphp
+                            <div class="min-w-0">
+                                <label for="skrot-{{ $locale }}-{{ $label }}" class="mb-1.5 block text-[13.5px] text-graphite">{{ __('catalog::shop.shortcut_'.$label, [], 'pl') }}{{ $locale === 'en' ? ' — po angielsku' : '' }}</label>
+                                <input id="skrot-{{ $locale }}-{{ $label }}" name="{{ $locale }}[{{ $label }}]" value="{{ old($field, $note[$locale]) }}" maxlength="{{ SaveShopShortcutsRequest::MAX }}" @if ($locale === 'en') lang="en" @endif
+                                       @class([$input, 'border-error' => $bag->has($field), 'border-line' => ! $bag->has($field)])>
+                                @if ($bag->has($field))
+                                    <p class="mt-1.5 text-[13px] text-error">{{ $bag->first($field) }}</p>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                @endforeach
+            </div>
+            <button class="mt-[18px] min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Zapisz podpisy</button>
+        </form>
+
         @foreach ($categories as $category)
             @php
                 $formKey = 'kategoria-'.$category->id;

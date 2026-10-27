@@ -201,11 +201,25 @@
                                  :value="old('instagram_feed_hashtag', $instagram['instagram_feed_hashtag'])" placeholder="np. #zpracowni" />
             </div>
             @if ($instagram['posts']->isNotEmpty())
-                <div class="mt-3.5 flex flex-wrap items-center gap-2">
+                <p class="mt-3.5 text-[12.5px] text-label">Na stronie teraz, ostatni post {{ $instagram['posts']->first()->posted_at->diffForHumans() }}. Strona tnie zdjęcia do kwadratu — jeśli coś ważnego się ucina, przesuń kadr suwakami.</p>
+                @if ($errors->getBag('instagram')->has('focus.*'))
+                    <p class="mt-1.5 text-[13px] text-error">{{ $errors->getBag('instagram')->first('focus.*') }}</p>
+                @endif
+                <div class="mt-3 grid grid-cols-2 gap-3.5 min-[520px]:grid-cols-3">
                     @foreach ($instagram['posts'] as $post)
-                        <img src="{{ $post->imageUrl() }}" alt="" width="48" height="48" class="size-12 rounded-[3px] bg-line-soft object-cover">
+                        @php($point = old('focus.'.$post->id, ['x' => $post->focus_x, 'y' => $post->focus_y]))
+                        <fieldset x-data="{ x: {{ (int) $point['x'] }}, y: {{ (int) $point['y'] }} }" class="min-w-0">
+                            <legend class="sr-only">Kadr zdjęcia {{ $loop->iteration }}: {{ $post->alt() }}</legend>
+                            <img src="{{ $post->imageUrl() }}" alt="" width="150" height="150" loading="lazy" style="object-position: {{ (int) $point['x'] }}% {{ (int) $point['y'] }}%"
+                                 :style="`object-position: ${x}% ${y}%`" class="block aspect-square w-full rounded-[3px] bg-line-soft object-cover">
+                            @foreach (['y' => 'Góra — dół', 'x' => 'Lewo — prawo'] as $axis => $label)
+                                <label class="mt-1.5 block">
+                                    <span class="block text-[12px] text-muted">{{ $label }}</span>
+                                    <input type="range" name="focus[{{ $post->id }}][{{ $axis }}]" min="0" max="100" step="5" value="{{ (int) $point[$axis] }}" x-model.number="{{ $axis }}" class="h-11 w-full accent-ink">
+                                </label>
+                            @endforeach
+                        </fieldset>
                     @endforeach
-                    <span class="text-[12.5px] text-label">na stronie teraz, ostatni post {{ $instagram['posts']->first()->posted_at->diffForHumans() }}</span>
                 </div>
             @endif
             <button class="{{ $button }}">Zapisz i pobierz zdjęcia</button>

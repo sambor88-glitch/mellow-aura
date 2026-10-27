@@ -26,7 +26,7 @@
                     $full = $bundle->fullPrice();
                     $price = $bundle->price();
                 @endphp
-                <article id="zestaw-{{ $bundle->id }}" class="flex scroll-mt-28 animate-ma-up flex-wrap overflow-hidden rounded-[4px] border border-divider bg-cream">
+                <article id="zestaw-{{ $bundle->id }}" class="flex scroll-mt-28 animate-ma-up flex-wrap overflow-hidden rounded-[20px] border border-divider bg-cream">
                     <div class="flex min-w-0 flex-[1_1_260px]">
                         @foreach ($bundle->items->take(2) as $item)
                             @php($photo = $item->variant->product->getFirstMedia('images'))
@@ -45,7 +45,7 @@
                         @if ($bundle->description)
                             <p class="mb-[18px] max-w-[52ch] text-[15.5px] leading-[1.64] text-lead">{{ $bundle->description }}</p>
                         @endif
-                        <ul class="mb-5 flex flex-wrap gap-2" aria-label="W zestawie">
+                        <ul class="mb-5 grid justify-items-start gap-2 sm:flex sm:flex-wrap" aria-label="W zestawie">
                             @foreach ($bundle->items as $item)
                                 <li class="rounded-full bg-sand-dark px-[13px] py-1.5 text-[12px] tracking-[0.06em] text-muted">{{ $item->variant->product->name }}</li>
                             @endforeach
@@ -59,14 +59,14 @@
                                 <span class="text-[15px] text-hint line-through"><span class="sr-only">osobno </span>{{ Money::format($full) }}</span>
                                 <span class="rounded-full bg-navy px-3 py-[5px] text-[11.5px] tracking-[0.1em] text-linen uppercase">taniej o {{ Money::format($full - $price) }}</span>
                             @endif
-                            <button class="ml-auto min-h-11 rounded-full bg-ink px-7 py-3.5 text-[14px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">
+                            <button class="ml-auto min-h-11 rounded-full bg-ink px-7 py-3.5 max-sm:ml-0 max-sm:basis-full text-[14px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">
                                 Do koszyka<span class="sr-only">: {{ $bundle->name }}</span>
                             </button>
                         </form>
                     </div>
                 </article>
             @empty
-                <div class="rounded-[4px] bg-sand-dark px-9 py-11 text-center">
+                <div class="rounded-[20px] bg-sand-dark px-9 py-11 text-center">
                     <h2 class="mb-2 font-serif text-[26px] font-normal">Zestawy wrócą, gdy wyjdą z pieca</h2>
                     <p class="mb-[22px] text-[15.5px] text-lead">Części z zestawów pojechały już do kogoś. Każdą rzecz ze sklepu kupisz też osobno.</p>
                     <a href="{{ route('shop.index') }}" class="inline-block rounded-full bg-ink px-7 py-3.5 text-[14px] text-linen hover:bg-rose hover:text-ink">Zobacz produkty</a>
@@ -75,7 +75,7 @@
         </div>
 
         @if ($wrapOffered)
-            <div class="mt-11 flex flex-wrap items-center gap-7 rounded-[4px] bg-sand-dark px-8 py-9">
+            <div class="mt-11 flex flex-wrap items-center gap-7 rounded-[20px] bg-sand-dark px-8 py-9">
                 <div class="min-w-0 flex-[1_1_320px]">
                     <h2 class="mb-2 font-serif text-[26px] font-normal">{{ $wrapHeading }}</h2>
                     @if ($wrapLead)

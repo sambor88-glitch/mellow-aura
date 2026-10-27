@@ -35,7 +35,7 @@
                     @foreach ($paragraphs as $paragraph)
                         <p class="mb-5 text-[16.5px] leading-[1.72] text-lead">{{ $paragraph }}</p>
                     @endforeach
-                    <div class="mt-3 flex flex-wrap gap-3.5">
+                    <div class="mt-3 cta-row">
                         <a href="{{ $workshopsUrl ?? route('content.contact') }}" class="rounded-full bg-ink px-[30px] py-[15px] text-[14px] text-linen transition-[background-color,transform] duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">{{ $workshopsUrl ? 'Terminy i cennik' : 'Zapytaj o warsztaty' }}</a>
                         @if ($firingUrl)
                             <a href="{{ $firingUrl }}" class="rounded-full border border-line-strong px-[30px] py-[15px] text-[14px] text-ink transition-[border-color,background-color,transform] duration-300 hover:border-ink hover:bg-sand-dark hover:text-ink active:scale-[.98]">Wypalę Twoje prace</a>
@@ -44,8 +44,8 @@
                 </div>
 
                 @if ($facts->isNotEmpty())
-                    <div class="min-w-[260px] flex-[0_1_300px]">
-                        <div class="rounded-[4px] border border-divider bg-cream p-7">
+                    <div class="min-w-0 basis-full sm:min-w-[260px] sm:flex-[0_1_300px]">
+                        <div class="rounded-[20px] border border-divider bg-cream p-7">
                             <h2 class="mb-[18px] text-[11px] tracking-[0.2em] text-gold uppercase">dobrze wiedzieć</h2>
                             <dl class="grid gap-4 text-[14.5px] leading-[1.6] text-lead">
                                 @foreach ($facts as $fact)
@@ -67,7 +67,7 @@
             <div class="mx-auto max-w-[1280px] px-7 pt-16">
                 <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3.5">
                     @foreach ($gallery as $photo)
-                        <img src="{{ $photo['url'] }}" alt="{{ $photo['alt'] }}" loading="lazy" width="600" height="600" class="block aspect-square w-full rounded-[4px] bg-line-soft object-cover">
+                        <img src="{{ $photo['url'] }}" alt="{{ $photo['alt'] }}" loading="lazy" width="600" height="600" class="block aspect-square w-full rounded-[20px] bg-line-soft object-cover">
                     @endforeach
                 </div>
             </div>

@@ -6,8 +6,8 @@ use App\Modules\Shared\ModuleServiceProvider;
 use App\Modules\Shared\Support\SitemapPages;
 
 /**
- * Firing other people's work. Before the holidays: the price list page and its editor in the panel.
- * The batch form and its list in the panel come after the holidays.
+ * Firing other people's work: the price list page with the batch form and its quote, the editor in the panel
+ * the mails about a reported batch and the list of batches in the panel, grouped into the weekly load.
  */
 class FiringServiceProvider extends ModuleServiceProvider
 {

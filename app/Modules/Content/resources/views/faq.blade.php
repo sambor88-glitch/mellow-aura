@@ -37,9 +37,9 @@
         @endif
 
         @if ($shippingMethods->isNotEmpty())
-            <section aria-labelledby="wysylka-i-zwroty" class="mt-12 rounded-[4px] border border-divider bg-cream px-[30px] py-8">
+            <section aria-labelledby="wysylka-i-zwroty" class="mt-12 rounded-[20px] border border-divider bg-cream px-[30px] py-8">
                 <h2 id="wysylka-i-zwroty" class="mb-5 font-serif text-[25px]">Wysyłka i zwroty</h2>
-                <div class="grid gap-px overflow-hidden rounded-[4px] border border-divider bg-divider">
+                <div class="grid gap-px overflow-hidden rounded-[20px] border border-divider bg-divider">
                     @foreach ($shippingMethods as $method)
                         <div class="flex items-baseline justify-between gap-4 bg-linen px-5 py-4">
                             <div class="min-w-0">
@@ -67,7 +67,7 @@
             </section>
         @endif
 
-        <div class="mt-12 flex flex-wrap items-center justify-between gap-6 rounded-[4px] border border-divider bg-cream p-8">
+        <div class="mt-12 flex flex-wrap items-center justify-between gap-6 rounded-[20px] border border-divider bg-cream p-8">
             <div class="min-w-0">
                 <h2 class="mb-1.5 font-serif text-[24px]">Nie ma tu Twojego pytania?</h2>
                 <p class="text-[15px] text-muted">{{ $phone ? 'Napisz na WhatsAppie — to najszybsza droga do mnie.' : 'Napisz do mnie — odpisuję zwykle tego samego dnia.' }}</p>

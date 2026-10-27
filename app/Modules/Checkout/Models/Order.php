@@ -6,10 +6,13 @@ use App\Modules\Checkout\Enums\OrderStatus;
 use App\Modules\Checkout\Enums\PaymentMethod;
 use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Support\ShippingMethods;
+use App\Modules\CustomOrders\Models\CustomOrderPayment;
 use App\Modules\Shared\Support\Money;
+use App\Modules\Workshops\Models\WorkshopBooking;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 #[Fillable([
     'number', 'status', 'name', 'email', 'phone', 'shipping_method', 'shipping_address', 'delivery_country', 'locker_code', 'tracking_number',
@@ -32,6 +35,28 @@ class Order extends Model
     public function withdrawals(): HasMany
     {
         return $this->hasMany(Withdrawal::class);
+    }
+
+    /**
+     * The seats this order books on a workshop date, when it was placed from the booking form (Workshops).
+     * Such an order has its own confirmation page and never touches the cart.
+     *
+     * @return HasOne<WorkshopBooking, $this>
+     */
+    public function workshopBooking(): HasOne
+    {
+        return $this->hasOne(WorkshopBooking::class);
+    }
+
+    /**
+     * The custom order this order pays for, when it was placed from a payment link (CustomOrders, MA-144).
+     * Such an order has its own confirmation page and never touches the cart.
+     *
+     * @return HasOne<CustomOrderPayment, $this>
+     */
+    public function customOrderPayment(): HasOne
+    {
+        return $this->hasOne(CustomOrderPayment::class);
     }
 
     /**

@@ -65,8 +65,10 @@ app/Modules/Catalog/
 Pierwsza fala: `Shared` (układ strony, komponenty Blade, formatowanie kwot, SEO), `Localization` (prefiks
 `/en/`, slugi per język, przełącznik — wchodzi przed modułami z tłumaczonymi treściami), `Settings`, `Admin`,
 `Catalog`, `Cart`, `Checkout`, `Payments`, `Shipping`, `MugConfigurator`, `Gifts`, `Content`, `Consent` (zgody na cookies i Google Analytics),
-`Monitoring` (niewysłane maile w panelu, alerty o błędach, pilnowanie kolejki i harmonogramu).
-Po świętach: `Workshops`, `CustomOrders`, `Firing`, `Journal`.
+`Monitoring` (niewysłane maile w panelu, alerty o błędach, pilnowanie kolejki i harmonogramu),
+`CustomOrders` (zamówienia indywidualne: formularz ze zdjęciami, panel z wyceną, zaliczka — przed startem
+z decyzji Macieja 26.10, epik MA-16).
+Po świętach: `Workshops`, `Firing`, `Journal`.
 
 ## Sesja i cache w plikach
 
@@ -239,6 +241,13 @@ npm install && npm run dev        # Vite na Macu, nie w kontenerze
 - Composer i Artisan tylko przez `./vendor/bin/sail`, żeby zależności liczyły się dla PHP 8.4.
 - Testy potrzebują Vite: działającego `npm run dev` albo zbudowanego `npm run build`. Bez żadnego z nich część testów
   stron pada z `ViteManifestNotFoundException`. CI przed testami robi `npm ci && npm run build`.
+- Test zakupu w przeglądarce (MA-198, `tests/e2e`, Playwright): sklep → koszyk → kasa z BLIK → potwierdzenie →
+  panel „Opłacone” → „Wysłane” → trzy maile w logu, na 1280 px i jako iPhone 13. Pada przy błędzie JS, `console.error`,
+  odpowiedzi 5xx i przewijaniu w bok. W CI to job `e2e` obok `tests`; przy błędzie zrzuty i log są w artefakcie `e2e-results`.
+  Lokalnie (na Macu, potrzebuje PHP 8.4 i zbudowanego `npm run build`):
+  `npx playwright install chromium`, potem `E2E_ADMIN_PASSWORD=<min. 12 znaków> npx playwright test`.
+  `tests/e2e/serve.sh` stawia osobną bazę SQLite w `storage/e2e` i `artisan serve` na porcie 8123 — Twojego `.env`
+  i bazy nie rusza, ale czyści `storage/logs/laravel.log`.
 
 ## Gałęzie i środowiska
 

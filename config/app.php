@@ -17,6 +17,10 @@ return [
 
     'noindex' => (bool) env('APP_NOINDEX', true),
 
+    // Shared\Http\Middleware\KeepShortWords: no one-letter word at the end of a line on the shop's pages. Off in the
+    // feature tests, so their assertions read plain spaces; tests/Feature/Shared/KeepShortWordsTest turns it on.
+    'keep_short_words' => (bool) env('APP_KEEP_SHORT_WORDS', true),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

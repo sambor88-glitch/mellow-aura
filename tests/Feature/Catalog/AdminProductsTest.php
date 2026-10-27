@@ -10,6 +10,7 @@ use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\PriceHistory;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
+use App\Modules\Settings\Database\Seeders\SettingsSeeder;
 use App\Modules\Settings\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -246,6 +247,41 @@ class AdminProductsTest extends TestCase
         $this->assertTrue($mug->needsDelivery());
 
         $this->actingAs($owner)->get('/panel/produkty')->assertSee('name="variants[1][sent_by_post]" value="1" checked', false);
+    }
+
+    public function test_a_workshop_voucher_names_its_workshop_and_the_seats_of_each_size(): void
+    {
+        $this->seed(SettingsSeeder::class);
+        $vouchers = Category::factory()->create(['name' => 'Vouchery', 'slug' => 'vouchery', 'group' => CategoryGroup::Workshops]);
+        $voucher = $this->product('Voucher na lepienie', 1, [22000, 42000], ['category_id' => $vouchers->id]);
+        [$one, $two] = $voucher->variants()->orderBy('id')->get()->all();
+        $this->product('Kubki malowane', 2, [7900]);
+        $owner = User::factory()->create();
+
+        $page = $this->actingAs($owner)->get('/panel/produkty')->assertOk()->getContent();
+        $this->assertSame(1, substr_count($page, 'name="workshop_code"'), 'Only the voucher names a workshop.');
+        $this->assertSame(3, substr_count($page, '][voucher_seats]"'), 'Two sizes of the voucher and one spare row, none for the mugs.');
+
+        $form = [
+            'form' => 'produkt-'.$voucher->id,
+            'name' => 'Voucher na lepienie',
+            'category_id' => $vouchers->id,
+            'is_published' => '1',
+            'workshop_code' => 'hand_building',
+            'variants' => [
+                ['id' => $one->id, 'label' => 'Dla jednej osoby', 'price' => '220', 'stock' => '', 'voucher_seats' => ''],
+                ['id' => $two->id, 'label' => 'Dla dwóch osób', 'price' => '420', 'stock' => '', 'voucher_seats' => '2'],
+            ],
+        ];
+
+        $this->actingAs($owner)->put('/panel/produkty/'.$voucher->id, $form)->assertRedirect('/panel/produkty#produkt-'.$voucher->id);
+
+        $this->assertSame('hand_building', $voucher->fresh()->workshop_code);
+        $this->assertSame([null, 2], $voucher->variants()->orderBy('id')->pluck('voucher_seats')->all());
+        $this->actingAs($owner)->get('/panel/produkty')->assertSee('<option value="hand_building" selected>Lepienie kubków</option>', false);
+
+        $this->actingAs($owner)->put('/panel/produkty/'.$voucher->id, ['workshop_code' => 'pottery_wheel', 'variants' => [[...$form['variants'][1], 'voucher_seats' => '7']], ...array_diff_key($form, ['workshop_code' => 1, 'variants' => 1])])
+            ->assertSessionHasErrorsIn('produkt-'.$voucher->id, ['workshop_code' => 'Wybierz warsztat z cennika', 'variants.0.voucher_seats' => 'Wpisz liczbę miejsc od 1 do 6']);
     }
 
     public function test_google_shopping_gets_the_kind_from_the_list_and_a_product_can_stay_out_of_it(): void
