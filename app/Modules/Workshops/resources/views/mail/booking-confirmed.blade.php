@@ -1,0 +1,34 @@
+<x-shared::mail.layout
+    :title="'Zapis na warsztat '.$order->number"
+    :preheader="$workshop.' · '.$date->dayLabel().', '.$date->timeLabel()"
+>
+    <h1 style="margin: 0 0 12px; font-family: Georgia, 'Times New Roman', serif; font-weight: normal; font-size: 30px; line-height: 1.15; color: #2F2620;">Dziękuję. Do zobaczenia w pracowni.</h1>
+    <p style="margin: 0 0 22px; color: #5C5043;">
+        Zapis <strong style="font-weight: 600; color: #2F2620;">{{ $order->number }}</strong> jest opłacony{{ $booking->seats > 1 ? ' — miejsca są Wasze' : ' — miejsce jest Twoje' }}.
+    </p>
+
+    @include('workshops::mail.partials.booking')
+
+    <p style="margin: 0 0 4px; color: #5C5043;">
+        @if ($booking->remindsDayBefore())
+            Dzień przed warsztatem przypomnę Ci o nim mailem.
+        @endif
+        @if ($contactEmail)
+            Masz pytanie albo coś Ci wypadło? Odpisz na tego maila — trafi prosto do mnie.
+        @else
+            Masz pytanie albo coś Ci wypadło? Napisz do mnie przez stronę i podaj numer {{ $order->number }}.
+        @endif
+        @if ($contactPhone)
+            Możesz też napisać na WhatsAppie: {{ $contactPhone }}.
+        @endif
+    </p>
+    <p style="margin: 12px 0 0; font-size: 13.5px; color: #5C5043;">
+        W załączniku jest regulamin{{ $order->terms_version ? ' ('.$order->terms_version.')' : '' }}.
+    </p>
+    <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">Kasia</p>
+
+    <x-slot:footer>
+        MellowAura{{ $city ? ' · '.$city : '' }}<br>
+        Potwierdzenie zapisu na warsztat {{ $order->number }}.
+    </x-slot:footer>
+</x-shared::mail.layout>

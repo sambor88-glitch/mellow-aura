@@ -18,8 +18,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property BookingStatus $status
  * @property CarbonImmutable $expires_at
  * @property ?CarbonImmutable $confirmed_at
+ * @property ?CarbonImmutable $reminded_at
  */
-#[Fillable(['workshop_date_id', 'order_id', 'seats', 'status', 'expires_at', 'confirmed_at'])]
+#[Fillable(['workshop_date_id', 'order_id', 'seats', 'status', 'expires_at', 'confirmed_at', 'reminded_at'])]
 class WorkshopBooking extends Model
 {
     /**
@@ -27,6 +28,9 @@ class WorkshopBooking extends Model
      * page. A payment that comes later still gets the seats if they are free (ConfirmBooking).
      */
     public const HOLD_MINUTES = 15;
+
+    /** The reminder goes out this many hours before the start (Actions\SendReminders). */
+    public const REMIND_HOURS_BEFORE = 24;
 
     /**
      * Bookings whose seats are taken right now: paid, or waiting for a payment that may still come.
@@ -39,6 +43,15 @@ class WorkshopBooking extends Model
         $query->where(fn (Builder $query) => $query
             ->where('status', BookingStatus::Confirmed)
             ->orWhere(fn (Builder $query) => $query->where('status', BookingStatus::Held)->where('expires_at', '>', now())));
+    }
+
+    /**
+     * Whether a reminder will go out: only for seats paid before the reminder time, since a booking made for
+     * tomorrow already has everything in the fresh confirmation.
+     */
+    public function remindsDayBefore(): bool
+    {
+        return ($this->confirmed_at ?? now())->lte($this->workshopDate->starts_at->subHours(self::REMIND_HOURS_BEFORE));
     }
 
     /**
@@ -69,6 +82,7 @@ class WorkshopBooking extends Model
             'status' => BookingStatus::class,
             'expires_at' => 'immutable_datetime',
             'confirmed_at' => 'immutable_datetime',
+            'reminded_at' => 'immutable_datetime',
         ];
     }
 }
