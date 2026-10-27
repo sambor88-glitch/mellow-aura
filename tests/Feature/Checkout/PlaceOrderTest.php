@@ -164,11 +164,18 @@ class PlaceOrderTest extends TestCase
             ->assertSeeInOrder(['Adres e-mail bez małpy', 'Popraw pola wyżej i wpisz nowy kod BLIK', 'Płacę'])
             ->assertDontSee('value="123456"', false);
 
+        // One sentence at the code, even when the code was missing too.
+        $this->from('/zamowienie')
+            ->followingRedirects()
+            ->post('/zamowienie', $this->form(['email' => '', 'blik_code' => '']))
+            ->assertSee('>Popraw pola wyżej i wpisz nowy kod BLIK</p>', false)
+            ->assertDontSee('>Wpisz 6-cyfrowy kod z aplikacji banku</p>', false);
+
         // A wrong code alone says what is wrong with the code.
         $this->from('/zamowienie')
             ->followingRedirects()
             ->post('/zamowienie', $this->form(['blik_code' => '12']))
-            ->assertSee('Wpisz 6-cyfrowy kod z aplikacji banku')
+            ->assertSee('>Wpisz 6-cyfrowy kod z aplikacji banku</p>', false)
             ->assertDontSee('Popraw pola wyżej');
 
         // Without a mistake the field only says how long the code lives.

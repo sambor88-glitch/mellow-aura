@@ -226,8 +226,8 @@
                         @if ($blikCode && $paymentMethods->contains(PaymentMethod::Blik))
                             @php
                                 // The code is never flashed back: after any mistake elsewhere it has to be typed again.
-                                $blikRetype = $errors->any() && ! $errors->has('blik_code') ? $t('blik_retype') : null;
-                                $blikError = $errors->first('blik_code') ?: $blikRetype;
+                                $elsewhere = collect($errors->keys())->contains(fn (string $field) => $field !== 'blik_code');
+                                $blikError = $elsewhere ? $t('blik_retype') : $errors->first('blik_code');
                                 $blikNote = $blikError ?: $t('blik_hint');
                             @endphp
                             <div x-show="payment === 'blik'" x-transition:enter="transition duration-500 ease-clay" x-transition:enter-start="opacity-0 blur-sm -translate-y-2"
