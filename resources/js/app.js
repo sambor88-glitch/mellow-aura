@@ -9,6 +9,7 @@ import buyBar from './buy-bar';
 import cart from './cart';
 import checkout from './checkout';
 import consentBanner from './consent';
+import debugTaps, { debugVariant } from './debug-taps';
 import favorites from './favorites';
 import firingQuote from './firing';
 import stickyHeader from './header';
@@ -35,7 +36,13 @@ Alpine.data('pairUpload', pairUpload);
 Alpine.data('photoPicker', photoPicker);
 Alpine.data('stickyHeader', stickyHeader);
 Alpine.start();
-aura();
+const debug = debugVariant();
+if (debug) {
+    debugTaps(debug);
+}
+if (debug !== 'still') {
+    aura();
+}
 trackPage();
 trackClicks();
 rememberLocaleChoice();
