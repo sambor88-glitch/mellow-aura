@@ -86,7 +86,7 @@ class BankTransferPaymentTest extends TestCase
         Mail::fake();
 
         $this->travel(5)->minutes();
-        $this->actingAs(User::factory()->helper()->create(['name' => 'Ola']))
+        $this->actingAs(User::factory()->create(['name' => 'Ola']))
             ->patch('/panel/zamowienia/'.$order->number.'/wplata')
             ->assertRedirect('/panel/zamowienia/'.$order->number)
             ->assertSessionHas('panel_status', 'Ta wpłata jest już zapisana — nic się nie zmieniło.');
@@ -131,6 +131,25 @@ class BankTransferPaymentTest extends TestCase
         $this->assertSame('p24-123', $order->payment_provider_id);
         $this->assertNull($order->payment_confirmed_by);
         $this->assertSame(2, $vase->fresh()->stock);
+        Mail::assertNothingQueued();
+    }
+
+    public function test_a_helper_sees_no_button_and_cannot_mark_the_transfer(): void
+    {
+        $vase = $this->variant(stock: 3);
+        $order = $this->order($vase);
+        Mail::fake();
+        $this->actingAs(User::factory()->helper()->create());
+
+        $this->get('/panel/zamowienia/'.$order->number)
+            ->assertOk()
+            ->assertDontSee('Wpłata doszła')
+            ->assertDontSee(route('admin.orders.paid', $order))
+            ->assertSee('Wpłatę zaznacza właścicielka');
+        $this->patch('/panel/zamowienia/'.$order->number.'/wplata')->assertForbidden();
+
+        $this->assertSame(PaymentStatus::Pending, $order->fresh()->payment_status);
+        $this->assertSame(3, $vase->fresh()->stock);
         Mail::assertNothingQueued();
     }
 

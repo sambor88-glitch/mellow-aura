@@ -1,3 +1,4 @@
+@use('App\Modules\Admin\Support\PanelAccess')
 @use('App\Modules\Checkout\Enums\OrderStatus')
 @use('App\Modules\Checkout\Enums\PaymentMethod')
 @use('App\Modules\Checkout\Enums\PaymentStatus')
@@ -125,7 +126,7 @@
                     <p class="mt-3 text-[13px] text-error">{{ $message }}</p>
                 @enderror
 
-                @if (! $paid && $order->payment_method === PaymentMethod::BankTransfer && $order->payment_status === PaymentStatus::Pending)
+                @if (! $paid && $order->payment_method === PaymentMethod::BankTransfer && $order->payment_status === PaymentStatus::Pending && PanelAccess::allows(auth()->user(), 'admin.orders.paid'))
                     {{-- No gateway confirms a bank transfer: Kasia marks it once the money is on her account (MA-216). --}}
                     <div x-data="{ asking: false, sending: false }" x-on:pageshow.window="sending = false" class="mt-4 grid gap-2.5 border-t border-divider pt-4">
                         <p class="text-[13px] leading-[1.55] text-label">Przelew tradycyjny — sprawdź na koncie, czy przyszło {{ $order->money($order->total_gross) }} z numerem {{ $order->number }} w tytule.</p>
@@ -139,7 +140,9 @@
                         </form>
                     </div>
                 @elseif (! $paid)
-                    <p class="mt-3 text-[13px] leading-[1.55] text-label">Status zmienisz, gdy zamówienie będzie opłacone.</p>
+                    <p class="mt-3 text-[13px] leading-[1.55] text-label">{{ $order->payment_method === PaymentMethod::BankTransfer && $order->payment_status === PaymentStatus::Pending
+                        ? 'Czeka na przelew. Wpłatę zaznacza właścicielka, gdy pieniądze dojdą na konto.'
+                        : 'Status zmienisz, gdy zamówienie będzie opłacone.' }}</p>
                 @else
                     <div class="mt-4 grid gap-3 border-t border-divider pt-4">
                         @if ($travels && in_array($order->status, [OrderStatus::InProgress, OrderStatus::Problem], true))
