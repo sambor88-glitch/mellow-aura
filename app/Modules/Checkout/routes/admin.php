@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/zamowienia', [OrderController::class, 'index'])->name('orders.index');
 Route::get('/zamowienia/{order:number}', [OrderController::class, 'show'])->name('orders.show');
 Route::patch('/zamowienia/{order:number}/status', [OrderController::class, 'status'])->name('orders.status');
+Route::patch('/zamowienia/{order:number}/wplata', [OrderController::class, 'paid'])->name('orders.paid');
 Route::get('/zamowienia/{order:number}/certyfikaty', CertificateController::class)->name('orders.certificates');
 Route::get('/odstapienia', [WithdrawalController::class, 'index'])->name('withdrawals.index');
 Route::get('/reklamacje', [ComplaintController::class, 'index'])->name('complaints.index');
