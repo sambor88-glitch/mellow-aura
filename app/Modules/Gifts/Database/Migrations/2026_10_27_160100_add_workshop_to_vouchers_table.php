@@ -15,7 +15,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('vouchers', function (Blueprint $table) {
-            $table->string('workshop_code', 40)->nullable()->after('dedication');
+            // Indexed: the booking page asks whether any voucher is for its workshop.
+            $table->string('workshop_code', 40)->nullable()->index()->after('dedication');
             $table->unsignedTinyInteger('seats')->nullable()->after('workshop_code');
         });
 
@@ -34,6 +35,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('vouchers', function (Blueprint $table) {
+            $table->dropIndex(['workshop_code']);
             $table->dropColumn(['workshop_code', 'seats']);
         });
     }

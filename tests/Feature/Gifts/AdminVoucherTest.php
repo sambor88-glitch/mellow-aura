@@ -7,6 +7,7 @@ use App\Modules\Gifts\Models\Voucher;
 use App\Modules\Settings\Database\Seeders\SettingsSeeder;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\ViewErrorBag;
 use Tests\TestCase;
 
 /**
@@ -38,6 +39,7 @@ class AdminVoucherTest extends TestCase
             ->assertSeeInOrder(['Sprawdź voucher', 'MA-7KQ2-9XHT', 'Ważny', 'na „Warsztat dla pary”, miejsc: 1', '<option value="couples" selected>Warsztat dla pary</option>', 'value="2027-03-01"', 'Zapisz voucher'], false);
 
         $this->actingAs($owner)->get(route('admin.gifts.edit', ['kod' => 'MA-ZZZZ-ZZZZ']))->assertSee('Nie ma vouchera z takim kodem.');
+        $this->actingAs($owner)->get(route('admin.gifts.edit', ['kod' => ['MA-7KQ2-9XHT']]))->assertOk()->assertDontSee('Nie ma vouchera z takim kodem.');
         $this->actingAs($owner)->get(route('admin.gifts.edit'))->assertSee('Sprawdź voucher')->assertDontSee('Nie ma vouchera z takim kodem.');
     }
 
@@ -77,5 +79,48 @@ class AdminVoucherTest extends TestCase
             ]);
 
         $this->assertSame(['hand_building', 1], [$voucher->fresh()->workshop_code, $voucher->fresh()->seats]);
+
+        // The form keeps what she typed.
+        $this->from($page)->put(route('admin.gifts.voucher.update', $voucher), ['form' => 'voucher-'.$voucher->id, 'workshop_code' => 'couples', 'seats' => '9', 'valid_until' => '2027-02-28']);
+        $this->get($page)
+            ->assertSee('<option value="couples" selected>', false)
+            ->assertSee('name="seats" value="9"', false)
+            ->assertSee('value="2027-02-28"', false);
+    }
+
+    public function test_a_voucher_booked_by_hand_is_marked_used_and_stops_booking_on_the_site(): void
+    {
+        $voucher = Voucher::factory()->create(['workshop_code' => 'hand_building', 'seats' => 1, 'valid_until' => '2027-01-31']);
+        $owner = User::factory()->create();
+        $page = route('admin.gifts.edit', ['kod' => $voucher->code]);
+        $form = ['workshop_code' => 'hand_building', 'seats' => '1', 'valid_until' => '2027-01-31'];
+
+        $this->actingAs($owner)->get($page)->assertSee('wykorzystany — zapisałam ręcznie');
+        $this->actingAs($owner)->from($page)->put(route('admin.gifts.voucher.update', $voucher), [...$form, 'redeemed' => '1']);
+
+        $usedAt = $voucher->fresh()->redeemed_at;
+        $this->assertNotNull($usedAt);
+        $this->actingAs($owner)->get($page)->assertSeeInOrder(['Wykorzystany', 'oznaczony ręcznie']);
+
+        // Saving again keeps the day it was used; unticking gives it back.
+        $this->travel(2)->days();
+        $this->actingAs($owner)->from($page)->put(route('admin.gifts.voucher.update', $voucher), [...$form, 'redeemed' => '1']);
+        $this->assertTrue($usedAt->equalTo($voucher->fresh()->redeemed_at));
+        $this->actingAs($owner)->from($page)->put(route('admin.gifts.voucher.update', $voucher), $form);
+        $this->assertNull($voucher->fresh()->redeemed_at);
+    }
+
+    public function test_a_helper_sees_the_voucher_on_the_order_but_no_form_to_change_it(): void
+    {
+        $voucher = Voucher::factory()->create(['workshop_code' => 'hand_building', 'seats' => 1]);
+
+        $this->actingAs(User::factory()->helper()->create())
+            ->put(route('admin.gifts.voucher.update', $voucher), ['workshop_code' => '', 'valid_until' => '2027-01-31'])
+            ->assertForbidden();
+
+        $this->assertSame('hand_building', $voucher->fresh()->workshop_code);
+        $card = view('gifts::admin.voucher', ['voucher' => $voucher, 'errors' => new ViewErrorBag])->render();
+        $this->assertStringContainsString('na „Lepienie kubków”, miejsc: 1', $card);
+        $this->assertStringNotContainsString(route('admin.gifts.voucher.update', $voucher), $card);
     }
 }

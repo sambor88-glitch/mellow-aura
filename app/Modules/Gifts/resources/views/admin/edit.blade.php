@@ -132,7 +132,7 @@
 
             <section id="sprawdz-voucher" class="{{ $card }}">
                 <h2 class="{{ $heading }}">Sprawdź voucher</h2>
-                <p class="{{ $intro }}">Wpisz kod z vouchera: zobaczysz, czy jest ważny i czy ktoś się nim już zapisał. Tu też uzupełnisz warsztat i miejsca albo przedłużysz ważność.</p>
+                <p class="{{ $intro }}">Wpisz kod z vouchera: zobaczysz, czy jest ważny i czy ktoś się nim już zapisał. Tu też uzupełnisz warsztat i miejsca, przedłużysz ważność albo oznaczysz voucher jako wykorzystany, gdy zapisujesz kogoś ręcznie — wtedy kod nie zadziała już na stronie.</p>
                 <form method="get" action="{{ route('admin.gifts.edit') }}#sprawdz-voucher" class="flex flex-wrap gap-2.5">
                     <label for="sprawdz-kod" class="sr-only">Kod vouchera</label>
                     <input id="sprawdz-kod" name="kod" value="{{ $voucherCode }}" maxlength="30" autocomplete="off" spellcheck="false" placeholder="MA-7KQ2-9XHT"

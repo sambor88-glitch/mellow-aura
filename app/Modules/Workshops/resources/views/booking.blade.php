@@ -17,7 +17,7 @@
         <h1 class="mb-4 font-serif text-[length:clamp(40px,5.6vw,80px)] leading-[.96] font-light tracking-[-0.02em] text-balance">{{ $workshop['name'] }}</h1>
         <p class="mb-10 max-w-[52ch] text-[16.5px] text-lead">
             <time datetime="{{ $date->starts_at->toIso8601String() }}">{{ $when }}</time>@if ($workshop['duration_label']) &middot; {{ $workshop['duration_label'] }}@endif.
-            Miejsce jest Twoje, gdy tylko bank potwierdzi płatność.
+            Miejsce jest Twoje, gdy tylko bank potwierdzi płatność{{ $paymentMethods->contains(PaymentMethod::Voucher) ? ' — albo od razu, gdy zapisujesz się z voucherem' : '' }}.
         </p>
 
         @if ($seatsLeft === 0)
@@ -162,7 +162,7 @@
                             <span x-show="payment === @js($voucher)" @if ($selectedPayment !== $voucher) x-cloak @endif>Zapisuję się z voucherem</span>
                         </button>
                         <p class="mt-3 text-center text-[12px] leading-[1.5] text-hint">
-                            Trzymam miejsce {{ WorkshopBooking::HOLD_MINUTES }} minut na płatność.
+                            <span x-show="payment !== @js($voucher)" @if ($selectedPayment === $voucher) x-cloak @endif>Trzymam miejsce {{ WorkshopBooking::HOLD_MINUTES }} minut na płatność.</span>
                             @if ($location) Pracownia: {{ $location }}. @endif Dokładny adres podaję po zapisie.
                         </p>
                     </div>
