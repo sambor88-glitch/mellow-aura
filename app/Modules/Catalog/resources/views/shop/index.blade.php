@@ -1,3 +1,4 @@
+@use('App\Modules\Catalog\Support\ShopShortcuts')
 @use('App\Modules\Localization\Support\Locales')
 @use('App\Modules\Shared\Support\DispatchTime')
 @use('App\Modules\Shared\Support\Seo')
@@ -20,15 +21,7 @@
         default => __('catalog::shop.description', ['shipping' => $shipping]),
     });
 
-    // A shortcut shows up once its page exists in the language of this page.
-    $shortcuts = array_filter([
-        ['mug', 'mug.index'],
-        ['bundles', 'bundles.index'],
-        ['gift_finder', 'gifts.index'],
-        ['scarf', 'content.scarf'],
-        ['imprint', 'content.imprint'],
-        ['custom_orders', 'custom-orders.index'],
-    ], fn (array $shortcut) => Locales::has($shortcut[1], Locales::current()));
+    $shortcuts = array_filter(ShopShortcuts::ROUTES, fn (string $route) => Locales::has($route, Locales::current()));
 @endphp
 
 <x-shared::layout :title="$title" :description="$description" :canonical="$baseUrl" :noindex="$search !== ''">
@@ -61,10 +54,15 @@
             <section x-show="! favorites" aria-labelledby="shop-shortcuts" class="mb-8 md:mb-10">
                 <h2 id="shop-shortcuts" class="mb-2.5 text-[11px] tracking-[0.14em] text-hint uppercase">{{ __('catalog::shop.shortcuts_heading') }}</h2>
                 <div class="-mx-7 flex snap-x snap-mandatory scroll-px-7 gap-2.5 overflow-x-auto px-7 pb-1 [scrollbar-width:none] md:mx-0 md:flex-wrap md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
-                    @foreach ($shortcuts as [$label, $route])
+                    @foreach ($shortcuts as $label => $route)
+                        @php
+                            $note = $settings->get(ShopShortcuts::noteKey($label, Locales::current()));
+                        @endphp
                         <a href="{{ route($route) }}" class="flex w-[156px] shrink-0 snap-start flex-col rounded-[18px] border border-line bg-cream/60 px-3.5 py-3 text-ink transition-[border-color,background-color,transform] duration-300 hover:border-ink hover:text-ink active:scale-[.98] md:w-[178px]">
-                            <span class="text-[14px] leading-[1.25] font-medium">{{ __('catalog::shop.shortcut_'.$label) }}</span>
-                            <span class="mt-1 text-[12.5px] leading-[1.3] text-muted">{{ __('catalog::shop.shortcut_'.$label.'_note') }}&nbsp;<span aria-hidden="true" class="text-lead">→</span></span>
+                            <span class="text-[14px] leading-[1.25] font-medium">{{ __('catalog::shop.shortcut_'.$label) }}@if (! $note)&nbsp;<span aria-hidden="true" class="font-normal text-lead">→</span>@endif</span>
+                            @if ($note)
+                                <span class="mt-1 text-[12.5px] leading-[1.3] text-muted">{{ $note }}&nbsp;<span aria-hidden="true" class="text-lead">→</span></span>
+                            @endif
                         </a>
                     @endforeach
                 </div>

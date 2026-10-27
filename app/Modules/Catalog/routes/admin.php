@@ -19,4 +19,5 @@ Route::post('/produkty/{product}/zdjecia/{media}/przesun', [ProductPhotoControll
 Route::delete('/produkty/{product}/zdjecia/{media}', [ProductPhotoController::class, 'destroy'])->whereNumber(['product', 'media'])->scopeBindings()->name('products.photos.destroy');
 
 Route::get('/kategorie', [CategoryController::class, 'index'])->name('categories.index');
+Route::put('/kategorie/skroty', [CategoryController::class, 'shortcuts'])->name('categories.shortcuts');
 Route::put('/kategorie/{category}', [CategoryController::class, 'update'])->whereNumber('category')->name('categories.update');
