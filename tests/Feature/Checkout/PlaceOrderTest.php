@@ -153,25 +153,80 @@ class PlaceOrderTest extends TestCase
         $this->assertSame(0, Order::count());
     }
 
-    public function test_an_address_has_to_be_whole_and_a_nip_has_to_add_up(): void
+    public function test_the_courier_needs_the_whole_address_and_a_nip_has_to_add_up(): void
     {
+        $this->withCourier();
         $this->postJson('/koszyk', ['variant_id' => $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3)->id]);
+        $courier = ['shipping_method' => 'courier', 'expected_total' => 25900];
 
         $this->from('/zamowienie')
-            ->post('/zamowienie', $this->form(['street' => 'Długa 1', 'invoice_nip' => '123-456-78-90']))
+            ->post('/zamowienie', $this->form($courier))
+            ->assertSessionHasErrors([
+                'street' => 'Wpisz ulicę i numer — bez nich kurier nie trafi',
+                'postal_code' => 'Wpisz kod pocztowy, np. 30-001',
+                'city' => 'Wpisz miasto',
+            ]);
+
+        $this->from('/zamowienie')
+            ->post('/zamowienie', $this->form([...$courier, 'street' => 'Długa 1', 'invoice_nip' => '123-456-78-90']))
             ->assertSessionHasErrors(['postal_code', 'city', 'invoice_nip' => 'Ten NIP się nie zgadza — sprawdź cyfry']);
 
         $this->from('/zamowienie')
-            ->post('/zamowienie', $this->form(['street' => 'Długa 1', 'postal_code' => '300-01', 'city' => 'Kraków']))
+            ->post('/zamowienie', $this->form([...$courier, 'street' => 'Długa 1', 'postal_code' => '300-01', 'city' => 'Kraków']))
             ->assertSessionHasErrors(['postal_code' => 'Kod pocztowy wpisz jak na kopercie, np. 30-001']);
+        $this->assertSame(0, Order::count());
 
         // A phone's number pad has no dash, so the code typed as digits alone is fine.
-        $this->post('/zamowienie', $this->form(['street' => 'Długa 1', 'postal_code' => '30001', 'city' => 'Kraków', 'invoice_nip' => '111-111-11-11']))
+        $this->post('/zamowienie', $this->form([...$courier, 'street' => 'Długa 1', 'postal_code' => '30001', 'city' => 'Kraków', 'invoice_nip' => '111-111-11-11']))
             ->assertRedirect('/zamowienie/potwierdzenie');
 
-        $order = Order::where('payment_status', PaymentStatus::Paid)->sole();
+        $order = Order::sole();
+        $this->assertSame('courier', $order->shipping_method);
         $this->assertEquals(['street' => 'Długa 1', 'postal_code' => '30-001', 'city' => 'Kraków'], $order->shipping_address);
         $this->assertSame('1111111111', $order->invoice_nip);
+    }
+
+    public function test_the_parcel_locker_and_pickup_at_the_studio_need_no_address(): void
+    {
+        $this->withCourier();
+        $vase = $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3);
+
+        foreach ([['parcel_locker', 25500], ['studio_pickup', 23900]] as [$method, $total]) {
+            $this->flushSession();
+            $this->postJson('/koszyk', ['variant_id' => $vase->id]);
+            // A half address typed for the courier before switching away is left out, not held against her.
+            $this->post('/zamowienie', $this->form(['shipping_method' => $method, 'expected_total' => $total, 'street' => 'Długa 1']))
+                ->assertSessionHasNoErrors()
+                ->assertRedirect('/zamowienie/potwierdzenie');
+        }
+
+        $this->assertSame(
+            [['parcel_locker', null], ['studio_pickup', null]],
+            Order::orderBy('id')->get()->map(fn (Order $order) => [$order->shipping_method, $order->shipping_address])->all(),
+        );
+    }
+
+    public function test_the_checkout_shows_the_address_with_the_courier_and_its_errors_in_place(): void
+    {
+        $this->withCourier();
+        $this->postJson('/koszyk', ['variant_id' => $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3)->id]);
+
+        $courierBlock = '/x-show="shipping === \'courier\'"\s*(x-cloak)?\s*class/';
+
+        $page = $this->get('/zamowienie')
+            ->assertSeeInOrder(['Faktura na firmę, dopisek do paczki', 'InPost Kurier', 'Adres dostawy dla kuriera', 'autocomplete="address-line1"', 'autocomplete="postal-code"', 'autocomplete="address-level2"'], false)
+            ->getContent();
+        $this->assertMatchesRegularExpression($courierBlock, $page);
+        preg_match($courierBlock, $page, $hidden);
+        $this->assertSame('x-cloak', $hidden[1] ?? null);
+
+        $page = $this->from('/zamowienie')
+            ->followingRedirects()
+            ->post('/zamowienie', $this->form(['shipping_method' => 'courier', 'expected_total' => 25900]))
+            ->assertSeeInOrder(['InPost Kurier', 'Adres dostawy dla kuriera', 'Wpisz ulicę i numer — bez nich kurier nie trafi'])
+            ->getContent();
+        preg_match($courierBlock, $page, $shown);
+        $this->assertSame('', $shown[1] ?? '');
     }
 
     public function test_a_rejected_blik_code_keeps_the_cart_and_asks_to_try_again(): void
@@ -271,6 +326,15 @@ class PlaceOrderTest extends TestCase
      * @param  array<string, mixed>  $overrides
      * @return array<string, mixed>
      */
+    private function withCourier(): void
+    {
+        Setting::where('key', 'shipping_methods')->sole()->update(['value' => [
+            ['code' => 'parcel_locker', 'label' => 'InPost Paczkomat', 'price_gross' => 1600],
+            ['code' => 'courier', 'label' => 'InPost Kurier', 'price_gross' => 2000],
+            ['code' => 'studio_pickup', 'label' => 'Odbiór w pracowni', 'price_gross' => 0],
+        ]]);
+    }
+
     private function form(array $overrides = []): array
     {
         return [

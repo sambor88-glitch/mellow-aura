@@ -7,8 +7,8 @@
     $t = fn (string $key, array $replace = []) => __('checkout::checkout.'.$key, $replace);
     // A sentence with markup in it: the sentence is escaped, the markup put in place of its placeholder.
     $withLink = fn (string $sentence, string $placeholder, string $html) => str_replace($placeholder, $html, e($sentence));
-    // Vouchers sent as PDFs alone need no address or note for the parcel, only an invoice may.
-    $more = $needsDelivery ? ['street', 'postal_code', 'city', 'invoice_nip', 'note'] : ['invoice_nip'];
+    // Vouchers sent as PDFs alone need no note for the parcel, only an invoice may. The address sits with the courier.
+    $more = $needsDelivery ? ['invoice_nip', 'note'] : ['invoice_nip'];
     $moreOpen = $errors->hasAny($more) || collect($more)->contains(fn (string $field) => filled(old($field)));
     $radio = 'group flex cursor-pointer items-center gap-3.5 rounded-[18px] border border-line bg-cream/60 px-[18px] transition-[border-color,background-color,transform] duration-300 hover:-translate-y-0.5 hover:border-ink has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy';
 @endphp
@@ -50,13 +50,6 @@
                                 <span aria-hidden="true" class="group-open:hidden">+</span><span aria-hidden="true" class="hidden group-open:inline">−</span>
                             </summary>
                             <div class="mt-3.5 grid animate-ma-up-quick gap-[13px]">
-                                @if ($needsDelivery)
-                                    <x-shared::field name="street" :label="$t('street')" autocomplete="street-address" />
-                                    <div class="flex flex-wrap gap-[13px]">
-                                        <x-shared::field name="postal_code" :label="$t('postal_code')" autocomplete="postal-code" inputmode="numeric" placeholder="30-001" class="flex-[0_1_130px]" />
-                                        <x-shared::field name="city" :label="$t('city')" autocomplete="address-level2" class="flex-[1_1_150px]" />
-                                    </div>
-                                @endif
                                 <x-shared::field name="invoice_nip" :label="$t('nip')" inputmode="numeric" />
                                 @if ($needsDelivery)
                                     <x-shared::field name="note" :label="$t('note')" :placeholder="$t('note_placeholder')" />
@@ -145,6 +138,18 @@
                                             <p x-text="lockerAddress" aria-live="polite" class="min-w-0 flex-1 text-[13px] text-label"></p>
                                         </div>
                                     @endif
+                                </div>
+                            @endif
+
+                            {{-- The courier needs a door; the request ignores the address for every other way. --}}
+                            @if ($methods->has('courier'))
+                                <div x-show="shipping === 'courier'" @if ($selectedShipping !== 'courier') x-cloak @endif class="mt-4 grid gap-[13px] border-t border-line pt-4">
+                                    <p class="text-[13.5px] text-brown">{{ $t('courier_address') }}</p>
+                                    <x-shared::field name="street" :label="$t('street')" autocomplete="address-line1" />
+                                    <div class="flex flex-wrap gap-[13px]">
+                                        <x-shared::field name="postal_code" :label="$t('postal_code')" autocomplete="postal-code" inputmode="numeric" placeholder="30-001" class="flex-[0_1_130px]" />
+                                        <x-shared::field name="city" :label="$t('city')" autocomplete="address-level2" class="flex-[1_1_150px]" />
+                                    </div>
                                 </div>
                             @endif
                         </fieldset>
