@@ -7,7 +7,8 @@ use Closure;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * The Instagram card: the Behold.so JSON feed address and an optional hashtag the posts must have.
+ * The Instagram card: the Behold.so JSON feed address, an optional hashtag the posts must have and the point
+ * of each photo that stays in its square tile.
  */
 class SaveInstagramFeedRequest extends FormRequest
 {
@@ -31,6 +32,9 @@ class SaveInstagramFeedRequest extends FormRequest
                 }
             }],
             'instagram_feed_hashtag' => ['nullable', 'string', 'max:60', 'regex:/^#?[\p{L}\p{N}_]+$/u'],
+            'focus' => ['nullable', 'array'],
+            'focus.*.x' => ['required', 'integer', 'between:0,100'],
+            'focus.*.y' => ['required', 'integer', 'between:0,100'],
         ];
     }
 
@@ -43,6 +47,8 @@ class SaveInstagramFeedRequest extends FormRequest
             'instagram_feed_url.max' => 'Ten adres jest za długi — skopiuj go z Behold jeszcze raz',
             'instagram_feed_hashtag.max' => 'Hashtag zmieszczę do :max znaków',
             'instagram_feed_hashtag.regex' => 'Wpisz jeden hashtag bez spacji, np. #zpracowni',
+            'focus.*.x' => 'Przesuń suwak kadru jeszcze raz',
+            'focus.*.y' => 'Przesuń suwak kadru jeszcze raz',
         ];
     }
 
@@ -57,6 +63,16 @@ class SaveInstagramFeedRequest extends FormRequest
             'instagram_feed_url' => $this->validated('instagram_feed_url'),
             'instagram_feed_hashtag' => $hashtag === '' ? null : '#'.$hashtag,
         ];
+    }
+
+    /**
+     * @return array<int, array{x: int, y: int}> keyed by the post id
+     */
+    public function focus(): array
+    {
+        return collect((array) $this->validated('focus', []))
+            ->map(fn (array $point) => ['x' => (int) $point['x'], 'y' => (int) $point['y']])
+            ->all();
     }
 
     protected function prepareForValidation(): void

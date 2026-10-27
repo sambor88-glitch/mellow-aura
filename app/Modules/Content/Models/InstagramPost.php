@@ -11,12 +11,21 @@ use Illuminate\Support\Str;
  * A post from Kasia's Instagram with its photo saved on the shop's disk, so a visitor's browser never asks
  * Instagram or the feed provider for it.
  */
-#[Fillable(['external_id', 'permalink', 'caption', 'alt_text', 'image_path', 'posted_at'])]
+#[Fillable(['external_id', 'permalink', 'caption', 'alt_text', 'image_path', 'focus_x', 'focus_y', 'posted_at'])]
 class InstagramPost extends Model
 {
     public function imageUrl(): string
     {
         return Storage::disk('public')->url($this->image_path);
+    }
+
+    /**
+     * Where the square tile cuts the photo: a portrait post loses its top and bottom, so Kasia moves the point
+     * that has to stay in view. A new post keeps the middle.
+     */
+    public function objectPosition(): string
+    {
+        return ($this->focus_x ?? 50).'% '.($this->focus_y ?? 50).'%';
     }
 
     /**
@@ -37,6 +46,8 @@ class InstagramPost extends Model
     protected function casts(): array
     {
         return [
+            'focus_x' => 'integer',
+            'focus_y' => 'integer',
             'posted_at' => 'datetime',
         ];
     }
