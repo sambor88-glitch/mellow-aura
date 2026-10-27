@@ -4,7 +4,9 @@ namespace App\Modules\Checkout\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Checkout\Actions\ChangeOrderStatus;
+use App\Modules\Checkout\Actions\ConfirmBankTransfer;
 use App\Modules\Checkout\Enums\OrderStatus;
+use App\Modules\Checkout\Enums\PaymentMethod;
 use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Http\Requests\Admin\ChangeOrderStatusRequest;
 use App\Modules\Checkout\Models\Order;
@@ -79,5 +81,15 @@ class OrderController extends Controller
             OrderStatus::Problem => 'Problem zapisany — widać go na liście zamówień.',
             default => 'Z powrotem w realizacji.',
         });
+    }
+
+    /** „Wpłata doszła” on an order paid by bank transfer (MA-216). Any other way to pay is confirmed by its gateway. */
+    public function paid(Request $request, Order $order, ConfirmBankTransfer $confirm): RedirectResponse
+    {
+        abort_unless($order->payment_method === PaymentMethod::BankTransfer && $order->payment_status !== PaymentStatus::Failed, 403);
+
+        return to_route('admin.orders.show', $order)->with('panel_status', $confirm($order, $request->user())
+            ? 'Opłacone — klientka dostanie maila z potwierdzeniem.'
+            : 'Ta wpłata jest już zapisana — nic się nie zmieniło.');
     }
 }

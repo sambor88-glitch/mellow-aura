@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 #[Fillable([
     'number', 'status', 'name', 'email', 'phone', 'shipping_method', 'shipping_address', 'delivery_country', 'locker_code', 'tracking_number',
-    'shipping_gross', 'total_gross', 'currency', 'eur_rate', 'eur_rate_on', 'locale', 'payment_method', 'payment_status', 'payment_provider_id', 'paid_at', 'shipped_at', 'completed_at',
+    'shipping_gross', 'total_gross', 'currency', 'eur_rate', 'eur_rate_on', 'locale', 'payment_method', 'payment_status', 'payment_provider_id', 'paid_at', 'payment_confirmed_by', 'shipped_at', 'completed_at',
     'note', 'problem_note', 'invoice_nip', 'terms_version', 'terms_accepted_at',
 ])]
 class Order extends Model
