@@ -114,13 +114,22 @@ test('a customer buys a product and Kasia ships it', async ({ page }, testInfo) 
 
     let orderNumber;
 
-    await test.step('checkout with BLIK and a parcel locker', async () => {
+    await test.step('checkout with BLIK and a parcel locker, the code typed last', async () => {
         await page.goto('/zamowienie');
         await expectNoSideScroll(page);
 
-        await page.locator('[name="name"]').fill('Anna Testowa');
+        const pay = page.locator('form[action$="/zamowienie"] button[type="submit"]');
+
+        await page.locator('input[name="payment_method"][value="blik"]').check({ force: true });
+
+        // The BLIK code lives 2 minutes: an empty form leads to the first field, never to the code (MA-218).
+        await pay.click();
+        await expect(page.locator('[name="email"]')).toBeFocused();
+        expect(new URL(page.url()).pathname).toBe('/zamowienie');
+
         await page.locator('[name="email"]').fill(email);
         await page.locator('[name="phone"]').fill('600100200');
+        await page.locator('[name="name"]').fill('Anna Testowa');
         await page.locator('input[name="shipping_method"][value="parcel_locker"]').check({ force: true });
 
         const locker = page.locator('[name="locker_code"]');
@@ -129,15 +138,28 @@ test('a customer buys a product and Kasia ships it', async ({ page }, testInfo) 
             await locker.fill('KRA01M');
         }
 
-        await page.locator('input[name="payment_method"][value="blik"]').check({ force: true });
-        await page.locator('#blik_code').fill('123456');
-
         for (const deviation of await page.locator('[data-deviation]').all()) {
             await deviation.check();
         }
 
         await page.locator('[name="accept_terms"]').check();
-        await page.locator('form[action$="/zamowienie"] button[type="submit"]').click();
+
+        // Contact, delivery and terms are done, so the code is the one thing left.
+        await pay.click();
+        await expect(page.locator('#blik_code')).toBeFocused();
+
+        // Contact → delivery → payment, and the code right above the pay button, on a phone and a desktop alike.
+        const top = async (selector) => (await page.locator(selector).first().boundingBox()).y;
+        const blik = await top('#blik_code');
+
+        expect(await top('[name="email"]')).toBeLessThan(await top('legend:has-text("Sposób dostawy")'));
+        expect(await top('legend:has-text("Sposób dostawy")')).toBeLessThan(await top('legend:has-text("Płatność")'));
+        expect(await top('[name="accept_terms"]')).toBeLessThan(blik);
+        expect(blik).toBeLessThan(await top('form[action$="/zamowienie"] button[type="submit"]'));
+
+        await page.locator('#blik_code').fill('123456');
+        await expectNoSideScroll(page);
+        await pay.click();
 
         await page.waitForURL('**/zamowienie/potwierdzenie');
         await expectNoSideScroll(page);

@@ -28,7 +28,7 @@ class CheckoutPageTest extends TestCase
         ]]);
     }
 
-    public function test_the_checkout_shows_contact_payment_delivery_and_the_order_on_one_screen(): void
+    public function test_the_checkout_shows_contact_delivery_payment_and_the_order_with_the_blik_code_last(): void
     {
         $vase = $this->variant('Wazony', 'Niski 16 cm', 23900);
         $this->postJson('/koszyk', ['variant_id' => $vase->id]);
@@ -38,11 +38,13 @@ class CheckoutPageTest extends TestCase
             ->assertSee('<title>Zamówienie | MellowAura</title>', false)
             ->assertSee('<meta name="robots" content="noindex">', false)
             ->assertSeeInOrder([
-                'Jeszcze trzy pola', 'Telefon', 'E-mail', 'Imię i nazwisko', 'Faktura na firmę, dopisek do paczki',
-                'Płatność', 'BLIK', 'Karta', 'Przelewy24', 'Przelew tradycyjny', 'Przepisz kod z aplikacji banku',
+                'Jeszcze trzy pola', 'E-mail', 'Telefon', 'Imię i nazwisko', 'Faktura na firmę, dopisek do paczki',
                 'Sposób dostawy', 'InPost Paczkomat', '16,00 zł', 'Odbiór w pracowni', 'gratis',
-                'Twoje zamówienie', 'Wazony', 'Niski 16 cm', '1 szt.', '239,00 zł', 'Razem', '255,00 zł', 'Płacę 255,00 zł',
-            ])
+                'Płatność', 'BLIK', 'Karta', 'Przelewy24', 'Przelew tradycyjny',
+                'Twoje zamówienie', 'Wazony', 'Niski 16 cm', '1 szt.', '239,00 zł', 'Razem', '255,00 zł',
+                // The code lives 2 minutes, so it is typed last, right above the button.
+                'name="accept_terms"', 'Przepisz kod z aplikacji banku', 'id="blik_code"', '6 cyfr, ważne 2 minuty', 'type="submit"', 'Płacę 255,00 zł',
+            ], false)
             ->assertSee('name="expected_total" value="25500"', false);
     }
 

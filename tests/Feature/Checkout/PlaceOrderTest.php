@@ -153,6 +153,30 @@ class PlaceOrderTest extends TestCase
         $this->assertSame(0, Order::count());
     }
 
+    public function test_after_a_mistake_above_the_blik_field_asks_for_a_new_code(): void
+    {
+        $this->postJson('/koszyk', ['variant_id' => $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3)->id]);
+
+        // The code was fine, but it is never flashed back, so it has to be typed again.
+        $this->from('/zamowienie')
+            ->followingRedirects()
+            ->post('/zamowienie', $this->form(['email' => 'ania']))
+            ->assertSeeInOrder(['Adres e-mail bez małpy', 'Popraw pola wyżej i wpisz nowy kod BLIK', 'Płacę'])
+            ->assertDontSee('value="123456"', false);
+
+        // A wrong code alone says what is wrong with the code.
+        $this->from('/zamowienie')
+            ->followingRedirects()
+            ->post('/zamowienie', $this->form(['blik_code' => '12']))
+            ->assertSee('Wpisz 6-cyfrowy kod z aplikacji banku')
+            ->assertDontSee('Popraw pola wyżej');
+
+        // Without a mistake the field only says how long the code lives.
+        $this->get('/zamowienie')->assertSee('6 cyfr, ważne 2 minuty')->assertDontSee('Popraw pola wyżej');
+
+        $this->assertSame(0, Order::count());
+    }
+
     public function test_the_courier_needs_the_whole_address_and_a_nip_has_to_add_up(): void
     {
         $this->withCourier();
