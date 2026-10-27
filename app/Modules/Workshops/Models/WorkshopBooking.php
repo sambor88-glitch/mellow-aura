@@ -3,6 +3,7 @@
 namespace App\Modules\Workshops\Models;
 
 use App\Modules\Checkout\Models\Order;
+use App\Modules\Gifts\Models\Voucher;
 use App\Modules\Workshops\Enums\BookingStatus;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -16,13 +17,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * the booking holds the seats.
  *
  * @property ?int $workshop_date_id null once Kasia deleted the date of a cancelled booking
+ * @property ?int $voucher_id the voucher that paid for the seats instead of money
  * @property BookingStatus $status
  * @property CarbonImmutable $expires_at
  * @property ?CarbonImmutable $confirmed_at
  * @property ?CarbonImmutable $reminded_at
  * @property ?CarbonImmutable $cancelled_at
  */
-#[Fillable(['workshop_date_id', 'order_id', 'seats', 'status', 'expires_at', 'confirmed_at', 'reminded_at', 'cancelled_at'])]
+#[Fillable(['workshop_date_id', 'order_id', 'voucher_id', 'seats', 'status', 'expires_at', 'confirmed_at', 'reminded_at', 'cancelled_at'])]
 class WorkshopBooking extends Model
 {
     /**
@@ -100,5 +102,15 @@ class WorkshopBooking extends Model
             'reminded_at' => 'immutable_datetime',
             'cancelled_at' => 'immutable_datetime',
         ];
+    }
+
+    /**
+     * The voucher that paid for the seats instead of money.
+     *
+     * @return BelongsTo<Voucher, $this>
+     */
+    public function voucher(): BelongsTo
+    {
+        return $this->belongsTo(Voucher::class);
     }
 }

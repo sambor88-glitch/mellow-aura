@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-#[Fillable(['product_id', 'label', 'price_gross', 'compare_at_price', 'stock', 'sent_by_post', 'media_id'])]
+#[Fillable(['product_id', 'label', 'price_gross', 'compare_at_price', 'stock', 'sent_by_post', 'voucher_seats', 'media_id'])]
 class ProductVariant extends Model
 {
     /** @use HasFactory<ProductVariantFactory> */

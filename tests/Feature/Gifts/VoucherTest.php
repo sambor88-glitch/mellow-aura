@@ -125,6 +125,27 @@ class VoucherTest extends TestCase
         $confirmation->assertSeeInText($vouchers[0]->code.' · dla: Ania · od: Kasia · ważny do 20 listopada 2027');
     }
 
+    public function test_a_workshop_voucher_carries_its_workshop_and_seats_and_an_amount_voucher_none(): void
+    {
+        Mail::fake();
+        $workshop = $this->voucherVariant();
+        $workshop->product->update(['workshop_code' => 'hand_building']);
+        $workshop->update(['voucher_seats' => 2]);
+        $single = ProductVariant::factory()->create(['product_id' => $workshop->product_id, 'label' => 'Dla jednej osoby', 'price_gross' => 22000, 'stock' => null]);
+        $amount = ProductVariant::factory()->create([
+            'product_id' => Product::factory()->create(['name' => 'Voucher kwotowy', 'category_id' => $workshop->product->category_id])->id,
+            'label' => '150 zł', 'price_gross' => 15000, 'stock' => null, 'voucher_seats' => 3,
+        ]);
+
+        foreach ([$workshop, $single, $amount] as $variant) {
+            $this->postJson('/koszyk', ['type' => 'voucher', 'variant_id' => $variant->id, 'recipient_name' => 'Ania']);
+        }
+
+        $this->post('/zamowienie', $this->form(['expected_total' => 79000]))->assertRedirect('/zamowienie/potwierdzenie');
+
+        $this->assertSame([['hand_building', 2], ['hand_building', 1], [null, null]], Voucher::query()->orderBy('id')->get()->map(fn (Voucher $voucher) => [$voucher->workshop_code, $voucher->seats])->all());
+    }
+
     public function test_a_voucher_sent_as_a_pdf_needs_no_delivery_but_one_sent_by_post_does(): void
     {
         Mail::fake();

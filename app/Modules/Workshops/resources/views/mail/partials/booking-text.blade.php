@@ -1,7 +1,7 @@
 WARSZTAT
 {!! $workshop !!}
 {!! $date->dayLabel() !!}, {!! $date->timeLabel() !!}
-Liczba osób: {!! $booking->seats !!} · zapłacone {!! $order->money($order->total_gross) !!}
+Liczba osób: {!! $booking->seats !!} · {!! $voucher ? 'voucher '.$voucher->code : 'zapłacone '.$order->money($order->total_gross) !!}
 
 GDZIE
 @if ($address)

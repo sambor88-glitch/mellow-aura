@@ -4,6 +4,7 @@ namespace App\Modules\Workshops\Actions;
 
 use App\Modules\Checkout\Actions\ChangeOrderStatus;
 use App\Modules\Checkout\Enums\OrderStatus;
+use App\Modules\Gifts\Actions\ReturnVoucher;
 use App\Modules\Workshops\Enums\BookingStatus;
 use App\Modules\Workshops\Mail\BookingCancelled;
 use App\Modules\Workshops\Models\WorkshopBooking;
@@ -17,10 +18,11 @@ use Illuminate\Support\Facades\Mail;
  * goes out. The money goes back by hand — the gateway has no refunds — so a paid booking puts its order under
  * „Problem” with the amount to return; after the refund Kasia marks the order done. The date is locked as in
  * ConfirmBooking, so a payment confirmed at the same moment is counted first or not at all.
+ * A booking paid with a voucher has no money to return: the voucher is valid again instead (MA-137).
  */
 class CancelBooking
 {
-    public function __construct(private ChangeOrderStatus $changeOrderStatus) {}
+    public function __construct(private ChangeOrderStatus $changeOrderStatus, private ReturnVoucher $returnVoucher) {}
 
     /**
      * @param  bool  $notify  send her the cancellation mail; only a confirmed booking gets one, since an overbooked one
@@ -45,7 +47,9 @@ class CancelBooking
 
             $booking->update(['status' => BookingStatus::Cancelled, 'cancelled_at' => now()]);
 
-            if ($was->isPaid()) {
+            if ($booking->voucher_id !== null) {
+                ($this->returnVoucher)($booking->voucher_id);
+            } elseif ($was->isPaid()) {
                 $order = $booking->order;
                 ($this->changeOrderStatus)($order, OrderStatus::Problem, problemNote: 'Zapis na warsztat anulowany w panelu. Zwróć wpłatę '
                     .$order->money($order->total_gross).', potem zmień status na „Zakończone”.');

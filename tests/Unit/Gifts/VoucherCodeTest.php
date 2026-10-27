@@ -17,4 +17,13 @@ class VoucherCodeTest extends TestCase
 
         $this->assertCount(200, array_unique($codes));
     }
+
+    public function test_a_typed_code_is_read_as_printed(): void
+    {
+        foreach (['MA-7KQ2-9XHT', 'ma-7kq2-9xht', ' 7kq2 9xht ', '7KQ29XHT', 'MA 7KQ2 9XHT', 'ma7kq29xht'] as $typed) {
+            $this->assertSame('MA-7KQ2-9XHT', VoucherCode::normalize($typed), $typed);
+        }
+
+        $this->assertSame('MA7KQ2', VoucherCode::normalize('ma-7kq2'));
+    }
 }

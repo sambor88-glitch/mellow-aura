@@ -21,4 +21,16 @@ class VoucherCode
 
         return 'MA-'.substr($characters, 0, 4).'-'.substr($characters, 4);
     }
+
+    /**
+     * A code as typed — lower case, with spaces, without dashes or the MA- in front — in the printed form.
+     * Anything that cannot be a code comes back as typed, upper-cased, and is simply not found.
+     */
+    public static function normalize(string $typed): string
+    {
+        $characters = (string) preg_replace('/[^A-Z0-9]+/', '', mb_strtoupper($typed));
+        $characters = strlen($characters) === 10 && str_starts_with($characters, 'MA') ? substr($characters, 2) : $characters;
+
+        return strlen($characters) === 8 ? 'MA-'.substr($characters, 0, 4).'-'.substr($characters, 4) : $characters;
+    }
 }

@@ -6,4 +6,5 @@ return [
     'online_transfer' => ['Przelewy24', 'Przelew online z 380 banków'],
     'card' => ['Karta', 'Visa, Mastercard'],
     'bank_transfer' => ['Przelew tradycyjny', 'Wysyłka po zaksięgowaniu'],
+    'voucher' => ['Mam voucher', 'Kod z vouchera na ten warsztat'],
 ];

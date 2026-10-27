@@ -10,7 +10,8 @@ use Illuminate\Validation\Rule;
 
 /**
  * The booking form: three fields for contact, how many seats, how to pay and accepting the terms.
- * Whether the seats are still free is counted by PlaceBooking, under the lock.
+ * Whether the seats are still free is counted by PlaceBooking, under the lock. With a voucher (MA-137) the code takes
+ * the place of the payment and the seats come from the voucher, so the form's seats and total are left out.
  */
 class BookWorkshopRequest extends FormRequest
 {
@@ -27,17 +28,21 @@ class BookWorkshopRequest extends FormRequest
      */
     public function rules(): array
     {
+        $byVoucher = 'exclude_if:payment_method,'.PaymentMethod::Voucher->value;
+
         return [
             'name' => ['required', 'string', 'max:120'],
             'email' => ['required', 'string', 'email', 'max:255'],
             'phone' => ['required', 'string', 'regex:/^(\+?48)?[\s-]*(\d[\s-]*){9}$/'],
-            'seats' => ['required', 'integer', 'min:1', 'max:'.BookingController::MAX_SEATS],
-            'payment_method' => ['required', Rule::in(array_column(BookingController::paymentMethods(), 'value'))],
+            'seats' => [$byVoucher, 'required', 'integer', 'min:1', 'max:'.BookingController::MAX_SEATS],
+            'payment_method' => ['required', Rule::in([...array_column(BookingController::paymentMethods(), 'value'), PaymentMethod::Voucher->value])],
+            // Normalized by Gifts\Support\VoucherCode; a printed code is 12 characters, typed ones may carry spaces.
+            'voucher_code' => ['exclude_unless:payment_method,'.PaymentMethod::Voucher->value, 'required', 'string', 'max:30'],
             // Without BLIK Level 0 the code is typed on Przelewy24's page, not here.
             'blik_code' => $this->container->make(PaymentGateway::class)->takesBlikCode()
                 ? ['exclude_unless:payment_method,'.PaymentMethod::Blik->value, 'required', 'digits:6']
                 : ['exclude'],
-            'expected_total' => ['required', 'integer'],
+            'expected_total' => [$byVoucher, 'required', 'integer'],
             'accept_terms' => ['accepted'],
         ];
     }
@@ -63,6 +68,8 @@ class BookWorkshopRequest extends FormRequest
             'payment_method.in' => 'Wybierz, jak płacisz',
             'blik_code.required' => 'Wpisz 6 cyfr kodu BLIK z aplikacji banku',
             'blik_code.digits' => 'Wpisz 6 cyfr kodu BLIK z aplikacji banku',
+            'voucher_code.required' => 'Wpisz kod z vouchera, np. MA-7KQ2-9XHT',
+            'voucher_code.max' => 'Kod z vouchera ma 12 znaków, np. MA-7KQ2-9XHT',
             'accept_terms.accepted' => 'Zaznacz akceptację regulaminu',
         ];
     }

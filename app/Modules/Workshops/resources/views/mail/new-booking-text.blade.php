@@ -1,7 +1,7 @@
 {{-- The plain-text part is never rendered as HTML, so values print raw instead of as HTML entities. --}}
 Nowy zapis na warsztat
 
-{!! $order->number !!} · opłacone: {!! $order->money($order->total_gross) !!}, {!! $order->payment_method->label() !!}.
+{!! $order->number !!} · {!! $voucher ? 'voucher '.$voucher->code.', bez płatności' : 'opłacone: '.$order->money($order->total_gross).', '.$order->payment_method->label() !!}.
 Odpowiedź na tego maila trafi prosto do osoby, która się zapisała.
 
 WARSZTAT

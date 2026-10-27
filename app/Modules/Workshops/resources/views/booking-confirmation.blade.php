@@ -29,7 +29,7 @@
             <p class="mx-auto mb-8 max-w-[50ch] text-[17px] leading-[1.7] text-lead">
                 @if ($confirmed)
                     {{ $order->items->first()?->product_name }}, <time datetime="{{ $date->starts_at->toIso8601String() }}">{{ $when }}</time> — miejsca: {{ $booking->seats }}.
-                    Zapis {!! $number !!} jest opłacony. Potwierdzenie przyjdzie na {{ $order->email }}.
+                    Zapis {!! $number !!} jest opłacony{{ $booking->voucher ? ' voucherem '.$booking->voucher->code : '' }}. Potwierdzenie przyjdzie na {{ $order->email }}.
                 @elseif ($overbooked)
                     Płatność za zapis {!! $number !!} przyszła, gdy ostatnie miejsce na {{ $when }} zajęła już inna osoba.
                     Napiszę do Ciebie: zwrócę całą wpłatę albo zaproponuję inny termin.

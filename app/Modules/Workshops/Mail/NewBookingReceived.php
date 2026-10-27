@@ -43,6 +43,7 @@ class NewBookingReceived extends QueuedMail
                 'booking' => $this->booking,
                 'order' => $order,
                 'date' => $this->booking->workshopDate,
+                'voucher' => $this->booking->voucher,
                 'workshop' => (string) $order->items->sortBy('id')->first()?->product_name,
             ],
         );
