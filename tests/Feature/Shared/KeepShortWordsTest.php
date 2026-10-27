@@ -25,6 +25,7 @@ class KeepShortWordsTest extends TestCase
         $this->assertSame('obiegu'.self::NBSP.'— dwie', KeepShortWords::text('obiegu — dwie'));
         $this->assertSame('Zobacz'.self::NBSP.'→', KeepShortWords::text('Zobacz →'));
         $this->assertSame('Kawa', KeepShortWords::text('Kawa'));
+        $this->assertSame('MA-2026-0001', KeepShortWords::text('MA-2026-0001'));
     }
 
     public function test_only_text_between_tags_changes(): void

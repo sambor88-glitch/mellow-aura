@@ -50,7 +50,8 @@ class KeepShortWords
         }
 
         $text = preg_replace('/(\d)[ \t\r\n]+(?=\p{L})/u', '$1'.self::NBSP, $text) ?? $text;
-        $text = preg_replace('/(\d)([–-])(?=\d)/u', '$1'.self::WORD_JOINER.'$2'.self::WORD_JOINER, $text) ?? $text;
+        // Only the en dash of a range: a hyphen between digits belongs to codes such as MA-2026-0001 and stays as is.
+        $text = preg_replace('/(\d)–(?=\d)/u', '$1'.self::WORD_JOINER.'–'.self::WORD_JOINER, $text) ?? $text;
         $text = preg_replace('/[ \t\r\n]+([→↗])/u', self::NBSP.'$1', $text) ?? $text;
 
         return preg_replace('/[ \t\r\n]+([—–])(?=\s)/u', self::NBSP.'$1', $text) ?? $text;
