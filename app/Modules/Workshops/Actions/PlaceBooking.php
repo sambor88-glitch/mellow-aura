@@ -63,7 +63,7 @@ class PlaceBooking
                 return null;
             }
 
-            $voucher = $this->redeemVoucher->lockFor($code, $date->workshop_code);
+            $voucher = $this->redeemVoucher->lockFor($code, $date->workshop_code, $date->starts_at);
 
             if ($date->seatsLeft() < $voucher->seats) {
                 return null;
