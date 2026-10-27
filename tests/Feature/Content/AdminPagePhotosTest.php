@@ -60,7 +60,7 @@ class AdminPagePhotosTest extends TestCase
             ->assertRedirect('/panel/zdjecia-stron#about-main')
             ->assertSessionHas('panel_status', 'Kadr zapisany. Klienci już go widzą.');
 
-        $this->assertSame(['about-main' => ['focus' => ['x' => 30, 'y' => 70], 'alt' => 'Kasia przy kole']], Setting::find(PagePhotos::SETTING)->value);
+        $this->assertEquals(['about-main' => ['focus' => ['x' => 30, 'y' => 70], 'alt' => 'Kasia przy kole']], Setting::find(PagePhotos::SETTING)->value);
 
         $this->get('/o-mnie')
             ->assertOk()
@@ -70,7 +70,7 @@ class AdminPagePhotosTest extends TestCase
         $this->get('/panel/zdjecia-stron')->assertSeeInOrder(['id="about-main"', 'Przywróć pierwszy kadr'], false)->assertDontSee('Przywróć pierwsze zdjęcie');
 
         $this->post('/panel/zdjecia-stron/about-main/przywroc')->assertRedirect('/panel/zdjecia-stron#about-main');
-        $this->assertSame([], Setting::find(PagePhotos::SETTING)->value);
+        $this->assertEquals([], Setting::find(PagePhotos::SETTING)->value);
     }
 
     public function test_the_hero_keeps_two_points_and_a_decorative_place_no_description(): void
@@ -80,7 +80,8 @@ class AdminPagePhotosTest extends TestCase
             ->assertRedirect('/panel/zdjecia-stron#home-hero');
         $this->put('/panel/zdjecia-stron/home-float-1', ['focus' => ['x' => 20, 'y' => 20], 'focus_phone' => ['x' => 10, 'y' => 10], 'alt' => 'Misa']);
 
-        $this->assertSame([
+        // MySQL keeps JSON keys in its own order, so the order is not compared.
+        $this->assertEquals([
             'home-hero' => ['focus' => ['x' => 50, 'y' => 60], 'focus_phone' => ['x' => 40, 'y' => 90]],
             'home-float-1' => ['focus' => ['x' => 20, 'y' => 20]],
         ], Setting::find(PagePhotos::SETTING)->value);
@@ -112,7 +113,7 @@ class AdminPagePhotosTest extends TestCase
 
         // The old point and description were for the old photo.
         $path = Setting::find(PagePhotos::SETTING)->value['b2b']['path'];
-        $this->assertSame(['b2b' => ['path' => $path]], Setting::find(PagePhotos::SETTING)->value);
+        $this->assertEquals(['b2b' => ['path' => $path]], Setting::find(PagePhotos::SETTING)->value);
         $this->assertMatchesRegularExpression('#^page-photos/b2b-[a-z0-9]{6}\.webp$#', $path);
         Storage::disk('public')->assertExists($path);
         $this->assertSame('image/webp', Storage::disk('public')->mimeType($path));
@@ -124,14 +125,14 @@ class AdminPagePhotosTest extends TestCase
             ->assertRedirect('/panel/zdjecia-stron#b2b')
             ->assertSessionHas('panel_status', 'Zdjęcie zdjęte ze strony. Jego miejsce zostaje puste.');
         Storage::disk('public')->assertMissing($path);
-        $this->assertSame(['b2b' => ['path' => null]], Setting::find(PagePhotos::SETTING)->value);
+        $this->assertEquals(['b2b' => ['path' => null]], Setting::find(PagePhotos::SETTING)->value);
         $this->get('/ceramika-dla-gastronomii')->assertOk()->assertDontSee('Kawa w ręcznie robionym kubku');
         $this->get('/panel/zdjecia-stron')->assertSee('Brak zdjęcia — to miejsce na stronie jest puste');
 
         $this->post('/panel/zdjecia-stron/b2b/przywroc')
             ->assertRedirect('/panel/zdjecia-stron#b2b')
             ->assertSessionHas('panel_status', 'Wróciło pierwsze zdjęcie z pierwszym kadrem.');
-        $this->assertSame([], Setting::find(PagePhotos::SETTING)->value);
+        $this->assertEquals([], Setting::find(PagePhotos::SETTING)->value);
         $this->get('/ceramika-dla-gastronomii')->assertOk()->assertSee('alt="Kawa w ręcznie robionym kubku"', false);
     }
 
