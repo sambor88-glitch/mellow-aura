@@ -156,6 +156,11 @@ class CheckoutController extends Controller
             return to_route('workshops.booking.confirmation');
         }
 
+        // So does a payment for a custom order, with what the money is for.
+        if ($order->customOrderPayment()->exists()) {
+            return to_route('custom-orders.payment.confirmation');
+        }
+
         // The cart waited for this moment, so a payment the bank refused leaves it exactly as it was.
         if ($order->payment_status === PaymentStatus::Failed) {
             $request->session()->forget('checkout.order');
