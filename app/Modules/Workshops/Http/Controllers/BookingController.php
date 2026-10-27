@@ -132,7 +132,8 @@ class BookingController extends Controller
         $order = $number ? Order::query()->where('number', $number)->first() : null;
         $booking = $order?->workshopBooking;
 
-        if ($order === null || $booking === null) {
+        // No booking in the session, or Kasia cancelled it and deleted its date meanwhile.
+        if ($order === null || $booking === null || $booking->workshop_date_id === null) {
             return to_route('workshops.index');
         }
 

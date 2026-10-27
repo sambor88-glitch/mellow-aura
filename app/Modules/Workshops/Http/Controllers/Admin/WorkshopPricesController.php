@@ -25,7 +25,7 @@ class WorkshopPricesController extends Controller
 
         return view('workshops::admin.edit', [
             'names' => $names,
-            'dates' => WorkshopDate::query()->upcoming()->get(),
+            'dates' => WorkshopDate::query()->upcoming()->withTakenSeats()->get(),
             'lead' => $settings->get('text_workshops_lead'),
             'whatToBring' => implode("\n", (array) $settings->get('workshop_what_to_bring', [])),
             'workshops' => collect((array) $settings->get('workshop_types', []))

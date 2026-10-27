@@ -141,6 +141,7 @@
                                 <div class="mt-0.5 text-[12.5px] text-muted">{{ collect([$date->starts_at->format('H:i').($date->ends_at ? ' – '.$date->ends_at->format('H:i') : ''), $names[$date->workshop_code] ?? 'warsztatu nie ma już w cenniku'])->join(' · ') }}</div>
                             </div>
                             <span class="text-[12.5px] text-graphite tabular-nums">{{ $seats($date->seats) }}</span>
+                            <a href="{{ route('admin.workshops.dates.bookings', $date) }}" class="inline-flex min-h-11 items-center text-[13px] tabular-nums">Zapisy · zajęte {{ $date->seatsTaken() }}</a>
                             <form method="post" action="{{ route('admin.workshops.dates.destroy', $date) }}"
                                   x-data x-on:submit="confirm('Usunąć ten termin z terminarza?') || $event.preventDefault()">
                                 @csrf

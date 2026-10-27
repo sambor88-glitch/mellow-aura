@@ -55,7 +55,7 @@ class BlikController extends Controller
             'booking' => $booking = $order->workshopBooking,
             'customOrderPayment' => $payment = $order->customOrderPayment,
             'otherUrl' => match (true) {
-                $booking !== null => route('workshops.booking.create', $booking->workshop_date_id),
+                $booking !== null => $booking->workshop_date_id ? route('workshops.booking.create', $booking->workshop_date_id) : route('workshops.index'),
                 $payment !== null => $payment->paymentLink->url(),
                 default => route('checkout.index'),
             },

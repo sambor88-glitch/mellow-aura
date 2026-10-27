@@ -26,7 +26,7 @@ class Menu
             ['label' => 'Kategorie', 'route' => 'admin.categories.index', 'active' => 'admin.categories.*', 'description' => 'Tytuł i opis każdej półki w Google, wstęp nad produktami i podpisy skrótów nad sklepem.'],
             ['label' => 'Kubek z napisem', 'route' => 'admin.mug.edit', 'active' => 'admin.mug.*', 'description' => 'Zdjęcie pod napisy, rozmiary z cenami i limit znaków.'],
             ['label' => 'Prezenty i zestawy', 'route' => 'admin.gifts.edit', 'active' => 'admin.gifts.*', 'description' => 'Zestawy z rabatem, „Szukam prezentu” i vouchery.'],
-            ['label' => 'Warsztaty', 'route' => 'admin.workshops.edit', 'active' => 'admin.workshops.*', 'description' => 'Cennik warsztatów i terminarz z liczbą miejsc.'],
+            ['label' => 'Warsztaty', 'route' => 'admin.workshops.edit', 'active' => 'admin.workshops.*', 'description' => 'Cennik warsztatów, terminarz i lista zapisanych osób z kontaktem.'],
             ['label' => 'Zgłoszenia do wypału', 'route' => 'admin.firing.requests.index', 'active' => 'admin.firing.requests.*', 'description' => 'Wsady z formularza w tygodniowych partiach: nowe, przyjęte, w piecu, do odbioru.'],
             ['label' => 'Wypały', 'route' => 'admin.firing.edit', 'active' => 'admin.firing.edit', 'description' => 'Cennik wypałów na zlecenie, dzień wsadu i notka pod cennikiem.'],
             ['label' => 'Usługi', 'route' => 'admin.services.edit', 'active' => 'admin.services.*', 'description' => 'Apaszka i odcisk rośliny: zdjęcia przed i po, teksty, cennik i kroki.'],
