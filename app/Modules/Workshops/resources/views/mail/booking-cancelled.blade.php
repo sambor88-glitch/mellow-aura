@@ -6,14 +6,14 @@
     <p style="margin: 0 0 16px; color: #5C5043;">
         Anulowałam Twój zapis na warsztat {{ $date->dayLabel() }}, {{ $date->timeLabel() }} (zapis {{ $order->number }}).
     </p>
-    @if ($voucher && ! $voucher->isExpired())
+    @if ($voucher && ! $voucher['expired'])
         <p style="margin: 0 0 22px; color: #5C5043;">
-            Twój voucher {{ $voucher->code }} znów jest ważny — do {{ $voucher->valid_until->translatedFormat('j F Y') }}. Zapiszesz się nim na inny termin na stronie.
+            Twój voucher {{ $voucher['code'] }} znów jest ważny — do {{ $voucher['valid_until'] }}. Zapiszesz się nim na inny termin na stronie.
             Jeśli wolisz, odpisz na tego maila — przepiszę Cię sama.
         </p>
     @elseif ($voucher)
         <p style="margin: 0 0 22px; color: #5C5043;">
-            Twój voucher {{ $voucher->code }} wraca do Ciebie. Jego ważność minęła {{ $voucher->valid_until->translatedFormat('j F Y') }} — odpisz na tego maila, a przedłużę go i zapiszę Cię na inny termin.
+            Twój voucher {{ $voucher['code'] }} wraca do Ciebie. Jego ważność minęła {{ $voucher['valid_until'] }} — odpisz na tego maila, a przedłużę go i zapiszę Cię na inny termin.
         </p>
     @else
         <p style="margin: 0 0 22px; color: #5C5043;">

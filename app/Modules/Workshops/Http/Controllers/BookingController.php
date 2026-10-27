@@ -185,6 +185,7 @@ class BookingController extends Controller
             VoucherRefusal::Unknown => 'Nie znajduję takiego kodu. Przepisz go z vouchera — wygląda tak: MA-7KQ2-9XHT.',
             VoucherRefusal::Redeemed => 'Ten voucher jest już wykorzystany. Jeśli to pomyłka, napisz do mnie.',
             VoucherRefusal::Expired => 'Ten voucher był ważny do '.$refused->voucher->valid_until->translatedFormat('j F Y').'. Napisz do mnie — coś wymyślimy.',
+            VoucherRefusal::EndsBeforeDate => 'Ten voucher jest ważny do '.$refused->voucher->valid_until->translatedFormat('j F Y').' — wybierz termin do tego dnia.',
             VoucherRefusal::OtherWorkshop => $voucherFor !== null
                 ? 'Ten voucher jest na warsztat „'.$voucherFor.'”. Wybierz termin tego warsztatu.'
                 : 'Ten voucher jest na inny warsztat. Napisz do mnie, a zapiszę Cię sama.',

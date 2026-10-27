@@ -127,15 +127,16 @@
                 @if (! $paid)
                     <p class="mt-3 text-[13px] leading-[1.55] text-label">Status zmienisz, gdy zamówienie będzie opłacone.</p>
                 @else
-                    <div class="mt-4 grid gap-3 border-t border-divider pt-4">
+                    {{-- One tap per change: after the first submit every status button waits for the page to come back (MA-223). --}}
+                    <div x-data="{ sending: false }" x-on:submit="sending = true" x-on:pageshow.window="sending = false" class="mt-4 grid gap-3 border-t border-divider pt-4">
                         @if ($travels && in_array($order->status, [OrderStatus::InProgress, OrderStatus::Problem], true))
                             <form method="post" action="{{ route('admin.orders.status', $order) }}" class="grid gap-2.5">
                                 @csrf
                                 @method('patch')
                                 <input type="hidden" name="status" value="{{ OrderStatus::Shipped->value }}">
                                 <x-shared::field name="tracking_number" label="Numer przesyłki" autocomplete="off" autocapitalize="characters" spellcheck="false"
-                                                 hint="Nieobowiązkowe — z numerem klientka śledzi paczkę" />
-                                <button class="w-full rounded-full bg-ink p-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Wysłane — powiadom klientkę</button>
+                                                 :hint="$order->tracking_number ? 'Puste pole zostawia numer '.$order->tracking_number : 'Nieobowiązkowe — z numerem klientka śledzi paczkę'" />
+                                <button x-bind:disabled="sending" class="w-full rounded-full bg-ink p-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97] disabled:opacity-60">{{ $order->shipped_at ? 'Znowu wysłane — bez drugiego maila' : 'Wysłane — powiadom klientkę' }}</button>
                             </form>
                         @endif
 
@@ -144,7 +145,7 @@
                                 @csrf
                                 @method('patch')
                                 <input type="hidden" name="status" value="{{ OrderStatus::Completed->value }}">
-                                <button class="{{ $action }}">{{ match (true) {
+                                <button x-bind:disabled="sending" class="{{ $action }}">{{ match (true) {
                                     $order->status === OrderStatus::Shipped => 'Doręczone — zakończ',
                                     $order->shipping_method === 'studio_pickup' => 'Odebrane — zakończ',
                                     default => 'Zakończ zamówienie',
@@ -169,18 +170,25 @@
                                             <p id="problem_note-note" class="mt-1.5 text-[12.5px] text-hint">Tylko dla Ciebie, np. „paczka wróciła” albo „pęknięty kubek”</p>
                                         @enderror
                                     </div>
-                                    <button class="{{ $action }}">Oznacz jako problem</button>
+                                    <button x-bind:disabled="sending" class="{{ $action }}">Oznacz jako problem</button>
                                 </form>
                             </details>
                         @endif
 
                         @if (in_array($order->status, [OrderStatus::Shipped, OrderStatus::Completed, OrderStatus::Problem], true))
-                            <form method="post" action="{{ route('admin.orders.status', $order) }}">
-                                @csrf
-                                @method('patch')
-                                <input type="hidden" name="status" value="{{ OrderStatus::InProgress->value }}">
-                                <button class="text-[13px] text-label underline decoration-line-strong underline-offset-4 hover:text-ink">Wróć do „W realizacji”</button>
-                            </form>
+                            {{-- Asked in place, like removing an account: the date and the tracking number stay either way. --}}
+                            <div x-data="{ asking: false }" class="flex flex-wrap items-center gap-2.5">
+                                <button type="button" x-show="! asking" x-on:click="asking = true"
+                                        class="text-[13px] text-label underline decoration-line-strong underline-offset-4 hover:text-ink">Wróć do „W realizacji”</button>
+                                <form method="post" action="{{ route('admin.orders.status', $order) }}" x-show="asking" x-cloak class="flex flex-wrap items-center gap-2.5">
+                                    @csrf
+                                    @method('patch')
+                                    <input type="hidden" name="status" value="{{ OrderStatus::InProgress->value }}">
+                                    <span class="text-[12.5px] text-label">Na pewno?</span>
+                                    <button x-bind:disabled="sending" class="rounded-full bg-ink px-4 py-2 text-[12.5px] text-linen disabled:opacity-60">Tak, wróć</button>
+                                    <button type="button" x-on:click="asking = false" class="rounded-full px-3 py-2 text-[12.5px] text-label hover:text-ink">Anuluj</button>
+                                </form>
+                            </div>
                         @endif
                     </div>
                 @endif

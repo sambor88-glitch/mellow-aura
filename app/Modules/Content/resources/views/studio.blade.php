@@ -65,9 +65,20 @@
 
         @if ($gallery->isNotEmpty())
             <div class="mx-auto max-w-[1280px] px-7 pt-16">
-                <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3.5">
+                {{-- Two, three or four to a row, and only whole rows: a photo left alone in the last row is not shown
+                     at that width (Kasia adds photos in the panel, so their number is not known in advance). --}}
+                @php
+                    $count = $gallery->count();
+                    $whole = fn (int $columns) => $count >= $columns ? $count - $count % $columns : $count;
+                @endphp
+                <div class="grid grid-cols-2 gap-3.5 sm:grid-cols-3 lg:grid-cols-4">
                     @foreach ($gallery as $photo)
-                        <img src="{{ $photo['url'] }}" alt="{{ $photo['alt'] }}" loading="lazy" width="600" height="600" class="block aspect-square w-full rounded-[20px] bg-line-soft object-cover">
+                        <img src="{{ $photo['url'] }}" alt="{{ $photo['alt'] }}" loading="lazy" width="600" height="600" @class([
+                            'block aspect-square w-full rounded-[20px] bg-line-soft object-cover',
+                            'max-sm:hidden' => $loop->index >= $whole(2),
+                            'sm:max-lg:hidden' => $loop->index >= $whole(3),
+                            'lg:hidden' => $loop->index >= $whole(4),
+                        ])>
                     @endforeach
                 </div>
             </div>

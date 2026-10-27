@@ -8,8 +8,9 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
- * One voucher in the panel (MA-137): which workshop and how many seats it books with its code, and until when.
- * Kasia fills in a voucher that came without them and extends one that ran out. Each voucher has its own form,
+ * One voucher in the panel (MA-137): which workshop and how many seats it books with its code, until when, and
+ * whether it is used. Kasia fills in a voucher that came without them, extends one that ran out and marks one she
+ * booked by hand as used. Each voucher has its own form,
  * so mistakes come back in its own error bag.
  */
 class SaveVoucherRequest extends FormRequest
@@ -33,6 +34,7 @@ class SaveVoucherRequest extends FormRequest
             'workshop_code' => ['nullable', 'string', Rule::in(app(WorkshopTypes::class)->all()->map(WorkshopTypes::key(...))->all())],
             'seats' => ['nullable', 'integer', 'min:1', 'max:'.BookingController::MAX_SEATS],
             'valid_until' => ['required', 'date_format:Y-m-d'],
+            'redeemed' => ['nullable', 'boolean'],
         ];
     }
 
@@ -54,7 +56,7 @@ class SaveVoucherRequest extends FormRequest
     }
 
     /**
-     * @return array{workshop_code: ?string, seats: ?int, valid_until: string}
+     * @return array{workshop_code: ?string, seats: ?int, valid_until: string, redeemed: bool}
      */
     public function voucher(): array
     {
@@ -66,6 +68,7 @@ class SaveVoucherRequest extends FormRequest
             // A workshop voucher books at least one seat; an amount voucher books none.
             'seats' => $workshop === null ? null : (int) ($data['seats'] ?? 1),
             'valid_until' => $data['valid_until'],
+            'redeemed' => $this->boolean('redeemed'),
         ];
     }
 

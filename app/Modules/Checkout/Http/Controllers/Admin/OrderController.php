@@ -71,10 +71,11 @@ class OrderController extends Controller
     public function status(ChangeOrderStatusRequest $request, Order $order, ChangeOrderStatus $change): RedirectResponse
     {
         $status = OrderStatus::from($request->validated('status'));
+        $sentBefore = $order->shipped_at !== null;
         $change($order, $status, $request->validated('tracking_number'), $request->validated('problem_note'));
 
         return to_route('admin.orders.show', $order)->with('panel_status', match ($status) {
-            OrderStatus::Shipped => $order->tracking_number ? 'Wysłane — klientka dostanie maila z numerem przesyłki.' : 'Wysłane — klientka dostanie maila.',
+            OrderStatus::Shipped => $sentBefore ? 'Znowu wysłane — klientka dostała maila za pierwszym razem, drugi nie wyjdzie.' : ($order->tracking_number ? 'Wysłane — klientka dostanie maila z numerem przesyłki.' : 'Wysłane — klientka dostanie maila.'),
             OrderStatus::Completed => 'Zakończone — '.$order->number.' nie czeka już na Ciebie.',
             OrderStatus::Problem => 'Problem zapisany — widać go na liście zamówień.',
             default => 'Z powrotem w realizacji.',

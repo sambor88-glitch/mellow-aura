@@ -71,9 +71,11 @@
                     </div>
                 @endforeach
 
+                {{-- On a phone the frame shows only the middle half of the screen and the plate sits at the bottom of the photo,
+                     so the photo starts a third higher; aura.js brings it back as the frame opens. --}}
                 <div class="aura-frame">
                     <img src="{{ $photo('kasia-talerz-zloto.webp') }}" alt="{{ $t('hero_alt') }}" fetchpriority="high" width="1200" height="1500"
-                         class="size-full origin-[50%_75%] scale-[1.28] object-cover object-[50%_82%]">
+                         class="size-full origin-[50%_75%] scale-[1.28] object-cover object-[50%_82%] max-[760px]:-translate-y-[32%]">
                 </div>
                 <div class="aura-scrim"></div>
 
@@ -104,7 +106,7 @@
                             <a href="{{ $workshopsUrl }}" data-magnet class="{{ $btnGlass }}">{{ $t('cta_workshops') }}</a>
                         @endif
                     </div>
-                    <div class="mt-8 grid grid-cols-2 items-stretch gap-3 md:flex md:flex-wrap [&>*:last-child:nth-child(odd)]:col-span-2">
+                    <div class="mt-8 grid max-w-[720px] grid-cols-2 items-stretch gap-3 md:auto-cols-fr md:grid-flow-col md:grid-cols-none [&>*:last-child:nth-child(odd)]:col-span-2 md:[&>*:last-child:nth-child(odd)]:col-span-1">
                         {{-- BLIK only where the price is in złoty: it does not exist in euro. --}}
                         @foreach (array_filter([['100%', $t('fact_handmade')], Locales::currency() === 'PLN' ? ['BLIK', $t('fact_blik')] : null, $dispatch ? [$dispatch, $t('fact_dispatch')] : null]) as [$value, $label])
                             <div class="aura-fact glass flex flex-col gap-1 rounded-2xl px-5 py-3.5">
@@ -305,7 +307,7 @@
                 <div data-aura-rise class="grid grid-cols-2 gap-2.5 min-[520px]:grid-cols-3 min-[980px]:grid-cols-6">
                     @foreach ($instagramPosts as $post)
                         <a href="{{ $post->permalink }}" target="_blank" rel="noopener" class="block overflow-hidden rounded-[14px] bg-linen">
-                            <img src="{{ $post->imageUrl() }}" alt="{{ $post->alt() }}" loading="lazy" width="1080" height="1080" class="block aspect-square w-full object-cover transition-transform duration-[1.1s] ease-clay hover:scale-[1.06]">
+                            <img src="{{ $post->imageUrl() }}" alt="{{ $post->alt() }}" loading="lazy" width="1080" height="1080" style="object-position: {{ $post->objectPosition() }}" class="block aspect-square w-full object-cover transition-transform duration-[1.1s] ease-clay hover:scale-[1.06]">
                         </a>
                     @endforeach
                 </div>

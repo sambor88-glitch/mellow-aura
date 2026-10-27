@@ -58,7 +58,7 @@
         </div>
 
         @if ($shopLinks)
-            <div class="basis-full sm:flex-[0_1_170px]">
+            <div class="basis-full sm:flex-[0_1_200px]">
                 <div class="mb-4 text-[10.5px] tracking-[0.24em] text-label-dark uppercase">{{ __('shared::footer.shop') }}</div>
                 <div class="flex flex-col gap-[11px] text-[14.5px]">
                     @foreach ($shopLinks as [$label, $href])
@@ -68,16 +68,13 @@
             </div>
         @endif
 
-        @if ($studioLinks || Route::has('admin.dashboard'))
-            <div class="basis-full sm:flex-[0_1_170px]">
+        @if ($studioLinks)
+            <div class="basis-full sm:flex-[0_1_200px]">
                 <div class="mb-4 text-[10.5px] tracking-[0.24em] text-label-dark uppercase">{{ __('shared::footer.studio') }}</div>
                 <div class="flex flex-col gap-[11px] text-[14.5px]">
                     @foreach ($studioLinks as [$label, $href])
                         <a href="{{ $href }}" class="text-on-dark hover:text-rose">{{ $label }}</a>
                     @endforeach
-                    @if (Route::has('admin.dashboard'))
-                        <a href="{{ route('admin.dashboard') }}" class="text-label-dark hover:text-rose">{{ __('shared::footer.panel') }}</a>
-                    @endif
                 </div>
             </div>
         @endif

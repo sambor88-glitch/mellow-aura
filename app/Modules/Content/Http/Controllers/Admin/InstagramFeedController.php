@@ -4,6 +4,7 @@ namespace App\Modules\Content\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Content\Actions\RefreshInstagramFeed;
+use App\Modules\Content\Actions\SetInstagramFocus;
 use App\Modules\Content\Exceptions\InstagramFeedUnavailable;
 use App\Modules\Content\Http\Requests\Admin\SaveInstagramFeedRequest;
 use App\Modules\Settings\Actions\SaveSettings;
@@ -14,9 +15,10 @@ use Illuminate\Http\RedirectResponse;
  */
 class InstagramFeedController extends Controller
 {
-    public function __invoke(SaveInstagramFeedRequest $request, SaveSettings $saveSettings, RefreshInstagramFeed $refresh): RedirectResponse
+    public function __invoke(SaveInstagramFeedRequest $request, SaveSettings $saveSettings, SetInstagramFocus $setFocus, RefreshInstagramFeed $refresh): RedirectResponse
     {
         $saveSettings($settings = $request->settings());
+        $setFocus($request->focus());
 
         try {
             $count = $refresh();
