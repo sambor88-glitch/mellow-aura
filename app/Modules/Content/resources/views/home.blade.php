@@ -93,7 +93,8 @@
                     <p class="eyebrow mb-[22px]">{{ $t('eyebrow') }}</p>
                     <h1 id="hero-title" class="max-w-[12ch] font-serif text-[length:clamp(42px,6.4vw,92px)] leading-[.96] font-light tracking-[-0.02em] text-balance">{{ $em('heading') }}</h1>
                     <p class="aura-lead mt-6 max-w-[46ch] text-[17.5px] leading-[1.68] text-pretty text-lead">{{ $t('lead') }}</p>
-                    <div class="mt-8 flex flex-wrap gap-3">
+                    {{-- On a phone an even grid: the main button across, the others in two equal columns, a single one across. --}}
+                    <div @class(['mt-8 grid grid-cols-2 gap-3 md:flex md:flex-wrap [&>*]:justify-center [&>*]:whitespace-nowrap max-md:[&>*]:px-4! [&>.aura-btn-main]:col-span-2', '[&>*:last-child]:col-span-2' => ! $workshopsUrl])>
                         @if ($mugUrl = $link('mug.index'))
                             <a href="{{ $mugUrl }}" data-magnet class="{{ $btnMain }}">{{ $t('cta_mug') }} <span aria-hidden="true">→</span></a>
                         @endif
@@ -102,7 +103,7 @@
                             <a href="{{ $workshopsUrl }}" data-magnet class="{{ $btnGlass }}">{{ $t('cta_workshops') }}</a>
                         @endif
                     </div>
-                    <div class="mt-8 flex flex-wrap items-stretch gap-3">
+                    <div class="mt-8 grid grid-cols-2 items-stretch gap-3 md:flex md:flex-wrap [&>*:last-child:nth-child(odd)]:col-span-2">
                         {{-- BLIK only where the price is in złoty: it does not exist in euro. --}}
                         @foreach (array_filter([['100%', $t('fact_handmade')], Locales::currency() === 'PLN' ? ['BLIK', $t('fact_blik')] : null, $dispatch ? [$dispatch, $t('fact_dispatch')] : null]) as [$value, $label])
                             <div class="aura-fact glass flex flex-col gap-1 rounded-2xl px-5 py-3.5">
@@ -244,7 +245,7 @@
             <div class="relative mx-auto flex max-w-[1360px] flex-wrap items-center gap-[clamp(40px,6vw,80px)] px-[clamp(18px,4vw,48px)]">
                 <div class="min-w-0 flex-[1_1_440px]">
                     <p class="eyebrow mb-[22px] text-label-dark [--eyebrow-dash:var(--color-rose)]">{{ $t('workshops_eyebrow') }}</p>
-                    <h2 id="workshops-title" class="font-serif text-[length:clamp(44px,6.2vw,96px)] leading-[.95] font-light tracking-[-0.02em] text-sand">{{ $em('workshops_heading', 'text-rose italic') }}</h2>
+                    <h2 id="workshops-title" class="font-serif text-[length:clamp(44px,6.2vw,96px)] leading-[.95] font-light tracking-[-0.02em] text-sand">{{ $em('workshops_heading', 'text-rose italic whitespace-nowrap') }}</h2>
                     <p class="mt-6 max-w-[44ch] text-[17.5px] leading-[1.68] text-on-dark-muted">{{ $t('workshops_text') }}</p>
                     <div data-aura-rise class="mt-9 grid gap-2.5">
                         @foreach ($workshops as $workshop)
