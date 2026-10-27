@@ -9,7 +9,7 @@
 
 <x-shared::layout
     title="Zestawy prezentowe — ceramika i jedwab w pudełku"
-    description="Gotowe zestawy: kubek i scrunchie w jednym kolorze, talerz z filiżanką, kadzielnica z podstawką. Taniej niż osobno, zapakowane na prezent."
+    description="Gotowe zestawy: kubek i scrunchie w jednym odcieniu, talerz z filiżanką, kadzielnica z podstawką. Taniej niż osobno, zapakowane na prezent."
     :canonical="route('bundles.index')"
     :image="$bundles->first()?->items->first()?->variant->product->getFirstMedia('images')?->getAvailableUrl(['card'])"
 >
@@ -47,7 +47,8 @@
                         @endif
                         <ul class="mb-5 grid justify-items-start gap-2 sm:flex sm:flex-wrap" aria-label="W zestawie">
                             @foreach ($bundle->items as $item)
-                                <li class="rounded-full bg-sand-dark px-[13px] py-1.5 text-[12px] tracking-[0.06em] text-muted">{{ $item->variant->product->name }}</li>
+                                {{-- A live set has only published parts, so each one has its page in the shop. --}}
+                                <li><a href="{{ route('product.show', $item->variant->product) }}" class="inline-block rounded-full bg-sand-dark px-[13px] py-1.5 text-[12px] tracking-[0.06em] text-muted transition-colors duration-300 hover:bg-line-soft hover:text-ink">{{ $item->variant->product->name }}</a></li>
                             @endforeach
                         </ul>
                         <form method="post" action="{{ route('cart.store') }}" x-data x-on:submit.prevent="$store.cart.send($el)" class="flex flex-wrap items-center gap-4">
@@ -55,9 +56,9 @@
                             <input type="hidden" name="type" value="bundle">
                             <input type="hidden" name="bundle_id" value="{{ $bundle->id }}">
                             <span class="font-serif text-[27px]">{{ Money::format($price) }}</span>
+                            {{-- The parts' sum is not an earlier price, so it is never struck through or badged as a reduction (Omnibus). --}}
                             @if ($price < $full)
-                                <span class="text-[15px] text-hint line-through"><span class="sr-only">osobno </span>{{ Money::format($full) }}</span>
-                                <span class="rounded-full bg-navy px-3 py-[5px] text-[11.5px] tracking-[0.1em] text-linen uppercase">taniej o {{ Money::format($full - $price) }}</span>
+                                <span class="text-[15px] text-muted">osobno {{ Money::format($full) }} · oszczędzasz {{ Money::format($full - $price) }}</span>
                             @endif
                             <button class="ml-auto min-h-11 rounded-full bg-ink px-7 py-3.5 max-sm:ml-0 max-sm:basis-full text-[14px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">
                                 Do koszyka<span class="sr-only">: {{ $bundle->name }}</span>
