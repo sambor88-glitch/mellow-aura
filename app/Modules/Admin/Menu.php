@@ -23,7 +23,7 @@ class Menu
             ['label' => 'Reklamacje', 'route' => 'admin.complaints.index', 'active' => 'admin.complaints.*', 'description' => 'Odpowiedź w 14 dni z gotowym listem — przy odmowie z oświadczeniem o mediacji.'],
             ['label' => 'Niewysłane maile', 'route' => 'admin.failed-mails.index', 'active' => 'admin.failed-mails.*', 'description' => 'Maile ze sklepu, które nie wyszły mimo kilku prób. Wyślesz je jeszcze raz jednym kliknięciem.'],
             ['label' => 'Produkty', 'route' => 'admin.products.index', 'active' => 'admin.products.*', 'description' => 'Nazwy, rozmiary, ceny, stany i zdjęcia.'],
-            ['label' => 'Kategorie', 'route' => 'admin.categories.index', 'active' => 'admin.categories.*', 'description' => 'Tytuł i opis każdej półki w Google oraz wstęp nad produktami.'],
+            ['label' => 'Kategorie', 'route' => 'admin.categories.index', 'active' => 'admin.categories.*', 'description' => 'Tytuł i opis każdej półki w Google, wstęp nad produktami i podpisy skrótów nad sklepem.'],
             ['label' => 'Kubek z napisem', 'route' => 'admin.mug.edit', 'active' => 'admin.mug.*', 'description' => 'Zdjęcie pod napisy, rozmiary z cenami i limit znaków.'],
             ['label' => 'Prezenty i zestawy', 'route' => 'admin.gifts.edit', 'active' => 'admin.gifts.*', 'description' => 'Zestawy z rabatem, „Szukam prezentu” i vouchery.'],
             ['label' => 'Warsztaty', 'route' => 'admin.workshops.edit', 'active' => 'admin.workshops.*', 'description' => 'Cennik warsztatów i terminarz z liczbą miejsc.'],

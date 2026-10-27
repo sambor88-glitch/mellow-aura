@@ -964,5 +964,53 @@
                 ]
             }
         ]
+    },
+    {
+        "key": "shop_shortcut_note_mug",
+        "value": "Twój tekst, Twój kolor"
+    },
+    {
+        "key": "shop_shortcut_note_bundles",
+        "value": "Gotowe do wręczenia"
+    },
+    {
+        "key": "shop_shortcut_note_gift_finder",
+        "value": "Pomogę wybrać"
+    },
+    {
+        "key": "shop_shortcut_note_scarf",
+        "value": "Opaska z Twojej tkaniny"
+    },
+    {
+        "key": "shop_shortcut_note_imprint",
+        "value": "Twoje kwiaty w ceramice"
+    },
+    {
+        "key": "shop_shortcut_note_custom_orders",
+        "value": "Opisz pomysł, wycenię"
+    },
+    {
+        "key": "shop_shortcut_note_mug_en",
+        "value": "Your words, your colour"
+    },
+    {
+        "key": "shop_shortcut_note_bundles_en",
+        "value": "Ready to give"
+    },
+    {
+        "key": "shop_shortcut_note_gift_finder_en",
+        "value": "I will help you choose"
+    },
+    {
+        "key": "shop_shortcut_note_scarf_en",
+        "value": "A headband from your fabric"
+    },
+    {
+        "key": "shop_shortcut_note_imprint_en",
+        "value": "Your flowers in clay"
+    },
+    {
+        "key": "shop_shortcut_note_custom_orders_en",
+        "value": "Describe it, I will quote"
     }
 ]
