@@ -251,7 +251,7 @@ class WorkshopBookingTest extends TestCase
 
         $this->actingAs(User::factory()->create())
             ->delete(route('admin.workshops.dates.destroy', $date))
-            ->assertSessionHas('panel_status', 'Na ten termin są już zapisy — nie usuwam go z terminarza');
+            ->assertSessionHas('panel_status', 'Na ten termin są zapisy — anuluj je w „Zapisy”, zanim usuniesz termin');
 
         $this->assertModelExists($date);
     }

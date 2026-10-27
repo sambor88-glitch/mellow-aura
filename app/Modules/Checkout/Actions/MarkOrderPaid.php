@@ -48,9 +48,11 @@ class MarkOrderPaid
                 }
             }
 
-            $problemNote = ($this->confirmBooking)($order) === BookingStatus::Overbooked
-                ? 'Nadkomplet: płatność przyszła po czasie trzymania miejsca, a termin jest pełny. Zwróć wpłatę albo zaproponuj inny termin.'
-                : ($this->confirmCustomOrderPayment)($order);
+            $problemNote = match (($this->confirmBooking)($order)) {
+                BookingStatus::Overbooked => 'Nadkomplet: płatność przyszła po czasie trzymania miejsca, a termin jest pełny. Zwróć wpłatę albo zaproponuj inny termin.',
+                BookingStatus::Cancelled => 'Płatność za zapis na warsztat, który anulowałaś w panelu. Zwróć wpłatę.',
+                default => ($this->confirmCustomOrderPayment)($order),
+            };
             $problem = $problemNote !== null;
 
             $order->update([

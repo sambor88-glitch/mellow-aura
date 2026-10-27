@@ -19,8 +19,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property CarbonImmutable $expires_at
  * @property ?CarbonImmutable $confirmed_at
  * @property ?CarbonImmutable $reminded_at
+ * @property ?CarbonImmutable $cancelled_at
  */
-#[Fillable(['workshop_date_id', 'order_id', 'seats', 'status', 'expires_at', 'confirmed_at', 'reminded_at'])]
+#[Fillable(['workshop_date_id', 'order_id', 'seats', 'status', 'expires_at', 'confirmed_at', 'reminded_at', 'cancelled_at'])]
 class WorkshopBooking extends Model
 {
     /**
@@ -43,6 +44,19 @@ class WorkshopBooking extends Model
         $query->where(fn (Builder $query) => $query
             ->where('status', BookingStatus::Confirmed)
             ->orWhere(fn (Builder $query) => $query->where('status', BookingStatus::Held)->where('expires_at', '>', now())));
+    }
+
+    /**
+     * Whether the booking is still on the date's list in the panel: paid, held for a payment that may still come,
+     * or overbooked and waiting for the refund.
+     */
+    public function isActive(): bool
+    {
+        return match ($this->status) {
+            BookingStatus::Confirmed, BookingStatus::Overbooked => true,
+            BookingStatus::Held => $this->expires_at->isFuture(),
+            default => false,
+        };
     }
 
     /**
@@ -83,6 +97,7 @@ class WorkshopBooking extends Model
             'expires_at' => 'immutable_datetime',
             'confirmed_at' => 'immutable_datetime',
             'reminded_at' => 'immutable_datetime',
+            'cancelled_at' => 'immutable_datetime',
         ];
     }
 }
