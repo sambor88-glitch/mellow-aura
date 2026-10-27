@@ -305,7 +305,7 @@
                 <div data-aura-rise class="grid grid-cols-2 gap-2.5 min-[520px]:grid-cols-3 min-[980px]:grid-cols-6">
                     @foreach ($instagramPosts as $post)
                         <a href="{{ $post->permalink }}" target="_blank" rel="noopener" class="block overflow-hidden rounded-[14px] bg-linen">
-                            <img src="{{ $post->imageUrl() }}" alt="{{ $post->alt() }}" loading="lazy" width="1080" height="1080" class="block aspect-square w-full object-cover transition-transform duration-[1.1s] ease-clay hover:scale-[1.06]">
+                            <img src="{{ $post->imageUrl() }}" alt="{{ $post->alt() }}" loading="lazy" width="1080" height="1080" style="object-position: {{ $post->objectPosition() }}" class="block aspect-square w-full object-cover transition-transform duration-[1.1s] ease-clay hover:scale-[1.06]">
                         </a>
                     @endforeach
                 </div>
