@@ -216,6 +216,11 @@ a jedna wypychała na gałąź cudzego PR-a. Zasady, żeby praca się nie dublow
 - Zadanie, którego kod już jest, a w Jirze jest otwarte, porządkujesz zamiast je proponować:
   - całość zrobiona i jest worklog → „Gotowe”;
   - kod jest, a zostały kroki poza kodem → „W toku” i komentarz, co jest, a co zostaje.
+- Każdy mail do Kasi z pytaniem albo prośbą (wysłany przez Macieja) dostaje zadanie w Jirze: tytuł `[KASIA] …`,
+  etykieta `prosba-do-kasi`, przypisane do Macieja, w opisie data wysłania, adresaci i temat maila, termin (Due date)
+  = kiedy przypomnieć, zwykle 3 dni robocze. Odpowiedź Kasi → komentarz i „Gotowe”. Po terminie bez odpowiedzi
+  proponujesz Maciejowi przypomnienie. Lista otwartych próśb: JQL `labels = prosba-do-kasi AND statusCategory != Done`.
+  Adresy Kasi są w opisach tych zadań w Jirze, nie w repozytorium.
 
 ## Komendy
 
