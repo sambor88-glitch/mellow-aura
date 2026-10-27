@@ -646,8 +646,9 @@
  * The full-screen menu and the cart drawer on a touch screen: no blur behind them and no fade from nothing.
  * iOS Safari left an overlay that faded in from opacity 0 with a backdrop-filter, and blurred text sliding over it,
  * unpainted for seconds. The menu or the cart was open, so the next taps landed on it unseen — on the cart's „×”,
- * which sits exactly where „Koszyk” is — and „Menu” seemed to answer one tap in five (MA-203). Unlayered, so it beats
- * the utilities on those elements.
+ * which sits exactly where „Koszyk” is — and „Menu” seemed to answer one tap in five (MA-203). The drawer does not slide
+ * in either: inside the modal <dialog> Safari ran the slide backwards, off the left edge, and then left half a second of
+ * empty dimmed screen before the panel popped in. Unlayered, so it beats the utilities on those elements.
  */
 @media (pointer: coarse) {
     .aura-overlay {
@@ -670,8 +671,6 @@
         -webkit-backdrop-filter: none;
         backdrop-filter: none;
         background-color: var(--color-cream);
-        animation-name: auraDrawerTouch;
+        animation: none;
     }
 }
-
-@keyframes auraDrawerTouch { from { transform: translateX(110%); } }
