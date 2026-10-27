@@ -641,3 +641,37 @@
         display: none;
     }
 }
+
+/*
+ * The full-screen menu and the cart drawer on a touch screen: no blur behind them and no fade from nothing.
+ * iOS Safari left an overlay that faded in from opacity 0 with a backdrop-filter, and blurred text sliding over it,
+ * unpainted for seconds. The menu or the cart was open, so the next taps landed on it unseen — on the cart's „×”,
+ * which sits exactly where „Koszyk” is — and „Menu” seemed to answer one tap in five (MA-203). Unlayered, so it beats
+ * the utilities on those elements.
+ */
+@media (pointer: coarse) {
+    .aura-overlay {
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+        opacity: 1;
+        animation: none;
+        transition: none;
+    }
+
+    #menu.aura-overlay {
+        background-color: rgb(243 237 228 / .97);
+    }
+
+    .aura-overlay a {
+        filter: none;
+    }
+
+    .aura-drawer-panel {
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+        background-color: var(--color-cream);
+        animation-name: auraDrawerTouch;
+    }
+}
+
+@keyframes auraDrawerTouch { from { transform: translateX(110%); } }
