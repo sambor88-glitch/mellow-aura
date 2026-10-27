@@ -17,6 +17,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
 /**
@@ -72,7 +73,10 @@ class Przelewy24GatewayTest extends TestCase
                 && $request['amount'] === 25500 && $request['currency'] === 'PLN'
                 && $request['description'] === 'MellowAura '.$order->number
                 && $request['email'] === 'ania@example.com' && $request['language'] === 'pl' && $request['country'] === 'PL'
-                && $request['urlReturn'] === route('checkout.confirmation')
+                // Signed with the order's number, so the bank's app in another browser still finds the order (MA-219).
+                && str_starts_with($request['urlReturn'], route('checkout.confirmation').'?')
+                && str_contains($request['urlReturn'], 'order='.$order->number)
+                && str_contains($request['urlReturn'], 'signature=')
                 && $request['urlStatus'] === route('payments.przelewy24.notify')
                 && $request['sign'] === hash('sha384', '{"sessionId":"'.$attempt->session_id.'","merchantId":11111,"amount":25500,"currency":"PLN","crc":"crc-key"}')
                 && ! isset($request['additional']);
@@ -173,6 +177,110 @@ class Przelewy24GatewayTest extends TestCase
         $this->get('/zamowienie/potwierdzenie')->assertOk()->assertSee('Zapłacone');
         $this->assertSame(PaymentStatus::Paid, Order::sole()->payment_status);
         $this->assertSame(2, $variant->fresh()->stock);
+    }
+
+    public function test_a_payment_cancelled_on_przelewy24s_page_keeps_the_cart_and_offers_to_finish_it(): void
+    {
+        Http::fake([
+            self::API.'transaction/register' => Http::response(['data' => ['token' => 'TOKEN-5'], 'responseCode' => 0]),
+            self::API.'transaction/by/sessionId/*' => Http::response(['data' => ['status' => 0], 'responseCode' => 0]),
+        ]);
+        $this->cartWithAVase();
+        $this->post('/zamowienie', $this->form(['payment_method' => 'card', 'blik_code' => '']));
+
+        // Przelewy24 sends the customer back after a cancel too, and says nothing about it.
+        $this->get($this->returnUrl())->assertOk()
+            ->assertSee('Dziękuję. Czekam na potwierdzenie.')
+            ->assertSee('Dokończ płatność')
+            ->assertSee('Zmień sposób płatności');
+
+        $this->get('/zamowienie')->assertOk()->assertSee('Wazony');
+    }
+
+    public function test_the_signed_return_in_another_browser_shows_the_number_and_status_only(): void
+    {
+        Http::fake([
+            self::API.'transaction/register' => Http::response(['data' => ['token' => 'TOKEN-6'], 'responseCode' => 0]),
+            self::API.'transaction/by/sessionId/*' => Http::response(['data' => ['status' => 2], 'responseCode' => 0]),
+        ]);
+        $variant = $this->cartWithAVase();
+        $this->post('/zamowienie', $this->form(['payment_method' => 'card', 'blik_code' => '', 'locker_code' => 'KRA01M']));
+        $url = $this->returnUrl();
+        $order = Order::sole();
+
+        // The bank's app opens the link in another browser: no session, no cart.
+        $this->flushSession();
+
+        $this->get($url)->assertOk()
+            ->assertSee($order->number)
+            ->assertSee('Zapłacone')
+            ->assertDontSee('KRA01M')
+            ->assertDontSee('ania@example.com')
+            ->assertDontSee('Anna Nowak')
+            ->assertDontSee('Zmień sposób płatności');
+        $this->assertSame(PaymentStatus::Paid, $order->fresh()->payment_status);
+        $this->assertSame(2, $variant->fresh()->stock);
+    }
+
+    public function test_a_wrong_or_expired_signature_is_refused(): void
+    {
+        Http::fake([self::API.'transaction/register' => Http::response(['data' => ['token' => 'TOKEN-7'], 'responseCode' => 0])]);
+        $this->cartWithAVase();
+        $this->post('/zamowienie', $this->form(['payment_method' => 'card', 'blik_code' => '']));
+        $url = $this->returnUrl();
+        $number = Order::sole()->number;
+        $this->flushSession();
+
+        $this->get(route('checkout.confirmation', ['order' => $number]))->assertForbidden();
+        $this->get(str_replace('signature=', 'signature=0', $url))->assertForbidden();
+        $this->travel(2)->days();
+        $this->get($url)->assertForbidden();
+    }
+
+    public function test_finishing_the_payment_registers_a_new_try_on_the_same_order(): void
+    {
+        Http::fake([
+            self::API.'transaction/register' => Http::sequence()
+                ->push(['data' => ['token' => 'TOKEN-8'], 'responseCode' => 0])
+                ->push(['data' => ['token' => 'TOKEN-9'], 'responseCode' => 0]),
+            self::API.'transaction/by/sessionId/*' => Http::response(['data' => ['status' => 0], 'responseCode' => 0]),
+        ]);
+        $this->cartWithAVase();
+        $this->post('/zamowienie', $this->form(['payment_method' => 'card', 'blik_code' => '']));
+        $order = Order::sole();
+
+        $this->post(URL::temporarySignedRoute('checkout.resume', now()->addDay(), ['order' => $order->number]))
+            ->assertRedirect('https://sandbox.przelewy24.pl/trnRequest/TOKEN-9');
+
+        $this->assertSame(1, Order::count());
+        $this->assertSame(2, PaymentAttempt::where('order_id', $order->id)->count());
+        $this->assertSame(PaymentAttempt::latest('id')->first()->session_id, $order->fresh()->payment_provider_id);
+        // Without a valid signature nothing is registered.
+        $this->post(route('checkout.resume', ['order' => $order->number]))->assertForbidden();
+        $this->assertSame(2, PaymentAttempt::count());
+    }
+
+    public function test_a_payment_finished_in_another_browser_empties_this_cart_at_the_checkout(): void
+    {
+        Http::fake([
+            self::API.'transaction/register' => Http::response(['data' => ['token' => 'TOKEN-10'], 'responseCode' => 0]),
+            self::API.'transaction/by/sessionId/*' => Http::response(['data' => ['status' => 2], 'responseCode' => 0]),
+        ]);
+        $this->cartWithAVase();
+        $this->post('/zamowienie', $this->form(['payment_method' => 'card', 'blik_code' => '']));
+        // Przelewy24's notification marked it paid while the customer was in the bank's app.
+        Order::sole()->update(['payment_status' => PaymentStatus::Paid]);
+
+        $this->get('/zamowienie')->assertRedirect(route('checkout.confirmation'));
+        $this->get('/zamowienie/potwierdzenie')->assertOk();
+        $this->get('/zamowienie')->assertOk()->assertDontSee('Wazony');
+    }
+
+    /** The return address the order was registered with. */
+    private function returnUrl(): string
+    {
+        return Http::recorded(fn (Request $request) => str_ends_with($request->url(), 'transaction/register'))
+            ->first()[0]['urlReturn'];
     }
 
     private function cartWithAVase(): ProductVariant

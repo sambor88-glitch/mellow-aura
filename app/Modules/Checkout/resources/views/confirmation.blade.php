@@ -6,7 +6,7 @@
     $withNumber = fn (string $key) => str_replace(':number', '<strong class="font-medium select-all">'.e($order->number).'</strong>', e($t($key)));
 @endphp
 <x-shared::layout :title="$t('title')" :noindex="true">
-    @if ($purchase)
+    @if ($purchase && $own)
         {{-- Once per order in this browser, so a reload of the confirmation counts no second purchase. --}}
         <x-consent::analytics-event name="purchase" :params="$purchase" :once="'purchase-'.$order->number" />
     @endif
@@ -33,14 +33,36 @@
                 @elseif (! $paid)
                     {{-- Back from Przelewy24's page before its notification: no transfer to make, only a moment to wait. --}}
                     {!! $withNumber('confirming_text') !!}
-                    <a href="{{ route('checkout.confirmation') }}" class="mt-2 block text-graphite underline underline-offset-4 hover:text-ink">{{ $t('check_again') }}</a>
+                    {{-- The same address again: the signed link from Przelewy24 or the session's own. --}}
+                    <a href="{{ request()->fullUrl() }}" class="mt-2 block text-graphite underline underline-offset-4 hover:text-ink">{{ $t('check_again') }}</a>
                 @elseif ($parcel)
                     {!! $withNumber('paid_parcel_text') !!}
                 @else
                     {!! $withNumber('paid_text') !!}
                 @endif
             </p>
-            @includeIf('gifts::checkout.vouchers', ['order' => $order])
+            @if ($resumeUrl)
+                {{-- Przelewy24 says nothing about a cancelled payment, so the way back to it stays here (MA-219). --}}
+                <div class="mx-auto mb-8 max-w-[48ch]">
+                    @if (session('checkout_notice'))
+                        <p role="alert" class="mb-4 rounded-[18px] border border-alert-line bg-alert px-5 py-4 text-[15px] leading-[1.6] text-alert-text">{{ session('checkout_notice') }}</p>
+                    @endif
+                    <p class="mb-4 text-[15px] leading-[1.6] text-lead">{{ $t($own ? 'resume_text' : 'resume_text_elsewhere') }}</p>
+                    <div class="flex flex-wrap items-center justify-center gap-3">
+                        <form method="POST" action="{{ $resumeUrl }}">
+                            @csrf
+                            <button type="submit" class="inline-flex min-h-[52px] items-center rounded-full bg-ink px-[30px] text-[14px] font-medium text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.98]">{{ $t('resume') }}</button>
+                        </form>
+                        @if ($own)
+                            <a href="{{ route('checkout.index') }}" class="inline-flex min-h-[52px] items-center rounded-full border border-line-strong px-[30px] text-[14px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark active:scale-[.98]">{{ $t('change_payment') }}</a>
+                        @endif
+                    </div>
+                </div>
+            @endif
+            {{-- Without the session (a signed link opened in another browser) the page shows no voucher codes and no locker. --}}
+            @if ($own)
+                @includeIf('gifts::checkout.vouchers', ['order' => $order])
+            @endif
             @if ($order->hasShortage())
                 <p role="status" class="mx-auto mb-8 max-w-[48ch] rounded-[18px] border border-alert-line bg-alert px-5 py-4 text-[15px] leading-[1.6] text-alert-text">
                     {{ $t('shortage') }}
@@ -52,7 +74,7 @@
                     <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">{{ $t('delivery') }}</span><span>{{ $shippingLabel }}</span></div>
                 @endif
                 {{-- The locker the customer picked, or the promise to pick one, so a typo can still be caught (MA-72). --}}
-                @if ($order->shipping_method === 'parcel_locker')
+                @if ($own && $order->shipping_method === 'parcel_locker')
                     <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">{{ $t('locker') }}</span><span class="select-all">{{ $order->locker_code ?? $t('locker_to_agree') }}</span></div>
                 @endif
                 @if ($parcel && ($dispatch = DispatchTime::label($settings)))

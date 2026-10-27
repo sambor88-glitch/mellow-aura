@@ -56,6 +56,13 @@ class TestGateway implements PaymentGateway
         return StartedPayment::rejected(__('payments::gateway.code_refused'));
     }
 
+    public function resume(Order $order): StartedPayment
+    {
+        return ($this->simulate)($order, null, announce: false)
+            ? StartedPayment::done()
+            : StartedPayment::rejected(__('payments::gateway.code_refused'));
+    }
+
     public function takesBlikCode(): bool
     {
         return true;
