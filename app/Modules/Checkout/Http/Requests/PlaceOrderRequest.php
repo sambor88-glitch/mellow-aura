@@ -17,7 +17,8 @@ use Illuminate\Validation\Rule;
 /**
  * Three fields, delivery, payment and accepting the terms are required, and so is accepting each unexpected
  * feature of a product in the cart (terms §4.5). A cart of vouchers sent as PDFs has no delivery to choose.
- * The address, NIP and note are optional, but an address has to be whole and a NIP has to add up.
+ * The courier needs the address, and the address goes with the courier alone: the parcel locker and pickup
+ * at the studio have no door to deliver to. The NIP and note are optional, but a NIP has to add up.
  * So is the parcel locker: without one Kasia agrees on it with the customer.
  */
 class PlaceOrderRequest extends FormRequest
@@ -39,9 +40,9 @@ class PlaceOrderRequest extends FormRequest
             'phone' => ['required', 'string', 'regex:/^(\+?48)?[\s-]*(\d[\s-]*){9}$/'],
             'email' => ['required', 'string', 'email', 'max:255'],
             'name' => ['required', 'string', 'max:120'],
-            'street' => ['nullable', 'required_with:postal_code,city', 'string', 'max:160'],
-            'postal_code' => ['nullable', 'required_with:street,city', 'regex:/^\d{2}-\d{3}$/'],
-            'city' => ['nullable', 'required_with:street,postal_code', 'string', 'max:80'],
+            'street' => ['exclude_unless:shipping_method,courier', 'required', 'string', 'max:160'],
+            'postal_code' => ['exclude_unless:shipping_method,courier', 'required', 'regex:/^\d{2}-\d{3}$/'],
+            'city' => ['exclude_unless:shipping_method,courier', 'required', 'string', 'max:80'],
             'invoice_nip' => ['bail', 'nullable', 'digits:10', $this->checksum(...)],
             'note' => ['nullable', 'string', 'max:500'],
             // Vouchers sent as PDFs alone have nothing to deliver; the controller records them as sent by e-mail.
@@ -76,11 +77,11 @@ class PlaceOrderRequest extends FormRequest
             'email.max' => $t('email_max'),
             'name.required' => $t('name_required'),
             'name.max' => $t('name_max'),
-            'street.required_with' => $t('street_required_with'),
+            'street.required' => $t('street_required'),
             'street.max' => $t('street_max'),
-            'postal_code.required_with' => $t('postal_code_required_with'),
+            'postal_code.required' => $t('postal_code_required'),
             'postal_code.regex' => $t('postal_code_regex'),
-            'city.required_with' => $t('city_required_with'),
+            'city.required' => $t('city_required'),
             'city.max' => $t('city_max'),
             'invoice_nip.digits' => $t('nip_digits'),
             'note.max' => $t('note_max'),
