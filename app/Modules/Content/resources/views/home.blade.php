@@ -104,7 +104,7 @@
                             <a href="{{ $workshopsUrl }}" data-magnet class="{{ $btnGlass }}">{{ $t('cta_workshops') }}</a>
                         @endif
                     </div>
-                    <div class="mt-8 grid grid-cols-2 items-stretch gap-3 md:flex md:flex-wrap [&>*:last-child:nth-child(odd)]:col-span-2">
+                    <div class="mt-8 grid max-w-[720px] grid-cols-2 items-stretch gap-3 md:auto-cols-fr md:grid-flow-col md:grid-cols-none [&>*:last-child:nth-child(odd)]:col-span-2 md:[&>*:last-child:nth-child(odd)]:col-span-1">
                         {{-- BLIK only where the price is in złoty: it does not exist in euro. --}}
                         @foreach (array_filter([['100%', $t('fact_handmade')], Locales::currency() === 'PLN' ? ['BLIK', $t('fact_blik')] : null, $dispatch ? [$dispatch, $t('fact_dispatch')] : null]) as [$value, $label])
                             <div class="aura-fact glass flex flex-col gap-1 rounded-2xl px-5 py-3.5">

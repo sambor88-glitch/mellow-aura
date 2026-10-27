@@ -16,7 +16,6 @@ return [
     'imprint' => 'Your plant imprint',
     'b2b' => 'For cafés & restaurants',
     'firing' => 'Kiln firing service',
-    'panel' => 'Studio panel',
     'write' => 'Write to me',
     'by_appointment' => 'Studio visits by appointment',
     'faq' => 'FAQ',

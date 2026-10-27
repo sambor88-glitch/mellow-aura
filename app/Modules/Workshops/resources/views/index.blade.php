@@ -26,17 +26,17 @@
             <div class="mb-[76px] grid grid-cols-[repeat(auto-fit,minmax(290px,1fr))] gap-[22px]">
                 @foreach ($workshops as $workshop)
                     <article class="flex animate-ma-up flex-col rounded-[20px] border border-divider bg-cream px-7 py-[30px]" style="animation-delay: {{ $loop->index * 0.06 }}s">
-                        {{-- On a phone the price goes under the name, so the name keeps the whole width. --}}
-                        <div class="mb-3.5 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3.5">
+                        {{-- The price under the name: beside it, it squeezed the name into two or three lines in a narrow card. --}}
+                        <div class="mb-3.5 flex flex-col gap-2">
                             <h2 class="min-w-0 font-serif text-[26px] leading-[1.15] text-balance">{{ $workshop['name'] }}</h2>
-                            <div class="flex flex-none items-baseline gap-1.5 sm:block sm:text-right">
+                            <div class="flex items-baseline gap-1.5">
                                 <div class="font-serif text-[25px] leading-none tabular-nums">{{ Money::format($workshop['price_gross']) }}</div>
                                 @if ($workshop['unit_label'])
-                                    <div class="text-[12.5px] text-label sm:mt-1 sm:text-[11.5px]"><span class="sm:hidden">/ </span>{{ $workshop['unit_label'] }}</div>
+                                    <div class="text-[12.5px] text-label">/ {{ $workshop['unit_label'] }}</div>
                                 @endif
                             </div>
                         </div>
-                        <x-shared::price-before-reduction :was="$workshop['was']" :lowest="$workshop['lowest']" class="-mt-1.5 mb-3.5 sm:text-right" />
+                        <x-shared::price-before-reduction :was="$workshop['was']" :lowest="$workshop['lowest']" class="-mt-1.5 mb-3.5" />
                         @if ($workshop['duration_label'] || $workshop['group_label'])
                             <div class="mb-4 flex flex-wrap gap-2">
                                 @foreach (array_filter([$workshop['duration_label'], $workshop['group_label']]) as $fact)

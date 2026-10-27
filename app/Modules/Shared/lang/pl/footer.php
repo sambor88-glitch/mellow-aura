@@ -16,7 +16,6 @@ return [
     'imprint' => 'Odcisk Twojej rośliny',
     'b2b' => 'Dla kawiarni i restauracji',
     'firing' => 'Wypały na zlecenie',
-    'panel' => 'Mój panel',
     'write' => 'Napisz do mnie',
     'by_appointment' => 'Pracownia na zapisy',
     'faq' => 'FAQ',
