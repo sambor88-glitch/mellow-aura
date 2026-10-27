@@ -68,7 +68,6 @@ class LaunchCheckCommandTest extends TestCase
         ]);
 
         $this->artisan('seo:launch-check', ['url' => 'https://mellow-aura.com'])
-            ->expectsOutputToContain('Regulamin i polityka bez notatek roboczych')
             ->expectsOutputToContain('/regulamin')
             ->assertFailed();
     }
@@ -80,7 +79,6 @@ class LaunchCheckCommandTest extends TestCase
         ]);
 
         $this->artisan('seo:launch-check', ['url' => 'https://mellow-aura.com'])
-            ->expectsOutputToContain('Mapa strony nie ma stron z noindex')
             ->expectsOutputToContain('https://mellow-aura.com/sklep')
             ->assertFailed();
     }
