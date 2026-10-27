@@ -27,6 +27,7 @@ class WorkshopPricesController extends Controller
             'names' => $names,
             'dates' => WorkshopDate::query()->upcoming()->get(),
             'lead' => $settings->get('text_workshops_lead'),
+            'whatToBring' => implode("\n", (array) $settings->get('workshop_what_to_bring', [])),
             'workshops' => collect((array) $settings->get('workshop_types', []))
                 ->filter(fn (mixed $type) => is_array($type))
                 ->map(fn (array $type) => [

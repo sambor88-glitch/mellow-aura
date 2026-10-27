@@ -9,7 +9,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 
 /**
- * The workshop price list and the sentence above it. A row keeps its code and unit for bookings after
+ * The workshop price list, the sentence above it and what to bring, which goes only into the booking mails. A row keeps its code and unit for bookings after
  * the holidays; a new row gets a code from its name.
  */
 class SaveWorkshopTypesRequest extends FormRequest
@@ -37,6 +37,7 @@ class SaveWorkshopTypesRequest extends FormRequest
 
         return [
             'text_workshops_lead' => ['nullable', 'string', 'max:300'],
+            'workshop_what_to_bring' => ['nullable', 'string', 'max:400'],
             'workshops' => ['nullable', 'array', 'max:12'],
             'workshops.*.name' => $row(['nullable', 'string', 'max:60', 'required_with:workshops.*.price']),
             'workshops.*.price' => $row(['nullable', 'regex:'.self::PRICE, 'required_with:workshops.*.name']),
@@ -58,6 +59,7 @@ class SaveWorkshopTypesRequest extends FormRequest
     {
         return [
             'text_workshops_lead.max' => 'Zdanie zmieszczę do :max znaków',
+            'workshop_what_to_bring.max' => 'Listę zmieszczę do :max znaków',
             'workshops.max' => 'Zmieszczę do :max warsztatów',
             'workshops.*.name.required_with' => 'Wpisz nazwę warsztatu do tej ceny',
             'workshops.*.name.max' => 'Nazwę zmieszczę do :max znaków',
@@ -72,12 +74,13 @@ class SaveWorkshopTypesRequest extends FormRequest
     }
 
     /**
-     * @return array{text_workshops_lead: ?string, workshop_types: list<array<string, mixed>>}
+     * @return array{text_workshops_lead: ?string, workshop_what_to_bring: list<string>, workshop_types: list<array<string, mixed>>}
      */
     public function settings(): array
     {
         return [
             'text_workshops_lead' => filled($lead = $this->validated('text_workshops_lead')) ? trim($lead) : null,
+            'workshop_what_to_bring' => $this->lines($this->validated('workshop_what_to_bring')),
             'workshop_types' => array_map(fn (array $row) => [
                 'code' => $row['code'] ?? Str::slug((string) $row['name'], '_'),
                 'name' => $row['name'],
@@ -88,9 +91,19 @@ class SaveWorkshopTypesRequest extends FormRequest
                 'unit' => $row['unit'],
                 'unit_label' => $row['unit_label'],
                 'summary' => $row['summary'],
-                'includes' => array_values(array_filter(array_map('trim', explode("\n", (string) $row['includes'])), fn (string $line) => $line !== '')),
+                'includes' => $this->lines($row['includes']),
             ], $this->listRows('workshops', self::FIELDS)),
         ];
+    }
+
+    /**
+     * One item per line, without the empty ones.
+     *
+     * @return list<string>
+     */
+    private function lines(?string $text): array
+    {
+        return array_values(array_filter(array_map('trim', explode("\n", (string) $text)), fn (string $line) => $line !== ''));
     }
 
     protected function getRedirectUrl(): string
