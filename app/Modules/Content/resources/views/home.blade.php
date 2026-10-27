@@ -71,9 +71,11 @@
                     </div>
                 @endforeach
 
+                {{-- On a phone the frame shows only the middle half of the screen and the plate sits at the bottom of the photo,
+                     so the photo starts a third higher; aura.js brings it back as the frame opens. --}}
                 <div class="aura-frame">
                     <img src="{{ $photo('kasia-talerz-zloto.webp') }}" alt="{{ $t('hero_alt') }}" fetchpriority="high" width="1200" height="1500"
-                         class="size-full origin-[50%_75%] scale-[1.28] object-cover object-[50%_82%]">
+                         class="size-full origin-[50%_75%] scale-[1.28] object-cover object-[50%_82%] max-[760px]:-translate-y-[32%]">
                 </div>
                 <div class="aura-scrim"></div>
 

@@ -119,6 +119,8 @@ function hero(lenis) {
         .fromTo(frame, { clipPath: small ? 'inset(24% 14% 26% 14% round 18px)' : 'inset(22% 37% 22% 37% round 18px)' },
             { clipPath: 'inset(0% 0% 0% 0% round 0px)', duration: 0.55, ease: 'power2.inOut' }, 0)
         .fromTo(frame.querySelector('img'), { scale: 1.28 }, { scale: 1, duration: 0.6 }, 0)
+        // The phone photo starts higher (-translate-y-[32%] in the view) and comes down with the frame, never leaving a gap under it.
+        .fromTo(frame.querySelector('img'), { y: 0, yPercent: small ? -32 : 0 }, { y: 0, yPercent: 0, duration: 0.55, ease: 'power2.inOut' }, 0)
         .to(el.querySelector('.aura-mark-1 > span'), { yPercent: -120, xPercent: -18, opacity: 0, filter: 'blur(4px)', letterSpacing: '.08em', duration: 0.3 }, 0)
         .to(el.querySelector('.aura-mark-2 > span'), { yPercent: 120, xPercent: 18, opacity: 0, filter: 'blur(4px)', letterSpacing: '.08em', duration: 0.3 }, 0)
         .to(el.querySelector('[data-hero-meta]'), { opacity: 0, y: 20, duration: 0.12 }, 0)
