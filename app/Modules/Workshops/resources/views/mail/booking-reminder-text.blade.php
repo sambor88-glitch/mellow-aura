@@ -14,8 +14,8 @@ Coś Ci wypadło albo się spóźnisz? Napisz do mnie przez stronę i podaj nume
 Najszybciej złapiesz mnie na WhatsAppie: {!! $contactPhone !!}.
 @endif
 
-Kasia
+{!! $mailTexts->signature() !!}
 
 --
-MellowAura{!! $city ? ' · '.$city : '' !!}
+{!! $mailTexts->footer() !!}
 Przypomnienie o warsztacie z zapisu {!! $order->number !!}.

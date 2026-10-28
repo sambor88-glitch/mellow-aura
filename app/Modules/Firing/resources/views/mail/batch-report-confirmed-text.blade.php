@@ -25,8 +25,8 @@ TWOJA WIADOMOŚĆ
 Chcesz coś zmienić? Odpisz na tego maila — trafi prosto do mnie.
 @endif
 
-Kasia
+{!! $mailTexts->signature() !!}
 
 --
-MellowAura{!! $city ? ' · '.$city : '' !!}
+{!! $mailTexts->footer() !!}
 Potwierdzenie zgłoszenia wysłane przez formularz „Zgłoś wsad” na stronie wypałów MellowAura.

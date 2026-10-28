@@ -19,10 +19,10 @@
             Najszybciej złapiesz mnie na WhatsAppie: {{ $contactPhone }}.
         @endif
     </p>
-    <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">Kasia</p>
+    <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">{{ $mailTexts->common('signature') }}</p>
 
     <x-slot:footer>
-        MellowAura{{ $city ? ' · '.$city : '' }}<br>
+        {{ $mailTexts->common('footer') }}<br>
         Przypomnienie o warsztacie z zapisu {{ $order->number }}.
     </x-slot:footer>
 </x-shared::mail.layout>

@@ -1,7 +1,7 @@
 {{-- The plain-text part is never rendered as HTML, so values print raw instead of as HTML entities. --}}
 {!! $parcel ? 'Dziękuję. Pakuję.' : 'Dziękuję.' !!}
 
-Zamówienie {!! $order->number !!} jest opłacone.{!! $parcel ? ' Zanim paczka wyjdzie, wyślę Ci jej zdjęcie — każdą sztukę zawijam osobno.' : '' !!}
+{!! $mailTexts->text('order_confirmed', 'intro', ['numer' => $order->number]) !!}{!! $parcel ? ' Zanim paczka wyjdzie, wyślę Ci jej zdjęcie — każdą sztukę zawijam osobno.' : '' !!}
 @if ($missing->isNotEmpty())
 
 Ktoś kupił ostatnią sztukę chwilę przed zaksięgowaniem Twojej płatności: {!! $missing->map(fn ($item) => $item->product_name.' ('.$item->variant_label.')')->join(', ') !!}. Za brakujące sztuki zwrócę Ci {{ $order->money($refund) }} — najpóźniej w ciągu 14 dni. Jeśli wolisz podobną sztukę na zamówienie, odpisz na tego maila.
@@ -17,7 +17,7 @@ DOSTAWA
 @includeIf('gifts::mail.order-vouchers-text', ['order' => $order])
 
 @if ($contactEmail)
-Masz pytanie o zamówienie? Odpisz na tego maila — trafi prosto do mnie.
+{!! $mailTexts->text('order_confirmed', 'outro', ['numer' => $order->number]) !!}
 @else
 Masz pytanie o zamówienie? Napisz do mnie przez stronę sklepu i podaj numer {!! $order->number !!}.
 @endif
@@ -30,8 +30,8 @@ W załącznikach jest regulamin sklepu{!! $order->terms_version ? ' ('.$order->t
 Odstąpienie zgłosisz najprościej online, przez formularz „Odstąp od umowy tutaj”: {!! route('withdrawal.create', ['zamowienie' => $order->number]) !!}
 @endif
 
-Kasia
+{!! $mailTexts->signature() !!}
 
 --
-MellowAura{!! $city ? ' · '.$city : '' !!}
+{!! $mailTexts->footer() !!}
 Potwierdzenie zamówienia {!! $order->number !!} złożonego w sklepie MellowAura.

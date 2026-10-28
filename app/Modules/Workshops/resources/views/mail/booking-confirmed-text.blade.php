@@ -19,8 +19,8 @@ Możesz też napisać na WhatsAppie: {!! $contactPhone !!}.
 
 W załączniku jest regulamin{!! $order->terms_version ? ' ('.$order->terms_version.')' : '' !!}.
 
-Kasia
+{!! $mailTexts->signature() !!}
 
 --
-MellowAura{!! $city ? ' · '.$city : '' !!}
+{!! $mailTexts->footer() !!}
 Potwierdzenie zapisu na warsztat {!! $order->number !!}.

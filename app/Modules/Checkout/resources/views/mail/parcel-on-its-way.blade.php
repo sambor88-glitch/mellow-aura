@@ -4,7 +4,7 @@
 >
     <h1 style="margin: 0 0 12px; font-family: Georgia, 'Times New Roman', serif; font-weight: normal; font-size: 30px; line-height: 1.15; color: #2F2620;">Paczka w drodze</h1>
     <p style="margin: 0 0 22px; color: #5C5043;">
-        Wysłałam Twoje zamówienie <strong style="font-weight: 600; color: #2F2620;">{{ $order->number }}</strong>.
+        {{ $mailTexts->html('parcel_on_its_way', 'intro', ['numer' => $order->number]) }}
         @if ($order->shipping_method === 'parcel_locker')
             InPost napisze do Ciebie SMS-a i maila, gdy paczka będzie czekać w paczkomacie.
         @elseif ($order->shipping_method === 'courier')
@@ -36,7 +36,7 @@
 
     <p style="margin: 0; color: #5C5043;">
         @if ($contactEmail)
-            Coś nie tak z paczką? Odpisz na tego maila — trafi prosto do mnie.
+            {{ $mailTexts->html('parcel_on_its_way', 'outro', ['numer' => $order->number]) }}
         @else
             Coś nie tak z paczką? Napisz do mnie przez stronę sklepu i podaj numer {{ $order->number }}.
         @endif
@@ -44,10 +44,10 @@
             Możesz też napisać na WhatsAppie: {{ $contactPhone }}.
         @endif
     </p>
-    <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">Kasia</p>
+    <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">{{ $mailTexts->common('signature') }}</p>
 
     <x-slot:footer>
-        MellowAura{{ $city ? ' · '.$city : '' }}<br>
+        {{ $mailTexts->common('footer') }}<br>
         Wiadomość o wysłaniu zamówienia {{ $order->number }} ze sklepu MellowAura.
     </x-slot:footer>
 </x-shared::mail.layout>

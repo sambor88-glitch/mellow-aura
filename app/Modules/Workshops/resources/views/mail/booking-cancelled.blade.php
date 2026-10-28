@@ -24,10 +24,10 @@
     @if ($contactPhone)
         <p style="margin: 0 0 4px; color: #5C5043;">Możesz też napisać na WhatsAppie: {{ $contactPhone }}.</p>
     @endif
-    <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">Kasia</p>
+    <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">{{ $mailTexts->common('signature') }}</p>
 
     <x-slot:footer>
-        MellowAura{{ $city ? ' · '.$city : '' }}<br>
+        {{ $mailTexts->common('footer') }}<br>
         Wiadomość o zapisie na warsztat {{ $order->number }}.
     </x-slot:footer>
 </x-shared::mail.layout>

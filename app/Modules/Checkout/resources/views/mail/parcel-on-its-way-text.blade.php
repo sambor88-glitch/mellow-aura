@@ -1,7 +1,7 @@
 {{-- The plain-text part is never rendered as HTML, so values print raw instead of as HTML entities. --}}
 Paczka w drodze
 
-Wysłałam Twoje zamówienie {!! $order->number !!}.{!! match ($order->shipping_method) {
+{!! $mailTexts->text('parcel_on_its_way', 'intro', ['numer' => $order->number]) !!}{!! match ($order->shipping_method) {
     'parcel_locker' => ' InPost napisze do Ciebie SMS-a i maila, gdy paczka będzie czekać w paczkomacie.',
     'courier' => ' Kurier InPost da znać przed doręczeniem.',
     default => '',
@@ -22,7 +22,7 @@ DOSTAWA
 {!! $delivery !!}
 
 @if ($contactEmail)
-Coś nie tak z paczką? Odpisz na tego maila — trafi prosto do mnie.
+{!! $mailTexts->text('parcel_on_its_way', 'outro', ['numer' => $order->number]) !!}
 @else
 Coś nie tak z paczką? Napisz do mnie przez stronę sklepu i podaj numer {!! $order->number !!}.
 @endif
@@ -30,8 +30,8 @@ Coś nie tak z paczką? Napisz do mnie przez stronę sklepu i podaj numer {!! $o
 Możesz też napisać na WhatsAppie: {!! $contactPhone !!}.
 @endif
 
-Kasia
+{!! $mailTexts->signature() !!}
 
 --
-MellowAura{!! $city ? ' · '.$city : '' !!}
+{!! $mailTexts->footer() !!}
 Wiadomość o wysłaniu zamówienia {!! $order->number !!} ze sklepu MellowAura.

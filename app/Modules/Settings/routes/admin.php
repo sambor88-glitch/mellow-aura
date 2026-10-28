@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Settings\Http\Controllers\Admin\MailTextsController;
 use App\Modules\Settings\Http\Controllers\Admin\SeoPagesController;
 use App\Modules\Settings\Http\Controllers\Admin\SettingsController;
 use Illuminate\Support\Facades\Route;
@@ -14,3 +15,7 @@ Route::put('/ustawienia/statystyki', [SettingsController::class, 'analytics'])->
 
 Route::get('/google', [SeoPagesController::class, 'edit'])->name('seo-pages.edit');
 Route::put('/google', [SeoPagesController::class, 'update'])->name('seo-pages.update');
+
+Route::get('/maile', [MailTextsController::class, 'edit'])->name('mail-texts.edit');
+Route::put('/maile', [MailTextsController::class, 'update'])->name('mail-texts.update');
+Route::put('/maile/podglad', [MailTextsController::class, 'preview'])->name('mail-texts.preview');

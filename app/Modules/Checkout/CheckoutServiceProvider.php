@@ -10,11 +10,24 @@ use App\Modules\Checkout\Listeners\SendOrderEmails;
 use App\Modules\Checkout\Listeners\SendOrderSummary;
 use App\Modules\Checkout\Listeners\SendShippingNotice;
 use App\Modules\Checkout\Listeners\SendWithdrawalEmails;
+use App\Modules\Checkout\Mail\OrderAwaitingPayment;
+use App\Modules\Checkout\Mail\OrderConfirmed;
+use App\Modules\Checkout\Mail\OrderUnavailable;
+use App\Modules\Checkout\Mail\ParcelOnItsWay;
+use App\Modules\Checkout\Mail\WithdrawalConfirmed;
 use App\Modules\Shared\ModuleServiceProvider;
 use Illuminate\Support\Facades\Event;
 
 class CheckoutServiceProvider extends ModuleServiceProvider
 {
+    protected array $customerMails = [
+        OrderAwaitingPayment::class,
+        OrderConfirmed::class,
+        OrderUnavailable::class,
+        ParcelOnItsWay::class,
+        WithdrawalConfirmed::class,
+    ];
+
     public function boot(): void
     {
         parent::boot();

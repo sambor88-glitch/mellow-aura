@@ -25,10 +25,10 @@
     <p style="margin: 12px 0 0; font-size: 13.5px; color: #5C5043;">
         W załączniku jest regulamin{{ $order->terms_version ? ' ('.$order->terms_version.')' : '' }}.
     </p>
-    <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">Kasia</p>
+    <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">{{ $mailTexts->common('signature') }}</p>
 
     <x-slot:footer>
-        MellowAura{{ $city ? ' · '.$city : '' }}<br>
+        {{ $mailTexts->common('footer') }}<br>
         Potwierdzenie zapisu na warsztat {{ $order->number }}.
     </x-slot:footer>
 </x-shared::mail.layout>

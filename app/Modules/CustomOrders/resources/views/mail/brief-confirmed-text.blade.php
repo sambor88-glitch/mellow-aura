@@ -14,8 +14,8 @@ TWÓJ OPIS
 Chcesz coś dopisać albo dosłać zdjęcie? Odpisz na tego maila — trafi prosto do mnie.
 @endif
 
-Kasia
+{!! $mailTexts->signature() !!}
 
 --
-MellowAura{!! $city ? ' · '.$city : '' !!}
+{!! $mailTexts->footer() !!}
 Potwierdzenie wysłane przez formularz „Zamówienia indywidualne” na stronie MellowAura.

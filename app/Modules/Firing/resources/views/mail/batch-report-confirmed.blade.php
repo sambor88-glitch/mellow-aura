@@ -22,10 +22,10 @@
     @if ($contactEmail)
         <p style="margin: 0; color: #5C5043;">Chcesz coś zmienić? Odpisz na tego maila — trafi prosto do mnie.</p>
     @endif
-    <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">Kasia</p>
+    <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">{{ $mailTexts->common('signature') }}</p>
 
     <x-slot:footer>
-        MellowAura{{ $city ? ' · '.$city : '' }}<br>
+        {{ $mailTexts->common('footer') }}<br>
         Potwierdzenie zgłoszenia wysłane przez formularz „Zgłoś wsad” na stronie wypałów MellowAura.
     </x-slot:footer>
 </x-shared::mail.layout>

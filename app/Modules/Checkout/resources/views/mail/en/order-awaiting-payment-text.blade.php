@@ -1,7 +1,7 @@
 {{-- The plain-text part is never rendered as HTML, so values print raw instead of as HTML entities. --}}
 Thank you for your order
 
-Order {!! $order->number !!} is waiting for your payment. Once it arrives, you’ll get a second e-mail confirming I’ve accepted your order. That is when our contract is made.
+{!! $mailTexts->text('order_awaiting_payment', 'intro', ['numer' => $order->number]) !!} Once it arrives, you’ll get a second e-mail confirming I’ve accepted your order. That is when our contract is made.
 @if ($bankTransfer)
 
 BANK TRANSFER DETAILS
@@ -26,13 +26,13 @@ DELIVERY AND PAYMENT
 Payment: {!! $order->payment_method->title() !!}
 
 @if ($contactEmail)
-A question about your order? Just reply to this e-mail — it comes straight to me.
+{!! $mailTexts->text('order_awaiting_payment', 'outro', ['numer' => $order->number]) !!}
 @else
 A question about your order? Write to me through the shop and give your order number, {!! $order->number !!}.
 @endif
 
-Kasia
+{!! $mailTexts->signature() !!}
 
 --
-MellowAura{!! $city ? ' · '.$city : '' !!}
+{!! $mailTexts->footer() !!}
 Summary of order {!! $order->number !!} placed in the MellowAura shop.

@@ -21,11 +21,11 @@ Rzeczy odeślij w ciągu 14 dni od dziś{!! $returnAddress ? ' na adres: '.$retu
 Pieniądze zwrócę w ciągu 14 dni od dziś, tą samą metodą płatności. Mogę z tym poczekać, aż rzeczy do mnie wrócą albo dostanę dowód ich nadania. Szczegóły są w regulaminie, w §12: {!! route('content.terms') !!}#regulamin-12-prawo-odstapienia-od-umowy
 @if ($contactEmail)
 
-Masz pytanie? Odpisz na tego maila — trafi prosto do mnie.
+{!! $mailTexts->text('withdrawal_confirmed', 'outro', ['numer' => $withdrawal->order_number]) !!}
 @endif
 
-Kasia
+{!! $mailTexts->signature() !!}
 
 --
-MellowAura{!! $city ? ' · '.$city : '' !!}
+{!! $mailTexts->footer() !!}
 Potwierdzenie odstąpienia od umowy wysłane przez formularz „Odstąp od umowy tutaj” w sklepie MellowAura.

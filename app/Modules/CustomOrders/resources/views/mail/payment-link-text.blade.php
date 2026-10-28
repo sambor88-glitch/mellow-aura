@@ -16,8 +16,8 @@ Link jest ważny do {!! $validUntil !!}.
 Masz pytanie przed zapłatą? Odpisz na tego maila — trafi prosto do mnie.
 @endif
 
-Kasia
+{!! $mailTexts->signature() !!}
 
 --
-MellowAura{!! $city ? ' · '.$city : '' !!}
+{!! $mailTexts->footer() !!}
 Link do płatności za zamówienie indywidualne.

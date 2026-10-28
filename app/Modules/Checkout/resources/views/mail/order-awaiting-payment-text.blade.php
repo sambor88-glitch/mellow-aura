@@ -1,7 +1,7 @@
 {{-- The plain-text part is never rendered as HTML, so values print raw instead of as HTML entities. --}}
 Dziękuję za zamówienie
 
-Zamówienie {!! $order->number !!} czeka na płatność. Gdy wpłata dotrze, dostaniesz drugi mail — potwierdzenie przyjęcia zamówienia do realizacji. Z tą chwilą zawieramy umowę.
+{!! $mailTexts->text('order_awaiting_payment', 'intro', ['numer' => $order->number]) !!} Gdy wpłata dotrze, dostaniesz drugi mail — potwierdzenie przyjęcia zamówienia do realizacji. Z tą chwilą zawieramy umowę.
 @if ($bankTransfer)
 
 DANE DO PRZELEWU
@@ -26,13 +26,13 @@ DOSTAWA I PŁATNOŚĆ
 Płatność: {!! $order->payment_method->label() !!}
 
 @if ($contactEmail)
-Masz pytanie o zamówienie? Odpisz na tego maila — trafi prosto do mnie.
+{!! $mailTexts->text('order_awaiting_payment', 'outro', ['numer' => $order->number]) !!}
 @else
 Masz pytanie o zamówienie? Napisz do mnie przez stronę sklepu i podaj numer {!! $order->number !!}.
 @endif
 
-Kasia
+{!! $mailTexts->signature() !!}
 
 --
-MellowAura{!! $city ? ' · '.$city : '' !!}
+{!! $mailTexts->footer() !!}
 Podsumowanie zamówienia {!! $order->number !!} złożonego w sklepie MellowAura.
