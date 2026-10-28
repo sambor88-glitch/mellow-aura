@@ -6,6 +6,7 @@ use App\Modules\Catalog\CatalogServiceProvider;
 use App\Modules\Checkout\CheckoutServiceProvider;
 use App\Modules\Consent\ConsentServiceProvider;
 use App\Modules\Content\ContentServiceProvider;
+use App\Modules\Customers\CustomersServiceProvider;
 use App\Modules\CustomOrders\CustomOrdersServiceProvider;
 use App\Modules\Firing\FiringServiceProvider;
 use App\Modules\Gifts\GiftsServiceProvider;
@@ -37,5 +38,6 @@ return [
     ConsentServiceProvider::class,
     WorkshopsServiceProvider::class,
     FiringServiceProvider::class,
+    CustomersServiceProvider::class,
     MonitoringServiceProvider::class,
 ];
