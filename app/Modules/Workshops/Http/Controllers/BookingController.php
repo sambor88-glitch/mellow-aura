@@ -226,14 +226,36 @@ class BookingController extends Controller
         /** @var WorkshopBooking $booking */
         $booking = $booking->fresh(['workshopDate', 'voucher']);
 
+        $paid = $order->payment_status === PaymentStatus::Paid;
+        $overbooked = $booking->status === BookingStatus::Overbooked;
+
         return response()->view('workshops::booking-confirmation', [
             'order' => $order,
             'booking' => $booking,
             'date' => $booking->workshopDate,
-            'paid' => $order->payment_status === PaymentStatus::Paid,
-            'overbooked' => $booking->status === BookingStatus::Overbooked,
+            'paid' => $paid,
+            'overbooked' => $overbooked,
+            'analytics' => $paid && ! $overbooked ? $this->analytics($order, $booking) : null,
             'location' => $settings->get('location_description'),
         ])->header('X-Robots-Tag', self::ROBOTS);
+    }
+
+    /**
+     * workshop_booking for Google Analytics (MA-140): which workshop, how many seats, what it was worth and whether
+     * money or a voucher paid. Nothing the customer typed, no name and no e-mail.
+     *
+     * @return array<string, string|int|float>
+     */
+    private function analytics(Order $order, WorkshopBooking $booking): array
+    {
+        return [
+            'workshop_type' => $booking->workshopDate->workshop_code,
+            'seats' => $booking->seats,
+            'method' => $booking->voucher_id !== null ? 'voucher' : 'payment',
+            'currency' => $order->currency ?? 'PLN',
+            'value' => $order->total_gross / 100,
+            'transaction_id' => $order->number,
+        ];
     }
 
     /**

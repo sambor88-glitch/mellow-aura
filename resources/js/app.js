@@ -1,6 +1,6 @@
 import Alpine from 'alpinejs';
 import focus from '@alpinejs/focus';
-import { trackClicks, trackPage } from './analytics';
+import { trackPage } from './analytics';
 import aura from './aura';
 import beforeAfter from './before-after';
 import blikWait from './blik';
@@ -37,5 +37,4 @@ Alpine.data('stickyHeader', stickyHeader);
 Alpine.start();
 aura();
 trackPage();
-trackClicks();
 rememberLocaleChoice();

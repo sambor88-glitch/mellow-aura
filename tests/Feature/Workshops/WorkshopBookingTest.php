@@ -11,6 +11,7 @@ use App\Modules\Checkout\Models\Order;
 use App\Modules\Checkout\Support\ShippingMethods;
 use App\Modules\Monitoring\Mail\Alert;
 use App\Modules\Settings\Database\Seeders\SettingsSeeder;
+use App\Modules\Settings\Models\Setting;
 use App\Modules\Workshops\Enums\BookingStatus;
 use App\Modules\Workshops\Models\WorkshopBooking;
 use App\Modules\Workshops\Models\WorkshopDate;
@@ -89,6 +90,34 @@ class WorkshopBookingTest extends TestCase
 
         $this->get('/warsztaty-ceramiczne-krakow')->assertSee('ostatnie miejsce');
         $this->assertSame(['wrap' => ['type' => 'gift_wrap', 'quantity' => 1]], session('cart'));
+    }
+
+    public function test_a_paid_booking_counts_once_as_workshop_booking_in_google_analytics(): void
+    {
+        Setting::query()->updateOrCreate(['key' => 'google_analytics_id'], ['value' => 'G-AB12CD34EF']);
+        $this->post(route('workshops.booking.store', $this->date(seats: 3)), $this->form(['seats' => 2, 'expected_total' => 44000]));
+        $order = Order::sole();
+
+        $html = $this->get(route('workshops.booking.confirmation'))->assertOk()->getContent();
+        preg_match('#<script type="application/json" data-analytics-event>(.*?)</script>#s', $html, $match);
+
+        // The browser sends it once per order (analytics.js), with nothing the customer typed.
+        $this->assertSame([
+            'name' => 'workshop_booking',
+            'params' => ['workshop_type' => 'hand_building', 'seats' => 2, 'method' => 'payment', 'currency' => 'PLN', 'value' => 440, 'transaction_id' => $order->number],
+            'once' => 'workshop-'.$order->number,
+        ], json_decode($match[1], true));
+        $this->assertStringNotContainsString($order->email, $match[1]);
+    }
+
+    public function test_a_booking_still_waiting_for_its_payment_sends_nothing_to_google_analytics(): void
+    {
+        Setting::query()->updateOrCreate(['key' => 'google_analytics_id'], ['value' => 'G-AB12CD34EF']);
+        $this->post(route('workshops.booking.store', $this->date(seats: 2)), $this->form(['payment_method' => 'card', 'blik_code' => null]));
+        Order::sole()->update(['payment_status' => PaymentStatus::Pending, 'paid_at' => null]);
+        WorkshopBooking::sole()->update(['status' => BookingStatus::Held, 'confirmed_at' => null]);
+
+        $this->get(route('workshops.booking.confirmation'))->assertOk()->assertDontSee('workshop_booking');
     }
 
     public function test_the_last_seat_goes_to_one_person_only(): void
