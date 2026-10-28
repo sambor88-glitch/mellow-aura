@@ -39,7 +39,7 @@ class ConfirmBooking
                     'workshop-cancelled-paid:'.$order->number,
                     'Płatność za anulowany zapis — do zwrotu',
                     $order->number.' ('.$order->name.', '.$order->email.'): przyszła płatność za zapis na warsztat, który anulowałaś w panelu. '
-                        .'Zwróć wpłatę '.$order->money($order->total_gross).'.',
+                        .self::refund($order).'.',
                 ));
 
                 if ($booking->status !== BookingStatus::Cancelled) {
@@ -65,10 +65,17 @@ class ConfirmBooking
                 'Nadkomplet na warsztacie — do zwrotu',
                 $order->number.' ('.$order->name.', '.$order->email.'): płatność za warsztat '.$date->dayLabel().', '.$date->timeLabel()
                     .' (miejsca: '.$booking->seats.') przyszła po czasie trzymania miejsca, a termin jest już pełny. '
-                    .'Zwróć wpłatę '.$order->money($order->total_gross).' albo zaproponuj inny termin.',
+                    .self::refund($order).' albo zaproponuj inny termin.',
             ));
 
             return BookingStatus::Overbooked;
         });
+    }
+
+    /** What goes back: the money to the account, the part an amount voucher paid to the voucher (MA-244). */
+    private static function refund(Order $order): string
+    {
+        return 'Zwróć wpłatę '.$order->money($order->amountDue())
+            .($order->vouchers_gross > 0 ? ', a '.$order->money($order->vouchers_gross).' oddaj na voucher przyciskiem w zamówieniu' : '');
     }
 }

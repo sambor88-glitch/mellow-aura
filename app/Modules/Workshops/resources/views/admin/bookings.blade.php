@@ -26,7 +26,7 @@
                                 <a href="mailto:{{ $order->email }}">{{ $order->email }}</a>@if ($order->phone) · <a href="tel:{{ preg_replace('/[^\d+]/', '', $order->phone) }}">{{ $order->phone }}</a>@endif
                             </div>
                             <div class="mt-1 text-[12.5px] text-muted tabular-nums">
-                                <a href="{{ route('admin.orders.show', $order) }}">{{ $order->number }}</a> · {{ $booking->voucher ? 'voucher '.$booking->voucher->code : $order->money($order->total_gross) }} · zapis {{ $booking->created_at->format('j.m, H:i') }}
+                                <a href="{{ route('admin.orders.show', $order) }}">{{ $order->number }}</a> · {{ $booking->paidLabel() }} · zapis {{ $booking->created_at->format('j.m, H:i') }}
                             </div>
                         </div>
                         <span class="flex-none rounded-full px-3 py-[5px] text-[11.5px] {{ $booking->status->chipClass() }}">{{ $booking->status->label() }}</span>

@@ -50,10 +50,15 @@ class MarkOrderPaid
                 }
             }
 
+            // The workshop date before the vouchers: PlaceBooking and CancelBooking lock in that order too.
+            $booking = ($this->confirmBooking)($order);
             $voucherNote = ($this->captureVoucherBalance)($order);
-            $problemNote = match (($this->confirmBooking)($order)) {
-                BookingStatus::Overbooked => 'Nadkomplet: płatność przyszła po czasie trzymania miejsca, a termin jest pełny. Zwróć wpłatę albo zaproponuj inny termin.',
-                BookingStatus::Cancelled => 'Płatność za zapis na warsztat, który anulowałaś w panelu. Zwróć wpłatę.',
+            // Only the money that came in goes back to the account; the voucher part goes back to the voucher (MA-244).
+            $refund = 'Zwróć wpłatę '.$order->money($order->amountDue())
+                .($order->vouchers_gross > 0 ? ' i oddaj '.$order->money($order->vouchers_gross).' na voucher' : '');
+            $problemNote = match ($booking) {
+                BookingStatus::Overbooked => 'Nadkomplet: płatność przyszła po czasie trzymania miejsca, a termin jest pełny. '.$refund.' albo zaproponuj inny termin.',
+                BookingStatus::Cancelled => 'Płatność za zapis na warsztat, który anulowałaś w panelu. '.$refund.'.',
                 default => ($this->confirmCustomOrderPayment)($order),
             };
             $problemNote = collect([$problemNote, $voucherNote])->filter()->join(' ') ?: null;

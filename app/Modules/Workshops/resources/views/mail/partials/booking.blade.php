@@ -2,7 +2,7 @@
 <div style="margin: 0 0 6px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #726456;">Warsztat</div>
 <p style="margin: 0; color: #2F2620;">{{ $workshop }}</p>
 <p style="margin: 0; color: #5C5043;">{{ $date->dayLabel() }}, {{ $date->timeLabel() }}</p>
-<p style="margin: 0 0 22px; color: #5C5043;">Liczba osób: {{ $booking->seats }} · {{ $voucher ? 'voucher '.$voucher->code : 'zapłacone '.$order->money($order->total_gross) }}</p>
+<p style="margin: 0 0 22px; color: #5C5043;">Liczba osób: {{ $booking->seats }} · {{ $booking->paidLabel() }}</p>
 
 <div style="margin: 0 0 6px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #726456;">Gdzie</div>
 @if ($address)

@@ -36,7 +36,7 @@
                     Zapis {!! $number !!} jest opłacony{{ $booking->voucher ? ' voucherem '.$booking->voucher->code : '' }}. Potwierdzenie przyjdzie na {{ $order->email }}.
                 @elseif ($overbooked)
                     Płatność za zapis {!! $number !!} przyszła, gdy ostatnie miejsce na {{ $when }} zajęła już inna osoba.
-                    Napiszę do Ciebie: zwrócę całą wpłatę albo zaproponuję inny termin.
+                    Napiszę do Ciebie: zwrócę {{ $order->vouchers_gross > 0 ? 'wpłatę, a kwotę z vouchera oddam na voucher,' : 'całą wpłatę' }} albo zaproponuję inny termin.
                 @else
                     Przelewy24 jeszcze nie dało znać, że pieniądze są. Miejsce na {{ $when }} czeka na Ciebie — zapis {!! $number !!}.
                     <a href="{{ route('workshops.booking.confirmation') }}" class="mt-2 block text-graphite underline underline-offset-4 hover:text-ink">Sprawdź jeszcze raz</a>

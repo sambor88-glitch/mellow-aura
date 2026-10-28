@@ -72,6 +72,24 @@ class WorkshopBooking extends Model
     }
 
     /**
+     * How the seats were paid, for the mails and the panel: „voucher MA-…” for a workshop voucher, otherwise what came in
+     * and what amount vouchers paid (MA-244). Each amount in the order's currency.
+     */
+    public function paidLabel(): string
+    {
+        $order = $this->order;
+        // An order made up for the panel's preview of the mails has no voucher part at all.
+        $byVouchers = (int) $order->vouchers_gross;
+
+        return match (true) {
+            $this->voucher !== null => 'voucher '.$this->voucher->code,
+            $byVouchers === 0 => 'zapłacone '.$order->money($order->total_gross),
+            $byVouchers === $order->total_gross => 'zapłacone voucherem '.$order->money($byVouchers),
+            default => 'zapłacone '.$order->money($order->total_gross - $byVouchers).' i voucherem '.$order->money($byVouchers),
+        };
+    }
+
+    /**
      * @return BelongsTo<WorkshopDate, $this>
      */
     public function workshopDate(): BelongsTo

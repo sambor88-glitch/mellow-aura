@@ -3,6 +3,7 @@
 namespace App\Modules\Workshops\Http\Requests;
 
 use App\Modules\Checkout\Enums\PaymentMethod;
+use App\Modules\Gifts\Support\VoucherBalance;
 use App\Modules\Payments\Contracts\PaymentGateway;
 use App\Modules\Workshops\Http\Controllers\BookingController;
 use Illuminate\Foundation\Http\FormRequest;
@@ -12,6 +13,8 @@ use Illuminate\Validation\Rule;
  * The booking form: three fields for contact, how many seats, how to pay and accepting the terms.
  * Whether the seats are still free is counted by PlaceBooking, under the lock. With a voucher (MA-137) the code takes
  * the place of the payment and the seats come from the voucher, so the form's seats and total are left out.
+ * Amount vouchers (MA-244) come as the codes the form kept and what the screen said they pay; with nothing left to pay
+ * there is no BLIK code to ask for.
  */
 class BookWorkshopRequest extends FormRequest
 {
@@ -40,9 +43,12 @@ class BookWorkshopRequest extends FormRequest
             'voucher_code' => ['exclude_unless:payment_method,'.PaymentMethod::Voucher->value, 'required', 'string', 'max:30'],
             // Without BLIK Level 0 the code is typed on Przelewy24's page, not here.
             'blik_code' => $this->container->make(PaymentGateway::class)->takesBlikCode()
-                ? ['exclude_unless:payment_method,'.PaymentMethod::Blik->value, 'required', 'digits:6']
+                ? ['exclude_unless:payment_method,'.PaymentMethod::Blik->value, Rule::excludeIf($this->paidByVouchers(...)), 'required', 'digits:6']
                 : ['exclude'],
             'expected_total' => [$byVoucher, 'required', 'integer'],
+            'vouchers' => [$byVoucher, 'nullable', 'array', 'max:'.VoucherBalance::MAX_CODES],
+            'vouchers.*' => [$byVoucher, 'string', 'max:30'],
+            'expected_vouchers' => [$byVoucher, 'nullable', 'integer', 'min:0'],
             'accept_terms' => ['accepted'],
         ];
     }
@@ -72,6 +78,12 @@ class BookWorkshopRequest extends FormRequest
             'voucher_code.max' => 'Kod z vouchera ma 12 znaków, np. MA-7KQ2-9XHT',
             'accept_terms.accepted' => 'Zaznacz akceptację regulaminu',
         ];
+    }
+
+    /** What the screen said: the amount vouchers leave nothing to pay. */
+    private function paidByVouchers(): bool
+    {
+        return (int) $this->input('expected_vouchers') > 0 && (int) $this->input('expected_vouchers') >= (int) $this->input('expected_total');
     }
 
     protected function prepareForValidation(): void
