@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 
 /**
  * The firing price list from the panel (kiln_prices). A row without a name or a price does not show on the site.
+ * A row counts by the unit its „Za” note names (FiringQuote::unitFor), also when it was saved before that rule.
  * A reduced price comes with the lowest price from the 30 days before it.
  */
 class KilnPrices
@@ -54,7 +55,7 @@ class KilnPrices
                 'note' => filled($row['note'] ?? null) ? (string) $row['note'] : null,
                 'price_gross' => (int) $row['price_gross'],
                 'compare_at_price' => is_numeric($row['compare_at_price'] ?? null) ? (int) $row['compare_at_price'] : null,
-                'unit' => $row['unit'] ?? null,
+                'unit' => FiringQuote::unitFor($row['unit_label'] ?? null),
                 'unit_label' => filled($row['unit_label'] ?? null) ? (string) $row['unit_label'] : null,
             ])
             ->values();

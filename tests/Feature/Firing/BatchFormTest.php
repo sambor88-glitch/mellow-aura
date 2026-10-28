@@ -84,6 +84,22 @@ class BatchFormTest extends TestCase
         ], FiringRequest::query()->orderBy('id')->get()->map(fn (FiringRequest $batch) => [$batch->service_code, $batch->quantity, $batch->quote])->all());
     }
 
+    public function test_a_row_saved_without_a_unit_counts_by_its_za_note(): void
+    {
+        Mail::fake();
+        $this->setting('kiln_prices', [
+            ['code' => 'glaze_firing', 'label' => 'Wypał na ostro', 'price_gross' => 4000, 'unit' => null, 'unit_label' => '/ kg'],
+            // Kasia changed „/ kg” to „/ szt.” and the old unit stayed behind.
+            ['code' => 'gold_firing', 'label' => 'Wypał złota', 'price_gross' => 3500, 'unit' => 'kg', 'unit_label' => '/ szt.'],
+        ]);
+
+        $this->post('/wypal-ceramiki-krakow', $this->form(['service' => 'glaze_firing', 'quantity' => '3']));
+        $this->post('/wypal-ceramiki-krakow', $this->form(['service' => 'gold_firing', 'quantity' => '2']));
+
+        $this->assertSame([['kg', 12000], ['piece', 7000]],
+            FiringRequest::query()->orderBy('id')->get()->map(fn (FiringRequest $batch) => [$batch->unit, $batch->quote])->all());
+    }
+
     public function test_both_mails_show_the_batch_and_escape_what_the_customer_wrote(): void
     {
         $batch = FiringRequest::query()->create([

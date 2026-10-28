@@ -42,7 +42,7 @@ class FiringController extends Controller
                 'code' => KilnPrices::key($price),
                 'label' => $price['label'],
                 'price' => $price['price_gross'],
-                'unit' => $price['unit'] === null || in_array($price['unit'], FiringQuote::BY_AMOUNT, true) ? $price['unit'] : 'other',
+                'unit' => $price['unit'],
             ])->values(),
             'loadDays' => $loadDays->upcoming(),
             'reported' => $reported,
