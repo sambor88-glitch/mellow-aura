@@ -14,7 +14,8 @@
 <a href="{{ route('product.show', $product) }}" class="block text-ink hover:text-ink">
     <div class="relative isolate mb-3.5 overflow-hidden rounded-[18px] bg-linen transition-[box-shadow,transform] duration-500 ease-clay group-hover:-translate-y-1 group-hover:shadow-card-hover">
         @if ($image)
-            <img src="{{ $image->getAvailableUrl(['card']) }}" alt="{{ $image->getCustomProperty('alt') ?: $product->name }}" @unless ($eager) loading="lazy" @endunless
+            {{-- data-vt-photo: on the way to the product page this photo grows into the product photo (resources/js/transitions.js). --}}
+            <img data-vt-photo src="{{ $image->getAvailableUrl(['card']) }}" alt="{{ $image->getCustomProperty('alt') ?: $product->name }}" @unless ($eager) loading="lazy" @endunless
                  @if ($srcset) srcset="{{ $srcset }}" sizes="(min-width: 640px) 400px, {{ $phoneColumns > 1 ? 'calc(50vw - 35px)' : 'calc(100vw - 56px)' }}" @endif
                  width="1200" height="1500" style="{{ \App\Modules\Shared\Support\FocalPoint::style($image) }}" class="block aspect-[4/5] w-full object-cover saturate-[.8] transition-[transform,filter] duration-[1.1s] ease-clay group-hover:scale-[1.06] group-hover:saturate-100">
             @if ($second)

@@ -10,6 +10,8 @@
     @isset($head)
         {{ $head }}
     @endisset
+    <x-shared::speculation-rules />
+    <x-shared::page-transitions />
     @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>

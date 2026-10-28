@@ -640,6 +640,52 @@
     --focus-color: var(--color-linen);
 }
 
+/*
+ * Moving between pages (mellowaura-design, „Przejście do produktu”; MA-237). The old page blurs away, the new one
+ * comes out of the blur, and the photo of the clicked card grows into the product photo (resources/js/transitions.js
+ * names the card, the product page names its photo here). The shop turns it on in <x-shared::page-transitions>,
+ * only with motion allowed. Browsers without cross-document transitions ignore all of it.
+ */
+[data-vt-photo="main"] {
+    view-transition-name: pvimg;
+}
+
+::view-transition-group(pvimg) {
+    animation-duration: .75s;
+    animation-timing-function: var(--ease-clay);
+}
+
+/* A 4:5 card photo and a square product photo: both fill the frame as it grows, never squeezed. */
+::view-transition-old(pvimg), ::view-transition-new(pvimg) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+::view-transition-old(root) {
+    animation: auraPageOut .45s var(--ease-clay) both;
+}
+
+::view-transition-new(root) {
+    animation: auraPageIn .55s var(--ease-clay) both;
+}
+
+/* On a touch screen a blurred screenful costs a phone more than it shows (MA-203): a plain fade there. */
+@media (pointer: coarse) {
+    ::view-transition-old(root) {
+        animation-name: auraFadeOut;
+    }
+
+    ::view-transition-new(root) {
+        animation-name: auraFadeIn;
+    }
+}
+
+@keyframes auraPageOut { to { opacity: 0; filter: blur(10px); } }
+@keyframes auraPageIn { from { opacity: 0; filter: blur(10px); } }
+@keyframes auraFadeOut { to { opacity: 0; } }
+@keyframes auraFadeIn { from { opacity: 0; } }
+
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
         animation-duration: .01ms !important;
@@ -653,6 +699,10 @@
 
     .aura-cursor {
         display: none;
+    }
+
+    ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) {
+        animation: none !important;
     }
 }
 

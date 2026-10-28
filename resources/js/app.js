@@ -15,6 +15,7 @@ import rememberLocaleChoice from './locale';
 import mugConfigurator from './mug';
 import pairUpload from './pair-upload';
 import photoPicker from './photos';
+import { pageTransitions, whenShown } from './transitions';
 
 window.Alpine = Alpine;
 
@@ -39,5 +40,7 @@ Alpine.start();
 if (! matchMedia('(prefers-reduced-motion: reduce)').matches) {
     import('./aura').then(({ default: aura }) => aura()).catch(() => {});
 }
-trackPage();
+pageTransitions();
+// A page rendered ahead of a click sends its Analytics events only once someone sees it (MA-237).
+whenShown(trackPage);
 rememberLocaleChoice();
