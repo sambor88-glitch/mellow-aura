@@ -8,6 +8,7 @@ use App\Modules\Checkout\Models\OrderItem;
 use App\Modules\Localization\Support\Locales;
 use App\Modules\Settings\Settings;
 use App\Modules\Shared\Support\Pdf;
+use App\Modules\Shared\Support\QrCode;
 use Illuminate\Support\Collection;
 
 /**
@@ -61,6 +62,8 @@ class CertificatePdf
     {
         $certificate = Locales::within($locale, fn () => (new Certificate(['piece' => 1, 'number' => now()->format('Y').'/0001']))
             ->setRelation('orderItem', (new OrderItem)->forceFill([
+                // Any token of the right shape: the preview shows where the code goes, not a page that exists.
+                'page_token' => str_repeat('a', PieceToken::LENGTH),
                 'product_name' => __('checkout::certificate.sample_work'),
                 'variant_label' => '',
                 'custom_text' => __('checkout::certificate.sample_text'),
@@ -104,7 +107,7 @@ class CertificatePdf
     }
 
     /**
-     * @return array{number: string, work: string, text: ?string, ceramics: bool, dimensions: ?string, notes: list<array{string, string}>}
+     * @return array{number: string, work: string, text: ?string, ceramics: bool, fired: ?string, glaze: ?string, dimensions: ?string, qr: ?string, notes: list<array{string, string}>}
      */
     private function card(Certificate $certificate): array
     {
@@ -121,7 +124,12 @@ class CertificatePdf
             'work' => collect([$item->product_name, $item->variant_label])->filter()->join(' · '),
             'text' => $item->custom_text === null ? null : str_replace("\n", ' / ', $item->custom_text),
             'ceramics' => $ceramics,
+            // Filled in the panel (MA-234); left empty they stay lines to write on by hand.
+            'fired' => $item->fired_on?->format('j.m.Y'),
+            'glaze' => $item->glaze,
             'dimensions' => $product ? (collect($product->dimensionLabels())->map(fn (string $value, string $label) => $label.' '.$value)->join(' · ') ?: null) : null,
+            // The same page as the card in the parcel (MA-234).
+            'qr' => $item->page_token === null ? null : QrCode::dataUri($item->pageUrl()),
             'notes' => collect([
                 [__('checkout::certificate.care'), $product?->care_note ?: ($ceramics && $polish ? $this->settings->get('care_rule_ceramics') : null)],
                 [__('checkout::certificate.food_contact'), $polish ? $product?->food_contact?->option() : $product?->food_contact?->label()],

@@ -39,6 +39,10 @@
         .foot { border-top: 0.4mm solid #E2D7C7; font-size: 7pt; line-height: 1.5; color: #6B5D4F; }
         .foot td { padding-top: 3mm; }
         .thanks { text-align: right; }
+        {{-- The QR code to the page of the piece (MA-234) sits beside the producer, 20 mm with its quiet zone. --}}
+        .qr-block { position: absolute; left: 73mm; top: 95mm; width: 20mm; text-align: center; }
+        .qr-block img { display: block; width: 20mm; height: 20mm; }
+        .qr-caption { font-size: 6pt; line-height: 1.1; letter-spacing: 0.08em; color: #726456; margin-top: -1mm; }
     </style>
 </head>
 <body>
@@ -58,8 +62,8 @@
                 <tr><td class="label">{{ __('checkout::certificate.number') }}</td><td class="value">{{ $card['number'] }}</td></tr>
                 {{-- Written by hand on the card: the firing date and the glaze are known only in the studio. --}}
                 @if ($card['ceramics'])
-                    <tr><td class="label">{{ __('checkout::certificate.fired') }}</td><td class="value">&nbsp;</td></tr>
-                    <tr><td class="label">{{ __('checkout::certificate.clay') }}</td><td class="value">&nbsp;</td></tr>
+                    <tr><td class="label">{{ __('checkout::certificate.fired') }}</td><td class="value">{{ $card['fired'] }}&nbsp;</td></tr>
+                    <tr><td class="label">{{ __('checkout::certificate.clay') }}</td><td class="value">{{ $card['glaze'] }}&nbsp;</td></tr>
                 @else
                     <tr><td class="label">{{ __('checkout::certificate.material') }}</td><td class="value">&nbsp;</td></tr>
                 @endif
@@ -87,8 +91,14 @@
                 @endforeach
             @endif
             {{-- The maker's name, postal address and e-mail go into the parcel with the product (GPSR art. 9). --}}
+            @if ($card['qr'])
+                <div class="qr-block">
+                    <img src="{{ $card['qr'] }}" alt="">
+                    <div class="qr-caption">{!! nl2br(e(__('checkout::piece.qr_caption')), false) !!}</div>
+                </div>
+            @endif
             @if ($producer->isNotEmpty())
-                <div class="producer-block producer">
+                <div class="producer-block producer" @if ($card['qr']) style="width: 58mm;" @endif>
                     <div class="small-label" style="margin: 0 0 1mm;">{{ __('checkout::certificate.producer') }}</div>
                     @foreach ($producer as $line)
                         {{ $line }}<br>

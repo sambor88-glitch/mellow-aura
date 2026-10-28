@@ -68,6 +68,8 @@ return [
         // A piece or a category not written in English yet.
         'product.show' => 'shop.index',
         'shop.category' => 'shop.index',
+        // The page of a bought piece speaks the language of its order and has no twin (MA-234).
+        'piece.show' => 'shop.index',
         'workshops.index' => 'content.about',
         'vouchers.index' => 'shop.index',
         'gifts.index' => 'shop.index',
