@@ -32,20 +32,14 @@ export default function aura() {
 
     header();
     hero(lenis);
-    words();
-    rows();
-    shelf(lenis);
-    parallax();
-    rise();
-    giant();
-    flyToCart();
 
-    if (fine) {
-        pointer();
-        zoomFollow();
-    }
+    // The rest one effect per task: set up together with Alpine they held a phone's processor for most of a second,
+    // and a tap waited all that time (MA-232). The order stays, so the pinned shelf comes before what is under it.
+    const effects = [words, rows, () => shelf(lenis), parallax, rise, giant, flyToCart, ...(fine ? [pointer, zoomFollow] : [])];
+    const ready = effects.reduce((done, effect) => done.then(() => new Promise((resolve) => setTimeout(() => resolve(effect())))), Promise.resolve());
+    const loaded = new Promise((resolve) => (document.readyState === 'complete' ? resolve() : addEventListener('load', resolve, { once: true })));
 
-    addEventListener('load', () => ScrollTrigger.refresh());
+    Promise.all([ready, loaded]).then(() => setTimeout(() => ScrollTrigger.refresh()));
 }
 
 /*

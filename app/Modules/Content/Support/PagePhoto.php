@@ -4,6 +4,7 @@ namespace App\Modules\Content\Support;
 
 use App\Modules\Localization\Support\Locales;
 use App\Modules\Shared\Support\FocalPoint;
+use Illuminate\Support\HtmlString;
 
 /**
  * One place of PagePhotos as a page shows it. A null url is an empty place: the page leaves the photo out.
@@ -30,6 +31,24 @@ final readonly class PagePhoto
     public function exists(): bool
     {
         return $this->url !== null;
+    }
+
+    /** Smaller copies of the photo for a phone (PagePhotoSizes), null when there are none. */
+    public function srcset(): ?string
+    {
+        return $this->path !== null && $this->url !== null ? app(PagePhotoSizes::class)->srcset($this->path, $this->url) : null;
+    }
+
+    /**
+     * srcset and sizes for the <img>, or nothing when the photo has no smaller copies.
+     *
+     * @param  string  $sizes  how wide the photo shows, as in the sizes attribute
+     */
+    public function srcsetAttributes(string $sizes): HtmlString
+    {
+        $srcset = $this->srcset();
+
+        return new HtmlString($srcset === null ? '' : 'srcset="'.e($srcset).'" sizes="'.e($sizes).'"');
     }
 
     /** The inline style for an <img class="object-cover">. */

@@ -25,7 +25,7 @@
                 </div>
                 <div class="min-w-0 flex-[1_1_320px]">
                     @if (($photo = $pagePhotos->get('b2b'))->exists())
-                        <img src="{{ $photo->url }}" alt="{{ $photo->alt('Kawa w ręcznie robionym kubku') }}" width="600" height="750" style="{{ $photo->style() }}" class="block aspect-[4/5] w-full rounded-[20px] bg-divider-dark object-cover">
+                        <img src="{{ $photo->url }}" {{ $photo->srcsetAttributes('(min-width: 768px) 45vw, 100vw') }} alt="{{ $photo->alt('Kawa w ręcznie robionym kubku') }}" width="600" height="750" style="{{ $photo->style() }}" class="block aspect-[4/5] w-full rounded-[20px] bg-divider-dark object-cover">
                     @endif
                 </div>
             </div>

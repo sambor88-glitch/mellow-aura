@@ -50,7 +50,7 @@
                 {{-- Two to a row on a phone; an odd last photo takes the whole row instead of standing alone. --}}
                 <div class="grid grid-cols-2 gap-3.5 sm:grid-cols-[repeat(auto-fit,minmax(160px,1fr))] max-sm:[&>*:last-child:nth-child(odd)]:col-span-2 max-sm:[&>*:last-child:nth-child(odd)]:aspect-[2/1]">
                     @foreach ($photos as [$photo, $alt])
-                        <img src="{{ $photo->url }}" alt="{{ $photo->alt($alt) }}" loading="lazy" width="600" height="600" style="{{ $photo->style() }}" class="block aspect-square w-full rounded-[20px] bg-line-soft object-cover">
+                        <img src="{{ $photo->url }}" {{ $photo->srcsetAttributes('(min-width: 640px) 25vw, 100vw') }} alt="{{ $photo->alt($alt) }}" loading="lazy" width="600" height="600" style="{{ $photo->style() }}" class="block aspect-square w-full rounded-[20px] bg-line-soft object-cover">
                     @endforeach
                 </div>
             </div>

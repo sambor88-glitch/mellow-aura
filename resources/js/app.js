@@ -1,7 +1,6 @@
 import Alpine from 'alpinejs';
 import focus from '@alpinejs/focus';
 import { trackPage } from './analytics';
-import aura from './aura';
 import beforeAfter from './before-after';
 import blikWait from './blik';
 import briefPhotos from './brief-photos';
@@ -35,6 +34,10 @@ Alpine.data('pairUpload', pairUpload);
 Alpine.data('photoPicker', photoPicker);
 Alpine.data('stickyHeader', stickyHeader);
 Alpine.start();
-aura();
+// The motion (GSAP, ScrollTrigger, Lenis) is a file of its own that comes after Alpine: in this one it was half of what
+// a phone downloaded and ran before the page answered a tap (MA-232). Without it every page is complete and still.
+if (! matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    import('./aura').then(({ default: aura }) => aura()).catch(() => {});
+}
 trackPage();
 rememberLocaleChoice();

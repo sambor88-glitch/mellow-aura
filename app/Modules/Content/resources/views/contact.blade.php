@@ -62,7 +62,7 @@
                 </div>
 
                 @if (($photo = $pagePhotos->get('contact'))->exists())
-                    <img src="{{ $photo->url }}" alt="{{ $photo->alt('Talerz z odciskiem roślinnym') }}" loading="lazy"
+                    <img src="{{ $photo->url }}" {{ $photo->srcsetAttributes('(min-width: 768px) 50vw, 100vw') }} alt="{{ $photo->alt('Talerz z odciskiem roślinnym') }}" loading="lazy"
                          width="800" height="600" style="{{ $photo->style() }}" class="block aspect-[4/3] w-full rounded-[20px] bg-line-soft object-cover">
                 @endif
             </div>

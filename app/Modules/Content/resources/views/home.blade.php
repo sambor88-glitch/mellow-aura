@@ -68,10 +68,11 @@
     <section id="aura-hero" class="aura-hero relative -mt-[78px]" aria-labelledby="hero-title">
         <div class="aura-hero-pin">
             <div class="aura-scene">
+                {{-- Lazy: two of them are hidden on a phone and then never download, and the rest wait for the hero photo. --}}
                 @foreach ($floats as [$place, $class, $speed, $depth])
                     @continue (! ($float = $photo($place))->exists())
                     <div class="aura-float {{ $class }}" data-speed="{{ $speed }}" data-depth="{{ $depth }}" aria-hidden="true">
-                        <div class="size-full"><img src="{{ $float->url }}" alt="" width="400" height="500" style="{{ $float->style() }}" @if ($loop->index > 2) loading="lazy" @endif></div>
+                        <div class="size-full"><img src="{{ $float->url }}" {{ $float->srcsetAttributes('(max-width: 760px) 100px, 13vw') }} alt="" width="400" height="500" style="{{ $float->style() }}" loading="lazy"></div>
                     </div>
                 @endforeach
 
@@ -80,7 +81,7 @@
                      in the panel twice, for a computer and for a phone, where the frame is narrow and tall. --}}
                 <div class="aura-frame">
                     @if ($heroPhoto->exists())
-                        <img src="{{ $heroPhoto->url }}" alt="{{ $heroPhoto->alt($t('hero_alt')) }}" fetchpriority="high" width="1200" height="1500" style="{{ $heroPhoto->styleVariables() }}"
+                        <img src="{{ $heroPhoto->url }}" {{ $heroPhoto->srcsetAttributes('(max-aspect-ratio: 3/4) 75vh, 100vw') }} alt="{{ $heroPhoto->alt($t('hero_alt')) }}" fetchpriority="high" width="1200" height="1500" style="{{ $heroPhoto->styleVariables() }}"
                              class="size-full origin-[50%_75%] scale-[1.28] object-cover object-(--focus) max-[760px]:-translate-y-[32%] max-[760px]:object-(--focus-phone)">
                     @endif
                 </div>
@@ -156,7 +157,7 @@
                 </div>
                 @if ($kasiaPhoto->exists())
                     <div class="aspect-[3/4] min-w-0 flex-[0_1_300px] overflow-hidden rounded-[200px_200px_16px_16px]">
-                        <img src="{{ $kasiaPhoto->url }}" alt="{{ $kasiaPhoto->alt($t('kasia_alt')) }}" loading="lazy" width="600" height="800" data-aura-parallax="8" style="{{ $kasiaPhoto->style() }}" class="size-full object-cover">
+                        <img src="{{ $kasiaPhoto->url }}" {{ $kasiaPhoto->srcsetAttributes('340px') }} alt="{{ $kasiaPhoto->alt($t('kasia_alt')) }}" loading="lazy" width="600" height="800" data-aura-parallax="8" style="{{ $kasiaPhoto->style() }}" class="size-full object-cover">
                     </div>
                 @endif
             </div>
@@ -205,7 +206,7 @@
                 <div class="flex min-w-0 flex-[1_1_300px] gap-1.5 p-1.5">
                     @foreach ([['home-gifts-1', $t('gifts_mug_alt')], ['home-gifts-2', $t('gifts_scrunchies_alt')]] as [$place, $alt])
                         @continue (! ($gift = $photo($place))->exists())
-                        <div class="aspect-square w-1/2 overflow-hidden rounded-[20px]"><img src="{{ $gift->url }}" alt="{{ $gift->alt($alt) }}" loading="lazy" width="600" height="600" data-aura-parallax="6" style="{{ $gift->style() }}" class="size-full object-cover"></div>
+                        <div class="aspect-square w-1/2 overflow-hidden rounded-[20px]"><img src="{{ $gift->url }}" {{ $gift->srcsetAttributes('(min-width: 768px) 25vw, 50vw') }} alt="{{ $gift->alt($alt) }}" loading="lazy" width="600" height="600" data-aura-parallax="6" style="{{ $gift->style() }}" class="size-full object-cover"></div>
                     @endforeach
                 </div>
                 <div class="flex min-w-0 flex-[1_1_360px] flex-col justify-center px-[clamp(24px,4vw,48px)] py-11">
@@ -239,7 +240,7 @@
                     @php($servicePhoto = $photo($place))
                     <a href="{{ $url }}" class="group relative block h-[clamp(460px,72vh,700px)] min-w-0 flex-[1_1_420px] overflow-hidden rounded-[24px] text-sand hover:text-sand focus-visible:outline-offset-4">
                         @if ($servicePhoto->exists())
-                            <img src="{{ $servicePhoto->url }}" alt="{{ $servicePhoto->alt($alt) }}" loading="lazy" width="900" height="1200" data-aura-parallax="6" style="{{ $servicePhoto->style() }}" class="absolute inset-x-0 -top-[8%] h-[116%] w-full object-cover">
+                            <img src="{{ $servicePhoto->url }}" {{ $servicePhoto->srcsetAttributes('(min-width: 900px) 50vw, 100vw') }} alt="{{ $servicePhoto->alt($alt) }}" loading="lazy" width="900" height="1200" data-aura-parallax="6" style="{{ $servicePhoto->style() }}" class="absolute inset-x-0 -top-[8%] h-[116%] w-full object-cover">
                         @endif
                         <span class="absolute inset-0 bg-linear-to-b from-transparent from-40% to-ink/55"></span>
                         <span class="glass-dark absolute inset-x-3.5 bottom-3.5 z-2 block rounded-[18px] px-6 py-[22px] transition-transform duration-800 ease-clay group-hover:-translate-y-2">
@@ -288,7 +289,7 @@
                 <div aria-hidden="true" class="relative h-[clamp(460px,70vh,680px)] min-w-0 flex-[1_1_420px]">
                     @foreach ([['home-workshops-1', 'top-[6%] left-0 h-[70%] w-[58%]'], ['home-workshops-2', 'top-0 right-0 h-[44%] w-[38%]'], ['home-workshops-3', 'right-[6%] bottom-0 h-[46%] w-[46%]']] as [$place, $position])
                         @continue (! ($collage = $photo($place))->exists())
-                        <div class="absolute overflow-hidden rounded-[20px] {{ $position }}"><img src="{{ $collage->url }}" alt="" loading="lazy" width="800" height="1000" data-aura-parallax="{{ 6 + $loop->index * 4 }}" style="{{ $collage->style() }}" class="size-full object-cover"></div>
+                        <div class="absolute overflow-hidden rounded-[20px] {{ $position }}"><img src="{{ $collage->url }}" {{ $collage->srcsetAttributes('(min-width: 900px) 30vw, 60vw') }} alt="" loading="lazy" width="800" height="1000" data-aura-parallax="{{ 6 + $loop->index * 4 }}" style="{{ $collage->style() }}" class="size-full object-cover"></div>
                     @endforeach
                 </div>
             </div>
