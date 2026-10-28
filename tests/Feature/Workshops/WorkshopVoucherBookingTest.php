@@ -43,14 +43,44 @@ class WorkshopVoucherBookingTest extends TestCase
     {
         $date = $this->date(seats: 4);
 
-        $this->get(route('workshops.booking.create', $date))->assertOk()->assertDontSee('value="voucher"', false)->assertDontSee('Kod z vouchera');
+        $this->get(route('workshops.booking.create', $date))->assertOk()->assertDontSee('value="voucher"', false)->assertDontSee('Masz kod vouchera?');
 
-        $this->voucher();
+        $voucher = $this->voucher(seats: 2);
+
+        // One field for any code (MA-244); the workshop voucher then takes the place of the payment.
+        $this->get(route('workshops.booking.create', $date))
+            ->assertOk()
+            ->assertDontSee('value="voucher"', false)
+            ->assertSeeInOrder(['Masz kod vouchera?', 'Kod z vouchera', 'name="voucher_code"', 'Użyj vouchera', 'Rezerwuję i płacę'], false);
+
+        $this->post(route('workshops.booking.voucher.add', $date), ['voucher_code' => strtolower($voucher->code), 'email' => 'ania@example.com', 'payment_method' => 'blik'])
+            ->assertRedirect(route('workshops.booking.create', $date))
+            ->assertSessionHasInput('email', 'ania@example.com')
+            ->assertSessionHasInput('payment_method', 'voucher');
 
         $this->get(route('workshops.booking.create', $date))
             ->assertOk()
-            ->assertSee('value="voucher"', false)
-            ->assertSeeInOrder(['Mam voucher', 'Kod z vouchera', 'name="voucher_code"', 'Zapisuję się z voucherem'], false);
+            ->assertSee('name="payment_method" value="voucher"', false)
+            ->assertSee('name="voucher_code" value="'.$voucher->code.'"', false)
+            ->assertDontSee('value="blik"', false)
+            ->assertSeeInOrder(['Ile miejsc: 2', 'Voucher '.$voucher->code, 'rezerwuje miejsca: 2', 'Nie używaj vouchera', 'Zapisuję się z voucherem']);
+
+        // „Nie używaj vouchera” brings the payment back.
+        $this->post(route('workshops.booking.voucher.remove', $date), ['vouchers' => [$voucher->code], 'remove_voucher' => $voucher->code, 'payment_method' => 'voucher'])
+            ->assertRedirect(route('workshops.booking.create', $date));
+        $this->get(route('workshops.booking.create', $date))->assertSee('value="blik"', false)->assertDontSee('Voucher '.$voucher->code);
+    }
+
+    public function test_the_field_says_why_a_workshop_voucher_books_nothing_on_this_date(): void
+    {
+        $date = $this->date(seats: 4);
+        $couples = $this->voucher(['workshop_code' => 'couples']);
+
+        $this->post(route('workshops.booking.voucher.add', $date), ['voucher_code' => $couples->code])
+            ->assertSessionHasErrors(['voucher_code' => 'Ten voucher jest na warsztat „Warsztat dla pary”. Wybierz termin tego warsztatu.'])
+            ->assertSessionHasInput('voucher_code', $couples->code);
+        $this->post(route('workshops.booking.voucher.add', $date), ['voucher_code' => ''])
+            ->assertSessionHasErrors(['voucher_code' => 'Wpisz kod z vouchera — wygląda tak: MA-7KQ2-9XHT.']);
     }
 
     public function test_a_code_books_the_seats_on_the_voucher_at_once_and_is_used(): void

@@ -6,7 +6,13 @@
     $price = $workshop['price_gross'];
     $seats = (int) old('seats', 1);
     $seats = $seats >= 1 && $seats <= max(1, $maxSeats) ? $seats : 1;
-    $voucher = PaymentMethod::Voucher->value;
+    // A workshop voucher books by itself (MA-137); amount vouchers pay their part of the sum (MA-244).
+    $byWorkshopVoucher = $workshopVoucher !== null;
+    $seats = $byWorkshopVoucher ? $workshopVoucher->seats : $seats;
+    $voucherUses = \App\Modules\Gifts\Support\VoucherBalance::split($amountVouchers, $price * $seats);
+    $vouchersPaid = (int) $voucherUses->sum('amount');
+    $due = $price * $seats - $vouchersPaid;
+    $link = 'min-h-11 text-[12.5px] text-brown underline underline-offset-2 hover:text-ink';
     $glass = 'glass mb-4 rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]';
     $radio = 'group flex cursor-pointer items-center gap-3.5 rounded-[18px] border border-line bg-cream/60 px-[18px] py-[15px] transition-[border-color,background-color,transform] duration-300 hover:-translate-y-0.5 hover:border-ink has-checked:border-navy has-checked:bg-navy-soft has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy';
 @endphp
@@ -17,7 +23,7 @@
         <h1 class="mb-4 font-serif text-[length:clamp(40px,5.6vw,80px)] leading-[.96] font-light tracking-[-0.02em] text-balance">{{ $workshop['name'] }}</h1>
         <p class="mb-10 max-w-[52ch] text-[16.5px] text-lead">
             <time datetime="{{ $date->starts_at->toIso8601String() }}">{{ $when }}</time>@if ($workshop['duration_label']) &middot; {{ $workshop['duration_label'] }}@endif.
-            Miejsce jest Twoje, gdy tylko bank potwierdzi płatność{{ $paymentMethods->contains(PaymentMethod::Voucher) ? ' — albo od razu, gdy zapisujesz się z voucherem' : '' }}.
+            Miejsce jest Twoje, gdy tylko bank potwierdzi płatność{{ $takesVouchers ? ' — albo od razu, gdy płaci voucher' : '' }}.
         </p>
 
         @if ($seatsLeft === 0)
@@ -28,10 +34,38 @@
             </div>
         @else
             <form method="post" action="{{ route('workshops.booking.store', $date) }}" novalidate
-                  x-data="{ seats: {{ $seats }}, price: {{ $price }}, payment: @js($selectedPayment), blik: '', get total() { return this.seats * this.price }, format(amount) { return this.$store.cart.format(amount) } }"
+                  x-data="{
+                      seats: {{ $seats }}, price: {{ $byWorkshopVoucher ? 0 : $price }}, payment: @js($selectedPayment), blik: '', sending: false,
+                      addVoucherTo: @js(route('workshops.booking.voucher.add', $date)), removeVoucherTo: @js(route('workshops.booking.voucher.remove', $date)),
+                      vouchers: @js($amountVouchers->map(fn ($voucher) => ['code' => $voucher->code, 'balance' => $voucher->balance_minor])->values()),
+                      get total() { return this.seats * this.price },
+                      {{-- What each amount voucher pays, in the order typed — the same split as Gifts\Support\VoucherBalance. --}}
+                      get split() { let left = this.total; return this.vouchers.map((voucher) => { const amount = Math.min(left, voucher.balance); left -= amount; return amount }) },
+                      get vouchersPaid() { return this.split.reduce((sum, amount) => sum + amount, 0) },
+                      get due() { return this.total - this.vouchersPaid },
+                      leftOn(index) { const left = this.vouchers[index].balance - this.split[index]; return left === 0 ? 'cały idzie na ten zapis' : 'zostanie na nim ' + this.format(left) },
+                      format(amount) { return this.$store.cart.format(amount) },
+                      {{-- The whole form goes to the voucher's address, so everything typed so far comes back filled in. --}}
+                      send(address, extra = {}) {
+                          if (this.sending) return;
+                          Object.entries(extra).forEach(([name, value]) => this.$root.append(Object.assign(document.createElement('input'), { type: 'hidden', name, value })));
+                          this.$root.action = address;
+                          this.sending = true;
+                          this.$root.submit();
+                      },
+                  }"
                   class="flex flex-wrap items-start gap-[clamp(24px,4vw,56px)]">
                 @csrf
-                <input type="hidden" name="expected_total" value="{{ $price * $seats }}" x-bind:value="total">
+                @foreach ($byWorkshopVoucher ? [$workshopVoucher] : $amountVouchers as $kept)
+                    <input type="hidden" name="vouchers[]" value="{{ $kept->code }}">
+                @endforeach
+                @if ($byWorkshopVoucher)
+                    <input type="hidden" name="payment_method" value="{{ PaymentMethod::Voucher->value }}">
+                    <input type="hidden" name="voucher_code" value="{{ $workshopVoucher->code }}">
+                @else
+                    <input type="hidden" name="expected_total" value="{{ $price * $seats }}" x-bind:value="total">
+                    <input type="hidden" name="expected_vouchers" value="{{ $vouchersPaid }}" x-bind:value="vouchersPaid">
+                @endif
 
                 <div class="min-w-0 flex-[1_1_480px]">
                     <div class="{{ $glass }}">
@@ -40,7 +74,10 @@
                             <x-shared::field name="name" label="Imię i nazwisko" autocomplete="name" />
                             <x-shared::field name="email" label="E-mail" type="email" autocomplete="email" hint="Tu przyjdzie potwierdzenie zapisu" />
                             <x-shared::field name="phone" label="Telefon" type="tel" autocomplete="tel" hint="Na wypadek zmiany terminu" />
-                            <div x-show="payment !== @js($voucher)" @if ($selectedPayment === $voucher) x-cloak @endif class="min-w-0">
+                            @if ($byWorkshopVoucher)
+                                <p class="text-[13.5px] text-graphite">Ile miejsc: {{ $seats }} — tyle, na ile jest voucher.</p>
+                            @else
+                            <div class="min-w-0">
                                 <label for="seats" class="mb-1.5 block text-[13.5px] text-graphite">Ile miejsc @if ($workshop['unit_label'])<span class="text-label">({{ $workshop['unit_label'] }})</span>@endif</label>
                                 <select id="seats" name="seats" x-model.number="seats" aria-describedby="seats-note"
                                         @error('seats') aria-invalid="true" @enderror
@@ -59,10 +96,13 @@
                                     <p id="seats-note" class="mt-1.5 text-[12.5px] text-hint">Na ten termin: {{ $date->seatsLeftLabel() }}</p>
                                 @enderror
                             </div>
+                            @endif
                         </div>
                     </div>
 
-                    <fieldset class="{{ $glass }}">
+                    @unless ($byWorkshopVoucher)
+                    {{-- Vouchers that pay for everything leave nothing to choose (MA-244). --}}
+                    <fieldset x-show="due > 0" @if ($due === 0) x-cloak @endif class="{{ $glass }}">
                         <legend class="float-left mb-4 flex w-full items-baseline gap-3 font-serif text-[30px] leading-none font-light"><span aria-hidden="true" class="text-[22px] text-rose italic">ii</span>Płatność</legend>
                         <div class="clear-both grid gap-2.5">
                             @foreach ($paymentMethods as $method)
@@ -83,7 +123,7 @@
 
                     {{-- The code here only with BLIK Level 0; otherwise BLIK is chosen on Przelewy24's page. --}}
                     @if ($blikCode)
-                        <div x-show="payment === @js(PaymentMethod::Blik->value)" @if ($selectedPayment !== PaymentMethod::Blik->value) x-cloak @endif class="{{ $glass }}">
+                        <div x-show="payment === @js(PaymentMethod::Blik->value) && due > 0" @if ($selectedPayment !== PaymentMethod::Blik->value || $due === 0) x-cloak @endif class="{{ $glass }}">
                             <div class="mb-3.5 flex items-center gap-3">
                                 <span class="rounded-full bg-navy px-3 py-[5px] text-[12px] font-medium tracking-[0.06em] text-white">BLIK</span>
                                 <label for="blik_code" class="text-[13.5px] text-navy-text">Kod z aplikacji banku</label>
@@ -104,26 +144,7 @@
                             @enderror
                         </div>
                     @endif
-
-                    {{-- With a voucher the code pays and the voucher says how many seats (MA-137). --}}
-                    @if ($paymentMethods->contains(PaymentMethod::Voucher))
-                        <div x-show="payment === @js($voucher)" @if ($selectedPayment !== $voucher) x-cloak @endif class="{{ $glass }}">
-                            <label for="voucher_code" class="mb-1.5 block text-[13.5px] text-graphite">Kod z vouchera</label>
-                            <input id="voucher_code" name="voucher_code" value="{{ old('voucher_code') }}" maxlength="30"
-                                   autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="MA-7KQ2-9XHT" aria-describedby="voucher_code-note"
-                                   @error('voucher_code') aria-invalid="true" @enderror
-                                   @class([
-                                       'w-full min-w-0 rounded-[14px] border bg-white px-4 py-[15px] font-serif text-[22px] tracking-[0.08em] text-ink uppercase placeholder:text-line-strong focus:border-ink pointer-coarse:text-[22px]',
-                                       'border-error' => $errors->has('voucher_code'),
-                                       'border-line' => ! $errors->has('voucher_code'),
-                                   ])>
-                            @error('voucher_code')
-                                <p id="voucher_code-note" role="alert" class="mt-1.5 text-[13px] text-error">{{ $message }}</p>
-                            @else
-                                <p id="voucher_code-note" class="mt-1.5 text-[12.5px] text-hint">Voucher rezerwuje tyle miejsc, na ile jest wystawiony, i wystarczy raz.</p>
-                            @enderror
-                        </div>
-                    @endif
+                    @endunless
                 </div>
 
                 <div class="min-w-[260px] flex-[1_1_340px] min-[900px]:sticky min-[900px]:top-24">
@@ -134,14 +155,54 @@
                             <div class="mt-0.5 text-[12.5px] text-label">{{ $when }}</div>
                             <div class="mt-1 text-[13px] text-muted">{{ Money::format($price) }}@if ($workshop['unit_label']) / {{ $workshop['unit_label'] }}@endif</div>
                         </div>
-                        <div x-show="payment === @js($voucher)" @if ($selectedPayment !== $voucher) x-cloak @endif class="flex items-baseline justify-between">
-                            <span class="text-[14.5px]">Płacisz voucherem</span>
-                            <span class="font-serif text-[40px] leading-none font-light tabular-nums">{{ Money::format(0) }}</span>
-                        </div>
-                        <div x-show="payment !== @js($voucher)" @if ($selectedPayment === $voucher) x-cloak @endif class="flex items-baseline justify-between">
-                            <span class="text-[14.5px]">Do zapłaty</span>
-                            <span x-text="format(total)" class="font-serif text-[40px] leading-none font-light tabular-nums">{{ Money::format($price * $seats) }}</span>
-                        </div>
+                        @if ($byWorkshopVoucher)
+                            <div class="mb-3.5 flex items-start justify-between gap-3 border-b border-line pb-3.5 text-[14px]">
+                                <span class="min-w-0">
+                                    <span class="block">Voucher {{ $workshopVoucher->code }}</span>
+                                    <span class="block text-[12px] text-label">rezerwuje miejsca: {{ $workshopVoucher->seats }}</span>
+                                    <button type="button" x-on:click="send(removeVoucherTo, { remove_voucher: @js($workshopVoucher->code) })" class="-ml-1 px-1 {{ $link }}">Nie używaj vouchera {{ $workshopVoucher->code }}</button>
+                                    @error('voucher_code')
+                                        <span role="alert" class="mt-1 block text-[13px] text-error">{{ $message }}</span>
+                                    @enderror
+                                </span>
+                            </div>
+                            <div class="flex items-baseline justify-between">
+                                <span class="text-[14.5px]">Płacisz voucherem</span>
+                                <span class="font-serif text-[40px] leading-none font-light tabular-nums">{{ Money::format(0) }}</span>
+                            </div>
+                        @else
+                            @foreach ($voucherUses as $index => $use)
+                                <div class="mb-3.5 flex items-start justify-between gap-3 border-b border-line pb-3.5 text-[14px]">
+                                    <span class="min-w-0">
+                                        <span class="block">Voucher {{ $use['voucher']->code }}</span>
+                                        <span class="block text-[12px] text-label" x-text="leftOn({{ $index }})">{{ $use['voucher']->balance_minor === $use['amount'] ? 'cały idzie na ten zapis' : 'zostanie na nim '.Money::format($use['voucher']->balance_minor - $use['amount']) }}</span>
+                                        <button type="button" x-on:click="send(removeVoucherTo, { remove_voucher: @js($use['voucher']->code) })" class="-ml-1 px-1 {{ $link }}">Nie używaj vouchera {{ $use['voucher']->code }}</button>
+                                    </span>
+                                    <span class="whitespace-nowrap tabular-nums" x-text="'− ' + format(split[{{ $index }}])">−&thinsp;{{ Money::format($use['amount']) }}</span>
+                                </div>
+                            @endforeach
+                            @if ($takesVouchers)
+                                {{-- One field for any code: rare, so folded away like in the shop's checkout (mellowaura-ux). --}}
+                                <details @if ($errors->has('voucher_code')) open @endif class="group mb-3.5">
+                                    <summary class="flex min-h-11 cursor-pointer list-none items-center gap-2 text-[13.5px] text-graphite hover:text-ink [&::-webkit-details-marker]:hidden">
+                                        <span>Masz kod vouchera?</span>
+                                        <span aria-hidden="true" class="text-label transition-transform duration-300 group-open:rotate-45">+</span>
+                                    </summary>
+                                    <div class="grid gap-2.5 pt-1">
+                                        <x-shared::field name="voucher_code" label="Kod z vouchera" hint="Voucher na warsztat albo na kwotę — kilka voucherów dodaj po kolei." x-ref="voucherCode"
+                                                         x-on:keydown.enter.prevent="send(addVoucherTo)" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="30"
+                                                         placeholder="MA-7KQ2-9XHT" />
+                                        <button type="button" x-on:click="send(addVoucherTo)"
+                                                class="min-h-11 rounded-full border border-line-strong px-5 text-[13.5px] text-ink transition duration-300 hover:border-ink hover:bg-sand">Użyj vouchera</button>
+                                    </div>
+                                </details>
+                            @endif
+                            <div class="flex items-baseline justify-between">
+                                <span class="text-[14.5px]">Do zapłaty</span>
+                                <span x-text="format(due)" class="font-serif text-[40px] leading-none font-light tabular-nums">{{ Money::format($due) }}</span>
+                            </div>
+                            <p x-show="vouchersPaid > 0 && due === 0" @if ($vouchersPaid === 0 || $due > 0) x-cloak @endif class="mt-2 text-[13px] text-label">Voucher pokrywa całość — nic nie dopłacasz.</p>
+                        @endif
 
                         @if (session('booking_notice'))
                             <p role="alert" class="mt-4 rounded-[14px] border border-alert-line bg-alert px-3.5 py-3 text-[13.5px] text-alert-text">{{ session('booking_notice') }}</p>
@@ -158,11 +219,15 @@
                         @enderror
 
                         <button type="submit" class="fill-btn mt-5 min-h-[60px] w-full rounded-full bg-navy p-[17px] text-[15px] font-medium tracking-[0.02em] text-linen transition duration-300 [--fill:var(--color-ink)] hover:bg-ink active:scale-[.97]">
-                            <span x-show="payment !== @js($voucher)" @if ($selectedPayment === $voucher) x-cloak @endif>Rezerwuję i płacę <span x-text="format(total)">{{ Money::format($price * $seats) }}</span></span>
-                            <span x-show="payment === @js($voucher)" @if ($selectedPayment !== $voucher) x-cloak @endif>Zapisuję się z voucherem</span>
+                            @if ($byWorkshopVoucher)
+                                Zapisuję się z voucherem
+                            @else
+                                <span x-show="due > 0" @if ($due === 0) x-cloak @endif>Rezerwuję i płacę <span x-text="format(due)">{{ Money::format($due) }}</span></span>
+                                <span x-show="due === 0" @if ($due > 0) x-cloak @endif>Zapisuję się, płaci voucher</span>
+                            @endif
                         </button>
                         <p class="mt-3 text-center text-[12px] leading-[1.5] text-hint">
-                            <span x-show="payment !== @js($voucher)" @if ($selectedPayment === $voucher) x-cloak @endif>Trzymam miejsce {{ WorkshopBooking::HOLD_MINUTES }} minut na płatność.</span>
+                            <span x-show="due > 0" @if ($byWorkshopVoucher || $due === 0) x-cloak @endif>Trzymam miejsce {{ WorkshopBooking::HOLD_MINUTES }} minut na płatność.</span>
                             @if ($location) Pracownia: {{ $location }}. @endif Dokładny adres podaję po zapisie.
                         </p>
                     </div>

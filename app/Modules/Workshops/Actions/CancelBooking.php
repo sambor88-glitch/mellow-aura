@@ -4,6 +4,7 @@ namespace App\Modules\Workshops\Actions;
 
 use App\Modules\Checkout\Actions\ChangeOrderStatus;
 use App\Modules\Checkout\Enums\OrderStatus;
+use App\Modules\Gifts\Actions\RestoreVoucherBalance;
 use App\Modules\Gifts\Actions\ReturnVoucher;
 use App\Modules\Workshops\Enums\BookingStatus;
 use App\Modules\Workshops\Mail\BookingCancelled;
@@ -19,10 +20,12 @@ use Illuminate\Support\Facades\Mail;
  * „Problem” with the amount to return; after the refund Kasia marks the order done. The date is locked as in
  * ConfirmBooking, so a payment confirmed at the same moment is counted first or not at all.
  * A booking paid with a voucher has no money to return: the voucher is valid again instead (MA-137).
+ * What an amount voucher paid goes back to its balance at once (MA-244); only the rest is money to return, and a booking
+ * the vouchers paid in full has none. An unpaid booking gives back what its order holds.
  */
 class CancelBooking
 {
-    public function __construct(private ChangeOrderStatus $changeOrderStatus, private ReturnVoucher $returnVoucher) {}
+    public function __construct(private ChangeOrderStatus $changeOrderStatus, private ReturnVoucher $returnVoucher, private RestoreVoucherBalance $restoreVoucherBalance) {}
 
     /**
      * @param  bool  $notify  send her the cancellation mail; only a confirmed booking gets one, since an overbooked one
@@ -47,12 +50,20 @@ class CancelBooking
 
             $booking->update(['status' => BookingStatus::Cancelled, 'cancelled_at' => now()]);
 
+            $order = $booking->order;
+
             if ($booking->voucher_id !== null) {
                 ($this->returnVoucher)($booking->voucher_id);
             } elseif ($was->isPaid()) {
-                $order = $booking->order;
-                ($this->changeOrderStatus)($order, OrderStatus::Problem, problemNote: 'Zapis na warsztat anulowany w panelu. Zwróć wpłatę '
-                    .$order->money($order->total_gross).', potem zmień status na „Zakończone”.');
+                $restored = ($this->restoreVoucherBalance)($order);
+
+                if ($order->amountDue() > 0) {
+                    ($this->changeOrderStatus)($order, OrderStatus::Problem, problemNote: 'Zapis na warsztat anulowany w panelu. Zwróć wpłatę '
+                        .$order->money($order->amountDue()).', potem zmień status na „Zakończone”.'
+                        .($restored > 0 ? ' '.$order->money($restored).' z vouchera wróciło już na jego saldo.' : ''));
+                }
+            } else {
+                $this->restoreVoucherBalance->abandoned($order);
             }
 
             if ($notify && $was === BookingStatus::Confirmed) {

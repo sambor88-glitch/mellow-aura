@@ -147,7 +147,7 @@ class WorkshopBookingsPanelTest extends TestCase
 
         $this->assertSame(BookingStatus::Cancelled, $booking->fresh()->status);
         $this->assertSame(OrderStatus::Problem, $order->status);
-        $this->assertSame('Płatność za zapis na warsztat, który anulowałaś w panelu. Zwróć wpłatę.', $order->problem_note);
+        $this->assertSame('Płatność za zapis na warsztat, który anulowałaś w panelu. Zwróć wpłatę 220,00 zł.', $order->problem_note);
         $this->assertSame(1, $date->fresh()->seatsLeft());
         Mail::assertSent(Alert::class, fn (Alert $alert) => str_contains($alert->envelope()->subject, 'Płatność za anulowany zapis'));
     }
@@ -202,7 +202,7 @@ class WorkshopBookingsPanelTest extends TestCase
 
         $this->assertSame(BookingStatus::Cancelled, $booking->fresh()->status);
         $this->assertSame(OrderStatus::Problem, $order->status);
-        $this->assertSame('Płatność za zapis na warsztat, który anulowałaś w panelu. Zwróć wpłatę.', $order->problem_note);
+        $this->assertSame('Płatność za zapis na warsztat, który anulowałaś w panelu. Zwróć wpłatę 220,00 zł.', $order->problem_note);
         Mail::assertSent(Alert::class, fn (Alert $alert) => str_contains($alert->envelope()->subject, 'Płatność za anulowany zapis'));
         // Not the shop's order mails: the order still books a workshop.
         Mail::assertNotQueued(OrderConfirmed::class);

@@ -1,6 +1,11 @@
+@php
+    // An amount voucher's part is already back on its balance (CancelBooking); only the rest is money to return (MA-244).
+    $refund = $order->amountDue() > 0 ? 'Zwrócę Ci '.($order->vouchers_gross > 0 ? '' : 'całą ').'wpłatę, '.$order->money($order->amountDue()).', najpóźniej w ciągu 14 dni, na konto, z którego przyszła.' : null;
+    $backOnVoucher = $order->vouchers_gross > 0 ? 'Kwota z vouchera, '.$order->money($order->vouchers_gross).', wróciła już na voucher — wykorzystasz ją w sklepie albo przy kolejnym zapisie.' : null;
+@endphp
 <x-shared::mail.layout
     :title="'Zapis na warsztat anulowany'"
-    :preheader="$voucher ? 'Twój voucher wraca do Ciebie.' : 'Zwrócę Ci całą wpłatę '.$order->money($order->total_gross).'.'"
+    :preheader="$voucher ? 'Twój voucher wraca do Ciebie.' : ($refund !== null ? 'Zwrócę Ci '.($backOnVoucher ? '' : 'całą ').'wpłatę '.$order->money($order->amountDue()).'.' : 'Kwota z vouchera wraca na voucher.')"
 >
     <h1 style="margin: 0 0 12px; font-family: Georgia, 'Times New Roman', serif; font-weight: normal; font-size: 30px; line-height: 1.15; color: #2F2620;">Twój zapis jest anulowany.</h1>
     <p style="margin: 0 0 16px; color: #5C5043;">
@@ -17,7 +22,7 @@
         </p>
     @else
         <p style="margin: 0 0 22px; color: #5C5043;">
-            Zwrócę Ci całą wpłatę, {{ $order->money($order->total_gross) }}, najpóźniej w ciągu 14 dni, na konto, z którego przyszła.
+            {{ collect([$refund, $backOnVoucher])->filter()->join(' ') }}
             Jeśli wolisz inny termin, odpisz na tego maila — przepiszę Cię zamiast zwrotu.
         </p>
     @endif
