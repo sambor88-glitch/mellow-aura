@@ -8,6 +8,7 @@ return [
     'shop' => 'Shop',
     'gifts' => 'Gifts',
     'workshops' => 'Workshops',
+    'firing' => 'Kiln firing',
     'about' => 'About',
     'journal' => 'Journal',
     'contact' => 'Contact',

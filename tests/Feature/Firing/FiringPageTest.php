@@ -73,9 +73,13 @@ class FiringPageTest extends TestCase
             'text_kiln_lead' => 'Nie masz pieca?',
             'text_kiln_note' => '',
             'prices' => [
-                ['label' => 'Wypał biskwitowy', 'price' => '45', 'unit_label' => '/ kg', 'note' => '', 'code' => 'bisque_firing', 'unit' => 'kg'],
+                ['label' => 'Wypał biskwitowy', 'price' => '45', 'unit_label' => '/ kg', 'note' => '', 'code' => 'bisque_firing'],
                 ['label' => 'Cała półka', 'price' => '180', 'code' => 'private_shelf', 'remove' => '1'],
-                ['label' => 'Wypał raku', 'price' => '90,50', 'unit_label' => '', 'note' => 'w ogrodzie', 'code' => '', 'unit' => ''],
+                ['label' => 'Wypał raku', 'price' => '90,50', 'unit_label' => '', 'note' => 'w ogrodzie', 'code' => ''],
+                // A new row counts by the unit its „Za” names, so a price per kilogram is never quoted as a flat one.
+                ['label' => 'Wypał na ostro', 'price' => '40', 'unit_label' => 'za kg', 'code' => ''],
+                ['label' => 'Szkliwienie', 'price' => '25', 'unit_label' => '/ szt', 'code' => ''],
+                ['label' => 'Pełny piec', 'price' => '400', 'unit_label' => '/ wsad', 'code' => ''],
                 ['label' => '', 'price' => ''],
             ],
         ])
@@ -87,6 +91,9 @@ class FiringPageTest extends TestCase
         $this->assertEquals([
             ['code' => 'bisque_firing', 'label' => 'Wypał biskwitowy', 'note' => null, 'price_gross' => 4500, 'compare_at_price' => null, 'unit' => 'kg', 'unit_label' => '/ kg'],
             ['code' => 'wypal_raku', 'label' => 'Wypał raku', 'note' => 'w ogrodzie', 'price_gross' => 9050, 'compare_at_price' => null, 'unit' => null, 'unit_label' => null],
+            ['code' => 'wypal_na_ostro', 'label' => 'Wypał na ostro', 'note' => null, 'price_gross' => 4000, 'compare_at_price' => null, 'unit' => 'kg', 'unit_label' => 'za kg'],
+            ['code' => 'szkliwienie', 'label' => 'Szkliwienie', 'note' => null, 'price_gross' => 2500, 'compare_at_price' => null, 'unit' => 'piece', 'unit_label' => '/ szt'],
+            ['code' => 'pelny_piec', 'label' => 'Pełny piec', 'note' => null, 'price_gross' => 40000, 'compare_at_price' => null, 'unit' => 'other', 'unit_label' => '/ wsad'],
         ], Setting::find('kiln_prices')->value);
 
         $this->followingRedirects()

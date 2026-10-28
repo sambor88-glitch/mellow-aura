@@ -34,7 +34,6 @@ class KilnPricesController extends Controller
                     'unit_label' => $row['unit_label'] ?? '',
                     'note' => $row['note'] ?? '',
                     'code' => $row['code'] ?? '',
-                    'unit' => $row['unit'] ?? '',
                 ])
                 ->values()
                 ->all(),

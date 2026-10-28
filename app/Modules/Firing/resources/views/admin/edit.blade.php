@@ -24,13 +24,13 @@
             <h2 class="text-[11.5px] tracking-[0.16em] text-label uppercase">Cennik wypałów</h2>
             <a href="{{ route('firing.index') }}" target="_blank" rel="noopener" class="text-[13px]">Zobacz stronę →</a>
         </div>
-        <p class="mb-4 max-w-[62ch] text-[13.5px] leading-[1.6] text-muted">Usługa bez nazwy albo ceny nie pokaże się na stronie. „Za” to dopisek przy cenie, np. / kg albo / szt. — przy cenie za całość zostaw puste.</p>
+        <p class="mb-4 max-w-[62ch] text-[13.5px] leading-[1.6] text-muted">Usługa bez nazwy albo ceny nie pokaże się na stronie. „Za” to dopisek przy cenie. Przy „/ kg” i „/ szt.” formularz sam policzy wycenę, przy cenie za całość zostaw puste. Przy innym dopisku wycenę podasz sama.</p>
         @if ($bag->any())
             <p role="alert" class="mb-3.5 rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text">Popraw zaznaczone pola, żeby zapisać.</p>
         @endif
 
         <div class="mb-5 grid gap-3">
-            @foreach (['text_kiln_lead' => ['Zdanie pod nagłówkiem „Wypalę Twoje prace”', 300], 'text_kiln_note' => ['Notka pod cennikiem — np. kiedy zbierasz wsad', 400]] as $key => [$text, $max])
+            @foreach (['text_kiln_lead' => ['Zdanie pod nagłówkiem „Wypalę Twoje prace”', 300], 'text_kiln_note' => ['Notka pod cennikiem — np. jak przygotować prace i kiedy je odebrać', 400]] as $key => [$text, $max])
                 <div class="min-w-0">
                     <label for="wypaly-{{ $key }}" class="{{ $label }}">{{ $text }}</label>
                     <textarea id="wypaly-{{ $key }}" name="{{ $key }}" rows="2" maxlength="{{ $max }}"
@@ -69,7 +69,6 @@
                 <fieldset @class(['rounded-[4px] border p-3.5', 'border-sand-dark bg-linen' => ! $new, 'border-dashed border-line-strong' => $new])>
                     <legend class="sr-only">{{ $new ? 'Nowa usługa' : ($row['label'] ?: 'Usługa '.($index + 1)) }}</legend>
                     <input type="hidden" name="{{ $name }}[code]" value="{{ $row['code'] ?? '' }}">
-                    <input type="hidden" name="{{ $name }}[unit]" value="{{ $row['unit'] ?? '' }}">
                     <div class="grid gap-2.5 sm:grid-cols-[minmax(0,3fr)_minmax(0,1fr)_minmax(0,1fr)]">
                         <div class="min-w-0">
                             <label for="{{ $id }}-label" class="{{ $label }}">{{ $new ? 'Nowa usługa — nazwa' : 'Nazwa' }}</label>

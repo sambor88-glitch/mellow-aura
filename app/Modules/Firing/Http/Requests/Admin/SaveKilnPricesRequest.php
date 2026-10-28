@@ -2,6 +2,7 @@
 
 namespace App\Modules\Firing\Http\Requests\Admin;
 
+use App\Modules\Firing\Support\FiringQuote;
 use App\Modules\Shared\Http\Requests\Concerns\EditsListRows;
 use App\Modules\Shared\Rules\PriceBeforeReduction;
 use App\Modules\Shared\Support\Money;
@@ -10,13 +11,13 @@ use Illuminate\Support\Str;
 
 /**
  * The firing price list with the sentences above and under it, and the weekday Kasia collects batches. A row keeps
- * its code and unit, which the batch form counts the quote with; a new row gets a code from its name.
+ * its code and a new row gets one from its name; the unit the batch form counts the quote with comes from „Za”.
  */
 class SaveKilnPricesRequest extends FormRequest
 {
     use EditsListRows;
 
-    public const FIELDS = ['label', 'price', 'compare_at', 'unit_label', 'note', 'code', 'unit'];
+    public const FIELDS = ['label', 'price', 'compare_at', 'unit_label', 'note', 'code'];
 
     private const PRICE = '/^\d{1,5}([.,]\d{1,2})?$/';
 
@@ -84,7 +85,7 @@ class SaveKilnPricesRequest extends FormRequest
                 'note' => $row['note'],
                 'price_gross' => Money::parse((string) $row['price']),
                 'compare_at_price' => $row['compare_at'] === null ? null : Money::parse($row['compare_at']),
-                'unit' => $row['unit'],
+                'unit' => FiringQuote::unitFor($row['unit_label']),
                 'unit_label' => $row['unit_label'],
             ], $this->listRows('prices', self::FIELDS)),
         ];
