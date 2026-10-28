@@ -65,6 +65,35 @@
                         @if ($item->certificates->isNotEmpty())
                             <p class="mt-2 text-[13px] text-label">Certyfikat: <span class="text-ink tabular-nums">{{ $item->certificates->sortBy('piece')->pluck('number')->join(', ') }}</span></p>
                         @endif
+                        @if ($paid && $item->getsCertificate())
+                            {{-- The page behind the QR code (MA-234): what is filled here shows there and on the certificate. --}}
+                            @php($bag = $errors->getBag('piece'.$item->id))
+                            <div id="sztuka-{{ $item->id }}" class="mt-2.5 scroll-mt-6">
+                                <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px]">
+                                    <a href="{{ $item->pageUrl() }}" target="_blank" rel="noopener">Strona sztuki ↗</a>
+                                    <a href="{{ route('admin.orders.piece-card', [$order, $item]) }}" target="_blank" rel="noopener"
+                                       class="inline-flex min-h-11 items-center rounded-full border border-line-strong px-4 text-[13px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark hover:text-ink">Karta do paczki</a>
+                                </div>
+                                <details @if ($bag->any()) open @endif class="mt-1.5">
+                                    <summary class="cursor-pointer text-[13px] text-brown">
+                                        {{ collect([$item->fired_on ? 'wypał '.$item->fired_on->format('j.m.Y') : null, $item->glaze, $item->plant])->filter()->join(' · ') ?: 'Dopisz datę wypału i szkliwo' }}
+                                    </summary>
+                                    <form method="post" action="{{ route('admin.orders.piece', [$order, $item]) }}" class="mt-2.5 grid gap-3">
+                                        @csrf
+                                        @method('patch')
+                                        <div class="grid gap-3 sm:grid-cols-2">
+                                            <x-shared::field name="fired_on" id="fired_on-{{ $item->id }}" type="date" label="Data wypału" :bag="'piece'.$item->id"
+                                                             :value="$bag->any() ? old('fired_on') : ($item->fired_on?->format('Y-m-d') ?? '')" max="{{ today()->format('Y-m-d') }}" />
+                                            <x-shared::field name="glaze" id="glaze-{{ $item->id }}" label="Szkliwo" :bag="'piece'.$item->id" maxlength="120"
+                                                             :value="$bag->any() ? old('glaze') : ($item->glaze ?? '')" />
+                                        </div>
+                                        <x-shared::field name="plant" id="plant-{{ $item->id }}" label="Roślina" :bag="'piece'.$item->id" maxlength="120"
+                                                         :value="$bag->any() ? old('plant') : ($item->plant ?? '')" hint="Nieobowiązkowe — puste pola nie pokażą się klientce" />
+                                        <button class="{{ $action }}">Zapisz na stronie sztuki i certyfikacie</button>
+                                    </form>
+                                </details>
+                            </div>
+                        @endif
                         @if ($item->accepted_deviation !== null)
                             <p class="mt-2.5 text-[13px] text-label">Klientka zaakceptowała osobnym polem: <span class="text-ink">{{ $item->accepted_deviation }}</span></p>
                         @endif

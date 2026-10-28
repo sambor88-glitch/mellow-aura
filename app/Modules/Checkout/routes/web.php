@@ -2,7 +2,9 @@
 
 use App\Modules\Checkout\Http\Controllers\BlikController;
 use App\Modules\Checkout\Http\Controllers\CheckoutController;
+use App\Modules\Checkout\Http\Controllers\PieceController;
 use App\Modules\Checkout\Http\Controllers\WithdrawalController;
+use App\Modules\Checkout\Support\PieceToken;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/zamowienie', [CheckoutController::class, 'show'])->name('checkout.index');
@@ -18,3 +20,6 @@ Route::get('/zamowienie/blik/stan', [BlikController::class, 'status'])->middlewa
 Route::get('/odstapienie-od-umowy', [WithdrawalController::class, 'create'])->name('withdrawal.create');
 Route::post('/odstapienie-od-umowy', [WithdrawalController::class, 'store'])->name('withdrawal.store');
 Route::get('/odstapienie-od-umowy/potwierdzenie', [WithdrawalController::class, 'confirmation'])->name('withdrawal.confirmation');
+// The QR code in the parcel (MA-234). Polish only in the address; the page speaks the language of the order.
+// The throttle keeps anyone from walking through tokens by the thousand.
+Route::get('/k/{token}', PieceController::class)->where('token', PieceToken::PATTERN)->middleware('throttle:30,1')->name('piece.show');
