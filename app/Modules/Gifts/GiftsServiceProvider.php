@@ -10,12 +10,14 @@ use App\Modules\Gifts\Cart\GiftWrapLine;
 use App\Modules\Gifts\Cart\GiftWrapLines;
 use App\Modules\Gifts\Cart\VoucherLine;
 use App\Modules\Gifts\Cart\VoucherLines;
+use App\Modules\Gifts\Console\ReleaseVoucherHoldsCommand;
 use App\Modules\Gifts\Listeners\SendVouchers;
 use App\Modules\Gifts\Mail\VouchersIssued;
 use App\Modules\Gifts\Support\BundleMerchantItems;
 use App\Modules\Shared\ModuleServiceProvider;
 use App\Modules\Shared\Support\MerchantFeed;
 use App\Modules\Shared\Support\SitemapPages;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Event;
 
 class GiftsServiceProvider extends ModuleServiceProvider
@@ -32,6 +34,8 @@ class GiftsServiceProvider extends ModuleServiceProvider
             ->register(GiftWrapLine::TYPE, GiftWrapLines::class));
         $this->callAfterResolving(SitemapPages::class, fn (SitemapPages $pages) => $pages->routes('gifts.index', 'bundles.index', 'vouchers.index'));
         $this->callAfterResolving(MerchantFeed::class, fn (MerchantFeed $feed) => $feed->add(fn () => $this->app->make(BundleMerchantItems::class)()));
+        // Voucher money held by orders nobody paid for goes back to the vouchers (MA-211).
+        $this->callAfterResolving(Schedule::class, fn (Schedule $schedule) => $schedule->command(ReleaseVoucherHoldsCommand::class)->everyTenMinutes()->withoutOverlapping());
     }
 
     public function boot(): void
@@ -39,5 +43,9 @@ class GiftsServiceProvider extends ModuleServiceProvider
         parent::boot();
 
         Event::listen(OrderPaid::class, SendVouchers::class);
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([ReleaseVoucherHoldsCommand::class]);
+        }
     }
 }

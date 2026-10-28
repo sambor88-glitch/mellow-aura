@@ -64,7 +64,19 @@ const firstGap = (form, shipping) => {
     return gap && [form.elements[gap[0]], gap[2] ?? gap[0]];
 };
 
-export default ({ accepted, deviations, payment, blikCode, shipping, locker, lockerMap, subtotal, freeFrom, prices, texts, fieldTexts }) => ({
+// What each amount voucher pays towards the sum, in the order typed — the same split as Gifts\Support\VoucherBalance.
+const splitVouchers = (vouchers, total) => {
+    let left = total;
+
+    return Object.fromEntries(vouchers.map(({ code, balance }) => {
+        const amount = Math.min(left, balance);
+        left -= amount;
+
+        return [code, amount];
+    }));
+};
+
+export default ({ accepted, deviations, payment, blikCode, shipping, locker, lockerMap, subtotal, vouchers = [], freeFrom, prices, texts, fieldTexts }) => ({
     accepted,
     // A product with a feature nobody would expect has its own checkbox, keyed by the cart line.
     deviations: { ...deviations },
@@ -84,9 +96,62 @@ export default ({ accepted, deviations, payment, blikCode, shipping, locker, loc
         return subtotal + this.shippingCost;
     },
 
-    // The code is typed here only with BLIK Level 0; without it, on Przelewy24's page.
+    get voucherSplit() {
+        return splitVouchers(vouchers, this.total);
+    },
+
+    get vouchersPaid() {
+        return Object.values(this.voucherSplit).reduce((sum, amount) => sum + amount, 0);
+    },
+
+    // What is left to pay through the gateway once the vouchers paid their part.
+    get due() {
+        return this.total - this.vouchersPaid;
+    },
+
+    voucherAmount(code) {
+        return this.voucherSplit[code] ?? 0;
+    },
+
+    voucherLeftLabel(code) {
+        const left = (vouchers.find((candidate) => candidate.code === code)?.balance ?? 0) - this.voucherAmount(code);
+
+        return left === 0 ? say(texts, 'voucher_used_up') : say(texts, 'voucher_left', this.$store.cart.format(left));
+    },
+
+    // The whole form goes to the voucher's address, so everything typed so far comes back filled in.
+    sendTo(address, extra = {}) {
+        const form = this.$refs.voucherCode.form;
+        Object.entries(extra).forEach(([name, value]) => form.append(Object.assign(document.createElement('input'), { type: 'hidden', name, value })));
+        form.action = address;
+        this.submitting = true;
+        form.submit();
+    },
+
+    addVoucher() {
+        if (this.submitting) {
+            return;
+        }
+
+        if (this.$refs.voucherCode.value.trim() === '') {
+            this.$store.cart.say(say(texts, 'voucher_empty'));
+            this.$refs.voucherCode.focus();
+
+            return;
+        }
+
+        this.sendTo(this.$refs.voucherCode.form.dataset.voucherAdd);
+    },
+
+    removeVoucher(code) {
+        if (!this.submitting) {
+            this.sendTo(this.$refs.voucherCode.form.dataset.voucherRemove, { remove_voucher: code });
+        }
+    },
+
+    // The code is typed here only with BLIK Level 0; without it, on Przelewy24's page. Not at all when vouchers pay.
     get needsBlikCode() {
-        return blikCode && this.payment === 'blik' && this.blik.length !== 6;
+        return blikCode && this.due > 0 && this.payment === 'blik' && this.blik.length !== 6;
     },
 
     get deviationsAccepted() {
@@ -111,7 +176,11 @@ export default ({ accepted, deviations, payment, blikCode, shipping, locker, loc
             return say(texts, 'terms_missing');
         }
 
-        return this.needsBlikCode ? say(texts, 'blik_missing') : say(texts, 'pay', this.$store.cart.format(this.total));
+        if (this.needsBlikCode) {
+            return say(texts, 'blik_missing');
+        }
+
+        return this.due === 0 && this.vouchersPaid > 0 ? say(texts, 'pay_voucher') : say(texts, 'pay', this.$store.cart.format(this.due));
     },
 
     init() {

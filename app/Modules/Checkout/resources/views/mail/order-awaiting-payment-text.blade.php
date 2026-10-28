@@ -5,7 +5,7 @@ Dziękuję za zamówienie
 @if ($bankTransfer)
 
 DANE DO PRZELEWU
-Kwota: {{ $order->money($order->total_gross) }}
+Kwota: {{ $order->money($order->amountDue()) }}
 Tytuł: {!! $order->number !!}
 @if ($bankTransfer['account'])
 Rachunek: {!! $bankTransfer['account'] !!}

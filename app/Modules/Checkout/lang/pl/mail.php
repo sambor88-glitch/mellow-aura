@@ -10,6 +10,8 @@ return [
         'subtotal' => 'Produkty',
         'delivery' => 'Dostawa',
         'free' => 'gratis',
+        'voucher' => 'Voucher',
+        'due' => 'Dopłata',
         'total' => 'Razem',
     ],
     'delivery' => [

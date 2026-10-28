@@ -5,6 +5,8 @@ namespace App\Modules\Gifts\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Modules\Catalog\Enums\CategoryGroup;
 use App\Modules\Catalog\Models\Product;
+use App\Modules\Checkout\Models\Order;
+use App\Modules\Gifts\Actions\RestoreVoucherBalance;
 use App\Modules\Gifts\Actions\SaveBundle;
 use App\Modules\Gifts\Actions\SaveVoucher;
 use App\Modules\Gifts\Http\Requests\Admin\SaveBundleRequest;
@@ -35,7 +37,7 @@ class GiftsController extends Controller
 
         return view('gifts::admin.edit', [
             'voucherCode' => $code,
-            'foundVoucher' => $code === '' ? null : Voucher::query()->with(['orderItem.order', 'latestBooking.order'])->where('code', VoucherCode::normalize($code))->first(),
+            'foundVoucher' => $code === '' ? null : Voucher::query()->with(['orderItem.order', 'latestBooking.order', 'redemptions.order'])->where('code', VoucherCode::normalize($code))->first(),
             'bundles' => Bundle::query()->with('items.variant.product')->orderBy('sort_order')->orderBy('id')->get(),
             // Every size from the shop except vouchers, grouped by product.
             'products' => Product::query()
@@ -115,6 +117,19 @@ class GiftsController extends Controller
         $saveVoucher($voucher, $request->voucher());
 
         return redirect()->to(url()->previous().'#'.$request->formKey())->with('panel_status', 'Voucher '.$voucher->code.' zapisany.');
+    }
+
+    /**
+     * Kasia gives the voucher part of an order back to its vouchers instead of to the account (MA-211), e.g. after
+     * a withdrawal or an order she cannot make. The rest of the money she returns by hand, as before.
+     */
+    public function restoreOrderVouchers(Order $order, RestoreVoucherBalance $restore): RedirectResponse
+    {
+        $amount = $restore($order);
+
+        return redirect()->to(route('admin.orders.show', $order).'#vouchery-zamowienia')->with('panel_status', $amount > 0
+            ? $order->money($amount).' wróciło na vouchery. Klientka zapłaci nimi jeszcze raz tym samym kodem.'
+            : 'Na vouchery nie było już czego oddać.');
     }
 
     public function voucherNotes(SaveVoucherNotesRequest $request, SaveSettings $saveSettings): RedirectResponse

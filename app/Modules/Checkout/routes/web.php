@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/zamowienie', [CheckoutController::class, 'show'])->name('checkout.index');
 Route::post('/zamowienie', [CheckoutController::class, 'store'])->middleware('throttle:10,1')->name('checkout.store');
+// Amount vouchers (MA-211): in złoty only, so the English checkout has no such addresses.
+Route::post('/zamowienie/voucher', [CheckoutController::class, 'addVoucher'])->middleware('throttle:10,1')->name('checkout.voucher.add');
+Route::post('/zamowienie/voucher/usun', [CheckoutController::class, 'removeVoucher'])->name('checkout.voucher.remove');
 Route::get('/zamowienie/potwierdzenie', [CheckoutController::class, 'confirmation'])->name('checkout.confirmation');
 Route::post('/zamowienie/dokoncz-platnosc', [CheckoutController::class, 'resume'])->middleware('throttle:10,1')->name('checkout.resume');
 Route::get('/zamowienie/blik', [BlikController::class, 'show'])->name('checkout.blik');

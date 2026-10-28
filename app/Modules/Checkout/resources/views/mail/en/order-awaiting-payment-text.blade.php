@@ -5,7 +5,7 @@ Thank you for your order
 @if ($bankTransfer)
 
 BANK TRANSFER DETAILS
-Amount: {{ $order->money($order->total_gross) }}
+Amount: {{ $order->money($order->amountDue()) }}
 Reference: {!! $order->number !!}
 @if ($bankTransfer['account'])
 Account: {!! $bankTransfer['account'] !!}
