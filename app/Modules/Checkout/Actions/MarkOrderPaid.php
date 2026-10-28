@@ -8,6 +8,7 @@ use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Events\OrderPaid;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\CustomOrders\Actions\ConfirmPayment;
+use App\Modules\Gifts\Actions\CaptureVoucherBalance;
 use App\Modules\Gifts\Actions\IssueVouchers;
 use App\Modules\Workshops\Actions\ConfirmBooking;
 use App\Modules\Workshops\Enums\BookingStatus;
@@ -20,10 +21,11 @@ use Illuminate\Support\Facades\DB;
  * Seats on a workshop are confirmed here too; seats someone else took while the payment was late put the order
  * under „Problem”, for Kasia to return the money. A payment for a custom order counts towards its idea here as well;
  * money for a declined idea or above the quote also puts the order under „Problem”.
+ * Voucher money held for the order is spent here too (MA-211); a voucher emptied meanwhile puts it under „Problem”.
  */
 class MarkOrderPaid
 {
-    public function __construct(private DecrementStock $decrementStock, private IssueVouchers $issueVouchers, private ConfirmBooking $confirmBooking, private ConfirmPayment $confirmCustomOrderPayment) {}
+    public function __construct(private DecrementStock $decrementStock, private IssueVouchers $issueVouchers, private ConfirmBooking $confirmBooking, private ConfirmPayment $confirmCustomOrderPayment, private CaptureVoucherBalance $captureVoucherBalance) {}
 
     public function __invoke(Order $order, string $providerId): Order
     {
@@ -48,11 +50,13 @@ class MarkOrderPaid
                 }
             }
 
+            $voucherNote = ($this->captureVoucherBalance)($order);
             $problemNote = match (($this->confirmBooking)($order)) {
                 BookingStatus::Overbooked => 'Nadkomplet: płatność przyszła po czasie trzymania miejsca, a termin jest pełny. Zwróć wpłatę albo zaproponuj inny termin.',
                 BookingStatus::Cancelled => 'Płatność za zapis na warsztat, który anulowałaś w panelu. Zwróć wpłatę.',
                 default => ($this->confirmCustomOrderPayment)($order),
             };
+            $problemNote = collect([$problemNote, $voucherNote])->filter()->join(' ') ?: null;
             $problem = $problemNote !== null;
 
             $order->update([

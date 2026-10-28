@@ -14,3 +14,9 @@
 {!! __('checkout::mail.items.subtotal') !!}: {{ $order->money($subtotal) }}
 {!! __('checkout::mail.items.delivery') !!} · {!! $shippingLabel !!}: {{ $order->shipping_gross > 0 ? $order->money($order->shipping_gross) : __('checkout::mail.items.free') }}
 {!! __('checkout::mail.items.total') !!}: {{ $order->money($order->total_gross) }}
+@if ($order->vouchers_gross > 0)
+@foreach ($order->voucherRedemptions()->with('voucher')->get() as $redemption)
+{!! __('checkout::mail.items.voucher') !!} {!! $redemption->voucher->code !!}: −{{ $order->money($redemption->amount_minor) }}
+@endforeach
+{!! __('checkout::mail.items.due') !!}: {{ $order->money($order->amountDue()) }}
+@endif

@@ -13,6 +13,8 @@ use App\Modules\Checkout\Mail\OrderConfirmed;
 use App\Modules\Checkout\Mail\ParcelOnItsWay;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Checkout\Support\CertificatePdf;
+use App\Modules\Checkout\Support\VoucherCodes;
+use App\Modules\Gifts\Models\Voucher;
 use App\Modules\Settings\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
@@ -65,6 +67,21 @@ class EuroCheckoutTest extends TestCase
         $this->get('/zamowienie')
             ->assertSee('Jeszcze trzy pola')
             ->assertDontSee('€');
+    }
+
+    public function test_vouchers_pay_in_złoty_only_so_the_english_checkout_never_takes_them(): void
+    {
+        // MA-211: a code typed in on the Polish checkout stays in the session, but euro never takes it.
+        $voucher = Voucher::factory()->create(['amount_minor' => 15000, 'balance_minor' => 15000]);
+        $this->basket();
+        $this->withSession([VoucherCodes::SESSION_KEY => [$voucher->code]]);
+
+        $this->get('/en/checkout')->assertOk()->assertDontSee('voucher_code')->assertDontSee($voucher->code)->assertSee('Pay €43.50');
+        $this->post('/en/checkout', $this->form(['expected_vouchers' => 0]))->assertRedirect('/en/checkout/confirmation');
+
+        $this->assertSame([4350, 0], [Order::sole()->total_gross, Order::sole()->vouchers_gross]);
+        $this->assertSame(15000, $voucher->fresh()->balance_minor);
+        $this->post('/en/checkout/voucher')->assertNotFound();
     }
 
     public function test_free_delivery_stays_in_złoty(): void

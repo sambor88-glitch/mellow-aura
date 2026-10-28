@@ -30,4 +30,17 @@
         <td style="padding: 10px 0 0; font-size: 16px; color: #2F2620;"><strong>{{ __('checkout::mail.items.total') }}</strong></td>
         <td align="right" style="padding: 10px 0 0 16px; white-space: nowrap; font-family: Georgia, 'Times New Roman', serif; font-size: 20px; color: #2F2620;">{{ $order->money($order->total_gross) }}</td>
     </tr>
+    {{-- Amount vouchers paid part of it (MA-211); the rest went through the payment. --}}
+    @foreach ($order->vouchers_gross > 0 ? $order->voucherRedemptions()->with('voucher')->get() : [] as $redemption)
+        <tr>
+            <td style="padding: 6px 0 0; font-size: 14px; color: #726456;">{{ __('checkout::mail.items.voucher') }} {{ $redemption->voucher->code }}</td>
+            <td align="right" style="padding: 6px 0 0 16px; white-space: nowrap; font-size: 14px; color: #2F2620;">−&thinsp;{{ $order->money($redemption->amount_minor) }}</td>
+        </tr>
+    @endforeach
+    @if ($order->vouchers_gross > 0)
+        <tr>
+            <td style="padding: 6px 0 0; font-size: 14px; color: #726456;">{{ __('checkout::mail.items.due') }}</td>
+            <td align="right" style="padding: 6px 0 0 16px; white-space: nowrap; font-size: 14px; color: #2F2620;">{{ $order->money($order->amountDue()) }}</td>
+        </tr>
+    @endif
 </table>

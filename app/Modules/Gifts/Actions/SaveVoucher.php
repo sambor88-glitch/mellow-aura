@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
  * One voucher edited in the panel (MA-137): its workshop, seats and valid_until, and whether it is used. Until the
  * site takes codes, Kasia books by e-mail or WhatsApp (terms §8.5), so she marks such a voucher used by hand, or the
  * same code would book again on the site. A voucher used by a booking that still stands stays used: cancelling the
- * booking gives it back.
+ * booking gives it back. An amount voucher (MA-211) keeps its balance and history: only its date changes here.
  */
 class SaveVoucher
 {
@@ -21,6 +21,13 @@ class SaveVoucher
     {
         return DB::transaction(function () use ($voucher, $data) {
             $voucher = Voucher::query()->lockForUpdate()->findOrFail($voucher->id);
+
+            if ($voucher->isAmount()) {
+                $voucher->update(['valid_until' => $data['valid_until']]);
+
+                return $voucher;
+            }
+
             $booked = $voucher->redeemed_at !== null && $voucher->latestBooking?->status === BookingStatus::Confirmed;
 
             $voucher->update([

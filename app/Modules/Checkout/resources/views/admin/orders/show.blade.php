@@ -129,7 +129,7 @@
                 @if (! $paid && $order->payment_method === PaymentMethod::BankTransfer && $order->payment_status === PaymentStatus::Pending && PanelAccess::allows(auth()->user(), 'admin.orders.paid'))
                     {{-- No gateway confirms a bank transfer: Kasia marks it once the money is on her account (MA-216). --}}
                     <div x-data="{ asking: false, sending: false }" x-on:pageshow.window="sending = false" class="mt-4 grid gap-2.5 border-t border-divider pt-4">
-                        <p class="text-[13px] leading-[1.55] text-label">Przelew tradycyjny — sprawdź na koncie, czy przyszło {{ $order->money($order->total_gross) }} z numerem {{ $order->number }} w tytule.</p>
+                        <p class="text-[13px] leading-[1.55] text-label">Przelew tradycyjny — sprawdź na koncie, czy przyszło {{ $order->money($order->amountDue()) }} z numerem {{ $order->number }} w tytule.</p>
                         <button type="button" x-show="! asking" x-on:click="asking = true" class="w-full rounded-full bg-ink p-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Wpłata doszła</button>
                         <form method="post" action="{{ route('admin.orders.paid', $order) }}" x-show="asking" x-cloak x-on:submit="sending = true" class="flex flex-wrap items-center gap-2.5">
                             @csrf
@@ -242,6 +242,11 @@
                     <div class="{{ $row }}"><dt class="text-label">Produkty</dt><dd class="tabular-nums">{{ $order->money($order->total_gross - $order->shipping_gross) }}</dd></div>
                     <div class="{{ $row }}"><dt class="text-label">Dostawa</dt><dd class="tabular-nums">{{ $order->shipping_gross === 0 ? 'gratis' : $order->money($order->shipping_gross) }}</dd></div>
                     <div class="{{ $row }} border-t border-divider pt-2.5 font-serif text-[20px]"><dt>Razem</dt><dd class="tabular-nums">{{ $order->money($order->total_gross) }}</dd></div>
+                    @if ($order->vouchers_gross > 0)
+                        {{-- MA-211: the vouchers' part is not a discount; VAT stays on the items as they are. --}}
+                        <div class="{{ $row }}"><dt class="text-label">Voucherem</dt><dd class="tabular-nums">{{ $order->money($order->vouchers_gross) }}</dd></div>
+                        <div class="{{ $row }}"><dt class="text-label">Dopłata</dt><dd class="tabular-nums">{{ $order->amountDue() > 0 ? $order->money($order->amountDue()) : 'bez dopłaty' }}</dd></div>
+                    @endif
                     <div class="{{ $row }}"><dt class="text-label">Metoda</dt><dd>{{ $order->payment_method->label() }}</dd></div>
                     <div class="{{ $row }}"><dt class="text-label">Status</dt><dd>{{ $order->payment_status->label() }}</dd></div>
                     @if ($order->paid_at)

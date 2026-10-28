@@ -1,8 +1,11 @@
 @use('App\Modules\Admin\Support\PanelAccess')
+@use('App\Modules\Gifts\Enums\RedemptionStatus')
+@use('App\Modules\Shared\Support\Money')
 @use('App\Modules\Workshops\Enums\BookingStatus')
 @use('App\Modules\Workshops\Http\Controllers\BookingController')
 @use('App\Modules\Workshops\Support\WorkshopTypes')
-{{-- One voucher: what it books, whether it is used, and the form to fill it in, extend it or mark it used (MA-137). --}}
+{{-- One voucher: what it books, whether it is used, and the form to fill it in, extend it or mark it used (MA-137).
+     An amount voucher shows its balance and every use of it instead, and only its date can change (MA-211). --}}
 @php
     $formKey = 'voucher-'.$voucher->id;
     $bag = $errors->getBag($formKey);
@@ -16,6 +19,59 @@
     $workshopCode = (string) $old('workshop_code', $voucher->workshop_code);
     $field = 'min-h-11 min-w-0 rounded-[4px] border bg-white px-3 text-[14px] text-ink focus:border-ink';
 @endphp
+@if ($voucher->isAmount())
+    <div id="{{ $formKey }}" class="scroll-mt-6">
+        <p class="text-[13px] text-label">
+            @if ($voucher->isExpired())
+                <span class="rounded-full bg-alert px-2.5 py-[3px] text-[11.5px] text-error">Wygasł</span>
+                {{ $voucher->valid_until->translatedFormat('j F Y') }} — żeby można nim było zapłacić, przesuń datę niżej.
+            @elseif ($voucher->balance_minor > 0)
+                <span class="rounded-full bg-navy-soft px-2.5 py-[3px] text-[11.5px] text-navy">Ważny</span>
+                kwotowy — płaci w kasie sklepu, także w częściach
+            @else
+                <span class="rounded-full bg-linen px-2.5 py-[3px] text-[11.5px] text-label">Wykorzystany</span>
+                nic na nim nie zostało
+            @endif
+        </p>
+        <p class="mt-2 font-serif text-[19px] tabular-nums">Saldo {{ Money::format($voucher->balance_minor) }} <span class="text-[14px] text-label">z {{ Money::format($voucher->amount_minor) }}</span></p>
+        @if ($voucher->redemptions->isEmpty())
+            <p class="mt-1 text-[13px] text-label">Jeszcze nim nie płacono.</p>
+        @else
+            <ul class="mt-1.5 grid gap-1 text-[13px]">
+                @foreach ($voucher->redemptions as $redemption)
+                    <li class="flex flex-wrap justify-between gap-x-3 border-b border-divider py-1.5 last:border-b-0">
+                        <span>
+                            {{ ($redemption->returned_at ?? $redemption->used_at ?? $redemption->created_at)->format('j.m.Y, H:i') }} ·
+                            @if ($redemption->order)
+                                <a href="{{ route('admin.orders.show', $redemption->order) }}">{{ $redemption->order->number }}</a>
+                            @else
+                                zamówienie usunięte
+                            @endif
+                            · <span class="text-label">{{ $redemption->status->label() }}</span>
+                        </span>
+                        <span @class(['tabular-nums', 'text-label line-through' => $redemption->status === RedemptionStatus::Returned])>−&thinsp;{{ Money::format($redemption->amount_minor) }}</span>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+        @if (PanelAccess::allows(auth()->user(), 'admin.gifts.voucher.update'))
+            @if ($bag->any())
+                <p role="alert" class="mt-2 text-[13px] text-error">{{ $bag->first() }}</p>
+            @endif
+            <form method="post" action="{{ route('admin.gifts.voucher.update', $voucher) }}" novalidate class="mt-2.5 flex flex-wrap items-end gap-2.5">
+                @csrf
+                @method('PUT')
+                <input type="hidden" name="form" value="{{ $formKey }}">
+                <label class="grid gap-1 text-[12.5px] text-label">
+                    Ważny do
+                    <input type="date" name="valid_until" value="{{ $old('valid_until', $voucher->valid_until->toDateString()) }}"
+                           @class([$field, 'border-error' => $bag->has('valid_until'), 'border-line' => ! $bag->has('valid_until')])>
+                </label>
+                <button class="min-h-11 rounded-full border border-line-strong px-4 text-[13px] text-ink hover:border-ink hover:bg-sand">Przesuń datę</button>
+            </form>
+        @endif
+    </div>
+@else
 <div id="{{ $formKey }}" class="scroll-mt-6">
     <p class="text-[13px] text-label">
         @if ($voucher->redeemed_at)
@@ -73,3 +129,4 @@
         </form>
     @endif
 </div>
+@endif

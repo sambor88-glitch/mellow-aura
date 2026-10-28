@@ -5,6 +5,7 @@ namespace App\Modules\Checkout\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Cart\Cart;
 use App\Modules\Cart\CartLine;
+use App\Modules\Checkout\Actions\MarkOrderPaid;
 use App\Modules\Checkout\Actions\PlaceOrder;
 use App\Modules\Checkout\Actions\SettlePayment;
 use App\Modules\Checkout\Enums\PaymentMethod;
@@ -13,7 +14,12 @@ use App\Modules\Checkout\Http\Requests\PlaceOrderRequest;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Checkout\Support\LockerMap;
 use App\Modules\Checkout\Support\ShippingMethods;
+use App\Modules\Checkout\Support\VoucherCodes;
 use App\Modules\Content\Support\LegalDocument;
+use App\Modules\Gifts\Actions\RestoreVoucherBalance;
+use App\Modules\Gifts\Enums\BalanceRefusal;
+use App\Modules\Gifts\Exceptions\BalanceNotAccepted;
+use App\Modules\Gifts\Support\VoucherBalance;
 use App\Modules\Localization\Support\Locales;
 use App\Modules\Payments\Contracts\PaymentGateway;
 use App\Modules\Settings\Settings;
@@ -21,6 +27,7 @@ use App\Modules\Shared\Support\AnalyticsItem;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\URL;
 
@@ -50,6 +57,9 @@ class CheckoutController extends Controller
             $methods->has(old('shipping_method')) => old('shipping_method'),
             default => $methods->keys()->first(),
         };
+        $shippingGross = $methods->get($selectedShipping)['cost'] ?? 0;
+        // Amount vouchers typed in so far (MA-211), with what each pays towards the sum on the screen.
+        $vouchers = VoucherBalance::preview($this->voucherCodes($request), $subtotal + $shippingGross);
         $paymentMethods = $this->paymentMethods();
         $chosen = PaymentMethod::tryFrom((string) old('payment_method', $settings->get('default_payment_method')));
         $selectedPayment = ($chosen !== null && $paymentMethods->contains($chosen) ? $chosen : $paymentMethods->first())->value;
@@ -59,8 +69,10 @@ class CheckoutController extends Controller
             'subtotal' => $subtotal,
             'methods' => $methods,
             'needsDelivery' => $needsDelivery,
-            'shippingGross' => $methods->get($selectedShipping)['cost'] ?? 0,
+            'shippingGross' => $shippingGross,
             'selectedShipping' => $selectedShipping,
+            'acceptsVouchers' => VoucherCodes::accepted(),
+            'vouchers' => $vouchers,
             'paymentMethods' => $paymentMethods,
             'selectedPayment' => $selectedPayment,
             // Without BLIK Level 0 the code is typed on Przelewy24's page, so there is no field for it here.
@@ -79,6 +91,8 @@ class CheckoutController extends Controller
                 // InPost's map of lockers, or null without a token: then the code is typed by hand.
                 'lockerMap' => LockerMap::config(),
                 'subtotal' => $subtotal,
+                // What is left on each voucher, in the order typed: the screen splits a new sum between them.
+                'vouchers' => $vouchers->map(fn (array $use) => ['code' => $use['voucher']->code, 'balance' => $use['voucher']->balance_minor])->all(),
                 'freeFrom' => $shipping->freeFrom(),
                 'prices' => $methods->map(fn (array $method) => $method['price']),
                 // What the pay button and the pill say, in the language of the page.
@@ -100,7 +114,8 @@ class CheckoutController extends Controller
         ])->header('X-Robots-Tag', self::ROBOTS);
     }
 
-    public function store(PlaceOrderRequest $request, Cart $cart, ShippingMethods $shipping, PlaceOrder $placeOrder, PaymentGateway $gateway): RedirectResponse
+    public function store(PlaceOrderRequest $request, Cart $cart, ShippingMethods $shipping, PlaceOrder $placeOrder, PaymentGateway $gateway,
+        MarkOrderPaid $markOrderPaid, RestoreVoucherBalance $restoreVouchers): RedirectResponse
     {
         if ($redirect = $this->paidElsewhere($request, $cart)) {
             return $redirect;
@@ -123,8 +138,48 @@ class CheckoutController extends Controller
             return back()->withInput()->with('checkout_notice', __('checkout::checkout.changed'));
         }
 
-        // The version on the site at the moment of ordering is the one the customer accepted.
-        $order = $placeOrder($lines, [...$data, 'terms_version' => LegalDocument::terms()->versionLabel()], $shippingGross);
+        // The same goes for the vouchers: one spent elsewhere meanwhile leaves more to pay (MA-211).
+        $codes = $this->voucherCodes($request);
+        $vouchersGross = (int) VoucherBalance::preview($codes, $subtotal + $shippingGross)->sum('amount');
+
+        if ((int) ($data['expected_vouchers'] ?? 0) !== $vouchersGross) {
+            return back()->withInput()->with('checkout_notice', __('checkout::checkout.changed'));
+        }
+
+        $due = $subtotal + $shippingGross - $vouchersGross;
+
+        if ($due > 0 && $data['payment_method'] === PaymentMethod::Blik->value && $gateway->takesBlikCode() && blank($data['blik_code'] ?? null)) {
+            return back()->withInput()->withErrors(['blik_code' => __('checkout::validation.blik_code')]);
+        }
+
+        // A new order from the same cart gives up the last unpaid one: its voucher money is free again.
+        $this->abandonPrevious($request, $restoreVouchers);
+
+        try {
+            // The version on the site at the moment of ordering is the one the customer accepted.
+            $order = $placeOrder($lines, [...$data, 'terms_version' => LegalDocument::terms()->versionLabel()], $shippingGross, $codes);
+        } catch (BalanceNotAccepted $refused) {
+            VoucherCodes::forget($request, $refused->typedCode);
+
+            return back()->withInput()->withErrors(['voucher_code' => VoucherCodes::refusal($refused)]);
+        }
+
+        // Another order took the voucher's money between the check above and the lock in PlaceOrder.
+        if ($order->vouchers_gross !== $vouchersGross) {
+            $restoreVouchers->abandoned($order);
+
+            return back()->withInput()->with('checkout_notice', __('checkout::checkout.changed'));
+        }
+
+        $request->session()->put('checkout.order', $order->number);
+
+        // Vouchers paid for everything: nothing goes through the gateway.
+        if ($order->amountDue() === 0) {
+            $markOrderPaid($order, 'voucher');
+            $request->session()->put('checkout.analytics', ['order' => $order->number, 'value' => $subtotal, 'items' => $this->analyticsItems($lines)]);
+
+            return to_route('checkout.confirmation');
+        }
 
         // The BLIK code goes from the form to the gateway and is never saved anywhere.
         $payment = $gateway->start($order, $data['blik_code'] ?? null);
@@ -132,11 +187,12 @@ class CheckoutController extends Controller
         // A refused payment never empties the cart. The sentence lands on the field it is about.
         if ($payment->error !== null) {
             $field = $order->payment_method === PaymentMethod::Blik ? 'blik_code' : 'payment_method';
+            $restoreVouchers->abandoned($order);
+            $request->session()->forget('checkout.order');
 
             return back()->withInput()->withErrors([$field => $payment->error]);
         }
 
-        $request->session()->put('checkout.order', $order->number);
         // The cart is emptied on the confirmation page, so the purchase for Google Analytics is kept here.
         $request->session()->put('checkout.analytics', ['order' => $order->number, 'value' => $subtotal, 'items' => $this->analyticsItems($lines)]);
 
@@ -156,7 +212,7 @@ class CheckoutController extends Controller
         return to_route('checkout.confirmation');
     }
 
-    public function confirmation(Request $request, Cart $cart, SettlePayment $settle, PaymentGateway $gateway): Response|RedirectResponse
+    public function confirmation(Request $request, Cart $cart, SettlePayment $settle, PaymentGateway $gateway, RestoreVoucherBalance $restoreVouchers): Response|RedirectResponse
     {
         $order = $this->confirmedOrder($request);
 
@@ -188,6 +244,7 @@ class CheckoutController extends Controller
 
             // The cart waited for this moment, so a payment the bank refused leaves it exactly as it was.
             if ($order->payment_status === PaymentStatus::Failed) {
+                $restoreVouchers->abandoned($order);
                 $request->session()->forget('checkout.order');
 
                 return to_route('checkout.index')->with('checkout_notice', __('checkout::checkout.bank_refused'));
@@ -218,6 +275,44 @@ class CheckoutController extends Controller
             // A pickup in the studio is never packed for the post: no parcel photo, no shipping time.
             'parcel' => $order->sendsParcel() && $order->shipping_method !== 'studio_pickup',
         ])->header('X-Robots-Tag', self::ROBOTS);
+    }
+
+    /**
+     * „Użyj vouchera” (MA-211): the whole form comes here, so everything typed so far comes back filled in. The code is
+     * checked and kept for the order; the screen then shows what it pays. The BLIK code is never kept, as everywhere.
+     */
+    public function addVoucher(Request $request): RedirectResponse
+    {
+        abort_unless(VoucherCodes::accepted(), 404);
+
+        $code = trim((string) $request->input('voucher_code'));
+        $typed = $request->except(['_token', 'blik_code']);
+        $kept = VoucherCodes::all($request);
+
+        try {
+            $voucher = VoucherBalance::find($code);
+            throw_if(in_array($voucher->code, $kept, true), new BalanceNotAccepted($code, BalanceRefusal::Twice, $voucher));
+        } catch (BalanceNotAccepted $refused) {
+            $message = $code === '' ? __('checkout::checkout.voucher_refused.empty') : VoucherCodes::refusal($refused);
+
+            return to_route('checkout.index')->withInput($typed)->withErrors(['voucher_code' => $message]);
+        }
+
+        if (count($kept) >= VoucherBalance::MAX_CODES) {
+            return to_route('checkout.index')->withInput($typed)
+                ->withErrors(['voucher_code' => __('checkout::checkout.voucher_refused.too_many', ['count' => VoucherBalance::MAX_CODES])]);
+        }
+
+        VoucherCodes::add($request, $voucher->code);
+
+        return to_route('checkout.index')->withInput(Arr::except($typed, 'voucher_code'))->with('voucher_added', $voucher->code);
+    }
+
+    public function removeVoucher(Request $request): RedirectResponse
+    {
+        VoucherCodes::forget($request, (string) $request->input('remove_voucher'));
+
+        return to_route('checkout.index')->withInput($request->except(['_token', 'blik_code', 'voucher_code', 'remove_voucher']));
     }
 
     /**
@@ -281,6 +376,7 @@ class CheckoutController extends Controller
         }
 
         $cart->clear();
+        $request->session()->forget(VoucherCodes::SESSION_KEY);
         $request->session()->put('checkout.cleared', $order->number);
     }
 
@@ -305,6 +401,28 @@ class CheckoutController extends Controller
         $this->clearCartOnce($request, $cart, $order);
 
         return to_route('checkout.confirmation');
+    }
+
+    /**
+     * The order this session placed last, if it is still unpaid and the customer is ordering again. A bank transfer
+     * counts too: whoever orders again is not going to send the first one.
+     */
+    private function abandonPrevious(Request $request, RestoreVoucherBalance $restoreVouchers): void
+    {
+        $number = $request->session()->get('checkout.order');
+        $previous = $number === null ? null : Order::query()->where('number', $number)->where('payment_status', '!=', PaymentStatus::Paid)->first();
+
+        if ($previous !== null) {
+            $restoreVouchers->abandoned($previous);
+        }
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function voucherCodes(Request $request): array
+    {
+        return VoucherCodes::accepted() ? VoucherCodes::all($request) : [];
     }
 
     /**

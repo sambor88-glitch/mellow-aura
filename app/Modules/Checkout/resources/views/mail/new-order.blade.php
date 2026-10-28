@@ -4,7 +4,7 @@
 >
     <h1 style="margin: 0 0 12px; font-family: Georgia, 'Times New Roman', serif; font-weight: normal; font-size: 28px; line-height: 1.15; color: #2F2620;">Nowe zamówienie {{ $order->number }}</h1>
     <p style="margin: 0 0 22px; color: #5C5043;">
-        Opłacone: {{ $order->money($order->total_gross) }}, {{ $order->payment_method->label() }}.
+        Opłacone: {{ $order->money($order->total_gross) }}, {{ $order->payment_method->label() }}@if ($order->vouchers_gross > 0 && $order->amountDue() > 0) + voucher {{ $order->money($order->vouchers_gross) }}@endif.
         Odpowiedź na tego maila trafi prosto do osoby, która zamówiła.
     </p>
 
