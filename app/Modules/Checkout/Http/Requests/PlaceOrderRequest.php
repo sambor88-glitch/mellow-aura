@@ -52,11 +52,13 @@ class PlaceOrderRequest extends FormRequest
             'locker_code' => ['exclude_unless:shipping_method,parcel_locker', 'nullable', 'regex:/^[A-Z0-9-]{4,16}$/'],
             // Only the ways to pay in the currency of the basket: BLIK never takes euro.
             'payment_method' => ['required', Rule::in(array_column(PaymentMethod::for(Locales::currency()), 'value'))],
-            // Without BLIK Level 0 the code is typed on Przelewy24's page, not here.
+            // Without BLIK Level 0 the code is typed on Przelewy24's page, not here. Nor when vouchers pay for everything
+            // (MA-211); the controller checks that against the vouchers themselves.
             'blik_code' => $this->container->make(PaymentGateway::class)->takesBlikCode()
-                ? ['exclude_unless:payment_method,blik', 'required', 'digits:6']
+                ? ['exclude_unless:payment_method,blik', Rule::excludeIf($this->paidByVouchers(...)), 'required', 'digits:6']
                 : ['exclude'],
             'expected_total' => ['required', 'integer'],
+            'expected_vouchers' => ['nullable', 'integer', 'min:0'],
             'accept_terms' => ['accepted'],
             ...$this->deviationKeys()->mapWithKeys(fn (string $key) => ['accept_deviations.'.$key => ['accepted']])->all(),
         ];
@@ -97,6 +99,12 @@ class PlaceOrderRequest extends FormRequest
                 'accept_deviations.'.$key.'.accepted' => $t('accept_deviation'),
             ])->all(),
         ];
+    }
+
+    /** What the screen said: the vouchers leave nothing to pay. */
+    private function paidByVouchers(): bool
+    {
+        return (int) $this->input('expected_vouchers') > 0 && (int) $this->input('expected_vouchers') >= (int) $this->input('expected_total');
     }
 
     private function needsDelivery(): bool

@@ -31,9 +31,12 @@
                 {{ $t($needsDelivery ? 'lead_parcel' : 'lead_email') }}
             </p>
 
-            <form method="post" action="{{ route('checkout.store') }}" novalidate x-data="checkout(@js($config))" x-on:submit="submit($event)" class="flex flex-wrap items-start gap-[clamp(24px,4vw,56px)]">
+            <form method="post" action="{{ route('checkout.store') }}" novalidate
+                  @if ($acceptsVouchers) data-voucher-add="{{ route('checkout.voucher.add') }}" data-voucher-remove="{{ route('checkout.voucher.remove') }}" @endif
+                  x-data="checkout(@js($config))" x-on:submit="submit($event)" class="flex flex-wrap items-start gap-[clamp(24px,4vw,56px)]">
                 @csrf
                 <input type="hidden" name="expected_total" value="{{ $subtotal + $shippingGross }}" x-bind:value="total">
+                <input type="hidden" name="expected_vouchers" value="{{ $vouchers->sum('amount') }}" x-bind:value="vouchersPaid">
 
                 <div class="min-w-0 flex-[1_1_480px]">
                     <div class="glass mb-4 rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]">
@@ -138,7 +141,8 @@
                         </div>
                     @endif
 
-                    <fieldset class="glass rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]">
+                    {{-- Vouchers that pay for everything leave nothing to choose (MA-211). --}}
+                    <fieldset x-show="due > 0" @if ($vouchers->sum('amount') >= $subtotal + $shippingGross) x-cloak @endif class="glass rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]">
                         <legend class="float-left mb-4 flex w-full items-baseline gap-3 font-serif text-[30px] leading-none font-light"><span aria-hidden="true" class="text-[22px] text-rose italic">iii</span>{{ $t('payment') }}</legend>
                         <div class="clear-both grid gap-2.5">
                             @foreach ($paymentMethods as $method)
@@ -197,10 +201,47 @@
                             <span>{{ $t('delivery') }}</span>
                             <span x-text="shippingCost === 0 ? @js($t('free')) : $store.cart.format(shippingCost)">{{ $shippingGross === 0 ? $t('free') : $money($shippingGross) }}</span>
                         </div>
+                        @if ($acceptsVouchers)
+                            {{-- Amount vouchers (MA-211): rare, so folded away like the invoice (mellowaura-ux). Each code
+                                 pays as much as it holds; the screen splits a new delivery cost between them as the server does. --}}
+                            @foreach ($vouchers as $use)
+                                @php
+                                    $code = $use['voucher']->code;
+                                @endphp
+                                <div class="mb-[7px] flex items-start justify-between gap-3 text-[14px] text-muted">
+                                    <span class="min-w-0">
+                                        <span class="block">{{ $t('voucher_line', ['code' => $code]) }}</span>
+                                        <span class="block text-[12px] text-label" x-text="voucherLeftLabel(@js($code))">{{ $use['voucher']->balance_minor === $use['amount'] ? $t('voucher_used_up') : $t('voucher_left', ['amount' => $money($use['voucher']->balance_minor - $use['amount'])]) }}</span>
+                                        <button type="button" x-on:click="removeVoucher(@js($code))" class="-ml-1 min-h-11 px-1 text-[12.5px] text-brown underline underline-offset-2 hover:text-ink">{{ $t('voucher_remove', ['code' => $code]) }}</button>
+                                    </span>
+                                    <span class="whitespace-nowrap tabular-nums" x-text="'− ' + $store.cart.format(voucherAmount(@js($code)))">−&thinsp;{{ $money($use['amount']) }}</span>
+                                </div>
+                            @endforeach
+                            @if (session('voucher_added'))
+                                <p role="status" class="sr-only">{{ $t('voucher_added', ['code' => session('voucher_added')]) }}</p>
+                            @endif
+                            <details @if ($errors->has('voucher_code')) open @endif class="group mb-3.5">
+                                <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-[13.5px] text-brown [&::-webkit-details-marker]:hidden">
+                                    <span>{{ $t('voucher_toggle') }}</span>
+                                    <span aria-hidden="true" class="group-open:hidden">+</span><span aria-hidden="true" class="hidden group-open:inline">−</span>
+                                </summary>
+                                <div class="mt-1.5 animate-ma-up-quick">
+                                    <x-shared::field name="voucher_code" :label="$t('voucher_label')" :hint="$t('voucher_hint')" x-ref="voucherCode"
+                                                     x-on:keydown.enter.prevent="addVoucher()" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="30"
+                                                     :placeholder="$t('voucher_placeholder')" />
+                                    {{-- A button, not a second submit: Enter anywhere else in the form still means „Płacę”. --}}
+                                    <button type="button" x-on:click="addVoucher()"
+                                            class="mt-2.5 min-h-11 rounded-full border border-glass-line bg-cream/60 px-6 text-[14px] text-ink transition-colors duration-300 hover:border-ink hover:bg-cream">
+                                        {{ $t('voucher_add') }}
+                                    </button>
+                                </div>
+                            </details>
+                        @endif
                         <div class="flex items-baseline justify-between border-t border-line pt-3.5">
-                            <span class="text-[14.5px]">{{ $t('total') }}</span>
-                            <span x-text="$store.cart.format(total)" class="font-serif text-[40px] leading-none font-light tabular-nums">{{ $money($subtotal + $shippingGross) }}</span>
+                            <span class="text-[14.5px]" x-text="vouchersPaid > 0 ? @js($t('to_pay')) : @js($t('total'))">{{ $vouchers->sum('amount') > 0 ? $t('to_pay') : $t('total') }}</span>
+                            <span x-text="$store.cart.format(due)" class="font-serif text-[40px] leading-none font-light tabular-nums">{{ $money($subtotal + $shippingGross - $vouchers->sum('amount')) }}</span>
                         </div>
+                        <p x-show="vouchersPaid > 0 && due === 0" @if ($subtotal + $shippingGross > $vouchers->sum('amount')) x-cloak @endif class="mt-2 text-[13px] text-label">{{ $t('voucher_covers') }}</p>
 
                         @if (session('checkout_notice'))
                             <p role="alert" class="mt-4 rounded-[14px] border border-alert-line bg-alert px-3.5 py-3 text-[13.5px] text-alert-text">{{ session('checkout_notice') }}</p>
@@ -230,7 +271,7 @@
                                 $blikError = $elsewhere ? $t('blik_retype') : $errors->first('blik_code');
                                 $blikNote = $blikError ?: $t('blik_hint');
                             @endphp
-                            <div x-show="payment === 'blik'" x-transition:enter="transition duration-500 ease-clay" x-transition:enter-start="opacity-0 blur-sm -translate-y-2"
+                            <div x-show="payment === 'blik' && due > 0" x-transition:enter="transition duration-500 ease-clay" x-transition:enter-start="opacity-0 blur-sm -translate-y-2"
                                  @if ($selectedPayment !== PaymentMethod::Blik->value) x-cloak @endif class="mt-5 rounded-[20px] border border-navy-line bg-navy-soft p-4">
                                 <div class="mb-3 flex items-center gap-3">
                                     <span class="rounded-full bg-navy px-3 py-[5px] text-[12px] font-medium tracking-[0.06em] text-white">BLIK</span>
@@ -254,7 +295,7 @@
                         {{-- The button breathes once the form is ready (mellowaura-design, „Kod BLIK”). --}}
                         <button type="submit" x-bind:class="ready ? 'animate-[auraRing_1.8s_ease-in-out_infinite]' : 'bg-label!'"
                                 class="fill-btn mt-5 min-h-[60px] w-full rounded-full bg-navy p-[17px] text-[15px] font-medium tracking-[0.02em] text-linen transition duration-300 [--fill:var(--color-ink)] hover:bg-ink active:scale-[.97]">
-                            <span x-text="label">{{ $t('pay', ['amount' => $money($subtotal + $shippingGross)]) }}</span>
+                            <span x-text="label">{{ $t('pay', ['amount' => $money($subtotal + $shippingGross - $vouchers->sum('amount'))]) }}</span>
                         </button>
                         <div class="mt-3.5 flex flex-wrap justify-center gap-3 text-[11.5px] tracking-[0.08em] text-label uppercase">
                             {!! collect(config('services.przelewy24.wallets') ? __('checkout::checkout.wallet_badges') : [])->merge($t('badges'))->map(fn (string $badge) => '<span>'.e($badge).'</span>')->join('<span>&middot;</span>') !!}

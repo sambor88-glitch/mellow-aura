@@ -10,6 +10,7 @@ Route::put('/prezenty/zestawy/{bundle}', [GiftsController::class, 'updateBundle'
 Route::put('/prezenty/teksty', [GiftsController::class, 'texts'])->name('gifts.texts');
 Route::put('/prezenty/vouchery', [GiftsController::class, 'vouchers'])->name('gifts.vouchers');
 Route::put('/prezenty/voucher/{voucher}', [GiftsController::class, 'updateVoucher'])->whereNumber('voucher')->name('gifts.voucher.update');
+Route::put('/prezenty/zamowienie/{order}/oddaj-na-voucher', [GiftsController::class, 'restoreOrderVouchers'])->whereNumber('order')->name('gifts.order-vouchers.restore');
 Route::put('/prezenty/vouchery/opis-warsztatu', [GiftsController::class, 'voucherNotes'])->name('gifts.voucher-notes');
 Route::put('/prezenty/szukam-prezentu', [GiftsController::class, 'giftFinder'])->name('gifts.finder');
 

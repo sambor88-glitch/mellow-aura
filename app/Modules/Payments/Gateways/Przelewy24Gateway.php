@@ -142,7 +142,8 @@ class Przelewy24Gateway implements PaymentGateway
     private function register(Order $order, bool $blikHere): ?PaymentAttempt
     {
         $sessionId = $order->number.'-'.Str::lower(Str::random(8));
-        $amount = (int) $order->total_gross;
+        // Amount vouchers paid part of it already (MA-211); the gateway takes the rest.
+        $amount = $order->amountDue();
         $currency = $order->currency ?? 'PLN';
 
         $body = [

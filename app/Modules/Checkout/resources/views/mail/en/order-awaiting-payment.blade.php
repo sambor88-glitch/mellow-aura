@@ -1,6 +1,6 @@
 <x-shared::mail.layout
     :title="'Order '.$order->number"
-    :preheader="'Waiting for your payment of '.$order->money($order->total_gross).'. Your order confirmation comes in a separate e-mail.'"
+    :preheader="'Waiting for your payment of '.$order->money($order->amountDue()).'. Your order confirmation comes in a separate e-mail.'"
 >
     <h1 style="margin: 0 0 12px; font-family: Georgia, 'Times New Roman', serif; font-weight: normal; font-size: 30px; line-height: 1.15; color: #2F2620;">Thank you for your order</h1>
     <p style="margin: 0 0 22px; color: #5C5043;">
@@ -13,7 +13,7 @@
             <tr>
                 <td style="background: #F7F2EA; border: 1px solid #E2D7C7; border-radius: 4px; padding: 14px 16px; font-size: 14.5px; line-height: 1.7; color: #2F2620;">
                     <div style="margin: 0 0 4px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #726456;">Bank transfer details</div>
-                    Amount: {{ $order->money($order->total_gross) }}<br>
+                    Amount: {{ $order->money($order->amountDue()) }}<br>
                     Reference: {{ $order->number }}<br>
                     @if ($bankTransfer['account'])
                         Account: {{ $bankTransfer['account'] }}<br>

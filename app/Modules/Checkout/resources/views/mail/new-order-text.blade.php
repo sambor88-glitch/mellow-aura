@@ -1,7 +1,7 @@
 {{-- The plain-text part is never rendered as HTML, so values print raw instead of as HTML entities. --}}
 Nowe zamówienie {!! $order->number !!}
 
-Opłacone: {{ $order->money($order->total_gross) }}, {!! $order->payment_method->label() !!}.
+Opłacone: {{ $order->money($order->total_gross) }}, {!! $order->payment_method->label() !!}@if ($order->vouchers_gross > 0 && $order->amountDue() > 0) + voucher {{ $order->money($order->vouchers_gross) }}@endif.
 Odpowiedź na tego maila trafi prosto do osoby, która zamówiła.
 @if ($missing->isNotEmpty())
 

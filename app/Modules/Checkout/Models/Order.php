@@ -7,6 +7,7 @@ use App\Modules\Checkout\Enums\PaymentMethod;
 use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Support\ShippingMethods;
 use App\Modules\CustomOrders\Models\CustomOrderPayment;
+use App\Modules\Gifts\Models\VoucherRedemption;
 use App\Modules\Shared\Support\Money;
 use App\Modules\Workshops\Models\WorkshopBooking;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -17,7 +18,7 @@ use Illuminate\Support\Facades\URL;
 
 #[Fillable([
     'number', 'status', 'name', 'email', 'phone', 'shipping_method', 'shipping_address', 'delivery_country', 'locker_code', 'tracking_number',
-    'shipping_gross', 'total_gross', 'currency', 'eur_rate', 'eur_rate_on', 'locale', 'payment_method', 'payment_status', 'payment_provider_id', 'paid_at', 'payment_confirmed_by', 'shipped_at', 'completed_at',
+    'shipping_gross', 'total_gross', 'vouchers_gross', 'currency', 'eur_rate', 'eur_rate_on', 'locale', 'payment_method', 'payment_status', 'payment_provider_id', 'paid_at', 'payment_confirmed_by', 'shipped_at', 'completed_at',
     'note', 'problem_note', 'invoice_nip', 'terms_version', 'terms_accepted_at',
 ])]
 class Order extends Model
@@ -58,6 +59,24 @@ class Order extends Model
     public function customOrderPayment(): HasOne
     {
         return $this->hasOne(CustomOrderPayment::class);
+    }
+
+    /**
+     * What amount vouchers paid of this order, each use with its voucher (MA-211).
+     *
+     * @return HasMany<VoucherRedemption, $this>
+     */
+    public function voucherRedemptions(): HasMany
+    {
+        return $this->hasMany(VoucherRedemption::class)->orderBy('id');
+    }
+
+    /**
+     * What is paid through the gateway or by transfer: the total less what vouchers paid (MA-211).
+     */
+    public function amountDue(): int
+    {
+        return $this->total_gross - $this->vouchers_gross;
     }
 
     /**
@@ -116,6 +135,7 @@ class Order extends Model
             'eur_rate_on' => 'date',
             'shipping_gross' => 'integer',
             'total_gross' => 'integer',
+            'vouchers_gross' => 'integer',
             'payment_method' => PaymentMethod::class,
             'payment_status' => PaymentStatus::class,
             'paid_at' => 'datetime',

@@ -66,7 +66,7 @@
                     <p id="blik_code-note" class="mt-2.5 text-center text-[12.5px] text-navy-hint">{{ $t('hint') }}</p>
                 @enderror
                 <button type="submit" class="fill-btn mt-5 min-h-[60px] w-full rounded-full bg-navy p-[17px] text-[15px] font-medium tracking-[0.02em] text-linen transition duration-300 [--fill:var(--color-ink)] hover:bg-ink active:scale-[.97]">
-                    {{ $t('pay', ['amount' => $order->money($order->total_gross)]) }}
+                    {{ $t('pay', ['amount' => $order->money($order->amountDue())]) }}
                 </button>
             </form>
             {{-- Back to the checkout with the cart as it was, the workshop's form or the payment link: another way to pay is a new order there. --}}

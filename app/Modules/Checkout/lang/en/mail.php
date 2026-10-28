@@ -9,6 +9,8 @@ return [
         'subtotal' => 'Items',
         'delivery' => 'Delivery',
         'free' => 'free',
+        'voucher' => 'Gift voucher',
+        'due' => 'Paid by card or transfer',
         'total' => 'Total',
     ],
     'delivery' => [

@@ -12,6 +12,8 @@ use Illuminate\Support\Collection;
  * Issues the vouchers of a paid order: one for every voucher piece paid for, each with its own code and
  * the names and dedication from the order, valid for the months set in the panel from the day of payment.
  * A workshop voucher takes its workshop from the product and its seats from the size (one when left empty).
+ * An amount voucher is worth what was paid for it and starts with all of it on its balance (MA-211); vouchers pay
+ * in złoty only, so one bought in another currency gets no balance and Kasia settles it by hand.
  * Checkout calls it inside the payment transaction, so a paid order never lacks its vouchers.
  * Calling it again issues nothing new.
  */
@@ -35,6 +37,7 @@ class IssueVouchers
 
             $paidPieces = $item->quantity - $item->missing_quantity;
             $workshop = $item->variant->product->workshop_code;
+            $amount = $workshop === null && $item->currency === 'PLN' ? $item->unit_price_gross : null;
 
             for ($piece = Voucher::query()->where('order_item_id', $item->id)->count(); $piece < $paidPieces; $piece++) {
                 $issued->push(Voucher::create([
@@ -45,6 +48,8 @@ class IssueVouchers
                     'dedication' => $item->dedication,
                     'workshop_code' => $workshop,
                     'seats' => $workshop === null ? null : ($item->variant->voucher_seats ?? 1),
+                    'amount_minor' => $amount,
+                    'balance_minor' => $amount,
                     'valid_until' => $validUntil,
                 ]));
             }

@@ -69,7 +69,11 @@
                 </p>
             @endif
             <div class="glass mb-6 inline-flex min-w-[min(380px,100%)] flex-col gap-3.5 rounded-[24px] px-[30px] py-[26px] text-left">
-                <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">{{ $t($paid ? 'paid' : 'to_pay') }}</span><span>{{ $order->money($order->total_gross) }}</span></div>
+                <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">{{ $t($paid ? 'paid' : 'to_pay') }}</span><span>{{ $order->money($paid ? $order->total_gross : $order->amountDue()) }}</span></div>
+                @if ($order->vouchers_gross > 0)
+                    {{-- Amount vouchers paid this part (MA-211). --}}
+                    <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">{{ $t('paid_by_voucher') }}</span><span>{{ $order->money($order->vouchers_gross) }}</span></div>
+                @endif
                 @if ($shippingLabel)
                     <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">{{ $t('delivery') }}</span><span>{{ $shippingLabel }}</span></div>
                 @endif

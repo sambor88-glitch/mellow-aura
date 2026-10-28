@@ -4,9 +4,12 @@ namespace App\Modules\Checkout\Actions;
 
 use App\Modules\Cart\CartLine;
 use App\Modules\Checkout\Enums\OrderStatus;
+use App\Modules\Checkout\Enums\PaymentMethod;
 use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Checkout\Support\OrderTax;
+use App\Modules\Gifts\Actions\HoldVoucherBalance;
+use App\Modules\Gifts\Exceptions\BalanceNotAccepted;
 use App\Modules\Localization\Support\Locales;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -16,18 +19,23 @@ use Illuminate\Support\Facades\DB;
  * Saves the order with copies of what the customer saw — names, variant labels, prices, the text
  * for the mug and the features accepted with their own checkbox — so later changes in the shop never rewrite it. Each cart line says which items it becomes.
  * Stock is not touched here: it comes off only when the payment is confirmed.
+ * Amount vouchers pay first, from their balance (MA-211): the money is held in the same transaction, the order keeps
+ * how much they paid, and an order they pay in full needs no other way to pay.
  */
 class PlaceOrder
 {
-    public function __construct(private OrderTax $tax) {}
+    public function __construct(private OrderTax $tax, private HoldVoucherBalance $holdVoucherBalance) {}
 
     /**
      * @param  Collection<string, CartLine>  $lines
      * @param  array<string, mixed>  $data  validated checkout fields
+     * @param  list<string>  $voucherCodes  amount vouchers to pay with, in the order typed
+     *
+     * @throws BalanceNotAccepted
      */
-    public function __invoke(Collection $lines, array $data, int $shippingGross): Order
+    public function __invoke(Collection $lines, array $data, int $shippingGross, array $voucherCodes = []): Order
     {
-        return DB::transaction(function () use ($lines, $data, $shippingGross) {
+        return DB::transaction(function () use ($lines, $data, $shippingGross, $voucherCodes) {
             $address = array_filter(Arr::only($data, ['street', 'postal_code', 'city']));
 
             $order = Order::create([
@@ -41,6 +49,7 @@ class PlaceOrder
                 'locker_code' => $data['shipping_method'] === 'parcel_locker' ? ($data['locker_code'] ?? null) : null,
                 'shipping_gross' => $shippingGross,
                 'total_gross' => $lines->sum(fn (CartLine $line) => $line->total()) + $shippingGross,
+                'vouchers_gross' => 0,
                 // The cart counts in the currency of the page, so the order is paid in it and speaks its language.
                 'currency' => Locales::currency(),
                 ...$this->tax->euroRate(),
@@ -77,6 +86,15 @@ class PlaceOrder
                     'recipient_name' => $item->recipientName,
                     'dedication' => $item->dedication,
                     'sender_name' => $item->senderName,
+                ]);
+            }
+
+            $vouchersGross = ($this->holdVoucherBalance)($order, $voucherCodes);
+
+            if ($vouchersGross > 0) {
+                $order->update([
+                    'vouchers_gross' => $vouchersGross,
+                    'payment_method' => $vouchersGross === $order->total_gross ? PaymentMethod::Voucher : $order->payment_method,
                 ]);
             }
 
