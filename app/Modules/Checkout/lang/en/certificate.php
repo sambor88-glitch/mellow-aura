@@ -2,9 +2,9 @@
 
 return [
     'title' => 'Certificates of uniqueness',
-    'brand_note' => 'ceramics &middot; handmade &middot; kraków',
+    'brand_note' => 'ceramics · handmade · kraków',
     'eyebrow' => 'certificate of uniqueness',
-    'quote' => 'There is only one of this,<br>and not even I<br>can make it again.',
+    'quote' => "There is only one of this,\nand not even I\ncan make it again.",
     'work' => 'Piece',
     'number' => 'Number',
     'fired' => 'Fired on',
@@ -18,6 +18,8 @@ return [
     'deviation' => 'Please note',
     'warnings' => 'Warnings',
     'producer' => 'maker',
-    'thanks' => 'Thank you for choosing something<br>made by hand.',
+    'thanks' => "Thank you for choosing something\nmade by hand.",
     'filename' => 'certificates',
+    'sample_work' => 'Mug with lettering · Large',
+    'sample_text' => 'good morning',
 ];

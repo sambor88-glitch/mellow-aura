@@ -30,6 +30,7 @@ class Menu
             ['label' => 'Zgłoszenia do wypału', 'route' => 'admin.firing.requests.index', 'active' => 'admin.firing.requests.*', 'description' => 'Wsady z formularza w tygodniowych partiach: nowe, przyjęte, w piecu, do odbioru.'],
             ['label' => 'Wypały', 'route' => 'admin.firing.edit', 'active' => 'admin.firing.edit', 'description' => 'Cennik wypałów na zlecenie, dzień wsadu i notka pod cennikiem.'],
             ['label' => 'Usługi', 'route' => 'admin.services.edit', 'active' => 'admin.services.*', 'description' => 'Apaszka i odcisk rośliny: zdjęcia przed i po, teksty, cennik i kroki.'],
+            ['label' => 'Certyfikat unikatu', 'route' => 'admin.certificate.edit', 'active' => 'admin.certificate.*', 'description' => 'Nagłówek, cytat i dopisek pod logo na karcie do paczki — z podglądem PDF.'],
             ['label' => 'Treści', 'route' => 'admin.content.edit', 'active' => 'admin.content.*', 'description' => 'Teksty na stronach, częste pytania, fakty o pracowni, zamówienia indywidualne, karty dla lokali i sprawy w formularzu.'],
             ['label' => 'Zdjęcia stron', 'route' => 'admin.page-photos.edit', 'active' => 'admin.page-photos.*', 'description' => 'Zdjęcia na stronie głównej, „O mnie”, kontakcie, usługach i pozostałych stronach: podmiana i kadr każdego miejsca.'],
             ['label' => 'Google', 'route' => 'admin.seo-pages.edit', 'active' => 'admin.seo-pages.*', 'description' => 'Tytuł i opis każdej strony stałej w wynikach wyszukiwania.'],

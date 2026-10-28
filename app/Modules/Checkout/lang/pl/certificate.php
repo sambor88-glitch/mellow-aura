@@ -2,9 +2,9 @@
 
 return [
     'title' => 'Certyfikaty unikatu',
-    'brand_note' => 'ceramika &middot; rękodzieło &middot; kraków',
+    'brand_note' => 'ceramika · rękodzieło · kraków',
     'eyebrow' => 'certyfikat unikatu',
-    'quote' => 'Ta rzecz jest jedna<br>i nie powtórzę jej<br>nawet ja.',
+    'quote' => "Ta rzecz jest jedna\ni nie powtórzę jej\nnawet ja.",
     'work' => 'Praca',
     'number' => 'Numer',
     'fired' => 'Data wypału',
@@ -18,6 +18,8 @@ return [
     'deviation' => 'Zwróć uwagę',
     'warnings' => 'Ostrzeżenia',
     'producer' => 'producent',
-    'thanks' => 'Dziękuję, że wybrałaś rzecz<br>zrobioną w dłoniach.',
+    'thanks' => "Dziękuję, że wybrałaś rzecz\nzrobioną w dłoniach.",
     'filename' => 'certyfikaty',
+    'sample_work' => 'Kubek z napisem · Duży',
+    'sample_text' => 'dzień dobry',
 ];
