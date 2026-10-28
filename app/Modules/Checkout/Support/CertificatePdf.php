@@ -4,6 +4,7 @@ namespace App\Modules\Checkout\Support;
 
 use App\Modules\Catalog\Enums\CategoryGroup;
 use App\Modules\Checkout\Models\Certificate;
+use App\Modules\Checkout\Models\OrderItem;
 use App\Modules\Localization\Support\Locales;
 use App\Modules\Settings\Settings;
 use App\Modules\Shared\Support\Pdf;
@@ -20,6 +21,14 @@ class CertificatePdf
     /** The shop's address as printed, whatever server renders the card. */
     private const WEBSITE = 'mellow-aura.com';
 
+    /**
+     * The sentences on the front that Kasia rewrites in the panel, each with the most characters and lines the card
+     * holds without pushing the fields into the signature (MA-240). An empty one prints the text from lang.
+     *
+     * @var array<string, array{int, int}>
+     */
+    public const TEXTS = ['eyebrow' => [36, 1], 'quote' => [110, 4], 'brand_note' => [40, 1]];
+
     public function __construct(private Settings $settings) {}
 
     /**
@@ -27,27 +36,58 @@ class CertificatePdf
      * warnings in English, and the card says so too.
      *
      * @param  Collection<int, Certificate>  $certificates
+     * @param  array<string, ?string>|null  $texts
      */
-    public function render(Collection $certificates, string $locale = 'pl'): string
+    public function render(Collection $certificates, string $locale = 'pl', ?array $texts = null): string
     {
-        return Pdf::render($this->html($certificates, $locale), 'portrait', 'a6');
+        return Pdf::render($this->html($certificates, $locale, $texts), 'portrait', 'a6');
     }
 
     /**
      * @param  Collection<int, Certificate>  $certificates
+     * @param  array<string, ?string>|null  $texts  typed in the panel and not saved yet; null reads the settings
      */
-    public function html(Collection $certificates, string $locale = 'pl'): string
+    public function html(Collection $certificates, string $locale = 'pl', ?array $texts = null): string
     {
-        return Locales::within($locale, fn () => $this->view($certificates));
+        return Locales::within($locale, fn () => $this->view($certificates, $texts));
+    }
+
+    /**
+     * One card for a sample piece, so the panel shows the texts on paper before they are saved.
+     *
+     * @param  array<string, ?string>  $texts
+     */
+    public function sample(string $locale, array $texts): string
+    {
+        $certificate = Locales::within($locale, fn () => (new Certificate(['piece' => 1, 'number' => now()->format('Y').'/0001']))
+            ->setRelation('orderItem', (new OrderItem)->forceFill([
+                'product_name' => __('checkout::certificate.sample_work'),
+                'variant_label' => '',
+                'custom_text' => __('checkout::certificate.sample_text'),
+            ])->setRelation('variant', null)));
+
+        return $this->render(collect([$certificate]), $locale, $texts);
+    }
+
+    /** The setting holding a text of the card: no suffix in Polish, `_en` in English, like the other texts. */
+    public static function setting(string $text, string $locale): string
+    {
+        return 'certificate_'.$text.($locale === Locales::default() ? '' : '_'.$locale);
     }
 
     /**
      * @param  Collection<int, Certificate>  $certificates
+     * @param  array<string, ?string>|null  $texts
      */
-    private function view(Collection $certificates): string
+    private function view(Collection $certificates, ?array $texts): string
     {
         return view('checkout::pdf.certificates', [
             'cards' => $certificates->map($this->card(...))->values(),
+            'texts' => collect(self::TEXTS)->map(function (array $limits, string $text) use ($texts) {
+                $value = $texts === null ? $this->settings->get(self::setting($text, Locales::current())) : ($texts[$text] ?? null);
+
+                return filled($value) ? $value : __('checkout::certificate.'.$text);
+            })->all(),
             'fonts' => Pdf::fonts(),
             'website' => self::WEBSITE,
             'producer' => collect(['company_name', 'company_address', 'contact_email'])->map(fn (string $key) => $this->settings->get($key))->filter()->values(),

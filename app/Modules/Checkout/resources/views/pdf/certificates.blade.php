@@ -46,11 +46,12 @@
         <div class="page front">
             <div class="head">
                 <div class="brand">mellowaura</div>
-                <div class="brand-note">{!! __('checkout::certificate.brand_note') !!}</div>
+                {{-- Texts from the panel are escaped first; only their line breaks become <br>. --}}
+                <div class="brand-note">{!! nl2br(e($texts['brand_note']), false) !!}</div>
             </div>
             <div class="intro">
-                <div class="eyebrow">{{ __('checkout::certificate.eyebrow') }}</div>
-                <div class="quote">{!! __('checkout::certificate.quote') !!}</div>
+                <div class="eyebrow">{{ $texts['eyebrow'] }}</div>
+                <div class="quote">{!! nl2br(e($texts['quote']), false) !!}</div>
             </div>
             <table class="fields">
                 <tr><td class="label">{{ __('checkout::certificate.work') }}</td><td class="value">{{ $card['work'] }}@if ($card['text'])<br>„{{ $card['text'] }}”@endif</td></tr>
@@ -98,7 +99,7 @@
                 <table class="foot">
                     <tr>
                         <td>@foreach ($contact as $line){{ $line }}<br>@endforeach</td>
-                        <td class="thanks">{!! __('checkout::certificate.thanks') !!}</td>
+                        <td class="thanks">{!! nl2br(e(__('checkout::certificate.thanks')), false) !!}</td>
                     </tr>
                 </table>
             </div>
