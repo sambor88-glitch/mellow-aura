@@ -4,6 +4,10 @@
     $confirmed = $paid && ! $overbooked;
 @endphp
 <x-shared::layout title="Zapis na warsztat | MellowAura" :noindex="true">
+    @if ($analytics)
+        {{-- Once per booking: a reload of this page does not count it again. --}}
+        <x-consent::analytics-event name="workshop_booking" :params="$analytics" :once="'workshop-'.$order->number" />
+    @endif
     {{-- The kiln glow grows from the middle and the ✓ draws itself (mellowaura-design, „Żar potwierdzenia”). --}}
     <div class="relative overflow-hidden">
     @if ($confirmed)
