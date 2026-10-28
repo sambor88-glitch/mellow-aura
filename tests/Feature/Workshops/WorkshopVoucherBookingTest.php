@@ -9,6 +9,7 @@ use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Gifts\Models\Voucher;
 use App\Modules\Settings\Database\Seeders\SettingsSeeder;
+use App\Modules\Settings\Models\Setting;
 use App\Modules\Workshops\Enums\BookingStatus;
 use App\Modules\Workshops\Mail\BookingCancelled;
 use App\Modules\Workshops\Mail\BookingConfirmed;
@@ -57,6 +58,7 @@ class WorkshopVoucherBookingTest extends TestCase
         $date = $this->date(seats: 4);
         $voucher = $this->voucher(seats: 2);
         $typed = strtolower(str_replace('-', ' ', substr($voucher->code, 3)));
+        Setting::query()->updateOrCreate(['key' => 'google_analytics_id'], ['value' => 'G-AB12CD34EF']);
 
         $this->post(route('workshops.booking.store', $date), $this->form(['voucher_code' => $typed]))
             ->assertRedirect(route('workshops.booking.confirmation'));
@@ -73,7 +75,9 @@ class WorkshopVoucherBookingTest extends TestCase
             ->assertOk()
             ->assertSee('Do zobaczenia w pracowni')
             ->assertSee('miejsca: 2')
-            ->assertSee('jest opłacony voucherem '.$voucher->code);
+            ->assertSee('jest opłacony voucherem '.$voucher->code)
+            // workshop_booking for Google Analytics (MA-140) says that a voucher paid.
+            ->assertSee('"name":"workshop_booking","params":{"workshop_type":"hand_building","seats":2,"method":"voucher","currency":"PLN","value":0,', false);
 
         Mail::assertQueued(BookingConfirmed::class, fn (BookingConfirmed $mail) => $mail->hasTo('ania@example.com'));
         (new BookingConfirmed($booking))->assertSeeInHtml('Liczba osób: 2 · voucher '.$voucher->code)->assertDontSeeInHtml('zapłacone');

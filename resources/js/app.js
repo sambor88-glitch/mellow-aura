@@ -1,6 +1,6 @@
 import Alpine from 'alpinejs';
 import focus from '@alpinejs/focus';
-import { trackClicks, trackPage } from './analytics';
+import { trackPage } from './analytics';
 import beforeAfter from './before-after';
 import blikWait from './blik';
 import briefPhotos from './brief-photos';
@@ -40,5 +40,4 @@ if (! matchMedia('(prefers-reduced-motion: reduce)').matches) {
     import('./aura').then(({ default: aura }) => aura()).catch(() => {});
 }
 trackPage();
-trackClicks();
 rememberLocaleChoice();
