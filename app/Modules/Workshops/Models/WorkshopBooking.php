@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Seats on one workshop date, booked by one order. The order holds the price, the customer and the payment;
@@ -23,8 +24,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property ?CarbonImmutable $confirmed_at
  * @property ?CarbonImmutable $reminded_at
  * @property ?CarbonImmutable $cancelled_at
+ * @property ?CarbonImmutable $moved_at the last time Kasia moved it to another date (MA-210)
  */
-#[Fillable(['workshop_date_id', 'order_id', 'voucher_id', 'seats', 'status', 'expires_at', 'confirmed_at', 'reminded_at', 'cancelled_at'])]
+#[Fillable(['workshop_date_id', 'order_id', 'voucher_id', 'seats', 'status', 'expires_at', 'confirmed_at', 'reminded_at', 'cancelled_at', 'moved_at'])]
 class WorkshopBooking extends Model
 {
     /**
@@ -63,12 +65,12 @@ class WorkshopBooking extends Model
     }
 
     /**
-     * Whether a reminder will go out: only for seats paid before the reminder time, since a booking made for
-     * tomorrow already has everything in the fresh confirmation.
+     * Whether a reminder will go out: only for seats paid (or moved here) before the reminder time, since a booking
+     * made or moved for tomorrow already has everything in the fresh mail.
      */
     public function remindsDayBefore(): bool
     {
-        return ($this->confirmed_at ?? now())->lte($this->workshopDate->starts_at->subHours(self::REMIND_HOURS_BEFORE));
+        return ($this->moved_at ?? $this->confirmed_at ?? now())->lte($this->workshopDate->starts_at->subHours(self::REMIND_HOURS_BEFORE));
     }
 
     /**
@@ -98,6 +100,16 @@ class WorkshopBooking extends Model
     }
 
     /**
+     * The dates it was moved between, the latest first.
+     *
+     * @return HasMany<WorkshopBookingMove, $this>
+     */
+    public function moves(): HasMany
+    {
+        return $this->hasMany(WorkshopBookingMove::class)->latest('id');
+    }
+
+    /**
      * @return BelongsTo<Order, $this>
      */
     public function order(): BelongsTo
@@ -119,6 +131,7 @@ class WorkshopBooking extends Model
             'confirmed_at' => 'immutable_datetime',
             'reminded_at' => 'immutable_datetime',
             'cancelled_at' => 'immutable_datetime',
+            'moved_at' => 'immutable_datetime',
         ];
     }
 

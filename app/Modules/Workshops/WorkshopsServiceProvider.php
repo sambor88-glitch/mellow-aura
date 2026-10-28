@@ -9,6 +9,7 @@ use App\Modules\Workshops\Console\SendRemindersCommand;
 use App\Modules\Workshops\Listeners\SendBookingEmails;
 use App\Modules\Workshops\Mail\BookingCancelled;
 use App\Modules\Workshops\Mail\BookingConfirmed;
+use App\Modules\Workshops\Mail\BookingMoved;
 use App\Modules\Workshops\Mail\BookingOverbooked;
 use App\Modules\Workshops\Mail\BookingReminder;
 use Illuminate\Console\Scheduling\Schedule;
@@ -24,6 +25,7 @@ class WorkshopsServiceProvider extends ModuleServiceProvider
         BookingConfirmed::class,
         BookingReminder::class,
         BookingCancelled::class,
+        BookingMoved::class,
         BookingOverbooked::class,
     ];
 

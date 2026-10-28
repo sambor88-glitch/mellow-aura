@@ -11,3 +11,4 @@ Route::post('/warsztaty/terminy', [WorkshopDateController::class, 'store'])->nam
 Route::delete('/warsztaty/terminy/{date}', [WorkshopDateController::class, 'destroy'])->whereNumber('date')->name('workshops.dates.destroy');
 Route::get('/warsztaty/terminy/{date}/zapisy', [WorkshopBookingController::class, 'index'])->whereNumber('date')->name('workshops.dates.bookings');
 Route::post('/warsztaty/zapisy/{booking}/anuluj', [WorkshopBookingController::class, 'cancel'])->whereNumber('booking')->name('workshops.bookings.cancel');
+Route::post('/warsztaty/zapisy/{booking}/przenies', [WorkshopBookingController::class, 'move'])->whereNumber('booking')->name('workshops.bookings.move');
