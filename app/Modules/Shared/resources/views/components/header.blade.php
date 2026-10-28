@@ -7,6 +7,7 @@
         // The gift finder is Polish-only; an English page leads „Gifts” to the gift sets instead.
         Locales::has('gifts.index', Locales::current()) ? ['gifts', 'gifts.index', 'gifts.*'] : ['gifts', 'bundles.index', 'bundles.*'],
         ['workshops', 'workshops.index', 'workshops.*'],
+        ['firing', 'firing.index', 'firing.*'],
         ['about', 'content.about', 'content.about'],
         ['journal', 'journal.index', 'journal.*'],
         ['contact', 'content.contact', 'content.contact'],

@@ -8,6 +8,7 @@ return [
     'shop' => 'Sklep',
     'gifts' => 'Prezenty',
     'workshops' => 'Warsztaty',
+    'firing' => 'Wypał',
     'about' => 'O mnie',
     'journal' => 'Dziennik',
     'contact' => 'Kontakt',
