@@ -64,7 +64,7 @@
                 </div>
                 <div class="min-w-0 flex-[1_1_320px]">
                     @if (($photo = $pagePhotos->get($page['photo']))->exists())
-                        <img src="{{ $photo->url }}" alt="{{ $photo->alt($page['photoAlt']) }}" width="600" height="800" style="{{ $photo->style() }}" class="block aspect-[3/4] w-full rounded-[20px] bg-line-soft object-cover">
+                        <img src="{{ $photo->url }}" {{ $photo->srcsetAttributes('(min-width: 768px) 45vw, 100vw') }} alt="{{ $photo->alt($page['photoAlt']) }}" width="600" height="800" style="{{ $photo->style() }}" class="block aspect-[3/4] w-full rounded-[20px] bg-line-soft object-cover">
                     @endif
                 </div>
             </div>

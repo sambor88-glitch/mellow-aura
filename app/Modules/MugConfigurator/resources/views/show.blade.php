@@ -60,11 +60,11 @@
 
         <div class="flex flex-wrap items-start gap-[clamp(28px,5vw,72px)]">
             <div class="min-w-0 flex-[1_1_440px] min-[852px]:sticky min-[852px]:top-24">
-                {{-- Two previews once the 3D mug has loaded: Kasia's photo with the text on it, shown first, and the model. --}}
-                <div x-cloak x-show="has3d" role="group" aria-label="{{ $t('preview') }}" class="glass mb-3 inline-flex gap-1 rounded-full p-1">
-                    <button type="button" x-on:click="view = 'photo'" x-bind:aria-pressed="view === 'photo'"
+                {{-- Two previews where WebGL can work: Kasia's photo with the text on it, shown first, and the model. --}}
+                <div x-show="has3d" role="group" aria-label="{{ $t('preview') }}" class="glass mb-3 inline-flex gap-1 rounded-full p-1 motion-reduce:hidden">
+                    <button type="button" x-on:click="view = 'photo'" aria-pressed="true" x-bind:aria-pressed="view === 'photo'"
                             class="min-h-10 rounded-full px-4 text-[13px] text-graphite transition-colors duration-300 aria-pressed:bg-ink aria-pressed:text-linen">{{ $t('on_photo') }}</button>
-                    <button type="button" x-on:click="view = '3d'" x-bind:aria-pressed="view === '3d'"
+                    <button type="button" x-on:click="show3d()" aria-pressed="false" x-bind:aria-pressed="view === '3d'"
                             class="min-h-10 rounded-full px-4 text-[13px] text-graphite transition-colors duration-300 aria-pressed:bg-ink aria-pressed:text-linen">{{ $t('model') }}</button>
                 </div>
                 <div x-ref="stage3d" x-cloak x-show="view === '3d'" role="img" x-bind:aria-label="@js($t('preview_label')) + (text.trim() || @js($t('preview_empty')))"

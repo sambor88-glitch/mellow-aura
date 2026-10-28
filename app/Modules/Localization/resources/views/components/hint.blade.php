@@ -5,8 +5,9 @@
     $preferred = Locales::preferred(request());
     $show = $preferred !== null && $preferred !== Locales::current() && Locales::existsIn(request(), $preferred);
 @endphp
+{{-- Drawn with the page, not after the script: shown later, it pushed the whole page down (CLS, MA-232). --}}
 @if ($show)
-    <div x-data="{ open: true }" x-show="open" x-cloak
+    <div x-data="{ open: true }" x-show="open"
          lang="{{ $preferred }}" class="relative z-61 px-3 pt-3.5 print:hidden">
         <div class="glass mx-auto flex max-w-[1120px] flex-wrap items-center gap-x-4 gap-y-2 rounded-[22px] py-2 pr-2 pl-[22px] text-[13.5px] text-graphite">
             <p class="m-0">{{ __('localization::switcher.hint', [], $preferred) }}</p>

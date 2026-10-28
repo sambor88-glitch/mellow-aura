@@ -83,11 +83,13 @@ class PagePhotos
         [$x, $y] = $place['focus'] ?? [FocalPoint::CENTRE, FocalPoint::CENTRE];
         $focus = fn (mixed $point) => is_array($point) ? ['x' => (int) ($point['x'] ?? $x), 'y' => (int) ($point['y'] ?? $y)] : ['x' => $x, 'y' => $y];
         $path = array_key_exists('path', $saved) ? $saved['path'] : self::defaultPath($key);
+        $path = is_string($path) && $path !== '' ? $path : null;
+        $url = SitePhoto::url($path);
 
         return new PagePhoto(
             key: $key,
-            path: is_string($path) && $path !== '' ? $path : null,
-            url: SitePhoto::url(is_string($path) ? $path : null),
+            path: $path,
+            url: $url,
             focus: $focus($saved['focus'] ?? null),
             phoneFocus: ($place['phone'] ?? false) ? $focus($saved['focus_phone'] ?? $saved['focus'] ?? null) : null,
             alt: is_string($saved['alt'] ?? null) && $saved['alt'] !== '' ? $saved['alt'] : null,

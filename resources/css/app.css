@@ -107,13 +107,18 @@
     --animate-ma-stamp: maStamp .38s cubic-bezier(.2, .8, .2, 1) both;
     --animate-ma-pulse: maPulse 2.6s ease-in-out infinite;
 
+    /*
+     * The page and its first cards fade in from .01, never from 0: Chrome does not count anything painted at opacity 0
+     * as the largest paint, so a page fading in from nothing waited for a photo painted later, 3–4 s on a phone (MA-232).
+     * To the eye .01 is the same nothing (mellowaura-design: „startuje z częściowej widoczności”).
+     */
     @keyframes maView {
-        from { opacity: 0; transform: translateY(10px); }
+        from { opacity: .01; transform: translateY(10px); }
         to { opacity: 1; transform: none; }
     }
 
     @keyframes maUp {
-        from { opacity: 0; transform: translateY(14px); }
+        from { opacity: .01; transform: translateY(14px); }
         to { opacity: 1; transform: none; }
     }
 
@@ -625,7 +630,7 @@
 @keyframes auraDrift2 { to { transform: translate(-22vw, -10vh) scale(.9); } }
 @keyframes auraDrift3 { to { transform: translate(-14vw, -18vh) scale(1.2); } }
 @keyframes auraGrain { 20% { transform: translate(-3%, 2%); } 40% { transform: translate(2%, -4%); } 60% { transform: translate(-4%, -1%); } 80% { transform: translate(3%, 3%); } }
-@keyframes auraBlurIn { from { opacity: 0; filter: blur(6px); transform: translateY(.18em); } to { opacity: 1; filter: blur(0); transform: none; } }
+@keyframes auraBlurIn { from { opacity: .01; filter: blur(6px); transform: translateY(.18em); } to { opacity: 1; filter: blur(0); transform: none; } }
 
 /*
  * Navy focus disappears on ink (1.5:1), so a dark surface such as the footer gives everything inside a linen outline (13.3:1).

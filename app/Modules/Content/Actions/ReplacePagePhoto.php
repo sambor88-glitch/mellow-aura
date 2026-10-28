@@ -3,6 +3,7 @@
 namespace App\Modules\Content\Actions;
 
 use App\Modules\Content\Support\PagePhotos;
+use App\Modules\Content\Support\PagePhotoSizes;
 use App\Modules\Settings\Actions\SaveSettings;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -14,13 +15,13 @@ use Spatie\Image\Image;
  * Puts Kasia's photo in a place of PagePhotos, takes the photo off the page (no photo) or brings back the one from
  * zdjecia/. A new photo is turned upright, scaled down to 2400 px and saved again as WebP, which drops EXIF and the GPS
  * position of the studio. The point of the old photo means nothing for the new one, so it goes back to the place's own.
- * The uploaded photo it replaces is deleted; photos from zdjecia/ stay.
+ * The uploaded photo it replaces is deleted with its smaller copies; photos from zdjecia/ stay.
  */
 class ReplacePagePhoto
 {
     private const LONGEST_SIDE = 2400;
 
-    public function __construct(private PagePhotos $photos, private SaveSettings $saveSettings) {}
+    public function __construct(private PagePhotos $photos, private PagePhotoSizes $sizes, private SaveSettings $saveSettings) {}
 
     /**
      * @param  UploadedFile|false|null  $photo  a new photo, false for no photo, null for the photo from zdjecia/
@@ -38,6 +39,7 @@ class ReplacePagePhoto
 
         if ($previous !== null && str_starts_with($previous, PagePhotos::DIRECTORY.'/')) {
             Storage::disk('public')->delete($previous);
+            $this->sizes->forget($previous);
         }
     }
 

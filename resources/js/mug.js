@@ -18,9 +18,10 @@ export default ({ maxLines, maxChars, prices, texts, glazes, size, glaze, ink })
         // The field has focus: on a phone the small preview shows above it and the bottom bar steps aside.
         writing: false,
         limitNotice: '',
-        // Kasia's photo with the text on it comes first; the 3D mug, once loaded, waits behind its button.
+        // Kasia's photo with the text on it comes first; the 3D mug waits behind its button.
         view: 'photo',
-        has3d: false,
+        // Known before the first paint, so the switch above the photo never pushes it down; WebGL itself is tried on the press.
+        has3d: 'WebGLRenderingContext' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
 
         init() {
             try {
@@ -28,30 +29,36 @@ export default ({ maxLines, maxChars, prices, texts, glazes, size, glaze, ink })
             } catch {
                 // Private mode without storage: the sound stays on.
             }
-
-            this.load3d();
         },
 
-        // The 3D mug (resources/js/mug3d.js) comes as its own file, only here, and only with WebGL and full motion.
-        async load3d() {
-            if (!this.$refs.stage3d || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        // The 3D mug (resources/js/mug3d.js, three.js) comes as its own file, only on the first press of its button:
+        // loaded with the page it took most of a phone's processor before the photo could be typed on (MA-232).
+        async show3d() {
+            this.view = '3d';
+
+            if (mug) {
                 return;
             }
 
             try {
                 const { default: createMug, webglWorks } = await import('./mug3d');
 
-                if (!webglWorks()) {
+                if (mug) {
                     return;
+                }
+
+                if (!webglWorks()) {
+                    throw new Error('No WebGL');
                 }
 
                 mug = createMug(this.$refs.stage3d, { ink, glaze: this.glazeHex });
                 mug.setText(this.text.split('\n'), false);
-                this.has3d = true;
                 this.$watch('text', (value) => mug.setText(value.split('\n'), true));
                 this.$watch('glaze', () => mug.setGlaze(this.glazeHex));
             } catch {
                 // The photo preview already works; the 3D mug is only a bonus.
+                this.has3d = false;
+                this.view = 'photo';
             }
         },
 

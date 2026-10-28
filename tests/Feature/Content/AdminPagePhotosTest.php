@@ -4,6 +4,7 @@ namespace Tests\Feature\Content;
 
 use App\Models\User;
 use App\Modules\Content\Support\PagePhotos;
+use App\Modules\Content\Support\PagePhotoSizes;
 use App\Modules\Settings\Database\Seeders\SettingsSeeder;
 use App\Modules\Settings\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -119,12 +120,18 @@ class AdminPagePhotosTest extends TestCase
         $this->assertSame('image/webp', Storage::disk('public')->mimeType($path));
 
         $this->get('/ceramika-dla-gastronomii')->assertOk()->assertSee('src="'.Storage::disk('public')->url($path).'"', false);
+        // A phone gets a smaller copy of the 1600 px photo (MA-232).
+        $copies = Storage::disk('public')->files(PagePhotoSizes::DIRECTORY);
+        $this->assertCount(2, $copies);
+        $this->get('/ceramika-dla-gastronomii')->assertSee(Storage::disk('public')->url($copies[0]).' 400w', false)
+            ->assertSee(Storage::disk('public')->url($path).' 1600w', false);
         $this->get('/panel/zdjecia-stron')->assertSee('Przywróć pierwsze zdjęcie');
 
         $this->delete('/panel/zdjecia-stron/b2b')
             ->assertRedirect('/panel/zdjecia-stron#b2b')
             ->assertSessionHas('panel_status', 'Zdjęcie zdjęte ze strony. Jego miejsce zostaje puste.');
         Storage::disk('public')->assertMissing($path);
+        $this->assertSame([], Storage::disk('public')->files(PagePhotoSizes::DIRECTORY));
         $this->assertEquals(['b2b' => ['path' => null]], Setting::find(PagePhotos::SETTING)->value);
         $this->get('/ceramika-dla-gastronomii')->assertOk()->assertDontSee('Kawa w ręcznie robionym kubku');
         $this->get('/panel/zdjecia-stron')->assertSee('Brak zdjęcia — to miejsce na stronie jest puste');

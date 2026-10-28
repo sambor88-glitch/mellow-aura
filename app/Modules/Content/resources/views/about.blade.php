@@ -35,13 +35,13 @@
                 </div>
                 <div class="min-w-0 flex-[1_1_340px]">
                     @if (($main = $pagePhotos->get('about-main'))->exists())
-                        <img src="{{ $main->url }}" alt="{{ $main->alt('Kasia trzymająca talerz ze złoconą krawędzią') }}"
+                        <img src="{{ $main->url }}" {{ $main->srcsetAttributes('(min-width: 768px) 45vw, 100vw') }} alt="{{ $main->alt('Kasia trzymająca talerz ze złoconą krawędzią') }}"
                              width="600" height="800" style="{{ $main->style() }}" class="mb-3.5 block aspect-[3/4] w-full rounded-[20px] bg-line-soft object-cover">
                     @endif
                     <div class="flex gap-3.5">
                         @foreach ([['about-detail-1', 'Kubek z wbijanym tekstem'], ['about-detail-2', 'Kadzielnica ze złoconym kołnierzem']] as [$place, $alt])
                             @continue (! ($detail = $pagePhotos->get($place))->exists())
-                            <img src="{{ $detail->url }}" alt="{{ $detail->alt($alt) }}" loading="lazy"
+                            <img src="{{ $detail->url }}" {{ $detail->srcsetAttributes('(min-width: 768px) 22vw, 50vw') }} alt="{{ $detail->alt($alt) }}" loading="lazy"
                                  width="600" height="600" style="{{ $detail->style() }}" class="block aspect-square min-w-0 flex-1 rounded-[20px] bg-line-soft object-cover">
                         @endforeach
                     </div>
