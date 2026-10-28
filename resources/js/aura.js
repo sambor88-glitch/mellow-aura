@@ -40,6 +40,18 @@ export default function aura() {
     const loaded = new Promise((resolve) => (document.readyState === 'complete' ? resolve() : addEventListener('load', resolve, { once: true })));
 
     Promise.all([ready, loaded]).then(() => setTimeout(() => ScrollTrigger.refresh()));
+
+    // A page rendered ahead of a click or brought back from the history cache (MA-237): the window may have changed
+    // size meanwhile, and Lenis still holds the scroll position of before. Refreshed after the page transition,
+    // so measuring never stutters the fade.
+    addEventListener('pagereveal', (event) => {
+        const settle = () => {
+            lenis.resize();
+            lenis.scrollTo(window.scrollY, { immediate: true });
+            ScrollTrigger.refresh();
+        };
+        event.viewTransition ? event.viewTransition.finished.then(settle, settle) : requestAnimationFrame(settle);
+    });
 }
 
 /*

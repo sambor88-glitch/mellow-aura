@@ -56,7 +56,7 @@
                     <div class="aspect-square w-full rounded-[26px] bg-linen"></div>
                 @else
                     {{-- Photos change by blurring into each other; the mouse moves a slight zoom around (resources/js/aura.js). --}}
-                    <button type="button" x-ref="zoomTrigger" x-on:click="$refs.zoom.showModal()" title="{{ __('catalog::product.zoom_hint') }}" data-zoom-follow
+                    <button type="button" x-ref="zoomTrigger" x-on:click="$refs.zoom.showModal()" title="{{ __('catalog::product.zoom_hint') }}" data-zoom-follow data-vt-photo="main"
                             class="relative block aspect-square w-full cursor-zoom-in overflow-hidden rounded-[26px] bg-linen">
                         @foreach ($images as $index => $image)
                             @php($srcset = ProductPhoto::srcset($image))

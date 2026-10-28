@@ -1,4 +1,5 @@
 import { track } from './analytics';
+import { renewSpeculations } from './transitions';
 
 /*
  * The cart drawer. Cart forms post in the background and the server answers with the drawer's
@@ -64,6 +65,7 @@ export default {
 
         document.getElementById('cart-content').innerHTML = data.content;
         this.count = data.count;
+        renewSpeculations();
         this.open(document.activeElement);
 
         // The pressed button was replaced, so focus its new copy, or × when the line is gone.
