@@ -1,7 +1,7 @@
 <x-shared::mail.layout title="Link do płatności" :preheader="'Do zapłaty '.$amount.'. Link jest ważny do '.$validUntil.'.'">
     <h1 style="margin: 0 0 12px; font-family: Georgia, 'Times New Roman', serif; font-weight: normal; font-size: 28px; line-height: 1.15; color: #2F2620;">Można zaczynać</h1>
     <p style="margin: 0 0 22px; color: #5C5043;">
-        {{ $idea->name }}, zaczynam pracę, gdy tylko przyjdzie wpłata. Zapłacisz BLIK-iem, kartą albo przelewem przez Przelewy24.
+        {{ $mailTexts->html('payment_link', 'intro', ['imie' => $idea->name, 'kwota' => $amount]) }}
     </p>
 
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 22px; border-top: 1px solid #E2D7C7;">
@@ -31,7 +31,7 @@
     <p style="margin: 0 0 22px; font-size: 13px; color: #726456;">Link jest ważny do {{ $validUntil }}.</p>
 
     @if ($contactEmail)
-        <p style="margin: 0; color: #5C5043;">Masz pytanie przed zapłatą? Odpisz na tego maila — trafi prosto do mnie.</p>
+        <p style="margin: 0; color: #5C5043;">{{ $mailTexts->html('payment_link', 'outro', ['imie' => $idea->name, 'kwota' => $amount]) }}</p>
     @endif
     <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">{{ $mailTexts->common('signature') }}</p>
 

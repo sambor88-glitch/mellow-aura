@@ -1,7 +1,7 @@
 {{-- The plain-text part is never rendered as HTML, so values print raw instead of as HTML entities. --}}
 Mam Twoje zgłoszenie
 
-Dziękuję, {!! $firingRequest->name !!}. Odpiszę z potwierdzeniem terminu i miejscem, gdzie przywieziesz prace.
+{!! $mailTexts->text('batch_report_confirmed', 'intro', ['imie' => $firingRequest->name]) !!}
 @if ($firingRequest->quote !== null)
 Wycena jest policzona z cennika i z Twojego zgłoszenia.
 @else
@@ -22,7 +22,7 @@ TWOJA WIADOMOŚĆ
 @endif
 @if ($contactEmail)
 
-Chcesz coś zmienić? Odpisz na tego maila — trafi prosto do mnie.
+{!! $mailTexts->text('batch_report_confirmed', 'outro', ['imie' => $firingRequest->name]) !!}
 @endif
 
 {!! $mailTexts->signature() !!}

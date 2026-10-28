@@ -1,7 +1,7 @@
 {{-- The plain-text part is never rendered as HTML, so values print raw instead of as HTML entities. --}}
 Mam Twój pomysł
 
-Dziękuję, {!! $customOrderRequest->name !!}. Przeczytam wszystko i odpiszę ze szkicem i wyceną. Jeśli czegoś mi zabraknie, dopytam.
+{!! $mailTexts->text('brief_confirmed', 'intro', ['imie' => $customOrderRequest->name]) !!}
 
 @foreach ($customOrderRequest->summary() as $label => $value)
 {!! $label !!}: {!! $value !!}
@@ -11,7 +11,7 @@ TWÓJ OPIS
 {!! $customOrderRequest->description !!}
 @if ($contactEmail)
 
-Chcesz coś dopisać albo dosłać zdjęcie? Odpisz na tego maila — trafi prosto do mnie.
+{!! $mailTexts->text('brief_confirmed', 'outro', ['imie' => $customOrderRequest->name]) !!}
 @endif
 
 {!! $mailTexts->signature() !!}

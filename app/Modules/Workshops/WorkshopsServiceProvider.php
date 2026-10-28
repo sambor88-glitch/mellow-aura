@@ -7,6 +7,10 @@ use App\Modules\Shared\ModuleServiceProvider;
 use App\Modules\Shared\Support\SitemapPages;
 use App\Modules\Workshops\Console\SendRemindersCommand;
 use App\Modules\Workshops\Listeners\SendBookingEmails;
+use App\Modules\Workshops\Mail\BookingCancelled;
+use App\Modules\Workshops\Mail\BookingConfirmed;
+use App\Modules\Workshops\Mail\BookingOverbooked;
+use App\Modules\Workshops\Mail\BookingReminder;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Event;
 
@@ -16,6 +20,13 @@ use Illuminate\Support\Facades\Event;
  */
 class WorkshopsServiceProvider extends ModuleServiceProvider
 {
+    protected array $customerMails = [
+        BookingConfirmed::class,
+        BookingReminder::class,
+        BookingCancelled::class,
+        BookingOverbooked::class,
+    ];
+
     public function register(): void
     {
         $this->callAfterResolving(SitemapPages::class, fn (SitemapPages $pages) => $pages->routes('workshops.index'));

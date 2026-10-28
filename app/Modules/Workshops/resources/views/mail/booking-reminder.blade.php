@@ -4,14 +4,14 @@
 >
     <h1 style="margin: 0 0 12px; font-family: Georgia, 'Times New Roman', serif; font-weight: normal; font-size: 30px; line-height: 1.15; color: #2F2620;">Do jutra!</h1>
     <p style="margin: 0 0 22px; color: #5C5043;">
-        Przypominam o warsztacie — glina już czeka. Wszystko jest w tym mailu, nie musisz szukać poprzedniego.
+        {{ $mailTexts->html('booking_reminder', 'intro', $textFill) }}
     </p>
 
     @include('workshops::mail.partials.booking')
 
     <p style="margin: 0 0 4px; color: #5C5043;">
         @if ($contactEmail)
-            Coś Ci wypadło albo się spóźnisz? Odpisz na tego maila — trafi prosto do mnie.
+            {{ $mailTexts->html('booking_reminder', 'outro', $textFill) }}
         @else
             Coś Ci wypadło albo się spóźnisz? Napisz do mnie przez stronę i podaj numer {{ $order->number }}.
         @endif

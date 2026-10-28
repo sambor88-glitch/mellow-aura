@@ -4,8 +4,7 @@
 >
     <h1 style="margin: 0 0 12px; font-family: Georgia, 'Times New Roman', serif; font-weight: normal; font-size: 30px; line-height: 1.15; color: #2F2620;">{{ $vouchers->count() === 1 ? 'Twój voucher' : 'Twoje vouchery' }}</h1>
     <p style="margin: 0 0 22px; color: #5C5043;">
-        {{ $vouchers->count() === 1 ? 'Voucher jest w załączniku jako PDF' : 'Każdy voucher jest w załączniku jako osobny PDF' }} — wydrukuj go albo prześlij
-        dalej osobie, dla której jest. W tym mailu nie ma cen, więc możesz go przekazać w całości.
+        {{ $mailTexts->html('vouchers', 'intro', ['kod' => $vouchers->pluck('code')->join(', ')], $vouchers->count() > 1 ? 'many' : null) }}
     </p>
 
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; margin: 0 0 22px;">
@@ -25,7 +24,7 @@
     <p style="margin: 0 0 4px; color: #5C5043;">
         Numer vouchera wystarczy, żeby go wykorzystać{{ $contactPhone ? ' — termin ustalisz na WhatsAppie: '.$contactPhone : '' }}.
         @if ($contactEmail)
-            Pytanie? Odpisz na tego maila — trafi prosto do mnie.
+            {{ $mailTexts->html('vouchers', 'outro', ['kod' => $vouchers->pluck('code')->join(', ')]) }}
         @endif
     </p>
     <p style="margin: 18px 0 0; color: #2F2620;">{{ $mailTexts->common('signature') }}</p>

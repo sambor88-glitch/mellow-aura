@@ -1,7 +1,7 @@
 {{-- The plain-text part is never rendered as HTML, so values print raw instead of as HTML entities. --}}
 Można zaczynać
 
-{!! $idea->name !!}, zaczynam pracę, gdy tylko przyjdzie wpłata. Zapłacisz BLIK-iem, kartą albo przelewem przez Przelewy24.
+{!! $mailTexts->text('payment_link', 'intro', ['imie' => $idea->name, 'kwota' => $amount]) !!}
 
 Co to ma być: {!! $idea->kind->label() !!}
 @if ($quote)
@@ -13,7 +13,7 @@ Płacę: {!! $url !!}
 Link jest ważny do {!! $validUntil !!}.
 @if ($contactEmail)
 
-Masz pytanie przed zapłatą? Odpisz na tego maila — trafi prosto do mnie.
+{!! $mailTexts->text('payment_link', 'outro', ['imie' => $idea->name, 'kwota' => $amount]) !!}
 @endif
 
 {!! $mailTexts->signature() !!}

@@ -7,9 +7,13 @@ use App\Modules\Checkout\Mail\OrderConfirmed;
 use App\Modules\Checkout\Mail\ParcelOnItsWay;
 use App\Modules\Checkout\Mail\WithdrawalConfirmed;
 use App\Modules\Checkout\Support\SampleOrder;
+use App\Modules\Gifts\Mail\VouchersIssued;
 use App\Modules\Settings\Models\Setting;
+use App\Modules\Settings\Settings;
 use App\Modules\Shared\Mail\MailTexts;
+use App\Modules\Workshops\Mail\BookingConfirmed;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class AdminMailTextsTest extends TestCase
@@ -139,6 +143,61 @@ class AdminMailTextsTest extends TestCase
         $this->actingAs(User::factory()->create())
             ->put('/panel/maile/podglad', ['preview' => 'new_order:pl'])
             ->assertNotFound();
+    }
+
+    public function test_the_workshop_custom_order_voucher_and_firing_mails_are_on_the_list(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->get('/panel/maile')
+            ->assertOk()
+            ->assertSee('Potwierdzenie zapisu na warsztat')
+            ->assertSee('Przypomnienie o warsztacie')
+            ->assertSee('Anulowanie zapisu na warsztat')
+            ->assertSee('Termin warsztatu się zapełnił')
+            ->assertSee('Potwierdzenie zamówienia indywidualnego')
+            ->assertSee('Link do płatności — zamówienie indywidualne')
+            ->assertSee('Vouchery w PDF')
+            ->assertSee('Potwierdzenie zgłoszenia do wypału')
+            ->assertSee('placeholder="Do zobaczenia w pracowni · {dzien}, {godzina}"', false)
+            // A cancellation's refund is a promise in the code, so it has no closing sentence to rewrite.
+            ->assertDontSee('name="mail_booking_cancelled_outro"', false)
+            ->assertDontSee('name="mail_booking_reminder_subject_en"', false);
+    }
+
+    public function test_a_default_is_worded_for_one_or_many_and_kasias_own_text_goes_out_for_both(): void
+    {
+        $booking = BookingConfirmed::sample('pl')->booking;
+        $booking->seats = 1;
+        $this->assertStringContainsString('jest opłacony — miejsce jest Twoje.', (new BookingConfirmed($booking))->render());
+        $booking->seats = 2;
+        $this->assertStringContainsString('jest opłacony — miejsca są Wasze.', (new BookingConfirmed($booking))->render());
+
+        $one = VouchersIssued::sample('pl');
+        $many = new VouchersIssued($one->order, $one->vouchers->concat([(clone $one->vouchers->first())->forceFill(['code' => 'MA9X4T'])]));
+        $this->assertSame('Voucher MA7K2Q', $one->envelope()->subject);
+        $this->assertSame('Vouchery z MellowAury', $many->envelope()->subject);
+
+        Setting::create(['key' => 'mail_vouchers_subject', 'value' => 'Prezent z pracowni: {kod}']);
+        Setting::create(['key' => 'mail_booking_confirmed_intro', 'value' => 'Zapis {numer} na {termin} — do zobaczenia!']);
+        app(Settings::class)->refresh();
+
+        $this->assertSame('Prezent z pracowni: MA7K2Q, MA9X4T', $many->envelope()->subject);
+        $this->assertStringContainsString('na <strong style="font-weight: 600;">'.e($booking->workshopDate->dayLabel().', '.$booking->workshopDate->timeLabel()).'</strong> — do zobaczenia!', (new BookingConfirmed($booking))->render());
+    }
+
+    public function test_previewing_a_workshop_mail_without_the_studio_address_raises_no_alert(): void
+    {
+        config(['monitoring.alert_email' => 'alerty@example.com']);
+        Mail::fake();
+
+        $this->actingAs(User::factory()->create())
+            ->put('/panel/maile/podglad', ['preview' => 'booking_reminder:pl', 'mail_booking_reminder_intro' => 'Jutro lepimy!'])
+            ->assertOk()
+            ->assertSee('Jutro lepimy!')
+            ->assertSee('Adres pracowni wyślę Ci osobnym mailem');
+
+        Mail::assertNothingSent();
+        Mail::assertNothingQueued();
     }
 
     public function test_every_registered_mail_renders_its_sample_in_each_language(): void

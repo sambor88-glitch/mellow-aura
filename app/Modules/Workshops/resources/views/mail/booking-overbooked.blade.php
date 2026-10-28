@@ -4,7 +4,7 @@
 >
     <h1 style="margin: 0 0 12px; font-family: Georgia, 'Times New Roman', serif; font-weight: normal; font-size: 30px; line-height: 1.15; color: #2F2620;">Przepraszam — termin się zapełnił.</h1>
     <p style="margin: 0 0 16px; color: #5C5043;">
-        Twoja płatność za warsztat {{ $date->dayLabel() }}, {{ $date->timeLabel() }} (zapis {{ $order->number }}) dotarła, kiedy ostatnie miejsce zajęła już inna osoba.
+        {{ $mailTexts->html('booking_overbooked', 'intro', $textFill) }}
     </p>
     <p style="margin: 0 0 22px; color: #5C5043;">
         Zwrócę Ci całą wpłatę, {{ $order->money($order->total_gross) }}, najpóźniej w ciągu 14 dni.

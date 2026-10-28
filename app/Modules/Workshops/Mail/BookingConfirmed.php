@@ -5,7 +5,11 @@ namespace App\Modules\Workshops\Mail;
 use App\Modules\Checkout\Mail\Concerns\InOrderLanguage;
 use App\Modules\Content\Support\LegalPdf;
 use App\Modules\Settings\Settings;
+use App\Modules\Shared\Mail\EditableTexts;
+use App\Modules\Shared\Mail\HasEditableTexts;
+use App\Modules\Shared\Mail\MailTexts;
 use App\Modules\Shared\Mail\QueuedMail;
+use App\Modules\Workshops\Mail\Concerns\BookingTexts;
 use App\Modules\Workshops\Models\WorkshopBooking;
 use App\Modules\Workshops\Support\BookingDetails;
 use Illuminate\Mail\Mailables\Address;
@@ -20,13 +24,23 @@ use Illuminate\Mail\Mailables\Envelope;
  * withdrawal form, since a workshop on a set date has no right of withdrawal (art. 38 ust. 1 pkt 12 ustawy o prawach konsumenta).
  * Workshops exist only in Polish; the language still comes from the order, like every mail to a customer.
  */
-class BookingConfirmed extends QueuedMail
+class BookingConfirmed extends QueuedMail implements HasEditableTexts
 {
-    use InOrderLanguage;
+    use BookingTexts, InOrderLanguage;
 
     public function __construct(public WorkshopBooking $booking)
     {
         $this->inOrderLanguage($booking->order);
+    }
+
+    public static function editableTexts(): EditableTexts
+    {
+        return self::bookingTexts('booking_confirmed', 'Potwierdzenie zapisu na warsztat', 'Gdy płatność za zapis dojdzie (albo zapis voucherem). Z adresem pracowni i listą, co zabrać.');
+    }
+
+    public static function sample(string $locale): self
+    {
+        return new self(self::sampleBooking());
     }
 
     public function description(): string
@@ -37,10 +51,9 @@ class BookingConfirmed extends QueuedMail
     public function envelope(): Envelope
     {
         $contact = app(Settings::class)->get('contact_email');
-        $date = $this->booking->workshopDate;
 
         return new Envelope(
-            subject: 'Do zobaczenia w pracowni · '.$date->dayLabel().', '.$date->starts_at->format('H:i'),
+            subject: app(MailTexts::class)->text('booking_confirmed', 'subject', $this->textFill()),
             replyTo: $contact ? [new Address($contact, __('checkout::mail.from'))] : [],
         );
     }
@@ -60,7 +73,7 @@ class BookingConfirmed extends QueuedMail
         return new Content(
             view: 'workshops::mail.booking-confirmed',
             text: 'workshops::mail.booking-confirmed-text',
-            with: app(BookingDetails::class)->for($this->booking),
+            with: [...app(BookingDetails::class)->for($this->booking), 'textFill' => $this->textFill()],
         );
     }
 }
