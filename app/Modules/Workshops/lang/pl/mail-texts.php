@@ -18,6 +18,11 @@ return [
         'subject' => 'Zapis na warsztat anulowany · {dzien}, {godzina}',
         'intro' => 'Anulowałam Twój zapis na warsztat {termin} (zapis {numer}).',
     ],
+    'booking_moved' => [
+        'subject' => 'Nowy termin warsztatu · {dzien}, {godzina}',
+        'intro' => 'Przeniosłam Twój zapis {numer} na {termin}.',
+        'outro' => 'Masz pytanie albo ten termin Ci nie pasuje? Odpisz na tego maila — trafi prosto do mnie.',
+    ],
     'booking_overbooked' => [
         'subject' => 'Termin warsztatu się zapełnił · {numer}',
         'intro' => 'Twoja płatność za warsztat {termin} (zapis {numer}) dotarła, kiedy ostatnie miejsce zajęła już inna osoba.',

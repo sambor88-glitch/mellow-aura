@@ -107,6 +107,7 @@
             </section>
 
             @includeIf('gifts::admin.order-vouchers', ['order' => $order, 'card' => $card])
+            @includeIf('workshops::admin.order-booking', ['order' => $order, 'card' => $card])
 
             <section class="{{ $card }}">
                 <h2 class="mb-4 font-serif text-[23px]">Dostawa</h2>

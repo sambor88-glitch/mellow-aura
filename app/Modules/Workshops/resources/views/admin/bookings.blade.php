@@ -32,6 +32,53 @@
                         <span class="flex-none rounded-full px-3 py-[5px] text-[11.5px] {{ $booking->status->chipClass() }}">{{ $booking->status->label() }}</span>
                     </div>
 
+                    @if ($booking->moves->isNotEmpty())
+                        <ul class="grid gap-0.5 text-[12.5px] text-muted tabular-nums">
+                            @foreach ($booking->moves as $move)
+                                <li>Przeniesiony {{ $move->created_at->format('j.m, H:i') }}: z {{ $move->fromLabel() }} na {{ $move->toLabel() }}</li>
+                            @endforeach
+                        </ul>
+                    @endif
+
+                    @if ($moving = $moves[$booking->id] ?? null)
+                        @php($bag = $errors->getBag('move'.$booking->id))
+                        <details @if ($bag->any()) open @endif class="border-t border-divider pt-3">
+                            <summary class="flex min-h-11 cursor-pointer items-center text-[13px] text-brown">Przenieś na inny termin</summary>
+                            @if ($moving['refusal'])
+                                <p class="mt-1 max-w-[62ch] text-[13px] leading-[1.6] text-muted">{{ $moving['refusal'] }}</p>
+                            @elseif ($moving['dates']->isEmpty())
+                                <p class="mt-1 max-w-[62ch] text-[13px] leading-[1.6] text-muted">Nie ma innych terminów tego warsztatu. Dodaj nowy w terminarzu, a potem wróć tutaj.</p>
+                            @else
+                                <form method="post" action="{{ route('admin.workshops.bookings.move', $booking) }}" class="mt-2 grid gap-3">
+                                    @csrf
+                                    <div class="min-w-0">
+                                        <label for="przenies-{{ $booking->id }}" class="mb-1 block text-[12.5px] text-graphite">Nowy termin</label>
+                                        <select id="przenies-{{ $booking->id }}" name="workshop_date_id" required
+                                                @if ($bag->any()) aria-invalid="true" aria-describedby="przenies-{{ $booking->id }}-note" @endif
+                                                @class(['w-full min-w-0 rounded-[4px] border bg-white px-3 py-2.5 text-[15px] text-ink focus:border-ink sm:max-w-[420px]', 'border-error' => $bag->any(), 'border-line' => ! $bag->any()])>
+                                            <option value="">Wybierz termin</option>
+                                            @foreach ($moving['dates'] as $option)
+                                                @php($fits = $option->seatsLeft() >= $booking->seats)
+                                                <option value="{{ $option->id }}" @disabled(! $fits)>{{ $option->dayLabel() }}, {{ $option->timeLabel() }} · {{ $fits ? $option->seatsLeftLabel() : 'za mało miejsc ('.$option->seatsLeftLabel().')' }}</option>
+                                            @endforeach
+                                        </select>
+                                        @if ($bag->any())
+                                            <p id="przenies-{{ $booking->id }}-note" class="mt-1.5 text-[13px] text-error">{{ $bag->first('workshop_date_id') }}</p>
+                                        @endif
+                                    </div>
+                                    <p class="max-w-[62ch] text-[13px] leading-[1.6] text-muted">Płatność zostaje bez zmian — na liście są tylko terminy tego warsztatu, w tej samej cenie. Miejsce na tym terminie od razu się zwolni.</p>
+                                    <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+                                        <label class="flex min-h-11 items-center gap-2 text-[13px] text-graphite">
+                                            <input type="checkbox" name="notify" value="1" checked class="size-4 accent-ink">
+                                            Wyślij klientce maila z nowym terminem i adresem
+                                        </label>
+                                        <button class="ml-auto min-h-11 rounded-full bg-ink px-5 text-[13px] text-linen hover:bg-rose hover:text-ink">Przenieś zapis</button>
+                                    </div>
+                                </form>
+                            @endif
+                        </details>
+                    @endif
+
                     <form method="post" action="{{ route('admin.workshops.bookings.cancel', $booking) }}"
                           x-data x-on:submit="confirm(@js('Anulować zapis: '.$order->name.'? Miejsce od razu wróci do zapisów.')) || $event.preventDefault()"
                           class="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-divider pt-3">
