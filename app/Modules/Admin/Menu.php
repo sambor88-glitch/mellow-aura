@@ -21,6 +21,7 @@ class Menu
             ['label' => 'Zamówienia indywidualne', 'route' => 'admin.custom-orders.index', 'active' => 'admin.custom-orders.*', 'description' => 'Pomysły z formularza ze zdjęciami: wycena, zaliczka, realizacja i wysyłka.'],
             ['label' => 'Odstąpienia', 'route' => 'admin.withdrawals.index', 'active' => 'admin.withdrawals.*', 'description' => 'Oświadczenia z formularza „Odstąp od umowy tutaj” i termin zwrotu pieniędzy.'],
             ['label' => 'Reklamacje', 'route' => 'admin.complaints.index', 'active' => 'admin.complaints.*', 'description' => 'Odpowiedź w 14 dni z gotowym listem — przy odmowie z oświadczeniem o mediacji.'],
+            ['label' => 'Klientki', 'route' => 'admin.customers.index', 'active' => 'admin.customers.*', 'description' => 'Wszystko o jednej osobie po adresie e-mail: zamówienia, warsztaty, pomysły i wypały. Tu też kopia jej danych i usunięcie na jej prośbę (RODO).'],
             ['label' => 'Niewysłane maile', 'route' => 'admin.failed-mails.index', 'active' => 'admin.failed-mails.*', 'description' => 'Maile ze sklepu, które nie wyszły mimo kilku prób. Wyślesz je jeszcze raz jednym kliknięciem.'],
             ['label' => 'Produkty', 'route' => 'admin.products.index', 'active' => 'admin.products.*', 'description' => 'Nazwy, rozmiary, ceny, stany i zdjęcia.'],
             ['label' => 'Kategorie', 'route' => 'admin.categories.index', 'active' => 'admin.categories.*', 'description' => 'Tytuł i opis każdej półki w Google, wstęp nad produktami i podpisy skrótów nad sklepem.'],
