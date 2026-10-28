@@ -21,12 +21,12 @@
     </p>
 
     @if ($contactEmail)
-        <p style="margin: 0; color: #5C5043;">Masz pytanie? Odpisz na tego maila — trafi prosto do mnie.</p>
+        <p style="margin: 0; color: #5C5043;">{{ $mailTexts->html('withdrawal_confirmed', 'outro', ['numer' => $withdrawal->order_number]) }}</p>
     @endif
-    <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">Kasia</p>
+    <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">{{ $mailTexts->common('signature') }}</p>
 
     <x-slot:footer>
-        MellowAura{{ $city ? ' · '.$city : '' }}<br>
+        {{ $mailTexts->common('footer') }}<br>
         Potwierdzenie odstąpienia od umowy wysłane przez formularz „Odstąp od umowy tutaj” w sklepie MellowAura.
     </x-slot:footer>
 </x-shared::mail.layout>

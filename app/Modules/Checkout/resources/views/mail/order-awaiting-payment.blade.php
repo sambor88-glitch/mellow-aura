@@ -4,7 +4,7 @@
 >
     <h1 style="margin: 0 0 12px; font-family: Georgia, 'Times New Roman', serif; font-weight: normal; font-size: 30px; line-height: 1.15; color: #2F2620;">Dziękuję za zamówienie</h1>
     <p style="margin: 0 0 22px; color: #5C5043;">
-        Zamówienie <strong style="font-weight: 600; color: #2F2620;">{{ $order->number }}</strong> czeka na płatność.
+        {{ $mailTexts->html('order_awaiting_payment', 'intro', ['numer' => $order->number]) }}
         Gdy wpłata dotrze, dostaniesz drugi mail — potwierdzenie przyjęcia zamówienia do realizacji. Z tą chwilą zawieramy umowę.
     </p>
 
@@ -38,15 +38,15 @@
 
     <p style="margin: 0; color: #5C5043;">
         @if ($contactEmail)
-            Masz pytanie o zamówienie? Odpisz na tego maila — trafi prosto do mnie.
+            {{ $mailTexts->html('order_awaiting_payment', 'outro', ['numer' => $order->number]) }}
         @else
             Masz pytanie o zamówienie? Napisz do mnie przez stronę sklepu i podaj numer {{ $order->number }}.
         @endif
     </p>
-    <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">Kasia</p>
+    <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">{{ $mailTexts->common('signature') }}</p>
 
     <x-slot:footer>
-        MellowAura{{ $city ? ' · '.$city : '' }}<br>
+        {{ $mailTexts->common('footer') }}<br>
         Podsumowanie zamówienia {{ $order->number }} złożonego w sklepie MellowAura.
     </x-slot:footer>
 </x-shared::mail.layout>

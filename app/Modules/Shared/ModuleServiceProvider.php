@@ -2,6 +2,8 @@
 
 namespace App\Modules\Shared;
 
+use App\Modules\Shared\Mail\HasEditableTexts;
+use App\Modules\Shared\Mail\MailTexts;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
@@ -16,10 +18,14 @@ use ReflectionClass;
  * Loads, when present: routes/web.php, routes/admin.php (prefix /panel, name admin.*, signed-in accounts allowed there),
  * resources/views (namespace = snake-case module name), resources/views/components as
  * anonymous Blade components (<x-module::name>), lang (translations as __('module::file.key')), Database/Migrations,
- * and points model factories at Database/Factories.
+ * and points model factories at Database/Factories. Customer mails listed in $customerMails show up in the panel
+ * under „Maile”, where Kasia rewrites their sentences.
  */
 abstract class ModuleServiceProvider extends ServiceProvider
 {
+    /** @var list<class-string<HasEditableTexts>> */
+    protected array $customerMails = [];
+
     public function boot(): void
     {
         $dir = dirname((new ReflectionClass(static::class))->getFileName());
@@ -53,6 +59,8 @@ abstract class ModuleServiceProvider extends ServiceProvider
         if (is_dir($dir.'/Database/Migrations')) {
             $this->loadMigrationsFrom($dir.'/Database/Migrations');
         }
+
+        MailTexts::register(...$this->customerMails);
 
         Factory::guessFactoryNamesUsing(function (string $model): string {
             if (preg_match('/^App\\\\Modules\\\\([^\\\\]+)\\\\Models\\\\(.+)$/', $model, $m)) {

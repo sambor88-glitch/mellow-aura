@@ -1,7 +1,7 @@
 {{-- The plain-text part is never rendered as HTML, so values print raw instead of as HTML entities. --}}
 Your parcel is on its way
 
-I’ve sent your order {!! $order->number !!}.{!! match ($order->shipping_method) {
+{!! $mailTexts->text('parcel_on_its_way', 'intro', ['numer' => $order->number]) !!}{!! match ($order->shipping_method) {
     'parcel_locker' => ' InPost will text and e-mail you when it’s waiting in the parcel locker.',
     'courier' => ' The InPost courier will let you know before delivery.',
     default => '',
@@ -22,7 +22,7 @@ DELIVERY
 {!! $delivery !!}
 
 @if ($contactEmail)
-Something wrong with the parcel? Just reply to this e-mail — it comes straight to me.
+{!! $mailTexts->text('parcel_on_its_way', 'outro', ['numer' => $order->number]) !!}
 @else
 Something wrong with the parcel? Write to me through the shop and give your order number, {!! $order->number !!}.
 @endif
@@ -30,8 +30,8 @@ Something wrong with the parcel? Write to me through the shop and give your orde
 You can also message me on WhatsApp: {!! $contactPhone !!}.
 @endif
 
-Kasia
+{!! $mailTexts->signature() !!}
 
 --
-MellowAura{!! $city ? ' · '.$city : '' !!}
+{!! $mailTexts->footer() !!}
 Dispatch notice for order {!! $order->number !!} from the MellowAura shop.

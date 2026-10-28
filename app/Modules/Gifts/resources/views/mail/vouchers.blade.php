@@ -28,7 +28,7 @@
             Pytanie? Odpisz na tego maila — trafi prosto do mnie.
         @endif
     </p>
-    <p style="margin: 18px 0 0; color: #2F2620;">Kasia</p>
+    <p style="margin: 18px 0 0; color: #2F2620;">{{ $mailTexts->common('signature') }}</p>
 
-    <x-slot:footer>{{ $vouchers->count() === 1 ? 'Voucher' : 'Vouchery' }} do zamówienia {{ $order->number }} w sklepie MellowAura.</x-slot:footer>
+    <x-slot:footer>{{ $mailTexts->common('footer') }}<br>{{ $vouchers->count() === 1 ? 'Voucher' : 'Vouchery' }} do zamówienia {{ $order->number }} w sklepie MellowAura.</x-slot:footer>
 </x-shared::mail.layout>

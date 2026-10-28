@@ -4,7 +4,7 @@
 >
     <h1 style="margin: 0 0 12px; font-family: Georgia, 'Times New Roman', serif; font-weight: normal; font-size: 30px; line-height: 1.15; color: #2F2620;">Your parcel is on its way</h1>
     <p style="margin: 0 0 22px; color: #5C5043;">
-        I’ve sent your order <strong style="font-weight: 600; color: #2F2620;">{{ $order->number }}</strong>.
+        {{ $mailTexts->html('parcel_on_its_way', 'intro', ['numer' => $order->number]) }}
         @if ($order->shipping_method === 'parcel_locker')
             InPost will text and e-mail you when it’s waiting in the parcel locker.
         @elseif ($order->shipping_method === 'courier')
@@ -36,7 +36,7 @@
 
     <p style="margin: 0; color: #5C5043;">
         @if ($contactEmail)
-            Something wrong with the parcel? Just reply to this e-mail — it comes straight to me.
+            {{ $mailTexts->html('parcel_on_its_way', 'outro', ['numer' => $order->number]) }}
         @else
             Something wrong with the parcel? Write to me through the shop and give your order number, {{ $order->number }}.
         @endif
@@ -44,10 +44,10 @@
             You can also message me on WhatsApp: {{ $contactPhone }}.
         @endif
     </p>
-    <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">Kasia</p>
+    <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">{{ $mailTexts->common('signature') }}</p>
 
     <x-slot:footer>
-        MellowAura{{ $city ? ' · '.$city : '' }}<br>
+        {{ $mailTexts->common('footer') }}<br>
         Dispatch notice for order {{ $order->number }} from the MellowAura shop.
     </x-slot:footer>
 </x-shared::mail.layout>

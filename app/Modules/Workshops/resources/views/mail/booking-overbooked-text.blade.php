@@ -8,8 +8,8 @@ Zwrócę Ci całą wpłatę, {!! $order->money($order->total_gross) !!}, najpó�
 Możesz też napisać na WhatsAppie: {!! $contactPhone !!}.
 @endif
 
-Kasia
+{!! $mailTexts->signature() !!}
 
 --
-MellowAura{!! $city ? ' · '.$city : '' !!}
+{!! $mailTexts->footer() !!}
 Wiadomość o zapisie na warsztat {!! $order->number !!}.

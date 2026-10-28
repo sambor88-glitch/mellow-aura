@@ -4,7 +4,7 @@
 >
     <h1 style="margin: 0 0 12px; font-family: Georgia, 'Times New Roman', serif; font-weight: normal; font-size: 30px; line-height: 1.15; color: #2F2620;">Thank you for your order</h1>
     <p style="margin: 0 0 22px; color: #5C5043;">
-        Order <strong style="font-weight: 600; color: #2F2620;">{{ $order->number }}</strong> is waiting for your payment.
+        {{ $mailTexts->html('order_awaiting_payment', 'intro', ['numer' => $order->number]) }}
         Once it arrives, you’ll get a second e-mail confirming I’ve accepted your order. That is when our contract is made.
     </p>
 
@@ -38,15 +38,15 @@
 
     <p style="margin: 0; color: #5C5043;">
         @if ($contactEmail)
-            A question about your order? Just reply to this e-mail — it comes straight to me.
+            {{ $mailTexts->html('order_awaiting_payment', 'outro', ['numer' => $order->number]) }}
         @else
             A question about your order? Write to me through the shop and give your order number, {{ $order->number }}.
         @endif
     </p>
-    <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">Kasia</p>
+    <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">{{ $mailTexts->common('signature') }}</p>
 
     <x-slot:footer>
-        MellowAura{{ $city ? ' · '.$city : '' }}<br>
+        {{ $mailTexts->common('footer') }}<br>
         Summary of order {{ $order->number }} placed in the MellowAura shop.
     </x-slot:footer>
 </x-shared::mail.layout>

@@ -10,7 +10,8 @@
 Numer vouchera wystarczy, żeby go wykorzystać{!! $contactPhone ? ' — termin ustalisz na WhatsAppie: '.$contactPhone : '' !!}.@if ($contactEmail) Pytanie? Odpisz na tego maila — trafi prosto do mnie.@endif
 
 
-Kasia
+{!! $mailTexts->signature() !!}
 
 --
+{!! $mailTexts->footer() !!}
 {{ $vouchers->count() === 1 ? 'Voucher' : 'Vouchery' }} do zamówienia {!! $order->number !!} w sklepie MellowAura.
