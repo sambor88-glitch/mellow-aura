@@ -32,13 +32,14 @@ class PrivacyRequest extends Model
     ];
 
     /**
-     * „zamówienia: 2 · zgłoszenia do wypału: 1”, leaving out what was not there.
+     * „zamówienia: 2 · zgłoszenia do wypału: 1”, leaving out what was not there. The order is SUMMARY_LABELS',
+     * since MySQL keeps a JSON column's keys in its own order.
      */
     public function summaryLabel(): string
     {
-        return collect($this->summary)
-            ->filter(fn (int $count) => $count > 0)
-            ->map(fn (int $count, string $key) => (self::SUMMARY_LABELS[$key] ?? $key).': '.$count)
+        return collect(self::SUMMARY_LABELS)
+            ->filter(fn (string $label, string $key) => ($this->summary[$key] ?? 0) > 0)
+            ->map(fn (string $label, string $key) => $label.': '.$this->summary[$key])
             ->join(' · ') ?: 'nic nie było zapisane';
     }
 
