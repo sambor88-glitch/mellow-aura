@@ -5,6 +5,7 @@ namespace App\Modules\Shared\Mail;
 use App\Modules\Localization\Support\Locales;
 use App\Modules\Settings\Settings;
 use Closure;
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\HtmlString;
 
 /**
@@ -38,6 +39,8 @@ class MailTexts
      * @var array<string, ?string>
      */
     private array $typed = [];
+
+    private bool $previewing = false;
 
     public function __construct(private Settings $settings) {}
 
@@ -77,12 +80,15 @@ class MailTexts
     }
 
     /**
-     * The text an empty field sends, in the current language.
+     * The text an empty field sends, in the current language. A variant picks a default worded for another case,
+     * e.g. `subject_many` for several vouchers; whatever Kasia writes herself goes out in every case.
      */
-    public function default(string $part, ?string $mail = null): string
+    public function default(string $part, ?string $mail = null, ?string $variant = null): string
     {
         if ($mail !== null) {
-            return __(self::mails()[$mail]->lang.'.'.$part);
+            $key = self::mails()[$mail]->lang.'.'.$part;
+
+            return __($variant !== null && Lang::has($key.'_'.$variant) ? $key.'_'.$variant : $key);
         }
 
         if ($part === 'footer') {
@@ -97,12 +103,12 @@ class MailTexts
     /**
      * The sentence as Kasia wrote it, or the default, with placeholders still in braces.
      */
-    public function raw(string $part, ?string $mail = null): string
+    public function raw(string $part, ?string $mail = null, ?string $variant = null): string
     {
         $key = self::setting($part, app()->getLocale(), $mail);
         $value = array_key_exists($key, $this->typed) ? $this->typed[$key] : $this->settings->get($key);
 
-        return filled($value) ? (string) $value : $this->default($part, $mail);
+        return filled($value) ? (string) $value : $this->default($part, $mail, $variant);
     }
 
     /**
@@ -110,9 +116,9 @@ class MailTexts
      *
      * @param  array<string, string>  $fill  placeholder => value
      */
-    public function text(string $mail, string $part, array $fill = []): string
+    public function text(string $mail, string $part, array $fill = [], ?string $variant = null): string
     {
-        return strtr($this->raw($part, $mail), self::tokens($fill));
+        return strtr($this->raw($part, $mail, $variant), self::tokens($fill));
     }
 
     /**
@@ -120,11 +126,11 @@ class MailTexts
      *
      * @param  array<string, string>  $fill  placeholder => value
      */
-    public function html(string $mail, string $part, array $fill = []): HtmlString
+    public function html(string $mail, string $part, array $fill = [], ?string $variant = null): HtmlString
     {
         $values = array_map(fn (string $value) => '<strong style="font-weight: 600;">'.e($value).'</strong>', self::tokens($fill));
 
-        return new HtmlString(nl2br(strtr(e($this->raw($part, $mail)), $values), false));
+        return new HtmlString(nl2br(strtr(e($this->raw($part, $mail, $variant)), $values), false));
     }
 
     /**
@@ -146,6 +152,14 @@ class MailTexts
     }
 
     /**
+     * Whether a mail is being rendered for the panel's preview, so nothing should leave the shop because of it.
+     */
+    public function isPreviewing(): bool
+    {
+        return $this->previewing;
+    }
+
+    /**
      * Renders with the texts typed in the panel in place of the saved ones, without saving them.
      *
      * @template T
@@ -157,11 +171,13 @@ class MailTexts
     public function previewing(array $typed, Closure $render): mixed
     {
         $this->typed = $typed;
+        $this->previewing = true;
 
         try {
             return $render();
         } finally {
             $this->typed = [];
+            $this->previewing = false;
         }
     }
 

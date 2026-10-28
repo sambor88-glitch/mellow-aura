@@ -1,7 +1,7 @@
 {{-- The plain-text part is never rendered as HTML, so values print raw instead of as HTML entities. --}}
 Twój zapis jest anulowany.
 
-Anulowałam Twój zapis na warsztat {!! $date->dayLabel() !!}, {!! $date->timeLabel() !!} (zapis {!! $order->number !!}).
+{!! $mailTexts->text('booking_cancelled', 'intro', $textFill) !!}
 
 @if ($voucher && ! $voucher['expired'])
 Twój voucher {!! $voucher['code'] !!} znów jest ważny — do {!! $voucher['valid_until'] !!}. Zapiszesz się nim na inny termin na stronie. Jeśli wolisz, odpisz na tego maila — przepiszę Cię sama.

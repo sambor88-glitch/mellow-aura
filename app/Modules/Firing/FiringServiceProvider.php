@@ -2,6 +2,7 @@
 
 namespace App\Modules\Firing;
 
+use App\Modules\Firing\Mail\BatchReportConfirmed;
 use App\Modules\Shared\ModuleServiceProvider;
 use App\Modules\Shared\Support\SitemapPages;
 
@@ -11,6 +12,10 @@ use App\Modules\Shared\Support\SitemapPages;
  */
 class FiringServiceProvider extends ModuleServiceProvider
 {
+    protected array $customerMails = [
+        BatchReportConfirmed::class,
+    ];
+
     public function register(): void
     {
         $this->callAfterResolving(SitemapPages::class, fn (SitemapPages $pages) => $pages->routes('firing.index'));

@@ -1,7 +1,7 @@
 <x-shared::mail.layout title="Twój wsad do wypału" :preheader="'Wycena: '.$firingRequest->summary()['Wycena'].'. Odpiszę z potwierdzeniem terminu.'">
     <h1 style="margin: 0 0 12px; font-family: Georgia, 'Times New Roman', serif; font-weight: normal; font-size: 28px; line-height: 1.15; color: #2F2620;">Mam Twoje zgłoszenie</h1>
     <p style="margin: 0 0 22px; color: #5C5043;">
-        Dziękuję, {{ $firingRequest->name }}. Odpiszę z potwierdzeniem terminu i miejscem, gdzie przywieziesz prace.
+        {{ $mailTexts->html('batch_report_confirmed', 'intro', ['imie' => $firingRequest->name]) }}
         @if ($firingRequest->quote !== null)
             Wycena jest policzona z cennika i z Twojego zgłoszenia.
         @else
@@ -20,7 +20,7 @@
     @endif
 
     @if ($contactEmail)
-        <p style="margin: 0; color: #5C5043;">Chcesz coś zmienić? Odpisz na tego maila — trafi prosto do mnie.</p>
+        <p style="margin: 0; color: #5C5043;">{{ $mailTexts->html('batch_report_confirmed', 'outro', ['imie' => $firingRequest->name]) }}</p>
     @endif
     <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">{{ $mailTexts->common('signature') }}</p>
 

@@ -4,7 +4,7 @@
 >
     <h1 style="margin: 0 0 12px; font-family: Georgia, 'Times New Roman', serif; font-weight: normal; font-size: 30px; line-height: 1.15; color: #2F2620;">Twój zapis jest anulowany.</h1>
     <p style="margin: 0 0 16px; color: #5C5043;">
-        Anulowałam Twój zapis na warsztat {{ $date->dayLabel() }}, {{ $date->timeLabel() }} (zapis {{ $order->number }}).
+        {{ $mailTexts->html('booking_cancelled', 'intro', $textFill) }}
     </p>
     @if ($voucher && ! $voucher['expired'])
         <p style="margin: 0 0 22px; color: #5C5043;">

@@ -6,6 +6,7 @@ use App\Modules\Checkout\Models\Order;
 use App\Modules\Gifts\Models\Voucher;
 use App\Modules\Monitoring\Support\Alerts;
 use App\Modules\Settings\Settings;
+use App\Modules\Shared\Mail\MailTexts;
 use App\Modules\Workshops\Models\WorkshopBooking;
 use App\Modules\Workshops\Models\WorkshopDate;
 
@@ -59,6 +60,11 @@ class BookingDetails
         $address = $this->settings->get('studio_address');
 
         if (blank($address)) {
+            // The panel's preview of the mail is no booking: Kasia hears about the address only for a real one.
+            if (app(MailTexts::class)->isPreviewing()) {
+                return null;
+            }
+
             $this->alerts->send(
                 'workshop-studio-address',
                 'Brak adresu pracowni w mailu o warsztacie',

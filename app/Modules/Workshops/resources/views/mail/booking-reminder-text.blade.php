@@ -1,12 +1,12 @@
 {{-- The plain-text part is never rendered as HTML, so values print raw instead of as HTML entities. --}}
 Do jutra!
 
-Przypominam o warsztacie — glina już czeka. Wszystko jest w tym mailu, nie musisz szukać poprzedniego.
+{!! $mailTexts->text('booking_reminder', 'intro', $textFill) !!}
 
 @include('workshops::mail.partials.booking-text')
 
 @if ($contactEmail)
-Coś Ci wypadło albo się spóźnisz? Odpisz na tego maila — trafi prosto do mnie.
+{!! $mailTexts->text('booking_reminder', 'outro', $textFill) !!}
 @else
 Coś Ci wypadło albo się spóźnisz? Napisz do mnie przez stronę i podaj numer {!! $order->number !!}.
 @endif

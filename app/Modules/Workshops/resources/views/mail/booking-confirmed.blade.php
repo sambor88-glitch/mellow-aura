@@ -4,7 +4,7 @@
 >
     <h1 style="margin: 0 0 12px; font-family: Georgia, 'Times New Roman', serif; font-weight: normal; font-size: 30px; line-height: 1.15; color: #2F2620;">Dziękuję. Do zobaczenia w pracowni.</h1>
     <p style="margin: 0 0 22px; color: #5C5043;">
-        Zapis <strong style="font-weight: 600; color: #2F2620;">{{ $order->number }}</strong> jest opłacony{{ $booking->seats > 1 ? ' — miejsca są Wasze' : ' — miejsce jest Twoje' }}.
+        {{ $mailTexts->html('booking_confirmed', 'intro', $textFill, $booking->seats > 1 ? 'many' : null) }}
     </p>
 
     @include('workshops::mail.partials.booking')
@@ -14,7 +14,7 @@
             Dzień przed warsztatem przypomnę Ci o nim mailem.
         @endif
         @if ($contactEmail)
-            Masz pytanie albo coś Ci wypadło? Odpisz na tego maila — trafi prosto do mnie.
+            {{ $mailTexts->html('booking_confirmed', 'outro', $textFill) }}
         @else
             Masz pytanie albo coś Ci wypadło? Napisz do mnie przez stronę i podaj numer {{ $order->number }}.
         @endif
