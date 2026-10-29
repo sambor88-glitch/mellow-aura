@@ -108,6 +108,7 @@ class CheckoutController extends Controller
                     'postal_code' => 'postal_code_required',
                     'postal_code_format' => 'postal_code_regex',
                     'city' => 'city_required',
+                    'locker_code' => 'locker_code_required',
                     'locker_code_format' => 'locker_code',
                 ])->map(fn (string $key) => __('checkout::validation.'.$key)),
             ],

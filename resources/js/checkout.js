@@ -52,11 +52,12 @@ const firstGap = (form, shipping) => {
     }
 
     if (shipping === 'parcel_locker') {
-        checks.push(['locker_code', () => {
-            const code = value('locker_code').replace(/\s+/g, '').toUpperCase();
+        const code = () => value('locker_code').replace(/\s+/g, '').toUpperCase();
 
-            return code === '' || LOCKER_CODE.test(code);
-        }, 'locker_code_format']);
+        checks.push(
+            ['locker_code', () => code() !== ''],
+            ['locker_code', () => LOCKER_CODE.test(code()), 'locker_code_format'],
+        );
     }
 
     const gap = checks.find(([name, passes]) => form.elements[name] && !passes());
@@ -158,14 +159,23 @@ export default ({ accepted, deviations, payment, blikCode, shipping, locker, loc
         return Object.values(this.deviations).every(Boolean);
     },
 
+    // Without the locker's code Kasia has nowhere to send the parcel (MA-248).
+    get needsLocker() {
+        return this.shipping === 'parcel_locker' && String(this.locker ?? '').trim() === '';
+    },
+
     get ready() {
-        return this.accepted && this.deviationsAccepted && !this.needsBlikCode;
+        return this.accepted && this.deviationsAccepted && !this.needsBlikCode && !this.needsLocker;
     },
 
     // What the pay button says: the amount, or what is still missing, in the order of the screen.
     get label() {
         if (this.submitting) {
             return say(texts, 'paying');
+        }
+
+        if (this.needsLocker) {
+            return say(texts, 'locker_missing');
         }
 
         if (!this.deviationsAccepted) {

@@ -54,14 +54,14 @@ class CheckoutPageTest extends TestCase
 
         $this->get('/zamowienie')
             ->assertSee('name="locker_code"', false)
-            ->assertSee('Nie wiesz? Zostaw puste — napiszę do Ciebie i ustalimy paczkomat')
+            ->assertSee('Kod znajdziesz w aplikacji InPost, np. KRA01M')
             ->assertDontSee('Wybierz na mapie')
             ->assertDontSee('geowidget');
 
         config(['services.inpost.geowidget_token' => 'test-token']);
 
         $this->get('/zamowienie')
-            ->assertSee('Wybierz na mapie')
+            ->assertSee('Wybierz na mapie albo wpisz kod z aplikacji InPost')
             ->assertSee('aria-labelledby="lockers-title"', false)
             ->assertSee('test-token', false)
             ->assertSee('geowidget.inpost.pl', false)

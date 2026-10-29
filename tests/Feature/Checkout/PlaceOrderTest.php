@@ -130,7 +130,7 @@ class PlaceOrderTest extends TestCase
     public function test_missing_details_come_back_with_hints_and_the_cart_stays(): void
     {
         $this->postJson('/koszyk', ['variant_id' => $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3)->id]);
-        $incomplete = ['shipping_method' => 'parcel_locker', 'payment_method' => 'blik', 'blik_code' => '123', 'expected_total' => 25500];
+        $incomplete = ['shipping_method' => 'parcel_locker', 'locker_code' => 'KRA01M', 'payment_method' => 'blik', 'blik_code' => '123', 'expected_total' => 25500];
 
         // Check the page first: asserting on the session empties the flashed errors for the next request.
         $this->from('/zamowienie')
@@ -298,13 +298,13 @@ class PlaceOrderTest extends TestCase
         $this->assertSame([0, 47800, PaymentMethod::Card], [$order->shipping_gross, $order->total_gross, $order->payment_method]);
     }
 
-    public function test_the_parcel_locker_is_optional_and_saved_in_capitals_without_spaces(): void
+    public function test_the_parcel_locker_is_saved_in_capitals_without_spaces(): void
     {
         $this->postJson('/koszyk', ['variant_id' => $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3)->id]);
         $this->from('/zamowienie')
             ->followingRedirects()
             ->post('/zamowienie', $this->form(['locker_code' => 'kra 01m?']))
-            ->assertSee('Kod paczkomatu to litery i cyfry, np. KRA01M — sprawdź go albo zostaw puste');
+            ->assertSee('Kod paczkomatu to litery i cyfry, np. KRA01M — sprawdź go w aplikacji InPost');
         $this->assertSame(0, Order::count());
 
         $this->post('/zamowienie', $this->form(['locker_code' => ' kra 01m ']))->assertRedirect('/zamowienie/potwierdzenie');
@@ -312,14 +312,29 @@ class PlaceOrderTest extends TestCase
         $this->get('/zamowienie/potwierdzenie')->assertSeeInOrder(['Paczkomat', 'KRA01M']);
     }
 
-    public function test_an_empty_parcel_locker_leaves_the_choice_to_kasia(): void
+    public function test_the_parcel_locker_needs_its_code(): void
     {
         $this->postJson('/koszyk', ['variant_id' => $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3)->id]);
 
-        $this->post('/zamowienie', $this->form(['locker_code' => '']))->assertRedirect('/zamowienie/potwierdzenie');
+        foreach (['', '   ', null] as $code) {
+            $this->from('/zamowienie')
+                ->post('/zamowienie', $this->form(['locker_code' => $code]))
+                ->assertRedirect('/zamowienie')
+                ->assertSessionHasErrors(['locker_code' => 'Wpisz kod paczkomatu — bez niego nie wiem, dokąd wysłać paczkę']);
+        }
 
-        $this->assertNull(Order::sole()->locker_code);
-        $this->get('/zamowienie/potwierdzenie')->assertSeeInOrder(['Paczkomat', 'Napiszę do Ciebie i ustalimy']);
+        $this->assertSame(0, Order::count());
+    }
+
+    public function test_the_checkout_no_longer_offers_to_leave_the_locker_empty(): void
+    {
+        $this->postJson('/koszyk', ['variant_id' => $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3)->id]);
+
+        $this->get('/zamowienie')
+            ->assertOk()
+            ->assertSee('Kod znajdziesz w aplikacji InPost, np. KRA01M')
+            ->assertDontSee('Zostaw puste')
+            ->assertDontSee('zostaw puste');
     }
 
     public function test_a_locker_typed_before_switching_to_pickup_is_not_saved(): void
@@ -373,6 +388,7 @@ class PlaceOrderTest extends TestCase
             'email' => 'ania@example.com',
             'name' => 'Anna Nowak',
             'shipping_method' => 'parcel_locker',
+            'locker_code' => 'KRA01M',
             'payment_method' => 'blik',
             'blik_code' => '123456', 'accept_terms' => '1',
             'expected_total' => 25500,

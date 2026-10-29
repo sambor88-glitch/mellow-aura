@@ -30,7 +30,7 @@ class PanelAccountsTest extends TestCase
         $helper = User::factory()->helper()->create();
         $order = Order::create([
             'status' => OrderStatus::InProgress, 'name' => 'Anna Nowak', 'email' => 'ania@example.com', 'phone' => '600100200',
-            'shipping_method' => 'parcel_locker', 'shipping_gross' => 1600, 'total_gross' => 25500,
+            'shipping_method' => 'parcel_locker', 'locker_code' => 'KRA01M', 'shipping_gross' => 1600, 'total_gross' => 25500,
             'payment_method' => PaymentMethod::Blik, 'payment_status' => PaymentStatus::Paid, 'paid_at' => now(),
         ]);
         $order->update(['number' => 'MA-2026-'.(1000 + $order->id)]);

@@ -35,8 +35,8 @@ return [
     'delivery_way' => 'Sposób dostawy',
     'locker' => 'Paczkomat',
     'locker_placeholder' => 'np. KRA01M',
-    'locker_to_agree' => 'Napiszę do Ciebie i ustalimy',
-    'locker_hint' => 'Nie wiesz? Zostaw puste — napiszę do Ciebie i ustalimy paczkomat',
+    'locker_hint' => 'Kod znajdziesz w aplikacji InPost, np. KRA01M',
+    'locker_hint_map' => 'Wybierz na mapie albo wpisz kod z aplikacji InPost',
     'locker_map' => 'Wybierz na mapie',
     'locker_dialog' => 'Wybierz paczkomat',
     'locker_close' => 'Zamknij mapę',
@@ -81,13 +81,14 @@ return [
 
     // Said by the pay button and the pill at the bottom of the screen (resources/js/checkout.js).
     'js' => [
-        'locker_map_failed' => 'Mapa paczkomatów się nie wczytała. Wpisz kod paczkomatu albo zostaw puste',
+        'locker_map_failed' => 'Mapa paczkomatów się nie wczytała. Wpisz kod paczkomatu z aplikacji InPost',
         'paying' => 'Płacę…',
         'pay' => 'Płacę :amount',
         'pay_voucher' => 'Zamawiam, płaci voucher',
         'voucher_left' => 'zostanie na nim :amount',
         'voucher_used_up' => 'cały idzie na to zamówienie',
         'voucher_empty' => 'Wpisz kod z vouchera, a odejmę go od sumy',
+        'locker_missing' => 'Wybierz paczkomat, żeby zapłacić',
         'blik_missing' => 'Wpisz kod BLIK, żeby zapłacić',
         'blik_short' => 'Wpisz 6-cyfrowy kod z aplikacji banku',
         'deviation_missing' => 'Zaznacz „Akceptuję” przy produkcie',

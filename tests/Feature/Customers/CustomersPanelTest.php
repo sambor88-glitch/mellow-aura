@@ -261,7 +261,7 @@ class CustomersPanelTest extends TestCase
             'name' => 'Anna Nowak',
             'email' => 'ania@example.com',
             'phone' => '600 100 200',
-            'shipping_method' => 'parcel_locker',
+            'shipping_method' => 'parcel_locker', 'locker_code' => 'KRA01M',
             'shipping_gross' => 1600,
             'total_gross' => 25500,
             'payment_method' => PaymentMethod::Blik,

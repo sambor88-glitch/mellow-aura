@@ -55,7 +55,7 @@ class PaymentStockTest extends TestCase
     {
         $mug = $this->variant(stock: 1);
         $lines = collect(['v'.$mug->id => new ProductLine('v'.$mug->id, 1, $mug->load('product'))]);
-        $data = ['name' => 'Anna Nowak', 'email' => 'ania@example.com', 'phone' => '600100200', 'shipping_method' => 'parcel_locker', 'payment_method' => 'blik'];
+        $data = ['name' => 'Anna Nowak', 'email' => 'ania@example.com', 'phone' => '600100200', 'shipping_method' => 'parcel_locker', 'locker_code' => 'KRA01M', 'payment_method' => 'blik'];
 
         // Both checkouts started while the piece was still on the shelf.
         $first = app(PlaceOrder::class)($lines, $data, 1600);
@@ -86,7 +86,7 @@ class PaymentStockTest extends TestCase
             'phone' => '600 100 200',
             'email' => 'ania@example.com',
             'name' => 'Anna Nowak',
-            'shipping_method' => 'parcel_locker',
+            'shipping_method' => 'parcel_locker', 'locker_code' => 'KRA01M',
             'payment_method' => 'blik',
             'blik_code' => '123456', 'accept_terms' => '1',
             'expected_total' => 25500,

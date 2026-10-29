@@ -35,8 +35,8 @@ return [
     'delivery_way' => 'Delivery',
     'locker' => 'Parcel locker',
     'locker_placeholder' => 'e.g. KRA01M',
-    'locker_to_agree' => 'I’ll write to you and we’ll agree on one',
-    'locker_hint' => 'Not sure? Leave it empty — I’ll write to you and we’ll agree on a parcel locker',
+    'locker_hint' => 'You’ll find the code in the InPost app, e.g. KRA01M',
+    'locker_hint_map' => 'Pick one on the map or type the code from the InPost app',
     'locker_map' => 'Choose on the map',
     'locker_dialog' => 'Choose a parcel locker',
     'locker_close' => 'Close the map',
@@ -59,9 +59,10 @@ return [
     'wrapping' => 'I wrap ceramics in wood wool and a double box',
 
     'js' => [
-        'locker_map_failed' => 'The map of lockers didn’t load. Type the locker’s code or leave it empty',
+        'locker_map_failed' => 'The map of lockers didn’t load. Type the locker’s code from the InPost app',
         'paying' => 'Paying…',
         'pay' => 'Pay :amount',
+        'locker_missing' => 'Choose a parcel locker to pay',
         'blik_missing' => 'Enter your BLIK code to pay',
         'blik_short' => 'Enter the 6-digit code from your banking app',
         'deviation_missing' => 'Tick “I accept” next to the piece',

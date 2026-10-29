@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aura - panel</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
+<!--
+  Makieta panelu do zadań MA-248…MA-251 (29.10.2026). Dane są przykładowe, nie z bazy.
+  Paleta i kroje: skill mellowaura-design. Zasady panelu: skill mellowaura-panel
+  (tło #EDE4D8, karty #FCF9F4 z promieniem 4 px, gęściej niż sklep, cztery kafelki, bez <table>).
+  Przenosząc do Blade: klasy niżej mają odpowiedniki w tokenach resources/css/app.css (ink, sand-dark, cream…).
+-->
+<style>
+:root{
+  --ink:#2F2620;--sand-d:#EDE4D8;--sand:#F3EDE4;--linen:#F7F2EA;--cream:#FCF9F4;
+  --graphite:#4A3E33;--lead:#5C5043;--help:#6B5D4F;--label:#726456;--hint:#736454;
+  --line:#DCD0BE;--line-strong:#C6B8A5;--divider:#E2D7C7;
+  --brown:#855F3D;--navy:#24417E;--rose:#D6A39C;--dash:#B98E64;--error:#8C3A2E;--success:#5C7A4A;
+  --alert:#F7ECE9;--alert-line:#E0C3BC;--navy-soft:#F0F3FA;--success-soft:#EDF0E9;--success-line:#C7D2BC;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:'Instrument Sans',system-ui,sans-serif;color:var(--ink);background:#E3D9CB;-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.5}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--navy);outline-offset:3px}
+.serif{font-family:Newsreader,serif;font-weight:300}
+.num{font-variant-numeric:tabular-nums}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- Pasek makiety (nie jest częścią panelu) ---------- */
+.mock{position:sticky;top:0;z-index:200;background:var(--ink);color:#D8CDBD;padding:10px clamp(12px,3vw,28px);display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.mock b{font-family:Newsreader,serif;font-weight:300;font-size:18px;color:#F3EDE4;margin-right:6px}
+.mock .tabs{display:flex;flex-wrap:wrap;gap:6px}
+.mock button{background:transparent;border:1px solid #55483C;border-radius:999px;padding:7px 14px;font-size:12.5px;color:#D8CDBD;min-height:36px}
+.mock button[aria-pressed=true]{background:var(--rose);border-color:var(--rose);color:var(--ink)}
+.mock .role{margin-left:auto;display:flex;gap:6px;align-items:center;font-size:12px;color:#9B8C7C}
+.mock :focus-visible{outline-color:var(--linen)}
+.screen{display:none}
+.screen.on{display:block}
+.note{max-width:1280px;margin:18px auto 0;padding:0 clamp(16px,3vw,28px);font-size:13px;color:var(--lead)}
+.note strong{color:var(--ink)}
+
+/* ---------- Panel: układ ---------- */
+.panel{background:var(--sand-d);max-width:1280px;margin:18px auto 60px;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.p-head{border-bottom:1px solid var(--line);display:flex;align-items:center;gap:24px;padding:16px 28px}
+.wordmark{display:flex;flex-direction:column;gap:2px}
+.wordmark span:first-child{font-family:Newsreader,serif;font-size:22px;line-height:1;letter-spacing:.16em;text-transform:uppercase}
+.wordmark span:last-child{font-size:9px;letter-spacing:.3em;color:var(--label);text-transform:uppercase}
+.p-head .site{margin-left:auto;font-size:13px;color:var(--lead)}
+.p-head .site:hover{color:var(--navy)}
+.logout{background:none;border:0;min-height:44px;padding:0 4px;font-size:13px;color:var(--label)}
+.logout:hover{color:var(--ink)}
+.p-body{display:flex;gap:40px;padding:44px 28px 96px}
+.p-main{flex:1 1 600px;min-width:0}
+
+/* Menu w grupach (MA-249) */
+.side{flex:0 0 220px;display:flex;flex-direction:column;gap:22px}
+.side h2{margin:0 0 8px 18px;font-size:10.5px;font-weight:500;letter-spacing:.3em;text-transform:uppercase;color:var(--label)}
+.side ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.side a{display:flex;align-items:center;gap:10px;min-height:44px;border-radius:999px;border:1px solid transparent;padding:0 8px 0 18px;font-size:13.5px;color:var(--lead);transition:background .3s var(--ease),border-color .3s var(--ease)}
+.side a:hover{border-color:var(--line-strong);background:var(--sand);color:var(--ink)}
+.side a[aria-current=page]{background:var(--ink);border-color:var(--ink);color:var(--linen)}
+.side a .count{margin-left:auto}
+.count{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;padding:0 8px;border-radius:999px;background:var(--rose);color:var(--ink);font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+.side .today{font-family:Newsreader,serif;font-size:17px;font-weight:300}
+.side .today.on{background:var(--ink);border-color:var(--ink);color:var(--linen)}
+
+/* Nagłówek ekranu */
+.eyebrow{display:flex;align-items:center;gap:12px;margin:0 0 14px;font-size:10.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--brown)}
+.eyebrow::before{content:"";width:34px;height:1px;background:var(--dash)}
+.h1{margin:0;font-family:Newsreader,serif;font-weight:300;font-size:clamp(32px,4.4vw,52px);line-height:1.04;text-wrap:balance}
+.h1 em{color:var(--brown)}
+.titlebar{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:30px}
+.lead{max-width:40ch;margin:0;font-size:14px;color:var(--help);text-wrap:pretty}
+
+/* Notatka z monitoringu */
+.notice{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;background:var(--alert);border:1px solid var(--alert-line);border-radius:4px;padding:14px 18px;margin-bottom:22px;font-size:13.5px;color:#7A3A2E}
+.notice strong{color:var(--error);font-weight:600}
+.notice a{margin-left:auto;text-decoration:underline;text-underline-offset:3px}
+
+/* Kafelki (MA-250) */
+.tiles{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:36px}
+.tile{flex:1 1 180px;min-width:0;display:block;background:var(--cream);border:1px solid var(--line);border-radius:4px;padding:20px 22px;transition:border-color .3s var(--ease),transform .4s var(--ease)}
+.tile:hover{border-color:var(--ink)}
+.tile .v{font-family:Newsreader,serif;font-weight:300;font-size:34px;line-height:1;font-variant-numeric:tabular-nums}
+.tile .l{margin-top:6px;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--label)}
+.tile .h{margin-top:8px;font-size:12.5px;color:var(--hint)}
+.tile .h.late{color:var(--error)}
+.tile .go{display:block;margin-top:14px;font-size:12.5px;color:var(--ink)}
+.tile.zero .v{color:var(--label)}
+
+/* Lista „Wymaga Twojej reakcji” */
+.sec-title{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:0 0 14px}
+.sec-title h2{margin:0;font-family:Newsreader,serif;font-weight:300;font-size:26px}
+.sec-title span{font-size:12.5px;color:var(--hint)}
+.rows{display:grid;gap:10px}
+.row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;background:var(--cream);border:1px solid var(--line);border-radius:4px;padding:16px 18px}
+.row.late{border-left:3px solid var(--error);padding-left:16px}
+.age{flex:0 0 92px;font-size:12.5px;color:var(--hint);font-variant-numeric:tabular-nums}
+.age b{display:block;font-family:Newsreader,serif;font-weight:300;font-size:19px;color:var(--ink)}
+.row.late .age b,.row.late .age{color:var(--error)}
+.what{flex:1 1 220px;min-width:0}
+.what .k{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--label)}
+.what .t{font-size:14.5px;margin-top:2px}
+.what .s{font-size:12.5px;color:var(--label);margin-top:2px}
+.amt{flex:0 0 auto;font-family:Newsreader,serif;font-weight:300;font-size:19px;font-variant-numeric:tabular-nums}
+.chip{flex:0 0 auto;border-radius:999px;padding:5px 12px;font-size:11.5px}
+.st-new{background:var(--rose);color:var(--ink)}
+.st-prog{background:var(--sand-d);color:var(--lead)}
+.st-ship{background:var(--navy-soft);color:var(--navy)}
+.st-done{background:var(--linen);color:var(--label)}
+.st-prob{background:var(--alert);color:var(--error)}
+.act{flex:0 0 auto;display:inline-flex;align-items:center;min-height:40px;background:transparent;border:1px solid var(--line-strong);border-radius:999px;padding:0 16px;font-size:12.5px}
+.act:hover{border-color:var(--ink);background:var(--sand-d)}
+.act.main{background:var(--ink);border-color:var(--ink);color:var(--linen)}
+.act.main:hover{background:var(--rose);border-color:var(--rose);color:var(--ink)}
+.late-tag{display:block;font-size:12px;color:var(--error);margin-top:4px}
+
+.empty{border:1px dashed var(--line-strong);border-radius:4px;padding:40px 28px;text-align:center;background:var(--linen)}
+.empty .serif{font-size:22px;margin-bottom:8px}
+.empty p{font-size:13.5px;color:var(--label);margin:0 auto;max-width:42ch}
+
+/* Filtry zamówień */
+.filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.filters a{display:inline-flex;align-items:center;min-height:40px;border:1px solid var(--line-strong);border-radius:999px;padding:0 18px;font-size:13px;color:var(--lead)}
+.filters a:hover{border-color:var(--ink);background:var(--sand);color:var(--ink)}
+.filters a[aria-current=page]{background:var(--ink);border-color:var(--ink);color:var(--linen)}
+.legend{font-size:12.5px;color:var(--hint);margin:0 0 14px}
+.legend i{display:inline-block;width:3px;height:12px;background:var(--error);vertical-align:-1px;margin-right:6px}
+
+/* ---------- Niezapisane zmiany (MA-251) ---------- */
+.cards{display:grid;gap:22px}
+.card{position:relative;background:var(--cream);border:1px solid var(--line);border-radius:4px;padding:28px 26px;transition:border-color .3s var(--ease)}
+.card.dirty{border-color:var(--brown)}
+.card-h{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-bottom:18px}
+.card-h h3{margin:0;font-family:Newsreader,serif;font-weight:300;font-size:24px}
+.badge{display:none;border-radius:999px;padding:4px 12px;font-size:11.5px;background:#F4E7D6;color:#6A4A2E;border:1px solid #E1C9A8}
+.badge::before{content:"● ";color:var(--brown)}
+.card.dirty .badge{display:inline-block}
+.fields{display:grid;gap:13px}
+.pair{display:flex;flex-wrap:wrap;align-items:flex-start;gap:13px}
+.pair>*{flex:1 1 200px;min-width:0}
+label.f{display:grid;gap:6px;font-size:13px;color:var(--graphite)}
+.f input,.f select,.f textarea{width:100%;background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px 15px;font:inherit;font-size:16px;color:var(--ink)}
+.f input:focus,.f textarea:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 4px rgba(36,65,126,.14)}
+.f .hint{font-size:12.5px;color:var(--hint)}
+.savebar{position:sticky;bottom:12px;z-index:30;margin-top:22px}
+.card.dirty .savebar{padding:10px;border-radius:999px;background:rgba(252,249,244,.6);border:1px solid rgba(220,208,190,.8);-webkit-backdrop-filter:blur(14px) saturate(1.3);backdrop-filter:blur(14px) saturate(1.3);box-shadow:0 18px 40px -26px rgba(47,38,32,.55)}
+.save{width:100%;min-height:52px;border:0;border-radius:999px;background:var(--ink);color:var(--linen);font-size:14px;padding:16px}
+.save:hover{background:var(--rose);color:var(--ink)}
+.ask{display:none;margin-top:14px;border:1px solid var(--alert-line);background:var(--alert);border-radius:4px;padding:16px 18px;font-size:13.5px;color:#7A3A2E}
+.ask.on{display:block;animation:up .45s var(--ease)}
+.ask p{margin:0 0 12px}
+.ask .btns{display:flex;flex-wrap:wrap;gap:8px}
+.ask .btns button{min-height:44px;border-radius:999px;padding:0 18px;font-size:13px;border:1px solid var(--line-strong);background:var(--cream)}
+.ask .btns .keep{background:var(--ink);color:var(--linen);border-color:var(--ink)}
+.ask .btns .drop{color:var(--error);border-color:var(--alert-line)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:120;max-width:calc(100% - 32px);width:max-content;background:var(--ink);color:var(--sand);border-radius:999px;padding:14px 24px;font-size:14px;box-shadow:0 18px 40px -20px rgba(47,38,32,.6);animation:up .4s var(--ease)}
+@keyframes up{from{opacity:0;transform:translate(var(--tx,0),10px)}to{opacity:1;transform:translate(var(--tx,0),0)}}
+.toast{--tx:-50%}
+
+/* ---------- Telefon (MA-249) ---------- */
+.phones{display:flex;flex-wrap:wrap;gap:32px;justify-content:center;padding:28px 16px 60px}
+.phones>div{flex:0 1 390px;min-width:0}
+.phone{width:100%;height:760px;border-radius:44px;background:var(--ink);padding:12px;box-shadow:0 30px 60px -34px rgba(47,38,32,.55)}
+.phone-cap{text-align:center;font-size:12.5px;color:var(--lead);margin-top:12px}
+.scr{position:relative;height:100%;border-radius:34px;overflow:hidden;background:var(--sand-d);display:flex;flex-direction:column}
+.m-top{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:44px 12px 10px;border-bottom:1px solid var(--line);background:var(--sand-d)}
+.m-menu{display:inline-flex;align-items:center;gap:8px;min-height:44px;border:1px solid var(--line-strong);border-radius:999px;background:var(--cream);padding:0 8px 0 16px;font-size:13.5px}
+.m-menu[aria-expanded=true]{background:var(--ink);color:var(--linen);border-color:var(--ink)}
+.m-title{flex:1 1 auto;min-width:0;font-family:Newsreader,serif;font-weight:300;font-size:21px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.m-out{flex:0 0 auto;background:none;border:0;min-height:44px;min-width:44px;padding:0 6px;font-size:13px;color:var(--label)}
+.m-body{flex:1 1 auto;overflow:auto;padding:16px 12px 30px}
+.m-body .tiles{gap:10px;margin-bottom:20px}
+.m-body .tile{flex:1 1 140px;padding:14px 16px}
+.m-body .tile .v{font-size:28px}
+.m-body .row{padding:14px;gap:10px}
+.m-body .age{flex:0 0 100%;display:flex;gap:8px;align-items:baseline}
+.m-body .age b{display:inline;font-size:17px}
+.m-body .filters{flex-wrap:nowrap;overflow-x:auto;margin:0 -12px 14px;padding:0 12px;scrollbar-width:none}
+.m-body .filters a{flex:0 0 auto;min-height:44px}
+.m-body .act{min-height:44px}
+/* Na dotyku menu pełne i od razu — bez backdrop-filter i bez wjazdu (MA-203) */
+.m-nav{position:absolute;inset:98px 0 0 0;z-index:60;background:var(--sand-d);overflow:auto;padding:14px 12px 24px;display:none}
+.m-nav.on{display:block}
+.m-nav .side{flex:none;gap:18px}
+.m-nav .side a{min-height:48px;font-size:15px}
+.m-nav .site{display:flex;align-items:center;min-height:48px;padding:0 18px;margin-top:6px;border-top:1px solid var(--line);font-size:14px;color:var(--lead)}
+
+/* ---------- Kasa (MA-248) — styl sklepu, nie panelu ---------- */
+.shop{background:var(--sand);max-width:1280px;margin:18px auto 60px;border:1px solid var(--line);border-radius:4px;padding:clamp(24px,4vw,48px) clamp(16px,4vw,48px)}
+.shop-grid{display:flex;flex-wrap:wrap;gap:28px}
+.shop-col{flex:1 1 420px;min-width:0}
+.glass{background:rgba(252,249,244,.6);border:1px solid rgba(220,208,190,.8);-webkit-backdrop-filter:blur(18px) saturate(1.3);backdrop-filter:blur(18px) saturate(1.3);border-radius:24px;padding:26px 24px}
+.glass h3{margin:0 0 4px;font-family:Newsreader,serif;font-weight:300;font-size:28px}
+.glass .sub{margin:0 0 18px;font-size:13px;color:var(--help)}
+.opts{display:grid;gap:10px}
+.opt{display:flex;align-items:center;gap:14px;min-height:56px;border:1px solid var(--line);border-radius:16px;padding:12px 16px;background:var(--cream);text-align:left;width:100%}
+.opt[aria-checked=true]{background:var(--ink);border-color:var(--ink);color:var(--linen)}
+.opt .p{margin-left:auto;font-family:Newsreader,serif;font-size:18px;font-variant-numeric:tabular-nums}
+.opt .dot{flex:0 0 18px;height:18px;border-radius:50%;border:1px solid currentColor;display:grid;place-items:center}
+.opt[aria-checked=true] .dot::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--rose)}
+.locker{margin-top:14px;padding-top:16px;border-top:1px solid var(--divider)}
+.req{color:var(--brown)}
+.f.err input{border-color:var(--error);box-shadow:0 0 0 4px rgba(140,58,46,.1)}
+.errmsg{display:flex;gap:8px;font-size:13px;color:var(--error)}
+.mapline{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-top:12px}
+.glassbtn{display:inline-flex;align-items:center;min-height:44px;border-radius:999px;padding:0 20px;font-size:13.5px;background:rgba(252,249,244,.6);border:1px solid rgba(220,208,190,.8);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.glassbtn:hover{background:var(--cream)}
+.addr{font-size:13px;color:var(--label)}
+.pay{margin-top:18px;width:100%;min-height:52px;border:0;border-radius:999px;background:var(--ink);color:var(--linen);font-size:14.5px;padding:0 30px}
+.pay:hover{background:var(--rose);color:var(--ink)}
+.pay.missing{background:var(--sand-d);color:var(--lead);border:1px solid var(--line-strong)}
+.variant{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--label);margin:0 0 10px}
+.copy{flex:1 1 300px;min-width:0;font-size:13px;color:var(--lead)}
+.copy table{width:100%;border-collapse:collapse;font-size:13px}
+.copy td{border-top:1px solid var(--line);padding:9px 8px 9px 0;vertical-align:top}
+.copy td:first-child{color:var(--label);white-space:nowrap}
+.copy del{color:var(--label)}
+
+@media (max-width:860px){
+  .p-body{flex-direction:column;padding:28px 16px 64px;gap:24px}
+  .side{flex:none}
+  .p-head{padding:12px 16px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="mock" role="region" aria-label="Przełącznik makiety">
+  <b>Makieta panelu</b>
+  <div class="tabs" role="group" aria-label="Ekran">
+    <button data-go="today" aria-pressed="true">1 · Na dziś</button>
+    <button data-go="orders" aria-pressed="false">2 · Zamówienia</button>
+    <button data-go="phone" aria-pressed="false">3 · Telefon</button>
+    <button data-go="dirty" aria-pressed="false">4 · Niezapisane zmiany</button>
+    <button data-go="checkout" aria-pressed="false">5 · Kasa: Paczkomat</button>
+  </div>
+  <div class="role" role="group" aria-label="Rola">
+    rola:
+    <button data-role="owner" aria-pressed="true">Kasia</button>
+    <button data-role="helper" aria-pressed="false">pomoc</button>
+  </div>
+</div>
+
+<!-- =========================================================
+     1. NA DZIŚ — MA-250 (strona startowa) + MA-249 (menu w grupach)
+     ========================================================= -->
+<section class="screen on" id="today">
+  <p class="note"><strong>MA-250 · MA-249.</strong> Po zalogowaniu Kasia widzi, co dziś zrobić: cztery kafelki prowadzą do przefiltrowanych list, pod nimi wszystko, co czeka, najstarsze na górze. Menu w czterech grupach z licznikami. Przełącz rolę na „pomoc”, żeby zobaczyć wersję bez pieniędzy i ustawień.</p>
+  <div class="panel">
+    <header class="p-head">
+      <a href="#" class="wordmark"><span>mellowaura</span><span>mój panel</span></a>
+      <a href="#" class="site">Zobacz stronę</a>
+      <button class="logout">Wyloguj</button>
+    </header>
+    <div class="p-body">
+      <nav class="side js-side" aria-label="Sekcje panelu" data-current="today"></nav>
+      <main class="p-main">
+        <div class="titlebar">
+          <div>
+            <p class="eyebrow">tylko dla Ciebie · nie widzą tego klienci</p>
+            <h1 class="h1">Na dziś <em>· czwartek, 29.10</em></h1>
+          </div>
+          <p class="lead owner-only">Co wysłać, na co odpisać i co nie wyszło. Reszta panelu jest w menu z boku.</p>
+          <p class="lead helper-only" hidden>Zamówienia do spakowania i wysłania, z napisami do wbicia i certyfikatami do druku.</p>
+        </div>
+
+        <!-- monitoring::admin.dashboard-notice — zostaje nad kafelkami, tylko dla właścicielki -->
+        <div class="notice owner-only" role="status">
+          <strong>Harmonogram nie działa od 2 godzin.</strong>
+          <span>Statusy paczek z InPost się nie odświeżają.</span>
+          <a href="#">Co sprawdzić na Forge</a>
+        </div>
+
+        <div class="tiles">
+          <a href="#" class="tile" data-go-orders>
+            <div class="v">3</div>
+            <div class="l">do wysłania</div>
+            <div class="h late">najdłużej czeka 6 dni — po terminie</div>
+            <span class="go">Pokaż listę →</span>
+          </a>
+          <a href="#" class="tile owner-only">
+            <div class="v">2</div>
+            <div class="l">nowe pomysły</div>
+            <div class="h">zamówienia indywidualne do wyceny</div>
+            <span class="go">Wyceń →</span>
+          </a>
+          <a href="#" class="tile owner-only">
+            <div class="v">1</div>
+            <div class="l">reklamacje</div>
+            <div class="h late">odpowiedz do 4.11 — zostało 6 dni</div>
+            <span class="go">Odpowiedz →</span>
+          </a>
+          <a href="#" class="tile owner-only">
+            <div class="v">1</div>
+            <div class="l">niewysłane maile</div>
+            <div class="h">potwierdzenie zamówienia nie wyszło</div>
+            <span class="go">Wyślij jeszcze raz →</span>
+          </a>
+          <a href="#" class="tile helper-only" hidden>
+            <div class="v">1</div>
+            <div class="l">problem</div>
+            <div class="h">brak sztuki w zamówieniu</div>
+            <span class="go">Pokaż →</span>
+          </a>
+        </div>
+
+        <div class="sec-title">
+          <h2>Wymaga Twojej reakcji</h2>
+          <span class="owner-only">7 spraw · najstarsze na górze</span>
+          <span class="helper-only" hidden>4 sprawy · najstarsze na górze</span>
+        </div>
+        <div class="rows">
+          <div class="row late">
+            <div class="age"><b>6 dni</b>od 23.10</div>
+            <div class="what"><div class="k">do wysłania · MA-2026-1004</div><div class="t">Anna K. · Paczkomat KRA01M</div><div class="s">Kubek z napisem „Dla Babci” (350 ml) × 1</div><span class="late-tag">Minął czas wysyłki z ustawień: 5 dni roboczych</span></div>
+            <span class="chip st-prog">W realizacji</span>
+            <a href="#" class="act main">Spakuj i wyślij →</a>
+          </div>
+          <div class="row owner-only">
+            <div class="age"><b>5 dni</b>od 24.10</div>
+            <div class="what"><div class="k">reklamacja · MA-2026-0991</div><div class="t">Magda W. · pęknięta miska</div><div class="s">Odpowiedź do 4.11 — list gotowy do uzupełnienia</div></div>
+            <span class="chip st-prob">Problem</span>
+            <a href="#" class="act main">Odpowiedz →</a>
+          </div>
+          <div class="row">
+            <div class="age"><b>3 dni</b>od 26.10</div>
+            <div class="what"><div class="k">do wysłania · MA-2026-1007</div><div class="t">Ola P. · kurier</div><div class="s">Talerz deserowy × 2, pakowanie na prezent</div></div>
+            <span class="chip st-prog">W realizacji</span>
+            <a href="#" class="act">Szczegóły</a>
+          </div>
+          <div class="row owner-only">
+            <div class="age"><b>2 dni</b>od 27.10</div>
+            <div class="what"><div class="k">zamówienie indywidualne</div><div class="t">Kasia L. · komplet 6 kubków na wesele</div><div class="s">3 zdjęcia · budżet 600–900 zł</div></div>
+            <span class="chip st-new">Nowe</span>
+            <a href="#" class="act main">Wyceń →</a>
+          </div>
+          <div class="row helper-only" hidden>
+            <div class="age"><b>2 dni</b>od 27.10</div>
+            <div class="what"><div class="k">problem · MA-2026-1006</div><div class="t">Ewa S. · brak sztuki</div><div class="s">Wazon „Len” — 0 w magazynie, zamówiono 1</div></div>
+            <span class="chip st-prob">Problem</span>
+            <a href="#" class="act">Szczegóły</a>
+          </div>
+          <div class="row owner-only">
+            <div class="age"><b>1 dzień</b>od 28.10</div>
+            <div class="what"><div class="k">niewysłany mail</div><div class="t">Potwierdzenie zamówienia MA-2026-1009</div><div class="s">Postmark odrzucił adres · próbowano 6 razy przez 2 godziny</div></div>
+            <span class="chip st-prob">Problem</span>
+            <a href="#" class="act">Wyślij jeszcze raz</a>
+          </div>
+          <div class="row">
+            <div class="age"><b>dziś</b>9:12</div>
+            <div class="what"><div class="k">do wysłania · MA-2026-1010</div><div class="t">Zofia M. · Paczkomat WAW12A</div><div class="s">Miska „Glina” × 1</div></div>
+            <span class="chip st-new">Nowe</span>
+            <a href="#" class="act">Szczegóły</a>
+          </div>
+        </div>
+
+        <details style="margin-top:28px">
+          <summary style="cursor:pointer;font-size:13px;color:var(--lead);min-height:44px;display:flex;align-items:center">Pokaż stan pusty (gdy nic nie czeka)</summary>
+          <div class="empty" style="margin-top:10px">
+            <div class="serif">Na dziś wszystko zrobione</div>
+            <p>Nic nie czeka na wysłanie ani na odpowiedź. Nowe zamówienie pojawi się tutaj od razu po zapłacie.</p>
+          </div>
+        </details>
+      </main>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     2. ZAMÓWIENIA — MA-250 (czeka N dni, domyślnie „Do wysłania”)
+     ========================================================= -->
+<section class="screen" id="orders">
+  <p class="note"><strong>MA-250.</strong> Lista otwiera się na „Do wysłania” (zamiast „Opłacone”, które pokazywały „W realizacji” — dwie nazwy na to samo). Każdy wiersz mówi, ile czeka. Czerwona kreska z lewej, gdy minął czas wysyłki z ustawień (<code>shipping_days_to</code>).</p>
+  <div class="panel">
+    <header class="p-head">
+      <a href="#" class="wordmark"><span>mellowaura</span><span>mój panel</span></a>
+      <a href="#" class="site">Zobacz stronę</a>
+      <button class="logout">Wyloguj</button>
+    </header>
+    <div class="p-body">
+      <nav class="side js-side" aria-label="Sekcje panelu" data-current="orders"></nav>
+      <main class="p-main">
+        <div class="titlebar">
+          <div>
+            <p class="eyebrow">tylko dla Ciebie · nie widzą tego klienci</p>
+            <h1 class="h1">Zamówienia</h1>
+          </div>
+          <p class="lead">Wysyłasz w 2–5 dni roboczych (Ustawienia → Dostawa). Po tym czasie zamówienie dostaje czerwoną kreskę.</p>
+        </div>
+        <nav class="filters" aria-label="Filtry zamówień">
+          <a href="#" aria-current="page">Do wysłania (3)</a>
+          <a href="#">Wysłane (5)</a>
+          <a href="#">Zakończone (41)</a>
+          <a href="#">Problem (1)</a>
+          <a href="#" class="owner-only">Nieopłacone (2)</a>
+          <a href="#">Wszystkie</a>
+        </nav>
+        <p class="legend"><i></i>po terminie wysyłki · najstarsze na górze</p>
+        <div class="rows">
+          <div class="row late">
+            <div class="age"><b>czeka 6 dni</b>MA-2026-1004 · 23.10</div>
+            <div class="what"><div class="t">Anna K.</div><div class="s">Kubek z napisem „Dla Babci” (350 ml) × 1 · Paczkomat KRA01M</div><span class="late-tag">Termin wysyłki minął 28.10</span></div>
+            <div class="amt owner-only">149 zł</div>
+            <span class="chip st-prog">W realizacji</span>
+            <a href="#" class="act main">Spakuj i wyślij →</a>
+          </div>
+          <div class="row">
+            <div class="age"><b>czeka 3 dni</b>MA-2026-1007 · 26.10</div>
+            <div class="what"><div class="t">Ola P.</div><div class="s">Talerz deserowy × 2 · kurier · pakowanie na prezent</div></div>
+            <div class="amt owner-only">188 zł</div>
+            <span class="chip st-prog">W realizacji</span>
+            <a href="#" class="act">Szczegóły</a>
+          </div>
+          <div class="row">
+            <div class="age"><b>dziś</b>MA-2026-1010 · 9:12</div>
+            <div class="what"><div class="t">Zofia M.</div><div class="s">Miska „Glina” × 1 · Paczkomat WAW12A</div></div>
+            <div class="amt owner-only">119 zł</div>
+            <span class="chip st-new">Nowe</span>
+            <a href="#" class="act">Szczegóły</a>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     3. TELEFON — MA-249 (menu pod przyciskiem, iPhone 13: 390 × 844)
+     ========================================================= -->
+<section class="screen" id="phone">
+  <p class="note"><strong>MA-249.</strong> Na telefonie menu chowa się pod przyciskiem „Menu” z sumą liczników. Na górze nazwa bieżącego ekranu i „Wyloguj” w tej samej linii. Zamówienia widać od pierwszego ekranu. Menu otwiera się od razu, pełne, bez rozmycia (wnioski z MA-203). <code>Escape</code> zamyka, fokus wraca na przycisk.</p>
+  <div class="phones">
+    <div>
+      <div class="phone"><div class="scr">
+        <div class="m-top">
+          <button class="m-menu js-mmenu" aria-expanded="false" aria-controls="mnav1">Menu <span class="count owner-only" aria-hidden="true">7</span><span class="count helper-only" aria-hidden="true" hidden>3</span><span class="sr">, 7 spraw czeka</span></button>
+          <div class="m-title">Zamówienia</div>
+          <button class="m-out">Wyloguj</button>
+        </div>
+        <nav class="m-nav" id="mnav1" aria-label="Sekcje panelu"><div class="side js-side" data-current="orders"></div><a href="#" class="site">Zobacz stronę →</a></nav>
+        <div class="m-body">
+          <nav class="filters" aria-label="Filtry zamówień">
+            <a href="#" aria-current="page">Do wysłania (3)</a><a href="#">Wysłane (5)</a><a href="#">Zakończone (41)</a><a href="#">Problem (1)</a>
+          </nav>
+          <div class="rows">
+            <div class="row late">
+              <div class="age"><b>czeka 6 dni</b>MA-2026-1004</div>
+              <div class="what"><div class="t">Anna K. · KRA01M</div><div class="s">Kubek „Dla Babci” 350 ml × 1</div><span class="late-tag">Termin wysyłki minął 28.10</span></div>
+              <a href="#" class="act main">Spakuj i wyślij →</a>
+            </div>
+            <div class="row">
+              <div class="age"><b>czeka 3 dni</b>MA-2026-1007</div>
+              <div class="what"><div class="t">Ola P. · kurier</div><div class="s">Talerz deserowy × 2, na prezent</div></div>
+              <a href="#" class="act">Szczegóły</a>
+            </div>
+            <div class="row">
+              <div class="age"><b>dziś</b>MA-2026-1010</div>
+              <div class="what"><div class="t">Zofia M. · WAW12A</div><div class="s">Miska „Glina” × 1</div></div>
+              <a href="#" class="act">Szczegóły</a>
+            </div>
+          </div>
+        </div>
+      </div></div>
+      <div class="phone-cap">Zamknięte menu — kliknij „Menu”</div>
+    </div>
+
+    <div>
+      <div class="phone"><div class="scr">
+        <div class="m-top">
+          <button class="m-menu js-mmenu" aria-expanded="false" aria-controls="mnav2">Menu <span class="count owner-only" aria-hidden="true">7</span><span class="count helper-only" aria-hidden="true" hidden>3</span></button>
+          <div class="m-title">Na dziś</div>
+          <button class="m-out">Wyloguj</button>
+        </div>
+        <nav class="m-nav" id="mnav2" aria-label="Sekcje panelu"><div class="side js-side" data-current="today"></div><a href="#" class="site">Zobacz stronę →</a></nav>
+        <div class="m-body">
+          <div class="tiles">
+            <a href="#" class="tile"><div class="v">3</div><div class="l">do wysłania</div><div class="h late">6 dni — po terminie</div></a>
+            <a href="#" class="tile owner-only"><div class="v">2</div><div class="l">nowe pomysły</div><div class="h">do wyceny</div></a>
+            <a href="#" class="tile owner-only"><div class="v">1</div><div class="l">reklamacje</div><div class="h late">do 4.11</div></a>
+            <a href="#" class="tile owner-only"><div class="v">1</div><div class="l">niewysłane maile</div><div class="h">1 do ponowienia</div></a>
+            <a href="#" class="tile helper-only" hidden><div class="v">1</div><div class="l">problem</div><div class="h">brak sztuki</div></a>
+          </div>
+          <div class="sec-title"><h2 style="font-size:22px">Wymaga reakcji</h2></div>
+          <div class="rows">
+            <div class="row late"><div class="age"><b>6 dni</b>do wysłania</div><div class="what"><div class="t">Anna K. · MA-2026-1004</div></div><a href="#" class="act main">Wyślij →</a></div>
+            <div class="row owner-only"><div class="age"><b>5 dni</b>reklamacja</div><div class="what"><div class="t">Magda W. · do 4.11</div></div><a href="#" class="act main">Odpowiedz →</a></div>
+          </div>
+        </div>
+      </div></div>
+      <div class="phone-cap">„Na dziś” na telefonie — otwórz menu, żeby zobaczyć grupy</div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     4. NIEZAPISANE ZMIANY — MA-251
+     ========================================================= -->
+<section class="screen" id="dirty">
+  <p class="note"><strong>MA-251.</strong> Zmień coś w karcie „Dostawa”: karta dostaje znak „niezapisane”, a jej przycisk przykleja się do dołu ekranu. Potem kliknij zapis w „Kontakt” albo inną pozycję menu — pytanie pojawia się w tym samym miejscu, nie w oknie przeglądarki. Zamknięcie karty: zwykłe <code>beforeunload</code>.</p>
+  <div class="panel">
+    <header class="p-head">
+      <a href="#" class="wordmark"><span>mellowaura</span><span>mój panel</span></a>
+      <a href="#" class="site">Zobacz stronę</a>
+      <button class="logout">Wyloguj</button>
+    </header>
+    <div class="p-body">
+      <nav class="side js-side js-guard" aria-label="Sekcje panelu" data-current="settings"></nav>
+      <main class="p-main">
+        <div class="titlebar">
+          <div>
+            <p class="eyebrow">tylko dla Ciebie · nie widzą tego klienci</p>
+            <h1 class="h1">Ustawienia</h1>
+          </div>
+          <p class="lead">Każda karta zapisuje się osobno. Niezapisaną kartę poznasz po brązowym obrysie.</p>
+        </div>
+        <div class="ask js-nav-ask" role="alert" style="margin:0 0 18px">
+          <p>Masz niezapisane zmiany w „<span class="js-dirty-name">Dostawa</span>”. Zapisz je najpierw albo porzuć.</p>
+          <div class="btns"><button class="keep js-save-dirty">Zapisz „Dostawa”</button><button class="drop js-drop">Porzuć zmiany i przejdź</button><button class="js-close">Zostań tutaj</button></div>
+        </div>
+        <div class="cards">
+          <form class="card js-form" data-name="Dostawa" onsubmit="return false">
+            <div class="card-h"><h3>Dostawa</h3><span class="badge">niezapisane</span></div>
+            <div class="fields">
+              <div class="pair">
+                <label class="f">Paczkomat InPost, cena<input value="16,99 zł" inputmode="decimal"></label>
+                <label class="f">Kurier InPost, cena<input value="19,99 zł" inputmode="decimal"></label>
+              </div>
+              <label class="f">Darmowa dostawa od<input value="300 zł" inputmode="decimal"><span class="hint">Działa tylko w złotych. Puste pole — bez darmowej dostawy.</span></label>
+              <div class="pair">
+                <label class="f">Wysyłam najwcześniej po (dni roboczych)<input value="2" inputmode="numeric"></label>
+                <label class="f">Wysyłam najpóźniej po (dni roboczych)<input value="5" inputmode="numeric"><span class="hint">Po tym czasie zamówienie w panelu dostaje czerwoną kreskę.</span></label>
+              </div>
+              <label class="f">Paczkomat, z którego nadajesz<input value="KRA22M"></label>
+            </div>
+            <div class="savebar"><button class="save js-save">Zapisz dostawę — klientki zobaczą nowe ceny</button></div>
+          </form>
+
+          <form class="card js-form" data-name="Kontakt" onsubmit="return false">
+            <div class="card-h"><h3>Kontakt</h3><span class="badge">niezapisane</span></div>
+            <div class="fields">
+              <label class="f">E-mail na stronie<input value="" placeholder="uzupełnij w panelu"><span class="hint">Puste pole nie pokaże się na stronie.</span></label>
+              <label class="f">Instagram<input value="@mellowaura"></label>
+              <label class="f">Gdzie jest pracownia (bez adresu)<input value="okolice Błoń Krakowskich"></label>
+            </div>
+            <div class="ask js-ask" role="alert">
+              <p>Masz niezapisane zmiany w „<span class="js-dirty-name">Dostawa</span>”. Zapisz je najpierw albo porzuć.</p>
+              <div class="btns"><button class="keep js-save-dirty">Zapisz „Dostawa”</button><button class="drop js-drop">Porzuć zmiany w „Dostawa”</button><button class="js-close">Wróć</button></div>
+            </div>
+            <div class="savebar"><button class="save js-save">Zapisz kontakt</button></div>
+          </form>
+
+          <form class="card js-form" data-name="Pakowanie" onsubmit="return false">
+            <div class="card-h"><h3>Pakowanie na prezent</h3><span class="badge">niezapisane</span></div>
+            <div class="fields">
+              <label class="f">Cena pakowania<input value="15 zł" inputmode="decimal"></label>
+              <label class="f">Opis w kasie<textarea rows="3">Papier, sznurek i karteczka z Twoimi życzeniami.</textarea></label>
+            </div>
+            <div class="savebar"><button class="save js-save">Zapisz pakowanie</button></div>
+          </form>
+        </div>
+      </main>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     5. KASA — MA-248 (kod Paczkomatu obowiązkowy)
+     ========================================================= -->
+<section class="screen" id="checkout">
+  <p class="note"><strong>MA-248.</strong> Kod Paczkomatu jest wymagany. Znika tekst „Zostaw puste — napiszę do Ciebie” (MA-175). Przycisk nie jest wyłączony — mówi, czego brakuje. Działa z mapą i bez niej. Wyślij pusty formularz, żeby zobaczyć błąd.</p>
+  <div class="shop">
+    <div class="shop-grid">
+      <div class="shop-col">
+        <p class="variant">z mapą (INPOST_GEOWIDGET_TOKEN ustawiony)</p>
+        <form class="glass js-checkout" novalidate data-map="1">
+          <h3>Dostawa</h3>
+          <p class="sub">Wysyłam w 2–5 dni roboczych.</p>
+          <div class="opts" role="radiogroup" aria-label="Sposób dostawy">
+            <button type="button" class="opt" role="radio" aria-checked="true"><span class="dot"></span>InPost Paczkomat<span class="p">16,99 zł</span></button>
+            <button type="button" class="opt" role="radio" aria-checked="false"><span class="dot"></span>Kurier InPost<span class="p">19,99 zł</span></button>
+          </div>
+          <div class="locker">
+            <label class="f js-lf">
+              <span>Paczkomat <span class="req" aria-hidden="true">*</span></span>
+              <input name="locker_code" required aria-required="true" aria-describedby="lh1 le1" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="16" placeholder="np. KRA01M">
+              <span class="hint" id="lh1">Wybierz na mapie albo wpisz kod z aplikacji InPost.</span>
+              <span class="errmsg" id="le1" hidden>Wpisz kod paczkomatu albo wybierz go na mapie — bez niego nie wiem, dokąd wysłać paczkę.</span>
+            </label>
+            <div class="mapline">
+              <button type="button" class="glassbtn js-pick">Wybierz na mapie</button>
+              <span class="addr js-addr" aria-live="polite"></span>
+            </div>
+          </div>
+          <button class="pay js-pay">Płacę 165,99 zł</button>
+        </form>
+      </div>
+
+      <div class="shop-col">
+        <p class="variant">bez mapy (pusty token) — samo pole</p>
+        <form class="glass js-checkout" novalidate>
+          <h3>Dostawa</h3>
+          <p class="sub">Wysyłam w 2–5 dni roboczych.</p>
+          <div class="opts" role="radiogroup" aria-label="Sposób dostawy">
+            <button type="button" class="opt" role="radio" aria-checked="true"><span class="dot"></span>InPost Paczkomat<span class="p">16,99 zł</span></button>
+            <button type="button" class="opt" role="radio" aria-checked="false"><span class="dot"></span>Kurier InPost<span class="p">19,99 zł</span></button>
+          </div>
+          <div class="locker">
+            <label class="f js-lf">
+              <span>Paczkomat <span class="req" aria-hidden="true">*</span></span>
+              <input name="locker_code" required aria-required="true" aria-describedby="lh2 le2" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="16" placeholder="np. KRA01M">
+              <span class="hint" id="lh2">Kod znajdziesz w aplikacji InPost albo na <a href="https://inpost.pl/znajdz-paczkomat" style="text-decoration:underline">mapie paczkomatów</a>.</span>
+              <span class="errmsg" id="le2" hidden>Wpisz kod paczkomatu — bez niego nie wiem, dokąd wysłać paczkę.</span>
+            </label>
+          </div>
+          <button class="pay js-pay">Płacę 165,99 zł</button>
+        </form>
+      </div>
+
+      <div class="copy">
+        <p class="variant">teksty do lang/pl i lang/en (checkout::checkout)</p>
+        <table>
+          <tr><td>locker_hint</td><td><del>Nie wiesz? Zostaw puste — napiszę do Ciebie i ustalimy paczkomat</del><br>Wybierz na mapie albo wpisz kod z aplikacji InPost.<br><span style="color:var(--label)">EN: Pick one on the map or type the code from the InPost app.</span></td></tr>
+          <tr><td>locker_required</td><td>Wpisz kod paczkomatu — bez niego nie wiem, dokąd wysłać paczkę.<br><span style="color:var(--label)">EN: Enter the parcel locker code — without it I don’t know where to send your parcel.</span></td></tr>
+          <tr><td>locker_invalid</td><td>Ten kod wygląda inaczej niż kody InPost, np. KRA01M. Sprawdź go w aplikacji.<br><span style="color:var(--label)">EN: This doesn’t look like an InPost code (e.g. KRA01M). Please check it in the app.</span></td></tr>
+          <tr><td>pay_missing_locker</td><td>Wybierz paczkomat, żeby zapłacić<br><span style="color:var(--label)">EN: Choose a parcel locker to pay</span></td></tr>
+          <tr><td>locker_map_failed</td><td>Mapa paczkomatów się nie wczytała. Wpisz kod paczkomatu <del>albo zostaw puste</del>.</td></tr>
+          <tr><td>locker_to_agree</td><td><del>Napiszę do Ciebie i ustalimy</del> — do usunięcia z kasy i potwierdzenia. W mailu zostaje tylko dla starych zamówień bez kodu.</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+/* Dane menu — jak przyszłe Menu::sections() z grupami (MA-249). */
+const GROUPS = [
+  { label: 'Sprzedaż', items: [
+    { id: 'orders', label: 'Zamówienia', count: 3, countLabel: 'do wysłania', helper: true },
+    { id: 'custom', label: 'Zamówienia indywidualne', count: 2, countLabel: 'nowe' },
+    { id: 'customers', label: 'Klientki' },
+    { id: 'withdrawals', label: 'Odstąpienia' },
+    { id: 'complaints', label: 'Reklamacje', count: 1, countLabel: 'czeka na odpowiedź' },
+  ]},
+  { label: 'Oferta', items: [
+    { label: 'Produkty' }, { label: 'Kategorie' }, { label: 'Kubek z napisem' }, { label: 'Prezenty i zestawy' },
+    { label: 'Warsztaty' }, { label: 'Wypały' }, { label: 'Usługi' },
+  ]},
+  { label: 'Strona', items: [
+    { label: 'Treści' }, { label: 'Zdjęcia stron' }, { label: 'Google' }, { label: 'Maile' }, { label: 'Certyfikat unikatu' },
+  ]},
+  { label: 'Ustawienia', items: [
+    { id: 'settings', label: 'Ustawienia' }, { label: 'Konta' },
+    { id: 'failed', label: 'Niewysłane maile', count: 1, countLabel: 'do ponowienia' },
+  ]},
+];
+let role = 'owner';
+
+function renderSides() {
+  document.querySelectorAll('.js-side').forEach(nav => {
+    const cur = nav.dataset.current;
+    let html = `<a href="#" class="today${cur === 'today' ? ' on' : ''}" ${cur === 'today' ? 'aria-current="page"' : ''}>Na dziś</a>`;
+    GROUPS.forEach(g => {
+      const items = g.items.filter(i => role === 'owner' || i.helper);
+      if (!items.length) return;
+      html += `<div><h2>${g.label}</h2><ul>` + items.map(i =>
+        `<li><a href="#" data-target="${i.id || ''}" ${i.id === cur ? 'aria-current="page"' : ''}>${i.label}` +
+        (i.count ? `<span class="count" aria-hidden="true">${i.count}</span><span class="sr">, ${i.count} ${i.countLabel}</span>` : '') +
+        `</a></li>`).join('') + `</ul></div>`;
+    });
+    nav.innerHTML = html;
+  });
+}
+
+/* Przełącznik ekranów makiety */
+document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('[data-go]').forEach(x => x.setAttribute('aria-pressed', x === b));
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === b.dataset.go));
+  window.scrollTo(0, 0);
+}));
+document.querySelector('[data-go-orders]').addEventListener('click', e => { e.preventDefault(); document.querySelector('[data-go=orders]').click(); });
+
+/* Rola: Kasia albo pomoc (PanelAccess) */
+document.querySelectorAll('[data-role]').forEach(b => b.addEventListener('click', () => {
+  role = b.dataset.role;
+  document.querySelectorAll('[data-role]').forEach(x => x.setAttribute('aria-pressed', x === b));
+  document.querySelectorAll('.owner-only').forEach(el => el.hidden = role !== 'owner');
+  document.querySelectorAll('.helper-only').forEach(el => el.hidden = role === 'owner');
+  renderSides();
+}));
+renderSides();
+
+/* Menu na telefonie: aria-expanded, Escape zamyka, fokus wraca na przycisk */
+document.querySelectorAll('.js-mmenu').forEach(btn => {
+  const nav = document.getElementById(btn.getAttribute('aria-controls'));
+  const set = open => { btn.setAttribute('aria-expanded', open); nav.classList.toggle('on', open); if (open) nav.querySelector('a')?.focus(); };
+  btn.addEventListener('click', () => set(btn.getAttribute('aria-expanded') !== 'true'));
+  nav.addEventListener('keydown', e => { if (e.key === 'Escape') { set(false); btn.focus(); } });
+});
+
+/* MA-251: formularz pamięta, że jest zmieniony */
+const forms = [...document.querySelectorAll('.js-form')];
+const snapshot = f => [...f.elements].filter(el => el.name !== undefined && 'value' in el && el.tagName !== 'BUTTON').map(el => el.value).join('\u0001');
+forms.forEach(f => { f._clean = snapshot(f); f.addEventListener('input', () => f.classList.toggle('dirty', snapshot(f) !== f._clean)); });
+const dirtyForm = except => forms.find(f => f !== except && f.classList.contains('dirty'));
+const closeAsks = () => document.querySelectorAll('.ask').forEach(a => a.classList.remove('on'));
+let pendingNav = null;
+
+function toast(text) {
+  document.querySelector('.toast')?.remove();
+  const t = Object.assign(document.createElement('div'), { className: 'toast', role: 'status', textContent: text });
+  document.body.append(t); setTimeout(() => t.remove(), 2600);
+}
+function markSaved(f) { f._clean = snapshot(f); f.classList.remove('dirty'); }
+function ask(box, df) {
+  closeAsks();
+  box.querySelectorAll('.js-dirty-name').forEach(n => n.textContent = df.dataset.name);
+  box.querySelector('.js-save-dirty').textContent = `Zapisz „${df.dataset.name}”`;
+  box._dirty = df; box.classList.add('on'); box.querySelector('.js-save-dirty').focus();
+}
+
+forms.forEach(f => f.querySelector('.js-save').addEventListener('click', () => {
+  const df = dirtyForm(f);
+  const box = f.querySelector('.js-ask') || document.querySelector('.js-nav-ask');
+  if (df) { box._then = () => { markSaved(f); toast(`Zapisane: ${f.dataset.name}. Klientki już to widzą.`); }; return ask(box, df); }
+  markSaved(f); closeAsks(); toast(`Zapisane: ${f.dataset.name}. Klientki już to widzą.`);
+}));
+document.querySelectorAll('.ask').forEach(box => {
+  box.querySelector('.js-save-dirty').addEventListener('click', () => { markSaved(box._dirty); closeAsks(); toast(`Zapisane: ${box._dirty.dataset.name}.`); box._dirty.querySelector('.js-save').focus(); });
+  box.querySelector('.js-drop').addEventListener('click', () => {
+    const df = box._dirty; df.reset(); markSaved(df); closeAsks();
+    if (box._then) { box._then(); box._then = null; }
+    if (pendingNav) { toast(`Zmiany porzucone. Przechodzisz do „${pendingNav}”.`); pendingNav = null; }
+  });
+  box.querySelector('.js-close').addEventListener('click', () => { closeAsks(); box._then = null; pendingNav = null; });
+});
+document.querySelector('.js-guard').addEventListener('click', e => {
+  const a = e.target.closest('a'); if (!a) return;
+  e.preventDefault();
+  const df = dirtyForm(null);
+  if (df) { pendingNav = a.textContent.replace(/\d+.*$/, '').trim(); const box = document.querySelector('.js-nav-ask'); box._then = null; ask(box, df); box.scrollIntoView({ block: 'nearest' }); }
+});
+window.addEventListener('beforeunload', e => { if (dirtyForm(null)) { e.preventDefault(); e.returnValue = ''; } });
+
+/* MA-248: kod paczkomatu wymagany */
+const LOCKER = /^[A-Z]{3}\d{2,3}[A-Z]{0,2}$/i;
+document.querySelectorAll('.js-checkout').forEach(form => {
+  const input = form.querySelector('input[name=locker_code]');
+  const label = form.querySelector('.js-lf');
+  const err = label.querySelector('.errmsg');
+  const pay = form.querySelector('.js-pay');
+  const refresh = () => {
+    const ok = LOCKER.test(input.value.trim());
+    pay.textContent = ok ? 'Płacę 165,99 zł' : 'Wybierz paczkomat, żeby zapłacić';
+    pay.classList.toggle('missing', !ok);
+    if (ok) { label.classList.remove('err'); err.hidden = true; input.removeAttribute('aria-invalid'); }
+    return ok;
+  };
+  input.addEventListener('input', () => { input.value = input.value.toUpperCase(); refresh(); });
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!refresh()) {
+      label.classList.add('err'); err.hidden = false; input.setAttribute('aria-invalid', 'true');
+      err.textContent = input.value.trim() === '' ? err.dataset.empty : 'Ten kod wygląda inaczej niż kody InPost, np. KRA01M. Sprawdź go w aplikacji.';
+      input.focus();
+    } else toast('Tu poszłabyś do płatności.');
+  });
+  err.dataset.empty = err.textContent;
+  form.querySelector('.js-pick')?.addEventListener('click', () => {
+    input.value = 'KRA01M'; form.querySelector('.js-addr').textContent = 'Kraków, ul. Przykładowa 1 · przy sklepie'; refresh();
+  });
+  form.querySelectorAll('.opt').forEach(o => o.addEventListener('click', () => {
+    form.querySelectorAll('.opt').forEach(x => x.setAttribute('aria-checked', x === o));
+    const locker = o === form.querySelector('.opt');
+    form.querySelector('.locker').hidden = !locker;
+    if (locker) refresh(); else { pay.textContent = 'Płacę 168,99 zł'; pay.classList.remove('missing'); }
+  }));
+  refresh();
+});
+</script>
+</body>
+</html>
