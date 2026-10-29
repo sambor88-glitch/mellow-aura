@@ -15,6 +15,7 @@ Po angielsku zostaje tylko kod (sekcja „Język kodu”) i terminy techniczne z
 | Plik | Rozstrzyga |
 | --- | --- |
 | `Aura - strona glowna.html`, `Aura - ekrany.html` | wygląd i ruch (kierunek „Aura” od 22.09.2026) — przenoś do Blade, nie projektuj od nowa |
+| `Aura - panel.html` | wygląd panelu: „Na dziś”, menu w grupach z licznikami, menu na telefonie, niezapisane zmiany, wymagany Paczkomat w kasie (MA-248…MA-251) |
 | `MellowAura.dc.html` | teksty, ceny, przebieg i zachowanie każdego ekranu; jego wygląd zastąpiła Aura |
 | `Specyfikacja wdrozenia - MellowAura.dc.html` | adresy, tytuły, opisy, JSON-LD, zakres panelu, integracje |
 | `Plan wdrozenia - Laravel krok po kroku.dc.html` | stos, schemat bazy, harmonogram do 10 listopada |
