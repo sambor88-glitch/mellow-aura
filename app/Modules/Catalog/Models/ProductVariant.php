@@ -92,6 +92,16 @@ class ProductVariant extends Model
     }
 
     /**
+     * People waiting for this size to come back (MA-266).
+     *
+     * @return HasMany<StockNotification, $this>
+     */
+    public function stockNotifications(): HasMany
+    {
+        return $this->hasMany(StockNotification::class);
+    }
+
+    /**
      * @return HasMany<PriceHistory, $this>
      */
     public function priceHistory(): HasMany

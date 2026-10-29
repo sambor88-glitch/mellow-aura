@@ -66,6 +66,11 @@
                             $soldOut => ['wyprzedany — dodaj sztuki, żeby wrócił', 'text-error'],
                             default => ['widoczny w sklepie', 'text-success'],
                         };
+                        // „3 osoby czekają na powrót”, with the sizes when there are several.
+                        $waitingVariants = $product->variants->where('stock_notifications_count', '>', 0);
+                        $waiting = $waitingVariants->sum('stock_notifications_count');
+                        $waitingNote = $waiting === 0 ? null : trans_choice(':count osoba czeka|:count osoby czekają|:count osób czeka', $waiting, [], 'pl').' na powrót'
+                            .($product->variants->count() > 1 ? ' ('.$waitingVariants->map(fn ($variant) => $variant->label.': '.$variant->stock_notifications_count)->join(', ').')' : '');
                         $photoCount = match (true) {
                             $photos->isEmpty() => 'Zdjęcia — jeszcze żadnego',
                             $photos->count() === 1 => 'Jedno zdjęcie',
@@ -86,6 +91,9 @@
                             <div class="min-w-0 flex-[1_1_150px]">
                                 <div class="text-[14.5px] leading-[1.3]">{{ $product->name }}</div>
                                 <div class="mt-[3px] text-[12px] {{ $stateClass }}">{{ $product->category->name }} &middot; {{ $state }}@if ($english) &middot; {{ $english }} @endif</div>
+                                @if ($waitingNote)
+                                    <div class="mt-[3px] text-[12px] text-navy-text">{{ $waitingNote }}</div>
+                                @endif
                             </div>
                             @if ($prices->isNotEmpty())
                                 <div class="flex-none text-[14px] tabular-nums">{{ $prices->min() === $prices->max() ? Money::format($prices->min()) : 'od '.Money::format($prices->min()) }}</div>
