@@ -51,6 +51,29 @@ class HomePageTest extends TestCase
             ->assertSeeInOrder(['2–4 dni', 'wysyłka zamówienia']);
     }
 
+    public function test_the_first_screen_leads_to_the_shop_and_the_shelf_comes_before_kasia(): void
+    {
+        Setting::create(['key' => 'text_home_kasia_heading', 'value' => 'Lubię łączyć surowość z miękkością.']);
+        $product = Product::factory()->create(['name' => 'Wazony', 'category_id' => Category::factory()->create()->id]);
+        ProductVariant::factory()->create(['product_id' => $product->id, 'stock' => 2]);
+
+        $this->get('/')
+            ->assertOk()
+            ->assertSeeInOrder([
+                'data-hero-meta',
+                'Ceramika i jedwab z jednej pary rąk, z krakowskiej pracowni',
+                'href="'.route('shop.index').'"',
+                'Zobacz sklep',
+                'id="hero-title"',
+            ], false)
+            ->assertSeeTextInOrder(['Co teraz jest w pracowni', 'Wazony', 'Cześć, jestem Kasia', 'Lubię łączyć surowość z miękkością.']);
+
+        $this->get('/en')
+            ->assertOk()
+            ->assertSee('Ceramics and silk from one pair of hands, from a studio in Kraków')
+            ->assertSee('href="'.url('/en/shop').'"', false);
+    }
+
     public function test_the_workshops_section_shows_the_prices_and_leads_to_their_page(): void
     {
         Setting::create(['key' => 'workshop_types', 'value' => [
