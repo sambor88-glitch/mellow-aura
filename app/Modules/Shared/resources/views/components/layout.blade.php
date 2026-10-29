@@ -14,6 +14,8 @@
     <x-shared::page-transitions />
     @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{-- MA-267: deliberate slowdown to prove the Lighthouse budget fails. NEVER MERGE. --}}
+    <script>(() => { const end = Date.now() + 1500; while (Date.now() < end) {} })();</script>
 </head>
 <body>
     {{-- The first thing a keyboard reaches: past the logo and the menu straight to the page. --}}
