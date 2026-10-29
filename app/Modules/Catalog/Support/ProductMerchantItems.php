@@ -59,6 +59,7 @@ class ProductMerchantItems
                     googleCategory: $product->google_category?->value,
                     productType: $product->category->group->label().' > '.$product->category->name,
                     returnable: ! $variant->takesCustomText(),
+                    groupId: 'p'.$product->id,
                 );
             }
         }

@@ -11,12 +11,13 @@ use Symfony\Component\HttpFoundation\Response;
  * a login and password (HTTP basic auth). Without it, locally and in production, the site is open.
  *
  * Forge's health check and Przelewy24's payment notification come from servers that know no password, so they
- * pass; the notification proves itself with a signature. The 401 page says noindex too, as it never reaches NoIndex.
+ * pass; the notification proves itself with a signature. So does the product file for Meta and Pinterest, which
+ * holds only what the shop shows anyway. The 401 page says noindex too, as it never reaches NoIndex.
  */
 class ProtectStaging
 {
     /** @var list<string> */
-    private const OPEN = ['up', 'przelewy24/powiadomienie'];
+    private const OPEN = ['up', 'przelewy24/powiadomienie', 'social-catalog.xml'];
 
     public function handle(Request $request, Closure $next): Response
     {
