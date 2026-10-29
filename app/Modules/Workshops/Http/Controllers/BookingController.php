@@ -27,6 +27,7 @@ use App\Modules\Workshops\Enums\BookingStatus;
 use App\Modules\Workshops\Http\Requests\BookWorkshopRequest;
 use App\Modules\Workshops\Models\WorkshopBooking;
 use App\Modules\Workshops\Models\WorkshopDate;
+use App\Modules\Workshops\Support\BookingCalendar;
 use App\Modules\Workshops\Support\WorkshopTypes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -94,7 +95,26 @@ class BookingController extends Controller
             'workshopVoucher' => $workshopVoucher,
             'amountVouchers' => $workshopVoucher === null ? $this->amountVouchers($codes) : collect(),
             'location' => $settings->get('location_description'),
+            'googleCalendar' => $paid && ! $overbooked ? $calendar->googleUrl($booking) : null,
         ])->header('X-Robots-Tag', self::ROBOTS);
+    }
+
+    /**
+     * The paid booking from the session as an event for her calendar (MA-268). The site never gives the exact address,
+     * so the file has the area from the panel; the one attached to the confirmation mail has the address.
+     */
+    public function calendar(Request $request, BookingCalendar $calendar): Response
+    {
+        $number = $request->session()->get('checkout.order');
+        $booking = $number ? Order::query()->where('number', $number)->first()?->workshopBooking : null;
+
+        abort_if($booking === null || $booking->status !== BookingStatus::Confirmed || $booking->workshopDate === null, 404);
+
+        return response($calendar->ics($booking), 200, [
+            'Content-Type' => BookingCalendar::mime(),
+            'Content-Disposition' => 'attachment; filename="'.BookingCalendar::FILE_NAME.'"',
+            'X-Robots-Tag' => self::ROBOTS,
+        ]);
     }
 
     /**
@@ -314,7 +334,7 @@ class BookingController extends Controller
      * Where the booking ends: paid with her seats, paid too late for a full date, or still waiting for Przelewy24.
      * A failed payment frees the seats and goes back to the form.
      */
-    public function confirmation(Request $request, SettlePayment $settle, ReleaseBooking $release, PaymentGateway $gateway, Settings $settings): Response|RedirectResponse
+    public function confirmation(Request $request, SettlePayment $settle, ReleaseBooking $release, PaymentGateway $gateway, Settings $settings, BookingCalendar $calendar): Response|RedirectResponse
     {
         $number = $request->session()->get('checkout.order');
         $order = $number ? Order::query()->where('number', $number)->first() : null;

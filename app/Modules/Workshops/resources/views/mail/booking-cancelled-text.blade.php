@@ -19,6 +19,8 @@ Twój voucher {!! $voucher['code'] !!} wraca do Ciebie. Jego ważność minęła
 Możesz też napisać na WhatsAppie: {!! $contactPhone !!}.
 @endif
 
+Plik w załączniku usunie warsztat z Twojego kalendarza.
+
 {!! $mailTexts->signature() !!}
 
 --

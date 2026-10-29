@@ -10,8 +10,10 @@ use App\Modules\Shared\Mail\MailTexts;
 use App\Modules\Shared\Mail\QueuedMail;
 use App\Modules\Workshops\Mail\Concerns\BookingTexts;
 use App\Modules\Workshops\Models\WorkshopBooking;
+use App\Modules\Workshops\Support\BookingCalendar;
 use Carbon\CarbonImmutable;
 use Illuminate\Mail\Mailables\Address;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
@@ -19,6 +21,7 @@ use Illuminate\Mail\Mailables\Envelope;
  * Kasia cancelled a paid booking in the panel (CancelBooking): which workshop, the refund within 14 days, and
  * an answer to this mail for another date instead. A booking paid with a voucher gets the voucher back instead of
  * a refund; the mail says how it stood when it was given back, since the code may book again before the queue sends it.
+ * The attached METHOD:CANCEL file takes the event off her calendar (MA-268); a booking whose date is gone has none.
  */
 class BookingCancelled extends QueuedMail implements HasEditableTexts
 {
@@ -61,6 +64,20 @@ class BookingCancelled extends QueuedMail implements HasEditableTexts
             subject: app(MailTexts::class)->text('booking_cancelled', 'subject', $this->textFill()),
             replyTo: $contact ? [new Address($contact, __('checkout::mail.from'))] : [],
         );
+    }
+
+    /**
+     * @return list<Attachment>
+     */
+    public function attachments(): array
+    {
+        if ($this->booking->workshopDate === null) {
+            return [];
+        }
+
+        $calendar = app(BookingCalendar::class);
+
+        return [Attachment::fromData(fn () => $calendar->cancellation($this->booking), BookingCalendar::FILE_NAME)->withMime(BookingCalendar::mime('CANCEL'))];
     }
 
     public function content(): Content
