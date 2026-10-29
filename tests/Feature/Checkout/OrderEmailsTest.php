@@ -61,7 +61,7 @@ class OrderEmailsTest extends TestCase
         $mail->assertHasSubject('Zamówienie '.$order->number.' jest opłacone');
         $mail->assertHasReplyTo('kasia@example.com');
         $mail->assertSeeInOrderInHtml(['Dziękuję. Pakuję.', $order->number, 'Wazony', 'Niski 16 cm', '239,00 zł', 'Kubki z cytatem', 'JESZCZE NIE TERAZ', '79,00 zł', '318,00 zł', 'InPost Paczkomat', '16,00 zł', '334,00 zł']);
-        $mail->assertSeeInHtml('Napiszę do Ciebie i ustalimy paczkomat');
+        $mail->assertSeeInHtml('Paczkomat KRA01M');
         $mail->assertSeeInHtml('Możesz też napisać na WhatsAppie: +48 600 700 800.');
         $mail->assertDontSeeInHtml('Ktoś kupił ostatnią sztukę');
         $mail->assertSeeInText('Napis: „JESZCZE NIE TERAZ”');
@@ -175,7 +175,7 @@ class OrderEmailsTest extends TestCase
         $second = app(PlaceOrder::class)(collect([
             'v'.$holder->id => new ProductLine('v'.$holder->id, 1, $holder->load('product')),
             'v'.$vase->id => new ProductLine('v'.$vase->id, 1, $vase->load('product')),
-        ]), ['name' => 'Anna Nowak', 'email' => 'ania@example.com', 'phone' => '600100200', 'shipping_method' => 'parcel_locker', 'payment_method' => 'blik'], 1600);
+        ]), ['name' => 'Anna Nowak', 'email' => 'ania@example.com', 'phone' => '600100200', 'shipping_method' => 'parcel_locker', 'locker_code' => 'KRA01M', 'payment_method' => 'blik'], 1600);
 
         app(MarkOrderPaid::class)($first, 'test-first');
         app(MarkOrderPaid::class)($second, 'test-second');
@@ -259,7 +259,7 @@ class OrderEmailsTest extends TestCase
 
         return app(PlaceOrder::class)(collect([$line->key => $line]), [
             'name' => 'Anna Nowak', 'email' => 'ania@example.com', 'phone' => '600100200',
-            'shipping_method' => 'parcel_locker', 'payment_method' => 'blik', ...$data,
+            'shipping_method' => 'parcel_locker', 'locker_code' => 'KRA01M', 'payment_method' => 'blik', ...$data,
         ], 1600);
     }
 
@@ -273,7 +273,7 @@ class OrderEmailsTest extends TestCase
             'phone' => '+48 600 100 200',
             'email' => 'ania@example.com',
             'name' => 'Anna Nowak',
-            'shipping_method' => 'parcel_locker',
+            'shipping_method' => 'parcel_locker', 'locker_code' => 'KRA01M',
             'payment_method' => 'blik',
             'blik_code' => '123456', 'accept_terms' => '1',
             'expected_total' => 25500,

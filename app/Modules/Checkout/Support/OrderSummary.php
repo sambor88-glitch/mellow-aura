@@ -77,6 +77,7 @@ class OrderSummary
             ShippingMethods::EMAIL => __('checkout::mail.delivery.email', ['email' => $order->email]),
             'parcel_locker' => $order->locker_code
                 ? __('checkout::mail.delivery.locker', ['code' => $order->locker_code])
+                // Only orders from before the code became required (MA-248) have no locker.
                 : __('checkout::mail.delivery.locker_to_agree'),
             'courier' => __('checkout::mail.delivery.courier'),
             default => __('checkout::mail.delivery.pickup'),

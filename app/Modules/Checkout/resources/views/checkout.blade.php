@@ -83,10 +83,10 @@
                                 <p class="mt-2 text-[13px] text-error">{{ $message }}</p>
                             @enderror
 
-                            {{-- Optional: without a locker Kasia agrees on one with the customer. --}}
+                            {{-- Required: without the locker's code Kasia has nowhere to send the parcel (MA-248). --}}
                             @if ($methods->has('parcel_locker'))
                                 <div x-show="shipping === 'parcel_locker'" @if ($selectedShipping !== 'parcel_locker') x-cloak @endif class="mt-4 border-t border-line pt-4">
-                                    <x-shared::field name="locker_code" :label="$t('locker')" :hint="$t('locker_hint')" x-ref="locker" x-model="locker" x-on:input="lockerAddress = ''"
+                                    <x-shared::field name="locker_code" :label="$t('locker')" :hint="$t($config['lockerMap'] ? 'locker_hint_map' : 'locker_hint')" aria-required="true" x-ref="locker" x-model="locker" x-on:input="lockerAddress = ''"
                                                      autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="16" :placeholder="$t('locker_placeholder')" />
                                     @if ($config['lockerMap'])
                                         <div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">

@@ -311,7 +311,7 @@ class VoucherTest extends TestCase
             'phone' => '+48 600 100 200',
             'email' => 'ania@example.com',
             'name' => 'Anna Nowak',
-            'shipping_method' => 'parcel_locker',
+            'shipping_method' => 'parcel_locker', 'locker_code' => 'KRA01M',
             'payment_method' => 'blik',
             'blik_code' => '123456', 'accept_terms' => '1',
             ...$overrides,

@@ -117,7 +117,7 @@ class CertificatesTest extends TestCase
             'name' => 'Anna Nowak',
             'email' => 'ania@example.com',
             'phone' => '600100200',
-            'shipping_method' => 'parcel_locker',
+            'shipping_method' => 'parcel_locker', 'locker_code' => 'KRA01M',
             'shipping_gross' => 1600,
             'total_gross' => 50000,
             'payment_method' => PaymentMethod::Blik,

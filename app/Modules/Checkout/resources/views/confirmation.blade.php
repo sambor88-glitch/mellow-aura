@@ -77,9 +77,9 @@
                 @if ($shippingLabel)
                     <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">{{ $t('delivery') }}</span><span>{{ $shippingLabel }}</span></div>
                 @endif
-                {{-- The locker the customer picked, or the promise to pick one, so a typo can still be caught (MA-72). --}}
-                @if ($own && $order->shipping_method === 'parcel_locker')
-                    <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">{{ $t('locker') }}</span><span class="select-all">{{ $order->locker_code ?? $t('locker_to_agree') }}</span></div>
+                {{-- The locker the customer picked, so a typo can still be caught (MA-72). --}}
+                @if ($own && $order->shipping_method === 'parcel_locker' && $order->locker_code)
+                    <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">{{ $t('locker') }}</span><span class="select-all">{{ $order->locker_code }}</span></div>
                 @endif
                 @if ($parcel && ($dispatch = DispatchTime::label($settings)))
                     <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">{{ $t('dispatch') }}</span><span>{{ $dispatch }}</span></div>

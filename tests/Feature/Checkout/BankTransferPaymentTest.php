@@ -168,7 +168,7 @@ class BankTransferPaymentTest extends TestCase
 
         return app(PlaceOrder::class)(collect([$line->key => $line]), [
             'name' => 'Anna Nowak', 'email' => 'ania@example.com', 'phone' => '600100200',
-            'shipping_method' => 'parcel_locker', 'payment_method' => $paymentMethod,
+            'shipping_method' => 'parcel_locker', 'locker_code' => 'KRA01M', 'payment_method' => $paymentMethod,
         ], 1600);
     }
 

@@ -207,7 +207,7 @@ class WithdrawalTest extends TestCase
             'name' => 'Anna Nowak',
             'email' => $email,
             'phone' => '600100200',
-            'shipping_method' => 'parcel_locker',
+            'shipping_method' => 'parcel_locker', 'locker_code' => 'KRA01M',
             'shipping_gross' => 1600,
             'total_gross' => 25500,
             'payment_method' => PaymentMethod::Blik,

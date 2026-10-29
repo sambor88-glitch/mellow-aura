@@ -18,8 +18,8 @@ use Illuminate\Validation\Rule;
  * Three fields, delivery, payment and accepting the terms are required, and so is accepting each unexpected
  * feature of a product in the cart (terms §4.5). A cart of vouchers sent as PDFs has no delivery to choose.
  * The courier needs the address, and the address goes with the courier alone: the parcel locker and pickup
- * at the studio have no door to deliver to. The NIP and note are optional, but a NIP has to add up.
- * So is the parcel locker: without one Kasia agrees on it with the customer.
+ * at the studio have no door to deliver to, but the parcel locker needs its code: without one Kasia has nowhere
+ * to send the parcel (MA-248). The NIP and note are optional, but a NIP has to add up.
  */
 class PlaceOrderRequest extends FormRequest
 {
@@ -49,7 +49,7 @@ class PlaceOrderRequest extends FormRequest
             'shipping_method' => $this->needsDelivery()
                 ? ['required', Rule::in($this->container->make(ShippingMethods::class)->all()->keys())]
                 : ['exclude'],
-            'locker_code' => ['exclude_unless:shipping_method,parcel_locker', 'nullable', 'regex:/^[A-Z0-9-]{4,16}$/'],
+            'locker_code' => ['exclude_unless:shipping_method,parcel_locker', 'required', 'regex:/^[A-Z0-9-]{4,16}$/'],
             // Only the ways to pay in the currency of the basket: BLIK never takes euro.
             'payment_method' => ['required', Rule::in(array_column(PaymentMethod::for(Locales::currency()), 'value'))],
             // Without BLIK Level 0 the code is typed on Przelewy24's page, not here. Nor when vouchers pay for everything
@@ -89,6 +89,7 @@ class PlaceOrderRequest extends FormRequest
             'note.max' => $t('note_max'),
             'shipping_method.required' => $t('shipping_method'),
             'shipping_method.in' => $t('shipping_method'),
+            'locker_code.required' => $t('locker_code_required'),
             'locker_code.regex' => $t('locker_code'),
             'payment_method.required' => $t('payment_method'),
             'payment_method.in' => $t('payment_method'),
