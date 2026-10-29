@@ -14,6 +14,11 @@
     $label = 'mb-1 block text-[12.5px] text-graphite';
 @endphp
 <x-admin::layout title="Wypały" lead="Cennik na stronie wypałów na zlecenie. Z niego formularz „Zgłoś wsad” liczy klientom wycenę — zgłoszenie dostajesz mailem.">
+    {{-- „Wypały” is one section of the menu with two tabs: the batches and this price list (MA-249). --}}
+    <nav aria-label="Widok" class="mb-6 flex flex-wrap gap-2">
+        <a href="{{ route('admin.firing.requests.index') }}" class="rounded-full border border-line-strong px-[18px] py-[9px] text-[13px] text-lead hover:border-ink hover:bg-sand hover:text-ink">Zgłoszenia</a>
+        <span aria-current="page" class="rounded-full border border-ink bg-ink px-[18px] py-[9px] text-[13px] text-linen">Cennik i dzień wsadu</span>
+    </nav>
     <form id="cennik" method="post" action="{{ route('admin.firing.update') }}" novalidate class="max-w-[880px] scroll-mt-6 rounded-[4px] border border-line bg-cream p-[22px]">
         @csrf
         @method('PUT')

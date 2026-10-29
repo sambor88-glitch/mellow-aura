@@ -10,24 +10,37 @@
     @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-sand-dark">
+<body class="bg-sand-dark" x-data="{ menu: false }" x-on:keydown.escape.window="if (menu) { menu = false; $refs.menuButton.focus() }">
+    {{-- On a phone the sections hide under „Menu” and the bar names the screen, so the orders come first (MA-249). --}}
     <header class="border-b border-line">
-        <div class="mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-6 gap-y-3 px-7 py-4">
-            <a href="{{ auth()->check() ? route('admin.dashboard') : url('/') }}" class="flex flex-col gap-0.5 text-ink hover:text-ink">
+        <div class="mx-auto flex max-w-[1280px] items-center gap-x-3 px-4 py-3 md:gap-x-6 md:px-7 md:py-4">
+            @auth
+                <button type="button" x-ref="menuButton" x-on:click="menu = ! menu" aria-controls="panel-menu" aria-expanded="false" x-bind:aria-expanded="menu.toString()"
+                        x-bind:class="menu ? 'border-ink bg-ink text-linen' : 'border-line-strong bg-cream text-ink'"
+                        class="inline-flex min-h-11 flex-none items-center gap-2 rounded-full border py-0 pr-2 pl-4 text-[13.5px] md:hidden">
+                    Menu
+                    @if ($waiting = Menu::waiting())
+                        <span aria-hidden="true" class="inline-flex h-[26px] min-w-[26px] items-center justify-center rounded-full bg-rose px-2 text-[12px] font-semibold text-ink tabular-nums">{{ $waiting }}</span>
+                        <span class="sr-only">, {{ $waiting }} {{ $waiting === 1 ? 'sprawa czeka' : 'spraw czeka' }}</span>
+                    @endif
+                </button>
+                <span class="min-w-0 flex-1 truncate font-serif text-[21px] font-light md:hidden">{{ $title }}</span>
+            @endauth
+            <a href="{{ auth()->check() ? route('admin.dashboard') : url('/') }}" @class(['flex-col gap-0.5 text-ink hover:text-ink', 'hidden md:flex' => auth()->check(), 'flex' => auth()->guest()])>
                 <span class="font-serif text-[22px] leading-none tracking-[0.16em] uppercase">mellowaura</span>
                 <span class="text-[9px] tracking-[0.3em] text-label uppercase">mój panel</span>
             </a>
-            <a href="{{ url('/') }}" class="ml-auto text-[13px] text-lead hover:text-navy">Zobacz stronę</a>
+            <a href="{{ url('/') }}" @class(['ml-auto text-[13px] text-lead hover:text-navy', 'hidden md:inline' => auth()->check()])>Zobacz stronę</a>
             @auth
-                <form method="post" action="{{ route('admin.logout') }}">
+                <form method="post" action="{{ route('admin.logout') }}" class="flex-none">
                     @csrf
-                    <button class="min-h-11 px-1 text-[13px] text-label hover:text-ink">Wyloguj</button>
+                    <button class="min-h-11 min-w-11 px-1 text-[13px] text-label hover:text-ink">Wyloguj</button>
                 </form>
             @endauth
         </div>
     </header>
 
-    <div class="mx-auto max-w-[1280px] animate-ma-view px-7 pt-11 pb-24">
+    <div class="mx-auto max-w-[1280px] animate-ma-view px-4 pt-7 pb-24 md:px-7 md:pt-11">
         <div class="mb-[30px] flex flex-wrap items-end justify-between gap-5">
             <div>
                 <div class="mb-3.5 text-[10.5px] tracking-[0.3em] text-brown uppercase">tylko dla Ciebie &middot; nie widzą tego klienci</div>
@@ -40,18 +53,55 @@
 
         <div class="flex flex-wrap gap-x-10 gap-y-6">
             @auth
-                <nav aria-label="Sekcje panelu" class="flex min-w-0 flex-[0_1_200px] flex-col gap-2">
-                    @foreach (Menu::sections() as $section)
-                        <a href="{{ route($section['route']) }}" @if (request()->routeIs($section['active'])) aria-current="page" @endif
-                           @class([
-                               'rounded-full border px-[18px] py-[11px] text-[13.5px]',
-                               'border-ink bg-ink text-linen hover:text-linen' => request()->routeIs($section['active']),
-                               'border-line-strong text-lead hover:border-ink hover:bg-sand hover:text-ink' => ! request()->routeIs($section['active']),
-                           ])>{{ $section['label'] }}</a>
+                {{-- Four groups, a number next to what waits (MA-249). On a phone Escape closes it and gives the focus back to „Menu”. --}}
+                <nav id="panel-menu" aria-label="Sekcje panelu" x-bind:class="{ 'max-md:hidden': ! menu }"
+                     class="flex min-w-0 flex-col gap-[22px] max-md:hidden max-md:basis-full md:flex-[0_0_220px]">
+                    <a href="{{ route('admin.dashboard') }}" @if (request()->routeIs('admin.dashboard')) aria-current="page" @endif
+                       @class([
+                           'flex min-h-11 items-center rounded-full border px-[18px] font-serif text-[17px] font-light',
+                           'border-ink bg-ink text-linen hover:text-linen' => request()->routeIs('admin.dashboard'),
+                           'border-transparent text-lead hover:border-line-strong hover:bg-sand hover:text-ink' => ! request()->routeIs('admin.dashboard'),
+                       ])>Mój panel</a>
+                    @foreach (Menu::groups() as $group)
+                        <div>
+                            <h2 class="mb-2 ml-[18px] text-[10.5px] font-medium tracking-[0.3em] text-label uppercase">{{ $group['label'] }}</h2>
+                            <ul class="flex flex-col gap-1">
+                                @foreach ($group['sections'] as $section)
+                                    <li>
+                                        <a href="{{ route($section['route']) }}" @if (Menu::isCurrent($section)) aria-current="page" @endif
+                                           @class([
+                                               'flex min-h-11 items-center gap-2.5 rounded-full border py-1 pr-2 pl-[18px] text-[13.5px] max-md:min-h-12 max-md:text-[15px]',
+                                               'border-ink bg-ink text-linen hover:text-linen' => Menu::isCurrent($section),
+                                               'border-transparent text-lead hover:border-line-strong hover:bg-sand hover:text-ink' => ! Menu::isCurrent($section),
+                                           ])>{{ $section['label'] }}@if ($section['count'])<span aria-hidden="true" class="ml-auto inline-flex h-[26px] min-w-[26px] flex-none items-center justify-center rounded-full bg-rose px-2 text-[12px] font-semibold text-ink tabular-nums">{{ $section['count'] }}</span><span class="sr-only">, {{ $section['count'] }} {{ $section['count_label'] }}</span>@endif</a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
                     @endforeach
+                    <a href="{{ url('/') }}" class="flex min-h-12 items-center border-t border-line px-[18px] text-[14px] text-lead md:hidden">Zobacz stronę →</a>
                 </nav>
             @endauth
-            <main class="min-w-0 flex-[1_1_600px]">
+            {{-- A changed form says so and asks before its changes are lost (MA-251, resources/js/unsaved.js). --}}
+            <main class="min-w-0 flex-[1_1_600px]" @auth x-data="unsavedChanges(@js([
+                'marked' => 'Niezapisane zmiany w „:form”.',
+                'question' => 'Masz niezapisane zmiany w „:form”. Zapisz je najpierw albo porzuć.',
+                'go' => 'Wróć do „:form”',
+                'drop' => 'Porzuć zmiany w „:form”',
+                'screen' => $title,
+            ]))" @endauth>
+                @auth
+                <p x-ref="unsavedStatus" role="status" class="sr-only"></p>
+                <template x-ref="unsavedTemplate">
+                    <div role="alert" class="mb-4 rounded-[4px] border border-alert-line bg-alert px-[18px] py-4 text-[13.5px] text-alert-text">
+                        <p data-text class="mb-3"></p>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" data-go class="min-h-11 rounded-full bg-ink px-[18px] text-[13px] text-linen hover:bg-rose hover:text-ink"></button>
+                            <button type="button" data-drop class="min-h-11 rounded-full border border-alert-line bg-cream px-[18px] text-[13px] text-error hover:border-error"></button>
+                        </div>
+                    </div>
+                </template>
+                @endauth
                 {{ $slot }}
             </main>
         </div>
