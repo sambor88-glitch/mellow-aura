@@ -1,16 +1,30 @@
 @use('App\Modules\Shared\Support\Money')
+@use('App\Modules\Workshops\Support\WorkshopTypes')
 @php
     // The topic name matches the contact form's list from the panel; if it is renamed, the form simply opens without it.
     $contactUrl = route('content.contact', ['temat' => 'Warsztaty i terminy']);
     $vouchersUrl = Route::has('vouchers.index') ? route('vouchers.index') : null;
     $chip = 'rounded-full bg-sand-dark px-[11px] py-[5px] text-[11.5px] tracking-[0.1em] text-muted uppercase';
+    // The filter only helps when there is something to choose between.
+    $filtered = $workshops->filter(fn (array $workshop) => $dateCounts->has(WorkshopTypes::key($workshop)));
+    $pills = collect([['code' => null, 'label' => 'Wszystkie']])
+        ->concat($filtered->map(fn (array $workshop) => ['code' => WorkshopTypes::key($workshop), 'label' => $workshop['name']]));
 @endphp
 
 <x-shared::layout title="Warsztaty ceramiczne Kraków — kameralnie, do 6 osób"
                   description="Warsztaty ceramiczne w Krakowie: lepienie kubków, szkliwienie, sesje 1:1, dla par i rodzin. Glina, narzędzia i dwa wypały w cenie. Terminy i cennik."
                   :canonical="route('workshops.index')">
     <x-slot:head>{!! $structuredData !!}</x-slot:head>
-    <div class="mx-auto max-w-[1280px] animate-ma-view px-7 pt-14 pb-24">
+    {{-- „Terminy (n)” on a card shows that workshop's dates only; without JS the list shows them all. --}}
+    <div x-data="{
+            type: null,
+            show(code) {
+                this.type = code;
+                const list = document.getElementById('workshop-dates');
+                window.auraLenis ? window.auraLenis.scrollTo(list, { offset: -96 }) : list.scrollIntoView({ block: 'start' });
+            },
+         }"
+         class="mx-auto max-w-[1280px] animate-ma-view px-7 pt-14 pb-24">
         <div class="mb-5 text-[10.5px] tracking-[0.3em] text-brown uppercase">warsztaty &middot; cennik</div>
         <h1 class="mb-[18px] font-serif text-[length:clamp(38px,5.2vw,70px)] leading-[1.04] font-light tracking-[-0.02em]">Zanurz dłonie<br>w glinie</h1>
         @if ($lead)
@@ -25,6 +39,10 @@
         @if ($workshops->isNotEmpty())
             <div class="mb-[76px] grid grid-cols-[repeat(auto-fit,minmax(290px,1fr))] gap-[22px]">
                 @foreach ($workshops as $workshop)
+                    @php
+                        $code = WorkshopTypes::key($workshop);
+                        $count = $dateCounts->get($code, 0);
+                    @endphp
                     <article class="flex animate-ma-up flex-col rounded-[20px] border border-divider bg-cream px-7 py-[30px]" style="animation-delay: {{ $loop->index * 0.06 }}s">
                         {{-- The price under the name: beside it, it squeezed the name into two or three lines in a narrow card. --}}
                         <div class="mb-3.5 flex flex-col gap-2">
@@ -54,6 +72,13 @@
                                 @endforeach
                             </ul>
                         @endif
+                        @if ($count > 0)
+                            <a href="#workshop-dates" x-on:click.prevent="show(@js($code))"
+                               @class(['inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-ink px-6 py-3 text-[14px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]', 'mt-5' => $workshop['includes'], 'mt-auto' => ! $workshop['includes']])>Terminy ({{ $count }}) <span aria-hidden="true">↓</span></a>
+                        @else
+                            <a href="{{ $contactUrl }}"
+                               @class(['inline-flex min-h-11 items-center justify-center rounded-full border border-ink px-6 py-3 text-[14px] text-ink transition duration-300 hover:bg-ink hover:text-linen active:scale-[.97]', 'mt-5' => $workshop['includes'], 'mt-auto' => ! $workshop['includes']])>Zapytaj o termin</a>
+                        @endif
                     </article>
                 @endforeach
             </div>
@@ -63,28 +88,41 @@
             <div class="min-w-0 flex-[1_1_420px]">
                 @if ($dates->isNotEmpty())
                     <section aria-labelledby="workshop-dates" class="mb-14">
-                        <h2 id="workshop-dates" class="mb-2 font-serif text-[length:clamp(28px,3.4vw,40px)] font-light">Najbliższe terminy</h2>
+                        <h2 id="workshop-dates" class="mb-2 scroll-mt-24 font-serif text-[length:clamp(28px,3.4vw,40px)] font-light">Najbliższe terminy</h2>
                         <p class="mb-[26px] text-[15.5px] text-muted">Wybierz termin i zapłać BLIK-iem, kartą albo przez Przelewy24 — miejsce jest Twoje od razu.</p>
+                        @if ($filtered->count() > 1)
+                            {{-- Buttons only work with JS, so without it the row is not there at all. On a phone one row swiped sideways. --}}
+                            <div x-cloak role="group" aria-label="Pokaż terminy warsztatu"
+                                 class="-mx-7 mb-5 flex gap-2 overflow-x-auto px-7 pb-1 [scrollbar-width:none] md:mx-0 md:flex-wrap md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
+                                @foreach ($pills as $pill)
+                                    <button type="button" x-on:click="type = @js($pill['code'])" x-bind:aria-pressed="type === @js($pill['code'])"
+                                            class="min-h-11 shrink-0 rounded-full border border-line-strong px-[17px] text-[13px] whitespace-nowrap text-lead transition-colors duration-300 hover:border-ink hover:text-ink aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-linen">{{ $pill['label'] }}</button>
+                                @endforeach
+                            </div>
+                        @endif
                         <ul class="grid gap-3">
                             @foreach ($dates as ['date' => $date, 'workshop' => $workshop])
                                 @php
                                     $when = $date->dayLabel().', '.$date->timeLabel();
                                 @endphp
-                                <li class="flex flex-wrap items-center gap-4 rounded-[20px] border border-divider bg-cream px-[22px] py-5">
+                                <li x-show="type === null || type === @js($date->workshop_code)" class="flex flex-wrap items-center gap-4 rounded-[20px] border border-divider bg-cream px-[22px] py-5">
                                     <div class="min-w-0 flex-[1_1_200px]">
                                         <div class="font-serif text-[19px] leading-[1.2]">
                                             <time datetime="{{ $date->starts_at->toIso8601String() }}">{{ $date->dayLabel() }}</time>
                                         </div>
                                         <div class="mt-[3px] text-[13.5px] text-muted">{{ $date->timeLabel() }} &middot; {{ $workshop['name'] }}</div>
                                     </div>
-                                    <div class="flex flex-none items-center gap-5">
-                                        <div class="text-right">
+                                    {{-- Fixed widths keep „Wybieram” in one column; on a phone seats and price left, the button right, under a line. --}}
+                                    <div class="flex items-center gap-5 max-sm:w-full max-sm:justify-between max-sm:border-t max-sm:border-divider max-sm:pt-4 sm:flex-none">
+                                        <div class="sm:w-[190px] sm:text-right">
                                             <div @class(['text-[12.5px]', 'text-error' => $date->seatsLeft() <= 1, 'text-success-text' => $date->seatsLeft() > 1])>{{ $date->seatsLeftLabel() }}</div>
                                             <div class="mt-0.5 text-[14px] tabular-nums">{{ Money::format($workshop['price_gross']) }}@if ($workshop['unit_label']) / {{ $workshop['unit_label'] }}@endif</div>
                                         </div>
                                         @if ($date->seatsLeft() > 0)
                                             <a href="{{ route('workshops.booking.create', $date) }}" aria-label="Wybieram: {{ $workshop['name'] }}, {{ $when }}"
-                                               class="rounded-full border border-ink px-5 py-2.5 text-[13px] text-ink transition duration-300 hover:bg-ink hover:text-linen active:scale-[.97]">Wybieram</a>
+                                               class="inline-flex min-h-11 w-[118px] flex-none items-center justify-center rounded-full border border-ink text-[13px] text-ink transition duration-300 hover:bg-ink hover:text-linen active:scale-[.97]">Wybieram</a>
+                                        @else
+                                            <span aria-hidden="true" class="w-[118px] flex-none max-sm:hidden"></span>
                                         @endif
                                     </div>
                                 </li>

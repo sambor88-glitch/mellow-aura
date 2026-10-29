@@ -35,6 +35,8 @@ class WorkshopController extends Controller
         return view('workshops::index', [
             'workshops' => $workshops,
             'dates' => $dates,
+            // workshop code => its upcoming dates, for „Terminy (n)” on the card and the filter above the list.
+            'dateCounts' => $dates->countBy(fn (array $row) => $row['date']->workshop_code),
             'lead' => $lead,
             'structuredData' => ServiceStructuredData::for('Warsztaty ceramiczne w Krakowie', route('workshops.index'), $lead,
                 $workshops->map(fn (array $workshop) => [$workshop['name'], $workshop['price_gross'], $workshop['unit_label']]))
