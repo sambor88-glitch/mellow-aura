@@ -99,7 +99,10 @@ class FiringRequestsPanelTest extends TestCase
 
         (new BatchReported($batch))->assertSeeInHtml(route('admin.firing.requests.index').'#zgloszenie-'.$batch->id, false);
 
-        $this->actingAs(User::factory()->create())->get('/panel')->assertSeeInOrder(['Zgłoszenia do wypału', 'Wypały']);
+        // One section of the menu leads to the batches; the price list is the second tab (MA-249).
+        $this->actingAs(User::factory()->create())->get('/panel')
+            ->assertSeeInOrder(['href="'.route('admin.firing.requests.index').'"', 'Wypały'], false)
+            ->assertDontSee('href="'.route('admin.firing.edit').'"', false);
     }
 
     /**
