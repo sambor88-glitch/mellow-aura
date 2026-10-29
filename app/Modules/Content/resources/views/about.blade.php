@@ -68,7 +68,7 @@
                 <p class="mb-8 text-[16.5px] text-muted">Wszystko zrobione w zgodzie z naturą i kobiecą intuicją.</p>
                 <div class="grid grid-cols-[repeat(auto-fit,minmax(230px,1fr))] gap-[26px]">
                     @foreach ($featured as $product)
-                        <x-catalog::product-card :phone-columns="1" :product="$product" :delay="$loop->index * 0.09" :with-variant-count="false" />
+                        <x-catalog::product-card :phone-columns="1" :product="$product" :delay="$loop->index * 0.09" :with-variant-count="false" :with-button="false" />
                     @endforeach
                 </div>
             </section>

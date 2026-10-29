@@ -25,6 +25,14 @@ enum VariantKind: string
     }
 
     /**
+     * „Wybierz rozmiar” — the card's button that leads to the product page instead of guessing a size.
+     */
+    public function choose(): string
+    {
+        return __('catalog::enums.variant_kind_choose.'.$this->value);
+    }
+
+    /**
      * The choice in the panel.
      */
     public function option(): string

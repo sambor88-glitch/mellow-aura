@@ -24,4 +24,11 @@ return [
         'options_few' => ':count warianty',
         'options_many' => ':count wariantów',
     ],
+    // The card's button when the size, amount or colour has to be picked on the product page.
+    'variant_kind_choose' => [
+        'sizes' => 'Wybierz rozmiar',
+        'amounts' => 'Wybierz kwotę',
+        'colors' => 'Wybierz kolor',
+        'options' => 'Wybierz wariant',
+    ],
 ];

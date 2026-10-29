@@ -27,7 +27,8 @@ class ErrorPagesTest extends TestCase
             ->assertNotFound()
             ->assertSee('<meta name="robots" content="noindex">', false)
             ->assertSee('Tej strony tu nie ma')
-            ->assertSee('<a href="'.url('/sklep').'" class="button button-primary">Przejdź do sklepu</a>', false);
+            // The site's layout or, without a database, the standalone page — both lead to the shop (see NotFoundPageTest).
+            ->assertSeeInOrder(['href="'.url('/sklep').'"', 'Przejdź do sklepu'], false);
     }
 
     public function test_an_error_tells_the_customer_the_cart_is_safe_and_needs_no_database(): void

@@ -108,6 +108,14 @@ class ShopPageTest extends TestCase
         $this->get('/sklep/nie-ma-takiej')->assertNotFound();
     }
 
+    public function test_the_shop_breadcrumbs_name_the_page_like_the_menu_does(): void
+    {
+        $this->get('/sklep')
+            ->assertOk()
+            ->assertSeeInOrder(['aria-label="Okruszki"', 'href="'.url('/').'"', 'Strona główna', '/', '<span class="text-lead">Sklep</span>', '</nav>'], false)
+            ->assertDontSee('Produkty</span>', false);
+    }
+
     public function test_a_category_page_links_its_breadcrumbs_and_describes_them_for_search_engines(): void
     {
         $silk = Category::factory()->create(['name' => 'Jedwab', 'slug' => 'jedwab']);
@@ -115,11 +123,11 @@ class ShopPageTest extends TestCase
 
         $response = $this->get('/sklep/jedwab')
             ->assertOk()
-            ->assertSeeInOrder(['aria-label="Okruszki"', 'href="'.url('/').'"', 'Strona główna', 'href="'.url('/sklep').'"', 'Produkty', 'Jedwab'], false);
+            ->assertSeeInOrder(['aria-label="Okruszki"', 'href="'.url('/').'"', 'Strona główna', 'href="'.url('/sklep').'"', 'Sklep', 'Jedwab'], false);
 
         $breadcrumbs = $this->structuredData($response->getContent())->firstWhere('@type', 'BreadcrumbList');
 
-        $this->assertSame(['Strona główna', 'Produkty', 'Jedwab'], array_column($breadcrumbs['itemListElement'], 'name'));
+        $this->assertSame(['Strona główna', 'Sklep', 'Jedwab'], array_column($breadcrumbs['itemListElement'], 'name'));
         $this->assertSame(url('/sklep/jedwab'), $breadcrumbs['itemListElement'][2]['item']);
     }
 
