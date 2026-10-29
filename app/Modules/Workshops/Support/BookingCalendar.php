@@ -204,7 +204,7 @@ class BookingCalendar
     /** Text values escape the backslash, the comma, the semicolon and line breaks (RFC 5545, 3.3.11). */
     private function escape(string $text): string
     {
-        return str_replace(["\\", ';', ',', "\r\n", "\n", "\r"], ['\\\\', '\;', '\,', '\n', '\n', '\n'], $text);
+        return str_replace(['\\', ';', ',', "\r\n", "\n", "\r"], ['\\\\', '\;', '\,', '\n', '\n', '\n'], $text);
     }
 
     /** Lines longer than 75 bytes go on as continuation lines, never splitting a Polish letter. */
