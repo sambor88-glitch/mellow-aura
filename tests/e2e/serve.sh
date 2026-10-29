@@ -12,7 +12,8 @@ cd "$(dirname "$0")/../.."
 
 export APP_ENV=local
 export APP_DEBUG=true
-export APP_URL="http://127.0.0.1:${E2E_PORT}"
+# The Lighthouse budget puts a proxy in front and passes its address (tests/lighthouse/run.sh).
+export APP_URL="${E2E_APP_URL:-http://127.0.0.1:${E2E_PORT}}"
 export APP_LOCALES=pl,en
 export STAGING_PASSWORD=
 export DB_CONNECTION=sqlite

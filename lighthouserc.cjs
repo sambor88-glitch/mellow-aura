@@ -1,8 +1,9 @@
 // Performance budget in CI (MA-267): Lighthouse on the key pages, phone and desktop.
-// tests/lighthouse/run.sh starts the shop and runs this config once per preset (LHCI_PRESET).
-const port = process.env.E2E_PORT ?? '8123';
+// tests/lighthouse/run.sh starts the shop and runs this config once per preset (LIGHTHOUSE_PRESET;
+// not LHCI_*, which lhci reads as its own options).
+const port = process.env.LIGHTHOUSE_PORT ?? '8124';
 const base = `http://127.0.0.1:${port}`;
-const preset = process.env.LHCI_PRESET === 'desktop' ? 'desktop' : 'mobile';
+const preset = process.env.LIGHTHOUSE_PRESET === 'desktop' ? 'desktop' : 'mobile';
 
 // The median of the runs decides, so one slow run on a busy runner does not fail the job.
 const median = (assertion) => [assertion[0], { ...assertion[1], aggregationMethod: 'median-run' }];
