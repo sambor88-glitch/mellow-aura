@@ -30,8 +30,8 @@ class WorkshopsPageTest extends TestCase
             ->assertSee('<title>Warsztaty ceramiczne Kraków — kameralnie, do 6 osób</title>', false)
             ->assertSee('<link rel="canonical" href="'.route('workshops.index').'">', false)
             ->assertSeeInOrder(['warsztaty &middot; cennik', 'Zanurz dłonie<br>w glinie', 'Ceny zawierają glinę, narzędzia, szkliwa i wypały.'], false)
-            ->assertSeeInOrder(['Lepienie kubków', '220,00 zł', 'os.', '2 godziny', 'grupa do 6 osób', 'Pierwszy raz w glinie', 'Glina i wszystkie narzędzia', 'Herbata i coś słodkiego'])
-            ->assertSeeInOrder(['Warsztat dla pary', '390,00 zł', 'para', 'Rodzinnie z dzieckiem', '260,00 zł', 'dorosły + dziecko'])
+            ->assertSeeInOrder(['Lepienie kubków', '220 zł', 'os.', '2 godziny', 'grupa do 6 osób', 'Pierwszy raz w glinie', 'Glina i wszystkie narzędzia', 'Herbata i coś słodkiego'])
+            ->assertSeeInOrder(['Warsztat dla pary', '390 zł', 'para', 'Rodzinnie z dzieckiem', '260 zł', 'dorosły + dziecko'])
             ->assertSeeInOrder(['Jak się zapisać', 'Pracownia: Kraków, okolice Błoń Krakowskich. Dokładny adres podaję po zapisie.'])
             ->assertSee('href="https://wa.me/48600100200"', false)
             ->assertSee('href="'.e(route('content.contact', ['temat' => 'Warsztaty i terminy'])).'"', false)
@@ -65,8 +65,8 @@ class WorkshopsPageTest extends TestCase
             ->assertOk()
             ->assertSeeInOrder([
                 'Najbliższe terminy',
-                '<time datetime="2026-10-31T11:00:00+01:00">sob. 31 października</time>', '11:00 – 13:30 &middot; Lepienie kubków', 'ostatnie miejsce', '220,00 zł / os.',
-                'wt. 3 listopada', '18:00 – 20:00 &middot; Szkliwienie i malowanie', '5 wolnych miejsc', '160,00 zł / os.',
+                '<time datetime="2026-10-31T11:00:00+01:00">sob. 31 października</time>', '11:00 – 13:30 &middot; Lepienie kubków', 'ostatnie miejsce', '220 zł / os.',
+                'wt. 3 listopada', '18:00 – 20:00 &middot; Szkliwienie i malowanie', '5 wolnych miejsc', '160 zł / os.',
                 'sob. 7 listopada', '11:00 &middot; Lepienie kubków', '3 wolne miejsca',
                 'Jak się zapisać',
             ], false)
@@ -149,7 +149,7 @@ class WorkshopsPageTest extends TestCase
         $this->get('/warsztaty-ceramiczne-krakow')
             ->assertOk()
             ->assertSee('Koło garncarskie')
-            ->assertSee('300,00 zł')
+            ->assertSee('300 zł')
             ->assertDontSee('Bez ceny')
             ->assertDontSee('wa.me', false);
     }

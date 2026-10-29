@@ -41,7 +41,7 @@ class BundlesPageTest extends TestCase
             ->assertSee('<title>Zestawy prezentowe — ceramika i jedwab w pudełku</title>', false)
             ->assertSee('<link rel="canonical" href="'.route('bundles.index').'">', false)
             ->assertSeeInOrder(['zestawy prezentowe', "Glina i jedwab\nw jednym pudełku", 'Dobieram odcień szkliwa do tkaniny.'])
-            ->assertSeeInOrder(['Kubek i scrunchie w jednym odcieniu', 'Kubki malowane ręcznie', 'Scrunchies', '133,00 zł', 'osobno 148,00 zł · oszczędzasz 15,00 zł', 'Do koszyka'])
+            ->assertSeeInOrder(['Kubek i scrunchie w jednym odcieniu', 'Kubki malowane ręcznie', 'Scrunchies', '133 zł', 'osobno 148 zł · oszczędzasz 15 zł', 'Do koszyka'])
             ->assertDontSee('Ukryty zestaw');
 
         $this->assertStringNotContainsString('Zapakuj na prezent', $response->getContent());
@@ -51,7 +51,7 @@ class BundlesPageTest extends TestCase
     {
         $this->bundle('Kubek i scrunchie w jednym odcieniu', [['Kubki malowane ręcznie', '300 ml', 7900], ['Scrunchies', 'Średnia', 6900]]);
 
-        $content = $this->get('/zestawy-prezentowe')->assertOk()->assertSee('osobno 148,00 zł')->getContent();
+        $content = $this->get('/zestawy-prezentowe')->assertOk()->assertSee('osobno 148 zł')->getContent();
 
         $this->assertStringNotContainsString('line-through', $content);
         $this->assertStringNotContainsString('<s>', $content);
@@ -87,7 +87,7 @@ class BundlesPageTest extends TestCase
             ->assertJson(['count' => 1, 'notice' => 'Poranek we dwoje — zestaw w koszyku'])
             ->json('content');
         $this->assertStringContainsString('Zestaw: Filiżanki (Zestaw 2 szt.) + Talerze (Deserowy 18 cm)', $content);
-        $this->assertStringContainsString('269,00 zł', $content);
+        $this->assertStringContainsString('269 zł', $content);
 
         $this->patchJson('/koszyk/b'.$bundle->id, ['quantity' => 3])
             ->assertJson(['count' => 2, 'notice' => 'Z tego, co na półce, złożę 2 szt. tego zestawu — więcej zrobię na zamówienie']);
@@ -122,7 +122,7 @@ class BundlesPageTest extends TestCase
         Setting::create(['key' => 'text_gift_wrap_heading', 'value' => 'Pakowanie na prezent']);
         $vase = ProductVariant::factory()->for(Product::factory()->state(['name' => 'Wazony']))->create(['price_gross' => 23900, 'stock' => 3]);
 
-        $this->get('/zestawy-prezentowe')->assertOk()->assertSee('Zapakuj na prezent — 12,00 zł');
+        $this->get('/zestawy-prezentowe')->assertOk()->assertSee('Zapakuj na prezent — 12 zł');
 
         $this->postJson('/koszyk', ['variant_id' => $vase->id]);
         $this->postJson('/koszyk', ['type' => 'gift_wrap'])->assertJson(['count' => 2, 'notice' => 'Pakowanie na prezent — dodane do zamówienia']);
@@ -163,7 +163,7 @@ class BundlesPageTest extends TestCase
 
         // Without the vase there is nothing left to wrap: the wrapping drops out, also from the price.
         $this->deleteJson('/koszyk/v'.$vase->id)->assertJson(['count' => 1]);
-        $this->get('/zamowienie')->assertDontSee('Pakowanie na prezent')->assertSeeInOrder(['Razem', '150,00 zł']);
+        $this->get('/zamowienie')->assertDontSee('Pakowanie na prezent')->assertSeeInOrder(['Razem', '150 zł']);
     }
 
     public function test_without_a_price_there_is_no_gift_wrapping(): void

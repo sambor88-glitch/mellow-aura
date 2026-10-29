@@ -34,14 +34,14 @@ class MugPageTest extends TestCase
             ->assertSeeInOrder(['Strona główna', 'Kubek z napisem'])
             ->assertSeeInOrder(['na zamówienie', 'gotowe w 4–8 tygodni', "Kubek, który mówi to,\nco myślisz", 'Wbijam litery stemplem'])
             ->assertSeeInOrder(['Twój napis', 'name="text"', 'Wycisz stempel', 'Podziel na linie'], false)
-            ->assertSeeInOrder(['Rozmiar', 'Mały', '200 ml', '69,00 zł', 'value="Średni" x-model="size" checked', 'Średni', '300 ml', '79,00 zł', 'Duży', '400 ml', '95,00 zł'], false)
+            ->assertSeeInOrder(['Rozmiar', 'Mały', '200 ml', '69 zł', 'value="Średni" x-model="size" checked', 'Średni', '300 ml', '79 zł', 'Duży', '400 ml', '95 zł'], false)
             ->assertSeeInOrder(['Kolor wnętrza', 'value="turquoise" x-model="glaze" checked', 'Turkus', 'Kobalt', 'Ceglany', 'Grafit', 'Pudrowy róż'], false)
-            ->assertSeeInOrder(['Dodaj do koszyka', '79,00 zł', 'wysyłka gratis od 400,00 zł'])
+            ->assertSeeInOrder(['Dodaj do koszyka', '79 zł', 'wysyłka gratis od 400 zł'])
             ->assertSeeInOrder(['Zamawiasz więcej?', 'Od sześciu kubków robię rabat', 'Czego nie wbiję', 'Mowy nienawiści'])
             ->assertSee('Podgląd jest orientacyjny')
             // On a phone: a strip of the photo above the field while typing, and the price with the button at the bottom.
             ->assertSeeInOrder(['id="mug-form"', 'Twój napis', 'x-ref="mini"', 'name="text"'], false)
-            ->assertSeeInOrder(['x-data="buyBar(\'#mug-form [type=submit]\')"', '79,00 zł', 'Średni · wnętrze: Turkus', 'Wpisz napis'], false);
+            ->assertSeeInOrder(['x-data="buyBar(\'#mug-form [type=submit]\')"', '79 zł', 'Średni · wnętrze: Turkus', 'Wpisz napis'], false);
     }
 
     public function test_the_english_page_sells_the_mug_in_euro_in_english(): void
@@ -51,9 +51,9 @@ class MugPageTest extends TestCase
             ->assertSee('<title>Custom text mug — your words stamped into clay</title>', false)
             ->assertSeeInOrder(['Home', 'Custom text mug'])
             ->assertSeeInOrder(['Your text', 'Mute the stamp', 'Split into lines'])
-            ->assertSeeInOrder(['Size', 'Small', '200 ml', '€19.00', 'Medium', '300 ml', '€19.00', 'Large', '400 ml', '€19.00'])
+            ->assertSeeInOrder(['Size', 'Small', '200 ml', '€19', 'Medium', '300 ml', '€19', 'Large', '400 ml', '€19'])
             ->assertSeeInOrder(['Inside colour', 'Turquoise', 'Cobalt', 'Brick red', 'Graphite', 'Powder pink'])
-            ->assertSeeInOrder(['Add to basket', '€19.00'])
+            ->assertSeeInOrder(['Add to basket', '€19'])
             ->assertSee('data-limit="I can fit 3 lines of 16 characters"', false)
             ->assertSee('"priceCurrency":"EUR"', false)
             // Kasia's Polish texts from the panel, BLIK and free delivery stay on the Polish page.
@@ -66,10 +66,10 @@ class MugPageTest extends TestCase
             ->assertJson(['count' => 1, 'notice' => 'Your mug is in the basket'])
             ->json('content');
         $this->assertStringContainsString('“NOT TODAY” · Large 400 ml · cobalt inside', $content);
-        $this->assertStringContainsString('€19.00', $content);
+        $this->assertStringContainsString('€19', $content);
 
         // The same mug in the Polish basket costs złoty.
-        $this->get('/sklep')->assertSee('95,00 zł');
+        $this->get('/sklep')->assertSee('95 zł');
     }
 
     public function test_a_size_without_a_euro_price_stays_off_the_english_page(): void
@@ -98,7 +98,7 @@ class MugPageTest extends TestCase
             ->json('content');
         $this->assertStringContainsString('Kubek z napisem', $content);
         $this->assertStringContainsString('„NIE POWINNAM / ALE JEDNAK” · Duży 400 ml · wnętrze kobalt', $content);
-        $this->assertStringContainsString('95,00 zł', $content);
+        $this->assertStringContainsString('95 zł', $content);
 
         // The same mug again makes the line grow; another glaze is another line.
         $this->postJson('/koszyk', ['type' => 'mug', 'text' => 'NIE POWINNAM'."\n".'ALE JEDNAK', 'size' => 'Duży', 'glaze' => 'cobalt'])->assertJson(['count' => 2]);

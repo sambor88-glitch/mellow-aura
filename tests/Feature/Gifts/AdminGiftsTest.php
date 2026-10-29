@@ -47,7 +47,7 @@ class AdminGiftsTest extends TestCase
             ->get('/panel/prezenty')
             ->assertOk()
             ->assertSee('href="'.route('admin.gifts.edit').'"', false)
-            ->assertSeeInOrder(['Zestawy prezentowe', 'value="Kubek i scrunchie"', 'value="'.$mug->id.'" selected', 'value="'.$scrunchie->id.'" selected', 'name="discount_percent" value="10"', 'Tak to zobaczą klienci:', '133,00 zł', '148,00 zł'], false)
+            ->assertSeeInOrder(['Zestawy prezentowe', 'value="Kubek i scrunchie"', 'value="'.$mug->id.'" selected', 'value="'.$scrunchie->id.'" selected', 'name="discount_percent" value="10"', 'Tak to zobaczą klienci:', '133 zł', '148 zł'], false)
             ->assertSeeInOrder(['Nowy zestaw', 'Dodaj zestaw na stronę', 'Teksty na stronie zestawów', 'Vouchery'])
             ->assertDontSee('Voucher kwotowy · 150 zł');
     }

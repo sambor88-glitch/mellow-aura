@@ -7,6 +7,7 @@ use App\Modules\Catalog\Enums\CategoryGroup;
 use App\Modules\Catalog\Enums\Dimension;
 use App\Modules\Catalog\Enums\FoodContact;
 use App\Modules\Catalog\Enums\GoogleCategory;
+use App\Modules\Catalog\Enums\VariantKind;
 use App\Modules\Localization\Support\Locales;
 use App\Modules\Shared\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -24,7 +25,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 #[Fillable([
     'slug', 'name', 'category_id', 'description', 'seo_description', 'dimensions', 'care_note',
     'food_contact', 'deviation', 'size_tolerance', 'safety_warnings', 'google_category', 'show_in_google',
-    'is_published', 'is_one_off', 'is_exact_piece', 'euro_from_rate', 'sort_order', 'stamp_enabled', 'workshop_code', 'occasions', 'recipients',
+    'is_published', 'is_one_off', 'is_exact_piece', 'variant_kind', 'euro_from_rate', 'sort_order', 'stamp_enabled', 'workshop_code', 'occasions', 'recipients',
 ])]
 class Product extends Model implements HasMedia
 {
@@ -166,6 +167,7 @@ class Product extends Model implements HasMedia
             'is_published' => 'boolean',
             'is_one_off' => 'boolean',
             'is_exact_piece' => 'boolean',
+            'variant_kind' => VariantKind::class,
             'euro_from_rate' => 'boolean',
             'sort_order' => 'integer',
             'stamp_enabled' => 'boolean',

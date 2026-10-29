@@ -60,12 +60,12 @@ class OrderEmailsTest extends TestCase
         $mail = new OrderConfirmed($order);
         $mail->assertHasSubject('Zamówienie '.$order->number.' jest opłacone');
         $mail->assertHasReplyTo('kasia@example.com');
-        $mail->assertSeeInOrderInHtml(['Dziękuję. Pakuję.', $order->number, 'Wazony', 'Niski 16 cm', '239,00 zł', 'Kubki z cytatem', 'JESZCZE NIE TERAZ', '79,00 zł', '318,00 zł', 'InPost Paczkomat', '16,00 zł', '334,00 zł']);
+        $mail->assertSeeInOrderInHtml(['Dziękuję. Pakuję.', $order->number, 'Wazony', 'Niski 16 cm', '239 zł', 'Kubki z cytatem', 'JESZCZE NIE TERAZ', '79 zł', '318 zł', 'InPost Paczkomat', '16 zł', '334 zł']);
         $mail->assertSeeInHtml('Paczkomat KRA01M');
         $mail->assertSeeInHtml('Możesz też napisać na WhatsAppie: +48 600 700 800.');
         $mail->assertDontSeeInHtml('Ktoś kupił ostatnią sztukę');
         $mail->assertSeeInText('Napis: „JESZCZE NIE TERAZ”');
-        $mail->assertSeeInText('Razem: 334,00 zł');
+        $mail->assertSeeInText('Razem: 334 zł');
         $mail->assertSeeInHtml('W załącznikach jest regulamin sklepu (wersja 0.2 z 16 września 2026) i wzór formularza odstąpienia od umowy.');
     }
 
@@ -100,7 +100,7 @@ class OrderEmailsTest extends TestCase
         Mail::assertQueued(NewOrderReceived::class, fn (NewOrderReceived $mail) => $mail->hasTo('kasia@example.com'));
 
         $mail = new NewOrderReceived($order);
-        $mail->assertHasSubject('Nowe zamówienie '.$order->number.' · 261,00 zł');
+        $mail->assertHasSubject('Nowe zamówienie '.$order->number.' · 261 zł');
         $mail->assertHasReplyTo('ania@example.com', 'Anna Nowak');
         $mail->assertSeeInHtml('Kurier InPost');
         $mail->assertSeeInHtml('Długa 5, 30-001 Kraków');
@@ -157,8 +157,8 @@ class OrderEmailsTest extends TestCase
 
         $mail = new OrderAwaitingPayment($order->load('items'));
         $mail->assertHasSubject('Podsumowanie zamówienia '.$order->number);
-        $mail->assertSeeInOrderInHtml(['Dziękuję za zamówienie', $order->number, 'czeka na płatność', 'Z tą chwilą zawieramy umowę.', 'Dane do przelewu', 'Kwota: 255,00 zł', 'Tytuł: '.$order->number, 'Rachunek: 12 3456 7890 1234 5678 9012 3456', 'Odbiorca: MellowAura Katarzyna Samborska', 'Wazony', '239,00 zł', 'Płatność: Przelew tradycyjny']);
-        $mail->assertSeeInText('Kwota: 255,00 zł');
+        $mail->assertSeeInOrderInHtml(['Dziękuję za zamówienie', $order->number, 'czeka na płatność', 'Z tą chwilą zawieramy umowę.', 'Dane do przelewu', 'Kwota: 255 zł', 'Tytuł: '.$order->number, 'Rachunek: 12 3456 7890 1234 5678 9012 3456', 'Odbiorca: MellowAura Katarzyna Samborska', 'Wazony', '239 zł', 'Płatność: Przelew tradycyjny']);
+        $mail->assertSeeInText('Kwota: 255 zł');
 
         $blik = new OrderAwaitingPayment($this->placeOrder($this->variant('Patery', 'Duża', 32900, stock: 1))->load('items'));
         $blik->assertDontSeeInHtml('Dane do przelewu');
@@ -185,12 +185,12 @@ class OrderEmailsTest extends TestCase
         (new OrderConfirmed($second))
             ->assertSeeInHtml('Ktoś kupił ostatnią sztukę chwilę przed zaksięgowaniem Twojej płatności:')
             ->assertSeeInHtml('Kadzielnice (Złoty kołnierz).')
-            ->assertSeeInHtml('Za brakujące sztuki zwrócę Ci 99,00 zł — najpóźniej w ciągu 14 dni.')
-            ->assertSeeInText('Za brakujące sztuki zwrócę Ci 99,00 zł — najpóźniej w ciągu 14 dni. Jeśli wolisz podobną sztukę na zamówienie, odpisz na tego maila.');
+            ->assertSeeInHtml('Za brakujące sztuki zwrócę Ci 99 zł — najpóźniej w ciągu 14 dni.')
+            ->assertSeeInText('Za brakujące sztuki zwrócę Ci 99 zł — najpóźniej w ciągu 14 dni. Jeśli wolisz podobną sztukę na zamówienie, odpisz na tego maila.');
         (new NewOrderReceived($second))
             ->assertSeeInHtml('Brakuje na półce:')
             ->assertSeeInHtml('Kadzielnice (Złoty kołnierz, 1 szt.)')
-            ->assertSeeInHtml('Klientka dostała maila, że zwrócisz jej 99,00 zł najpóźniej w ciągu 14 dni.');
+            ->assertSeeInHtml('Klientka dostała maila, że zwrócisz jej 99 zł najpóźniej w ciągu 14 dni.');
         (new OrderConfirmed($first->refresh()))->assertDontSeeInHtml('Ktoś kupił ostatnią sztukę');
     }
 
@@ -211,11 +211,11 @@ class OrderEmailsTest extends TestCase
         $second->refresh();
         (new OrderUnavailable($second))
             ->assertHasSubject('Zamówienie '.$second->number.' — zwrócę całą wpłatę')
-            ->assertSeeInOrderInHtml(['Przepraszam — tego już nie ma na półce', 'Kadzielnice (Złoty kołnierz)', 'nie wyślę zamówienia '.$second->number, 'Zwrócę Ci całą wpłatę', '115,00 zł', 'najpóźniej w ciągu 14 dni', 'Jeśli wolisz podobną sztukę na zamówienie, odpisz na tego maila.'])
-            ->assertSeeInText('Zwrócę Ci całą wpłatę — 115,00 zł — najpóźniej w ciągu 14 dni.');
+            ->assertSeeInOrderInHtml(['Przepraszam — tego już nie ma na półce', 'Kadzielnice (Złoty kołnierz)', 'nie wyślę zamówienia '.$second->number, 'Zwrócę Ci całą wpłatę', '115 zł', 'najpóźniej w ciągu 14 dni', 'Jeśli wolisz podobną sztukę na zamówienie, odpisz na tego maila.'])
+            ->assertSeeInText('Zwrócę Ci całą wpłatę — 115 zł — najpóźniej w ciągu 14 dni.');
         (new NewOrderReceived($second))
             ->assertSeeInHtml('Nic z tego zamówienia nie zostało na półce:')
-            ->assertSeeInHtml('zwrócisz jej 115,00 zł');
+            ->assertSeeInHtml('zwrócisz jej 115 zł');
     }
 
     public function test_the_locker_the_customer_picked_is_in_her_mail_and_in_kasias(): void

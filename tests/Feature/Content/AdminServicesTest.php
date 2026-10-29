@@ -95,7 +95,7 @@ class AdminServicesTest extends TestCase
     public function test_a_reduced_service_price_is_crossed_out_only_with_the_lowest_price_from_30_days(): void
     {
         // The seeded set has a price before a reduction but no history, so nothing is crossed out.
-        $this->get('/z-twojej-apaszki')->assertSee('199,00 zł')->assertDontSee('239,00 zł');
+        $this->get('/z-twojej-apaszki')->assertSee('199 zł')->assertDontSee('239 zł');
 
         $this->actingAs($this->owner)
             ->put('/panel/uslugi/apaszka/cennik', ['prices' => [
@@ -104,7 +104,7 @@ class AdminServicesTest extends TestCase
             ->assertRedirect('/panel/uslugi/apaszka#cennik');
 
         $this->get('/z-twojej-apaszki')
-            ->assertSeeInOrder(['Zestaw: opaska i dwie scrunchies', '179,00 zł', '239,00 zł', 'Najniższa cena z 30 dni przed obniżką: 199,00 zł']);
+            ->assertSeeInOrder(['Zestaw: opaska i dwie scrunchies', '179 zł', '239 zł', 'Najniższa cena z 30 dni przed obniżką: 199 zł']);
     }
 
     public function test_the_price_list_is_saved_without_removed_and_empty_rows(): void
@@ -124,7 +124,7 @@ class AdminServicesTest extends TestCase
             ['label' => 'Zestaw', 'note' => null, 'price_gross' => 19900, 'compare_at_price' => null],
         ], Setting::find('scarf_service_prices')->value);
 
-        $this->get('/z-twojej-apaszki')->assertSeeInOrder(['Opaska', 'szeroka', '129,50 zł', 'Zestaw', '199,00 zł'])->assertDontSee('Scrunchie, rozmiar do wyboru');
+        $this->get('/z-twojej-apaszki')->assertSeeInOrder(['Opaska', 'szeroka', '129,50 zł', 'Zestaw', '199 zł'])->assertDontSee('Scrunchie, rozmiar do wyboru');
     }
 
     public function test_a_price_without_a_name_and_a_bad_price_are_explained_on_their_row(): void

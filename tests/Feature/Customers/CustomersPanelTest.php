@@ -109,7 +109,7 @@ class CustomersPanelTest extends TestCase
             ->assertOk()
             ->assertSeeInOrder([
                 'Anna Nowak', 'ania@example.com', '600 100 200',
-                'Zamówienia i warsztaty', $order->number, 'Kubek z napisem (300 ml) × 1', '255,00 zł', 'Zakończone',
+                'Zamówienia i warsztaty', $order->number, 'Kubek z napisem (300 ml) × 1', '255 zł', 'Zakończone',
                 'Zamówienia indywidualne', 'Co to ma być: Kubki z napisem', 'Kubki &lt;b&gt;na ślub&lt;/b&gt;',
                 'Zgłoszenia do wypału', 'Wypał: Wypał biskwitowy',
                 'Usuń jej dane',

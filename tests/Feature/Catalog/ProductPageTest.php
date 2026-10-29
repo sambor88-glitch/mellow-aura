@@ -45,10 +45,10 @@ class ProductPageTest extends TestCase
             ->assertSee('<title>Wazony — ceramika handmade | MellowAura</title>', false)
             ->assertSee('<link rel="canonical" href="'.url('/produkt/wazony').'">', false)
             ->assertSee('Wazon lepiony z ręki.')
-            ->assertSee('239,00 zł')
+            ->assertSee('239 zł')
             ->assertSee(['Wysokość', '24 cm', 'Grubość', '6 mm'])
             ->assertSee('Zmywarka tak, złoto tylko ręcznie')
-            ->assertSee('3–5 dni roboczych, gratis od 400,00 zł')
+            ->assertSee('3–5 dni roboczych, gratis od 400 zł')
             ->assertDontSee('ostatnia sztuka');
 
         $this->get('/produkt/wazony?wariant='.$tall->id)
@@ -65,7 +65,7 @@ class ProductPageTest extends TestCase
         $this->get('/produkt/wazony?wariant='.$low->id)
             ->assertOk()
             ->assertSee('<form id="add-to-cart"', false)
-            ->assertSeeInOrder(['x-data="buyBar"', '239,00 zł', 'Niski 16 cm', 'form="add-to-cart"', 'Do koszyka'], false);
+            ->assertSeeInOrder(['x-data="buyBar"', '239 zł', 'Niski 16 cm', 'form="add-to-cart"', 'Do koszyka'], false);
 
         $this->get('/produkt/wazony?wariant='.$sold->id)
             ->assertOk()
@@ -238,9 +238,9 @@ class ProductPageTest extends TestCase
 
         $this->get('/produkt/talerze')
             ->assertOk()
-            ->assertSee('129,00 zł')
-            ->assertSee('159,00 zł')
-            ->assertSee('Najniższa cena z 30 dni przed obniżką: 145,00 zł');
+            ->assertSee('129 zł')
+            ->assertSee('159 zł')
+            ->assertSee('Najniższa cena z 30 dni przed obniżką: 145 zł');
     }
 
     public function test_a_discount_without_an_earlier_price_is_not_shown(): void
@@ -250,7 +250,7 @@ class ProductPageTest extends TestCase
 
         $this->get('/produkt/kubki')
             ->assertOk()
-            ->assertDontSee('99,00 zł')
+            ->assertDontSee('99 zł')
             ->assertDontSee('Najniższa cena');
     }
 

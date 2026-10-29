@@ -51,12 +51,12 @@ class PaymentLinkTest extends TestCase
         $this->actingAs(User::factory()->create())
             ->get(route('admin.custom-orders.index'))
             ->assertSee('Wyślij link do płatności')
-            ->assertSee('Całość — 900,00 zł')
-            ->assertSee('Połowa — 450,00 zł');
+            ->assertSee('Całość — 900 zł')
+            ->assertSee('Połowa — 450 zł');
 
         $this->post(route('admin.custom-orders.payment-links.store', $idea), ['part' => 'full'])
             ->assertRedirect(route('admin.custom-orders.index').'#pomysl-'.$idea->id)
-            ->assertSessionHas('panel_status', 'Link na 900,00 zł poszedł do ola@example.com.');
+            ->assertSessionHas('panel_status', 'Link na 900 zł poszedł do ola@example.com.');
 
         $link = PaymentLink::sole();
         $this->assertSame([90000, PaymentLinkStatus::Open, CustomOrderStatus::Deposit], [$link->amount, $link->status, $idea->fresh()->status]);
@@ -65,12 +65,12 @@ class PaymentLinkTest extends TestCase
 
         Mail::assertQueued(PaymentLinkSent::class, function (PaymentLinkSent $mail) use ($link) {
             $mail->assertSeeInHtml($link->url())
-                ->assertSeeInHtml('Płacę 900,00 zł')
+                ->assertSeeInHtml('Płacę 900 zł')
                 ->assertSeeInText('Link jest ważny do 9 listopada.')
                 // The quote is the amount, so it is not repeated.
                 ->assertDontSeeInHtml('Wycena');
 
-            return $mail->hasTo('ola@example.com') && $mail->envelope()->subject === 'Link do płatności: 900,00 zł';
+            return $mail->hasTo('ola@example.com') && $mail->envelope()->subject === 'Link do płatności: 900 zł';
         });
 
         $this->get(route('admin.custom-orders.index'))
@@ -108,7 +108,7 @@ class PaymentLinkTest extends TestCase
             ->assertSee('value="blik"', false)
             ->assertSee('value="card"', false)
             ->assertDontSee('value="bank_transfer"', false)
-            ->assertSee('Płacę 900,00 zł');
+            ->assertSee('Płacę 900 zł');
 
         $this->post(route('custom-orders.payment.store', $link->token), $this->form())
             ->assertRedirect(route('custom-orders.payment.confirmation'));
@@ -118,7 +118,7 @@ class PaymentLinkTest extends TestCase
             $order->payment_status, $order->status, $order->shipping_method, $order->shipping_gross, $order->total_gross, $order->currency,
         ]);
         $this->assertSame(['Ola', 'ola@example.com', '600100200'], [$order->name, $order->email, $order->phone]);
-        $this->assertSame(['Zamówienie indywidualne: Kubki z napisem', 'Wpłata do wyceny 900,00 zł', 1, 90000, true], [
+        $this->assertSame(['Zamówienie indywidualne: Kubki z napisem', 'Wpłata do wyceny 900 zł', 1, 90000, true], [
             $order->items[0]->product_name, $order->items[0]->variant_label, $order->items[0]->quantity, $order->items[0]->unit_price_gross, $order->items[0]->is_made_to_order,
         ]);
         $this->assertNotNull($order->terms_accepted_at);
@@ -129,13 +129,13 @@ class PaymentLinkTest extends TestCase
             ->assertHeader('X-Robots-Tag', 'noindex, nofollow')
             ->assertSee('Dziękuję, zaczynam')
             ->assertSee($order->number)
-            ->assertSee('900,00 zł');
+            ->assertSee('900 zł');
 
         // Przelewy24 sends everyone back to the shop's confirmation; a payment for an idea moves on to its own.
         $this->get(route('checkout.confirmation'))->assertRedirect(route('custom-orders.payment.confirmation'));
         $this->assertSame(['wrap' => ['type' => 'gift_wrap', 'quantity' => 1]], session('cart'));
 
-        $this->get($link->url())->assertSee('Ta wpłata już jest')->assertDontSee('Płacę 900,00 zł');
+        $this->get($link->url())->assertSee('Ta wpłata już jest')->assertDontSee('Płacę 900 zł');
         $this->actingAs(User::factory()->create())
             ->get(route('admin.custom-orders.index', ['status' => 'in_progress']))
             ->assertSee('Opłacony 26.10')
@@ -182,7 +182,7 @@ class PaymentLinkTest extends TestCase
 
         $this->assertSame(PaymentStatus::Failed, Order::sole()->payment_status);
         $this->assertSame([PaymentLinkStatus::Open, CustomOrderStatus::Deposit], [$link->fresh()->status, $link->customOrderRequest->fresh()->status]);
-        $this->get($link->url())->assertSee('Płacę 900,00 zł');
+        $this->get($link->url())->assertSee('Płacę 900 zł');
     }
 
     public function test_a_code_waiting_for_the_bank_goes_to_the_blik_page_and_back_to_the_link(): void
@@ -239,7 +239,7 @@ class PaymentLinkTest extends TestCase
         app(MarkOrderPaid::class)($late, 'test-late');
 
         $this->assertSame([PaymentStatus::Paid, OrderStatus::Problem], [$late->fresh()->payment_status, $late->fresh()->status]);
-        $this->assertSame('Wpłaty przekraczają wycenę 900,00 zł. Zwróć nadpłatę.', $late->fresh()->problem_note);
+        $this->assertSame('Wpłaty przekraczają wycenę 900 zł. Zwróć nadpłatę.', $late->fresh()->problem_note);
         $this->assertSame([PaymentLinkStatus::Paid, 180000], [$old->fresh()->status, $idea->fresh()->paidAmount()]);
         Mail::assertSent(Alert::class, fn (Alert $alert) => $alert->hasTo('alerty@example.com'));
 

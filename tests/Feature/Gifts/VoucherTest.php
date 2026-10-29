@@ -115,7 +115,7 @@ class VoucherTest extends TestCase
         $mail = new VouchersIssued($order, $vouchers->load('orderItem'));
         $mail->assertHasSubject('Vouchery z MellowAury');
         $mail->assertSeeInOrderInHtml(['Twoje vouchery', 'Voucher na warsztat', 'dla: Ania', 'od: Kasia', 'ważny do 20 listopada 2027', $vouchers[0]->code]);
-        $mail->assertDontSeeInHtml('420,00 zł');
+        $mail->assertDontSeeInHtml('420 zł');
         $mail->assertSeeInText($vouchers[1]->code.': Voucher na warsztat, Dla dwóch osób, dla: Ania, od: Kasia, ważny do 20 listopada 2027');
         $this->assertCount(2, $mail->attachments());
 
@@ -162,7 +162,7 @@ class VoucherTest extends TestCase
             ->assertOk()
             ->assertDontSee('name="shipping_method"', false)
             ->assertDontSee('name="street"', false)
-            ->assertSeeInOrder(['Dostawa', 'Mailem, w PDF', 'gratis', 'Razem', '420,00 zł'])
+            ->assertSeeInOrder(['Dostawa', 'Mailem, w PDF', 'gratis', 'Razem', '420 zł'])
             ->assertDontSee('Ceramikę zawijam');
 
         // The parcel locker sent with the form means nothing for a PDF and costs nothing.
