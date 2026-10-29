@@ -61,7 +61,7 @@
                            'flex min-h-11 items-center rounded-full border px-[18px] font-serif text-[17px] font-light',
                            'border-ink bg-ink text-linen hover:text-linen' => request()->routeIs('admin.dashboard'),
                            'border-transparent text-lead hover:border-line-strong hover:bg-sand hover:text-ink' => ! request()->routeIs('admin.dashboard'),
-                       ])>Mój panel</a>
+                       ])>Na dziś</a>
                     @foreach (Menu::groups() as $group)
                         <div>
                             <h2 class="mb-2 ml-[18px] text-[10.5px] font-medium tracking-[0.3em] text-label uppercase">{{ $group['label'] }}</h2>

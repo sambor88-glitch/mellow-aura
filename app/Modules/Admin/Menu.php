@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
  * sees only the orders.
  *
  * Four sections count what waits for Kasia. Only the sections this account sees are counted, once per request: the layout
- * and the dashboard both ask.
+ * asks for the groups and for their sum on the phone's „Menu”.
  */
 class Menu
 {

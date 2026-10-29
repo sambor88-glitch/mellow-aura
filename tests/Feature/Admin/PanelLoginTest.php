@@ -39,7 +39,7 @@ class PanelLoginTest extends TestCase
 
         $this->get('/panel')
             ->assertOk()
-            ->assertSee('Mój panel')
+            ->assertSee('Na dziś')
             ->assertSee('href="'.route('admin.orders.index').'"', false)
             ->assertSee('Wyloguj');
 
