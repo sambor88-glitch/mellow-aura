@@ -59,7 +59,7 @@ class WorkshopAmountVoucherTest extends TestCase
             ->assertOk()
             ->assertSee('name="vouchers[]" value="'.$voucher->code.'"', false)
             ->assertSee('name="expected_vouchers" value="22000"', false)
-            ->assertSeeInOrder(['Voucher '.$voucher->code, 'zostanie na nim 80,00 zł', 'Do zapłaty', '0,00 zł', 'Voucher pokrywa całość', 'Zapisuję się, płaci voucher']);
+            ->assertSeeInOrder(['Voucher '.$voucher->code, 'zostanie na nim 80 zł', 'Do zapłaty', '0 zł', 'Voucher pokrywa całość', 'Zapisuję się, płaci voucher']);
 
         // No BLIK code: there is nothing left to pay.
         $this->post(route('workshops.booking.store', $date), $this->form(['vouchers' => [$voucher->code], 'expected_vouchers' => 22000, 'blik_code' => '']))
@@ -77,8 +77,8 @@ class WorkshopAmountVoucherTest extends TestCase
             ->assertOk()
             ->assertSee('Do zobaczenia w pracowni')
             ->assertSee('"method":"voucher"', false);
-        (new BookingConfirmed($booking))->assertSeeInHtml('Liczba osób: 1 · zapłacone voucherem 220,00 zł');
-        (new NewBookingReceived($booking))->assertSeeInText($order->number.' · zapłacone voucherem 220,00 zł.');
+        (new BookingConfirmed($booking))->assertSeeInHtml('Liczba osób: 1 · zapłacone voucherem 220 zł');
+        (new NewBookingReceived($booking))->assertSeeInText($order->number.' · zapłacone voucherem 220 zł.');
     }
 
     public function test_a_voucher_that_covers_part_leaves_the_rest_for_the_gateway_and_is_spent_on_payment(): void
@@ -98,8 +98,8 @@ class WorkshopAmountVoucherTest extends TestCase
 
         $booking = WorkshopBooking::sole();
         $this->assertSame([BookingStatus::Confirmed, RedemptionStatus::Used, 0], [$booking->status, VoucherRedemption::sole()->status, $voucher->fresh()->balance_minor]);
-        (new BookingConfirmed($booking))->assertSeeInHtml('Liczba osób: 2 · zapłacone 340,00 zł i voucherem 100,00 zł');
-        (new NewBookingReceived($booking))->assertSeeInText($order->number.' · zapłacone 340,00 zł i voucherem 100,00 zł, BLIK.');
+        (new BookingConfirmed($booking))->assertSeeInHtml('Liczba osób: 2 · zapłacone 340 zł i voucherem 100 zł');
+        (new NewBookingReceived($booking))->assertSeeInText($order->number.' · zapłacone 340 zł i voucherem 100 zł, BLIK.');
     }
 
     public function test_a_refused_payment_gives_the_seats_and_the_money_back_to_the_voucher(): void
@@ -149,7 +149,7 @@ class WorkshopAmountVoucherTest extends TestCase
             ->assertSessionHasInput('vouchers', [$first->code, $second->code]);
         $this->get(route('workshops.booking.create', $date))
             ->assertSee('name="expected_vouchers" value="30000"', false)
-            ->assertSeeInOrder(['Voucher '.$first->code, 'cały idzie na ten zapis', 'Voucher '.$second->code, 'Do zapłaty', '140,00 zł', 'Rezerwuję i płacę']);
+            ->assertSeeInOrder(['Voucher '.$first->code, 'cały idzie na ten zapis', 'Voucher '.$second->code, 'Do zapłaty', '140 zł', 'Rezerwuję i płacę']);
 
         $this->post(route('workshops.booking.voucher.add', $date), ['voucher_code' => $first->code, 'vouchers' => [$first->code]])
             ->assertSessionHasErrors(['voucher_code' => 'Ten voucher już odjęłam od sumy.']);
@@ -175,13 +175,13 @@ class WorkshopAmountVoucherTest extends TestCase
         $this->assertSame(BookingStatus::Cancelled, $booking->fresh()->status);
         $this->assertSame([10000, RedemptionStatus::Returned], [$voucher->fresh()->balance_minor, VoucherRedemption::sole()->status]);
         $this->assertSame(OrderStatus::Problem, $order->status);
-        $this->assertSame('Zapis na warsztat anulowany w panelu. Zwróć wpłatę 120,00 zł, potem zmień status na „Zakończone”. 100,00 zł z vouchera wróciło już na jego saldo.', $order->problem_note);
+        $this->assertSame('Zapis na warsztat anulowany w panelu. Zwróć wpłatę 120 zł, potem zmień status na „Zakończone”. 100 zł z vouchera wróciło już na jego saldo.', $order->problem_note);
 
         Mail::assertQueued(BookingCancelled::class);
         (new BookingCancelled($booking->fresh()))
-            ->assertSeeInHtml('Zwrócę Ci wpłatę, 120,00 zł, najpóźniej w ciągu 14 dni')
-            ->assertSeeInHtml('Kwota z vouchera, 100,00 zł, wróciła już na voucher')
-            ->assertSeeInText('Zwrócę Ci wpłatę, 120,00 zł');
+            ->assertSeeInHtml('Zwrócę Ci wpłatę, 120 zł, najpóźniej w ciągu 14 dni')
+            ->assertSeeInHtml('Kwota z vouchera, 100 zł, wróciła już na voucher')
+            ->assertSeeInText('Zwrócę Ci wpłatę, 120 zł');
     }
 
     public function test_cancelling_a_booking_the_voucher_paid_in_full_returns_no_money(): void
@@ -197,7 +197,7 @@ class WorkshopAmountVoucherTest extends TestCase
         $this->assertSame(OrderStatus::Completed, $booking->order->fresh()->status);
         (new BookingCancelled($booking->fresh()))
             ->assertDontSeeInHtml('Zwrócę Ci')
-            ->assertSeeInHtml('Kwota z vouchera, 220,00 zł, wróciła już na voucher');
+            ->assertSeeInHtml('Kwota z vouchera, 220 zł, wróciła już na voucher');
     }
 
     public function test_a_late_payment_for_a_full_date_tells_kasia_to_give_the_voucher_part_back(): void
@@ -216,12 +216,12 @@ class WorkshopAmountVoucherTest extends TestCase
         $late = $late->fresh();
         $this->assertSame(BookingStatus::Overbooked, WorkshopBooking::query()->where('order_id', $late->id)->sole()->status);
         $this->assertSame(OrderStatus::Problem, $late->status);
-        $this->assertStringContainsString('Zwróć wpłatę 120,00 zł i oddaj 100,00 zł na voucher albo zaproponuj inny termin.', $late->problem_note);
+        $this->assertStringContainsString('Zwróć wpłatę 120 zł i oddaj 100 zł na voucher albo zaproponuj inny termin.', $late->problem_note);
         // The voucher part stays spent until Kasia decides: a seat on another date keeps it.
         $this->assertSame([0, RedemptionStatus::Used], [$voucher->fresh()->balance_minor, VoucherRedemption::sole()->status]);
 
         (new BookingOverbooked(WorkshopBooking::query()->where('order_id', $late->id)->sole()))
-            ->assertSeeInHtml('Zwrócę Ci wpłatę, 120,00 zł, najpóźniej w ciągu 14 dni. Kwotę z vouchera, 100,00 zł, oddam na voucher.');
+            ->assertSeeInHtml('Zwrócę Ci wpłatę, 120 zł, najpóźniej w ciągu 14 dni. Kwotę z vouchera, 100 zł, oddam na voucher.');
     }
 
     private function date(int $seats): WorkshopDate

@@ -88,6 +88,17 @@
         @endforelse
     </section>
 
+    @if ($records->stockNotifications->isNotEmpty())
+        <section aria-labelledby="czeka" class="mb-10">
+            <h2 id="czeka" class="{{ $heading }}">Czeka na powrót</h2>
+            @foreach ($records->stockNotifications as $notification)
+                <div class="{{ $card }} mb-2.5 text-[13.5px]">
+                    <span class="text-hint tabular-nums">{{ $notification->created_at->format('j.m.Y') }}</span> · {{ $notification->variant?->product?->name }}{{ $notification->variant?->label ? ' ('.$notification->variant->label.')' : '' }} · {{ $notification->locale === 'pl' ? 'mail po polsku' : 'mail po angielsku' }}
+                </div>
+            @endforeach
+        </section>
+    @endif
+
     @if ($records->withdrawals->isNotEmpty() || $records->receivedComplaints->isNotEmpty() || $records->complaints->isNotEmpty())
         <section aria-labelledby="sprawy" class="mb-10">
             <h2 id="sprawy" class="{{ $heading }}">Odstąpienia i reklamacje</h2>

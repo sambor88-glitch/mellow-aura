@@ -22,6 +22,7 @@ final readonly class Customer
         public int $customOrders,
         public int $firingRequests,
         public int $cases,
+        public int $stockNotifications,
         public Carbon $lastSeenAt,
     ) {}
 
@@ -36,6 +37,7 @@ final readonly class Customer
             [$this->customOrders, '{1} :count zamówienie indywidualne|[2,4] :count zamówienia indywidualne|[5,*] :count zamówień indywidualnych'],
             [$this->firingRequests, '{1} :count wypał|[2,4] :count wypały|[5,*] :count wypałów'],
             [$this->cases, '{1} :count odstąpienie lub reklamacja|[2,4] :count odstąpienia lub reklamacje|[5,*] :count odstąpień lub reklamacji'],
+            [$this->stockNotifications, '{1} czeka na :count rzecz|[2,*] czeka na :count rzeczy'],
         ])
             ->filter(fn (array $count) => $count[0] > 0)
             ->map(fn (array $count) => trans_choice($count[1], $count[0]))

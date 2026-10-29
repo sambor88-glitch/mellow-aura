@@ -27,6 +27,7 @@ return [
     'all' => 'All',
     'favorites_chip' => 'Saved',
     'sort' => 'Sort',
+    'sort_button' => 'Sort: :option',
     'sort_featured' => 'Featured',
     'sort_price_asc' => 'Price: low to high',
     'sort_price_desc' => 'Price: high to low',
@@ -40,4 +41,6 @@ return [
     'count' => ':shown of :total pieces on the shelf',
     'category_link' => ':category in the shop',
     'ready_heading' => 'Ready to ship from the shop',
+    'card_add' => 'Add to basket',
+    'card_lettering' => 'Choose the lettering',
 ];

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Catalog;
 
+use App\Modules\Catalog\Enums\VariantKind;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
@@ -34,13 +35,35 @@ class ShopPageTest extends TestCase
             ->assertSee('<link rel="canonical" href="'.url('/sklep').'">', false)
             ->assertSee('Kubki malowane ręcznie')
             ->assertSee('href="'.route('product.show', $painted).'"', false)
-            ->assertSee('od 69,00 zł')
+            ->assertSee('od 69 zł')
             ->assertSee('2 warianty')
             ->assertSee('Voucher kwotowy')
-            ->assertSee('150,00 zł')
+            ->assertSee('150 zł')
             ->assertDontSee('Szkic miski')
             ->assertDontSee('Wazon sprzedany')
             ->assertSee('2 z 2 produktów na półce');
+    }
+
+    public function test_the_card_counts_variants_in_the_words_picked_in_the_panel(): void
+    {
+        $mugs = Category::factory()->create(['name' => 'Kadzielnice i podstawki', 'slug' => 'kadzielnice-i-podstawki']);
+        $this->product('Miski', $mugs, [6900, 7900, 8900], ['variant_kind' => VariantKind::Sizes]);
+        $this->product('Voucher kwotowy', $mugs, [15000, 25000, 40000], ['variant_kind' => VariantKind::Amounts], stock: null);
+        $this->product('Scrunchies', $mugs, [4900, 4900, 4900, 4900, 4900], ['variant_kind' => VariantKind::Colors]);
+        $this->product('Zestaw filiżanek', $mugs, [19900, 29900]);
+        $this->product('Kadzielnica', $mugs, [5900], ['variant_kind' => VariantKind::Sizes]);
+
+        $this->get('/sklep')
+            ->assertOk()
+            ->assertSeeInOrder(['Miski', '3 rozmiary'])
+            ->assertSeeInOrder(['Voucher kwotowy', '3 kwoty'])
+            ->assertSeeInOrder(['Scrunchies', '5 kolorów'])
+            // Nothing picked: sets, lettering and seats are counted as variants.
+            ->assertSeeInOrder(['Zestaw filiżanek', '2 warianty'])
+            ->assertDontSee('1 rozmiar')
+            ->assertDontSee('3 warianty')
+            // The category fits one line on a phone with tighter letters.
+            ->assertSee('tracking-[0.2em] text-label uppercase max-sm:tracking-[0.06em]">Kadzielnice i podstawki', false);
     }
 
     public function test_hearts_save_favourites_in_the_browser_and_the_shop_filters_its_own_cards(): void
@@ -85,6 +108,14 @@ class ShopPageTest extends TestCase
         $this->get('/sklep/nie-ma-takiej')->assertNotFound();
     }
 
+    public function test_the_shop_breadcrumbs_name_the_page_like_the_menu_does(): void
+    {
+        $this->get('/sklep')
+            ->assertOk()
+            ->assertSeeInOrder(['aria-label="Okruszki"', 'href="'.url('/').'"', 'Strona główna', '/', '<span class="text-lead">Sklep</span>', '</nav>'], false)
+            ->assertDontSee('Produkty</span>', false);
+    }
+
     public function test_a_category_page_links_its_breadcrumbs_and_describes_them_for_search_engines(): void
     {
         $silk = Category::factory()->create(['name' => 'Jedwab', 'slug' => 'jedwab']);
@@ -92,11 +123,11 @@ class ShopPageTest extends TestCase
 
         $response = $this->get('/sklep/jedwab')
             ->assertOk()
-            ->assertSeeInOrder(['aria-label="Okruszki"', 'href="'.url('/').'"', 'Strona główna', 'href="'.url('/sklep').'"', 'Produkty', 'Jedwab'], false);
+            ->assertSeeInOrder(['aria-label="Okruszki"', 'href="'.url('/').'"', 'Strona główna', 'href="'.url('/sklep').'"', 'Sklep', 'Jedwab'], false);
 
         $breadcrumbs = $this->structuredData($response->getContent())->firstWhere('@type', 'BreadcrumbList');
 
-        $this->assertSame(['Strona główna', 'Produkty', 'Jedwab'], array_column($breadcrumbs['itemListElement'], 'name'));
+        $this->assertSame(['Strona główna', 'Sklep', 'Jedwab'], array_column($breadcrumbs['itemListElement'], 'name'));
         $this->assertSame(url('/sklep/jedwab'), $breadcrumbs['itemListElement'][2]['item']);
     }
 
@@ -135,6 +166,52 @@ class ShopPageTest extends TestCase
 
         $this->get('/sklep?sort=price_asc')->assertSeeInOrder(['Scrunchies', 'Patery']);
         $this->get('/sklep?sort=price_desc')->assertSeeInOrder(['Patery', 'Scrunchies']);
+    }
+
+    public function test_the_made_for_you_shortcuts_follow_the_products(): void
+    {
+        $category = Category::factory()->create();
+        $this->product('Patery', $category, [32900]);
+
+        // The grid comes first, so a phone shows products on its first screen (MA-258).
+        $this->get('/sklep')
+            ->assertOk()
+            ->assertSeeInOrder([
+                'Patery',
+                '1 z 1 produktów na półce',
+                '<h2 id="shop-shortcuts"',
+                'Zrobię dla Ciebie',
+                'href="'.route('mug.index').'"',
+            ], false);
+    }
+
+    public function test_sorting_is_a_list_of_links_on_a_phone_and_a_row_on_a_computer(): void
+    {
+        $this->get('/sklep?sort=price_asc&q=kubek')
+            ->assertOk()
+            ->assertSeeInOrder([
+                '<details',
+                'Sortuj: Cena rosnąco',
+                'href="'.url('/sklep?q=kubek').'"',
+                'href="'.url('/sklep?q=kubek&amp;sort=price_asc').'"  aria-current="true"',
+                '</details>',
+                // The same options as a row for a wide screen.
+                'Sortuj</span>',
+                'href="'.url('/sklep?q=kubek').'"',
+                'href="'.url('/sklep?q=kubek&amp;sort=price_asc').'"  aria-current="true"',
+                'href="'.url('/sklep?q=kubek&amp;sort=name').'"',
+            ], false)
+            ->assertDontSee('onclick', false);
+    }
+
+    public function test_the_english_shop_sorts_and_shows_its_shortcuts_in_english(): void
+    {
+        $this->get('/en/shop')
+            ->assertOk()
+            ->assertSee('Sort: Featured')
+            ->assertSee('href="'.url('/en/shop?sort=price_desc').'"', false)
+            ->assertSeeInOrder(['0 of 0 pieces on the shelf', 'Made for you'])
+            ->assertDontSee('Sortuj');
     }
 
     public function test_the_footer_shows_settings_and_skips_empty_ones(): void

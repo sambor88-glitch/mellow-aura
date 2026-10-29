@@ -45,7 +45,7 @@ class GiftFinderTest extends TestCase
             ->assertSeeInOrder(['Dla kogo', 'Dla każdego', 'Dla niej', 'Dla niego / taty', 'Dla pary'])
             ->assertSeeInOrder(['Okazja', 'Wszystkie okazje', 'Urodziny', 'Dzień Matki', 'Ślub', 'Parapetówka', 'Rocznica', 'Święta', 'Dla siebie'])
             ->assertSeeInOrder(['Budżet', 'Każdy budżet', 'do 100 zł', '100–200 zł', '200–400 zł', 'powyżej 400 zł'])
-            ->assertSeeInOrder(['2 pomysły', 'Kubki malowane ręcznie', 'od 69,00 zł', 'Do koszyka', 'Wazony', '239,00 zł'])
+            ->assertSeeInOrder(['2 pomysły', 'od 69 zł', 'Kubki malowane ręcznie', 'Wybierz wariant', '239 zł', 'Wazony', 'Do koszyka'])
             ->assertDontSee('Ukryte');
     }
 
@@ -84,19 +84,6 @@ class GiftFinderTest extends TestCase
             ->assertOk()
             ->assertSeeInOrder(['Nic nie pasuje do tych warunków', 'Poluzuj budżet albo napisz do mnie', 'href="'.route('custom-orders.index').'"', 'Napisz, czego szukasz'], false)
             ->assertSee('href="'.route('gifts.index').'"', false);
-    }
-
-    public function test_the_button_adds_the_cheapest_size_on_the_shelf_and_a_mug_with_your_text_goes_to_its_page(): void
-    {
-        $vases = $this->product('Wazony', [23900, 26900, 29900], ['wedding'], ['for_her']);
-        $vases->variants[0]->update(['stock' => 0]);
-        $stamped = $this->product('Kubek z Twoim tekstem', [7900], ['birthday'], ['for_her'], product: ['stamp_enabled' => true], stock: null);
-
-        $page = $this->get('/prezenty')->assertOk();
-
-        $page->assertSee('name="variant_id" value="'.$vases->variants[1]->id.'"', false);
-        $page->assertSeeInOrder(['Kubek z Twoim tekstem', 'Wybierz napis'])->assertSee('href="'.route('product.show', $stamped).'"', false);
-        $this->postJson('/koszyk', ['variant_id' => $vases->variants[1]->id])->assertJson(['count' => 1]);
     }
 
     public function test_the_voucher_note_shows_with_its_validity_when_vouchers_are_on_sale(): void

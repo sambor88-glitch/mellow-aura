@@ -2,6 +2,7 @@
 
 namespace App\Modules\Customers\Actions;
 
+use App\Modules\Catalog\Actions\AnonymizeCustomer as AnonymizeStockNotifications;
 use App\Modules\Checkout\Actions\AnonymizeCustomer as AnonymizeOrders;
 use App\Modules\Customers\Enums\PrivacyRequestType;
 use App\Modules\Customers\Models\PrivacyRequest;
@@ -28,6 +29,7 @@ class AnonymizeCustomer
         private AnonymizeCustomOrders $customOrders,
         private AnonymizeFiringRequests $firingRequests,
         private ForgetFailedMails $failedMails,
+        private AnonymizeStockNotifications $stockNotifications,
     ) {}
 
     /**
@@ -48,6 +50,7 @@ class AnonymizeCustomer
                 ...($this->orders)($email),
                 'firing_requests' => ($this->firingRequests)($email),
                 'failed_mails' => ($this->failedMails)($email),
+                'stock_notifications' => ($this->stockNotifications)($email),
                 // Photo files are not rolled back with the rows, so they go last.
                 'custom_orders' => ($this->customOrders)($email),
             ];

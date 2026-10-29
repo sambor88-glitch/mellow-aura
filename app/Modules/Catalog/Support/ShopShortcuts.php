@@ -3,7 +3,7 @@
 namespace App\Modules\Catalog\Support;
 
 /**
- * The cards above the shop („Zrobię dla Ciebie”) that lead to pages made to order. A card shows up once its page
+ * The cards under the shop's products („Zrobię dla Ciebie”) that lead to pages made to order. A card shows up once its page
  * exists in the language of the shop; the line under its name is Kasia's, from the panel (Kategorie).
  */
 class ShopShortcuts

@@ -36,6 +36,8 @@ return [
             'shop.index' => 'shop',
             'shop.category' => 'shop/{category:slug}',
             'product.show' => 'product/{product:slug}',
+            'stock-notifications.store' => 'notify-me',
+            'stock-notifications.destroy' => 'notify-me/{token}',
             'mug.index' => 'custom-text-mug',
             'cart.store' => 'basket',
             'cart.update' => 'basket/{line}',

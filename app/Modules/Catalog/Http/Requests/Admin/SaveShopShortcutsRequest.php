@@ -6,7 +6,7 @@ use App\Modules\Catalog\Support\ShopShortcuts;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * The line under each shortcut card above the shop, in Polish and English. An empty field leaves the card
+ * The line under each shortcut card under the shop's products, in Polish and English. An empty field leaves the card
  * with its name only.
  */
 class SaveShopShortcutsRequest extends FormRequest

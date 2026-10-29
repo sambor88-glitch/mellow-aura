@@ -28,8 +28,9 @@ class ProductController extends Controller
     {
         return view('catalog::admin.products.index', [
             'products' => Product::query()
-                // Translations for the English marker on the list and the English block in each form.
-                ->with(['category', 'variants' => fn ($query) => $query->orderBy('id'), 'variants.translations', 'variants.prices', 'media', 'translations'])
+                // Translations for the English marker on the list and the English block in each form;
+                // the people waiting for a sold-out size help Kasia decide what to make next (MA-266).
+                ->with(['category', 'variants' => fn ($query) => $query->orderBy('id')->withCount('stockNotifications'), 'variants.translations', 'variants.prices', 'media', 'translations'])
                 ->orderBy('sort_order')
                 ->orderBy('id')
                 ->get(),

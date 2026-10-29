@@ -2,6 +2,7 @@
 
 namespace App\Modules\Customers\Support;
 
+use App\Modules\Catalog\Models\StockNotification;
 use App\Modules\Checkout\Enums\ComplaintStatus;
 use App\Modules\Checkout\Enums\OrderStatus;
 use App\Modules\Checkout\Enums\PaymentStatus;
@@ -50,6 +51,9 @@ class CustomerRecords
     /** @var Collection<int, ComplaintAnswer> */
     public readonly Collection $complaints;
 
+    /** @var Collection<int, StockNotification> Sizes she waits for (MA-266). */
+    public readonly Collection $stockNotifications;
+
     /** @var Collection<int, PrivacyRequest> */
     public readonly Collection $privacyRequests;
 
@@ -71,6 +75,7 @@ class CustomerRecords
         $this->withdrawals = Withdrawal::query()->tap($byEmail)->latest('id')->get();
         $this->receivedComplaints = Complaint::query()->tap($byEmail)->latest('id')->get();
         $this->complaints = ComplaintAnswer::query()->tap($byEmail)->latest('id')->get();
+        $this->stockNotifications = StockNotification::query()->tap($byEmail)->with('variant.product')->latest('id')->get();
         $this->privacyRequests = PrivacyRequest::query()->where('customer_key', $customer->key)->latest('id')->get();
     }
 
@@ -237,6 +242,13 @@ class CustomerRecords
                 'details' => $answer->details,
                 'answer' => $answer->letter,
             ])->values()->all(),
+            'stock_notifications' => $this->stockNotifications->map(fn (StockNotification $notification) => [
+                'signed_up_at' => $notification->created_at->toIso8601String(),
+                'email' => $notification->email,
+                'product' => $notification->variant?->product?->name,
+                'variant' => $notification->variant?->label,
+                'language' => $notification->locale,
+            ])->values()->all(),
         ];
     }
 
@@ -256,6 +268,7 @@ class CustomerRecords
             'withdrawals' => $this->withdrawals->count(),
             'received_complaints' => $this->receivedComplaints->count(),
             'complaints' => $this->complaints->count(),
+            'stock_notifications' => $this->stockNotifications->count(),
         ];
     }
 }

@@ -64,7 +64,7 @@ class AdminWorkshopsTest extends TestCase
         ], $types[0]);
         $this->assertSame(['kolo_garncarskie', 30000], [$types[1]['code'], $types[1]['price_gross']]);
 
-        $this->get('/warsztaty-ceramiczne-krakow')->assertSeeInOrder(['Lepienie z ręki', '230,50 zł', 'Koło garncarskie', '300,00 zł'])->assertDontSee('Szkliwienie');
+        $this->get('/warsztaty-ceramiczne-krakow')->assertSeeInOrder(['Lepienie z ręki', '230,50 zł', 'Koło garncarskie', '300 zł'])->assertDontSee('Szkliwienie');
     }
 
     public function test_a_reduced_workshop_shows_the_lowest_price_from_the_30_days_before(): void
@@ -84,7 +84,7 @@ class AdminWorkshopsTest extends TestCase
         $this->assertSame(24000, Setting::find('workshop_types')->value[0]['compare_at_price']);
 
         $this->get('/warsztaty-ceramiczne-krakow')
-            ->assertSeeInOrder(['Lepienie z ręki', '180,00 zł', 'Cena przed obniżką: ', '240,00 zł', 'Najniższa cena z 30 dni przed obniżką: 220,00 zł'], false);
+            ->assertSeeInOrder(['Lepienie z ręki', '180 zł', 'Cena przed obniżką: ', '240 zł', 'Najniższa cena z 30 dni przed obniżką: 220 zł'], false);
 
         $this->actingAs($this->owner)->get('/panel/warsztaty')->assertSeeInOrder(['value="180"', 'Przed obniżką, zł', 'value="240"'], false);
 

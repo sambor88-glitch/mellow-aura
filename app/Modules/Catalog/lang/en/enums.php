@@ -14,4 +14,20 @@ return [
         'thickness_mm' => 'Thickness',
         'capacity_ml' => 'Capacity',
     ],
+    'variant_kind' => [
+        'sizes_few' => ':count sizes',
+        'sizes_many' => ':count sizes',
+        'amounts_few' => ':count amounts',
+        'amounts_many' => ':count amounts',
+        'colors_few' => ':count colours',
+        'colors_many' => ':count colours',
+        'options_few' => ':count options',
+        'options_many' => ':count options',
+    ],
+    'variant_kind_choose' => [
+        'sizes' => 'Choose a size',
+        'amounts' => 'Choose an amount',
+        'colors' => 'Choose a colour',
+        'options' => 'Choose an option',
+    ],
 ];

@@ -95,7 +95,7 @@ class PlaceOrderTest extends TestCase
             ->assertOk()
             ->assertSee('Dziękuję. Pakuję.')
             ->assertSee($order->number)
-            ->assertSee('334,00 zł')
+            ->assertSee('334 zł')
             ->assertSeeInOrder(['Wysyłka', '3–5 dni roboczych']);
 
         $this->get('/zamowienie')->assertSee('Nic tu jeszcze nie ma');

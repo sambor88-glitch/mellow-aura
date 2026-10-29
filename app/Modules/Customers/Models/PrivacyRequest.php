@@ -30,6 +30,7 @@ class PrivacyRequest extends Model
         'firing_requests' => 'zgłoszenia do wypału',
         'failed_mails' => 'niewysłane maile',
         'workshop_bookings' => 'zapisy na warsztaty',
+        'stock_notifications' => 'prośby o wiadomość, gdy rzecz wróci',
     ];
 
     /**

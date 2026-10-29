@@ -36,9 +36,13 @@
 @endphp
 
 <x-shared::layout :title="Seo::title($product->name, $suffix)" :description="Seo::description($product->seo_description ?: $product->description)" :canonical="$canonical" type="product" :image="$images->first()?->getAvailableUrl(['card'])">
-    @isset($structuredData)
-        <x-slot:head>{!! $structuredData !!}</x-slot:head>
-    @endisset
+    <x-slot:head>
+        {{-- Open Graph product tags for Pinterest Rich Pins and Meta, with the chosen variant's price in the page's currency. --}}
+        <meta property="product:price:amount" content="{{ Money::decimal($variant->price()) }}">
+        <meta property="product:price:currency" content="{{ $currency }}">
+        <meta property="product:availability" content="{{ $variant->isInStock() ? 'in stock' : 'out of stock' }}">
+        {!! $structuredData ?? '' !!}
+    </x-slot:head>
     <x-consent::analytics-event name="view_item" :params="AnalyticsItem::params($variant->price(), [VariantAnalyticsItem::make($variant)])" />
 
     <div class="mx-auto max-w-[1360px] animate-ma-view px-[clamp(18px,4vw,48px)] pt-9 pb-24">
@@ -187,11 +191,16 @@
                     </div>
                 @endif
 
-                @if ($variant->stock !== null && $variant->stock <= 1)
+                @if ($variant->stock === 1)
                     <div class="mb-5 flex items-center gap-2.5 rounded-[16px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text">
                         <span class="size-[7px] flex-none rounded-full bg-error"></span>
-                        <span>{{ $variant->stock === 1 ? __('catalog::product.stock_last') : __('catalog::product.stock_few', ['count' => $variant->stock]) }}</span>
+                        <span>{{ __('catalog::product.stock_last') }}</span>
                     </div>
+                @endif
+
+                {{-- A sold-out size asks for an e-mail instead of offering the basket: one mail when it is back (MA-266). --}}
+                @if (! $variant->isInStock() && Route::has('stock-notifications.store'))
+                    @include('catalog::product.restock-form')
                 @endif
 
                 @if (Route::has('cart.store') && $variant->isInStock())

@@ -44,7 +44,7 @@ class BankTransferPaymentTest extends TestCase
             ->assertOk()
             ->assertSee('Wpłata doszła')
             ->assertSee('Na pewno?')
-            ->assertSee('255,00 zł z numerem '.$order->number, false)
+            ->assertSee('255 zł z numerem '.$order->number, false)
             ->assertSee('action="'.route('admin.orders.paid', $order).'"', false)
             ->assertDontSee('Status zmienisz, gdy zamówienie będzie opłacone.');
     }

@@ -17,7 +17,7 @@ Masz pytanie albo coś Ci wypadło? Napisz do mnie przez stronę i podaj numer {
 Możesz też napisać na WhatsAppie: {!! $contactPhone !!}.
 @endif
 
-W załączniku jest regulamin{!! $order->terms_version ? ' ('.$order->terms_version.')' : '' !!}.
+W załącznikach są regulamin{!! $order->terms_version ? ' ('.$order->terms_version.')' : '' !!} i warsztat do dodania w Twoim kalendarzu.
 
 {!! $mailTexts->signature() !!}
 

@@ -166,7 +166,7 @@ class MerchantFeedTest extends TestCase
         $this->get('/kubek-z-napisem?rozmiar=maly')
             ->assertOk()
             ->assertSee('value="Mały" x-model="size" checked', false)
-            ->assertSeeInOrder(['Dodaj do koszyka', '69,00 zł']);
+            ->assertSeeInOrder(['Dodaj do koszyka', '69 zł']);
         $this->get('/kubek-z-napisem?rozmiar=nie-ma')->assertSee('value="Średni" x-model="size" checked', false);
     }
 

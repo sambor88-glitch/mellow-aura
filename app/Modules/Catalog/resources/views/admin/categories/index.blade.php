@@ -15,7 +15,7 @@
             @csrf
             @method('PUT')
             <div class="mb-1.5 flex flex-wrap items-baseline justify-between gap-3">
-                <h2 class="font-serif text-[23px]">Skróty nad sklepem</h2>
+                <h2 class="font-serif text-[23px]">Skróty pod produktami</h2>
                 <a href="{{ route('shop.index') }}" target="_blank" rel="noopener" class="text-[13px]">/sklep — „Zrobię dla Ciebie”</a>
             </div>
             <p class="mb-4 text-[13.5px] text-muted">Krótki podpis pod nazwą każdej karty. Puste pole — karta pokaże samą nazwę.</p>

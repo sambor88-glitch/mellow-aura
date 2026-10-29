@@ -7,6 +7,7 @@ use App\Modules\Catalog\Enums\FoodContact;
 use App\Modules\Catalog\Enums\GoogleCategory;
 use App\Modules\Catalog\Enums\Occasion;
 use App\Modules\Catalog\Enums\Recipient;
+use App\Modules\Catalog\Enums\VariantKind;
 use App\Modules\Shared\Rules\PriceBeforeReduction;
 use App\Modules\Shared\Support\FocalPoint;
 use App\Modules\Shared\Support\Money;
@@ -57,6 +58,7 @@ class SaveProductRequest extends FormRequest
             'occasions.*' => [Rule::enum(Occasion::class)],
             'recipients' => ['nullable', 'array'],
             'recipients.*' => [Rule::enum(Recipient::class)],
+            'variant_kind' => ['nullable', Rule::enum(VariantKind::class)],
             'variants' => ['required', 'array', 'max:30'],
             'variants.*.id' => ['nullable', 'integer'],
             // One price needs no size name; several sizes do.
@@ -115,6 +117,7 @@ class SaveProductRequest extends FormRequest
             'seo_description.max' => 'Opis dla Google zmieszczę do :max znaków — Google i tak pokaże tylko pierwsze 155',
             'care_note.max' => 'Zdanie o pielęgnacji zmieszczę do :max znaków',
             'food_contact.enum' => 'Wybierz z listy, czy to naczynie do jedzenia',
+            'variant_kind.enum' => 'Wybierz z listy, czym różnią się rozmiary',
             'deviation.max' => 'Tę cechę zmieszczę do :max znaków — napisz ją krócej',
             'size_tolerance.max' => 'Różnicę wymiarów zmieszczę do :max znaków, np. 0,5 cm',
             'safety_warnings.max' => 'Ostrzeżenia zmieszczę do :max znaków',
@@ -159,7 +162,7 @@ class SaveProductRequest extends FormRequest
      * The validated form in the shape SaveProduct takes: prices in grosze, empty dimensions left out,
      * photo descriptions and focal points keyed by photo id.
      *
-     * @return array{name: string, category_id: int, description: ?string, seo_description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, euro_from_rate: bool, workshop_code: ?string, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels: array<string, string>, price_gross: int, compare_at_price: ?int, prices: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post: bool, voucher_seats: ?int, media_id: ?int}>, photo_alts: array<int, string>, photo_focus: array<int, array{x: int, y: int}>}
+     * @return array{name: string, category_id: int, description: ?string, seo_description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, variant_kind: ?string, euro_from_rate: bool, workshop_code: ?string, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels: array<string, string>, price_gross: int, compare_at_price: ?int, prices: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post: bool, voucher_seats: ?int, media_id: ?int}>, photo_alts: array<int, string>, photo_focus: array<int, array{x: int, y: int}>}
      */
     public function product(): array
     {
@@ -180,6 +183,7 @@ class SaveProductRequest extends FormRequest
             'is_published' => $this->boolean('is_published'),
             'is_one_off' => $this->boolean('is_one_off'),
             'is_exact_piece' => $this->boolean('is_exact_piece'),
+            'variant_kind' => $data['variant_kind'] ?? null,
             'euro_from_rate' => $this->boolean('euro_from_rate'),
             'workshop_code' => filled($data['workshop_code'] ?? null) ? $data['workshop_code'] : null,
             'dimensions' => array_filter(

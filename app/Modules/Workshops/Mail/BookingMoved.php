@@ -10,8 +10,10 @@ use App\Modules\Shared\Mail\MailTexts;
 use App\Modules\Shared\Mail\QueuedMail;
 use App\Modules\Workshops\Mail\Concerns\BookingTexts;
 use App\Modules\Workshops\Models\WorkshopBooking;
+use App\Modules\Workshops\Support\BookingCalendar;
 use App\Modules\Workshops\Support\BookingDetails;
 use Illuminate\Mail\Mailables\Address;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
@@ -19,6 +21,7 @@ use Illuminate\Mail\Mailables\Envelope;
  * Kasia moved a paid booking to another date (Actions\MoveBooking, MA-210): the new date with everything the
  * confirmation has — the studio address included, so the mail stands on its own — and the date it replaces.
  * The previous date comes as text: the queue loads the booking afresh, by then on its new date.
+ * The attached event has the booking's UID and a higher SEQUENCE, so her calendar moves the event it already has (MA-268).
  */
 class BookingMoved extends QueuedMail implements HasEditableTexts
 {
@@ -57,6 +60,16 @@ class BookingMoved extends QueuedMail implements HasEditableTexts
             subject: app(MailTexts::class)->text('booking_moved', 'subject', $this->textFill()),
             replyTo: $contact ? [new Address($contact, __('checkout::mail.from'))] : [],
         );
+    }
+
+    /**
+     * @return list<Attachment>
+     */
+    public function attachments(): array
+    {
+        $calendar = app(BookingCalendar::class);
+
+        return [Attachment::fromData(fn () => $calendar->ics($this->booking, withAddress: true), BookingCalendar::FILE_NAME)->withMime(BookingCalendar::mime())];
     }
 
     public function content(): Content

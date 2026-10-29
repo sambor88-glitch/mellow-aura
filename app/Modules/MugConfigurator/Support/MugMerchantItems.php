@@ -39,6 +39,7 @@ class MugMerchantItems
                 googleCategory: GoogleCategory::Mugs->value,
                 productType: 'Ceramika > '.MugLine::NAME,
                 returnable: false,
+                groupId: 'mug',
             );
         }
     }

@@ -16,7 +16,7 @@ return [
     'shortcut_custom_orders' => 'Zamówienie indywidualne',
     'breadcrumb' => 'Okruszki',
     'home' => 'Strona główna',
-    'products' => 'Produkty',
+    'products' => 'Sklep',
     'heading' => 'Sklep',
     'favorites' => 'Ulubione',
     'favorites_intro' => 'Rzeczy zapisane sercem. Lista zostaje tylko w tej przeglądarce — nie wysyłam jej nigdzie.',
@@ -27,6 +27,7 @@ return [
     'all' => 'Wszystkie',
     'favorites_chip' => 'Ulubione',
     'sort' => 'Sortuj',
+    'sort_button' => 'Sortuj: :option',
     'sort_featured' => 'Polecane',
     'sort_price_asc' => 'Cena rosnąco',
     'sort_price_desc' => 'Cena malejąco',
@@ -40,4 +41,6 @@ return [
     'count' => ':shown z :total produktów na półce',
     'category_link' => ':category w sklepie',
     'ready_heading' => 'Gotowe od ręki w sklepie',
+    'card_add' => 'Do koszyka',
+    'card_lettering' => 'Wybierz napis',
 ];

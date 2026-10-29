@@ -1,9 +1,9 @@
+import { formatMoney } from './money';
+
 /*
  * The quote under the batch form, counted the same way as Firing\Support\FiringQuote on the server: a price per
  * kilogram or per piece times the amount, rounded to the grosz, or a row's flat price. Prices come in grosze.
  */
-const money = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' });
-
 const hundredths = (quantity) => {
     const match = String(quantity).trim().match(/^(\d{1,3})(?:[.,](\d{1,2}))?$/);
 
@@ -34,7 +34,7 @@ export default (services, service = '', quantity = '') => ({
         }
 
         if (row.unit === null) {
-            return money.format(row.price / 100);
+            return formatMoney(row.price);
         }
 
         const amount = hundredths(this.quantity);
@@ -44,6 +44,6 @@ export default (services, service = '', quantity = '') => ({
             return row.unit === 'kg' ? 'wpisz wagę' : 'wpisz liczbę prac';
         }
 
-        return money.format(Math.floor((row.price * amount + 50) / 100) / 100);
+        return formatMoney(Math.floor((row.price * amount + 50) / 100));
     },
 });

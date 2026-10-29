@@ -35,11 +35,11 @@ class ServicePagesTest extends TestCase
             ->assertSeeInOrder(['href="'.route('custom-orders.index', ['usluga' => 'apaszka']).'#formularz"', 'Napisz, co chcesz przysłać', 'href="'.route('content.imprint').'"', 'Odcisk Twojej rośliny →'], false)
             ->assertSeeInOrder(['01', 'Wysyłasz zdjęcie tkaniny', 'Powiem od razu', '04', 'Szyję i odsyłam'])
             ->assertSee('Kod Paczkomatu, do którego wyślesz paczkę, podam w wiadomości.')
-            ->assertSeeInOrder(['Co wychodzi z jednej apaszki', 'Opaska szeroka, pikowana', 'z apaszki 65 × 65 cm zostaje zapas', '119,00 zł', 'Zestaw: opaska i dwie scrunchies', '199,00 zł'])
+            ->assertSeeInOrder(['Co wychodzi z jednej apaszki', 'Opaska szeroka, pikowana', 'z apaszki 65 × 65 cm zostaje zapas', '119 zł', 'Zestaw: opaska i dwie scrunchies', '199 zł'])
             ->assertSee('Wysyłka tkaniny do mnie na Twój koszt')
             ->assertSee('dlaczego to robię')
             // No crossed-out price: services keep no price history for the lowest price from 30 days.
-            ->assertDontSee('239,00 zł')
+            ->assertDontSee('239 zł')
             ->assertDontSee('id="przed-i-po"', false)
             ->assertDontSee('Szybciej na WhatsAppie');
 
@@ -61,7 +61,7 @@ class ServicePagesTest extends TestCase
             ->assertSeeInOrder(["Kwiat z bukietu\nzostanie w glinie", 'Przyślij zasuszoną roślinę', 'Napisz, co chcesz odcisnąć', 'href="'.route('content.scarf').'"'], false)
             ->assertSeeInOrder(['Szybciej na WhatsAppie:', 'href="https://wa.me/48600100200"', '+48 600 100 200</a>'], false)
             ->assertSeeInOrder(['Suszysz roślinę płasko', 'Dwa wypały i wysyłka', 'Paczki do mnie: Paczkomat KRA01M.'])
-            ->assertSeeInOrder(['Na czym odciskam', 'Talerzyk deserowy 18 cm', '149,00 zł', 'Para talerzy na rocznicę', '329,00 zł'])
+            ->assertSeeInOrder(['Na czym odciskam', 'Talerzyk deserowy 18 cm', '149 zł', 'Para talerzy na rocznicę', '329 zł'])
             ->assertSee('na co to zamawiają')
             ->assertDontSee('Opaska szeroka, pikowana');
     }
@@ -86,7 +86,7 @@ class ServicePagesTest extends TestCase
             ->assertDontSee('Kod Paczkomatu')
             ->assertDontSee('Bez ceny')
             ->assertDontSee('43,21 zł')
-            ->assertSeeInOrder(['Opaska', '129,00 zł'])
+            ->assertSeeInOrder(['Opaska', '129 zł'])
             ->assertDontSee('Wysyłka tkaniny do mnie');
     }
 

@@ -59,13 +59,13 @@ class WorkshopEmailsTest extends TestCase
 
         Mail::assertQueued(BookingConfirmed::class, function (BookingConfirmed $mail) {
             $mail->assertHasSubject('Do zobaczenia w pracowni · sob. 31 października, 11:00');
-            $mail->assertSeeInOrderInHtml(['Lepienie kubków', 'sob. 31 października, 11:00 – 13:00', 'Liczba osób: 2', '440,00 zł', self::ADDRESS]);
+            $mail->assertSeeInOrderInHtml(['Lepienie kubków', 'sob. 31 października, 11:00 – 13:00', 'Liczba osób: 2', '440 zł', self::ADDRESS]);
             $mail->assertSeeInText(self::ADDRESS);
             $mail->assertSeeInHtml('Dzień przed warsztatem przypomnę Ci o nim mailem.');
             $mail->assertSeeInOrderInHtml(['Co zabrać ze sobą', 'Ubranie, którego nie szkoda pobrudzić', 'Spięte włosy']);
             $mail->assertSeeInText('- Spięte włosy');
 
-            return $mail->hasTo('ania@example.com') && $mail->hasReplyTo('kasia@example.com') && count($mail->attachments()) === 1;
+            return $mail->hasTo('ania@example.com') && $mail->hasReplyTo('kasia@example.com') && count($mail->attachments()) === 2;
         });
 
         Mail::assertQueued(NewBookingReceived::class, function (NewBookingReceived $mail) {
