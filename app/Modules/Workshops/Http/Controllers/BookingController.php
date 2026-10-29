@@ -95,7 +95,6 @@ class BookingController extends Controller
             'workshopVoucher' => $workshopVoucher,
             'amountVouchers' => $workshopVoucher === null ? $this->amountVouchers($codes) : collect(),
             'location' => $settings->get('location_description'),
-            'googleCalendar' => $paid && ! $overbooked ? $calendar->googleUrl($booking) : null,
         ])->header('X-Robots-Tag', self::ROBOTS);
     }
 
@@ -374,6 +373,7 @@ class BookingController extends Controller
             'overbooked' => $overbooked,
             'analytics' => $paid && ! $overbooked ? $this->analytics($order, $booking) : null,
             'location' => $settings->get('location_description'),
+            'googleCalendar' => $paid && ! $overbooked ? $calendar->googleUrl($booking) : null,
         ])->header('X-Robots-Tag', self::ROBOTS);
     }
 
