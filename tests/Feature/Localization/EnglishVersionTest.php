@@ -153,7 +153,7 @@ class EnglishVersionTest extends TestCase
         $this->assertStringContainsString('>Custom orders</a>', $english);
         $this->assertStringContainsString('href="'.url('/en/custom-orders').'"', $english);
         $this->assertStringContainsString('>Cookie settings</a>', $english);
-        $this->assertStringContainsString('Studio visits by appointment', $english);
+        $this->assertMatchesRegularExpression('#<a href="'.preg_quote(url('/en/contact'), '#').'"[^>]*>Studio visits by appointment</a>#', $english);
 
         // Studio services held in Polish, the Polish voucher category and the złoty payment line stay out.
         foreach (['Workshops &amp; prices', 'Kiln firing service', 'For cafés', 'Workshop vouchers', '/vouchery', 'BLIK', 'Pracownia na zapisy', 'Regulamin'] as $polishOnly) {
@@ -164,6 +164,7 @@ class EnglishVersionTest extends TestCase
         $this->assertStringContainsString('>Wszystkie produkty</a>', $polish);
         $this->assertStringContainsString('>Warsztaty i cennik</a>', $polish);
         $this->assertStringContainsString('BLIK · Przelewy24 · karta', $polish);
+        $this->assertMatchesRegularExpression('#<a href="'.preg_quote(url('/kontakt'), '#').'"[^>]*>Pracownia na zapisy</a>#', $polish);
     }
 
     public function test_the_home_page_speaks_english_and_leaves_out_what_is_polish_only(): void

@@ -8,8 +8,9 @@ use XMLWriter;
 
 /**
  * The products Google Merchant Center fetches from /google-merchant.xml, which opens the free listings in Google
- * Shopping. Each module adds what it sells in its provider, so a new kind of product needs no change here.
- * The file is built on request, so a product published in the panel is in it at once.
+ * Shopping, and the same products for the Meta catalog (Instagram Shopping) and Pinterest Catalogs from
+ * /social-catalog.xml. Each module adds what it sells in its provider, so a new kind of product needs no change here.
+ * The files are built on request, so a product published in the panel is in them at once.
  */
 class MerchantFeed
 {
@@ -53,6 +54,26 @@ class MerchantFeed
      */
     public function xml(): string
     {
+        return $this->document($this->items(), $this->writeItem(...));
+    }
+
+    /**
+     * The file Meta Commerce Manager and Pinterest Catalogs fetch. Both read Google's RSS 2.0 with the g: fields,
+     * so one file serves both. Only what is on the shelf goes in: a post can't tag a product nobody can buy.
+     */
+    public function catalogXml(): string
+    {
+        $items = array_values(array_filter($this->items(), fn (MerchantItem $item) => $item->available));
+
+        return $this->document($items, $this->writeCatalogItem(...));
+    }
+
+    /**
+     * @param  list<MerchantItem>  $items
+     * @param  callable(XMLWriter, MerchantItem): void  $writeItem
+     */
+    private function document(array $items, callable $writeItem): string
+    {
         $xml = new XMLWriter;
         $xml->openMemory();
         $xml->setIndent(true);
@@ -65,8 +86,8 @@ class MerchantFeed
         $xml->writeElement('link', url('/'));
         $xml->writeElement('description', self::BRAND);
 
-        foreach ($this->items() as $item) {
-            $this->writeItem($xml, $item);
+        foreach ($items as $item) {
+            $writeItem($xml, $item);
         }
 
         $xml->endElement();
@@ -79,35 +100,10 @@ class MerchantFeed
     private function writeItem(XMLWriter $xml, MerchantItem $item): void
     {
         $xml->startElement('item');
-        $this->write($xml, 'id', Str::limit($item->id, 50, ''));
-        $this->write($xml, 'title', Str::limit($item->title, 150, ''));
-        $this->write($xml, 'description', Str::limit(self::plain($item->description), 5000, ''));
-        $this->write($xml, 'link', $item->link);
-        $this->write($xml, 'image_link', $item->image);
-
-        foreach (array_slice($item->additionalImages, 0, 10) as $image) {
-            $this->write($xml, 'additional_image_link', $image);
-        }
-
-        $this->write($xml, 'availability', $item->available ? 'in_stock' : 'out_of_stock');
-        $this->write($xml, 'price', self::amount($item->price));
-
-        if ($item->salePrice !== null && $item->salePrice < $item->price) {
-            $this->write($xml, 'sale_price', self::amount($item->salePrice));
-        }
-
-        $this->write($xml, 'brand', self::BRAND);
+        $this->writeCommon($xml, $item, $item->available ? 'in_stock' : 'out_of_stock');
         // Handmade in the studio: no barcode and no manufacturer's part number exist.
         $this->write($xml, 'identifier_exists', 'no');
-        $this->write($xml, 'condition', 'new');
-
-        if ($item->googleCategory !== null) {
-            $this->write($xml, 'google_product_category', (string) $item->googleCategory);
-        }
-
-        if ($item->productType !== null) {
-            $this->write($xml, 'product_type', $item->productType);
-        }
+        $this->writeCategories($xml, $item);
 
         if ($item->isBundle) {
             $this->write($xml, 'is_bundle', 'yes');
@@ -137,6 +133,66 @@ class MerchantFeed
         }
 
         $xml->endElement();
+    }
+
+    /**
+     * Meta and Pinterest take the same fields as Google, with availability spelled with a space, the sizes of one
+     * product tied by item_group_id and no Merchant Center return label or handling times they don't read.
+     */
+    private function writeCatalogItem(XMLWriter $xml, MerchantItem $item): void
+    {
+        $xml->startElement('item');
+        $this->writeCommon($xml, $item, 'in stock');
+
+        if ($item->groupId !== null) {
+            $this->write($xml, 'item_group_id', $item->groupId);
+        }
+
+        $this->writeCategories($xml, $item);
+
+        foreach ($item->delivery as $option) {
+            $xml->startElement('g:shipping');
+            $this->write($xml, 'country', 'PL');
+            $this->write($xml, 'service', $option['label']);
+            $this->write($xml, 'price', self::amount($option['price']));
+            $xml->endElement();
+        }
+
+        $xml->endElement();
+    }
+
+    private function writeCommon(XMLWriter $xml, MerchantItem $item, string $availability): void
+    {
+        $this->write($xml, 'id', Str::limit($item->id, 50, ''));
+        $this->write($xml, 'title', Str::limit($item->title, 150, ''));
+        $this->write($xml, 'description', Str::limit(self::plain($item->description), 5000, ''));
+        $this->write($xml, 'link', $item->link);
+        $this->write($xml, 'image_link', $item->image);
+
+        foreach (array_slice($item->additionalImages, 0, 10) as $image) {
+            $this->write($xml, 'additional_image_link', $image);
+        }
+
+        $this->write($xml, 'availability', $availability);
+        $this->write($xml, 'price', self::amount($item->price));
+
+        if ($item->salePrice !== null && $item->salePrice < $item->price) {
+            $this->write($xml, 'sale_price', self::amount($item->salePrice));
+        }
+
+        $this->write($xml, 'brand', self::BRAND);
+        $this->write($xml, 'condition', 'new');
+    }
+
+    private function writeCategories(XMLWriter $xml, MerchantItem $item): void
+    {
+        if ($item->googleCategory !== null) {
+            $this->write($xml, 'google_product_category', (string) $item->googleCategory);
+        }
+
+        if ($item->productType !== null) {
+            $this->write($xml, 'product_type', $item->productType);
+        }
     }
 
     private function write(XMLWriter $xml, string $name, ?string $value): void

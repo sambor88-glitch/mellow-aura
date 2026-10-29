@@ -94,7 +94,12 @@
                 @if ($city)
                     <span>{{ $city }}</span>
                 @endif
-                <span>{{ __('shared::footer.by_appointment') }}</span>
+                {{-- The contact page tells when the exact address is given, so this line leads there. --}}
+                @if ($visit = $link('by_appointment', 'content.contact'))
+                    <a href="{{ $visit[1] }}" class="text-on-dark hover:text-rose">{{ $visit[0] }}</a>
+                @else
+                    <span>{{ __('shared::footer.by_appointment') }}</span>
+                @endif
             </div>
         </div>
     </div>
