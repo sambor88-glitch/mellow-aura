@@ -68,7 +68,8 @@ class BookingCalendarTest extends TestCase
         $this->settings(['location_description' => 'okolice Błoń Krakowskich']);
         $this->assertStringContainsString('LOCATION:Pracownia MellowAura\, okolice', $this->calendar()->ics($this->booking(), withAddress: true));
         $this->settings([]);
-        $this->assertStringNotContainsString('LOCATION:', $this->calendar()->ics($this->booking(), withAddress: true));
+        // X-LIC-LOCATION in the time zone is no location of the event.
+        $this->assertStringNotContainsString("\r\nLOCATION:", $this->calendar()->ics($this->booking(), withAddress: true));
     }
 
     public function test_a_move_keeps_the_uid_and_raises_the_sequence_and_a_cancellation_goes_one_further(): void
