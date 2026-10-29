@@ -3,7 +3,7 @@
 namespace App\Modules\Shared\Support;
 
 /**
- * One thing to buy in the feed for Google Merchant Center: a product size, a mug size from the configurator
+ * One thing to buy in the feeds for Google Merchant Center, Meta and Pinterest: a product size, a mug size from the configurator
  * or a gift set. Its id is also the item_id Google Analytics gets, so both describe the same thing.
  */
 final readonly class MerchantItem
@@ -30,5 +30,7 @@ final readonly class MerchantItem
         public ?string $productType = null,
         public bool $isBundle = false,
         public bool $returnable = true,
+        // The sizes of one product share it, so Meta and Pinterest show them as one product with options.
+        public ?string $groupId = null,
     ) {}
 }
