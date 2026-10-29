@@ -2,8 +2,10 @@
 
 namespace App\Modules\Customers\Support;
 
+use App\Modules\Checkout\Enums\ComplaintStatus;
 use App\Modules\Checkout\Enums\OrderStatus;
 use App\Modules\Checkout\Enums\PaymentStatus;
+use App\Modules\Checkout\Models\Complaint;
 use App\Modules\Checkout\Models\ComplaintAnswer;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Checkout\Models\Withdrawal;
@@ -42,6 +44,9 @@ class CustomerRecords
     /** @var Collection<int, Withdrawal> */
     public readonly Collection $withdrawals;
 
+    /** @var Collection<int, Complaint> Complaints as they came in (MA-261). */
+    public readonly Collection $receivedComplaints;
+
     /** @var Collection<int, ComplaintAnswer> */
     public readonly Collection $complaints;
 
@@ -64,6 +69,7 @@ class CustomerRecords
         $this->customOrders = CustomOrderRequest::query()->tap($byEmail)->with('media')->latest('id')->get();
         $this->firingRequests = FiringRequest::query()->tap($byEmail)->latest('id')->get();
         $this->withdrawals = Withdrawal::query()->tap($byEmail)->latest('id')->get();
+        $this->receivedComplaints = Complaint::query()->tap($byEmail)->latest('id')->get();
         $this->complaints = ComplaintAnswer::query()->tap($byEmail)->latest('id')->get();
         $this->privacyRequests = PrivacyRequest::query()->where('customer_key', $customer->key)->latest('id')->get();
     }
@@ -117,7 +123,14 @@ class CustomerRecords
                 'url' => route('admin.withdrawals.index'),
             ]);
 
-        return $orders->toBase()->concat($workshops)->concat($customOrders)->concat($firing)->concat($withdrawals)->values()->all();
+        $complaints = $this->receivedComplaints
+            ->filter(fn (Complaint $complaint) => $complaint->status === ComplaintStatus::Open)
+            ->map(fn (Complaint $complaint) => [
+                'label' => 'Reklamacja z '.$complaint->received_on->format('j.m.Y').' — '.$complaint->deadlineLabel(),
+                'url' => route('admin.complaints.index', ['reklamacja' => $complaint->id]).'#odpowiedz',
+            ]);
+
+        return $orders->toBase()->concat($workshops)->concat($customOrders)->concat($firing)->concat($withdrawals)->concat($complaints)->values()->all();
     }
 
     /**
@@ -207,6 +220,14 @@ class CustomerRecords
                 'email' => $withdrawal->email,
                 'statement' => $withdrawal->statement(),
             ])->values()->all(),
+            'received_complaints' => $this->receivedComplaints->map(fn (Complaint $complaint) => [
+                'received_on' => $complaint->received_on->toDateString(),
+                'order' => $complaint->order_number,
+                'name' => $complaint->name,
+                'email' => $complaint->email,
+                'description' => $complaint->description,
+                'status' => $complaint->status->value,
+            ])->values()->all(),
             'complaints' => $this->complaints->map(fn (ComplaintAnswer $answer) => [
                 'received_on' => $answer->received_on?->toDateString(),
                 'order' => $answer->order_number,
@@ -233,6 +254,7 @@ class CustomerRecords
             'custom_orders' => $this->customOrders->count(),
             'firing_requests' => $this->firingRequests->count(),
             'withdrawals' => $this->withdrawals->count(),
+            'received_complaints' => $this->receivedComplaints->count(),
             'complaints' => $this->complaints->count(),
         ];
     }

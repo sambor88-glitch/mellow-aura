@@ -5,7 +5,7 @@ namespace App\Modules\Admin;
 use App\Modules\Admin\Support\PanelAccess;
 use App\Modules\Checkout\Enums\OrderStatus;
 use App\Modules\Checkout\Enums\PaymentStatus;
-use App\Modules\Checkout\Models\ComplaintAnswer;
+use App\Modules\Checkout\Models\Complaint;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\CustomOrders\Enums\CustomOrderStatus;
 use App\Modules\CustomOrders\Models\CustomOrderRequest;
@@ -97,10 +97,10 @@ class Menu
                     'count_label' => 'nowe'],
                 ['label' => 'Klientki', 'route' => 'admin.customers.index', 'active' => ['admin.customers.*'], 'description' => 'Wszystko o jednej osobie po adresie e-mail: zamówienia, warsztaty, pomysły i wypały. Tu też kopia jej danych i usunięcie na jej prośbę (RODO).'],
                 ['label' => 'Odstąpienia', 'route' => 'admin.withdrawals.index', 'active' => ['admin.withdrawals.*'], 'description' => 'Oświadczenia z formularza „Odstąp od umowy tutaj” i termin zwrotu pieniędzy.'],
-                // Complaints arrive by e-mail; the panel keeps only the answers, so what waits is an answer that never went out.
-                ['label' => 'Reklamacje', 'route' => 'admin.complaints.index', 'active' => ['admin.complaints.*'], 'description' => 'Odpowiedź w 14 dni z gotowym listem — przy odmowie z oświadczeniem o mediacji.',
-                    'count' => fn () => ComplaintAnswer::query()->whereNull('emailed_at')->count(),
-                    'count_label' => 'odpowiedzi nie wyszły'],
+                // Complaints are saved the day they arrive by e-mail (MA-261); what waits is one without an answer.
+                ['label' => 'Reklamacje', 'route' => 'admin.complaints.index', 'active' => ['admin.complaints.*'], 'description' => 'Zapis reklamacji z maila, termin 14 dni i odpowiedź z gotowym listem — przy odmowie z oświadczeniem o mediacji.',
+                    'count' => fn () => Complaint::query()->open()->count(),
+                    'count_label' => 'bez odpowiedzi'],
             ]],
             ['label' => 'Oferta', 'sections' => [
                 ['label' => 'Produkty', 'route' => 'admin.products.index', 'active' => ['admin.products.*'], 'description' => 'Nazwy, rozmiary, ceny, stany i zdjęcia.'],

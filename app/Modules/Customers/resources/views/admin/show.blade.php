@@ -1,3 +1,4 @@
+@use('App\Modules\Checkout\Enums\ComplaintStatus')
 @use('App\Modules\Checkout\Enums\PaymentStatus')
 @use('App\Modules\Shared\Support\Money')
 @php
@@ -87,7 +88,7 @@
         @endforelse
     </section>
 
-    @if ($records->withdrawals->isNotEmpty() || $records->complaints->isNotEmpty())
+    @if ($records->withdrawals->isNotEmpty() || $records->receivedComplaints->isNotEmpty() || $records->complaints->isNotEmpty())
         <section aria-labelledby="sprawy" class="mb-10">
             <h2 id="sprawy" class="{{ $heading }}">Odstąpienia i reklamacje</h2>
             @foreach ($records->withdrawals as $withdrawal)
@@ -95,7 +96,13 @@
                     <span class="text-hint tabular-nums">{{ $withdrawal->submitted_at->format('j.m.Y') }}</span> · Odstąpienie od umowy {{ $withdrawal->order_number }} · {{ $withdrawal->handled_at ? 'załatwione' : 'czeka na zwrot' }}
                 </div>
             @endforeach
-            @foreach ($records->complaints as $complaint)
+            @foreach ($records->receivedComplaints as $complaint)
+                <div class="{{ $card }} mb-2.5 text-[13.5px]">
+                    <span class="text-hint tabular-nums">{{ $complaint->received_on->format('j.m.Y') }}</span> · Reklamacja{{ $complaint->order_number ? ' '.$complaint->order_number : '' }} · {{ $complaint->status === ComplaintStatus::Open ? $complaint->deadlineLabel() : 'odpowiedziana' }}
+                    <p class="mt-1 text-label [overflow-wrap:anywhere]">{{ Str::limit($complaint->description, 200) }}</p>
+                </div>
+            @endforeach
+            @foreach ($records->complaints->whereNull('complaint_id') as $complaint)
                 <div class="{{ $card }} mb-2.5 text-[13.5px]">
                     <span class="text-hint tabular-nums">{{ $complaint->received_on->format('j.m.Y') }}</span> · Reklamacja{{ $complaint->order_number ? ' '.$complaint->order_number : '' }}
                 </div>

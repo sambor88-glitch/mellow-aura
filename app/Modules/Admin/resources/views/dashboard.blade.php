@@ -1,4 +1,4 @@
-{{-- „Na dziś” (MA-250): four tiles, each leading to its filtered list, and what waits under them, the oldest first. --}}
+{{-- „Na dziś” (MA-250): tiles, each leading to its filtered list, and what waits under them, the oldest first. --}}
 <x-admin::layout title="Na dziś" :lead="ucfirst($today).'. '.(auth()->user()->isOwner() ? 'Co wysłać, na co odpisać i co nie wyszło. Reszta panelu jest w menu.' : 'Zamówienia do spakowania i wysłania, z napisami do wbicia i certyfikatami do druku.')">
     @can('manage-shop')
         @includeIf('monitoring::admin.dashboard-notice')
@@ -43,6 +43,8 @@
                         @endif
                         @if ($row['late'])
                             <div class="mt-1 text-[12px] text-error">{{ $row['late'] }}</div>
+                        @elseif ($row['deadline'])
+                            <div class="mt-1 text-[12px] text-label">{{ $row['deadline'] }}</div>
                         @endif
                     </div>
                     @if ($row['status'])

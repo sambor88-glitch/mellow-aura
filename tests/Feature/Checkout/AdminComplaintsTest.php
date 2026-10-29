@@ -45,7 +45,8 @@ class AdminComplaintsTest extends TestCase
 
         $this->actingAs($this->owner)
             ->get('/panel/zamowienia/'.$order->number)
-            ->assertSee('href="'.route('admin.complaints.index', ['zamowienie' => $order->number]).'#odpowiedz"', false);
+            ->assertSee('href="'.route('admin.complaints.index', ['zamowienie' => $order->number]).'#zapisz"', false)
+            ->assertSee('Klientka zgłosiła reklamację');
 
         $this->get('/panel/reklamacje?zamowienie='.$order->number)
             ->assertOk()
