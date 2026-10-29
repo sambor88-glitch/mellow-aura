@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Modules\Admin\Support\PanelAccess;
 use App\Modules\Checkout\Enums\OrderStatus;
 use App\Modules\Checkout\Enums\PaymentStatus;
+use App\Modules\Checkout\Models\Complaint;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Checkout\Support\OrderWait;
 use App\Modules\CustomOrders\Enums\CustomOrderStatus;
@@ -13,11 +14,13 @@ use App\Modules\CustomOrders\Models\CustomOrderRequest;
 use App\Modules\Monitoring\Support\FailedMails;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 /**
- * „Na dziś” (MA-250): what to send and what to answer, not a second menu. Four tiles, each leading to its filtered list,
- * and under them everything that waits for Kasia, the oldest first. A helper gets only the orders.
+ * „Na dziś” (MA-250): what to send and what to answer, not a second menu. Tiles, each leading to its filtered list,
+ * and under them everything that waits for Kasia, the oldest first. A complaint waits from the day it arrived and shows
+ * its 14-day deadline (MA-261). A helper gets only the orders.
  */
 class DashboardController extends Controller
 {
@@ -31,6 +34,9 @@ class DashboardController extends Controller
         $problems = $paid(OrderStatus::Problem)->with('items')->orderBy('updated_at')->get();
         $ideas = $this->allowed('admin.custom-orders.index')
             ? CustomOrderRequest::query()->where('status', CustomOrderStatus::New)->orderBy('created_at')->orderBy('id')->get()
+            : collect();
+        $complaints = $this->allowed('admin.complaints.index')
+            ? Complaint::query()->open()->orderBy('received_on')->orderBy('id')->get()
             : collect();
         $mails = $this->allowed('admin.failed-mails.index') ? $failedMails->all() : collect();
         $oldest = $toSend->first();
@@ -50,6 +56,11 @@ class DashboardController extends Controller
                 'value' => $ideas->count(), 'label' => 'nowe pomysły', 'route' => route('admin.custom-orders.index', ['status' => CustomOrderStatus::New->value]), 'go' => 'Wyceń',
                 'hint' => 'zamówienia indywidualne do wyceny', 'late' => false,
             ] : null,
+            $this->allowed('admin.complaints.index') ? [
+                'value' => $complaints->count(), 'label' => 'reklamacje', 'route' => route('admin.complaints.index').'#czekaja', 'go' => 'Odpowiedz',
+                'hint' => $complaints->isEmpty() ? 'żadna nie czeka na odpowiedź' : $complaints->first()->deadlineLabel(),
+                'late' => (bool) $complaints->first()?->dueSoon(),
+            ] : null,
             [
                 'value' => $problems->count(), 'label' => 'problem', 'route' => route('admin.orders.index', ['status' => 'problem']), 'go' => 'Pokaż',
                 'hint' => 'nadkomplet, brak sztuki, zwrot, paczka nie doszła', 'late' => false,
@@ -62,7 +73,7 @@ class DashboardController extends Controller
 
         return view('admin::dashboard', [
             'tiles' => $tiles,
-            'waiting' => $this->waiting($toSend, $problems, $ideas, $mails, $wait),
+            'waiting' => $this->waiting($toSend, $problems, $ideas, $complaints, $mails, $wait),
             'today' => now()->locale('pl')->isoFormat('dddd, D MMMM'),
         ]);
     }
@@ -70,9 +81,9 @@ class DashboardController extends Controller
     /**
      * Everything that waits, the oldest first.
      *
-     * @return Collection<int, array{since: CarbonInterface, age: string, kind: string, title: string, detail: string, status: ?array{string, string}, late: ?string, action: string, url: string, main: bool}>
+     * @return Collection<int, array{since: CarbonInterface, age: string, kind: string, title: string, detail: string, status: ?array{string, string}, late: ?string, deadline: ?string, action: string, url: string, main: bool}>
      */
-    private function waiting(Collection $toSend, Collection $problems, Collection $ideas, Collection $mails, OrderWait $wait): Collection
+    private function waiting(Collection $toSend, Collection $problems, Collection $ideas, Collection $complaints, Collection $mails, OrderWait $wait): Collection
     {
         $items = fn (Order $order) => $order->items->map(fn ($item) => $item->product_name.($item->variant_label === '' ? '' : ' ('.$item->variant_label.')').' × '.$item->quantity)->join(', ');
 
@@ -93,6 +104,13 @@ class DashboardController extends Controller
                 'status' => [CustomOrderStatus::New->label(), 'bg-rose text-ink'], 'late' => null,
                 'action' => 'Wyceń', 'url' => route('admin.custom-orders.index').'#pomysl-'.$idea->id, 'main' => true,
             ]))
+            ->concat($complaints->map(fn (Complaint $complaint) => [
+                'since' => $complaint->received_on, 'kind' => 'reklamacja'.($complaint->order_number ? ' · '.$complaint->order_number : ''),
+                'title' => $complaint->name, 'detail' => str($complaint->description)->limit(90)->toString(),
+                'status' => null, 'late' => $complaint->dueSoon() ? Str::ucfirst($complaint->deadlineLabel()) : null,
+                'deadline' => $complaint->dueSoon() ? null : Str::ucfirst($complaint->deadlineLabel()),
+                'action' => 'Odpowiedz', 'url' => route('admin.complaints.index', ['reklamacja' => $complaint->id]).'#odpowiedz', 'main' => true,
+            ]))
             ->concat($mails->map(fn (array $mail) => [
                 'since' => $mail['failedAt'], 'kind' => 'niewysłany mail', 'title' => $mail['description'], 'detail' => implode(', ', $mail['to']),
                 'status' => null, 'late' => null,
@@ -100,7 +118,7 @@ class DashboardController extends Controller
             ]))
             ->sortBy(fn (array $row) => $row['since']->getTimestamp())
             ->take(self::SHOWN)
-            ->map(fn (array $row) => [...$row, 'age' => $this->age($row['since'])])
+            ->map(fn (array $row) => ['deadline' => null, ...$row, 'age' => $this->age($row['since'])])
             ->values();
     }
 

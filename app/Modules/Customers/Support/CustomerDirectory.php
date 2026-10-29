@@ -2,6 +2,7 @@
 
 namespace App\Modules\Customers\Support;
 
+use App\Modules\Checkout\Models\Complaint;
 use App\Modules\Checkout\Models\ComplaintAnswer;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Checkout\Models\Withdrawal;
@@ -88,8 +89,10 @@ class CustomerDirectory
             ->map(fn (FiringRequest $request) => $this->record($request->email, $request->name, $request->phone, $request->created_at, 'firing'));
         $withdrawals = Withdrawal::query()->get(['name', 'email', 'submitted_at'])
             ->map(fn (Withdrawal $withdrawal) => $this->record($withdrawal->email, $withdrawal->name, null, $withdrawal->submitted_at, 'case'));
-        $complaints = ComplaintAnswer::query()->get(['name', 'email', 'created_at'])
-            ->map(fn (ComplaintAnswer $answer) => $this->record($answer->email, $answer->name, null, $answer->created_at, 'case'));
+        $complaints = ComplaintAnswer::query()->whereNull('complaint_id')->get(['name', 'email', 'created_at'])
+            ->map(fn (ComplaintAnswer $answer) => $this->record($answer->email, $answer->name, null, $answer->created_at, 'case'))
+            ->concat(Complaint::query()->get(['name', 'email', 'created_at'])
+                ->map(fn (Complaint $complaint) => $this->record($complaint->email, $complaint->name, null, $complaint->created_at, 'case')));
 
         return $orders->toBase()
             ->concat($customOrders)->concat($firing)->concat($withdrawals)->concat($complaints)
