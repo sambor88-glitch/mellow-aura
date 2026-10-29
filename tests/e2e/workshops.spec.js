@@ -13,8 +13,9 @@ async function signIn(page) {
 
 /** Two dates of „Lepienie kubków” and one of „Szkliwienie i malowanie”, added in the panel once for both screen sizes. */
 async function addDates(page) {
+    // E2eSeeder has dates of „Rodzinnie z dzieckiem” already; „Szkliwienie i malowanie” shows the first screen size added them.
     await page.goto('/warsztaty-ceramiczne-krakow');
-    if (await page.locator('#workshop-dates').count()) {
+    if (await page.getByRole('link', { name: 'Terminy (1)' }).count()) {
         return;
     }
 
@@ -41,7 +42,8 @@ test('a card leads to its own dates and the pills switch between workshops', asy
     await page.goto('/warsztaty-ceramiczne-krakow', { waitUntil: 'networkidle' });
     const rows = page.locator('section[aria-labelledby="workshop-dates"] li');
     const pills = page.getByRole('group', { name: 'Pokaż terminy warsztatu' });
-    await expect(rows.filter({ visible: true })).toHaveCount(3);
+    // Three dates added here and four of „Rodzinnie z dzieckiem” from E2eSeeder.
+    await expect(rows.filter({ visible: true })).toHaveCount(7);
 
     // A workshop without dates asks about one instead.
     await expect(page.getByRole('link', { name: 'Zapytaj o termin' }).first()).toBeVisible();
@@ -56,7 +58,7 @@ test('a card leads to its own dates and the pills switch between workshops', asy
     await expect(rows.filter({ visible: true })).toHaveCount(2);
 
     await pills.getByRole('button', { name: 'Wszystkie' }).click();
-    await expect(rows.filter({ visible: true })).toHaveCount(3);
+    await expect(rows.filter({ visible: true })).toHaveCount(7);
 
     // Every „Wybieram” in one column, of one width.
     const buttons = await rows.getByRole('link', { name: /^Wybieram/ }).evaluateAll((links) => links.map((link) => link.getBoundingClientRect()).map(({ left, width }) => [Math.round(left), Math.round(width)]));

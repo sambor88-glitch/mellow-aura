@@ -37,6 +37,13 @@ touch "$DB_DATABASE"
 
 php artisan storage:link --no-interaction || true
 php artisan migrate:fresh --seed --force --no-interaction
+# Vouchers and workshop dates for vouchers.spec.js (MA-263).
+php artisan db:seed --class=Database\\Seeders\\E2eSeeder --force --no-interaction
 printf '%s\n' "$E2E_ADMIN_PASSWORD" | php artisan admin:user "$E2E_ADMIN_EMAIL" --name=E2E --role=owner
+# vouchers.spec.js buys signed in, one account per screen size: the shop's forms share one limit of 10 a minute,
+# counted per address for a guest and per account for a signed-in user, and every test here comes from 127.0.0.1.
+for screen in desktop iphone; do
+    printf '%s\n' "$E2E_ADMIN_PASSWORD" | php artisan admin:user "e2e-${screen}@mellow-aura.test" --name="E2E ${screen}" --role=owner
+done
 
 exec php artisan serve --host=127.0.0.1 --port="$E2E_PORT" --no-reload
