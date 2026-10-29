@@ -56,7 +56,7 @@ class WorkshopBookingTest extends TestCase
             ->assertSee('value="online_transfer"', false)
             ->assertDontSee('value="bank_transfer"', false)
             ->assertSee('Rezerwuję i płacę')
-            ->assertSee('220,00 zł')
+            ->assertSee('220 zł')
             ->assertSee('Trzymam miejsce '.WorkshopBooking::HOLD_MINUTES.' minut na płatność.');
     }
 

@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Modules\Catalog\Enums\CategoryGroup;
 use App\Modules\Catalog\Enums\FoodContact;
 use App\Modules\Catalog\Enums\GoogleCategory;
+use App\Modules\Catalog\Enums\VariantKind;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\PriceHistory;
 use App\Modules\Catalog\Models\Product;
@@ -44,7 +45,7 @@ class AdminProductsTest extends TestCase
             ->get('/panel/produkty')
             ->assertOk()
             ->assertSee('Dodaj produkt')
-            ->assertSeeInOrder(['Wszystko, co masz w ofercie', 'Wazony', 'widoczny w sklepie', 'od 239,00 zł', 'Szkic miski', 'ukryty w sklepie', '89,00 zł']);
+            ->assertSeeInOrder(['Wszystko, co masz w ofercie', 'Wazony', 'widoczny w sklepie', 'od 239 zł', 'Szkic miski', 'ukryty w sklepie', '89 zł']);
     }
 
     public function test_adding_a_product_publishes_it_with_sizes_prices_and_details(): void
@@ -63,6 +64,7 @@ class AdminProductsTest extends TestCase
                 'size_tolerance' => '1 cm',
                 'safety_warnings' => 'Nie stawiaj na ogniu.',
                 'is_exact_piece' => '1',
+                'variant_kind' => 'sizes',
                 'google_category' => '3498',
                 'show_in_google' => '1',
                 'dimensions' => ['diameter_cm' => '12,5', 'height_cm' => ''],
@@ -85,6 +87,7 @@ class AdminProductsTest extends TestCase
             [$bowl->food_contact, $bowl->deviation, $bowl->size_tolerance, $bowl->safety_warnings, $bowl->is_exact_piece, $bowl->is_one_off],
         );
         $this->assertSame([['birthday'], ['for_her']], [$bowl->occasions, $bowl->recipients]);
+        $this->assertSame(VariantKind::Sizes, $bowl->variant_kind);
         $this->assertSame([GoogleCategory::Bowls, true], [$bowl->google_category, $bowl->show_in_google]);
         $this->assertTrue($bowl->is_published);
         $this->assertSame(
@@ -167,6 +170,7 @@ class AdminProductsTest extends TestCase
                 'name' => 'Kubki',
                 'category_id' => $this->mugs->id,
                 'food_contact' => 'maybe',
+                'variant_kind' => 'shapes',
                 'variants' => [
                     ['label' => '', 'price' => '79', 'stock' => ''],
                     ['label' => 'Duży', 'price' => '79 zł', 'stock' => ''],
@@ -177,6 +181,7 @@ class AdminProductsTest extends TestCase
                 'variants.0.label' => 'Nazwij każdy rozmiar — np. Mały 12 cm',
                 'variants.1.price' => 'Wpisz cenę, np. 79 albo 79,90',
                 'food_contact' => 'Wybierz z listy, czy to naczynie do jedzenia',
+                'variant_kind' => 'Wybierz z listy, czym różnią się rozmiary',
             ]);
 
         $this->assertSame('Kubki malowane', $mug->fresh()->name);
@@ -198,7 +203,7 @@ class AdminProductsTest extends TestCase
             ->assertSessionHas('panel_status', 'Zapisane. Klienci już to widzą.');
 
         $this->assertSame([19900, 23900], [$size->fresh()->price_gross, $size->fresh()->compare_at_price]);
-        $this->get('/produkt/wazony')->assertSeeInOrder(['199,00 zł', '239,00 zł', 'Najniższa cena z 30 dni przed obniżką: 239,00 zł']);
+        $this->get('/produkt/wazony')->assertSeeInOrder(['199 zł', '239 zł', 'Najniższa cena z 30 dni przed obniżką: 239 zł']);
         $this->get('/panel/produkty')->assertSee('value="239"', false);
     }
 
@@ -211,6 +216,16 @@ class AdminProductsTest extends TestCase
             ->get('/panel/produkty')
             ->assertOk()
             ->assertSeeInOrder(['Zanim ktoś kupi', 'Kontakt z żywnością', '<option value="suitable" selected>Tak — do jedzenia i picia</option>', 'value="Nie do mikrofalówki"', 'placeholder="jak w Ustawieniach: 0,5 cm"', 'Puste pole — obowiązuje różnica z Ustawień: 0,5 cm.', 'Ostrzeżenia', 'name="is_exact_piece" value="1" checked'], false);
+    }
+
+    public function test_the_form_asks_what_the_variants_differ_in(): void
+    {
+        $this->product('Voucher kwotowy', 1, [15000, 25000], ['variant_kind' => VariantKind::Amounts]);
+
+        $this->actingAs(User::factory()->create())
+            ->get('/panel/produkty')
+            ->assertOk()
+            ->assertSeeInOrder(['Czym różnią się rozmiary', 'Rozmiarem — „3 rozmiary”', '<option value="amounts" selected>Kwotą — „3 kwoty”</option>', 'Kolorem', 'Czymś innym — „3 warianty”'], false);
     }
 
     public function test_a_voucher_size_can_be_sent_by_post_and_goods_are_never_asked(): void

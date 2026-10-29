@@ -29,7 +29,7 @@ class EuroPricesTest extends TestCase
     public function test_euro_reads_the_english_way_on_an_english_page_and_the_polish_way_elsewhere(): void
     {
         App::setLocale('en');
-        $this->assertSame(['€39.00', '239,00 zł'], [Money::format(3900, 'EUR'), Money::format(23900)]);
+        $this->assertSame(['€39', '239 zł'], [Money::format(3900, 'EUR'), Money::format(23900)]);
 
         App::setLocale('pl');
         $this->assertSame('39,50 €', Money::format(3950, 'EUR'));
@@ -56,14 +56,14 @@ class EuroPricesTest extends TestCase
             ->assertOk()
             ->assertSee('Painted mug')
             // The large size has no euro price, so the card shows one price, not „from”.
-            ->assertSee('€39.00')
+            ->assertSee('€39')
             ->assertDontSee('from €')
             // Prices only; the studio's own price range for Google stays in złoty (a business in Kraków).
-            ->assertDontSee(',00 zł')
+            ->assertDontSee('149 zł<', false)
             ->assertDontSee('Plate');
 
         $this->get('/sklep')
-            ->assertSee('od 149,00 zł')
+            ->assertSee('od 149 zł')
             ->assertSee('Talerz')
             ->assertDontSee('€');
 
@@ -78,13 +78,13 @@ class EuroPricesTest extends TestCase
 
         $response = $this->get('/en/product/painted-mug')
             ->assertOk()
-            ->assertSee('€39.00')
+            ->assertSee('€39')
             ->assertSee('x-text="$store.cart.format(3900 * quantity)"', false)
             ->assertSee('"priceCurrency":"EUR"', false)
             ->assertSee('"price":"39.00"', false)
             // Only the size priced in euro is on offer.
             ->assertDontSee('Large')
-            ->assertDontSee(',00 zł')
+            ->assertDontSee('149 zł<', false)
             // Delivery and returns in the offer are the Polish ones, so the euro offer leaves them out for now.
             ->assertDontSee('shippingDetails', false);
 
@@ -92,7 +92,7 @@ class EuroPricesTest extends TestCase
 
         $this->get('/produkt/malowany-kubek')
             ->assertSee('"priceCurrency":"PLN"', false)
-            ->assertSee('149,00 zł');
+            ->assertSee('149 zł');
     }
 
     public function test_the_lowest_price_before_a_reduction_is_counted_in_each_currency_on_its_own(): void
@@ -112,9 +112,9 @@ class EuroPricesTest extends TestCase
         $this->assertSame(3900, $small->fresh()->lowestPriceBeforeDiscount('EUR'));
 
         $this->get('/en/product/painted-mug')
-            ->assertSeeInOrder(['€35.00', '€39.00', 'Lowest price in the 30 days before the reduction: €39.00']);
+            ->assertSeeInOrder(['€35', '€39', 'Lowest price in the 30 days before the reduction: €39']);
         $this->get('/produkt/malowany-kubek')
-            ->assertSeeInOrder(['129,00 zł', '149,00 zł', 'Najniższa cena z 30 dni przed obniżką: 149,00 zł']);
+            ->assertSeeInOrder(['129 zł', '149 zł', 'Najniższa cena z 30 dni przed obniżką: 149 zł']);
     }
 
     public function test_the_english_basket_counts_in_euro_and_leaves_out_what_has_no_euro_price(): void
@@ -124,7 +124,7 @@ class EuroPricesTest extends TestCase
         $this->post('/en/basket', ['variant_id' => $small->id], ['Accept' => 'application/json'])
             ->assertOk()
             ->assertJson(['count' => 1, 'notice' => 'Painted mug — added to your basket'])
-            ->assertJsonPath('content', fn (string $content) => str_contains($content, '€39.00') && str_contains($content, 'Total') && ! str_contains($content, 'zł'));
+            ->assertJsonPath('content', fn (string $content) => str_contains($content, '€39') && str_contains($content, 'Total') && ! str_contains($content, 'zł'));
 
         // Nothing goes into a euro basket without a euro price.
         $this->post('/en/basket', ['variant_id' => $large->id], ['Accept' => 'application/json'])->assertNotFound();
@@ -138,7 +138,7 @@ class EuroPricesTest extends TestCase
             ->assertDontSee('Przelewy24');
         $this->get('/sklep')
             ->assertSee('data-count="2"', false)
-            ->assertSee('328,00 zł')
+            ->assertSee('328 zł')
             ->assertSee('Przejdź do zamówienia')
             ->assertSee('Przelewy24');
     }
@@ -158,7 +158,7 @@ class EuroPricesTest extends TestCase
         $this->post('/en/basket', ['variant_id' => $small->id]);
 
         $this->get('/en/shop')->assertDontSee('more for free delivery')->assertSee('at checkout');
-        $this->get('/sklep')->assertSee('Do darmowej wysyłki brakuje 151,00 zł');
+        $this->get('/sklep')->assertSee('Do darmowej wysyłki brakuje 151 zł');
     }
 
     /** @return array{Product, ProductVariant, ProductVariant} */

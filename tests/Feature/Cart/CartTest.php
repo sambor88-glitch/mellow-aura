@@ -31,7 +31,7 @@ class CartTest extends TestCase
         $this->get('/produkt/wazony')
             ->assertOk()
             ->assertSeeInOrder(['Koszyk', 'sztuk:', '2'])
-            ->assertSeeInOrder(['Twój koszyk', 'Wazony', 'Niski 16 cm', '478,00 zł', 'Razem', '478,00 zł']);
+            ->assertSeeInOrder(['Twój koszyk', 'Wazony', 'Niski 16 cm', '478 zł', 'Razem', '478 zł']);
     }
 
     public function test_the_drawer_answers_in_the_background_with_its_new_content(): void
@@ -42,7 +42,7 @@ class CartTest extends TestCase
             ->assertOk()
             ->assertJson(['count' => 1, 'notice' => 'Wazony — dodane do koszyka']);
 
-        $this->assertStringContainsString('239,00 zł', $response->json('content'));
+        $this->assertStringContainsString('239 zł', $response->json('content'));
     }
 
     public function test_the_cart_never_holds_more_than_is_on_the_shelf(): void
@@ -129,8 +129,8 @@ class CartTest extends TestCase
         $vase = $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3);
 
         $content = $this->postJson('/koszyk', ['variant_id' => $vase->id])->json('content');
-        $this->assertStringContainsString('Do darmowej wysyłki brakuje 161,00 zł', $content);
-        $this->assertStringContainsString('od 16,00 zł', $content);
+        $this->assertStringContainsString('Do darmowej wysyłki brakuje 161 zł', $content);
+        $this->assertStringContainsString('od 16 zł', $content);
 
         $content = $this->postJson('/koszyk', ['variant_id' => $vase->id])->json('content');
         $this->assertStringContainsString('Wysyłka gratis — próg osiągnięty', $content);

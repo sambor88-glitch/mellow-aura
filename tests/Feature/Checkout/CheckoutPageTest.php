@@ -39,11 +39,11 @@ class CheckoutPageTest extends TestCase
             ->assertSee('<meta name="robots" content="noindex">', false)
             ->assertSeeInOrder([
                 'Jeszcze trzy pola', 'E-mail', 'Telefon', 'Imię i nazwisko', 'Faktura na firmę, dopisek do paczki',
-                'Sposób dostawy', 'InPost Paczkomat', '16,00 zł', 'Odbiór w pracowni', 'gratis',
+                'Sposób dostawy', 'InPost Paczkomat', '16 zł', 'Odbiór w pracowni', 'gratis',
                 'Płatność', 'BLIK', 'Karta', 'Przelewy24', 'Przelew tradycyjny',
-                'Twoje zamówienie', 'Wazony', 'Niski 16 cm', '1 szt.', '239,00 zł', 'Razem', '255,00 zł',
+                'Twoje zamówienie', 'Wazony', 'Niski 16 cm', '1 szt.', '239 zł', 'Razem', '255 zł',
                 // The code lives 2 minutes, so it is typed last, right above the button.
-                'name="accept_terms"', 'Przepisz kod z aplikacji banku', 'id="blik_code"', '6 cyfr, ważne 2 minuty', 'type="submit"', 'Płacę 255,00 zł',
+                'name="accept_terms"', 'Przepisz kod z aplikacji banku', 'id="blik_code"', '6 cyfr, ważne 2 minuty', 'type="submit"', 'Płacę 255 zł',
             ], false)
             ->assertSee('name="expected_total" value="25500"', false);
     }

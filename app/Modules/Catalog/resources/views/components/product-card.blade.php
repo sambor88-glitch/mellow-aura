@@ -7,8 +7,8 @@
     // One tile is about 290 px wide on a computer and half the phone screen, two to a row.
     $srcset = $image ? \App\Modules\Catalog\Support\ProductPhoto::srcset($image) : null;
     $variants = $product->variants->count();
-    $few = in_array($variants % 10, [2, 3, 4], true) && ! in_array($variants % 100, [12, 13, 14], true);
-    $variantsLabel = __($few ? 'catalog::card.variants_few' : 'catalog::card.variants_many', ['count' => $variants]);
+    // „3 rozmiary”, „3 kwoty” — the panel says what the variants differ in.
+    $variantsLabel = ($product->variant_kind ?? \App\Modules\Catalog\Enums\VariantKind::Options)->count($variants);
 @endphp
 <div data-shelf-card class="group relative animate-ma-up" style="animation-delay: {{ $delay }}s">
 <a href="{{ route('product.show', $product) }}" class="block text-ink hover:text-ink">
@@ -29,8 +29,8 @@
         @endif
         <span class="glass absolute bottom-2.5 left-2.5 z-2 flex items-baseline gap-2 rounded-full px-3 py-1.5 text-[13px] text-ink sm:bottom-3 sm:left-3 sm:px-3.5 sm:py-2 sm:text-[14px]"><x-catalog::price-label :product="$product" /></span>
     </div>
-    {{-- The category above the name, one line: side by side both broke into two on a phone. --}}
-    <div class="mb-1 truncate text-[10px] tracking-[0.2em] text-label uppercase">{{ $product->category->name }}</div>
+    {{-- The category above the name, one line: side by side both broke into two on a phone. Tighter letters on a phone fit „Kadzielnice i podstawki”. --}}
+    <div class="mb-1 truncate text-[10px] tracking-[0.2em] text-label uppercase max-sm:tracking-[0.06em]">{{ $product->category->name }}</div>
     <div class="font-serif text-[length:clamp(18px,4.8vw,22px)] leading-[1.15] font-light text-balance">{{ $product->name }}</div>
     @if ($withVariantCount && $variants > 1)
         <div class="mt-1 text-[12px] text-label">{{ $variantsLabel }}</div>

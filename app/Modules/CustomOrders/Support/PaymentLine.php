@@ -31,7 +31,7 @@ class PaymentLine extends CartLine
         return 'Zamówienie indywidualne: '.$this->link->customOrderRequest->kind->label();
     }
 
-    /** „Wpłata do wyceny 900,00 zł”. */
+    /** „Wpłata do wyceny 900 zł”. */
     public function details(): ?string
     {
         $quote = $this->link->customOrderRequest->quote;

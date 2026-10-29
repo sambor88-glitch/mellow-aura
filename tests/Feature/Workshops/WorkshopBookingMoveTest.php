@@ -100,7 +100,7 @@ class WorkshopBookingMoveTest extends TestCase
 
         Mail::assertQueued(BookingMoved::class, function (BookingMoved $mail) {
             $mail->assertHasSubject('Nowy termin warsztatu · sob. 7 listopada, 11:00');
-            $mail->assertSeeInOrderInHtml(['Przeniosłam Twój zapis', 'sob. 7 listopada, 11:00 – 13:00', 'Poprzedni termin', 'sob. 31 października, 11:00 – 13:00', 'niczego nie dopłacasz', 'Lepienie kubków', 'Liczba osób: 2', '440,00 zł', self::ADDRESS]);
+            $mail->assertSeeInOrderInHtml(['Przeniosłam Twój zapis', 'sob. 7 listopada, 11:00 – 13:00', 'Poprzedni termin', 'sob. 31 października, 11:00 – 13:00', 'niczego nie dopłacasz', 'Lepienie kubków', 'Liczba osób: 2', '440 zł', self::ADDRESS]);
             $mail->assertSeeInText(self::ADDRESS);
             $mail->assertSeeInHtml('Dzień przed warsztatem przypomnę Ci o nim mailem.');
 
@@ -176,7 +176,7 @@ class WorkshopBookingMoveTest extends TestCase
         $this->setPrice(25000);
 
         $this->actingAs($this->owner)->get(route('admin.workshops.dates.bookings', $from))
-            ->assertSee('Warsztat kosztuje teraz 250,00 zł za osobę, a ten zapis był za 220,00 zł. Przenoszę tylko na termin w tej samej cenie — bez dopłat i zwrotów różnicy.')
+            ->assertSee('Warsztat kosztuje teraz 250 zł za osobę, a ten zapis był za 220 zł. Przenoszę tylko na termin w tej samej cenie — bez dopłat i zwrotów różnicy.')
             ->assertDontSee('Przenieś zapis</button>', false);
 
         $this->post(route('admin.workshops.bookings.move', $booking), ['workshop_date_id' => $to->id])

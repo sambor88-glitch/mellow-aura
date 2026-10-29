@@ -73,7 +73,7 @@ class PiecePageTest extends TestCase
             ->assertSee('@mellowaura');
 
         // The city stays out too: the site's own details say „Kraków”, so the street and postal code stand in for it.
-        foreach (['Anna Nowak', 'ania@example.com', '600100200', '600 100 200', $order->number, 'Długa 1', '31-001', '100,00', '500,00'] as $personal) {
+        foreach (['Anna Nowak', 'ania@example.com', '600100200', '600 100 200', $order->number, 'Długa 1', '31-001', '100 zł', '500 zł'] as $personal) {
             $response->assertDontSee($personal, false);
         }
     }

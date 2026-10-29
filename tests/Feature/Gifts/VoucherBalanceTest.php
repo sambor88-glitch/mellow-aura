@@ -68,7 +68,7 @@ class VoucherBalanceTest extends TestCase
 
         $this->get('/zamowienie')
             ->assertSee('Voucher '.$voucher->code)
-            ->assertSee('zostanie na nim 45,00 zł')
+            ->assertSee('zostanie na nim 45 zł')
             ->assertSee('Zamawiam, płaci voucher')
             ->assertSee('name="expected_vouchers" value="25500"', false)
             ->assertSee('Voucher pokrywa całość');
@@ -100,7 +100,7 @@ class VoucherBalanceTest extends TestCase
         $this->post('/zamowienie/voucher', ['voucher_code' => $other->code]);
         $this->post('/zamowienie/voucher', ['voucher_code' => $other->code])->assertSessionHasErrors(['voucher_code' => 'Ten voucher już odjęłam od sumy.']);
 
-        $this->get('/zamowienie')->assertSee('Do zapłaty')->assertSee('Płacę 155,00 zł');
+        $this->get('/zamowienie')->assertSee('Do zapłaty')->assertSee('Płacę 155 zł');
         $this->post('/zamowienie', $this->form(['payment_method' => 'card', 'blik_code' => '', 'expected_vouchers' => 10000]))
             ->assertRedirect('https://sandbox.przelewy24.pl/trnRequest/TOKEN-1');
 
@@ -172,7 +172,7 @@ class VoucherBalanceTest extends TestCase
         $this->assertSame(0, $voucher->fresh()->balance_minor);
         $this->assertSame(20000, (int) VoucherRedemption::query()->where('status', RedemptionStatus::Used)->sum('amount_minor'));
         $this->assertSame(OrderStatus::Problem, $first->status);
-        $this->assertStringContainsString('voucher '.$voucher->code.' (200,00 zł) został w międzyczasie wydany', $first->problem_note);
+        $this->assertStringContainsString('voucher '.$voucher->code.' (200 zł) został w międzyczasie wydany', $first->problem_note);
     }
 
     public function test_a_code_that_pays_nothing_says_why(): void
@@ -208,16 +208,16 @@ class VoucherBalanceTest extends TestCase
 
         $this->actingAs($kasia)->get('/panel/prezenty?kod='.$voucher->code)
             ->assertOk()
-            ->assertSee('Saldo 45,00 zł')
+            ->assertSee('Saldo 45 zł')
             ->assertSee($order->number)
             ->assertSee('wykorzystane');
 
         $this->get('/panel/zamowienia/'.$order->number)
             ->assertSee('Zapłacone voucherem')
-            ->assertSee('Oddaj 255,00 zł na voucher');
+            ->assertSee('Oddaj 255 zł na voucher');
 
         $this->put('/panel/prezenty/zamowienie/'.$order->id.'/oddaj-na-voucher')
-            ->assertSessionHas('panel_status', '255,00 zł wróciło na vouchery. Klientka zapłaci nimi jeszcze raz tym samym kodem.');
+            ->assertSessionHas('panel_status', '255 zł wróciło na vouchery. Klientka zapłaci nimi jeszcze raz tym samym kodem.');
 
         $this->assertSame(30000, $voucher->fresh()->balance_minor);
         $this->assertSame(RedemptionStatus::Returned, VoucherRedemption::sole()->status);

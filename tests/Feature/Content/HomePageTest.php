@@ -83,7 +83,7 @@ class HomePageTest extends TestCase
         $this->get('/')
             ->assertOk()
             ->assertSeeText('Zanurz dłonie w glinie')
-            ->assertSee('od 220,00 zł / os.')
+            ->assertSee('od 220 zł / os.')
             ->assertSee('href="'.route('workshops.index').'"', false);
     }
 

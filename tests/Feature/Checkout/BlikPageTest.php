@@ -90,7 +90,7 @@ class BlikPageTest extends TestCase
             ->assertSee('autocomplete="one-time-code"', false)
             ->assertSee('inputmode="numeric"', false)
             ->assertSee('6 cyfr, ważne 2 minuty')
-            ->assertSee('Płacę 255,00 zł')
+            ->assertSee('Płacę 255 zł')
             ->assertDontSee('http-equiv="refresh"', false);
 
         $this->post('/zamowienie/blik', ['blik_code' => '123 456'])->assertRedirect(route('checkout.confirmation'));

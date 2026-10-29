@@ -4,6 +4,7 @@
 @use('App\Modules\Catalog\Enums\GoogleCategory')
 @use('App\Modules\Catalog\Enums\Occasion')
 @use('App\Modules\Catalog\Enums\Recipient')
+@use('App\Modules\Catalog\Enums\VariantKind')
 @use('App\Modules\Catalog\Models\ExchangeRate')
 @use('App\Modules\Shared\Support\FocalPoint')
 @use('App\Modules\Shared\Support\Money')
@@ -51,6 +52,7 @@
     $euroRate = ExchangeRate::for('EUR');
     $euroMarkup = (int) $settings->get(ConvertEuroPrices::MARKUP, 0);
     $foodContact = (string) $old('food_contact', $product?->food_contact?->value);
+    $variantKind = (string) $old('variant_kind', ($product?->variant_kind ?? VariantKind::Options)->value);
     $googleCategory = (string) $old('google_category', $product?->google_category?->value);
     $showInGoogle = $mine ? (bool) old('show_in_google') : ($product?->show_in_google ?? true);
     $defaultTolerance = $settings->get('size_tolerance');
@@ -185,6 +187,20 @@
             @endforeach
         </div>
         {!! $error('variants') !!}
+        <div class="mt-3 min-w-0">
+            <label for="{{ $formKey }}-variant-kind" class="mb-1.5 block text-[13.5px] text-graphite">Czym różnią się rozmiary</label>
+            <select id="{{ $formKey }}-variant-kind" name="variant_kind" aria-describedby="{{ $formKey }}-variant-kind-note"
+                    @class([$input, 'w-full px-4 py-[13px]', 'border-error' => $bag->has('variant_kind'), 'border-line' => ! $bag->has('variant_kind')])>
+                @foreach (VariantKind::cases() as $option)
+                    <option value="{{ $option->value }}" @selected($variantKind === $option->value)>{{ $option->option() }}</option>
+                @endforeach
+            </select>
+            @if ($bag->has('variant_kind'))
+                <p id="{{ $formKey }}-variant-kind-note" class="mt-1.5 text-[13px] text-error">{{ $bag->first('variant_kind') }}</p>
+            @else
+                <p id="{{ $formKey }}-variant-kind-note" class="mt-1.5 text-[12.5px] text-hint">Tak policzę je pod zdjęciem w sklepie. Przy jednej cenie nic się nie pokaże.</p>
+            @endif
+        </div>
         <p class="mt-2.5 text-[12.5px] leading-[1.5] text-hint">Puste wiersze się nie zapiszą. Jedna cena nie potrzebuje nazwy rozmiaru. Pole „szt.” zostaw puste, jeśli nie liczysz sztuk — przy zerze produkt sam znika ze sklepu. „Przed obniżką” wpisz tylko przy promocji: karta produktu przekreśli tę cenę, gdy obniżysz cenę, i sama poda najniższą cenę z 30 dni.</p>
         <label class="mt-2.5 flex min-h-11 items-start gap-2.5 text-[14px] text-graphite">
             <input type="checkbox" name="euro_from_rate" value="1" x-model="fromRate" @checked($fromRate) class="mt-[3px] size-4 flex-none accent-ink">

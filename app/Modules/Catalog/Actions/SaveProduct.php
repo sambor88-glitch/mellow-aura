@@ -2,6 +2,7 @@
 
 namespace App\Modules\Catalog\Actions;
 
+use App\Modules\Catalog\Enums\VariantKind;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductTranslation;
 use App\Modules\Catalog\Models\ProductVariant;
@@ -25,7 +26,7 @@ class SaveProduct
     public function __construct(private ConvertEuroPrices $convertEuroPrices) {}
 
     /**
-     * @param  array{name: string, category_id: int, description: ?string, seo_description?: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, euro_from_rate?: bool, workshop_code?: ?string, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels?: array<string, string>, price_gross: int, compare_at_price: ?int, prices?: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post?: bool, voucher_seats?: ?int, media_id?: ?int}>, photo_alts?: array<int, string>, photo_focus?: array<int, array{x: int, y: int}>, translations?: array<string, array<string, ?string>>}  $data
+     * @param  array{name: string, category_id: int, description: ?string, seo_description?: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, variant_kind?: ?string, euro_from_rate?: bool, workshop_code?: ?string, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels?: array<string, string>, price_gross: int, compare_at_price: ?int, prices?: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post?: bool, voucher_seats?: ?int, media_id?: ?int}>, photo_alts?: array<int, string>, photo_focus?: array<int, array{x: int, y: int}>, translations?: array<string, array<string, ?string>>}  $data
      */
     public function __invoke(?Product $product, array $data): Product
     {
@@ -46,6 +47,7 @@ class SaveProduct
                 'is_published' => $data['is_published'],
                 'is_one_off' => $data['is_one_off'],
                 'is_exact_piece' => $data['is_exact_piece'],
+                'variant_kind' => $data['variant_kind'] ?? $product?->variant_kind ?? VariantKind::Options,
                 'euro_from_rate' => $data['euro_from_rate'] ?? false,
                 // The workshop a voucher books; empty for an amount voucher and for everything else.
                 'workshop_code' => $data['workshop_code'] ?? null,
