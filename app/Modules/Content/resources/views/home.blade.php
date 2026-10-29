@@ -93,10 +93,10 @@
                 </div>
 
                 {{-- The first screen says what this is and leads to the shop; it fades as the frame grows (aura.js).
-                     On a phone it sits low and the button stays beside the line, so it never reaches the „Aura” under the frame. --}}
-                <div data-hero-meta class="absolute inset-x-3 bottom-3 z-6 mx-auto flex w-auto max-w-[680px] items-center gap-3 rounded-[22px] border border-glass-line bg-cream/90 py-2 pr-2 pl-4 backdrop-blur-[18px] sm:inset-x-[clamp(18px,4vw,48px)] sm:bottom-[22px] sm:w-fit sm:gap-6 sm:rounded-full sm:pl-7">
-                    <p class="min-w-0 flex-1 font-serif text-[length:clamp(15px,1.5vw,19px)] leading-[1.3] text-brown italic text-pretty">{{ $t('hero_bar') }}</p>
-                    <a href="{{ route('shop.index') }}" class="{{ $btnMain }} flex-none max-sm:min-h-12! max-sm:px-[18px]! max-sm:text-[13.5px]!">{{ $t('hero_bar_cta') }} <span aria-hidden="true">→</span></a>
+                     It keeps clear of „Aura”: on a phone it sits low under the word, on a wider screen to the left of it. --}}
+                <div data-hero-meta class="absolute inset-x-3 bottom-3 z-6 mx-auto flex w-auto max-w-[680px] items-center gap-3 rounded-[22px] border border-glass-line bg-cream/90 py-2 pr-2 pl-4 backdrop-blur-[18px] sm:inset-x-[clamp(18px,4vw,48px)] sm:bottom-4 sm:mx-0 sm:w-fit sm:gap-6 sm:rounded-full sm:py-1.5 sm:pr-1.5 sm:pl-7">
+                    <p class="min-w-0 flex-1 font-serif text-[length:clamp(15px,1.4vw,18px)] leading-[1.3] text-brown italic text-balance sm:max-w-[15em]">{{ $t('hero_bar') }}</p>
+                    <a href="{{ route('shop.index') }}" class="{{ $btnMain }} flex-none min-h-12! px-[18px]! text-[13.5px]! sm:px-6!">{{ $t('hero_bar_cta') }} <span aria-hidden="true">→</span></a>
                 </div>
             </div>
 
