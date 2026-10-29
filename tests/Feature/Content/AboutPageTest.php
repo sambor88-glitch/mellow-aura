@@ -37,7 +37,7 @@ class AboutPageTest extends TestCase
             ->assertSee('<title>O mnie — Kasia Samborska, pracownia MellowAura | Kraków</title>', false)
             ->assertSee('<link rel="canonical" href="'.route('content.about').'">', false)
             ->assertSee('Cześć,<br>jestem <em class="text-brown italic">Kasia</em>', false)
-            ->assertSeeInOrder(['Tworzę MellowAura – kameralną pracownię', 'Zajmuję się ceramiką i rękodziełem tekstylnym'])
+            ->assertSeeInOrder(['Tworzę MellowAura — kameralną pracownię', 'Zajmuję się ceramiką i rękodziełem tekstylnym'])
             ->assertDontSee('Lubię łączyć surowość z miękkością, prostotę z symboliką')
             ->assertSee('href="'.route('content.contact').'"', false)
             ->assertSeeInOrder(['<dt class="mb-2 font-serif text-[21px]">Glina</dt>', 'Nierówne krawędzie zostawiam', 'Rośliny'], false)

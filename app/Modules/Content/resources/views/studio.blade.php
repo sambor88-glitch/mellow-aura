@@ -5,7 +5,7 @@
 @endphp
 
 <x-shared::layout title="Pracownia w Krakowie — ciepło, empatia, cierpliwość"
-                  description="Kameralne home studio w Krakowie: jeden stół, do sześciu osób, dwa wypały w cenie warsztatu."
+                  description="Kameralna domowa pracownia w Krakowie: jeden stół, do sześciu osób, dwa wypały w cenie warsztatu."
                   :canonical="route('content.studio')">
     <div class="animate-ma-view pb-24">
         @if ($hero !== null)
