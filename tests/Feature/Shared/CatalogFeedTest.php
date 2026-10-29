@@ -98,8 +98,10 @@ class CatalogFeedTest extends TestCase
         $this->deliveryOptions();
         $category = Category::factory()->create(['group' => CategoryGroup::Ceramics]);
         $mug = ProductVariant::factory()->create(['product_id' => $this->product(['name' => 'Kubek', 'category_id' => $category->id])->id, 'price_gross' => 9000, 'stock' => 3]);
-        $set = Bundle::factory()->create(['name' => 'Kubek w pudełku', 'discount_percent' => 10, 'is_published' => true]);
+        $scrunchie = ProductVariant::factory()->create(['product_id' => $this->product(['name' => 'Scrunchie', 'category_id' => $category->id])->id, 'price_gross' => 6000, 'stock' => 3]);
+        $set = Bundle::factory()->create(['name' => 'Kubek i scrunchie', 'discount_percent' => 10, 'is_published' => true]);
         BundleItem::factory()->create(['bundle_id' => $set->id, 'product_variant_id' => $mug->id, 'sort_order' => 1]);
+        BundleItem::factory()->create(['bundle_id' => $set->id, 'product_variant_id' => $scrunchie->id, 'sort_order' => 2]);
 
         $item = $this->items($this->get('/social-catalog.xml')->getContent())['bundle-'.$set->id];
 
