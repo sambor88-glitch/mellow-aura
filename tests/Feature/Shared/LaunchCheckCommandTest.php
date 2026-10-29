@@ -9,6 +9,14 @@ class LaunchCheckCommandTest extends TestCase
 {
     private const SITEMAP = '<?xml version="1.0"?><urlset><url><loc>https://mellow-aura.com/</loc></url><url><loc>https://mellow-aura.com/sklep</loc></url></urlset>';
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Every address the command asks for is faked; a forgotten one fails here instead of reaching the real domain.
+        Http::preventStrayRequests();
+    }
+
     public function test_a_healthy_production_passes_every_check(): void
     {
         $this->fakeHealthyProduction();
@@ -47,6 +55,7 @@ class LaunchCheckCommandTest extends TestCase
             'https://mellowaura-dev.on-forge.com/*' => Http::response('<title>Sklep</title>'),
             'https://mellow-aura.com/sklep' => Http::response('<title>MellowAura</title><a onclick="go()">Dalej</a>'),
             'https://mellow-aura.com/' => Http::response('<title>MellowAura</title>', 200, ['X-Robots-Tag' => 'noindex, nofollow']),
+            'https://mellow-aura.com/en' => Http::response('', 404),
             'https://mellow-aura.com/regulamin' => Http::response('<title>Regulamin sklepu | MellowAura</title>'),
             'https://mellow-aura.com/polityka-prywatnosci' => Http::response('<title>Polityka prywatności | MellowAura</title>'),
         ]);
