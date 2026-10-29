@@ -60,3 +60,7 @@ Homestead.yaml
 /test-results/
 /playwright-report/
 /storage/e2e/
+
+# Lighthouse (MA-267)
+/lighthouse-results
+/.lighthouseci

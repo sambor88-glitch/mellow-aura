@@ -144,3 +144,49 @@ jobs:
             playwright-report/
             storage/logs/laravel.log
           retention-days: 7
+
+  # Performance budget (MA-267): Lighthouse on the key pages, phone and desktop, median of three runs.
+  # The thresholds live in lighthouserc.cjs; the reports and a summary table land in `lighthouse-results`.
+  lighthouse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, pdo_sqlite, gd, exif, intl
+          coverage: none
+
+      - uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+
+      - run: composer install --no-interaction --prefer-dist --no-progress
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci && npm run build
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      # Lighthouse uses the Google Chrome that comes with the runner.
+      - name: Lighthouse budget
+        run: bash tests/lighthouse/run.sh
+
+      - name: Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-results
+          path: lighthouse-results/
+          retention-days: 14
