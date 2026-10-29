@@ -65,7 +65,7 @@ class WorkshopEmailsTest extends TestCase
             $mail->assertSeeInOrderInHtml(['Co zabrać ze sobą', 'Ubranie, którego nie szkoda pobrudzić', 'Spięte włosy']);
             $mail->assertSeeInText('- Spięte włosy');
 
-            return $mail->hasTo('ania@example.com') && $mail->hasReplyTo('kasia@example.com') && count($mail->attachments()) === 1;
+            return $mail->hasTo('ania@example.com') && $mail->hasReplyTo('kasia@example.com') && count($mail->attachments()) === 2;
         });
 
         Mail::assertQueued(NewBookingReceived::class, function (NewBookingReceived $mail) {
