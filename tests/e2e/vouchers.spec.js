@@ -49,12 +49,12 @@ async function signIn(page, testInfo) {
 /** A voucher of E2eSeeder for this screen size: AAA2 pays 5000 zł, AAA3 20 zł, AAA4 1000 zł. */
 const voucherCode = (testInfo, suffix) => `MA-${testInfo.project.name === 'iphone' ? 'PHNE' : 'DESK'}-${suffix}`;
 
-/** Grosze as Money::format writes them: „4740,00 zł”. */
-const zl = (minor) => `${Math.trunc(minor / 100)},${String(minor % 100).padStart(2, '0')} zł`;
+/** Grosze as Money::format writes them, the grosze only when there are some (MA-257): „4740 zł”, „79,90 zł”. */
+const zl = (minor) => `${Math.trunc(minor / 100)}${minor % 100 ? `,${String(minor % 100).padStart(2, '0')}` : ''} zł`;
 
-/** Grosze from „− 260,00 zł”, whatever the spaces. */
+/** Grosze from „− 260 zł” or „− 79,90 zł”, whatever the spaces. */
 const grosze = (text) => {
-    const [, whole, part] = text.replace(/\s/g, '').match(/(\d+),(\d{2})zł/);
+    const [, whole, part = '0'] = text.replace(/\s/g, '').match(/(\d+)(?:,(\d{2}))?zł/);
 
     return Number(whole) * 100 + Number(part);
 };
@@ -254,7 +254,7 @@ test('a voucher pays a part and BLIK the rest', async ({ page }, testInfo) => {
         await expectNoSideScroll(page);
 
         const pay = page.locator('form[action$="/zamowienie"] button[type="submit"]');
-        await expect(pay).toHaveText(/Płacę \d+,\d{2}\s*zł/);
+        await expect(pay).toHaveText(/Płacę \d+(,\d{2})?\s*zł/);
         await pay.click();
 
         orderNumber = await confirmedOrderNumber(page);
