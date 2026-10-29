@@ -261,7 +261,7 @@
                         </p>
                     @endif
                     @if (Route::has('admin.complaints.index') && Gate::allows('manage-shop'))
-                        <a href="{{ route('admin.complaints.index', ['zamowienie' => $order->number]) }}#odpowiedz" class="mt-1 text-[13px]">Odpowiedz na reklamację →</a>
+                        <a href="{{ route('admin.complaints.index', ['zamowienie' => $order->number]) }}#zapisz" class="mt-1 text-[13px]">Klientka zgłosiła reklamację →</a>
                     @endif
                 </div>
             </section>

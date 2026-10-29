@@ -12,9 +12,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * An answer to a complaint, kept with the letter exactly as it was e-mailed.
  */
-#[Fillable(['order_id', 'order_number', 'name', 'email', 'received_on', 'decision', 'remedy', 'details', 'mediation', 'letter', 'emailed_at'])]
+#[Fillable(['complaint_id', 'order_id', 'order_number', 'name', 'email', 'received_on', 'decision', 'remedy', 'details', 'mediation', 'letter', 'emailed_at'])]
 class ComplaintAnswer extends Model
 {
+    /**
+     * The complaint this answers, when Kasia recorded it first (MA-261).
+     *
+     * @return BelongsTo<Complaint, $this>
+     */
+    public function complaint(): BelongsTo
+    {
+        return $this->belongsTo(Complaint::class);
+    }
+
     /**
      * @return BelongsTo<Order, $this>
      */

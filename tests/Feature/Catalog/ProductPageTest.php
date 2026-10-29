@@ -65,6 +65,8 @@ class ProductPageTest extends TestCase
         $this->get('/produkt/wazony?wariant='.$low->id)
             ->assertOk()
             ->assertSee('<form id="add-to-cart"', false)
+            // The bar steps aside while the sizes or the form are in view (MA-255).
+            ->assertSeeInOrder(['data-buy-zone', 'Rozmiar i cena', 'data-buy-zone', 'Niski 16 cm', '<form id="add-to-cart" data-buy-zone'], false)
             ->assertSeeInOrder(['x-data="buyBar"', '239 zł', 'Niski 16 cm', 'form="add-to-cart"', 'Do koszyka'], false);
 
         $this->get('/produkt/wazony?wariant='.$sold->id)

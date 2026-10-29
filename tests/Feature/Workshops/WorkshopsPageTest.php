@@ -85,6 +85,59 @@ class WorkshopsPageTest extends TestCase
         $this->assertSame(['@type' => 'PostalAddress', 'addressLocality' => 'Kraków', 'addressCountry' => 'PL'], $course['hasCourseInstance'][0]['location']['address']);
     }
 
+    public function test_a_card_leads_to_its_own_dates_and_the_pills_filter_the_list_by_workshop_code(): void
+    {
+        $this->travelTo(CarbonImmutable::parse('2026-10-26 12:00', 'Europe/Warsaw'));
+        WorkshopDate::factory()->create(['workshop_code' => 'hand_building', 'starts_at' => '2026-10-31 11:00', 'seats' => 4]);
+        WorkshopDate::factory()->create(['workshop_code' => 'hand_building', 'starts_at' => '2026-11-07 11:00', 'seats' => 4]);
+        WorkshopDate::factory()->create(['workshop_code' => 'glazing', 'starts_at' => '2026-11-03 18:00', 'seats' => 5]);
+        WorkshopDate::factory()->create(['workshop_code' => 'glazing', 'starts_at' => '2026-11-04 18:00', 'seats' => 0]);
+
+        $response = $this->get('/warsztaty-ceramiczne-krakow')->assertOk();
+        $html = $response->getContent();
+        $contact = e(route('content.contact', ['temat' => 'Warsztaty i terminy']));
+
+        // Each card: the number of its dates and a jump to the list, or a question when it has none.
+        $response->assertSeeInOrder([
+            'Lepienie kubków', 'href="#workshop-dates" x-on:click.prevent="show(\'hand_building\')"', 'Terminy (2) <span aria-hidden="true">↓</span>',
+            'Szkliwienie i malowanie', 'show(\'glazing\')', 'Terminy (2)',
+            'Sesja indywidualna 1:1', 'href="'.$contact.'"', 'Zapytaj o termin',
+            'Warsztat dla pary', 'Zapytaj o termin',
+            'Rodzinnie z dzieckiem', 'Zapytaj o termin',
+            'Najbliższe terminy',
+        ], false);
+
+        // The pills: all, then only the workshops that have dates — buttons that need JS, hidden without it.
+        $this->assertSame(1, preg_match('/<div x-cloak x-ref="pills" role="group" aria-label="Pokaż terminy warsztatu".*?<\/div>/s', $html, $pills));
+        $this->assertSame(['Wszystkie', 'Lepienie kubków', 'Szkliwienie i malowanie'], array_map(trim(...), preg_match_all('/<button[^>]*>([^<]+)<\/button>/', $pills[0], $labels) ? $labels[1] : []));
+        $this->assertStringContainsString('x-bind:aria-pressed="type === null"', $pills[0]);
+        $this->assertStringContainsString('x-on:click="type = \'glazing\'"', $pills[0]);
+
+        // Rows filter by the workshop code, not by its name; without JS x-show does nothing and all of them show.
+        preg_match_all('/<li x-show="([^"]+)"/', $html, $rows);
+        $this->assertSame([
+            "type === null || type === 'hand_building'",
+            "type === null || type === 'glazing'",
+            "type === null || type === 'glazing'",
+            "type === null || type === 'hand_building'",
+        ], array_map(html_entity_decode(...), $rows[1]));
+        $response->assertSeeInOrder(['sob. 31 października', 'wt. 3 listopada', 'śr. 4 listopada', 'brak miejsc', 'sob. 7 listopada'], false);
+
+        // A date without seats keeps the column: an empty space where „Wybieram” would be.
+        $this->assertSame(3, substr_count($html, '>Wybieram</a>'));
+        $this->assertSame(1, substr_count($html, '<span aria-hidden="true" class="w-[118px] flex-none max-sm:hidden"></span>'));
+    }
+
+    public function test_with_dates_of_one_workshop_only_there_is_nothing_to_filter(): void
+    {
+        WorkshopDate::factory()->create(['workshop_code' => 'glazing', 'starts_at' => now()->addWeek(), 'seats' => 5]);
+
+        $this->get('/warsztaty-ceramiczne-krakow')
+            ->assertSee('Terminy (1)')
+            ->assertSee('Najbliższe terminy')
+            ->assertDontSee('Pokaż terminy warsztatu');
+    }
+
     public function test_free_seats_are_counted_in_polish(): void
     {
         $labels = array_map(fn (int $seats) => (new WorkshopDate(['seats' => $seats]))->seatsLeftLabel(), [0, 1, 2, 4, 5, 12, 22, 25]);
@@ -96,7 +149,8 @@ class WorkshopsPageTest extends TestCase
     {
         WorkshopDate::factory()->create(['starts_at' => now()->subDay()]);
 
-        $response = $this->get('/warsztaty-ceramiczne-krakow')->assertOk()->assertDontSee('Najbliższe terminy');
+        $response = $this->get('/warsztaty-ceramiczne-krakow')->assertOk()->assertDontSee('Najbliższe terminy')->assertDontSee('Terminy (');
+        $this->assertSame(5, substr_count($response->getContent(), '>Zapytaj o termin</a>'));
 
         $this->assertNull($this->structuredData($response->getContent())->firstWhere('@type', 'Course'));
     }

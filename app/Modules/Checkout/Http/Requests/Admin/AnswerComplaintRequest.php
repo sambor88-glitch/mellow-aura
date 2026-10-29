@@ -4,6 +4,7 @@ namespace App\Modules\Checkout\Http\Requests\Admin;
 
 use App\Modules\Checkout\Enums\ComplaintDecision;
 use App\Modules\Checkout\Enums\ComplaintRemedy;
+use App\Modules\Checkout\Enums\ComplaintStatus;
 use App\Modules\Checkout\Enums\MediationConsent;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Http\FormRequest;
@@ -11,7 +12,8 @@ use Illuminate\Validation\Rule;
 
 /**
  * The answer to a complaint: who gets it, when the complaint came, the decision and, when the decision leaves the
- * dispute open, the reason and the statement on mediation, which the law otherwise reads as a yes.
+ * dispute open, the reason and the statement on mediation, which the law otherwise reads as a yes. When it answers a
+ * recorded complaint (MA-261), it names it, and sending closes it.
  */
 class AnswerComplaintRequest extends FormRequest
 {
@@ -36,6 +38,7 @@ class AnswerComplaintRequest extends FormRequest
             'remedy' => [Rule::requiredIf($this->input('decision') === ComplaintDecision::Accepted->value), 'nullable', Rule::enum(ComplaintRemedy::class)],
             'details' => [$openDispute ? 'required' : 'nullable', 'string', 'max:2000'],
             'mediation' => [$openDispute ? 'required' : 'nullable', Rule::enum(MediationConsent::class)],
+            'complaint_id' => ['nullable', 'integer', Rule::exists('complaints', 'id')->where('status', ComplaintStatus::Open->value)],
             'intent' => ['nullable', 'in:preview,send'],
         ];
     }
@@ -67,6 +70,7 @@ class AnswerComplaintRequest extends FormRequest
             'details.max' => 'Uzasadnienie zmieszczę do :max znaków',
             'mediation.required' => $mediation,
             'mediation.enum' => $mediation,
+            'complaint_id.exists' => 'Ta reklamacja ma już odpowiedź — znajdziesz ją na liście wysłanych',
         ];
     }
 
