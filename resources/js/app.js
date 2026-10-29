@@ -16,6 +16,7 @@ import mugConfigurator from './mug';
 import pairUpload from './pair-upload';
 import photoPicker from './photos';
 import { pageTransitions, whenShown } from './transitions';
+import unsavedChanges from './unsaved';
 
 window.Alpine = Alpine;
 
@@ -34,6 +35,7 @@ Alpine.data('mugConfigurator', mugConfigurator);
 Alpine.data('pairUpload', pairUpload);
 Alpine.data('photoPicker', photoPicker);
 Alpine.data('stickyHeader', stickyHeader);
+Alpine.data('unsavedChanges', unsavedChanges);
 Alpine.start();
 // The motion (GSAP, ScrollTrigger, Lenis) is a file of its own that comes after Alpine: in this one it was half of what
 // a phone downloaded and ran before the page answered a tap (MA-232). Without it every page is complete and still.

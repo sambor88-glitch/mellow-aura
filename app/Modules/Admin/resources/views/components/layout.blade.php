@@ -82,7 +82,26 @@
                     <a href="{{ url('/') }}" class="flex min-h-12 items-center border-t border-line px-[18px] text-[14px] text-lead md:hidden">Zobacz stronę →</a>
                 </nav>
             @endauth
-            <main class="min-w-0 flex-[1_1_600px]">
+            {{-- A changed form says so and asks before its changes are lost (MA-251, resources/js/unsaved.js). --}}
+            <main class="min-w-0 flex-[1_1_600px]" @auth x-data="unsavedChanges(@js([
+                'marked' => 'Niezapisane zmiany w „:form”.',
+                'question' => 'Masz niezapisane zmiany w „:form”. Zapisz je najpierw albo porzuć.',
+                'go' => 'Wróć do „:form”',
+                'drop' => 'Porzuć zmiany w „:form”',
+                'screen' => $title,
+            ]))" @endauth>
+                @auth
+                <p x-ref="unsavedStatus" role="status" class="sr-only"></p>
+                <template x-ref="unsavedTemplate">
+                    <div role="alert" class="mb-4 rounded-[4px] border border-alert-line bg-alert px-[18px] py-4 text-[13.5px] text-alert-text">
+                        <p data-text class="mb-3"></p>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" data-go class="min-h-11 rounded-full bg-ink px-[18px] text-[13px] text-linen hover:bg-rose hover:text-ink"></button>
+                            <button type="button" data-drop class="min-h-11 rounded-full border border-alert-line bg-cream px-[18px] text-[13px] text-error hover:border-error"></button>
+                        </div>
+                    </div>
+                </template>
+                @endauth
                 {{ $slot }}
             </main>
         </div>

@@ -51,7 +51,7 @@ class PanelMenuTest extends TestCase
     public function test_the_firing_batches_and_price_list_are_one_section_with_two_tabs(): void
     {
         $owner = User::factory()->create();
-        $menu = fn (string $page) => str($this->actingAs($owner)->get($page)->assertOk()->getContent())->between('id="panel-menu"', '</nav>');
+        $menu = fn (string $page) => str($this->actingAs($owner)->get($page)->assertOk()->getContent())->betweenFirst('id="panel-menu"', '</nav>');
 
         foreach (['/panel/wypaly', '/panel/wypaly/zgloszenia'] as $page) {
             $this->assertStringNotContainsString('Zgłoszenia do wypału', (string) $menu($page));
@@ -100,7 +100,7 @@ class PanelMenuTest extends TestCase
         $this->idea(CustomOrderStatus::New);
 
         $response = $this->actingAs(User::factory()->helper()->create())->get('/panel/zamowienia')->assertOk();
-        $menu = (string) str($response->getContent())->between('id="panel-menu"', '</nav>');
+        $menu = (string) str($response->getContent())->betweenFirst('id="panel-menu"', '</nav>');
 
         $this->assertStringContainsString('Sprzedaż', $menu);
         $this->assertStringContainsString('Zamówienia', $menu);
