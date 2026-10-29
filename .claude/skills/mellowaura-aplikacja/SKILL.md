@@ -79,7 +79,9 @@ Na karcie produktu cena i „Do koszyka" nie mogą wyjechać poza ekran przy prz
 `env(safe-area-inset-bottom)` odsuwa przycisk od paska gestów na iPhonie. Bez tego palec trafia w pasek systemowy.
 
 W aplikacji (`catalog::product.show`, `resources/js/buy-bar.js`) pasek wysyła formularz karty przez `form="add-to-cart"`.
-Znika, gdy przycisk formularza jest na ekranie, żeby dwa „Do koszyka” nie stały naraz. Od 872 px zdjęcie
+Znika, gdy na ekranie jest którakolwiek część formularza oznaczona `data-buy-zone` (wybór rozmiaru i `#add-to-cart`,
+na kubku cały `#mug-form`) — nie zasłania rozmiarów, a dwa „Do koszyka” nie stoją naraz (MA-255). Tło pełne
+(`bg-cream`, obrys `border-line`, cień), nie szkło: przez szkło prześwitywał tekst opisu. Od 872 px zdjęcie
 i formularz stoją obok siebie, więc pasek znika zapytaniem medialnym (`min-[872px]:hidden`).
 
 ## Nagłówek na telefonie

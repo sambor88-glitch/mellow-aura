@@ -159,8 +159,8 @@
                 @endif
 
                 @if ($product->variants->count() > 1)
-                    <div class="mb-3 text-[13.5px] font-medium text-graphite">{{ __('catalog::product.size_and_price') }}</div>
-                    <div class="mb-[30px] grid grid-cols-[repeat(auto-fit,minmax(92px,1fr))] gap-2.5 sm:flex sm:flex-wrap">
+                    <div data-buy-zone class="mb-3 text-[13.5px] font-medium text-graphite">{{ __('catalog::product.size_and_price') }}</div>
+                    <div data-buy-zone class="mb-[30px] grid grid-cols-[repeat(auto-fit,minmax(92px,1fr))] gap-2.5 sm:flex sm:flex-wrap">
                         @foreach ($product->variants as $option)
                             <a href="{{ $canonical }}?wariant={{ $option->id }}" @if ($option->is($variant)) aria-current="true" @endif @class([
                                 'block rounded-[20px] border px-[18px] py-3 text-left transition-[border-color,background-color] duration-300',
@@ -196,7 +196,7 @@
 
                 @if (Route::has('cart.store') && $variant->isInStock())
                     @php($stampMax = (int) $settings->get('stamp_text_max_chars', 22))
-                    <form id="add-to-cart" method="post" action="{{ route('cart.store') }}" x-data="{ quantity: 1, text: @js((string) old('custom_text')) }"
+                    <form id="add-to-cart" data-buy-zone method="post" action="{{ route('cart.store') }}" x-data="{ quantity: 1, text: @js((string) old('custom_text')) }"
                           x-on:submit.prevent="$store.cart.send($el)" data-fly-to-cart class="mb-[26px]">
                         @csrf
                         <input type="hidden" name="variant_id" value="{{ $variant->id }}">
@@ -334,11 +334,12 @@
             </div>
         @endif
 
-        {{-- On a phone the price and the button stay at the bottom of the screen (mellowaura-aplikacja). Where the photo
-             and the form stand side by side (from 872 px) they are in view anyway, so the bar is gone. --}}
+        {{-- On a phone the price and the button stay at the bottom of the screen (mellowaura-aplikacja), out of the way
+             while the sizes or the form are in view. A solid ground, not glass: text showed through it (MA-255). Where
+             the photo and the form stand side by side (from 872 px) they are in view anyway, so the bar is gone. --}}
         @if (Route::has('cart.store') && $variant->isInStock())
             <div x-data="buyBar" x-cloak x-bind:class="shown || 'invisible translate-y-full'"
-                 class="glass sticky bottom-[calc(12px+env(safe-area-inset-bottom))] z-50 mt-10 flex items-center gap-3 rounded-full py-2 pr-2 pl-5 transition duration-500 ease-clay min-[872px]:hidden">
+                 class="border border-line bg-cream shadow-[0_18px_40px_-24px_rgba(47,38,32,.55)] sticky bottom-[calc(12px+env(safe-area-inset-bottom))] z-50 mt-10 flex items-center gap-3 rounded-full py-2 pr-2 pl-5 transition duration-500 ease-clay min-[872px]:hidden">
                 <div class="min-w-0 flex-auto">
                     <div class="font-serif text-[22px] leading-none">{{ $price($variant) }}</div>
                     @if ($variant->label)

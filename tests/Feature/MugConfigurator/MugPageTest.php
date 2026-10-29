@@ -41,7 +41,7 @@ class MugPageTest extends TestCase
             ->assertSee('Podgląd jest orientacyjny')
             // On a phone: a strip of the photo above the field while typing, and the price with the button at the bottom.
             ->assertSeeInOrder(['id="mug-form"', 'Twój napis', 'x-ref="mini"', 'name="text"'], false)
-            ->assertSeeInOrder(['x-data="buyBar(\'#mug-form [type=submit]\')"', '79,00 zł', 'Średni · wnętrze: Turkus', 'Wpisz napis'], false);
+            ->assertSeeInOrder(['x-data="buyBar(\'#mug-form\')"', '79,00 zł', 'Średni · wnętrze: Turkus', 'Wpisz napis'], false);
     }
 
     public function test_the_english_page_sells_the_mug_in_euro_in_english(): void

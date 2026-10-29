@@ -221,9 +221,10 @@
         <x-catalog::category-links :slugs="['kubki-i-filizanki', 'talerze-i-miski']" :heading="__('catalog::shop.ready_heading')" class="mt-14" />
 
         {{-- On a phone the price and the button stay at the bottom (mellowaura-aplikacja), out of the way while typing
-             and while the form's own button is in view. Empty, the button says what is missing. --}}
-        <div x-data="buyBar('#mug-form [type=submit]')" x-cloak x-bind:class="(shown && ! writing) || 'invisible translate-y-full'"
-             class="glass sticky bottom-[calc(12px+env(safe-area-inset-bottom))] z-50 mt-10 flex items-center gap-3 rounded-full py-2 pr-2 pl-5 transition duration-500 ease-clay min-[852px]:hidden">
+             and while any part of the form is in view. A solid ground, not glass: text showed through it (MA-255).
+             Empty, the button says what is missing. --}}
+        <div x-data="buyBar('#mug-form')" x-cloak x-bind:class="(shown && ! writing) || 'invisible translate-y-full'"
+             class="border border-line bg-cream shadow-[0_18px_40px_-24px_rgba(47,38,32,.55)] sticky bottom-[calc(12px+env(safe-area-inset-bottom))] z-50 mt-10 flex items-center gap-3 rounded-full py-2 pr-2 pl-5 transition duration-500 ease-clay min-[852px]:hidden">
             <div class="min-w-0 flex-auto">
                 <div class="font-serif text-[22px] leading-none" x-text="price">{{ $money($startSize['price']) }}</div>
                 <div class="mt-1 truncate text-[11.5px] text-label" x-text="@js($sizes->pluck('title', 'label'))[size] + ' · ' + @js($t('inside')) + ' ' + glazeName">{{ $startSize['title'] }} · {{ $t('inside') }} {{ $startGlaze['name'] }}</div>
