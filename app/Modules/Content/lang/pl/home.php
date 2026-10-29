@@ -8,7 +8,7 @@ return [
     'hero_alt' => 'Kasia w pracowni trzyma talerz ze złoconą krawędzią',
     'hero_bar' => 'Ceramika i jedwab z jednej pary rąk, z krakowskiej pracowni',
     'hero_bar_cta' => 'Zobacz sklep',
-    'eyebrow' => 'home studio · kraków',
+    'eyebrow' => 'domowa pracownia · kraków',
     'heading' => 'Glina i jedwab z :em rąk.',
     'heading_em' => 'jednej pary',
     'lead' => 'Ceramika formowana w dłoniach i jedwabne dodatki szyte z tkanin z drugiego obiegu — dwie dziedziny w jednej krakowskiej pracowni. Do tego kubki z napisem wbijanym stemplem, którego nie zetrze żadna zmywarka.',

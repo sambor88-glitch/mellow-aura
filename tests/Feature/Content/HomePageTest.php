@@ -45,6 +45,8 @@ class HomePageTest extends TestCase
             ->assertSee('<link rel="canonical" href="'.url('/').'">', false)
             ->assertSee('href="'.route('product.show', 'patery').'"', false)
             ->assertSee('nowość')
+            ->assertSeeText('domowa pracownia · kraków')
+            ->assertDontSeeText('home studio')
             ->assertSeeTextInOrder(['Co teraz jest w pracowni', 'Wazony', 'Patery', 'Talerze', 'Kadzielnice'])
             ->assertDontSee('Scrunchies')
             ->assertSee('Lubię łączyć surowość z miękkością.')
