@@ -62,9 +62,14 @@ class StockNotificationsTest extends TestCase
         $this->assertSame(40, strlen($notification->token));
 
         $this->get('/produkt/wazony?wariant='.$tall->id)
-            ->assertSee('Czekasz na tę rzecz — napiszę, gdy wróci.')
+            ->assertSee('Zapisane. Napiszę, gdy ta rzecz wróci na półkę.')
             ->assertSee('action="'.route('stock-notifications.destroy', $notification->token).'"', false)
             ->assertDontSee('name="email"', false);
+
+        // Coming back later, the page still knows she waits.
+        $this->get('/produkt/wazony?wariant='.$tall->id)
+            ->assertSee('Czekasz na tę rzecz — napiszę, gdy wróci.')
+            ->assertSee('action="'.route('stock-notifications.destroy', $notification->token).'"', false);
     }
 
     public function test_the_same_address_twice_waits_once_and_hears_the_same_answer(): void
@@ -106,11 +111,12 @@ class StockNotificationsTest extends TestCase
 
         $this->post('/powiadom-o-dostepnosci', ['variant_id' => $low->id, 'email' => 'ania@example.com', 'consent' => '1'])->assertNotFound();
 
-        foreach (range(1, 6) as $try) {
+        // The refused try counts too: six a minute in all.
+        foreach (range(1, 5) as $try) {
             $this->post('/powiadom-o-dostepnosci', ['variant_id' => $tall->id, 'email' => "ania{$try}@example.com", 'consent' => '1'])->assertRedirect();
         }
 
-        $this->post('/powiadom-o-dostepnosci', ['variant_id' => $tall->id, 'email' => 'ania7@example.com', 'consent' => '1'])->assertTooManyRequests();
+        $this->post('/powiadom-o-dostepnosci', ['variant_id' => $tall->id, 'email' => 'ania6@example.com', 'consent' => '1'])->assertTooManyRequests();
     }
 
     public function test_stepping_back_removes_the_address(): void
