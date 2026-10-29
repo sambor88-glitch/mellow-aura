@@ -3,11 +3,11 @@
 namespace Tests\Feature\Admin;
 
 use App\Models\User;
-use App\Modules\Checkout\Enums\ComplaintDecision;
+use App\Modules\Checkout\Enums\ComplaintStatus;
 use App\Modules\Checkout\Enums\OrderStatus;
 use App\Modules\Checkout\Enums\PaymentMethod;
 use App\Modules\Checkout\Enums\PaymentStatus;
-use App\Modules\Checkout\Models\ComplaintAnswer;
+use App\Modules\Checkout\Models\Complaint;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Content\Mail\ContactMessageReceived;
 use App\Modules\CustomOrders\Enums\BriefKind;
@@ -71,15 +71,15 @@ class PanelMenuTest extends TestCase
         $this->order(OrderStatus::InProgress, PaymentStatus::Pending);
         $this->idea(CustomOrderStatus::New);
         $this->idea(CustomOrderStatus::Quoting);
-        $this->complaint(emailed: false);
-        $this->complaint(emailed: true);
+        $this->complaint(ComplaintStatus::Open);
+        $this->complaint(ComplaintStatus::Answered);
         $this->failedMail();
 
         $this->actingAs(User::factory()->create())
             ->get('/panel/zamowienia')
             ->assertSee(', 2 do wysłania', false)
             ->assertSee(', 1 nowe', false)
-            ->assertSee(', 1 odpowiedzi nie wyszły', false)
+            ->assertSee(', 1 bez odpowiedzi', false)
             ->assertSee(', 1 do ponowienia', false)
             // The phone's „Menu” adds them up.
             ->assertSee(', 5 spraw czeka', false);
@@ -152,11 +152,11 @@ class PanelMenuTest extends TestCase
         ]);
     }
 
-    private function complaint(bool $emailed): ComplaintAnswer
+    private function complaint(ComplaintStatus $status): Complaint
     {
-        return ComplaintAnswer::query()->create([
+        return Complaint::query()->create([
             'order_number' => 'MA-2026-1001', 'name' => 'Anna Nowak', 'email' => 'ania@example.com', 'received_on' => today(),
-            'decision' => ComplaintDecision::Accepted, 'letter' => 'Uznaję reklamację.', 'emailed_at' => $emailed ? now() : null,
+            'description' => 'Pęknięta miska', 'status' => $status,
         ]);
     }
 

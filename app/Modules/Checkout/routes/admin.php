@@ -21,4 +21,5 @@ Route::put('/certyfikat/podglad', [CertificateTextsController::class, 'preview']
 Route::get('/odstapienia', [WithdrawalController::class, 'index'])->name('withdrawals.index');
 Route::get('/reklamacje', [ComplaintController::class, 'index'])->name('complaints.index');
 Route::post('/reklamacje', [ComplaintController::class, 'store'])->name('complaints.store');
+Route::post('/reklamacje/nowa', [ComplaintController::class, 'record'])->name('complaints.record');
 Route::patch('/odstapienia/{withdrawal}', [WithdrawalController::class, 'update'])->name('withdrawals.update');

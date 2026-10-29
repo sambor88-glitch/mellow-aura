@@ -2,6 +2,7 @@
 
 namespace App\Modules\Checkout\Actions;
 
+use App\Modules\Checkout\Models\Complaint;
 use App\Modules\Checkout\Models\ComplaintAnswer;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Checkout\Models\OrderItem;
@@ -15,13 +16,13 @@ use App\Modules\Shared\Support\PersonalData;
  * A paid order is a sale the books must show for five years (art. 17(3)(b)): it keeps its number, dates, amounts,
  * items, the name and the NIP for the invoice. Everything else goes — e-mail, phone, address, Paczkomat, notes and
  * the texts typed for the pieces (the mug's inscription, the voucher's names and dedication). An order that was
- * never paid is no sale, so its name and NIP go too. Withdrawals and complaint answers keep the name and their
- * content as proof in a dispute (art. 17(3)(e)) and lose the e-mail.
+ * never paid is no sale, so its name and NIP go too. Withdrawals, complaints and their answers keep the name and
+ * their content as proof in a dispute (art. 17(3)(e)) and lose the e-mail.
  */
 class AnonymizeCustomer
 {
     /**
-     * @return array{orders: int, paid_orders: int, withdrawals: int, complaints: int}
+     * @return array{orders: int, paid_orders: int, withdrawals: int, complaints: int, received_complaints: int}
      */
     public function __invoke(string $email): array
     {
@@ -53,6 +54,7 @@ class AnonymizeCustomer
             'paid_orders' => $paid->count(),
             'withdrawals' => Withdrawal::query()->whereRaw('lower(email) = ?', [$email])->update(['email' => PersonalData::ERASED_EMAIL]),
             'complaints' => ComplaintAnswer::query()->whereRaw('lower(email) = ?', [$email])->update(['email' => PersonalData::ERASED_EMAIL]),
+            'received_complaints' => Complaint::query()->whereRaw('lower(email) = ?', [$email])->update(['email' => PersonalData::ERASED_EMAIL]),
         ];
     }
 }

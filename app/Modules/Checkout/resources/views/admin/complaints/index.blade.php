@@ -11,22 +11,119 @@
     $receivedOn = rescue(fn () => CarbonImmutable::createFromFormat('Y-m-d', (string) old('received_on')), null, false);
     $deadline = $receivedOn?->addDays(14);
     $field = fn (string $name) => $errors->has($name) ? 'border-error' : 'border-line';
+    // Both forms share the field names; old input belongs to the form that sent it.
+    $recording = $errors->hasBag('complaint');
+    $previous = fn (string $name, $default = null) => $recording ? $default : old($name, $default);
+    // The answer is filled in from the complaint it closes, else from the order the page was opened for.
+    $answering = $complaint ?? ($recording ? null : $order);
+    $answeringNumber = $complaint ? $complaint->order_number : $answering?->number;
 @endphp
-<x-admin::layout title="Reklamacje" lead="Na reklamację odpowiadasz w 14 dni od dnia, w którym doszła — bez odpowiedzi prawo uznaje ją za przyjętą. Tu składasz odpowiedź, widzisz gotowy list i wysyłasz go e-mailem.">
+<x-admin::layout title="Reklamacje" lead="Na reklamację odpowiadasz w 14 dni od dnia, w którym doszła — bez odpowiedzi prawo uznaje ją za przyjętą. Zapisz ją tu w dniu, w którym przyszła mailem, a zobaczysz, do kiedy odpowiedzieć.">
+    <section id="czekaja" aria-labelledby="czekaja-tytul" class="mb-11 scroll-mt-6">
+        <div class="mb-3.5 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <h2 id="czekaja-tytul" class="font-serif text-[26px] leading-tight font-light">Czekają na odpowiedź</h2>
+            @if ($open->isNotEmpty())
+                <span class="text-[12.5px] text-hint">najstarsze na górze</span>
+            @endif
+        </div>
+
+        @if ($open->isEmpty())
+            <div class="rounded-[4px] border border-dashed border-line-strong bg-linen px-7 py-8 text-center">
+                <div class="mb-2 font-serif text-[22px]">Nic nie czeka</div>
+                <p class="mx-auto max-w-[48ch] text-[13.5px] text-label">Gdy reklamacja przyjdzie mailem, zapisz ją od razu niżej. Od dnia, w którym doszła, liczysz 14 dni.</p>
+            </div>
+        @else
+            <ul class="grid gap-2.5">
+                @foreach ($open as $waiting)
+                    <li @class(['flex flex-wrap items-center gap-3.5 rounded-[4px] border border-line bg-cream py-4 pr-[18px]', 'border-l-[3px] border-l-error pl-4' => $waiting->overdue(), 'pl-[18px]' => ! $waiting->overdue()])>
+                        <div class="flex flex-none items-baseline gap-2 text-[12.5px] tabular-nums max-sm:basis-full sm:w-[92px] sm:flex-col sm:gap-0">
+                            <span @class(['font-serif text-[19px] font-light', 'text-error' => $waiting->overdue(), 'text-ink' => ! $waiting->overdue()])>do {{ $waiting->deadline()->format('j.m') }}</span>
+                            <span class="text-hint">doszła {{ $waiting->received_on->format('j.m') }}</span>
+                        </div>
+                        <div class="min-w-0 flex-[1_1_220px]">
+                            <div class="text-[11px] tracking-[0.14em] text-label uppercase">
+                                reklamacja
+                                @if ($waiting->order)
+                                    · <a href="{{ route('admin.orders.show', $waiting->order) }}">{{ $waiting->order_number }}</a>
+                                @elseif ($waiting->order_number)
+                                    · {{ $waiting->order_number }}
+                                @endif
+                            </div>
+                            <div class="mt-0.5 text-[14.5px] text-ink">{{ $waiting->name }} <span class="text-[12.5px] text-label [overflow-wrap:anywhere]">· {{ $waiting->email }}</span></div>
+                            <div class="mt-0.5 text-[12.5px] text-label [overflow-wrap:anywhere]">{{ Str::limit($waiting->description, 140) }}</div>
+                        </div>
+                        <span @class([
+                            'flex-none rounded-full px-3 py-[5px] text-[11.5px]',
+                            'bg-alert text-error' => $waiting->overdue(),
+                            'bg-alert text-alert-text' => ! $waiting->overdue() && $waiting->dueSoon(),
+                            'bg-sand-dark text-label' => ! $waiting->dueSoon(),
+                        ])>{{ Str::ucfirst($waiting->deadlineLabel()) }}</span>
+                        <a href="{{ route('admin.complaints.index', ['reklamacja' => $waiting->id]) }}#odpowiedz"
+                           class="inline-flex min-h-11 flex-none items-center rounded-full border border-ink bg-ink px-4 text-[12.5px] text-linen hover:border-rose hover:bg-rose hover:text-ink">Odpowiedz →</a>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+
+        <details id="zapisz" class="{{ $card }} mt-4" @if ($recording || ($order && ! $complaint)) open @endif>
+            <summary class="flex min-h-11 cursor-pointer list-none items-center gap-2 text-[14.5px] text-ink [&::-webkit-details-marker]:hidden">
+                <span aria-hidden="true" class="text-[18px] leading-none">+</span> Zapisz reklamację
+            </summary>
+            <form method="post" action="{{ route('admin.complaints.record') }}" novalidate class="mt-4 grid gap-4">
+                @csrf
+                @if ($recording)
+                    <p role="alert" class="rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text">Popraw zaznaczone pola, żeby zapisać reklamację.</p>
+                @endif
+                <div class="grid gap-3 sm:grid-cols-2">
+                    <x-shared::field bag="complaint" name="name" id="nowa-imie" label="Imię i nazwisko" :value="$recording ? old('name') : $order?->name ?? ''" autocomplete="off" />
+                    <x-shared::field bag="complaint" name="email" id="nowa-email" type="email" label="E-mail — z niego przyszła reklamacja" :value="$recording ? old('email') : $order?->email ?? ''" autocomplete="off" />
+                    <x-shared::field bag="complaint" name="order_number" id="nowa-zamowienie" label="Numer zamówienia — jeśli jest" :value="$recording ? old('order_number') : $order?->number ?? ''" placeholder="np. MA-2026-1047" />
+                    <x-shared::field bag="complaint" name="received_on" id="nowa-data" type="date" label="Kiedy reklamacja doszła" :value="$recording ? old('received_on') : now()->format('Y-m-d')" :max="now()->format('Y-m-d')"
+                                     hint="Od tego dnia liczysz 14 dni na odpowiedź" />
+                </div>
+                <div class="min-w-0">
+                    <label for="nowa-opis" class="{{ $label }}">Co zgłasza klientka</label>
+                    <textarea id="nowa-opis" name="description" rows="4" maxlength="2000" aria-describedby="nowa-opis-note"
+                              @if ($errors->complaint->has('description')) aria-invalid="true" @endif
+                              placeholder="np. Miska pękła po pierwszym myciu, zdjęcie w mailu z 24.10."
+                              class="{{ $input }} {{ $errors->complaint->has('description') ? 'border-error' : 'border-line' }} resize-y leading-[1.6]">{{ $recording ? old('description') : '' }}</textarea>
+                    @if ($errors->complaint->has('description'))
+                        <p id="nowa-opis-note" class="mt-1.5 text-[13px] text-error">{{ $errors->complaint->first('description') }}</p>
+                    @else
+                        <p id="nowa-opis-note" class="mt-1.5 text-[12.5px] text-hint">Wystarczy krótko — cały mail od klientki zostaje w Twojej skrzynce.</p>
+                    @endif
+                </div>
+                <div>
+                    <button class="min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Zapisz reklamację</button>
+                </div>
+            </form>
+        </details>
+    </section>
+
     <div id="odpowiedz" class="flex scroll-mt-6 flex-wrap items-start gap-[22px]">
         <form method="post" action="{{ route('admin.complaints.store') }}" novalidate x-data="{ decision: @js((string) old('decision')) }"
               class="{{ $card }} grid min-w-0 flex-[1_1_380px] gap-4">
             @csrf
             <h2 class="text-[11.5px] tracking-[0.16em] text-label uppercase">Odpowiedź na reklamację</h2>
-            @if ($errors->any())
+            @if ($complaint)
+                <input type="hidden" name="complaint_id" value="{{ $complaint->id }}">
+                <div class="rounded-[4px] bg-sand-dark px-4 py-3 text-[13.5px] text-graphite">
+                    <div>{{ $complaint->name }}, reklamacja z {{ $complaint->received_on->format('j.m.Y') }} · {{ $complaint->deadlineLabel() }}</div>
+                    <p class="mt-1 whitespace-pre-line text-label [overflow-wrap:anywhere]">{{ $complaint->description }}</p>
+                </div>
+            @endif
+            @error('complaint_id')
+                <p role="alert" class="rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text">{{ $message }}</p>
+            @enderror
+            @if ($errors->getBag('default')->any())
                 <p role="alert" class="rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text">Popraw zaznaczone pola, żeby zobaczyć list.</p>
             @endif
 
             <div class="grid gap-3 sm:grid-cols-2">
-                <x-shared::field name="name" id="reklamacja-imie" label="Imię i nazwisko" :value="old('name', $order?->name)" autocomplete="off" />
-                <x-shared::field name="email" id="reklamacja-email" type="email" label="E-mail — tu pójdzie odpowiedź" :value="old('email', $order?->email)" autocomplete="off" />
-                <x-shared::field name="order_number" id="reklamacja-zamowienie" label="Numer zamówienia — jeśli jest" :value="old('order_number', $order?->number)" placeholder="np. MA-2026-1047" />
-                <x-shared::field name="received_on" id="reklamacja-data" type="date" label="Kiedy reklamacja doszła" :value="old('received_on', now()->format('Y-m-d'))" :max="now()->format('Y-m-d')"
+                <x-shared::field name="name" id="reklamacja-imie" label="Imię i nazwisko" :value="$previous('name', $answering?->name ?? '')" autocomplete="off" />
+                <x-shared::field name="email" id="reklamacja-email" type="email" label="E-mail — tu pójdzie odpowiedź" :value="$previous('email', $answering?->email ?? '')" autocomplete="off" />
+                <x-shared::field name="order_number" id="reklamacja-zamowienie" label="Numer zamówienia — jeśli jest" :value="$previous('order_number', $answeringNumber ?? '')" placeholder="np. MA-2026-1047" />
+                <x-shared::field name="received_on" id="reklamacja-data" type="date" label="Kiedy reklamacja doszła" :value="$previous('received_on', ($complaint?->received_on ?? now())->format('Y-m-d'))" :max="now()->format('Y-m-d')"
                                  hint="Od tego dnia liczysz 14 dni na odpowiedź" />
             </div>
 
