@@ -32,7 +32,7 @@
     {{-- #ulubione shows only the cards saved with a heart; the list stays in the browser (see resources/js/favorites.js). --}}
     <div x-data="{ favorites: location.hash === '#ulubione', ids: @js($products->pluck('id')), get savedHere() { return this.ids.filter((id) => $store.favorites.has(id)).length } }"
          x-on:hashchange.window="favorites = location.hash === '#ulubione'"
-         class="mx-auto max-w-[1280px] animate-ma-view px-7 pt-14 pb-24">
+         class="mx-auto max-w-[1280px] animate-ma-view px-7 pt-9 pb-24 md:pt-14">
         <nav aria-label="{{ __('catalog::shop.breadcrumb') }}" class="mb-[22px] text-[12px] text-hint">
             <a href="{{ route('home') }}" class="text-hint hover:text-navy">{{ __('catalog::shop.home') }}</a>
             / @if ($category) <a href="{{ route('shop.index') }}" class="text-hint hover:text-navy">{{ __('catalog::shop.products') }}</a> / @endif<span class="text-lead">{{ $category->name ?? __('catalog::shop.products') }}</span>
@@ -49,37 +49,34 @@
             <p x-show="! favorites" class="mb-[26px] max-w-[58ch] text-[16.5px] text-muted">{{ $category->intro }}</p>
         @endif
 
-        @if ($shortcuts)
-            {{-- On a phone both rows below swipe sideways in one line, so the first products show on the first screen. --}}
-            <section x-show="! favorites" aria-labelledby="shop-shortcuts" class="mb-8 md:mb-10">
-                <h2 id="shop-shortcuts" class="mb-2.5 text-[11px] tracking-[0.14em] text-hint uppercase">{{ __('catalog::shop.shortcuts_heading') }}</h2>
-                <div class="-mx-7 flex snap-x snap-mandatory scroll-px-7 gap-2.5 overflow-x-auto px-7 pb-1 [scrollbar-width:none] md:mx-0 md:flex-wrap md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
-                    @foreach ($shortcuts as $label => $route)
-                        @php
-                            $note = $settings->get(ShopShortcuts::noteKey($label, Locales::current()));
-                        @endphp
-                        <a href="{{ route($route) }}" class="flex w-[156px] shrink-0 snap-start flex-col rounded-[18px] border border-line bg-cream/60 px-3.5 py-3 text-ink transition-[border-color,background-color,transform] duration-300 hover:border-ink hover:text-ink active:scale-[.98] md:w-[178px]">
-                            <span class="text-[14px] leading-[1.25] font-medium">{{ __('catalog::shop.shortcut_'.$label) }}@if (! $note)&nbsp;<span aria-hidden="true" class="font-normal text-lead">→</span>@endif</span>
-                            @if ($note)
-                                <span class="mt-1 text-[12.5px] leading-[1.3] text-muted">{{ $note }}&nbsp;<span aria-hidden="true" class="text-lead">→</span></span>
-                            @endif
-                        </a>
-                    @endforeach
-                </div>
-            </section>
-        @endif
-
-        <div class="mb-[34px] flex flex-wrap items-center justify-between gap-[18px] border-b border-divider pb-5">
-            <form method="get" action="{{ $baseUrl }}" role="search" class="flex min-w-0 flex-[1_1_100%] items-center gap-2 rounded-full border border-line bg-cream px-3.5 py-2 focus-within:border-ink md:flex-[0_1_280px]">
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-divider pb-4 md:mb-[34px] md:gap-[18px] md:pb-5">
+            <form method="get" action="{{ $baseUrl }}" role="search" class="flex min-h-11 min-w-0 flex-[1_1_0] items-center gap-2 rounded-full border border-line bg-cream px-3.5 py-1 focus-within:border-ink md:min-h-0 md:flex-[0_1_280px] md:py-2">
                 <span aria-hidden="true" class="text-[13px] text-hint">⌕</span>
                 <input type="text" name="q" value="{{ $search }}" enterkeyhint="search" placeholder="{{ __('catalog::shop.search_placeholder') }}" aria-label="{{ __('catalog::shop.search_label') }}" class="min-w-0 flex-1 border-0 bg-transparent py-0.5 text-[13.5px] text-ink focus:outline-none pointer-coarse:text-[16px]">
                 @if ($sort !== '')
                     <input type="hidden" name="sort" value="{{ $sort }}">
                 @endif
                 @if ($search !== '')
-                    <a href="{{ $clearSearchUrl }}" aria-label="{{ __('catalog::shop.search_clear') }}" class="px-0.5 text-[15px] leading-none text-hint hover:text-ink">×</a>
+                    <a href="{{ $clearSearchUrl }}" aria-label="{{ __('catalog::shop.search_clear') }}" class="-my-1 flex min-h-11 min-w-8 items-center justify-center text-[15px] leading-none text-hint hover:text-ink md:my-0 md:min-h-0 md:min-w-0 md:px-0.5">×</a>
                 @endif
             </form>
+
+            {{-- On a phone the sorting folds into one button beside the search; the options stay links. --}}
+            <details x-on:click.outside="$el.open = false" class="group relative shrink-0 md:hidden">
+                <summary class="flex min-h-11 cursor-pointer list-none items-center gap-1.5 rounded-full border border-line-strong px-4 text-[13.5px] whitespace-nowrap text-lead [&::-webkit-details-marker]:hidden">
+                    {{ __('catalog::shop.sort_button', ['option' => $sorts->firstWhere('active', true)['label']]) }}
+                    <span aria-hidden="true" class="text-[11px] transition-transform group-open:rotate-180">▾</span>
+                </summary>
+                <ul class="absolute top-[calc(100%+8px)] right-0 z-20 min-w-[200px] rounded-[18px] bg-cream p-2 shadow-[0_18px_40px_-24px_rgba(47,38,32,.55)] ring-1 ring-line">
+                    @foreach ($sorts as $option)
+                        <li><a href="{{ $option['url'] }}" @if ($option['active']) aria-current="true" @endif @class([
+                            'flex min-h-11 items-center rounded-full px-4 text-[14px] whitespace-nowrap hover:text-navy',
+                            'bg-sand-dark text-ink' => $option['active'],
+                            'text-label' => ! $option['active'],
+                        ])>{{ $option['label'] }}</a></li>
+                    @endforeach
+                </ul>
+            </details>
 
             {{-- The categories take their own row on a wide screen, so none drops alone into a second one;
                  the search and the sorting share the row under them. --}}
@@ -96,7 +93,7 @@
                    x-bind:class="favorites ? 'border-ink bg-ink text-linen hover:text-linen' : 'border-line-strong text-lead hover:text-navy'"
                    class="shrink-0 snap-start rounded-full border px-5 py-2.5 text-[13.5px] tracking-[0.03em] whitespace-nowrap">♥ {{ __('catalog::shop.favorites_chip') }} <span class="ml-0.5 text-[12px] opacity-85" x-text="savedHere"></span></a>
             </div>
-            <div class="-mx-7 flex w-[calc(100%+56px)] items-center gap-1.5 overflow-x-auto px-7 [scrollbar-width:none] md:mx-0 md:w-auto md:flex-wrap md:overflow-visible md:px-0 [&::-webkit-scrollbar]:hidden">
+            <div class="hidden flex-wrap items-center gap-1.5 md:flex">
                 <span class="mr-1.5 shrink-0 text-[12px] tracking-[0.12em] text-hint uppercase">{{ __('catalog::shop.sort') }}</span>
                 @foreach ($sorts as $option)
                     <a href="{{ $option['url'] }}" @if ($option['active']) aria-current="true" @endif @class([
@@ -133,5 +130,25 @@
         </div>
 
         <div x-show="! favorites" class="mt-11 text-[13px] text-hint">{{ __('catalog::shop.count', ['shown' => $products->count(), 'total' => $liveCount]) }}</div>
+
+        @if ($shortcuts)
+            {{-- Under the products, so a phone shows the first cards on its first screen (MA-258). --}}
+            <section x-show="! favorites" aria-labelledby="shop-shortcuts" class="mt-16">
+                <h2 id="shop-shortcuts" class="mb-5 font-serif text-[length:clamp(26px,3vw,36px)] leading-[1.1] font-light tracking-[-0.01em]">{{ __('catalog::shop.shortcuts_heading') }}</h2>
+                <div class="-mx-7 flex snap-x snap-mandatory scroll-px-7 gap-2.5 overflow-x-auto px-7 pb-1 [scrollbar-width:none] md:mx-0 md:flex-wrap md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
+                    @foreach ($shortcuts as $label => $route)
+                        @php
+                            $note = $settings->get(ShopShortcuts::noteKey($label, Locales::current()));
+                        @endphp
+                        <a href="{{ route($route) }}" class="flex w-[156px] shrink-0 snap-start flex-col rounded-[18px] border border-line bg-cream/60 px-3.5 py-3 text-ink transition-[border-color,background-color,transform] duration-300 hover:border-ink hover:text-ink active:scale-[.98] md:w-[178px]">
+                            <span class="text-[14px] leading-[1.25] font-medium">{{ __('catalog::shop.shortcut_'.$label) }}@if (! $note)&nbsp;<span aria-hidden="true" class="font-normal text-lead">→</span>@endif</span>
+                            @if ($note)
+                                <span class="mt-1 text-[12.5px] leading-[1.3] text-muted">{{ $note }}&nbsp;<span aria-hidden="true" class="text-lead">→</span></span>
+                            @endif
+                        </a>
+                    @endforeach
+                </div>
+            </section>
+        @endif
     </div>
 </x-shared::layout>
