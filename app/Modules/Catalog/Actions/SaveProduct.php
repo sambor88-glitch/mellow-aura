@@ -20,17 +20,22 @@ use Illuminate\Support\Str;
  *
  * Its other languages ride along: a product with an English name gets an English row (and its own English
  * address, also set once); an emptied English name removes the row, and the product leaves /en/.
+ *
+ * A size that was sold out and comes back on the shelf tells the people waiting for it (SendRestockNotices, MA-266),
+ * once the whole save is in.
  */
 class SaveProduct
 {
-    public function __construct(private ConvertEuroPrices $convertEuroPrices) {}
+    public function __construct(private ConvertEuroPrices $convertEuroPrices, private SendRestockNotices $sendRestockNotices) {}
 
     /**
      * @param  array{name: string, category_id: int, description: ?string, seo_description?: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, variant_kind?: ?string, euro_from_rate?: bool, workshop_code?: ?string, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels?: array<string, string>, price_gross: int, compare_at_price: ?int, prices?: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post?: bool, voucher_seats?: ?int, media_id?: ?int}>, photo_alts?: array<int, string>, photo_focus?: array<int, array{x: int, y: int}>, translations?: array<string, array<string, ?string>>}  $data
      */
     public function __invoke(?Product $product, array $data): Product
     {
-        return DB::transaction(function () use ($product, $data) {
+        $restocked = [];
+
+        $product = DB::transaction(function () use ($product, $data, &$restocked) {
             $attributes = [
                 'name' => $data['name'],
                 'category_id' => $data['category_id'],
@@ -80,7 +85,12 @@ class SaveProduct
                 $variant = $row['id'] === null ? null : $existing->get($row['id']);
 
                 if ($variant !== null) {
+                    $wasSoldOut = $variant->stock === 0;
                     $variant->update($values);
+
+                    if ($wasSoldOut && $variant->isInStock()) {
+                        $restocked[] = $variant;
+                    }
                 } else {
                     $variant = $product->variants()->create($values);
                 }
@@ -123,6 +133,12 @@ class SaveProduct
 
             return $product;
         });
+
+        foreach ($restocked as $variant) {
+            ($this->sendRestockNotices)($variant);
+        }
+
+        return $product;
     }
 
     /**

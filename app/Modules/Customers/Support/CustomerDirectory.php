@@ -2,6 +2,7 @@
 
 namespace App\Modules\Customers\Support;
 
+use App\Modules\Catalog\Models\StockNotification;
 use App\Modules\Checkout\Models\Complaint;
 use App\Modules\Checkout\Models\ComplaintAnswer;
 use App\Modules\Checkout\Models\Order;
@@ -35,13 +36,15 @@ class CustomerDirectory
                 return new Customer(
                     key: CustomerKey::of($email),
                     email: $email,
-                    name: (string) $records->first()['name'],
+                    // Waiting for a size leaves no name; the address stands in when nothing else does.
+                    name: (string) ($records->first(fn (array $record) => filled($record['name']))['name'] ?? $email),
                     phones: $records->pluck('phone')->filter(fn (?string $phone) => filled($phone))->unique()->values()->all(),
                     orders: $count('order') + $count('workshop'),
                     workshops: $count('workshop'),
                     customOrders: $count('custom_order'),
                     firingRequests: $count('firing'),
                     cases: $count('case'),
+                    stockNotifications: $count('stock_notification'),
                     lastSeenAt: $records->first()['at'],
                 );
             })
@@ -94,8 +97,11 @@ class CustomerDirectory
             ->concat(Complaint::query()->get(['name', 'email', 'created_at'])
                 ->map(fn (Complaint $complaint) => $this->record($complaint->email, $complaint->name, null, $complaint->created_at, 'case')));
 
+        $stockNotifications = StockNotification::query()->get(['email', 'created_at'])
+            ->map(fn (StockNotification $notification) => $this->record($notification->email, '', null, $notification->created_at, 'stock_notification'));
+
         return $orders->toBase()
-            ->concat($customOrders)->concat($firing)->concat($withdrawals)->concat($complaints)
+            ->concat($customOrders)->concat($firing)->concat($withdrawals)->concat($complaints)->concat($stockNotifications)
             ->reject(fn (array $record) => PersonalData::normalize($record['email']) === PersonalData::ERASED_EMAIL);
     }
 
