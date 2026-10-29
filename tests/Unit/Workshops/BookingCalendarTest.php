@@ -20,6 +20,8 @@ class BookingCalendarTest extends TestCase
 {
     private const ADDRESS = 'ul. Przykładowa 1/2, 30-001 Kraków';
 
+    private Settings $settings;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -130,7 +132,7 @@ class BookingCalendarTest extends TestCase
 
     private function calendar(): BookingCalendar
     {
-        return app(BookingCalendar::class);
+        return new BookingCalendar($this->settings);
     }
 
     /**
@@ -138,7 +140,7 @@ class BookingCalendarTest extends TestCase
      */
     private function settings(array $values): void
     {
-        $this->app->instance(Settings::class, new class($values) extends Settings
+        $this->settings = new class($values) extends Settings
         {
             /** @param array<string, mixed> $values */
             public function __construct(private array $values) {}
@@ -147,7 +149,7 @@ class BookingCalendarTest extends TestCase
             {
                 return $this->values[$key] ?? $default;
             }
-        });
+        };
     }
 
     private function booking(int $moves = 0, string $startsAt = '2026-10-31 11:00', ?int $minutes = 150, string $workshop = 'Lepienie kubków'): WorkshopBooking

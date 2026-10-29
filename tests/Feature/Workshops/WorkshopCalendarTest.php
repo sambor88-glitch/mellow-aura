@@ -92,7 +92,7 @@ class WorkshopCalendarTest extends TestCase
         Mail::assertQueued(BookingConfirmed::class, function (BookingConfirmed $mail) {
             $mail->assertSeeInHtml('warsztat do dodania w Twoim kalendarzu');
             $mail->assertSeeInText('warsztat do dodania w Twoim kalendarzu');
-            $mail->assertHasAttachment(Attachment::fromData(fn () => '', 'MellowAura-regulamin.pdf'));
+            $this->assertSame(['MellowAura-regulamin.pdf', BookingCalendar::FILE_NAME], collect($mail->attachments())->pluck('as')->all());
 
             return true;
         });

@@ -143,7 +143,7 @@ class BookingCalendar
 
     private function summary(WorkshopBooking $booking): string
     {
-        $workshop = (string) $booking->order->loadMissing('items')->items->sortBy('id')->first()?->product_name;
+        $workshop = trim((string) $booking->order->loadMissing('items')->items->sortBy('id')->first()?->product_name);
 
         return trim($workshop.' · MellowAura', ' ·');
     }
