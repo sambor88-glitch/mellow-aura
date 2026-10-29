@@ -20,8 +20,15 @@
             type: null,
             show(code) {
                 this.type = code;
-                const list = document.getElementById('workshop-dates');
-                window.auraLenis ? window.auraLenis.scrollTo(list, { offset: -96 }) : list.scrollIntoView({ block: 'start' });
+                // In the next frame: the list has changed by then, and Lenis has heard of any scroll the tap itself made
+                // (focus, a test's click) — before it, that scroll cancelled this one. scroll-mt keeps the heading clear of the header.
+                requestAnimationFrame(() => {
+                    // On a phone the chosen pill may sit past the edge of its row.
+                    const pill = this.$refs.pills?.querySelector('[aria-pressed=true]');
+                    if (pill) this.$refs.pills.scrollLeft = pill.offsetLeft - 28;
+                    const list = document.getElementById('workshop-dates');
+                    window.auraLenis ? window.auraLenis.scrollTo(list) : list.scrollIntoView({ block: 'start' });
+                });
             },
          }"
          class="mx-auto max-w-[1280px] animate-ma-view px-7 pt-14 pb-24">
@@ -92,8 +99,8 @@
                         <p class="mb-[26px] text-[15.5px] text-muted">Wybierz termin i zapłać BLIK-iem, kartą albo przez Przelewy24 — miejsce jest Twoje od razu.</p>
                         @if ($filtered->count() > 1)
                             {{-- Buttons only work with JS, so without it the row is not there at all. On a phone one row swiped sideways. --}}
-                            <div x-cloak role="group" aria-label="Pokaż terminy warsztatu"
-                                 class="-mx-7 mb-5 flex gap-2 overflow-x-auto px-7 pb-1 [scrollbar-width:none] md:mx-0 md:flex-wrap md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
+                            <div x-cloak x-ref="pills" role="group" aria-label="Pokaż terminy warsztatu"
+                                 class="relative -mx-7 mb-5 flex gap-2 overflow-x-auto px-7 pb-1 [scrollbar-width:none] md:mx-0 md:flex-wrap md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
                                 @foreach ($pills as $pill)
                                     <button type="button" x-on:click="type = @js($pill['code'])" x-bind:aria-pressed="type === @js($pill['code'])"
                                             class="min-h-11 shrink-0 rounded-full border border-line-strong px-[17px] text-[13px] whitespace-nowrap text-lead transition-colors duration-300 hover:border-ink hover:text-ink aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-linen">{{ $pill['label'] }}</button>

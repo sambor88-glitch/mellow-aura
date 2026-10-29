@@ -108,7 +108,7 @@ class WorkshopsPageTest extends TestCase
         ], false);
 
         // The pills: all, then only the workshops that have dates — buttons that need JS, hidden without it.
-        $this->assertSame(1, preg_match('/<div x-cloak role="group" aria-label="Pokaż terminy warsztatu".*?<\/div>/s', $html, $pills));
+        $this->assertSame(1, preg_match('/<div x-cloak x-ref="pills" role="group" aria-label="Pokaż terminy warsztatu".*?<\/div>/s', $html, $pills));
         $this->assertSame(['Wszystkie', 'Lepienie kubków', 'Szkliwienie i malowanie'], array_map(trim(...), preg_match_all('/<button[^>]*>([^<]+)<\/button>/', $pills[0], $labels) ? $labels[1] : []));
         $this->assertStringContainsString('x-bind:aria-pressed="type === null"', $pills[0]);
         $this->assertStringContainsString('x-on:click="type = \'glazing\'"', $pills[0]);
