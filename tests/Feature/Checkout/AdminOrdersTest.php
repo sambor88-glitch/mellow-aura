@@ -40,9 +40,10 @@ class AdminOrdersTest extends TestCase
             ->get('/panel/zamowienia')
             ->assertOk()
             ->assertSeeInOrder(['Dziś', '2', 'Do wysłania'])
+            // What waits to be sent, the oldest first (MA-250).
             ->assertSeeInOrder([
-                $short->number, 'Ewa Kowalska', 'Kubki z cytatem (Królowa matka) × 1', 'Problem: brak sztuki',
                 $paid->number, 'Anna Nowak', 'Wazony (Niski 16 cm) × 2', '494,00 zł', 'W realizacji',
+                $short->number, 'Ewa Kowalska', 'Kubki z cytatem (Królowa matka) × 1', 'Problem: brak sztuki',
             ])
             ->assertSee('Nieopłacone (1)')
             ->assertDontSee('Jan Zieliński');

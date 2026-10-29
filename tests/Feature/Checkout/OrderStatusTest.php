@@ -56,9 +56,12 @@ class OrderStatusTest extends TestCase
         $mail->assertSeeInOrderInHtml(['Paczka w drodze', $order->number, 'InPost napisze do Ciebie SMS-a i maila', 'https://inpost.pl/sledzenie-przesylek?number=6200123456789012', 'Numer przesyłki: 6200123456789012', 'W paczce', 'Wazony, Niski 16 cm × 2', 'InPost Paczkomat']);
         $mail->assertSeeInText('Śledź paczkę na stronie InPost: https://inpost.pl/sledzenie-przesylek?number=6200123456789012');
 
+        // The list opens on what waits to be sent, so the parcel has left it for „Wysłane” (MA-250).
         $this->get('/panel/zamowienia')
             ->assertSeeInOrder(['0', 'Do wysłania'])
             ->assertSee('Wysłane (1)')
+            ->assertDontSee($order->number);
+        $this->get('/panel/zamowienia?status=wyslane')
             ->assertSeeInOrder([$order->number, 'Wysłane']);
 
         $this->get('/panel/zamowienia/'.$order->number)

@@ -10,13 +10,15 @@ use App\Modules\Checkout\Enums\PaymentMethod;
 use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Http\Requests\Admin\ChangeOrderStatusRequest;
 use App\Modules\Checkout\Models\Order;
+use App\Modules\Checkout\Support\OrderWait;
 use App\Modules\Checkout\Support\ShippingMethods;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 /**
- * Orders in the panel. Paid ones come first, with a filter per status; unpaid and failed payments wait under their own filter.
+ * Orders in the panel. The list opens on what waits to be sent, oldest first (MA-250); the other statuses, all paid orders
+ * and the unpaid ones are filters of their own.
  */
 class OrderController extends Controller
 {
@@ -28,16 +30,21 @@ class OrderController extends Controller
         'problem' => OrderStatus::Problem,
     ];
 
-    public function index(Request $request): View
+    /** The filter for every paid order, whatever its status. */
+    private const ALL_PAID = 'wszystkie';
+
+    public function index(Request $request, OrderWait $wait): View
     {
         $unpaid = $request->query('platnosc') === 'nieoplacone';
-        $status = $unpaid ? null : (self::STATUS_FILTERS[(string) $request->query('status')] ?? null);
+        $allPaid = ! $unpaid && $request->query('status') === self::ALL_PAID;
+        $status = $unpaid || $allPaid ? null : (self::STATUS_FILTERS[(string) $request->query('status')] ?? OrderStatus::InProgress);
         $paid = fn () => Order::query()->where('payment_status', PaymentStatus::Paid);
 
         $orders = ($unpaid ? Order::query()->where('payment_status', '!=', PaymentStatus::Paid) : $paid())
             ->when($status, fn ($query) => $query->where('status', $status))
             ->with(['items', 'withdrawals'])
-            ->latest('id')
+            // What waits to be sent is worked through from the oldest; everything else reads from the newest.
+            ->when($status === OrderStatus::InProgress, fn ($query) => $query->orderBy('paid_at')->orderBy('id'), fn ($query) => $query->latest('id'))
             ->paginate(30)
             ->withQueryString();
 
@@ -46,7 +53,9 @@ class OrderController extends Controller
         return view('checkout::admin.orders.index', [
             'orders' => $orders,
             'unpaid' => $unpaid,
+            'allPaid' => $allPaid,
             'status' => $status,
+            'wait' => $wait,
             'unpaidCount' => Order::query()->where('payment_status', '!=', PaymentStatus::Paid)->count(),
             'filters' => collect(self::STATUS_FILTERS)->map(fn (OrderStatus $filter, string $slug) => [
                 'slug' => $slug,

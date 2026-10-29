@@ -40,7 +40,7 @@ class PanelMenuTest extends TestCase
             ->get('/panel/zamowienia')
             ->assertOk()
             ->assertSeeInOrder([
-                'Mój panel',
+                'Na dziś',
                 'Sprzedaż', 'Zamówienia', 'Zamówienia indywidualne', 'Klientki', 'Odstąpienia', 'Reklamacje',
                 'Oferta', 'Produkty', 'Kategorie', 'Kubek z napisem', 'Prezenty i zestawy', 'Warsztaty', 'Wypały', 'Usługi',
                 'Strona', 'Treści', 'Zdjęcia stron', 'Google', 'Maile', 'Certyfikat unikatu',
