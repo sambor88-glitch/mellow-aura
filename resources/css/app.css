@@ -551,7 +551,7 @@
         display: flex;
         width: max-content;
         white-space: nowrap;
-        font: 300 clamp(56px, 10vw, 150px) / 1.05 var(--font-serif);
+        font: 300 clamp(40px, 6vw, 96px) / 1.05 var(--font-serif);
         letter-spacing: -.02em;
     }
 

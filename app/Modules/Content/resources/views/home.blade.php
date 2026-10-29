@@ -92,10 +92,11 @@
                     <div class="aura-mark-2"><span class="inline-block">@foreach (mb_str_split('Aura') as $i => $letter)<span class="blur-in" style="animation-delay: {{ .3 + $i * .04 }}s">{{ $letter }}</span>@endforeach</span></div>
                 </div>
 
-                {{-- Hidden on a phone: it ran into the floating photos, and the eyebrow under the photo says the same. --}}
-                <div data-hero-meta class="absolute inset-x-0 bottom-[22px] z-6 hidden items-end sm:flex justify-between px-[clamp(18px,4vw,48px)] text-[10.5px] tracking-[0.3em] text-label uppercase">
-                    <span>{{ $t('hero_meta') }}</span>
-                    <span class="hidden items-center gap-3 sm:flex">{{ $t('scroll') }} <i class="h-[42px] w-px bg-linear-to-b from-brown to-transparent"></i></span>
+                {{-- The first screen says what this is and leads to the shop; it fades as the frame grows (aura.js).
+                     On a phone it sits low and the button stays beside the line, so it never reaches the „Aura” under the frame. --}}
+                <div data-hero-meta class="absolute inset-x-3 bottom-3 z-6 mx-auto flex w-auto max-w-[680px] items-center gap-3 rounded-[22px] border border-glass-line bg-cream/90 py-2 pr-2 pl-4 backdrop-blur-[18px] sm:inset-x-[clamp(18px,4vw,48px)] sm:bottom-[22px] sm:w-fit sm:gap-6 sm:rounded-full sm:pl-7">
+                    <p class="min-w-0 flex-1 font-serif text-[length:clamp(15px,1.5vw,19px)] leading-[1.3] text-brown italic text-pretty">{{ $t('hero_bar') }}</p>
+                    <a href="{{ route('shop.index') }}" class="{{ $btnMain }} flex-none max-sm:min-h-12! max-sm:px-[18px]! max-sm:text-[13.5px]!">{{ $t('hero_bar_cta') }} <span aria-hidden="true">→</span></a>
                 </div>
             </div>
 
@@ -137,6 +138,30 @@
         </div>
     </section>
 
+    @if ($featured->isNotEmpty())
+        <section data-aura-shelf class="relative flex flex-col justify-center py-16 md:min-h-svh" aria-labelledby="shop-title">
+            <div class="mx-auto mb-9 flex w-full max-w-[1360px] flex-wrap items-end justify-between gap-x-10 gap-y-5 px-[clamp(18px,4vw,48px)]">
+                <div>
+                    <p class="eyebrow mb-[22px]">{{ $t('shop_eyebrow') }}</p>
+                    <h2 id="shop-title" class="{{ $sectionTitle }}">{{ $em('shop_heading') }}</h2>
+                </div>
+                <div aria-hidden="true" class="h-0.5 min-w-40 flex-[0_1_260px] self-center overflow-hidden rounded-full bg-line"><i data-shelf-progress class="block size-full origin-left scale-x-0 bg-ink"></i></div>
+            </div>
+            <div class="aura-track-wrap pb-3.5">
+                <div data-shelf-track class="flex w-max gap-[clamp(16px,2vw,28px)] px-[clamp(18px,4vw,48px)]">
+                    @foreach ($featured as $product)
+                        <div class="w-[min(clamp(250px,26vw,360px),44vh)] flex-none snap-start">
+                            <x-catalog::product-card :product="$product" :delay="$loop->index * 0.07" :with-variant-count="false" />
+                        </div>
+                    @endforeach
+                    <a href="{{ route('shop.index') }}" class="grid aspect-[4/5] w-[min(clamp(250px,26vw,360px),44vh)] flex-none snap-start place-items-center self-start rounded-[18px] border border-dashed border-line-strong text-ink transition-[background-color,border-color] duration-400 hover:border-ink hover:bg-glass hover:text-ink">
+                        <span class="p-5 text-center font-serif text-[32px] leading-[1.1] font-light italic">{{ $t('shop_all') }}</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+    @endif
+
     @if ($kasiaHeading || $kasiaParagraph)
         <section class="mx-auto max-w-[1360px] px-[clamp(18px,4vw,48px)] py-20 sm:py-[clamp(110px,18vh,200px)]" aria-labelledby="kasia-title">
             <div class="flex flex-wrap items-end gap-14">
@@ -164,7 +189,7 @@
         </section>
     @endif
 
-    <div aria-hidden="true" class="overflow-hidden pt-8 pb-24">
+    <div aria-hidden="true" class="overflow-hidden pt-4 pb-12 sm:pb-16">
         @foreach ([['left', '', $t('words')[0], 1], ['right', 'aura-row-outline', $t('words')[1], 0]] as [$direction, $class, $words, $italic])
             <div data-aura-row="{{ $direction }}" class="aura-row {{ $class }}">
                 @foreach ([1, 2, 3] as $copy)
@@ -175,30 +200,6 @@
             </div>
         @endforeach
     </div>
-
-    @if ($featured->isNotEmpty())
-        <section data-aura-shelf class="relative flex flex-col justify-center py-16 md:min-h-svh" aria-labelledby="shop-title">
-            <div class="mx-auto mb-9 flex w-full max-w-[1360px] flex-wrap items-end justify-between gap-x-10 gap-y-5 px-[clamp(18px,4vw,48px)]">
-                <div>
-                    <p class="eyebrow mb-[22px]">{{ $t('shop_eyebrow') }}</p>
-                    <h2 id="shop-title" class="{{ $sectionTitle }}">{{ $em('shop_heading') }}</h2>
-                </div>
-                <div aria-hidden="true" class="h-0.5 min-w-40 flex-[0_1_260px] self-center overflow-hidden rounded-full bg-line"><i data-shelf-progress class="block size-full origin-left scale-x-0 bg-ink"></i></div>
-            </div>
-            <div class="aura-track-wrap pb-3.5">
-                <div data-shelf-track class="flex w-max gap-[clamp(16px,2vw,28px)] px-[clamp(18px,4vw,48px)]">
-                    @foreach ($featured as $product)
-                        <div class="w-[min(clamp(250px,26vw,360px),44vh)] flex-none snap-start">
-                            <x-catalog::product-card :product="$product" :delay="$loop->index * 0.07" :with-variant-count="false" />
-                        </div>
-                    @endforeach
-                    <a href="{{ route('shop.index') }}" class="grid aspect-[4/5] w-[min(clamp(250px,26vw,360px),44vh)] flex-none snap-start place-items-center self-start rounded-[18px] border border-dashed border-line-strong text-ink transition-[background-color,border-color] duration-400 hover:border-ink hover:bg-glass hover:text-ink">
-                        <span class="p-5 text-center font-serif text-[32px] leading-[1.1] font-light italic">{{ $t('shop_all') }}</span>
-                    </a>
-                </div>
-            </div>
-        </section>
-    @endif
 
     @if (($bundlesUrl = $link('bundles.index')) || $link('gifts.index'))
         <section class="mx-auto max-w-[1360px] px-[clamp(18px,4vw,48px)] pt-20 sm:pt-[clamp(90px,14vh,150px)]" aria-labelledby="gifts-title">
