@@ -51,6 +51,12 @@ test('a phone sees the first products on the first screen and sorts from one but
     await noSidewaysScroll(page);
     await page.screenshot({ path: testInfo.outputPath('shop-sort-open-390.png') });
 
+    // Escape folds the list back and leaves the focus on the button.
+    await page.keyboard.press('Escape');
+    await expect(option).toBeHidden();
+    await expect(sort).toBeFocused();
+
+    await sort.click();
     await option.click();
     await page.waitForURL(/sort=price_asc/);
     await expect(page.locator('details summary')).toContainText('Sortuj: Cena rosnąco');

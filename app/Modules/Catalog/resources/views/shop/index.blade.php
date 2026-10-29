@@ -62,7 +62,7 @@
             </form>
 
             {{-- On a phone the sorting folds into one button beside the search; the options stay links. --}}
-            <details x-on:click.outside="$el.open = false" class="group relative shrink-0 md:hidden">
+            <details x-on:click.outside="$el.open = false" x-on:keydown.escape="$el.open && ($el.open = false, $el.querySelector('summary').focus())" class="group relative shrink-0 md:hidden">
                 <summary class="flex min-h-11 cursor-pointer list-none items-center gap-1.5 rounded-full border border-line-strong px-4 text-[13.5px] whitespace-nowrap text-lead [&::-webkit-details-marker]:hidden">
                     {{ __('catalog::shop.sort_button', ['option' => $sorts->firstWhere('active', true)['label']]) }}
                     <span aria-hidden="true" class="text-[11px] transition-transform group-open:rotate-180">▾</span>
