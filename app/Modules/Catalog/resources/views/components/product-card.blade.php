@@ -16,7 +16,7 @@
     $needsLettering = $only && $product->stamp_enabled && $only->stock === null;
     $soldOut = $product->variants->every(fn ($variant) => ! $variant->isInStock());
 @endphp
-<div data-shelf-card class="group relative flex h-full animate-ma-up flex-col" style="animation-delay: {{ $delay }}s">
+<div data-shelf-card @class(['group relative flex animate-ma-up flex-col', 'h-full' => $withButton]) style="animation-delay: {{ $delay }}s">
 <a href="{{ route('product.show', $product) }}" class="block text-ink hover:text-ink">
     <div class="relative isolate mb-3.5 overflow-hidden rounded-[18px] bg-linen transition-[box-shadow,transform] duration-500 ease-clay group-hover:-translate-y-1 group-hover:shadow-card-hover">
         @if ($image)

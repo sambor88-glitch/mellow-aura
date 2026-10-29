@@ -63,6 +63,14 @@ class NotFoundPageTest extends TestCase
             ->assertDontSee('data-aura-header', false);
     }
 
+    public function test_other_methods_on_an_unknown_address_stay_a_404(): void
+    {
+        $this->post('/nie-ma-takiej-strony')->assertNotFound();
+        $this->put('/panel/nie-ma-takiej')->assertNotFound();
+        // An address that exists for another method keeps the router's own answer.
+        $this->put('/sklep')->assertStatus(405);
+    }
+
     public function test_a_request_for_json_still_gets_json(): void
     {
         $this->getJson('/nie-ma-takiej-strony')->assertNotFound()->assertJsonStructure(['message']);
