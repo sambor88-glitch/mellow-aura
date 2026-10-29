@@ -104,7 +104,7 @@ class Menu
             ]],
             ['label' => 'Oferta', 'sections' => [
                 ['label' => 'Produkty', 'route' => 'admin.products.index', 'active' => ['admin.products.*'], 'description' => 'Nazwy, rozmiary, ceny, stany i zdjęcia.'],
-                ['label' => 'Kategorie', 'route' => 'admin.categories.index', 'active' => ['admin.categories.*'], 'description' => 'Tytuł i opis każdej półki w Google, wstęp nad produktami i podpisy skrótów nad sklepem.'],
+                ['label' => 'Kategorie', 'route' => 'admin.categories.index', 'active' => ['admin.categories.*'], 'description' => 'Tytuł i opis każdej półki w Google, wstęp nad produktami i podpisy skrótów pod produktami w sklepie.'],
                 ['label' => 'Kubek z napisem', 'route' => 'admin.mug.edit', 'active' => ['admin.mug.*'], 'description' => 'Zdjęcie pod napisy, rozmiary z cenami i limit znaków.'],
                 ['label' => 'Prezenty i zestawy', 'route' => 'admin.gifts.edit', 'active' => ['admin.gifts.*'], 'description' => 'Zestawy z rabatem, „Szukam prezentu” i vouchery.'],
                 ['label' => 'Warsztaty', 'route' => 'admin.workshops.edit', 'active' => ['admin.workshops.*'], 'description' => 'Cennik warsztatów, terminarz i lista zapisanych osób z kontaktem.'],

@@ -18,6 +18,8 @@ Masz pytanie albo ten termin Ci nie pasuje? Napisz do mnie przez stronę i podaj
 Możesz też napisać na WhatsAppie: {!! $contactPhone !!}.
 @endif
 
+W załączniku jest nowy termin do kalendarza — jeśli masz tam warsztat, przesunie się sam.
+
 {!! $mailTexts->signature() !!}
 
 --

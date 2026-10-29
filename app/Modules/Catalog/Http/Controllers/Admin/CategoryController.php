@@ -15,7 +15,7 @@ use Illuminate\View\View;
 
 /**
  * Categories in the panel: what Google shows for each shop category and the introduction above its products,
- * plus the line under each shortcut card above the shop.
+ * plus the line under each shortcut card under the shop's products.
  */
 class CategoryController extends Controller
 {

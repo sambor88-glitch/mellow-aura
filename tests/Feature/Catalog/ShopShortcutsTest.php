@@ -28,7 +28,7 @@ class ShopShortcutsTest extends TestCase
         $this->actingAs(User::factory()->create())
             ->get('/panel/kategorie')
             ->assertOk()
-            ->assertSee('Skróty nad sklepem')
+            ->assertSee('Skróty pod produktami')
             ->assertSee('name="pl[mug]"', false)
             ->assertSee('name="en[mug]"', false);
 

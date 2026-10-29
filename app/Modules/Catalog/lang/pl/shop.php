@@ -27,6 +27,7 @@ return [
     'all' => 'Wszystkie',
     'favorites_chip' => 'Ulubione',
     'sort' => 'Sortuj',
+    'sort_button' => 'Sortuj: :option',
     'sort_featured' => 'Polecane',
     'sort_price_asc' => 'Cena rosnąco',
     'sort_price_desc' => 'Cena malejąco',

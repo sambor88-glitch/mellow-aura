@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/warsztaty-ceramiczne-krakow', WorkshopController::class)->name('workshops.index');
 Route::get('/warsztaty-ceramiczne-krakow/zapis/potwierdzenie', [BookingController::class, 'confirmation'])->name('workshops.booking.confirmation');
+// „Dodaj do kalendarza” on the confirmation page (MA-268): the booking from the session as an .ics file.
+Route::get('/warsztaty-ceramiczne-krakow/zapis/potwierdzenie/kalendarz.ics', [BookingController::class, 'calendar'])->name('workshops.booking.calendar');
 Route::get('/warsztaty-ceramiczne-krakow/zapis/{date}', [BookingController::class, 'create'])->whereNumber('date')->name('workshops.booking.create');
 Route::post('/warsztaty-ceramiczne-krakow/zapis/{date}', [BookingController::class, 'store'])->whereNumber('date')->middleware('throttle:10,1')->name('workshops.booking.store');
 // „Użyj vouchera” and „Nie używaj vouchera” in the booking form (MA-244): the form comes back filled in with the code.

@@ -168,6 +168,52 @@ class ShopPageTest extends TestCase
         $this->get('/sklep?sort=price_desc')->assertSeeInOrder(['Patery', 'Scrunchies']);
     }
 
+    public function test_the_made_for_you_shortcuts_follow_the_products(): void
+    {
+        $category = Category::factory()->create();
+        $this->product('Patery', $category, [32900]);
+
+        // The grid comes first, so a phone shows products on its first screen (MA-258).
+        $this->get('/sklep')
+            ->assertOk()
+            ->assertSeeInOrder([
+                'Patery',
+                '1 z 1 produktów na półce',
+                '<h2 id="shop-shortcuts"',
+                'Zrobię dla Ciebie',
+                'href="'.route('mug.index').'"',
+            ], false);
+    }
+
+    public function test_sorting_is_a_list_of_links_on_a_phone_and_a_row_on_a_computer(): void
+    {
+        $this->get('/sklep?sort=price_asc&q=kubek')
+            ->assertOk()
+            ->assertSeeInOrder([
+                '<details',
+                'Sortuj: Cena rosnąco',
+                'href="'.url('/sklep?q=kubek').'"',
+                'href="'.url('/sklep?q=kubek&amp;sort=price_asc').'"  aria-current="true"',
+                '</details>',
+                // The same options as a row for a wide screen.
+                'Sortuj</span>',
+                'href="'.url('/sklep?q=kubek').'"',
+                'href="'.url('/sklep?q=kubek&amp;sort=price_asc').'"  aria-current="true"',
+                'href="'.url('/sklep?q=kubek&amp;sort=name').'"',
+            ], false)
+            ->assertDontSee('onclick', false);
+    }
+
+    public function test_the_english_shop_sorts_and_shows_its_shortcuts_in_english(): void
+    {
+        $this->get('/en/shop')
+            ->assertOk()
+            ->assertSee('Sort: Featured')
+            ->assertSee('href="'.url('/en/shop?sort=price_desc').'"', false)
+            ->assertSeeInOrder(['0 of 0 pieces on the shelf', 'Made for you'])
+            ->assertDontSee('Sortuj');
+    }
+
     public function test_the_footer_shows_settings_and_skips_empty_ones(): void
     {
         Setting::create(['key' => 'footer_city', 'value' => 'Kraków, Polska']);

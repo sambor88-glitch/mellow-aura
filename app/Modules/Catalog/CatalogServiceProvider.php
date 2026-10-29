@@ -3,6 +3,7 @@
 namespace App\Modules\Catalog;
 
 use App\Modules\Catalog\Console\SyncEuroRateCommand;
+use App\Modules\Catalog\Mail\BackInStock;
 use App\Modules\Catalog\Models\ProductVariant;
 use App\Modules\Catalog\Support\CatalogSitemap;
 use App\Modules\Catalog\Support\ProductMerchantItems;
@@ -14,6 +15,8 @@ use Illuminate\Console\Scheduling\Schedule;
 
 class CatalogServiceProvider extends ModuleServiceProvider
 {
+    protected array $customerMails = [BackInStock::class];
+
     public function register(): void
     {
         $this->callAfterResolving(SitemapPages::class, fn (SitemapPages $pages) => $pages->add(new CatalogSitemap));

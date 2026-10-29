@@ -187,11 +187,16 @@
                     </div>
                 @endif
 
-                @if ($variant->stock !== null && $variant->stock <= 1)
+                @if ($variant->stock === 1)
                     <div class="mb-5 flex items-center gap-2.5 rounded-[16px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text">
                         <span class="size-[7px] flex-none rounded-full bg-error"></span>
-                        <span>{{ $variant->stock === 1 ? __('catalog::product.stock_last') : __('catalog::product.stock_few', ['count' => $variant->stock]) }}</span>
+                        <span>{{ __('catalog::product.stock_last') }}</span>
                     </div>
+                @endif
+
+                {{-- A sold-out size asks for an e-mail instead of offering the basket: one mail when it is back (MA-266). --}}
+                @if (! $variant->isInStock() && Route::has('stock-notifications.store'))
+                    @include('catalog::product.restock-form')
                 @endif
 
                 @if (Route::has('cart.store') && $variant->isInStock())

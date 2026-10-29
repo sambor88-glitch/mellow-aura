@@ -45,6 +45,14 @@
             @if ($confirmed && $location)
                 <p class="mx-auto mb-8 max-w-[50ch] text-[15px] leading-[1.65] text-muted">Pracownia: {{ $location }}. Dokładny adres dostaniesz mailem.</p>
             @endif
+            @if ($confirmed)
+                {{-- „Dodaj do kalendarza” (MA-268): the file for Apple and Outlook, the link for Google. No address here. --}}
+                <p class="mx-auto mb-8 flex max-w-[50ch] flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[15px] text-graphite">
+                    <span class="text-muted">Dodaj do kalendarza:</span>
+                    <a href="{{ route('workshops.booking.calendar') }}" download class="inline-flex min-h-11 items-center underline underline-offset-4 hover:text-ink">Apple, Outlook (plik .ics)</a>
+                    <a href="{{ $googleCalendar }}" target="_blank" rel="noopener" class="inline-flex min-h-11 items-center underline underline-offset-4 hover:text-ink">Kalendarz Google</a>
+                </p>
+            @endif
             <a href="{{ route('workshops.index') }}" class="inline-flex min-h-[52px] items-center rounded-full border border-ink px-[30px] text-[14px] text-ink transition duration-300 hover:bg-ink hover:text-linen active:scale-[.97]">Wracam do warsztatów</a>
         </div>
     </div>
