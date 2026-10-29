@@ -41,7 +41,7 @@ class FiringRequestsPanelTest extends TestCase
             ->assertSeeInOrder(['Zgłoszenia do wypału', 'Do zrobienia (5)', 'Odebrane'])
             ->assertSeeInOrder([
                 'Bez terminu', 'Ewa',
-                'Partia: czwartek, 29 października', '3 zgłoszenia · 3,7 kg · z cennika 111,00 zł · 1 do wyceny', 'Ola', 'Wypał biskwitowy · 2,5 kg · 75,00 zł', 'Basia', 'Przyjęte', 'Celina', 'Nie wie, jaki wypał — doradź', 'do wyceny',
+                'Partia: czwartek, 29 października', '3 zgłoszenia · 3,7 kg · z cennika 111 zł · 1 do wyceny', 'Ola', 'Wypał biskwitowy · 2,5 kg · 75 zł', 'Basia', 'Przyjęte', 'Celina', 'Nie wie, jaki wypał — doradź', 'do wyceny',
                 'Partia: czwartek, 5 listopada', 'Dorota',
             ])
             ->assertSee('Sześć miseczek &lt;b&gt;', false)

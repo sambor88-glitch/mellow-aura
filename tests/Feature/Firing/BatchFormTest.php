@@ -64,7 +64,7 @@ class BatchFormTest extends TestCase
             && $mail->hasReplyTo('kasia@example.com'));
 
         $this->get('/wypal-ceramiki-krakow')
-            ->assertSee('Mam Twoje zgłoszenie — wycena 75,00 zł. Potwierdzenie poszło na ola@example.com.');
+            ->assertSee('Mam Twoje zgłoszenie — wycena 75 zł. Potwierdzenie poszło na ola@example.com.');
         $this->get('/wypal-ceramiki-krakow')->assertDontSee('Mam Twoje zgłoszenie');
     }
 
@@ -109,13 +109,13 @@ class BatchFormTest extends TestCase
         ]);
 
         $toKasia = new BatchReported($batch);
-        $toKasia->assertSeeInOrderInHtml(['Wypał biskwitowy', '2,5 kg', '30,00 zł / kg', 'czwartek, 29 października 2026', '75,00 zł', '600 100 200'], false);
+        $toKasia->assertSeeInOrderInHtml(['Wypał biskwitowy', '2,5 kg', '30 zł / kg', 'czwartek, 29 października 2026', '75 zł', '600 100 200'], false);
         $toKasia->assertSeeInHtml('Ola &lt;b&gt;', false);
         $toKasia->assertDontSeeInHtml('<script>alert(1)</script>', false);
-        $toKasia->assertSeeInText("Wycena: 75,00 zł\n\nSześć miseczek\n<script>alert(1)</script>", false);
+        $toKasia->assertSeeInText("Wycena: 75 zł\n\nSześć miseczek\n<script>alert(1)</script>", false);
 
         $toCustomer = new BatchReportConfirmed($batch);
-        $toCustomer->assertSeeInOrderInHtml(['Mam Twoje zgłoszenie', 'Wypał biskwitowy', '2,5 kg', '75,00 zł', 'Kasia'], false);
+        $toCustomer->assertSeeInOrderInHtml(['Mam Twoje zgłoszenie', 'Wypał biskwitowy', '2,5 kg', '75 zł', 'Kasia'], false);
         $toCustomer->assertDontSeeInHtml('<script>alert(1)</script>', false);
 
         $batch->update(['service_code' => null, 'service_label' => null, 'unit' => null, 'quantity' => null, 'unit_price' => null, 'quote' => null]);

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Catalog;
 
+use App\Modules\Catalog\Enums\VariantKind;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
@@ -34,13 +35,35 @@ class ShopPageTest extends TestCase
             ->assertSee('<link rel="canonical" href="'.url('/sklep').'">', false)
             ->assertSee('Kubki malowane ręcznie')
             ->assertSee('href="'.route('product.show', $painted).'"', false)
-            ->assertSee('od 69,00 zł')
+            ->assertSee('od 69 zł')
             ->assertSee('2 warianty')
             ->assertSee('Voucher kwotowy')
-            ->assertSee('150,00 zł')
+            ->assertSee('150 zł')
             ->assertDontSee('Szkic miski')
             ->assertDontSee('Wazon sprzedany')
             ->assertSee('2 z 2 produktów na półce');
+    }
+
+    public function test_the_card_counts_variants_in_the_words_picked_in_the_panel(): void
+    {
+        $mugs = Category::factory()->create(['name' => 'Kadzielnice i podstawki', 'slug' => 'kadzielnice-i-podstawki']);
+        $this->product('Miski', $mugs, [6900, 7900, 8900], ['variant_kind' => VariantKind::Sizes]);
+        $this->product('Voucher kwotowy', $mugs, [15000, 25000, 40000], ['variant_kind' => VariantKind::Amounts], stock: null);
+        $this->product('Scrunchies', $mugs, [4900, 4900, 4900, 4900, 4900], ['variant_kind' => VariantKind::Colors]);
+        $this->product('Zestaw filiżanek', $mugs, [19900, 29900]);
+        $this->product('Kadzielnica', $mugs, [5900], ['variant_kind' => VariantKind::Sizes]);
+
+        $this->get('/sklep')
+            ->assertOk()
+            ->assertSeeInOrder(['Miski', '3 rozmiary'])
+            ->assertSeeInOrder(['Voucher kwotowy', '3 kwoty'])
+            ->assertSeeInOrder(['Scrunchies', '5 kolorów'])
+            // Nothing picked: sets, lettering and seats are counted as variants.
+            ->assertSeeInOrder(['Zestaw filiżanek', '2 warianty'])
+            ->assertDontSee('1 rozmiar')
+            ->assertDontSee('3 warianty')
+            // The category fits one line on a phone with tighter letters.
+            ->assertSee('tracking-[0.2em] text-label uppercase max-sm:tracking-[0.06em]">Kadzielnice i podstawki', false);
     }
 
     public function test_hearts_save_favourites_in_the_browser_and_the_shop_filters_its_own_cards(): void

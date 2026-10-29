@@ -45,7 +45,7 @@ class GiftFinderTest extends TestCase
             ->assertSeeInOrder(['Dla kogo', 'Dla każdego', 'Dla niej', 'Dla niego / taty', 'Dla pary'])
             ->assertSeeInOrder(['Okazja', 'Wszystkie okazje', 'Urodziny', 'Dzień Matki', 'Ślub', 'Parapetówka', 'Rocznica', 'Święta', 'Dla siebie'])
             ->assertSeeInOrder(['Budżet', 'Każdy budżet', 'do 100 zł', '100–200 zł', '200–400 zł', 'powyżej 400 zł'])
-            ->assertSeeInOrder(['2 pomysły', 'Kubki malowane ręcznie', 'od 69,00 zł', 'Do koszyka', 'Wazony', '239,00 zł'])
+            ->assertSeeInOrder(['2 pomysły', 'Kubki malowane ręcznie', 'od 69 zł', 'Do koszyka', 'Wazony', '239 zł'])
             ->assertDontSee('Ukryte');
     }
 

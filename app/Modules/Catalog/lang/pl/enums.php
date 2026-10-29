@@ -14,4 +14,14 @@ return [
         'thickness_mm' => 'Grubość',
         'capacity_ml' => 'Pojemność',
     ],
+    'variant_kind' => [
+        'sizes_few' => ':count rozmiary',
+        'sizes_many' => ':count rozmiarów',
+        'amounts_few' => ':count kwoty',
+        'amounts_many' => ':count kwot',
+        'colors_few' => ':count kolory',
+        'colors_many' => ':count kolorów',
+        'options_few' => ':count warianty',
+        'options_many' => ':count wariantów',
+    ],
 ];

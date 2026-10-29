@@ -5,22 +5,24 @@ namespace App\Modules\Shared\Support;
 use Illuminate\Support\Facades\App;
 
 /**
- * Amounts are integers in the currency's smallest unit (grosze, cents). Shown like the prototype (239,00 zł),
- * written for machines as a plain decimal (239.00).
+ * Amounts are integers in the currency's smallest unit (grosze, cents). Shown to people without empty grosze
+ * (239 zł, 79,90 zł), written for machines as a plain decimal (239.00).
  */
 class Money
 {
     /**
      * Złoty unless named: a euro amount is always asked for by its currency, so no złoty price ever shows under
-     * a euro sign. Euro reads the English way on an English page (€39.00) and the Polish way elsewhere (39,00 €).
+     * a euro sign. Euro reads the English way on an English page (€39) and the Polish way elsewhere (39 €).
+     * Grosze and cents show only when there are some: 69 zł, 79,90 zł (MA-257).
      */
     public static function format(int $minor, string $currency = 'PLN'): string
     {
-        $polish = str_replace('.', ',', self::decimal($minor));
+        $english = $minor % 100 === 0 ? (string) intdiv($minor, 100) : self::decimal($minor);
+        $polish = str_replace('.', ',', $english);
 
         return match ($currency) {
             'PLN' => $polish.' zł',
-            'EUR' => App::getLocale() === 'en' ? '€'.self::decimal($minor) : $polish.' €',
+            'EUR' => App::getLocale() === 'en' ? '€'.$english : $polish.' €',
             default => $polish.' '.$currency,
         };
     }

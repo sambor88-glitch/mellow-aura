@@ -1,4 +1,5 @@
 import { track } from './analytics';
+import { formatMoney } from './money';
 import { renewSpeculations } from './transitions';
 
 /*
@@ -88,15 +89,10 @@ export default {
         }
     },
 
-    // The same as Money::format in PHP; the page names its currency on <html data-currency>.
+    // The page names its currency on <html data-currency>.
     format(minor) {
-        const amount = (minor / 100).toFixed(2);
-        const { currency } = document.documentElement.dataset;
+        const { dataset, lang } = document.documentElement;
 
-        if (currency === 'EUR') {
-            return document.documentElement.lang === 'en' ? '€' + amount : amount.replace('.', ',') + ' €';
-        }
-
-        return amount.replace('.', ',') + ' zł';
+        return formatMoney(minor, dataset.currency || 'PLN', lang);
     },
 };
