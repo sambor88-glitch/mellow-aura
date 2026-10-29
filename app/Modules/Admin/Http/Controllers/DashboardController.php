@@ -34,12 +34,17 @@ class DashboardController extends Controller
             : collect();
         $mails = $this->allowed('admin.failed-mails.index') ? $failedMails->all() : collect();
         $oldest = $toSend->first();
+        $late = $toSend->filter(fn (Order $order) => $wait->overdue($order))->count();
 
         $tiles = array_values(array_filter([
             [
                 'value' => $toSend->count(), 'label' => 'do wysłania', 'route' => route('admin.orders.index'), 'go' => 'Pokaż listę',
-                'hint' => $oldest ? 'najdłużej '.$wait->label($oldest).($wait->overdue($oldest) ? ' — po terminie' : '') : 'wszystko wysłane',
-                'late' => $oldest !== null && $wait->overdue($oldest),
+                'hint' => match (true) {
+                    $oldest === null => 'wszystko wysłane',
+                    $late > 0 => 'najdłużej '.$wait->label($oldest).' · po terminie: '.$late,
+                    default => 'najdłużej '.$wait->label($oldest),
+                },
+                'late' => $late > 0,
             ],
             $this->allowed('admin.custom-orders.index') ? [
                 'value' => $ideas->count(), 'label' => 'nowe pomysły', 'route' => route('admin.custom-orders.index', ['status' => CustomOrderStatus::New->value]), 'go' => 'Wyceń',
@@ -47,7 +52,7 @@ class DashboardController extends Controller
             ] : null,
             [
                 'value' => $problems->count(), 'label' => 'problem', 'route' => route('admin.orders.index', ['status' => 'problem']), 'go' => 'Pokaż',
-                'hint' => 'brak sztuki, zwrot, paczka nie doszła', 'late' => false,
+                'hint' => 'nadkomplet, brak sztuki, zwrot, paczka nie doszła', 'late' => false,
             ],
             $this->allowed('admin.failed-mails.index') ? [
                 'value' => $mails->count(), 'label' => 'niewysłane maile', 'route' => route('admin.failed-mails.index'), 'go' => 'Wyślij jeszcze raz',
@@ -73,7 +78,7 @@ class DashboardController extends Controller
 
         return collect()
             ->concat($toSend->map(fn (Order $order) => [
-                'since' => $wait->since($order), 'kind' => 'do wysłania · '.$order->number, 'title' => $order->name, 'detail' => $items($order),
+                'since' => $wait->since($order), 'kind' => ($wait->madeToOrder($order) ? 'do wysłania · na zamówienie · ' : 'do wysłania · ').$order->number, 'title' => $order->name, 'detail' => $items($order),
                 'status' => [$order->status->label(), $order->status->chipClass()],
                 'late' => $wait->overdue($order) ? 'Termin wysyłki minął '.$wait->deadline($order)->format('j.m') : null,
                 'action' => 'Spakuj i wyślij', 'url' => route('admin.orders.show', $order), 'main' => true,

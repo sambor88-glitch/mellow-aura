@@ -52,7 +52,7 @@ class DashboardTest extends TestCase
             ->assertOk()
             ->assertSeeInOrder(['Na dziś', 'Czwartek, 29 października.'])
             // The failed mails notice stays above the tiles.
-            ->assertSeeInOrder(['1 mail nie wyszedł', '2', 'do wysłania', 'najdłużej czeka 9 dni — po terminie', '1', 'nowe pomysły', '1', 'problem', '1', 'niewysłane maile'])
+            ->assertSeeInOrder(['1 mail nie wyszedł', '2', 'do wysłania', 'najdłużej czeka 9 dni · po terminie: 1', '1', 'nowe pomysły', '1', 'problem', '1', 'niewysłane maile'])
             ->assertSee('href="'.route('admin.orders.index').'"', false)
             ->assertSee('href="'.route('admin.custom-orders.index', ['status' => 'new']).'"', false)
             ->assertSee('href="'.route('admin.orders.index', ['status' => 'problem']).'"', false)

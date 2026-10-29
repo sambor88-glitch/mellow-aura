@@ -67,6 +67,8 @@
                         <div class="mt-0.5 text-[12.5px] text-label">{{ $order->items->map(fn ($item) => $item->product_name.($item->variant_label === '' ? '' : ' ('.$item->variant_label.')').' × '.$item->quantity)->join(', ') }}</div>
                         @if ($late)
                             <div class="mt-1 text-[12.5px] text-error">Termin wysyłki minął {{ $wait->deadline($order)->format('j.m') }}</div>
+                        @elseif ($waits && $wait->madeToOrder($order))
+                            <div class="mt-1 text-[12.5px] text-brown">Na zamówienie — bez terminu z półki</div>
                         @endif
                     </div>
                     <div class="flex-none font-serif text-[19px] tabular-nums">{{ $order->money($order->total_gross) }}</div>

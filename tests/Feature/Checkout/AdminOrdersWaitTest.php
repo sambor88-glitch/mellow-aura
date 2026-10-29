@@ -3,10 +3,12 @@
 namespace Tests\Feature\Checkout;
 
 use App\Models\User;
+use App\Modules\Checkout\Actions\MarkOrderPaid;
 use App\Modules\Checkout\Enums\OrderStatus;
 use App\Modules\Checkout\Enums\PaymentMethod;
 use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Models\Order;
+use App\Modules\Checkout\Support\ShippingMethods;
 use App\Modules\Settings\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -53,6 +55,38 @@ class AdminOrdersWaitTest extends TestCase
             ->assertSee('Anna Nowak')
             // A sent parcel has stopped waiting.
             ->assertDontSee('czeka 14 dni');
+    }
+
+    public function test_a_piece_stamped_to_order_is_never_late_by_the_shelfs_deadline(): void
+    {
+        $mug = $this->order('Anna Nowak', OrderStatus::InProgress, '2026-10-01 09:00');
+        $mug->items()->create(['product_name' => 'Kubek z napisem', 'variant_label' => '350 ml', 'quantity' => 1, 'unit_price_gross' => 14900, 'custom_text' => 'DLA BABCI']);
+        $shelf = $this->order('Ola Wiśniewska', OrderStatus::InProgress, '2026-10-01 09:00');
+        $shelf->items()->create(['product_name' => 'Miska', 'variant_label' => '', 'quantity' => 1, 'unit_price_gross' => 11900]);
+
+        $response = $this->actingAs(User::factory()->create())->get('/panel/zamowienia')
+            ->assertSeeInOrder(['czeka 28 dni', $mug->number, 'Anna Nowak', 'Na zamówienie — bez terminu z półki'])
+            ->assertSeeInOrder(['czeka 28 dni', $shelf->number, 'Ola Wiśniewska', 'Termin wysyłki minął 8.10']);
+        $this->assertSame(1, substr_count($response->getContent(), 'border-l-error'));
+
+        $this->get('/panel')->assertSee('najdłużej czeka 28 dni · po terminie: 1')->assertSee('do wysłania · na zamówienie · '.$mug->number);
+    }
+
+    public function test_a_paid_order_without_a_parcel_never_waits_to_be_sent(): void
+    {
+        // A workshop booking, vouchers as PDFs and a payment for a custom order all go by e-mail.
+        $order = Order::create([
+            'status' => OrderStatus::New, 'name' => 'Iza Lis', 'email' => 'iza@example.com', 'phone' => '600100200',
+            'shipping_method' => ShippingMethods::EMAIL, 'shipping_gross' => 0, 'total_gross' => 22000,
+            'payment_method' => PaymentMethod::Blik, 'payment_status' => PaymentStatus::Pending,
+        ]);
+        $order->update(['number' => 'MA-2026-'.(1000 + $order->id)]);
+
+        app(MarkOrderPaid::class)($order, 'test-email-only');
+
+        $this->assertSame(OrderStatus::Completed, $order->fresh()->status);
+        $this->actingAs(User::factory()->create())->get('/panel/zamowienia')->assertDontSee('Iza Lis')->assertSee('Do wysłania (0)');
+        $this->get('/panel')->assertSee('wszystko wysłane')->assertDontSee('Iza Lis');
     }
 
     public function test_without_a_dispatch_time_nothing_is_late(): void
