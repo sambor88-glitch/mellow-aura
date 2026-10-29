@@ -40,4 +40,6 @@ return [
     'count' => ':shown of :total pieces on the shelf',
     'category_link' => ':category in the shop',
     'ready_heading' => 'Ready to ship from the shop',
+    'card_add' => 'Add to basket',
+    'card_lettering' => 'Choose the lettering',
 ];

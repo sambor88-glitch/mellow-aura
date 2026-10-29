@@ -59,40 +59,7 @@
 
         <div class="grid grid-cols-2 gap-x-3.5 gap-y-8 sm:grid-cols-[repeat(auto-fill,minmax(240px,1fr))] sm:gap-x-[26px] sm:gap-y-[30px]">
             @foreach ($ideas as $product)
-                @php
-                    $image = $product->getFirstMedia('images');
-                    $srcset = $image ? \App\Modules\Catalog\Support\ProductPhoto::srcset($image) : null;
-                    $variant = $addable[$product->id];
-                @endphp
-                <div class="animate-ma-up" style="animation-delay: {{ min($loop->index, 11) * 0.06 }}s">
-                    <a href="{{ route('product.show', $product) }}" class="group block text-ink hover:text-ink">
-                        <div class="relative mb-3.5 overflow-hidden rounded-[18px] bg-line-soft transition-[box-shadow,transform] duration-500 ease-clay group-hover:-translate-y-1 group-hover:shadow-card-hover">
-                            @if ($image)
-                                <img src="{{ $image->getAvailableUrl(['card']) }}" alt="{{ $image->getCustomProperty('alt') ?: $product->name }}" @if ($loop->index >= 2) loading="lazy" @endif
-                                     @if ($srcset) srcset="{{ $srcset }}" sizes="(min-width: 640px) 400px, calc(50vw - 35px)" @endif
-                                     width="1200" height="1500" style="{{ \App\Modules\Shared\Support\FocalPoint::style($image) }}" class="block aspect-[4/5] w-full object-cover">
-                            @else
-                                <div class="aspect-[4/5] w-full"></div>
-                            @endif
-                        </div>
-                        <div class="mb-[5px] truncate text-[10px] tracking-[0.2em] text-hint uppercase">{{ $product->category->name }}</div>
-                        <div class="mb-1.5 font-serif text-[length:clamp(18px,4.8vw,20px)] leading-[1.2] text-balance">{{ $product->name }}</div>
-                    </a>
-                    <div class="mb-3 text-[14px] text-lead"><x-catalog::price-label :product="$product" /></div>
-                    @if ($variant)
-                        <form method="post" action="{{ route('cart.store') }}" x-data x-on:submit.prevent="$store.cart.send($el)">
-                            @csrf
-                            <input type="hidden" name="variant_id" value="{{ $variant->id }}">
-                            <button class="min-h-11 w-full rounded-full border border-line-strong px-[18px] sm:w-auto py-[9px] text-[13px] text-ink transition duration-300 hover:border-ink hover:bg-ink hover:text-linen active:scale-[.97]">
-                                Do koszyka<span class="sr-only">: {{ $product->name }}{{ $product->variants->count() > 1 ? ', '.$variant->label : '' }}</span>
-                            </button>
-                        </form>
-                    @else
-                        <a href="{{ route('product.show', $product) }}" class="inline-flex min-h-11 w-full items-center justify-center rounded-full sm:w-auto border border-line-strong px-[18px] py-[9px] text-[13px] text-ink transition duration-300 hover:border-ink hover:bg-ink hover:text-linen active:scale-[.97]">
-                            Wybierz napis<span class="sr-only">: {{ $product->name }}</span>
-                        </a>
-                    @endif
-                </div>
+                <x-catalog::product-card :product="$product" :delay="min($loop->index, 11) * 0.06" :eager="$loop->index < 2" />
             @endforeach
         </div>
 

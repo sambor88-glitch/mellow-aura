@@ -7,12 +7,14 @@ use App\Modules\Shared\Http\Middleware\ProtectStaging;
 use App\Modules\Shared\Http\Middleware\RedirectOldAddresses;
 use App\Modules\Shared\Http\Middleware\SecurityHeaders;
 use App\Modules\Shared\Http\Middleware\StartSession;
+use App\Modules\Shared\Http\Responses\NotFoundPage;
 use App\Modules\Shared\Support\Cloudflare;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Session\Middleware\StartSession as LaravelStartSession;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -42,4 +44,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
+        // A missing page keeps the header with the menu and the cart and the footer (MA-259).
+        $exceptions->render(fn (NotFoundHttpException $e, Request $request) => NotFoundPage::render($request));
     })->create();

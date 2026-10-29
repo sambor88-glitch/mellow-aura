@@ -8,7 +8,6 @@ use App\Modules\Catalog\Enums\Occasion;
 use App\Modules\Catalog\Enums\Recipient;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
-use App\Modules\Catalog\Models\ProductVariant;
 use App\Modules\Gifts\Support\BudgetRanges;
 use App\Modules\Gifts\Support\VoucherValidity;
 use App\Modules\Settings\Settings;
@@ -59,11 +58,6 @@ class GiftFinderController extends Controller
             ],
             'resetUrl' => route('gifts.index'),
             'filtered' => array_filter($current) !== [],
-            // The size a card's button adds: the cheapest one on the shelf that needs no text of its own.
-            'addable' => $ideas->mapWithKeys(fn (Product $product) => [$product->id => $product->variants
-                ->filter(fn (ProductVariant $variant) => $variant->isInStock() && ! ($product->stamp_enabled && $variant->stock === null))
-                ->sortBy('price_gross')
-                ->first()]),
             'voucherCategory' => $voucherCategory,
             'voucherValidity' => VoucherValidity::label((int) $settings->get('voucher_validity_months', 12)),
         ]);

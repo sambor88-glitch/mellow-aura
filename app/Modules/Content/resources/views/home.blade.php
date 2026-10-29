@@ -151,7 +151,7 @@
                 <div data-shelf-track class="flex w-max gap-[clamp(16px,2vw,28px)] px-[clamp(18px,4vw,48px)]">
                     @foreach ($featured as $product)
                         <div class="w-[min(clamp(250px,26vw,360px),44vh)] flex-none snap-start">
-                            <x-catalog::product-card :product="$product" :delay="$loop->index * 0.07" :with-variant-count="false" />
+                            <x-catalog::product-card :product="$product" :delay="$loop->index * 0.07" :with-variant-count="false" :with-button="false" />
                         </div>
                     @endforeach
                     <a href="{{ route('shop.index') }}" class="grid aspect-[4/5] w-[min(clamp(250px,26vw,360px),44vh)] flex-none snap-start place-items-center self-start rounded-[18px] border border-dashed border-line-strong text-ink transition-[background-color,border-color] duration-400 hover:border-ink hover:bg-glass hover:text-ink">
