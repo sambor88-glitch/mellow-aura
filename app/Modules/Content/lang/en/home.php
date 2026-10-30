@@ -8,6 +8,7 @@ return [
     'description' => 'Hand-formed ceramics and silk accessories sewn from reclaimed fabric. Mugs with stamped lettering, made in a small studio in Kraków.',
 
     'hero_alt' => 'Kasia in her studio holding a plate with a gilded rim',
+    'float_link' => 'See :name',
     'hero_bar' => 'Ceramics and silk from one pair of hands, from a studio in Kraków',
     'hero_bar_cta' => 'See the shop',
     'eyebrow' => 'home studio · kraków',

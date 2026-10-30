@@ -514,7 +514,8 @@
         z-index: 1;
     }
 
-    .aura-float > div {
+    /* A plain photo or a link to its product (MA-280): aura.js moves this child under the mouse. */
+    .aura-float > * {
         overflow: hidden;
         border-radius: 12px;
         box-shadow: var(--shadow-float);

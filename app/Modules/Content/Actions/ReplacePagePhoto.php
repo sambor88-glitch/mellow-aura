@@ -14,7 +14,8 @@ use Spatie\Image\Image;
 /**
  * Puts Kasia's photo in a place of PagePhotos, takes the photo off the page (no photo) or brings back the one from
  * zdjecia/. A new photo is turned upright, scaled down to 2400 px and saved again as WebP, which drops EXIF and the GPS
- * position of the studio. The point of the old photo means nothing for the new one, so it goes back to the place's own.
+ * position of the studio. The point and the product of the old photo mean nothing for the new one, so they go back to
+ * the place's own.
  * The uploaded photo it replaces is deleted with its smaller copies; photos from zdjecia/ stay.
  */
 class ReplacePagePhoto
@@ -31,10 +32,10 @@ class ReplacePagePhoto
         $previous = $this->photos->get($place)->path;
 
         if ($photo === null) {
-            ($this->saveSettings)($this->photos->without($place, ['path', 'focus', 'focus_phone', 'alt']));
+            ($this->saveSettings)($this->photos->without($place, ['path', 'focus', 'focus_phone', 'alt', 'product_id']));
         } else {
             $path = $photo === false ? null : $this->store($photo, $place);
-            ($this->saveSettings)($this->photos->with($place, ['path' => $path, 'focus' => null, 'focus_phone' => null, 'alt' => null]));
+            ($this->saveSettings)($this->photos->with($place, ['path' => $path, 'focus' => null, 'focus_phone' => null, 'alt' => null, 'product_id' => null]));
         }
 
         if ($previous !== null && str_starts_with($previous, PagePhotos::DIRECTORY.'/')) {

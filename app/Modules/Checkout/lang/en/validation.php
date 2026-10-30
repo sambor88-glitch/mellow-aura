@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'phone_required_parcel' => 'The courier needs your phone number',
+    'phone_required_parcel' => 'InPost will text the pickup code to this number',
     'phone_required' => 'Enter your phone number — I’ll only call about your order',
     'phone_regex' => 'A Polish phone number has 9 digits — check none went missing',
     'email_required' => 'Enter your e-mail — your confirmation goes there',
-    'email_email' => 'That e-mail address has no @ — check it',
+    'email_email' => 'Check your e-mail address — e.g. ola@mail.com',
     'email_max' => 'That e-mail address is too long — check it again',
     'name_required' => 'Enter your full name — that’s how I’ll address the parcel',
     'name_max' => 'Your name fits in :max characters',

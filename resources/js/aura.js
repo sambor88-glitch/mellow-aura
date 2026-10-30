@@ -112,6 +112,8 @@ function hero(lenis) {
     document.documentElement.classList.toggle('hero-overlay', overlay);
     if (overlay) {
         gsap.set(copyParts, { opacity: 0, y: 30 });
+        // Until it shows, the copy over the photo lets clicks through to the floating photos under it (MA-280).
+        gsap.set(copy.parentElement, { pointerEvents: 'none' });
     }
 
     const timeline = gsap.timeline({
@@ -135,14 +137,16 @@ function hero(lenis) {
     el.querySelectorAll('.aura-float').forEach((float) => {
         const speed = Number(float.dataset.speed || 1);
         const left = float.getBoundingClientRect().left < innerWidth / 2;
-        timeline.to(float, { y: `${-speed * 38}vh`, x: `${(left ? -1 : 1) * speed * 8}vw`, scale: 0.7, opacity: 0, duration: 0.4 }, 0);
+        // autoAlpha: a photo that has flown away is hidden, so its link can be neither clicked nor tabbed to (MA-280).
+        timeline.to(float, { y: `${-speed * 38}vh`, x: `${(left ? -1 : 1) * speed * 8}vw`, scale: 0.7, autoAlpha: 0, duration: 0.4 }, 0);
     });
 
     if (! overlay) {
         return;
     }
 
-    timeline.to(copyParts, { opacity: 1, y: 0, stagger: 0.03, duration: 0.15 }, 0.4).to({}, { duration: 0.1 });
+    timeline.set(copy.parentElement, { pointerEvents: 'auto' }, 0.4)
+        .to(copyParts, { opacity: 1, y: 0, stagger: 0.03, duration: 0.15 }, 0.4).to({}, { duration: 0.1 });
 
     // A keyboard user lands on the copy: jump to the end of the scene where it is visible.
     copy.addEventListener('focusin', () => {

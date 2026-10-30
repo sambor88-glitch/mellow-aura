@@ -6,6 +6,7 @@ return [
     'description' => 'Ręcznie formowana ceramika i jedwabne dodatki z drugiego obiegu. Kubki z wbijanym napisem, warsztaty w kameralnej pracowni w Krakowie. Płatność BLIK.',
 
     'hero_alt' => 'Kasia w pracowni trzyma talerz ze złoconą krawędzią',
+    'float_link' => 'Zobacz :name',
     'hero_bar' => 'Ceramika i jedwab z jednej pary rąk, z krakowskiej pracowni',
     'hero_bar_cta' => 'Zobacz sklep',
     'eyebrow' => 'domowa pracownia · kraków',
