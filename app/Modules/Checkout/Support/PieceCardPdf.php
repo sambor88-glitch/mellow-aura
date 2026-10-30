@@ -25,7 +25,7 @@ class PieceCardPdf
     public function html(OrderItem $item): string
     {
         return Locales::within($item->order->locale ?? Locales::default(), fn () => view('checkout::pdf.piece-card', [
-            'work' => collect([$item->product_name, $item->variant_label])->filter()->join(' · '),
+            'work' => collect([$item->pieceName(), $item->variant_label])->filter()->join(' · '),
             'qr' => QrCode::dataUri($item->pageUrl()),
             'address' => preg_replace('#^https?://#', '', $item->pageUrl()),
             'brandNote' => $this->settings->get(CertificatePdf::setting('brand_note', Locales::current())) ?: __('checkout::certificate.brand_note'),

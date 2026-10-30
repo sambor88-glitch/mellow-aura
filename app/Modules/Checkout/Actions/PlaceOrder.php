@@ -73,6 +73,7 @@ class PlaceOrder
                     'product_variant_id' => $item->variantId,
                     'is_made_to_order' => $item->variantId === null,
                     'product_name' => $item->name,
+                    'piece_name' => $item->pieceName,
                     'variant_label' => $item->label,
                     'quantity' => $item->quantity,
                     'unit_price_gross' => $item->unitPrice,

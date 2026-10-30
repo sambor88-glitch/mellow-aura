@@ -81,6 +81,7 @@
         {
             "slug": "wazony",
             "name": "Wazony",
+            "piece_name": "Wazon",
             "category": "wazony-i-patery",
             "variant_kind": "sizes",
             "description": "Ręcznie formowane wazony z ceramiki o organicznej, nieregularnej linii. Każdy egzemplarz to unikat — pełen drobnych asymetrii, które nadają mu charakter i duszę. Szkliwiony subtelnie, w odcieniach inspirowanych naturą: ziemią, wodą i światłem.",
@@ -132,6 +133,7 @@
             "euro_from_rate": true,
             "en": {
                 "name": "Vases",
+                "piece_name": "Vase",
                 "slug": "vases",
                 "description": "Hand-formed ceramic vases with an organic, uneven line. Every one is one of a kind — full of small asymmetries that give it its character. A subtle glaze in shades I borrow from nature: earth, water and light."
             }
@@ -187,6 +189,7 @@
         {
             "slug": "patery",
             "name": "Patery",
+            "piece_name": "Patera",
             "category": "wazony-i-patery",
             "variant_kind": "sizes",
             "description": "Duże formy dekoracyjne na granicy naczynia i rzeźby. Patery powstają bez formy — z płata gliny, który sam decyduje, gdzie się wygnie. Czarne szkliwo wypalane na wysoką temperaturę daje głęboki, lustrzany połysk.",
@@ -233,6 +236,7 @@
             "euro_from_rate": true,
             "en": {
                 "name": "Platters",
+                "piece_name": "Platter",
                 "slug": "platters",
                 "description": "Large decorative forms on the edge between a dish and a sculpture. I make them without a mould — from a slab of clay that decides for itself where to bend. The black glaze, fired at a high temperature, gives a deep, mirror-like shine."
             }
@@ -240,6 +244,7 @@
         {
             "slug": "talerze",
             "name": "Talerze",
+            "piece_name": "Talerz",
             "category": "talerze-i-miski",
             "variant_kind": "sizes",
             "description": "Talerze z odciskiem prawdziwych roślin zebranych pod pracownią — baldachy, gałązki, liście. Roślina wypala się w piecu i zostawia po sobie rysunek, którego nie da się powtórzić. Piaskowa glina z ciemnym nakrapianiem.",
@@ -290,6 +295,7 @@
             "euro_from_rate": true,
             "en": {
                 "name": "Plates",
+                "piece_name": "Plate",
                 "slug": "plates",
                 "description": "Plates pressed with real plants I pick near the studio — umbels, twigs, leaves. The plant burns away in the kiln and leaves behind a drawing that can never be repeated. Sandy clay with dark speckles."
             }
@@ -402,6 +408,7 @@
         {
             "slug": "kubki-malowane",
             "name": "Kubki malowane ręcznie",
+            "piece_name": "Kubek malowany ręcznie",
             "category": "kubki-i-filizanki",
             "variant_kind": "sizes",
             "description": "Kubki formowane z ręki, o ściankach grubszych tam, gdzie trzyma je dłoń. Malowane pędzlem — każdy inaczej. Nadają się do zmywarki i do porannej kawy pitej wolniej niż zwykle.",
@@ -459,6 +466,7 @@
             "euro_from_rate": true,
             "en": {
                 "name": "Hand-painted mugs",
+                "piece_name": "Hand-painted mug",
                 "slug": "hand-painted-mugs",
                 "description": "Mugs formed by hand, with walls a little thicker where your hand holds them. Painted with a brush — each one differently. They go in the dishwasher, and they are made for a morning coffee you drink slower than usual."
             }
@@ -786,6 +794,7 @@
         {
             "slug": "miski",
             "name": "Miski",
+            "piece_name": "Miska",
             "category": "talerze-i-miski",
             "variant_kind": "sizes",
             "description": null,

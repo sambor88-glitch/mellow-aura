@@ -61,7 +61,7 @@ class PlaceOrderTest extends TestCase
     {
         Setting::create(['key' => 'dispatch_days_min', 'value' => 3]);
         Setting::create(['key' => 'dispatch_days_max', 'value' => 5]);
-        $vase = $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3);
+        $vase = $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3, product: ['piece_name' => 'Wazon']);
         $mug = $this->variant('Kubki malowane', 'Na zamówienie', 7900, stock: null);
         $this->postJson('/koszyk', ['variant_id' => $vase->id]);
         $this->postJson('/koszyk', ['variant_id' => $mug->id]);
@@ -81,11 +81,15 @@ class PlaceOrderTest extends TestCase
             $order->items->map(fn ($item) => [$item->product_name, $item->variant_label, $item->quantity, $item->unit_price_gross, $item->custom_text])->all(),
         );
 
+        // One piece is named apart from the product (MA-291); a product without such a name leaves it empty.
+        $this->assertSame(['Wazon', null], $order->items->pluck('piece_name')->all());
+
         $mug->update(['price_gross' => 9900]);
-        $vase->product->update(['name' => 'Wazony rzeźbione']);
+        $vase->product->update(['name' => 'Wazony rzeźbione', 'piece_name' => 'Wazon rzeźbiony']);
         $this->assertSame([23900, 7900], $order->items()->orderBy('id')->pluck('unit_price_gross')->all());
         $this->assertSame(['PLN', 'PLN'], $order->items()->orderBy('id')->pluck('currency')->all());
         $this->assertSame('Wazony', $order->items()->orderBy('id')->value('product_name'));
+        $this->assertSame('Wazon', $order->items()->orderBy('id')->value('piece_name'));
 
         // The confirmed payment took the vase off the shelf; the mug made to order has no stock to take.
         $this->assertSame(2, $vase->fresh()->stock);

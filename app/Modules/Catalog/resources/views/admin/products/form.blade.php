@@ -113,6 +113,11 @@
 
     <x-shared::field name="name" :id="$formKey.'-name'" label="Nazwa" :value="$old('name', $product?->name)" :bag="$formKey" placeholder="np. Miska z odciskiem paproci" />
 
+    {{-- A product is a kind with sizes („Wazony”); a bought piece is one of them (MA-291). --}}
+    <x-shared::field name="piece_name" :id="$formKey.'-piece-name'" label="Nazwa jednej sztuki" :value="$old('piece_name', $product?->piece_name)" :bag="$formKey"
+                     maxlength="120" placeholder="np. Wazon"
+                     hint="Na stronie kupionej sztuki, na certyfikacie i na karcie do paczki — „Wazon” zamiast „Wazony”. Puste pole: zostanie nazwa produktu." />
+
     <div class="min-w-0">
         <label for="{{ $formKey }}-category" class="mb-1.5 block text-[13.5px] text-graphite">Rodzaj — kategoria w sklepie</label>
         <select id="{{ $formKey }}-category" name="category_id" @class([$input, 'w-full px-4 py-[13px]', 'border-error' => $bag->has('category_id'), 'border-line' => ! $bag->has('category_id')])>
@@ -347,6 +352,7 @@
             <p lang="pl" class="text-[12.5px] leading-[1.5] text-hint">Pisz tak jak po polsku — konkretnie, w pierwszej osobie. Nazwy rozmiarów po angielsku wpisz wyżej, obok polskich. Puste pole nie pokaże się na angielskiej stronie, a tekst nie podstawi się po polsku.</p>
             @foreach ([
                 ['name', 'Nazwa po angielsku', 'input', 120, 'e.g. Fern imprint bowl'],
+                ['piece_name', 'Nazwa jednej sztuki po angielsku', 'input', 120, 'e.g. Vase'],
                 ['description', 'Opis po angielsku', 'textarea', 2000, 'what it’s made of, how it’s made, what to do with it'],
                 ['story', 'Skąd ten pomysł po angielsku', 'textarea', 1500, 'what inspired it, what you wanted it to hold'],
                 ['care_note', 'Pielęgnacja po angielsku', 'input', 200, 'e.g. Dishwasher safe, gold by hand only'],
