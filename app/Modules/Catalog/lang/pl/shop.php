@@ -14,7 +14,6 @@ return [
     'shortcut_scarf' => 'Z Twojej apaszki',
     'shortcut_imprint' => 'Odcisk Twojej rośliny',
     'shortcut_custom_orders' => 'Zamówienie indywidualne',
-    'breadcrumb' => 'Okruszki',
     'home' => 'Strona główna',
     'products' => 'Sklep',
     'heading' => 'Sklep',

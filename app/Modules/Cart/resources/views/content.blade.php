@@ -82,12 +82,12 @@
         @elseif ($freeReached || $cheapestShipping !== null)
             <div class="mb-3.5 flex justify-between text-[14.5px] text-muted">
                 <span>{{ __('cart::content.delivery') }}</span>
-                <span>{{ $freeReached ? __('cart::content.delivery_free_from', ['price' => $money($freeFrom)]) : __('cart::content.delivery_from', ['price' => $money((int) $cheapestShipping)]) }}</span>
+                <span>{{ $freeReached ? __('cart::content.delivery_free') : __('cart::content.delivery_from', ['price' => $money((int) $cheapestShipping)]) }}</span>
             </div>
         @elseif (! $inZloty)
             <div class="mb-3.5 flex justify-between text-[14.5px] text-muted"><span>{{ __('cart::content.delivery') }}</span><span>{{ __('cart::content.delivery_at_checkout') }}</span></div>
         @endif
-        <div class="mb-[18px] flex items-baseline justify-between border-t border-line pt-3.5"><span class="text-[14.5px]">{{ __('cart::content.total') }}</span><span class="font-serif text-[32px] leading-none font-light tabular-nums">{{ $money($subtotal) }}</span></div>
+        <div class="mb-[18px] flex items-baseline justify-between border-t border-line pt-3.5"><span class="text-[14.5px]">{{ __('cart::content.total') }}@if ($needsDelivery && ! $freeReached && $cheapestShipping !== null) <span class="text-[12.5px] text-muted">{{ __('cart::content.plus_delivery') }}</span>@endif</span><span class="font-serif text-[32px] leading-none font-light tabular-nums">{{ $money($subtotal) }}</span></div>
 
         {{-- The checkout in the language of the page, or none: a euro basket never lands on a złoty checkout. --}}
         @if (Locales::has('checkout.index', Locales::current()))

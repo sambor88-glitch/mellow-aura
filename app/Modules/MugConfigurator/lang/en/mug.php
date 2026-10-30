@@ -13,7 +13,6 @@ return [
     'added' => 'Your mug is in the basket',
     'title' => 'Custom text mug — your words stamped into clay',
     'description' => 'Design a mug with your own text: letters stamped into the clay by hand, three sizes, five glaze colours. A gift nobody else has. Handmade in Kraków.',
-    'breadcrumb' => 'Breadcrumbs',
     'home' => 'Home',
     'preview' => 'Preview',
     'model' => '3D model',

@@ -37,7 +37,7 @@ class ContactPageTest extends TestCase
         $response = $this->get('/kontakt')
             ->assertOk()
             ->assertSee('<title>Kontakt — pracownia MellowAura, Kraków</title>', false)
-            ->assertSee('<meta name="description" content="Napisz na WhatsApp +48 600 100 200 albo przez formularz. Odpisuję zwykle tego samego dnia.">', false)
+            ->assertSee('<meta name="description" content="Napisz na WhatsAppie +48 600 100 200 albo przez formularz. Odpisuję zwykle tego samego dnia.">', false)
             ->assertSeeInOrder(['Napisz<br>do mnie', 'Odpisuję zwykle tego samego dnia, chyba że stoję przy piecu.'], false)
             ->assertSee('href="https://wa.me/48600100200"', false)
             ->assertSee('href="https://www.instagram.com/mellowaura.studio/"', false)
@@ -131,7 +131,7 @@ class ContactPageTest extends TestCase
         $this->followingRedirects()
             ->post('/kontakt', $this->form())
             ->assertSee('Coś się zacięło po mojej stronie i wiadomość nie wyszła.')
-            ->assertSee('albo napisz na WhatsApp +48 600 100 200')
+            ->assertSee('albo napisz na WhatsAppie +48 600 100 200')
             ->assertSee('Czy w sobotę jest jeszcze miejsce?');
 
         Mail::assertNothingOutgoing();

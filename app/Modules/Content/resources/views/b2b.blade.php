@@ -17,7 +17,7 @@
             <div class="mx-auto flex max-w-[1280px] flex-wrap items-center gap-12 px-7 py-[72px]">
                 <div class="min-w-0 flex-[1_1_400px]">
                     <div class="mb-5 text-[10.5px] tracking-[0.3em] text-label-dark uppercase">dla kawiarni, restauracji i hoteli</div>
-                    <h1 class="mb-[22px] font-serif text-[length:clamp(36px,5vw,64px)] leading-[1.05] font-light tracking-[-0.02em] text-cream">Naczynia, które<br>widać na zdjęciach<br>Waszych gości</h1>
+                    <h1 class="mb-[22px] font-serif text-[length:clamp(36px,5vw,64px)] leading-[1.05] font-light tracking-[-0.02em] text-cream">Naczynia, które<br>widać na zdjęciach<br>Twoich gości</h1>
                     @if ($lead)
                         <p class="mb-8 max-w-[48ch] text-[17px] leading-[1.7] text-pretty text-line-strong">{{ $lead }}</p>
                     @endif
@@ -50,7 +50,7 @@
         <div class="mx-auto max-w-[1280px] px-7 pt-11 pb-24">
             <div class="flex flex-wrap items-center justify-between gap-[30px] rounded-[20px] bg-sand-dark px-[clamp(22px,4vw,40px)] py-11">
                 <div class="min-w-0 flex-[1_1_340px]">
-                    <h2 class="mb-2 font-serif text-[length:clamp(24px,3vw,34px)] leading-[1.2] font-light text-balance">{{ $ctaHeading ?: 'Porozmawiajmy o Waszym lokalu' }}</h2>
+                    <h2 class="mb-2 font-serif text-[length:clamp(24px,3vw,34px)] leading-[1.2] font-light text-balance">{{ $ctaHeading ?: 'Porozmawiajmy o Twoim lokalu' }}</h2>
                     @if ($cta)
                         <p class="text-[15.5px] text-lead">{{ $cta }}</p>
                     @endif

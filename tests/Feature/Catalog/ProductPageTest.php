@@ -56,6 +56,17 @@ class ProductPageTest extends TestCase
             ->assertSee('ostatnia sztuka — kolejną zrobię na zamówienie');
     }
 
+    public function test_a_one_off_says_there_will_not_be_another(): void
+    {
+        $product = Product::factory()->create(['slug' => 'talerz-z-paprocia', 'is_one_off' => true, 'stamp_enabled' => false]);
+        ProductVariant::factory()->create(['product_id' => $product->id, 'stock' => 1]);
+
+        $this->get('/produkt/talerz-z-paprocia')
+            ->assertOk()
+            ->assertSee('jedyna sztuka — drugiej takiej nie będzie')
+            ->assertDontSee('kolejną zrobię na zamówienie');
+    }
+
     public function test_a_phone_keeps_the_price_and_the_button_at_the_bottom_only_while_the_piece_can_be_bought(): void
     {
         $product = Product::factory()->create(['slug' => 'wazony', 'name' => 'Wazony']);

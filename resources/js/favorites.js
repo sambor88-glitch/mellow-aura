@@ -40,6 +40,8 @@ export default {
             // Blocked storage: the heart still works until the page is left.
         }
 
-        window.Alpine.store('cart').say(saved ? 'Zapisane w ulubionych — znajdziesz je w nagłówku' : 'Usunięte z ulubionych');
+        // Below 520 px the header has no heart (header.blade.php), so the shop filter is the way back (MA-294).
+        const where = window.matchMedia('(min-width: 520px)').matches ? 'w nagłówku' : 'w sklepie pod „♥ Ulubione”';
+        window.Alpine.store('cart').say(saved ? `Zapisane w ulubionych — znajdziesz je ${where}` : 'Usunięte z ulubionych');
     },
 };

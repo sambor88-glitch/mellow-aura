@@ -80,7 +80,7 @@ class InternalLinksTest extends TestCase
             ->assertOk()
             ->assertSee('Zrobię taki z Twojego')
             ->assertSee('href="'.route('content.imprint').'"', false)
-            ->assertSee('Talerz z odciskiem Twojej rośliny — zrobię go z Twojego kwiatu');
+            ->assertSee('Odcisk Twojej rośliny — odcisnę ją w glinie na talerzu');
     }
 
     public function test_gift_pages_lead_to_the_services(): void

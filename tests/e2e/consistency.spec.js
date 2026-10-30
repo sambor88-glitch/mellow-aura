@@ -35,7 +35,7 @@ for (const path of ['/sklep', '/prezenty']) {
 
 test('the shop breadcrumbs say „Sklep”', async ({ page }) => {
     await page.goto('/sklep');
-    await expect(page.getByRole('navigation', { name: 'Okruszki' })).toHaveText(/Strona główna\s*\/\s*Sklep/);
+    await expect(page.getByRole('navigation', { name: 'Ścieżka nawigacji' })).toHaveText(/Strona główna\s*\/\s*Sklep/);
 });
 
 test('the missing page keeps the menu, the cart and the footer', async ({ page }, testInfo) => {

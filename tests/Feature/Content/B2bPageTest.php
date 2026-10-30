@@ -30,7 +30,7 @@ class B2bPageTest extends TestCase
             ->assertSee('<title>Ceramika dla kawiarni i restauracji | MellowAura</title>', false)
             ->assertSee('<meta name="description" content="Powtarzalne formy w ręcznej ceramice dla kawiarni i restauracji: minimum 12 sztuk, próbka przed serią, dosypka po stłuczkach, logo lub sygnatura.">', false)
             ->assertSee('focus-on-dark', false)
-            ->assertSeeInOrder(['dla kawiarni, restauracji i hoteli', 'Naczynia, które<br>widać na zdjęciach<br>Waszych gości', 'Ręczna ceramika w powtarzalnej formie', $contact, 'Poproś o wycenę'], false)
+            ->assertSeeInOrder(['dla kawiarni, restauracji i hoteli', 'Naczynia, które<br>widać na zdjęciach<br>Twoich gości', 'Ręczna ceramika w powtarzalnej formie', $contact, 'Poproś o wycenę'], false)
             ->assertSeeInOrder(['Minimum 12 sztuk', 'Od dwunastu robi się sens', 'Próbka przed serią', 'Dosypka po stłuczkach', 'Logo lub sygnatura', 'Faktura i przelew z terminem 14 dni.'])
             ->assertSeeInOrder(['Prowadzicie lokal w Krakowie?', 'Przywiozę próbki', 'href="https://wa.me/48600100200"', $contact, 'Umów spotkanie'], false);
 
@@ -48,7 +48,7 @@ class B2bPageTest extends TestCase
             ->assertSee('<meta name="description" content="Powtarzalne formy w ręcznej ceramice dla kawiarni i restauracji.">', false)
             ->assertDontSee('Bez nagłówka')
             ->assertDontSee('Ręczna ceramika w powtarzalnej formie')
-            ->assertSee('Porozmawiajmy o Waszym lokalu')
+            ->assertSee('Porozmawiajmy o Twoim lokalu')
             ->assertDontSee('wa.me');
     }
 

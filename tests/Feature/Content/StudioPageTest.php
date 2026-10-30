@@ -71,7 +71,7 @@ class StudioPageTest extends TestCase
 
     public function test_the_about_page_leads_here(): void
     {
-        $this->get('/o-mnie')->assertSeeInOrder(['href="'.route('content.studio').'"', 'Zobacz jak tworzę'], false);
+        $this->get('/o-mnie')->assertSeeInOrder(['href="'.route('content.studio').'"', 'Zobacz, jak tworzę'], false);
     }
 
     /**

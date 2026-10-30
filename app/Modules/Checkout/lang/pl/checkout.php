@@ -106,7 +106,7 @@ return [
     'thanks_packing' => 'Dziękuję. Pakuję.',
     'thanks' => 'Dziękuję.',
     'waiting_text' => 'Zamówienie :number czeka na przelew. Dane do przelewu są w mailu, który właśnie wyszedł. Zabieram się za nie, gdy tylko pieniądze dojdą.',
-    'confirming_text' => 'Zamówienie :number czeka, aż Przelewy24 potwierdzi płatność. Zwykle trwa to kilka sekund. Gdy potwierdzenie dojdzie, dostaniesz ode mnie maila.',
+    'confirming_text' => 'Zamówienie :number czeka, aż Przelewy24 potwierdzą płatność. Zwykle trwa to kilka sekund. Gdy potwierdzenie dojdzie, dostaniesz ode mnie maila.',
     'check_again' => 'Sprawdź jeszcze raz',
     'resume_text' => 'Płatność przerwana albo okno się zamknęło? Zamówienie i koszyk czekają — możesz zapłacić jeszcze raz albo wybrać inny sposób.',
     'resume_text_elsewhere' => 'Płatność przerwana albo okno się zamknęło? Zamówienie czeka — możesz zapłacić jeszcze raz.',

@@ -95,7 +95,7 @@ class ProductLine extends CartLine
         return match ($this->variant->stock) {
             null => self::tooManyNotice(),
             0 => __('cart::line.sold_out'),
-            1 => __('cart::line.last_one'),
+            1 => __($this->variant->product->is_one_off ? 'cart::line.one_off' : 'cart::line.last_one'),
             default => __('cart::line.on_shelf', ['count' => $this->variant->stock]),
         };
     }

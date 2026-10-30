@@ -19,7 +19,7 @@ return [
     'deviation_label' => 'Please note:',
     'deviation_confirm' => 'I’ll ask you to confirm this in a separate box at checkout.',
     'stock_last' => 'last one — I’ll make another to order',
-    'stock_few' => ':count on the shelf — I’ll make another to order',
+    'stock_one_off' => 'the only one — there won’t be another like it',
     'fewer' => 'Fewer',
     'more' => 'More',
     'add_to_cart' => 'Add to basket',

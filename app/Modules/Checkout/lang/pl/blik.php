@@ -6,6 +6,8 @@ return [
     'eyebrow' => 'kasa &middot; BLIK',
     'wait_heading' => 'Potwierdź płatność w aplikacji banku',
     'wait_text' => 'Zamówienie :number czeka. Gdy bank potwierdzi, ta strona sama przejdzie dalej.',
+    'wait_text_booking' => 'Zapis :number czeka. Gdy bank potwierdzi, ta strona sama przejdzie dalej.',
+    'wait_text_custom_order' => 'Wpłata :number czeka. Gdy bank potwierdzi, ta strona sama przejdzie dalej.',
     'checking' => 'Czekam na potwierdzenie z banku',
     'time_left' => 'Na potwierdzenie zostało: :time',
     'noscript' => 'Strona sprawdza płatność co 5 sekund.',
