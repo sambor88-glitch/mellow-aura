@@ -242,6 +242,13 @@ export default ({ accepted, deviations, payment, blikCode, shipping, locker, loc
     init() {
         this.$el.querySelector('[aria-invalid="true"]')?.focus();
 
+        // Back from Przelewy24 through the browser's cache the page is the one left behind, still „Płacę…”: free it again.
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) {
+                this.submitting = false;
+            }
+        });
+
         // Geowidget v5 fires an event of this name on the document; older builds call a global function of it.
         if (lockerMap) {
             document.addEventListener(POINT_EVENT, (event) => this.pickLocker(event.detail));

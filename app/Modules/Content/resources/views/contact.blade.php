@@ -67,7 +67,7 @@
                 @endif
             </div>
 
-            <div class="min-w-[290px] flex-[1_1_340px]">
+            <div class="min-w-[min(100%,290px)] flex-[1_1_340px]">
                 <div id="formularz" class="scroll-mt-6 rounded-[20px] border border-divider bg-cream px-[30px] py-8">
                     @if (session('contact_sent'))
                         <p role="status" class="mb-5 rounded-[20px] border border-line-strong bg-sand-dark p-4 text-[14px] leading-[1.6] text-graphite">Wiadomość poszła. Odpisuję zwykle tego samego dnia.</p>
@@ -81,7 +81,7 @@
                         </p>
                     @endif
 
-                    <form method="post" action="{{ route('content.contact.send') }}" novalidate class="grid gap-[13px]">
+                    <form method="post" action="{{ route('content.contact.send') }}" novalidate data-submit-once class="grid gap-[13px]">
                         @csrf
                         <x-shared::field name="name" id="contact-name" label="Imię" autocomplete="given-name" />
                         <x-shared::field name="email" id="contact-email" label="E-mail" type="email" autocomplete="email" hint="Na ten adres odpiszę" />

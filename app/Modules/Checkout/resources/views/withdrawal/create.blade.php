@@ -25,7 +25,7 @@
                 </p>
             @endif
 
-            <form method="post" action="{{ route('withdrawal.store') }}" novalidate class="grid gap-[13px]">
+            <form method="post" action="{{ route('withdrawal.store') }}" novalidate data-submit-once class="grid gap-[13px]">
                 @csrf
                 <x-shared::field name="name" id="withdrawal-name" label="Imię i nazwisko" autocomplete="name" />
                 <x-shared::field name="email" id="withdrawal-email" label="E-mail" type="email" autocomplete="email" hint="Na ten adres wyślę potwierdzenie — najlepiej ten z zamówienia" />

@@ -436,6 +436,13 @@
         width: 250%;
     }
 
+    /* A form sent once waits for the next page (resources/js/submit-once.js): its button stays pressed and dimmed. */
+    form[data-sending] button:not([type="button"]) {
+        opacity: .6;
+        cursor: progress;
+        pointer-events: none;
+    }
+
     .blur-in {
         display: inline-block;
         animation: auraBlurIn .7s var(--ease-clay) both;
@@ -507,7 +514,8 @@
         z-index: 1;
     }
 
-    .aura-float > div {
+    /* A plain photo or a link to its product (MA-280): aura.js moves this child under the mouse. */
+    .aura-float > * {
         overflow: hidden;
         border-radius: 12px;
         box-shadow: var(--shadow-float);

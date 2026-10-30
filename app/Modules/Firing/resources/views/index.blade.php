@@ -50,7 +50,7 @@
                 @endif
             </div>
 
-            <div class="min-w-[290px] flex-[0_1_380px]">
+            <div class="min-w-[min(100%,290px)] flex-[0_1_380px]">
                 <div id="zglos-wsad" class="scroll-mt-6 rounded-[20px] border border-divider bg-cream px-7 py-[30px]">
                     <h2 class="mb-2.5 font-serif text-[23px]">Zgłoś wsad</h2>
                     @if ($reported)
@@ -69,7 +69,7 @@
                         @php
                             $select = 'w-full min-w-0 rounded-[14px] border bg-white px-4 py-[15px] text-[15px] text-lead focus:border-ink pointer-coarse:text-[16px]';
                         @endphp
-                        <form method="post" action="{{ route('firing.store') }}" novalidate class="grid gap-[13px]"
+                        <form method="post" action="{{ route('firing.store') }}" novalidate data-submit-once class="grid gap-[13px]"
                               x-data="firingQuote(@js($services), @js(old('service', '')), @js(old('quantity', '')))">
                             @csrf
                             <x-shared::field name="name" id="firing-name" label="Imię" autocomplete="given-name" maxlength="120" />

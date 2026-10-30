@@ -43,9 +43,16 @@ export default {
      * Posts a cart form and says whether the cart took it, so a page can switch a button afterwards.
      */
     async send(form) {
+        // A second tap before the answer would send the same quantity again or add the same mug twice (MA-282).
+        if (form.getAttribute('aria-busy') === 'true') {
+            return false;
+        }
+
         const focusKey = document.activeElement?.dataset.focus;
         let response = null;
         let data = null;
+
+        form.setAttribute('aria-busy', 'true');
 
         try {
             response = await fetch(form.action, {
@@ -56,6 +63,8 @@ export default {
             data = await response.json();
         } catch {
             data = null;
+        } finally {
+            form.removeAttribute('aria-busy');
         }
 
         if (!response?.ok || !data) {

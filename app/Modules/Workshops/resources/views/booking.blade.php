@@ -33,7 +33,7 @@
                 <a href="{{ route('workshops.index') }}#workshop-dates" class="inline-flex min-h-[52px] items-center rounded-full bg-ink px-[30px] text-[14px] text-linen transition duration-300 hover:bg-rose hover:text-ink">Wybieram inny termin</a>
             </div>
         @else
-            <form method="post" action="{{ route('workshops.booking.store', $date) }}" novalidate
+            <form method="post" action="{{ route('workshops.booking.store', $date) }}" novalidate data-submit-once x-on:pageshow.window="if ($event.persisted) sending = false"
                   x-data="{
                       seats: {{ $seats }}, price: {{ $byWorkshopVoucher ? 0 : $price }}, payment: @js($selectedPayment), blik: '', sending: false,
                       addVoucherTo: @js(route('workshops.booking.voucher.add', $date)), removeVoucherTo: @js(route('workshops.booking.voucher.remove', $date)),
@@ -47,7 +47,7 @@
                       format(amount) { return this.$store.cart.format(amount) },
                       {{-- The whole form goes to the voucher's address, so everything typed so far comes back filled in. --}}
                       send(address, extra = {}) {
-                          if (this.sending) return;
+                          if (this.sending || this.$root.hasAttribute('data-sending')) return;
                           Object.entries(extra).forEach(([name, value]) => this.$root.append(Object.assign(document.createElement('input'), { type: 'hidden', name, value })));
                           this.$root.action = address;
                           this.sending = true;
@@ -147,7 +147,7 @@
                     @endunless
                 </div>
 
-                <div class="min-w-[260px] flex-[1_1_340px] min-[900px]:sticky min-[900px]:top-24">
+                <div class="min-w-[min(100%,260px)] flex-[1_1_340px] min-[900px]:sticky min-[900px]:top-24">
                     <div class="glass rounded-[26px] p-[clamp(20px,3vw,30px)]">
                         <h2 class="mb-[18px] font-serif text-[30px] leading-none font-light">Twój zapis</h2>
                         <div class="mb-3.5 border-b border-line pb-3.5">

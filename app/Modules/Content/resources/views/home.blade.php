@@ -74,9 +74,21 @@
                 {{-- Lazy: two of them are hidden on a phone and then never download, and the rest wait for the hero photo. --}}
                 @foreach ($floats as [$place, $class, $speed, $depth])
                     @continue (! ($float = $photo($place))->exists())
-                    <div class="aura-float {{ $class }}" data-speed="{{ $speed }}" data-depth="{{ $depth }}" aria-hidden="true">
-                        <div class="size-full"><img src="{{ $float->url }}" {{ $float->srcsetAttributes('(max-width: 760px) 100px, 13vw') }} alt="" width="400" height="500" style="{{ $float->style() }}" loading="lazy"></div>
-                    </div>
+                    {{-- A photo with a product from the panel leads to it (MA-280); aura.js moves the wrapper and its first child,
+                         so the link is that child. Without a product it stays decoration. --}}
+                    @if ($floatProduct = $floatProducts->get($place))
+                        <div class="aura-float {{ $class }}" data-speed="{{ $speed }}" data-depth="{{ $depth }}">
+                            <a href="{{ route('product.show', $floatProduct) }}" aria-label="{{ $t('float_link', ['name' => $floatProduct->name]) }}"
+                               class="group aura-float-link block size-full transition-[box-shadow,translate] duration-500 ease-clay hover:-translate-y-1 hover:shadow-card-hover focus-visible:outline-offset-4">
+                                <img src="{{ $float->url }}" {{ $float->srcsetAttributes('(max-width: 760px) 100px, 13vw') }} alt="" width="400" height="500" style="{{ $float->style() }}" loading="lazy"
+                                     class="transition-[scale] duration-[1.1s] ease-clay group-hover:scale-[1.06] group-focus-visible:scale-[1.06]">
+                            </a>
+                        </div>
+                    @else
+                        <div class="aura-float {{ $class }}" data-speed="{{ $speed }}" data-depth="{{ $depth }}" aria-hidden="true">
+                            <div class="size-full"><img src="{{ $float->url }}" {{ $float->srcsetAttributes('(max-width: 760px) 100px, 13vw') }} alt="" width="400" height="500" style="{{ $float->style() }}" loading="lazy"></div>
+                        </div>
+                    @endif
                 @endforeach
 
                 {{-- On a phone the frame shows only the middle half of the screen and the plate sits at the bottom of the photo,
@@ -108,8 +120,9 @@
                     <p class="eyebrow mb-[22px]">{{ $t('eyebrow') }}</p>
                     <h1 id="hero-title" class="max-w-[12ch] font-serif text-[length:clamp(42px,6.4vw,92px)] leading-[.96] font-light tracking-[-0.02em] text-balance">{{ $em('heading') }}</h1>
                     <p class="aura-lead mt-6 max-w-[46ch] text-[17.5px] leading-[1.68] text-pretty text-lead">{{ $t('lead') }}</p>
-                    {{-- On a phone an even grid: the main button across, the others in two equal columns, a single one across. --}}
-                    <div @class(['mt-8 grid grid-cols-2 gap-3 md:flex md:flex-wrap [&>*]:justify-center [&>*]:whitespace-nowrap max-md:[&>*]:px-4! [&>.aura-btn-main]:col-span-2', '[&>*:last-child]:col-span-2' => ! $workshopsUrl])>
+                    {{-- On a phone an even grid: the main button across, the others in two equal columns, a single one across.
+                         A label may break there rather than spill out of its pill on a 320 px screen. --}}
+                    <div @class(['mt-8 grid grid-cols-2 gap-3 md:flex md:flex-wrap [&>*]:justify-center [&>*]:text-center md:[&>*]:whitespace-nowrap max-md:[&>*]:px-4! [&>.aura-btn-main]:col-span-2', '[&>*:last-child]:col-span-2' => ! $workshopsUrl])>
                         @if ($mugUrl = $link('mug.index'))
                             <a href="{{ $mugUrl }}" data-magnet class="{{ $btnMain }}">{{ $t('cta_mug') }} <span aria-hidden="true">→</span></a>
                         @endif
@@ -336,7 +349,7 @@
 
     @if ($cards)
         <section class="mx-auto max-w-[1360px] px-[clamp(18px,4vw,48px)] pt-20 sm:pt-[clamp(90px,14vh,150px)] pb-20 sm:pb-[clamp(90px,14vh,150px)]">
-            <div data-aura-rise class="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-[clamp(16px,2vw,28px)]">
+            <div data-aura-rise class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,260px),1fr))] gap-[clamp(16px,2vw,28px)]">
                 {{-- The first card stands out at rest; on hover every card fills with the same rose, text in ink and graphite. --}}
                 @foreach ($cards as [$url, $dark, $eyebrow, $title, $text])
                     <a href="{{ $url }}" @class([
