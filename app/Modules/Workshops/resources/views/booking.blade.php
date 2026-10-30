@@ -147,7 +147,7 @@
                     @endunless
                 </div>
 
-                <div class="min-w-[260px] flex-[1_1_340px] min-[900px]:sticky min-[900px]:top-24">
+                <div class="min-w-[min(100%,260px)] flex-[1_1_340px] min-[900px]:sticky min-[900px]:top-24">
                     <div class="glass rounded-[26px] p-[clamp(20px,3vw,30px)]">
                         <h2 class="mb-[18px] font-serif text-[30px] leading-none font-light">Twój zapis</h2>
                         <div class="mb-3.5 border-b border-line pb-3.5">

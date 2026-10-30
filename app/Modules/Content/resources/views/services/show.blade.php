@@ -142,7 +142,7 @@
                         <p class="mt-3.5 text-[13px] leading-[1.6] text-hint">{{ $note }}</p>
                     @endif
                 </div>
-                <div class="min-w-[280px] flex-[1_1_300px]">
+                <div class="min-w-[min(100%,280px)] flex-[1_1_300px]">
                     @include('content::services.'.$service->value.'-card')
                 </div>
             </div>

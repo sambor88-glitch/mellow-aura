@@ -133,7 +133,7 @@
             <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
         @endif
         <p class="mb-3.5 text-[13.5px] leading-[1.6] text-label">Wpisz je tak, jak są w CEIDG. Regulamin, polityka prywatności, strona kontaktu i stopka biorą je stąd. Operator płatności sprawdza, czy NIP na stronie zgadza się z wnioskiem.</p>
-        <div class="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-3">
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,260px),1fr))] gap-3">
             <x-shared::field name="company_name" id="firma-nazwa" bag="firma" label="Firma z CEIDG"
                              :value="old('company_name', $company['company_name'])" placeholder="np. MellowAura Katarzyna Samborska" />
             <x-shared::field name="company_nip" id="firma-nip" bag="firma" label="NIP" inputmode="numeric"
@@ -163,7 +163,7 @@
             <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
         @endif
         <p class="mb-3.5 max-w-[70ch] text-[13.5px] leading-[1.6] text-label">Pokażą się na karcie każdego produktu, który nie ma własnych. Własne wpisujesz w Produktach.</p>
-        <div class="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-3">
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,260px),1fr))] gap-3">
             <x-shared::field name="size_tolerance" id="karta-produktu-roznica" bag="karta-produktu" label="Dopuszczalna różnica wymiarów"
                              :value="old('size_tolerance', $productCard['size_tolerance'])" placeholder="np. 0,5 cm"
                              hint="Przy wymiarach: „mogą różnić się do 0,5 cm”. Tę samą wartość podaje regulamin w §4." />
