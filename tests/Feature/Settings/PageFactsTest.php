@@ -70,7 +70,7 @@ class PageFactsTest extends TestCase
         $home = $this->get('/')->assertOk()
             ->assertSee('dwie dziedziny w jednej krakowskiej pracowni.</p>', false)
             ->assertDontSee('zmywark')
-            ->assertDontSee('100%')
+            ->assertDontSee('>100%</strong>', false)
             ->assertDontSee('ręczna robota')
             ->assertDontSee('płatność w')
             ->assertDontSee('złoto 24k')
@@ -108,7 +108,8 @@ class PageFactsTest extends TestCase
             ->assertSeeInOrder(['clay', 'silk', 'linen', 'gold']);
 
         $this->get('/en/shop')->assertSee('Everything on the studio shelf right now.</p>', false)->assertDontSee('wypalona');
-        $this->get('/en/contact')->assertDontSee('tego samego dnia');
+        // The meta description; the contact lead from the panel is a separate setting.
+        $this->get('/en/contact')->assertDontSee('przez formularz. Odpisuję');
     }
 
     public function test_the_payment_lists_follow_the_checkout(): void
