@@ -3,6 +3,7 @@
     $card = 'scroll-mt-6 rounded-[4px] border border-line bg-cream px-[26px] py-7';
     $alert = 'mb-3.5 rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text';
     $tab = 'inline-flex min-h-11 items-center rounded-full border px-4 text-[13.5px]';
+    $field = 'min-h-11 min-w-0 rounded-[4px] border border-line bg-white px-3 py-2.5 text-[14px] text-ink focus:border-ink';
     $settingErrors = $errors->getBag('ustawienia');
 @endphp
 <x-admin::layout title="Karty wyboru" lead="Kubki „Podaruj wybór”: kupująca płaci za rozmiar i dostawę, a obdarowana sama wymyśla napis, wybiera kolor wnętrza i podaje adres. Gotowy wybór trafia do zamówień jako „W realizacji”.">
@@ -18,12 +19,36 @@
         </section>
     @endif
 
+    <form method="get" action="{{ route('admin.gift-choices.index') }}" role="search" class="mb-5 flex flex-wrap items-end gap-2.5">
+        <label for="szukaj" class="grid min-w-0 flex-[1_1_280px] gap-1.5 text-[12.5px] text-label">
+            Kod karty, numer zamówienia, imię albo e-mail
+            <input id="szukaj" name="szukaj" type="search" value="{{ $search }}" autocomplete="off" spellcheck="false" class="{{ $field }}">
+        </label>
+        <button class="min-h-11 rounded-full bg-ink px-6 text-[13.5px] text-linen hover:bg-navy">Szukaj</button>
+        @if ($search !== '')
+            <a href="{{ route('admin.gift-choices.index') }}" class="min-h-11 px-2 py-3 text-[13px] text-lead">Pokaż wszystkie</a>
+        @endif
+    </form>
+
     <div class="mb-4 flex flex-wrap items-center gap-2.5">
         <a href="{{ route('admin.gift-choices.index') }}" @class([$tab, 'border-ink bg-ink text-linen hover:text-linen' => $filter === 'open', 'border-line-strong text-ink' => $filter !== 'open'])>Czekają na wybór</a>
         <a href="{{ route('admin.gift-choices.index', ['pokaz' => 'wszystkie']) }}" @class([$tab, 'border-ink bg-ink text-linen hover:text-linen' => $filter === 'all', 'border-line-strong text-ink' => $filter !== 'all'])>Wszystkie</a>
     </div>
 
-    @if ($choices->isEmpty())
+    @if ($choices->isEmpty() && $search !== '')
+        <div class="rounded-[4px] border border-dashed border-line-strong bg-linen px-7 py-10 text-center">
+            <div class="mb-2 font-serif text-[22px]">Nie znalazłam takiej karty</div>
+            <p class="mx-auto max-w-[48ch] text-[13.5px] text-label">
+                Sprawdź kod albo wpisz coś innego: numer zamówienia, imię lub e-mail.
+                Kod vouchera wygląda tak samo jak kod karty
+                @if (\App\Modules\Admin\Support\PanelAccess::allows(auth()->user(), 'admin.gifts.edit'))
+                    — voucher sprawdzisz w <a href="{{ route('admin.gifts.edit') }}#sprawdz-voucher">Prezentach</a>.
+                @else
+                    — może to voucher.
+                @endif
+            </p>
+        </div>
+    @elseif ($choices->isEmpty())
         <div class="rounded-[4px] border border-dashed border-line-strong bg-linen px-7 py-10 text-center">
             <div class="mb-2 font-serif text-[22px]">Jeszcze nic tu nie ma</div>
             <p class="mx-auto mb-5 max-w-[44ch] text-[13.5px] text-label">Karta pojawi się tutaj, gdy ktoś za nią zapłaci w konfiguratorze kubka — z kodem, terminem i informacją, do kogo i kiedy idzie.</p>

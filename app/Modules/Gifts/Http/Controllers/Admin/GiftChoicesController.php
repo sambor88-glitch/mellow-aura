@@ -18,25 +18,33 @@ use Illuminate\View\View;
 
 /**
  * „Karty wyboru” in the panel (MA-235): the paid cards that wait for a choice, the ones past their last day for Kasia
- * to decide on, and the chosen ones, newest first. A card can be sent again; after the deadline it becomes a plain
+ * to decide on, and the chosen ones, newest first, or the ones a search finds. A card can be sent again; after the deadline it becomes a plain
  * mug or a voucher. The card's terms — days to choose and the delivery in its price — save on the same screen.
  */
 class GiftChoicesController extends Controller
 {
     public function index(Request $request, GiftChoiceTerms $terms, Settings $settings): View
     {
-        $filter = in_array($request->query('pokaz'), ['wszystkie'], true) ? 'all' : 'open';
+        // A search looks through every card, chosen and closed too: whoever asks may hold an old one (MA-289).
+        $search = trim((string) $request->query('szukaj'));
+        $filter = match (true) {
+            $search !== '' => 'search',
+            $request->query('pokaz') === 'wszystkie' => 'all',
+            default => 'open',
+        };
 
         return view('gifts::admin.gift-choices', [
             'awaiting' => GiftChoice::query()->awaitingDecision()->with('orderItem.order')->orderBy('choose_by')->get(),
             'choices' => GiftChoice::query()
                 ->issued()
+                ->when($filter === 'search', fn ($query) => $query->matching($search))
                 ->when($filter === 'open', fn ($query) => $query->whereNull('chosen_at')->whereNull('resolution')->where('choose_by', '>=', today()->toDateString()))
                 ->with(['orderItem.order', 'fulfilmentOrder', 'voucher'])
                 ->latest('id')
                 ->paginate(30)
                 ->withQueryString(),
             'filter' => $filter,
+            'search' => $search,
             'days' => $terms->days(),
             'delivery' => $settings->get('gift_choice_delivery_gross'),
             'deliveryGross' => $terms->deliveryGross(),
