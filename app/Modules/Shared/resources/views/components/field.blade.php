@@ -1,10 +1,10 @@
-@props(['name', 'label', 'type' => 'text', 'hint' => null, 'value' => null, 'bag' => 'default', 'id' => null])
+@props(['name', 'label', 'type' => 'text', 'hint' => null, 'value' => null, 'bag' => 'default', 'id' => null, 'optional' => false])
 @php
     $id ??= $name;
     $error = $errors->getBag($bag)->first($name);
 @endphp
 <div {{ $attributes->only('class')->merge(['class' => 'min-w-0']) }}>
-    <label for="{{ $id }}" class="mb-1.5 block text-[13.5px] text-graphite">{{ $label }}</label>
+    <label for="{{ $id }}" class="mb-1.5 block text-[13.5px] text-graphite">{{ $label }}@if ($optional) <span class="text-hint">{{ __('shared::forms.optional') }}</span>@endif</label>
     <input id="{{ $id }}" name="{{ $name }}" type="{{ $type }}" value="{{ $value ?? old($name) }}"
            @if ($error || $hint) aria-describedby="{{ $id }}-note" @endif
            @if ($error) aria-invalid="true" @endif

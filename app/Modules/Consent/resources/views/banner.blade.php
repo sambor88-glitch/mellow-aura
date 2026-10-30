@@ -8,18 +8,21 @@
             'analytics' => $consent->allowsAnalytics(request()),
             'measurementId' => $consent->measurementId(),
         ];
-        $button = 'min-h-11 flex-1 rounded-full bg-linen px-6 py-3 text-[14px] whitespace-nowrap text-ink transition duration-300 hover:bg-rose active:scale-[.97] sm:flex-none';
+        $button = 'min-h-11 flex-1 rounded-full bg-linen px-5 py-2.5 sm:px-6 sm:py-3 text-[14px] whitespace-nowrap text-ink transition duration-300 hover:bg-rose active:scale-[.97] sm:flex-none';
     @endphp
     {{-- Shown by the server until a choice is made, so it works without JavaScript; the footer link opens it again. --}}
     <section x-data="consentBanner(@js($config))" x-show="open" @unless ($config['open']) style="display: none" @endunless
              aria-labelledby="consent-title"
              class="focus-on-dark fixed inset-x-0 bottom-0 z-70 border-t border-line-dark bg-ink text-on-dark print:hidden">
-        <div class="mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-10 gap-y-4 px-7 pt-5 pb-[calc(20px+env(safe-area-inset-bottom))]">
+        {{-- On a phone the banner stays low: shorter words and smaller gaps, so the page keeps most of the screen. --}}
+        <div class="mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-10 gap-y-3 px-[clamp(16px,4vw,28px)] pt-4 pb-[calc(16px+env(safe-area-inset-bottom))] sm:gap-y-4 sm:pt-5 sm:pb-[calc(20px+env(safe-area-inset-bottom))]">
             <div class="min-w-0 flex-[1_1_420px]">
                 <h2 id="consent-title" class="mb-1.5 text-[11px] tracking-[0.2em] text-label-dark uppercase">pliki cookies</h2>
-                <p class="max-w-[76ch] text-[14px] leading-[1.6] text-pretty">
+                <p class="max-w-[76ch] text-[13.5px] leading-[1.55] text-pretty sm:text-[14px] sm:leading-[1.6]">
                     Koszyk i formularze działają na niezbędnych plikach cookies. Za Twoją zgodą włączę też Google Analytics — zobaczę, które strony się przydają. Bez reklam.
-                    Wybór zmienisz w każdej chwili w stopce, w „Ustawieniach cookies”.
+                    {{-- The way to take consent back is said before it is given (RODO art. 7 ust. 3), on a phone in fewer words. --}}
+                    <span class="max-sm:hidden">Wybór zmienisz w każdej chwili w stopce, w „Ustawieniach cookies”.</span>
+                    <span class="sm:hidden">Zmienisz to w stopce.</span>
                     <a href="{{ route('content.privacy') }}" class="text-sand underline decoration-line-dark underline-offset-4 hover:text-rose">Polityka prywatności</a>
                 </p>
                 <p x-show="decided" x-cloak class="mt-1.5 text-[13px] text-on-dark-muted" x-text="analytics ? 'Teraz: statystyki włączone.' : 'Teraz: tylko niezbędne pliki.'"></p>

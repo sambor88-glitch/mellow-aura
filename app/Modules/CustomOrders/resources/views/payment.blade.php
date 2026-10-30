@@ -75,7 +75,7 @@
                     @endif
                 </div>
 
-                <div class="min-w-[min(100%,260px)] flex-[1_1_340px] min-[900px]:sticky min-[900px]:top-24">
+                <div class="min-w-[min(100%,260px)] flex-[1_1_340px] min-[900px]:sticky min-[900px]:top-24 min-[900px]:max-h-[calc(100dvh-7rem)] min-[900px]:overflow-y-auto min-[900px]:overscroll-contain min-[900px]:rounded-[26px]">
                     <div class="glass rounded-[26px] p-[clamp(20px,3vw,30px)]">
                         <h2 class="mb-[18px] font-serif text-[30px] leading-none font-light">Twoja wpłata</h2>
                         <div class="mb-3.5 border-b border-line pb-3.5">
@@ -84,9 +84,9 @@
                                 <div class="mt-0.5 text-[12.5px] text-label">Wycena {{ Money::format($idea->quote) }}</div>
                             @endif
                         </div>
-                        <div class="flex items-baseline justify-between">
+                        <div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
                             <span class="text-[14.5px]">Do zapłaty</span>
-                            <span class="font-serif text-[40px] leading-none font-light tabular-nums">{{ $amount }}</span>
+                            <span class="font-serif text-[length:clamp(30px,10vw,40px)] leading-none font-light whitespace-nowrap tabular-nums">{{ $amount }}</span>
                         </div>
 
                         @if (session('payment_notice'))

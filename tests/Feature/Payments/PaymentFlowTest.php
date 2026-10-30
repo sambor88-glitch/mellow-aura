@@ -118,6 +118,44 @@ class PaymentFlowTest extends TestCase
         $this->assertSame(3, $variant->fresh()->stock);
     }
 
+    public function test_the_checkout_marks_what_must_be_filled_in_and_what_may_stay_empty(): void
+    {
+        $this->cartWithAVase();
+
+        $this->get('/zamowienie')->assertOk()
+            ->assertSeeInOrder(['id="email"', 'aria-required="true"', 'id="phone"', 'aria-required="true"', 'id="name"', 'aria-required="true"'], false)
+            ->assertSeeInOrder(['NIP do faktury', '(opcjonalnie)', 'Dopisek do paczki', '(opcjonalnie)']);
+    }
+
+    public function test_the_wait_for_a_bank_transfer_shows_the_details_to_pay(): void
+    {
+        Setting::create(['key' => 'company_bank_account', 'value' => '12 3456 7890 1234 5678 9012 3456']);
+        Setting::create(['key' => 'company_name', 'value' => 'MellowAura Katarzyna Samborska']);
+        $this->cartWithAVase();
+
+        $this->post('/zamowienie', $this->form(['payment_method' => 'bank_transfer', 'blik_code' => '']));
+        $order = Order::sole();
+
+        // The same details as the mail, each with „Kopiuj”: the account copies without its spaces.
+        $this->get('/zamowienie/potwierdzenie')->assertOk()
+            ->assertSeeInOrder(['Dane do przelewu', 'Kwota', $order->money($order->amountDue()), 'Tytuł', $order->number,
+                'Rachunek', '12 3456 7890 1234 5678 9012 3456', 'Odbiorca', 'MellowAura Katarzyna Samborska'])
+            ->assertSee('Kopiuj: Rachunek')
+            ->assertSee('12345678901234567890123456');
+    }
+
+    public function test_a_bank_transfer_without_an_account_in_the_panel_leaves_the_line_out(): void
+    {
+        $this->cartWithAVase();
+
+        $this->post('/zamowienie', $this->form(['payment_method' => 'bank_transfer', 'blik_code' => '']));
+
+        $this->get('/zamowienie/potwierdzenie')->assertOk()
+            ->assertSee('Dane do przelewu')
+            ->assertSee(Order::sole()->number)
+            ->assertDontSee('Rachunek');
+    }
+
     /**
      * A gateway that answers whatever the test needs, so no test talks to a real provider.
      */
