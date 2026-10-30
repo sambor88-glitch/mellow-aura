@@ -19,4 +19,6 @@ return [
     'error_email_format' => 'Adres e-mail bez małpy — sprawdź, czy nie uciekła',
     'error_email_long' => 'Ten adres e-mail jest za długi — sprawdź go jeszcze raz',
     'error_consent' => 'Zaznacz zgodę na ten jeden mail — bez niej nie mogę napisać',
+    // The field only a bot fills in.
+    'website' => 'Strona internetowa',
 ];

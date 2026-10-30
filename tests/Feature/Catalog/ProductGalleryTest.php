@@ -36,7 +36,10 @@ class ProductGalleryTest extends TestCase
                 'alt="Kubek z napisem wbitym stemplem"',
                 'aria-label="Zamknij powiększenie"',
                 '</dialog>',
-            ], false);
+            ], false)
+            // The zoom takes the largest copy, never the original of several megabytes (MA-296).
+            ->assertDontSee($product->getFirstMedia('images')->getUrl().'"', false)
+            ->assertSeeInOrder(['aria-label="Powiększone zdjęcie"', 'kubek-cappuccino-card.webp 1200w" sizes="100vw"'], false);
     }
 
     public function test_a_product_without_photos_has_nothing_to_zoom(): void

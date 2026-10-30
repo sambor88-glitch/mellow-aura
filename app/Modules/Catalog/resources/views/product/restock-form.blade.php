@@ -56,7 +56,7 @@
             </div>
             {{-- Hidden from people; a bot fills it in. --}}
             <div aria-hidden="true" class="absolute -left-[9999px]">
-                <label for="restock-website">Strona internetowa</label>
+                <label for="restock-website">{{ __('catalog::restock.website') }}</label>
                 <input id="restock-website" name="website" tabindex="-1" autocomplete="off">
             </div>
             <button class="fill-btn min-h-[54px] rounded-full bg-ink px-5 py-4 text-[14.5px] font-medium tracking-[0.03em] text-linen transition duration-300 [--fill:var(--color-rose)] hover:bg-rose hover:text-ink active:scale-[.97]">{{ __('catalog::restock.submit') }}</button>

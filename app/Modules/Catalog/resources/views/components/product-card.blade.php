@@ -12,7 +12,8 @@
     $variantsLabel = $kind->count($variants);
     // One button in the shop and in the gift finder (MA-259). A single size goes straight to the cart and the customer
     // stays on the shelf; several sizes lead to the product page — the card never guesses.
-    $only = $variants === 1 ? $product->variants->first() : null;
+    // A voucher asks for the name and dedication to print on its product page, so it never skips there (MA-296).
+    $only = $variants === 1 && ! $product->isVoucher() ? $product->variants->first() : null;
     $soldOut = $product->variants->every(fn ($variant) => ! $variant->isInStock());
 @endphp
 <div data-shelf-card @class(['group relative flex animate-ma-up flex-col', 'h-full' => $withButton]) style="animation-delay: {{ $delay }}s">
@@ -38,7 +39,10 @@
         <span class="glass absolute bottom-2.5 left-2.5 z-2 flex items-baseline gap-2 rounded-full px-3 py-1.5 text-[13px] text-ink sm:bottom-3 sm:left-3 sm:px-3.5 sm:py-2 sm:text-[14px]"><x-catalog::price-label :product="$product" /></span>
     </div>
     {{-- The category above the name, one line: side by side both broke into two on a phone. Tighter letters on a phone fit „Kadzielnice i podstawki”. --}}
-    <div class="mb-1 truncate text-[10px] tracking-[0.2em] text-label uppercase max-sm:tracking-[0.06em]">{{ $product->category->name }}</div>
+    {{-- A category not written in English has no name on /en/: no empty line then. --}}
+    @if (filled($product->category->name))
+        <div class="mb-1 truncate text-[10px] tracking-[0.2em] text-label uppercase max-sm:tracking-[0.06em]">{{ $product->category->name }}</div>
+    @endif
     <div class="font-serif text-[length:clamp(18px,4.8vw,22px)] leading-[1.15] font-light text-balance">{{ $product->name }}</div>
     @if ($withVariantCount && $variants > 1)
         <div class="mt-1 text-[12px] text-label">{{ $variantsLabel }}</div>
@@ -57,7 +61,7 @@
         </form>
     @else
         <a href="{{ route('product.show', $product) }}" class="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-line-strong px-[18px] py-[9px] text-[13px] text-ink transition duration-300 hover:border-ink hover:bg-ink hover:text-linen active:scale-[.97] sm:w-auto">
-            {{ $kind->choose() }}<span class="sr-only">: {{ $product->name }}</span>
+            {{ $variants === 1 ? __('catalog::shop.card_voucher') : $kind->choose() }}<span class="sr-only">: {{ $product->name }}</span>
         </a>
     @endif
     </div>

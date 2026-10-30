@@ -80,7 +80,10 @@
                     <dialog x-ref="zoom" x-on:click="$el.close()" x-on:keydown.escape="$el.close()" x-on:close="$refs.zoomTrigger.focus()" aria-label="{{ __('catalog::product.zoom_dialog') }}"
                             class="focus-on-dark fixed inset-0 size-full max-h-none max-w-none animate-ma-in cursor-zoom-out items-center justify-center bg-ink/55 p-7 backdrop-blur-[20px] open:flex backdrop:bg-transparent">
                         @foreach ($images as $index => $image)
-                            <img src="{{ $image->getUrl() }}" alt="{{ $image->getCustomProperty('alt') ?: $product->name }}" loading="lazy"
+                            {{-- The largest copy at most, never the original of several megabytes (MA-296). --}}
+                            @php($srcset = ProductPhoto::srcset($image))
+                            <img src="{{ $image->getAvailableUrl(['card']) }}" alt="{{ $image->getCustomProperty('alt') ?: $product->name }}" loading="lazy"
+                                 @if ($srcset) srcset="{{ $srcset }}" sizes="100vw" @endif
                                  x-show="active === {{ $index }}"
                                  class="size-full rounded-[18px] object-contain">
                         @endforeach
@@ -113,16 +116,18 @@
             </div>
 
             <div class="min-w-0 flex-[1_1_400px] min-[872px]:sticky min-[872px]:top-24">
-                <p class="eyebrow mb-4">
-                    {{ $product->category->name }}@if ($product->is_one_off) &middot; {{ __('catalog::product.one_off') }} @endif
-                </p>
-                <h1 class="mb-5 font-serif text-[length:clamp(44px,5.6vw,88px)] leading-[.94] font-light tracking-[-0.025em] text-balance"><span class="blur-in">{{ $product->name }}</span></h1>
+                {{-- A category not written in English has no name on /en/ (MA-296). --}}
+                @php($eyebrow = collect([$product->category->name, $product->is_one_off ? __('catalog::product.one_off') : null])->filter()->join(' · '))
+                @if ($eyebrow !== '')
+                    <p class="eyebrow mb-4">{{ $eyebrow }}</p>
+                @endif
+                <h1 class="mb-5 font-serif text-[length:clamp(44px,5.6vw,88px)] leading-[.94] font-light tracking-[-0.025em] text-balance break-words hyphens-auto"><span class="blur-in">{{ $product->name }}</span></h1>
 
                 <div class="mb-[26px]">
                     <div class="flex items-baseline gap-3.5">
                         <span class="font-serif text-[42px] leading-none font-light tabular-nums">{{ $price($variant) }}</span>
                         @if ($lowestBeforeDiscount !== null)
-                            <span class="text-[16px] text-label line-through">{{ Money::format($variant->compareAtPrice(), $currency) }}</span>
+                            <span class="text-[16px] text-label"><span class="sr-only">{{ __('catalog::product.price_before') }} </span><span class="line-through">{{ Money::format($variant->compareAtPrice(), $currency) }}</span></span>
                         @endif
                     </div>
                     @if ($lowestBeforeDiscount !== null)
@@ -147,13 +152,14 @@
 
                 @if ($dimensions || $product->food_contact)
                     <div class="mb-[30px]">
-                        {{-- Two even columns everywhere: label on the left, value on the right, an odd last one across. --}}
-                        <div class="grid grid-cols-2 gap-2 [&>*:last-child:nth-child(odd)]:col-span-2">
+                        {{-- Two even columns: label on the left, value on the right, an odd last one across. Below 400 px
+                             a pill half the screen wide broke „Szerokość 12,5 cm” into two lines, so they stack (MA-296). --}}
+                        <div class="grid grid-cols-1 gap-2 min-[400px]:grid-cols-2 min-[400px]:[&>*:last-child:nth-child(odd)]:col-span-2">
                             @foreach ($dimensions as $label => $value)
-                                <span class="glass flex items-baseline justify-between gap-2 rounded-full px-3.5 py-2 text-[13px]"><span class="text-label">{{ $label }}</span><span class="text-ink">{{ $value }}</span></span>
+                                <span class="glass flex items-baseline justify-between gap-2 rounded-full px-3.5 py-2 text-[13px] whitespace-nowrap"><span class="text-label">{{ $label }}</span><span class="text-ink">{{ $value }}</span></span>
                             @endforeach
                             @if ($product->food_contact)
-                                <span class="glass col-span-2 rounded-full px-3.5 py-2 text-center text-[13px] text-ink">{{ $product->food_contact->label() }}</span>
+                                <span class="glass rounded-full px-3.5 py-2 text-center text-[13px] text-ink min-[400px]:col-span-2">{{ $product->food_contact->label() }}</span>
                             @endif
                         </div>
                         @if ($dimensions && $tolerance && $isGoods)
@@ -317,21 +323,8 @@
                 <h2 class="mb-9 font-serif text-[length:clamp(36px,4.4vw,64px)] leading-[.98] font-light tracking-[-0.02em]">{{ __('catalog::product.related_title') }}</h2>
                 <div data-aura-rise class="grid grid-cols-2 gap-x-3.5 gap-y-8 sm:grid-cols-[repeat(auto-fill,minmax(230px,1fr))] sm:gap-[clamp(16px,2vw,28px)]">
                     @foreach ($related as $item)
-                        @php($cover = $item->getFirstMedia('images'))
-                        <a href="{{ route('product.show', $item) }}" class="group block text-ink hover:text-ink">
-                            <div class="mb-3.5 overflow-hidden rounded-[18px] bg-linen transition-[box-shadow,transform] duration-500 ease-clay group-hover:-translate-y-1 group-hover:shadow-card-hover">
-                                @if ($cover)
-                                    @php($srcset = ProductPhoto::srcset($cover))
-                                    <img src="{{ $cover->getAvailableUrl(['card']) }}" alt="{{ $cover->getCustomProperty('alt') ?: $item->name }}" loading="lazy"
-                                         @if ($srcset) srcset="{{ $srcset }}" sizes="(min-width: 640px) 300px, calc(50vw - 35px)" @endif
-                                         width="1200" height="1500" style="{{ FocalPoint::style($cover) }}" class="block aspect-[4/5] w-full object-cover transition-transform duration-[1.1s] ease-clay group-hover:scale-[1.06]">
-                                @else
-                                    <div class="aspect-[4/5] w-full"></div>
-                                @endif
-                            </div>
-                            <div class="font-serif text-[length:clamp(18px,4.8vw,22px)] leading-[1.15] font-light text-balance">{{ $item->name }}</div>
-                            <div class="mt-[3px] text-[13.5px] text-muted"><x-catalog::price-label :product="$item" /></div>
-                        </a>
+                        {{-- The shop's own card, without its button: this shelf is for looking further (MA-296). --}}
+                        <x-catalog::product-card :product="$item" :with-button="false" :with-variant-count="false" />
                     @endforeach
                 </div>
             </div>
