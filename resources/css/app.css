@@ -199,6 +199,9 @@
         -webkit-font-smoothing: antialiased;
         /* Room for the cookie banner while it is open (resources/js/consent.js), so the end of the page can scroll out from under it. */
         padding-bottom: var(--consent-h, 0px);
+        /* viewport-fit=cover lets the page reach under an iPhone's notch on its side; the content stays clear of it (MA-302). */
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
     }
 
     a {
@@ -617,6 +620,15 @@
 
 
 /* Light glass on sand and dark glass over photos (mellowaura-design, „Głębia”). Utilities, so variants such as [&>div]:glass work. */
+/*
+ * A full-screen overlay (cart drawer, zoomed photo, locker map) keeps its own padding, set as --pad,
+ * but never less than the notch and the gesture bar of an iPhone (viewport-fit=cover, MA-302).
+ */
+@utility pad-safe {
+    padding: max(var(--pad, 0px), env(safe-area-inset-top)) max(var(--pad, 0px), env(safe-area-inset-right))
+        max(var(--pad, 0px), env(safe-area-inset-bottom)) max(var(--pad, 0px), env(safe-area-inset-left));
+}
+
 @utility glass {
     background: var(--color-glass);
     border: 1px solid var(--color-glass-line);

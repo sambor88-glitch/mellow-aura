@@ -84,6 +84,26 @@ class ShopPageTest extends TestCase
         $this->get('/produkt/'.$vase->slug)->assertSee('x-on:click.prevent="$store.favorites.toggle('.$vase->id.')"', false);
     }
 
+    public function test_a_category_or_a_search_sends_the_favourites_chip_to_the_whole_shop(): void
+    {
+        $vases = Category::factory()->create(['name' => 'Wazony', 'slug' => 'wazony']);
+        $this->product('Wazon rzeźbiony', $vases, [23900]);
+
+        // Only the whole shop has every saved piece on the page, so it alone filters in place.
+        $this->get('/sklep')
+            ->assertSee('favorites: true && location.hash', false)
+            ->assertSee('<a href="#ulubione"', false);
+
+        foreach (['/sklep/wazony', '/sklep?q=wazon'] as $page) {
+            $this->get($page)
+                ->assertOk()
+                ->assertSee('favorites: false && location.hash', false)
+                ->assertDontSee('<a href="#ulubione"', false)
+                // The chip counts everything saved, not the part of it this page happens to show.
+                ->assertSeeInOrder(['<a href="'.route('shop.index').'#ulubione" x-cloak x-show="$store.favorites.count > 0"', '♥ Ulubione', 'x-text="$store.favorites.count"'], false);
+        }
+    }
+
     public function test_a_category_page_shows_only_its_products(): void
     {
         $mugs = Category::factory()->create(['name' => 'Kubki i filiżanki', 'slug' => 'kubki-i-filizanki']);
@@ -191,7 +211,8 @@ class ShopPageTest extends TestCase
             ->assertOk()
             ->assertSeeInOrder([
                 '<details',
-                'Sortuj: Cena rosnąco',
+                // The narrowest phone shows only „Sortuj”, so the search keeps its width (MA-296).
+                'Sortuj<span class="max-[419px]:sr-only">: Cena rosnąco</span>',
                 'href="'.url('/sklep?q=kubek').'"',
                 'href="'.url('/sklep?q=kubek&amp;sort=price_asc').'"  aria-current="true"',
                 '</details>',
@@ -208,7 +229,7 @@ class ShopPageTest extends TestCase
     {
         $this->get('/en/shop')
             ->assertOk()
-            ->assertSee('Sort: Featured')
+            ->assertSee('Sort<span class="max-[419px]:sr-only">: Featured</span>', false)
             ->assertSee('href="'.url('/en/shop?sort=price_desc').'"', false)
             ->assertSeeInOrder(['0 of 0 pieces on the shelf', 'Made for you'])
             ->assertDontSee('Sortuj');

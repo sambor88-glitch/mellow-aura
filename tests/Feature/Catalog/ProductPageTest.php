@@ -262,6 +262,7 @@ class ProductPageTest extends TestCase
             ->assertOk()
             ->assertSee('129 zł')
             ->assertSee('159 zł')
+            ->assertSee('<span class="sr-only">Cena przed obniżką: </span><span class="line-through">159 zł</span>', false)
             ->assertSee('Najniższa cena z 30 dni przed obniżką: 145 zł');
     }
 

@@ -13,6 +13,7 @@ return [
     'show_photo' => 'Pokaż zdjęcie :number',
     'one_off' => 'unikat',
     'lowest_price' => 'Najniższa cena z 30 dni przed obniżką: :price',
+    'price_before' => 'Cena przed obniżką:',
     'tolerance' => 'Ręczna robota — wymiary mogą różnić się do :tolerance.',
     'size_and_price' => 'Rozmiar i cena',
     'one_per_lettering' => 'Każdy kubek jest jeden — po 1 sztuce z każdego napisu. Kolejny zrobię na zamówienie.',

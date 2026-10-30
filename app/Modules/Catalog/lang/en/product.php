@@ -13,6 +13,7 @@ return [
     'show_photo' => 'Show photo :number',
     'one_off' => 'one of a kind',
     'lowest_price' => 'Lowest price in the 30 days before the reduction: :price',
+    'price_before' => 'Price before the reduction:',
     'tolerance' => 'Made by hand — sizes may vary by up to :tolerance.',
     'size_and_price' => 'Size and price',
     'one_per_lettering' => 'Every mug is one of a kind — one of each lettering. I’ll make another to order.',

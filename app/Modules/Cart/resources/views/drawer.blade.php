@@ -2,7 +2,7 @@
 {{-- A modal dialog: focus stays inside, and Esc, a click on the backdrop or × closes it. --}}
 <dialog id="cart" data-count="{{ $cart->count() }}" x-data aria-labelledby="cart-title"
         x-on:click.self="$el.close()" x-on:keydown.escape="$el.close()" x-on:close="$store.cart.closed()"
-        class="aura-overlay fixed inset-0 size-full max-h-none max-w-none animate-ma-in justify-end bg-ink/28 p-2.5 text-ink backdrop-blur-[6px] open:flex backdrop:bg-transparent">
+        class="aura-overlay fixed inset-0 size-full max-h-none max-w-none animate-ma-in justify-end bg-ink/28 pad-safe [--pad:10px] text-ink backdrop-blur-[6px] open:flex backdrop:bg-transparent">
     {{-- A glass panel lifted off the edge that slides in out of a blur (mellowaura-design, „Szuflada koszyka”). --}}
     <div class="aura-drawer-panel flex h-full w-[min(430px,100%)] animate-[auraDrawer_.65s_var(--ease-clay)_both] flex-col overflow-hidden rounded-[26px] border border-glass-line bg-cream/80 backdrop-blur-[30px] backdrop-saturate-[1.4]">
         <div class="flex items-center justify-between border-b border-line px-[26px] py-5">

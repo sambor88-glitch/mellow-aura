@@ -121,7 +121,7 @@
                         @if ($config['lockerMap'] && $methods->has('parcel_locker'))
                             {{-- InPost's own map, drawn on the first opening (resources/js/checkout.js). Esc, × or a click beside it closes it. --}}
                             <dialog x-ref="lockers" aria-labelledby="lockers-title" x-on:click.self="$el.close()"
-                                    class="fixed inset-0 size-full max-h-none max-w-none animate-ma-in items-center justify-center bg-ink/28 p-2.5 text-ink backdrop-blur-[6px] open:flex backdrop:bg-transparent">
+                                    class="fixed inset-0 size-full max-h-none max-w-none animate-ma-in items-center justify-center bg-ink/28 pad-safe [--pad:10px] text-ink backdrop-blur-[6px] open:flex backdrop:bg-transparent">
                                 <div class="flex h-[min(760px,100%)] w-[min(1080px,100%)] flex-col overflow-hidden rounded-[26px] border border-glass-line bg-cream">
                                     <div class="flex items-center justify-between gap-3 border-b border-line px-[clamp(16px,3vw,26px)] py-3">
                                         <h2 id="lockers-title" class="font-serif text-[28px] leading-none font-light">{{ $t('locker_dialog') }}</h2>
