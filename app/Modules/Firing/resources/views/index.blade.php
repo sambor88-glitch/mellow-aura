@@ -17,6 +17,7 @@
         @endif
 
         <div class="flex flex-wrap gap-11">
+            @if ($prices->isNotEmpty() || $note)
             <div class="min-w-0 flex-[1_1_420px]">
                 @if ($prices->isNotEmpty())
                     <table class="w-full overflow-hidden rounded-[20px] border border-divider bg-cream">
@@ -49,11 +50,15 @@
                     <p class="mt-3.5 text-[13px] leading-[1.6] text-hint">{{ $note }}</p>
                 @endif
             </div>
+            @endif
 
             <div class="min-w-[min(100%,290px)] flex-[0_1_380px]">
                 <div id="zglos-wsad" class="scroll-mt-6 rounded-[20px] border border-divider bg-cream px-7 py-[30px]">
-                    <h2 class="mb-2.5 font-serif text-[23px]">Zgłoś wsad</h2>
-                    @if ($reported)
+                    {{-- Without a price list there is no form to pick a firing from, so the box asks for a message instead. --}}
+                    <h2 class="mb-2.5 font-serif text-[23px]">{{ $prices->isNotEmpty() ? 'Zgłoś wsad' : 'Zapytaj o wypał' }}</h2>
+                    @if ($prices->isEmpty())
+                        <p class="text-[14.5px] leading-[1.6] text-muted">Cennik wypałów właśnie układam. Napisz, co chcesz wypalić i ile tego jest — odpiszę z ceną i terminem.</p>
+                    @elseif ($reported)
                         <div role="status" class="mb-5 rounded-[20px] border border-line-strong bg-sand-dark p-4 text-[14px] leading-[1.6] text-graphite">
                             <p>Mam Twoje zgłoszenie{{ $reported->quote !== null ? ' — wycena '.Money::format($reported->quote) : '' }}. Potwierdzenie poszło na {{ $reported->email }}. Odpiszę z terminem i miejscem, gdzie przywieziesz prace.</p>
                         </div>
@@ -153,7 +158,9 @@
                     @endif
 
                     <div class="mt-5 grid gap-3 border-t border-divider pt-5">
-                        <p class="text-[13.5px] leading-[1.6] text-muted">Wolisz najpierw zapytać?</p>
+                        @if ($prices->isNotEmpty())
+                            <p class="text-[13.5px] leading-[1.6] text-muted">Wolisz najpierw zapytać?</p>
+                        @endif
                         @if ($phone)
                             <a href="https://wa.me/{{ preg_replace('/\D+/', '', $phone) }}" target="_blank" rel="noopener"
                                class="rounded-full border border-line-strong p-[13px] text-center text-[14px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark hover:text-ink active:scale-[.98]">Napisz na WhatsAppie</a>

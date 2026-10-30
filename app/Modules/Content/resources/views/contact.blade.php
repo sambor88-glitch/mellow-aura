@@ -33,6 +33,8 @@
                     <p class="mb-10 max-w-[46ch] text-[17px] leading-[1.7] text-lead">{{ $lead }}</p>
                 @endif
 
+                {{-- Without any channel in the panel the frame stays out instead of showing an empty box. --}}
+                @if ($phone || $instagram || $email || $location)
                 <div class="mb-8 grid gap-px overflow-hidden rounded-[20px] border border-divider bg-divider">
                     @if ($phone)
                         <a href="https://wa.me/{{ preg_replace('/\D+/', '', $phone) }}" target="_blank" rel="noopener" class="{{ $channel }}">
@@ -60,6 +62,7 @@
                         </div>
                     @endif
                 </div>
+                @endif
 
                 @if (($photo = $pagePhotos->get('contact'))->exists())
                     <img src="{{ $photo->url }}" {{ $photo->srcsetAttributes('(min-width: 768px) 50vw, 100vw') }} alt="{{ $photo->alt('Talerz z odciskiem roślinnym') }}" loading="lazy"
