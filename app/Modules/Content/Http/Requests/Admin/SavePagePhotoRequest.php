@@ -7,8 +7,8 @@ use App\Modules\Shared\Support\FocalPoint;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * The point of a photo that stays in view (on a phone too, where the place has a second one) and Kasia's description
- * of her own photo, for one place of „Zdjęcia stron”.
+ * The point of a photo that stays in view (on a phone too, where the place has a second one), Kasia's description
+ * of her own photo and, around the hero frame, the product the photo leads to — for one place of „Zdjęcia stron”.
  */
 class SavePagePhotoRequest extends FormRequest
 {
@@ -31,6 +31,7 @@ class SavePagePhotoRequest extends FormRequest
             ...FocalPoint::rules('focus'),
             ...FocalPoint::rules('focus_phone'),
             'alt' => ['nullable', 'string', 'max:160'],
+            'product_id' => ['nullable', 'integer', 'exists:products,id'],
         ];
     }
 
@@ -43,13 +44,15 @@ class SavePagePhotoRequest extends FormRequest
             ...FocalPoint::messages('focus'),
             ...FocalPoint::messages('focus_phone'),
             'alt.max' => 'Opis zmieszczę do :max znaków',
+            'product_id.*' => 'Nie ma już takiego produktu — wybierz inny z listy',
         ];
     }
 
     /**
-     * Only what the place has: a second point only where PagePhotos gives one, a description only where the photo is not decoration.
+     * Only what the place has: a second point only where PagePhotos gives one, a description only where the photo is not
+     * decoration, a product only where the photo can lead to one.
      *
-     * @return array{focus: ?array{x: int, y: int}, focus_phone: ?array{x: int, y: int}, alt: ?string}
+     * @return array{focus: ?array{x: int, y: int}, focus_phone: ?array{x: int, y: int}, alt: ?string, product_id: ?int}
      */
     public function changes(): array
     {
@@ -62,6 +65,7 @@ class SavePagePhotoRequest extends FormRequest
             'focus' => $point('focus'),
             'focus_phone' => ($place['phone'] ?? false) ? $point('focus_phone') : null,
             'alt' => ($place['decorative'] ?? false) ? null : (trim((string) $this->validated('alt')) ?: null),
+            'product_id' => ($place['product'] ?? false) && filled($this->validated('product_id')) ? (int) $this->validated('product_id') : null,
         ];
     }
 

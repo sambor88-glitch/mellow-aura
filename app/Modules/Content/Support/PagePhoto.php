@@ -16,6 +16,7 @@ final readonly class PagePhoto
      * @param  ?array{x: int, y: int}  $phoneFocus  only for a place with a second point for a phone
      * @param  bool  $isDefault  nothing changed in the panel: the photo from zdjecia/ with the design's frame
      * @param  bool  $isReplaced  Kasia's own photo or no photo instead of the one from zdjecia/
+     * @param  ?int  $productId  the product the photo leads to, picked in the panel; the page checks it is in the shop
      */
     public function __construct(
         public string $key,
@@ -26,6 +27,7 @@ final readonly class PagePhoto
         public ?string $alt,
         public bool $isDefault,
         public bool $isReplaced,
+        public ?int $productId = null,
     ) {}
 
     public function exists(): bool

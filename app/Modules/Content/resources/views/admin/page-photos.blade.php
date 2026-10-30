@@ -16,6 +16,8 @@
                         $focus = $point('focus', $photo->focus);
                         $phoneFocus = $photo->phoneFocus === null ? null : $point('focus_phone', $photo->phoneFocus);
                         $decorative = $place['decorative'] ?? false;
+                        $linksProduct = $place['product'] ?? false;
+                        $productId = $bag->any() ? old('product_id') : $photo->productId;
                         // The hero starts at 82%; a step of 5 would round it to 80% on the first save.
                         $step = isset($place['focus']) ? 1 : 5;
                     @endphp
@@ -41,10 +43,22 @@
                                                class="{{ $input }} {{ $bag->has('alt') ? 'border-error' : 'border-line' }}">
                                     </label>
                                 @endunless
+                                @if ($linksProduct)
+                                    <label class="mt-3 block">
+                                        <span class="mb-1 block text-[12px] text-muted">Prowadzi do produktu</span>
+                                        <select name="product_id" class="{{ $input }} {{ $bag->has('product_id') ? 'border-error' : 'border-line' }}">
+                                            <option value="">Bez linku — samo zdjęcie</option>
+                                            @foreach ($products as $product)
+                                                <option value="{{ $product->id }}" @selected((string) $productId === (string) $product->id)>{{ $product->name }}{{ $product->is_published ? '' : ' (ukryty w sklepie)' }}</option>
+                                            @endforeach
+                                        </select>
+                                        <span class="mt-1 block text-[12px] text-hint">Gdy produkt zniknie ze sklepu albo się wyprzeda, zdjęcie zostaje, tylko bez linku.</span>
+                                    </label>
+                                @endif
                                 @foreach (collect($bag->getMessages())->except('photo')->flatten()->unique() as $message)
                                     <p role="alert" class="mt-1.5 text-[13px] text-error">{{ $message }}</p>
                                 @endforeach
-                                <button class="{{ $button }}">Zapisz kadr</button>
+                                <button class="{{ $button }}">{{ $linksProduct ? 'Zapisz' : 'Zapisz kadr' }}</button>
                             </form>
                         @else
                             <div class="grid aspect-[4/3] place-items-center rounded-[3px] border border-dashed border-line-strong bg-sand-dark px-4 text-center text-[13px] text-hint">Brak zdjęcia — to miejsce na stronie jest puste</div>

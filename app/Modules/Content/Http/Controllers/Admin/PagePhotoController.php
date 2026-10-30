@@ -3,6 +3,7 @@
 namespace App\Modules\Content\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Catalog\Models\Product;
 use App\Modules\Content\Actions\ReplacePagePhoto;
 use App\Modules\Content\Http\Requests\Admin\SavePagePhotoRequest;
 use App\Modules\Content\Http\Requests\Admin\StorePagePhotoRequest;
@@ -13,7 +14,8 @@ use Illuminate\View\View;
 
 /**
  * The panel's „Zdjęcia stron”: every photo of the shop's own pages by place, with the photo Kasia puts in instead,
- * the point that stays in view and her description. Each place saves on its own and keeps its own mistakes.
+ * the point that stays in view, her description and, around the hero frame, the product the photo leads to.
+ * Each place saves on its own and keeps its own mistakes.
  */
 class PagePhotoController extends Controller
 {
@@ -23,6 +25,8 @@ class PagePhotoController extends Controller
             'pages' => collect(PagePhotos::keys())
                 ->map(fn (string $key) => ['place' => PagePhotos::place($key), 'photo' => $photos->get($key)])
                 ->groupBy(fn (array $row) => $row['place']['page']),
+            // Every product, also a hidden or sold-out one: the page links only while it is in the shop (HomeController).
+            'products' => Product::query()->orderBy('name')->get(['id', 'name', 'is_published']),
         ]);
     }
 
@@ -37,7 +41,9 @@ class PagePhotoController extends Controller
     {
         $saveSettings($photos->with($place, $request->changes()));
 
-        return $this->saved($place, 'Kadr zapisany. Klienci już go widzą.');
+        return $this->saved($place, PagePhotos::place($place)['product'] ?? false
+            ? 'Zapisane. Klienci już widzą zmianę.'
+            : 'Kadr zapisany. Klienci już go widzą.');
     }
 
     public function destroy(string $place, ReplacePagePhoto $replace): RedirectResponse
