@@ -50,7 +50,7 @@
                 @endif
             </div>
 
-            <div class="min-w-[290px] flex-[0_1_380px]">
+            <div class="min-w-[min(100%,290px)] flex-[0_1_380px]">
                 <div id="zglos-wsad" class="scroll-mt-6 rounded-[20px] border border-divider bg-cream px-7 py-[30px]">
                     <h2 class="mb-2.5 font-serif text-[23px]">Zgłoś wsad</h2>
                     @if ($reported)

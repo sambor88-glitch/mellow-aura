@@ -108,8 +108,9 @@
                     <p class="eyebrow mb-[22px]">{{ $t('eyebrow') }}</p>
                     <h1 id="hero-title" class="max-w-[12ch] font-serif text-[length:clamp(42px,6.4vw,92px)] leading-[.96] font-light tracking-[-0.02em] text-balance">{{ $em('heading') }}</h1>
                     <p class="aura-lead mt-6 max-w-[46ch] text-[17.5px] leading-[1.68] text-pretty text-lead">{{ $t('lead') }}</p>
-                    {{-- On a phone an even grid: the main button across, the others in two equal columns, a single one across. --}}
-                    <div @class(['mt-8 grid grid-cols-2 gap-3 md:flex md:flex-wrap [&>*]:justify-center [&>*]:whitespace-nowrap max-md:[&>*]:px-4! [&>.aura-btn-main]:col-span-2', '[&>*:last-child]:col-span-2' => ! $workshopsUrl])>
+                    {{-- On a phone an even grid: the main button across, the others in two equal columns, a single one across.
+                         A label may break there rather than spill out of its pill on a 320 px screen. --}}
+                    <div @class(['mt-8 grid grid-cols-2 gap-3 md:flex md:flex-wrap [&>*]:justify-center [&>*]:text-center md:[&>*]:whitespace-nowrap max-md:[&>*]:px-4! [&>.aura-btn-main]:col-span-2', '[&>*:last-child]:col-span-2' => ! $workshopsUrl])>
                         @if ($mugUrl = $link('mug.index'))
                             <a href="{{ $mugUrl }}" data-magnet class="{{ $btnMain }}">{{ $t('cta_mug') }} <span aria-hidden="true">→</span></a>
                         @endif
@@ -336,7 +337,7 @@
 
     @if ($cards)
         <section class="mx-auto max-w-[1360px] px-[clamp(18px,4vw,48px)] pt-20 sm:pt-[clamp(90px,14vh,150px)] pb-20 sm:pb-[clamp(90px,14vh,150px)]">
-            <div data-aura-rise class="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-[clamp(16px,2vw,28px)]">
+            <div data-aura-rise class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,260px),1fr))] gap-[clamp(16px,2vw,28px)]">
                 {{-- The first card stands out at rest; on hover every card fills with the same rose, text in ink and graphite. --}}
                 @foreach ($cards as [$url, $dark, $eyebrow, $title, $text])
                     <a href="{{ $url }}" @class([

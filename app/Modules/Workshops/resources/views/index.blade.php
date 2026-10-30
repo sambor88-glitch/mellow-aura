@@ -47,7 +47,7 @@
         @endif
 
         @if ($workshops->isNotEmpty())
-            <div class="mb-[76px] grid grid-cols-[repeat(auto-fit,minmax(290px,1fr))] gap-[22px]">
+            <div class="mb-[76px] grid grid-cols-[repeat(auto-fit,minmax(min(100%,290px),1fr))] gap-[22px]">
                 @foreach ($workshops as $workshop)
                     @php
                         $code = WorkshopTypes::key($workshop);
@@ -156,7 +156,7 @@
                     <a href="{{ $vouchersUrl }}" class="border-b border-line-strong pb-[3px] text-[13.5px] tracking-[0.06em]">Warsztat na prezent? Zobacz vouchery →</a>
                 @endif
             </div>
-            <div class="min-w-[280px] flex-[0_1_340px]">
+            <div class="min-w-[min(100%,280px)] flex-[0_1_340px]">
                 <div class="focus-on-dark rounded-[20px] bg-ink px-7 py-[30px] text-divider">
                     <div class="mb-[18px] text-[11px] tracking-[0.2em] text-gold uppercase">zapisy</div>
                     <p class="mb-5 font-serif text-[21px] leading-[1.4] text-cream">Napisz, który warsztat i ile osób — odpiszę z wolnymi terminami.</p>
