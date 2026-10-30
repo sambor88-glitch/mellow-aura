@@ -186,7 +186,7 @@
                         </div>
                     @endforeach
                     <a href="{{ route('shop.index') }}" class="grid aspect-[4/5] w-[min(clamp(250px,26vw,360px),44vh)] flex-none snap-start place-items-center self-start rounded-[18px] border border-dashed border-line-strong text-ink transition-[background-color,border-color] duration-400 hover:border-ink hover:bg-glass hover:text-ink">
-                        <span class="p-5 text-center font-serif text-[32px] leading-[1.1] font-light italic">{{ $t('shop_all') }}</span>
+                        <span class="p-5 text-center font-serif text-[32px] leading-[1.1] font-light italic">{{ $t('shop_all') }} <span aria-hidden="true">→</span></span>
                     </a>
                 </div>
             </div>
@@ -290,7 +290,7 @@
                             <span class="text-[10.5px] tracking-[0.26em] text-on-dark uppercase">{{ $material }}</span>
                             <span class="mt-2 block font-serif text-[length:clamp(28px,3vw,40px)] leading-[1.05] font-light text-sand">{{ $title }}</span>
                             <span class="mt-2 block max-w-[42ch] text-[14.5px] text-on-dark">{{ $text }}</span>
-                            <span class="mt-3.5 block text-[14px] text-rose">{{ $from ? $t('from_price', ['price' => Money::format((int) $from)]) : $t('how_it_works') }}</span>
+                            <span class="mt-3.5 block text-[14px] text-rose">{{ $from ? $t('from_price', ['price' => Money::format((int) $from)]) : $t('how_it_works') }} <span aria-hidden="true">→</span></span>
                         </span>
                     </a>
                 @endforeach
@@ -353,7 +353,7 @@
                     <h2 id="instagram-title" class="{{ $sectionTitle }}">{{ $t('instagram_heading') }} <span aria-hidden="true" class="text-brown">🪐</span></h2>
                 </div>
                 @if ($instagramHandle !== '')
-                    <a href="https://www.instagram.com/{{ $instagramHandle }}/" target="_blank" rel="noopener" data-magnet class="{{ $btnGlass }}">{{ $t('instagram_follow') }}{{ $newTab }}</a>
+                    <a href="https://www.instagram.com/{{ $instagramHandle }}/" target="_blank" rel="noopener" data-magnet class="{{ $btnGlass }}">{{ $t('instagram_follow') }} <span aria-hidden="true">→</span>{{ $newTab }}</a>
                 @endif
             </div>
             <div class="glass rounded-[26px] p-3.5">

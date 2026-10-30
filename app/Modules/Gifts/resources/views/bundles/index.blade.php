@@ -45,10 +45,10 @@
                         @if ($bundle->description)
                             <p class="mb-[18px] max-w-[52ch] text-[15.5px] leading-[1.64] text-lead">{{ $bundle->description }}</p>
                         @endif
-                        <ul class="mb-5 grid justify-items-start gap-2 sm:flex sm:flex-wrap" aria-label="W zestawie">
+                        <ul class="mb-5 grid justify-items-start gap-2.5 sm:flex sm:flex-wrap" aria-label="W zestawie">
                             @foreach ($bundle->items as $item)
                                 {{-- A live set has only published parts, so each one has its page in the shop. --}}
-                                <li><a href="{{ route('product.show', $item->variant->product) }}" class="inline-block rounded-full bg-sand-dark px-[13px] py-1.5 text-[12px] tracking-[0.06em] text-muted transition-colors duration-300 hover:bg-line-soft hover:text-ink">{{ $item->variant->product->name }}</a></li>
+                                <li><a href="{{ route('product.show', $item->variant->product) }}" class="inline-flex min-h-11 items-center rounded-full bg-sand-dark px-[13px] text-[12px] tracking-[0.06em] text-muted transition-colors duration-300 hover:bg-line-soft hover:text-ink">{{ $item->variant->product->name }}</a></li>
                             @endforeach
                         </ul>
                         <form method="post" action="{{ route('cart.store') }}" x-data x-on:submit.prevent="$store.cart.send($el)" class="flex flex-wrap items-center gap-4">

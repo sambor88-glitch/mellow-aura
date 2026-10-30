@@ -5,6 +5,7 @@ namespace Tests\Feature\Content;
 use App\Modules\Settings\Database\Seeders\SettingsSeeder;
 use App\Modules\Settings\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class StudioPageTest extends TestCase
@@ -16,6 +17,7 @@ class StudioPageTest extends TestCase
         parent::setUp();
 
         $this->withoutVite();
+        Storage::fake('public');
         $this->seed(SettingsSeeder::class);
     }
 
@@ -41,6 +43,13 @@ class StudioPageTest extends TestCase
             ->assertSeeInOrder(['dobrze wiedzieć', 'Do 6 osób', 'Przy jednym stole, bez tłoku.', 'Wysyłka prac', 'Jeśli nie możesz przyjechać — wyślę.'])
             ->assertSeeInOrder(['alt="Kubek z wbijanym tekstem"', 'alt="Filiżanka na talerzyku z malowaną lawendą"'], false)
             ->assertDontSee('ul. Tajna 7');
+    }
+
+    public function test_the_main_photo_keeps_its_place_and_offers_smaller_copies_to_a_phone(): void
+    {
+        $page = $this->get('/pracownia')->assertOk()->getContent();
+
+        $this->assertMatchesRegularExpression('/<img src="[^"]*" alt="" fetchpriority="high"\s+srcset="[^"]+ 640w, [^"]+" sizes="100vw"\s+width="\d+" height="\d+"/', $page);
     }
 
     public function test_a_missing_photo_or_an_empty_fact_is_left_out(): void

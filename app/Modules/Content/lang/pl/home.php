@@ -31,7 +31,7 @@ return [
     'shop_eyebrow' => 'sklep',
     'shop_heading' => 'Co teraz jest :em',
     'shop_heading_em' => 'w pracowni',
-    'shop_all' => 'Wszystkie produkty →',
+    'shop_all' => 'Wszystkie produkty',
 
     'gifts_mug_alt' => 'Kubek malowany ręcznie',
     'gifts_scrunchies_alt' => 'Jedwabne scrunchies',
@@ -54,8 +54,8 @@ return [
     'imprint_material' => 'glina',
     'imprint_title' => 'Odcisk Twojej rośliny',
     'imprint_text' => 'Kwiat z bukietu ślubnego zostaje w glinie. Roślina znika, rysunek zostaje.',
-    'from_price' => 'od :price →',
-    'how_it_works' => 'Jak to działa →',
+    'from_price' => 'od :price',
+    'how_it_works' => 'Jak to działa',
 
     'workshops_eyebrow' => 'warsztaty ceramiczne · kraków',
     'workshops_heading' => 'Zanurz dłonie :em',
@@ -66,7 +66,7 @@ return [
     'workshops_cta' => 'Wybierz termin',
 
     'instagram_heading' => 'Codzienność pracowni',
-    'instagram_follow' => 'Obserwuj na Instagramie →',
+    'instagram_follow' => 'Obserwuj na Instagramie',
     'instagram_live' => 'prosto z Instagrama',
     'instagram_last' => 'ostatni post :ago',
 

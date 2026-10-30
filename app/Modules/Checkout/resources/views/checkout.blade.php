@@ -47,8 +47,8 @@
                             <x-shared::field name="name" :label="$t('name')" autocomplete="name" aria-required="true" />
                         </div>
 
-                        <details @if ($moreOpen) open @endif class="group mt-4 border-t border-line pt-4">
-                            <summary class="flex cursor-pointer list-none justify-between gap-3 text-[13.5px] text-brown [&::-webkit-details-marker]:hidden">
+                        <details @if ($moreOpen) open @endif class="group mt-4 border-t border-line pt-1">
+                            <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-[13.5px] text-brown [&::-webkit-details-marker]:hidden">
                                 <span>{{ $t($needsDelivery ? 'more_parcel' : 'more') }}</span>
                                 <span aria-hidden="true" class="group-open:hidden">+</span><span aria-hidden="true" class="hidden group-open:inline">−</span>
                             </summary>
