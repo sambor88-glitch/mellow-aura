@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'phone_required_parcel' => 'Bez numeru telefonu kurier nie znajdzie paczkomatu',
+    'phone_required_parcel' => 'InPost wyśle na ten numer SMS z kodem odbioru',
     'phone_required' => 'Wpisz numer telefonu — zadzwonię tylko w sprawie zamówienia',
     'phone_regex' => 'Numer telefonu ma 9 cyfr — sprawdź, czy żadna nie uciekła',
     'email_required' => 'Wpisz e-mail — wyślę na niego potwierdzenie',
-    'email_email' => 'Adres e-mail bez małpy — sprawdź, czy nie uciekła',
+    'email_email' => 'Sprawdź adres e-mail — np. ola@poczta.pl',
     'email_max' => 'Ten adres e-mail jest za długi — sprawdź go jeszcze raz',
     'name_required' => 'Wpisz imię i nazwisko — tak podpiszę paczkę',
     'name_max' => 'Imię i nazwisko zmieszczę do :max znaków',

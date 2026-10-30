@@ -136,7 +136,7 @@ class PlaceOrderTest extends TestCase
         $this->from('/zamowienie')
             ->followingRedirects()
             ->post('/zamowienie', $incomplete)
-            ->assertSee('Bez numeru telefonu kurier nie znajdzie paczkomatu')
+            ->assertSee('InPost wyśle na ten numer SMS z kodem odbioru')
             ->assertSee('aria-invalid="true"', false)
             ->assertSee('Wazony');
 
@@ -144,7 +144,7 @@ class PlaceOrderTest extends TestCase
             ->post('/zamowienie', $incomplete)
             ->assertRedirect('/zamowienie')
             ->assertSessionHasErrors([
-                'phone' => 'Bez numeru telefonu kurier nie znajdzie paczkomatu',
+                'phone' => 'InPost wyśle na ten numer SMS z kodem odbioru',
                 'email' => 'Wpisz e-mail — wyślę na niego potwierdzenie',
                 'name' => 'Wpisz imię i nazwisko — tak podpiszę paczkę',
                 'blik_code' => 'Wpisz 6-cyfrowy kod z aplikacji banku',
@@ -161,7 +161,7 @@ class PlaceOrderTest extends TestCase
         $this->from('/zamowienie')
             ->followingRedirects()
             ->post('/zamowienie', $this->form(['email' => 'ania']))
-            ->assertSeeInOrder(['Adres e-mail bez małpy', 'Popraw pola wyżej i wpisz nowy kod BLIK', 'Płacę'])
+            ->assertSeeInOrder(['Sprawdź adres e-mail', 'Popraw pola wyżej i wpisz nowy kod BLIK', 'Płacę'])
             ->assertDontSee('value="123456"', false);
 
         // One sentence at the code, even when the code was missing too.

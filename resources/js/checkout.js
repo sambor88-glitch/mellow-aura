@@ -65,6 +65,51 @@ const firstGap = (form, shipping) => {
     return gap && [form.elements[gap[0]], gap[2] ?? gap[0]];
 };
 
+// What a check on this screen says, under the field, where x-shared::field puts the server's sentence.
+// It stays until the field is corrected; the pill alone vanishes after 2.6 s and hides under the phone's keyboard.
+const checkId = (field) => `${field.id || field.name.replace(/\W+/g, '-')}-check`;
+
+// The field was corrected some other way than typing, e.g. a locker picked on the map.
+const unflag = (field) => document.getElementById(checkId(field))?.dispatchEvent(new Event('fixed'));
+
+const flag = (field, message) => {
+    unflag(field);
+
+    const id = checkId(field);
+    const checkbox = field.type === 'checkbox';
+    const corrected = checkbox ? 'change' : 'input';
+    const before = { describedby: field.getAttribute('aria-describedby'), invalid: field.getAttribute('aria-invalid') };
+    // The hint or the server's own sentence gives way to this one, as the hint gives way to the server's.
+    const note = before.describedby && document.getElementById(before.describedby);
+    // A field the server already marked keeps its red border; the others swap theirs for it.
+    const borders = checkbox ? [] : [...field.classList].filter((name) => name.startsWith('border-') && name.endsWith('line'));
+    const error = Object.assign(document.createElement('p'), { id, className: 'mt-1.5 text-[13px] text-error', textContent: message });
+
+    note?.setAttribute('hidden', '');
+    (checkbox ? field.closest('label') : field).after(error);
+    field.setAttribute('aria-describedby', id);
+    field.setAttribute('aria-invalid', 'true');
+
+    if (borders.length) {
+        field.classList.replace(borders[0], 'border-error');
+    }
+
+    const fixed = () => {
+        field.removeEventListener(corrected, fixed);
+        error.remove();
+        note?.removeAttribute('hidden');
+        before.describedby ? field.setAttribute('aria-describedby', before.describedby) : field.removeAttribute('aria-describedby');
+        before.invalid ? field.setAttribute('aria-invalid', before.invalid) : field.removeAttribute('aria-invalid');
+
+        if (borders.length) {
+            field.classList.replace('border-error', borders[0]);
+        }
+    };
+
+    error.addEventListener('fixed', fixed, { once: true });
+    field.addEventListener(corrected, fixed);
+};
+
 // What each amount voucher pays towards the sum, in the order typed — the same split as Gifts\Support\VoucherBalance.
 const splitVouchers = (vouchers, total) => {
     let left = total;
@@ -136,6 +181,7 @@ export default ({ accepted, deviations, payment, blikCode, shipping, locker, loc
 
         if (this.$refs.voucherCode.value.trim() === '') {
             this.$store.cart.say(say(texts, 'voucher_empty'));
+            flag(this.$refs.voucherCode, say(texts, 'voucher_empty'));
             this.$refs.voucherCode.focus();
 
             return;
@@ -238,6 +284,7 @@ export default ({ accepted, deviations, payment, blikCode, shipping, locker, loc
         this.locker = String(point.name).toUpperCase();
         this.lockerAddress = [point.address?.line1, point.address?.line2].filter(Boolean).join(', ');
         this.$refs.lockers.close();
+        unflag(this.$refs.locker);
         this.$refs.locker.focus();
     },
 
@@ -250,35 +297,33 @@ export default ({ accepted, deviations, payment, blikCode, shipping, locker, loc
         }
 
         const gap = firstGap(this.$el, this.shipping);
+        const stop = (field, message) => {
+            event.preventDefault();
+            this.$store.cart.say(message);
+            flag(field, message);
+            field.focus();
+        };
 
         if (gap) {
-            event.preventDefault();
-            this.$store.cart.say(fieldTexts[gap[1]]);
-            gap[0].focus();
+            stop(gap[0], fieldTexts[gap[1]]);
 
             return;
         }
 
         if (!this.deviationsAccepted) {
-            event.preventDefault();
-            this.$store.cart.say(say(texts, 'deviation_short'));
-            this.$el.querySelector('[data-deviation]:not(:checked)')?.focus();
+            stop(this.$el.querySelector('[data-deviation]:not(:checked)'), say(texts, 'deviation_short'));
 
             return;
         }
 
         if (!this.accepted) {
-            event.preventDefault();
-            this.$store.cart.say(say(texts, 'terms_short'));
-            this.$refs.terms.focus();
+            stop(this.$refs.terms, say(texts, 'terms_short'));
 
             return;
         }
 
         if (this.needsBlikCode) {
-            event.preventDefault();
-            this.$store.cart.say(say(texts, 'blik_short'));
-            this.$refs.blik.focus();
+            stop(this.$refs.blik, say(texts, 'blik_short'));
 
             return;
         }
