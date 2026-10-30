@@ -25,9 +25,15 @@
                  @if ($srcset) srcset="{{ $srcset }}" sizes="{{ \App\Modules\Catalog\Support\ProductPhoto::cardSizes($phoneColumns) }}" @endif
                  width="1200" height="1500" style="{{ \App\Modules\Shared\Support\FocalPoint::style($image) }}" class="block aspect-[4/5] w-full object-cover saturate-[.8] transition-[transform,filter] duration-[1.1s] ease-clay group-hover:scale-[1.06] group-hover:saturate-100">
             @if ($second)
+                {{-- Only where a pointer can hover: a phone took a blank pixel instead, as the photo it never shows was
+                     downloaded with the first screen and slowed the first photo down (MA-271). --}}
                 <span class="absolute inset-0">
-                    <img src="{{ $second->getAvailableUrl(['card']) }}" alt="" loading="lazy" width="1200" height="1500" style="{{ \App\Modules\Shared\Support\FocalPoint::style($second) }}"
-                         class="size-full object-cover [clip-path:circle(0%_at_50%_60%)] transition-[clip-path] duration-900 ease-clay group-hover:[clip-path:circle(75%_at_50%_60%)] group-focus-within:[clip-path:circle(75%_at_50%_60%)]">
+                    <picture class="contents">
+                        <source media="(hover: none)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                        <img src="{{ $second->getAvailableUrl(['card']) }}" alt="" loading="lazy" width="1200" height="1500" style="{{ \App\Modules\Shared\Support\FocalPoint::style($second) }}"
+                             @if ($secondSrcset = \App\Modules\Catalog\Support\ProductPhoto::srcset($second)) srcset="{{ $secondSrcset }}" sizes="{{ \App\Modules\Catalog\Support\ProductPhoto::cardSizes($phoneColumns) }}" @endif
+                             class="size-full object-cover [clip-path:circle(0%_at_50%_60%)] transition-[clip-path] duration-900 ease-clay group-hover:[clip-path:circle(75%_at_50%_60%)] group-focus-within:[clip-path:circle(75%_at_50%_60%)]">
+                    </picture>
                 </span>
             @endif
         @else

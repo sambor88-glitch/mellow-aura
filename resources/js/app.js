@@ -39,12 +39,17 @@ Alpine.data('unsavedChanges', unsavedChanges);
 Alpine.start();
 // The motion (GSAP, ScrollTrigger, Lenis) is a file of its own that comes after Alpine: in this one it was half of what
 // a phone downloaded and ran before the page answered a tap (MA-232). Without it every page is complete and still.
-// On a phone it waits for the page to load: on a slow line its 50 kB shared the connection with the first photo
-// and held it back (MA-271). A computer starts it at once, as the home hero's layout there depends on it.
+// On a phone it waits for the page to load and the browser to rest: on a slow line its 50 kB shared the connection
+// with the first photo and held it back (MA-271). A computer starts it at once, as the home hero's layout depends on it.
 if (! matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const motion = () => import('./aura').then(({ default: aura }) => aura()).catch(() => {});
-    if (matchMedia('(max-width: 760px)').matches && document.readyState !== 'complete') {
-        addEventListener('load', motion, { once: true });
+    if (matchMedia('(max-width: 760px)').matches) {
+        const idle = () => (window.requestIdleCallback ?? setTimeout)(motion, { timeout: 2000 });
+        if (document.readyState === 'complete') {
+            idle();
+        } else {
+            addEventListener('load', idle, { once: true });
+        }
     } else {
         motion();
     }
