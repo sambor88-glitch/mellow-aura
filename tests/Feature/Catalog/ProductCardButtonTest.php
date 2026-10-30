@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Catalog;
 
+use App\Modules\Catalog\Enums\CategoryGroup;
 use App\Modules\Catalog\Enums\VariantKind;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
@@ -55,6 +56,20 @@ class ProductCardButtonTest extends TestCase
         foreach ($bowls->variants as $variant) {
             $response->assertDontSee('name="variant_id" value="'.$variant->id.'"', false);
         }
+    }
+
+    #[DataProvider('pages')]
+    public function test_a_voucher_with_one_amount_leads_to_its_fields_instead_of_the_cart(string $page): void
+    {
+        $voucher = $this->product('Voucher na warsztaty', [25000], [
+            'category_id' => Category::factory()->create(['group' => CategoryGroup::Workshops])->id,
+        ]);
+
+        $response = $this->get($page)->assertOk();
+
+        // The name and the dedication to print are asked for on the product page (MA-296).
+        $this->assertCardLink($response, $voucher, 'Wpisz, dla kogo');
+        $response->assertDontSee('name="variant_id" value="'.$voucher->variants[0]->id.'"', false);
     }
 
     public function test_the_shop_and_the_gift_finder_draw_the_same_card(): void

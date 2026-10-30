@@ -25,6 +25,7 @@
     $shortcuts = array_filter(ShopShortcuts::ROUTES, fn (string $route) => Locales::has($route, Locales::current()));
     // The first card's photo is the largest thing on a phone's first screen.
     $firstPhoto = $products->first()?->getFirstMedia('images');
+    $wholeShop = ! $category && $search === '';
 @endphp
 
 <x-shared::layout :title="$title" :description="$description" :canonical="$baseUrl" :noindex="$search !== ''"
@@ -33,9 +34,10 @@
         <x-slot:head>{!! $structuredData !!}</x-slot:head>
     @endisset
 
-    {{-- #ulubione shows only the cards saved with a heart; the list stays in the browser (see resources/js/favorites.js). --}}
-    <div x-data="{ favorites: location.hash === '#ulubione', ids: @js($products->pluck('id')), get savedHere() { return this.ids.filter((id) => $store.favorites.has(id)).length } }"
-         x-on:hashchange.window="favorites = location.hash === '#ulubione'"
+    {{-- #ulubione shows only the cards saved with a heart; the list stays in the browser (see resources/js/favorites.js).
+         Only the whole shop has every saved piece on the page: a category or a search leads there instead (MA-296). --}}
+    <div x-data="{ favorites: @js($wholeShop) && location.hash === '#ulubione', ids: @js($products->pluck('id')), get savedHere() { return this.ids.filter((id) => $store.favorites.has(id)).length } }"
+         x-on:hashchange.window="favorites = @js($wholeShop) && location.hash === '#ulubione'"
          class="mx-auto max-w-[1280px] animate-ma-view px-7 pt-9 pb-24 md:pt-14">
         <x-shared::breadcrumb class="mb-[22px]" :items="$category
             ? [[__('catalog::shop.products'), route('shop.index')], [$category->name, null]]
@@ -67,7 +69,8 @@
             {{-- On a phone the sorting folds into one button beside the search; the options stay links. --}}
             <details x-on:click.outside="$el.open = false" x-on:keydown.escape="$el.open && ($el.open = false, $el.querySelector('summary').focus())" class="group relative shrink-0 md:hidden">
                 <summary class="flex min-h-11 cursor-pointer list-none items-center gap-1.5 rounded-full border border-line-strong px-4 text-[13.5px] whitespace-nowrap text-lead [&::-webkit-details-marker]:hidden">
-                    {{ __('catalog::shop.sort_button', ['option' => $sorts->firstWhere('active', true)['label']]) }}
+                    {{-- On the narrowest phones the chosen option only goes to a screen reader, so the search keeps its width. --}}
+                    {{ __('catalog::shop.sort') }}<span class="max-[419px]:sr-only">: {{ $sorts->firstWhere('active', true)['label'] }}</span>
                     <span aria-hidden="true" class="text-[11px] transition-transform group-open:rotate-180">▾</span>
                 </summary>
                 <ul class="absolute top-[calc(100%+8px)] right-0 z-20 min-w-[200px] rounded-[18px] bg-cream p-2 shadow-[0_18px_40px_-24px_rgba(47,38,32,.55)] ring-1 ring-line">
@@ -92,9 +95,14 @@
                         'border-line-strong text-lead hover:text-navy' => ! $chip['active'],
                     ])>{{ $chip['label'] }} <span class="ml-0.5 text-[12px] opacity-85">{{ $chip['count'] }}</span></a>
                 @endforeach
-                <a href="#ulubione" x-cloak x-show="$store.favorites.count > 0 || favorites" x-bind:aria-current="favorites ? 'page' : 'false'"
-                   x-bind:class="favorites ? 'border-ink bg-ink text-linen hover:text-linen' : 'border-line-strong text-lead hover:text-navy'"
-                   class="shrink-0 snap-start rounded-full border px-5 py-2.5 text-[13.5px] tracking-[0.03em] whitespace-nowrap">♥ {{ __('catalog::shop.favorites_chip') }} <span class="ml-0.5 text-[12px] opacity-85" x-text="savedHere"></span></a>
+                @if ($wholeShop)
+                    <a href="#ulubione" x-cloak x-show="$store.favorites.count > 0 || favorites" x-bind:aria-current="favorites ? 'page' : 'false'"
+                       x-bind:class="favorites ? 'border-ink bg-ink text-linen hover:text-linen' : 'border-line-strong text-lead hover:text-navy'"
+                       class="shrink-0 snap-start rounded-full border px-5 py-2.5 text-[13.5px] tracking-[0.03em] whitespace-nowrap">♥ {{ __('catalog::shop.favorites_chip') }} <span class="ml-0.5 text-[12px] opacity-85" x-text="savedHere"></span></a>
+                @else
+                    <a href="{{ route('shop.index') }}#ulubione" x-cloak x-show="$store.favorites.count > 0"
+                       class="shrink-0 snap-start rounded-full border border-line-strong px-5 py-2.5 text-[13.5px] tracking-[0.03em] whitespace-nowrap text-lead hover:text-navy">♥ {{ __('catalog::shop.favorites_chip') }} <span class="ml-0.5 text-[12px] opacity-85" x-text="$store.favorites.count"></span></a>
+                @endif
             </div>
             <div class="hidden flex-wrap items-center gap-1.5 md:flex">
                 <span class="mr-1.5 shrink-0 text-[12px] tracking-[0.12em] text-hint uppercase">{{ __('catalog::shop.sort') }}</span>

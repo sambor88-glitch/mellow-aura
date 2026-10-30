@@ -19,4 +19,6 @@ return [
     'error_email_format' => 'That e-mail has no @ — check it didn’t slip away',
     'error_email_long' => 'That e-mail is too long — please check it again',
     'error_consent' => 'Tick the box for this one e-mail — I can’t write without it',
+    // The field only a bot fills in.
+    'website' => 'Website',
 ];
