@@ -12,7 +12,8 @@ use App\Modules\Shared\Support\SitePhoto;
  * puts in her own photo, takes the photo off the page or moves the point that stays in view (FocalPoint).
  *
  * The setting `page_photos` keeps only what she changed, by place: `path` (a photo on the public disk, or null for no
- * photo at all), `focus`, `focus_phone` and `alt`. A place she never touched has no entry, so the page looks like the design.
+ * photo at all), `focus`, `focus_phone`, `alt` and `product_id`. A place she never touched has no entry, so the page looks
+ * like the design.
  */
 class PagePhotos
 {
@@ -22,18 +23,19 @@ class PagePhotos
 
     /**
      * Places by page. `frames` are the shapes of the place for the preview in the panel; `phone` gives the place a second
-     * point for a phone, where the shape of the place changes most; `decorative` places have alt="" and no description.
+     * point for a phone, where the shape of the place changes most; `decorative` places have alt="" and no description;
+     * a `product` place can lead to the product it shows (MA-280) and stays decoration until Kasia picks one.
      *
-     * @var array<string, array{page: string, label: string, file: string, frames: array<string, ?string>, focus?: array{int, int}, phone?: bool, decorative?: bool}>
+     * @var array<string, array{page: string, label: string, file: string, frames: array<string, ?string>, focus?: array{int, int}, phone?: bool, decorative?: bool, product?: bool}>
      */
     private const PLACES = [
         'home-hero' => ['page' => 'Strona główna', 'label' => 'Na samej górze — zdjęcie w ramce, które otwiera się przy przewijaniu', 'file' => 'kasia-talerz-zloto.webp', 'frames' => ['aspect-[3/4]' => 'na starcie', 'aspect-[16/10]' => 'otwarta'], 'focus' => [50, 82], 'phone' => true],
-        'home-float-1' => ['page' => 'Strona główna', 'label' => 'Wokół ramki — 1., u góry z lewej', 'file' => 'misa-laguna.webp', 'frames' => ['aspect-[3/4]' => null], 'decorative' => true],
-        'home-float-2' => ['page' => 'Strona główna', 'label' => 'Wokół ramki — 2., u góry z prawej', 'file' => 'podstawki-muszle-roz.webp', 'frames' => ['aspect-square' => null], 'decorative' => true],
-        'home-float-3' => ['page' => 'Strona główna', 'label' => 'Wokół ramki — 3., mała u góry (tylko na komputerze)', 'file' => 'opaska-jedwab.webp', 'frames' => ['aspect-[3/4]' => null], 'decorative' => true],
-        'home-float-4' => ['page' => 'Strona główna', 'label' => 'Wokół ramki — 4., na dole z lewej', 'file' => 'kubek-cappuccino.webp', 'frames' => ['aspect-square' => null], 'decorative' => true],
-        'home-float-5' => ['page' => 'Strona główna', 'label' => 'Wokół ramki — 5., na dole z prawej', 'file' => 'wazon-rzezbiony.webp', 'frames' => ['aspect-[3/4]' => null], 'decorative' => true],
-        'home-float-6' => ['page' => 'Strona główna', 'label' => 'Wokół ramki — 6., mała na dole (tylko na komputerze)', 'file' => 'kadzielnica-pszczoly.webp', 'frames' => ['aspect-square' => null], 'decorative' => true],
+        'home-float-1' => ['page' => 'Strona główna', 'label' => 'Wokół ramki — 1., u góry z lewej', 'file' => 'misa-laguna.webp', 'frames' => ['aspect-[3/4]' => null], 'decorative' => true, 'product' => true],
+        'home-float-2' => ['page' => 'Strona główna', 'label' => 'Wokół ramki — 2., u góry z prawej', 'file' => 'podstawki-muszle-roz.webp', 'frames' => ['aspect-square' => null], 'decorative' => true, 'product' => true],
+        'home-float-3' => ['page' => 'Strona główna', 'label' => 'Wokół ramki — 3., mała u góry (tylko na komputerze)', 'file' => 'opaska-jedwab.webp', 'frames' => ['aspect-[3/4]' => null], 'decorative' => true, 'product' => true],
+        'home-float-4' => ['page' => 'Strona główna', 'label' => 'Wokół ramki — 4., na dole z lewej', 'file' => 'kubek-cappuccino.webp', 'frames' => ['aspect-square' => null], 'decorative' => true, 'product' => true],
+        'home-float-5' => ['page' => 'Strona główna', 'label' => 'Wokół ramki — 5., na dole z prawej', 'file' => 'wazon-rzezbiony.webp', 'frames' => ['aspect-[3/4]' => null], 'decorative' => true, 'product' => true],
+        'home-float-6' => ['page' => 'Strona główna', 'label' => 'Wokół ramki — 6., mała na dole (tylko na komputerze)', 'file' => 'kadzielnica-pszczoly.webp', 'frames' => ['aspect-square' => null], 'decorative' => true, 'product' => true],
         'home-kasia' => ['page' => 'Strona główna', 'label' => 'Przy „Kasia” — zdjęcie w łuku', 'file' => 'zestaw-filizanka-talerz.webp', 'frames' => ['aspect-[3/4]' => null]],
         'home-gifts-1' => ['page' => 'Strona główna', 'label' => 'Prezenty — lewe zdjęcie', 'file' => 'kubek-cappuccino.webp', 'frames' => ['aspect-square' => null]],
         'home-gifts-2' => ['page' => 'Strona główna', 'label' => 'Prezenty — prawe zdjęcie', 'file' => 'scrunchies-fiolet.webp', 'frames' => ['aspect-square' => null]],
@@ -63,7 +65,7 @@ class PagePhotos
     }
 
     /**
-     * @return array{page: string, label: string, file: string, frames: array<string, ?string>, focus?: array{int, int}, phone?: bool, decorative?: bool}
+     * @return array{page: string, label: string, file: string, frames: array<string, ?string>, focus?: array{int, int}, phone?: bool, decorative?: bool, product?: bool}
      */
     public static function place(string $key): array
     {
@@ -93,6 +95,7 @@ class PagePhotos
             focus: $focus($saved['focus'] ?? null),
             phoneFocus: ($place['phone'] ?? false) ? $focus($saved['focus_phone'] ?? $saved['focus'] ?? null) : null,
             alt: is_string($saved['alt'] ?? null) && $saved['alt'] !== '' ? $saved['alt'] : null,
+            productId: ($place['product'] ?? false) && is_numeric($saved['product_id'] ?? null) ? (int) $saved['product_id'] : null,
             isDefault: $saved === [],
             isReplaced: array_key_exists('path', $saved),
         );
@@ -101,8 +104,8 @@ class PagePhotos
     /**
      * What Kasia changed in one place, merged into the setting by the caller through SaveSettings.
      *
-     * @param  array<string, mixed>  $changes  keys `path`, `focus`, `focus_phone`, `alt`; null as a value of
-     *                                         `focus`, `focus_phone` or `alt` drops it, while `path` => null means no photo
+     * @param  array<string, mixed>  $changes  keys `path`, `focus`, `focus_phone`, `alt`, `product_id`; null as a value of
+     *                                         any but `path` drops it, while `path` => null means no photo
      * @return array<string, array<string, array<string, mixed>>>
      */
     public function with(string $key, array $changes): array
@@ -111,7 +114,7 @@ class PagePhotos
         $all = (array) $this->settings->get(self::SETTING, []);
         $saved = [...$this->saved($key), ...$changes];
 
-        foreach (['focus', 'focus_phone', 'alt'] as $field) {
+        foreach (['focus', 'focus_phone', 'alt', 'product_id'] as $field) {
             if (array_key_exists($field, $saved) && $saved[$field] === null) {
                 unset($saved[$field]);
             }

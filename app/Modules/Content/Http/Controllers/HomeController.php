@@ -6,12 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Content\Actions\RefreshInstagramFeed;
 use App\Modules\Content\Models\InstagramPost;
+use App\Modules\Content\Support\PagePhotos;
 use App\Modules\Settings\Settings;
 use Illuminate\View\View;
 
 class HomeController extends Controller
 {
-    public function __invoke(Settings $settings): View
+    public function __invoke(Settings $settings, PagePhotos $pagePhotos): View
     {
         $live = Product::query()->live()->withShelf()
             ->orderBy('sort_order')
@@ -22,6 +23,12 @@ class HomeController extends Controller
             // The panel stores the Polish slug; on an English page ->slug reads the English one, so compare the column.
             'hero' => $live->first(fn (Product $product) => $product->getRawOriginal('slug') === $heroSlug) ?? $live->first(),
             'featured' => $live->take(4),
+            // The photos around the hero frame lead to the product Kasia picked (MA-280), but only to one in the shop on this
+            // page: hidden, sold out, deleted or on /en/ without English text and a euro price, the photo stays decoration.
+            'floatProducts' => collect(PagePhotos::keys())
+                ->filter(fn (string $key) => PagePhotos::place($key)['product'] ?? false)
+                ->mapWithKeys(fn (string $key) => [$key => $live->firstWhere('id', $pagePhotos->get($key)->productId)])
+                ->filter(),
             // Kasia can hide the whole section in the panel (MA-274). Her own posts come first; the feed's posts
             // show only while a feed is set, so clearing the address takes them off at once.
             'instagramPosts' => $settings->get('home_show_instagram_feed') !== false
