@@ -66,7 +66,7 @@
                     <p role="alert" class="mb-6 rounded-[18px] border border-alert-line bg-alert px-4 py-3 text-[14px] text-alert-text">{{ session('gift_choice_notice') }}</p>
                 @endif
 
-                <form method="post" action="{{ $action }}" novalidate x-data="{ shipping: @js($selectedShipping) }">
+                <form method="post" action="{{ $action }}" novalidate data-submit-once x-data="{ shipping: @js($selectedShipping) }">
                     @csrf
 
                     <label for="mug-text" class="mb-3 block {{ $eyebrow }}">{{ $t('your_text') }}</label>

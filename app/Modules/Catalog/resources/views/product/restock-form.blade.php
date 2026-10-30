@@ -26,7 +26,7 @@
             <p role="status" class="mb-3 text-[13.5px] text-success-text">{{ __('catalog::restock.unsubscribed') }}</p>
         @endif
         <p class="mb-4 text-[14.5px] leading-[1.6] text-pretty text-lead">{{ __('catalog::restock.lead') }}</p>
-        <form method="post" action="{{ route('stock-notifications.store') }}" novalidate class="grid gap-3">
+        <form method="post" action="{{ route('stock-notifications.store') }}" novalidate data-submit-once class="grid gap-3">
             @csrf
             <input type="hidden" name="variant_id" value="{{ $variant->id }}">
             <div class="min-w-0">

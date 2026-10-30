@@ -44,6 +44,15 @@ export default ({ maxFiles, maxFileBytes, maxTotalBytes }) => {
         sending: false,
         sendWhenReady: false,
 
+        init() {
+            // Back from the next page through the browser's cache: the form can be sent again.
+            window.addEventListener('pageshow', (event) => {
+                if (event.persisted) {
+                    this.sending = false;
+                }
+            });
+        },
+
         problem(chosen) {
             const big = chosen.find((file) => file.size > maxFileBytes);
             const total = chosen.reduce((sum, file) => sum + file.size, 0);

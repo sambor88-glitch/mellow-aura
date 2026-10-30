@@ -81,7 +81,7 @@
                         </p>
                     @endif
 
-                    <form method="post" action="{{ route('content.contact.send') }}" novalidate class="grid gap-[13px]">
+                    <form method="post" action="{{ route('content.contact.send') }}" novalidate data-submit-once class="grid gap-[13px]">
                         @csrf
                         <x-shared::field name="name" id="contact-name" label="Imię" autocomplete="given-name" />
                         <x-shared::field name="email" id="contact-email" label="E-mail" type="email" autocomplete="email" hint="Na ten adres odpiszę" />
