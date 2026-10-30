@@ -64,6 +64,23 @@ class ProductGalleryTest extends TestCase
         $this->assertStringContainsString('width="1200" height="1200"', $html);
     }
 
+    public function test_the_head_asks_for_the_main_photo_first(): void
+    {
+        $product = Product::factory()->create(['slug' => 'kubki']);
+        ProductVariant::factory()->create(['product_id' => $product->id]);
+        $this->photo($product, 'kubek-cappuccino.webp', 'Kubek z piaskowej gliny');
+
+        $html = $this->get('/produkt/kubki')->assertOk()->getContent();
+
+        // The same srcset and sizes as the <img>, or a phone downloads the photo twice (MA-271).
+        preg_match('/<img src="[^"]*" alt="Kubek z piaskowej gliny"\s+srcset="([^"]+)" sizes="([^"]+)"/', $html, $img);
+        $this->assertNotEmpty($img);
+        $preload = '/<link rel="preload" as="image" href="'.preg_quote($product->getFirstMedia('images')->getUrl('card'), '/')
+            .'"\s+imagesrcset="'.preg_quote($img[1], '/').'" imagesizes="'.preg_quote($img[2], '/').'"\s+fetchpriority="high">/';
+        $this->assertMatchesRegularExpression($preload, $html);
+        $this->assertLessThan(strpos($html, '<title>'), strpos($html, 'rel="preload" as="image"'));
+    }
+
     public function test_a_photo_without_the_smaller_copy_keeps_one_address(): void
     {
         $product = Product::factory()->create(['slug' => 'kubki']);

@@ -23,6 +23,8 @@
     $images = $product->getMedia('images');
     // The gallery opens on the chosen variant's photo: a quote mug shows its own lettering.
     $firstPhoto = max(0, (int) $images->search(fn ($image) => $image->is($variant->photo())));
+    // Half of a 1224 px page on a computer, the whole width minus padding on a phone.
+    $photoSizes = '(min-width: 872px) 584px, calc(100vw - 56px)';
     $lowestBeforeDiscount = $variant->lowestPriceBeforeDiscount();
     $dimensions = $product->dimensionLabels();
     // The general care rule from the panel is written in Polish, so an English page shows only the piece's own line.
@@ -35,7 +37,8 @@
     $producer = collect(['company_name', 'company_address', 'contact_email'])->mapWithKeys(fn (string $key) => [$key => $settings->get($key)])->filter();
 @endphp
 
-<x-shared::layout :title="Seo::title($product->name, $suffix)" :description="Seo::description($product->seo_description ?: $product->description)" :canonical="$canonical" type="product" :image="$images->first()?->getAvailableUrl(['card'])">
+<x-shared::layout :title="Seo::title($product->name, $suffix)" :description="Seo::description($product->seo_description ?: $product->description)" :canonical="$canonical" type="product" :image="$images->first()?->getAvailableUrl(['card'])"
+                    :preload-image="$images->isNotEmpty() ? ProductPhoto::preload($images[$firstPhoto], $photoSizes) : null">
     <x-slot:head>
         {{-- Open Graph product tags for Pinterest Rich Pins and Meta, with the chosen variant's price in the page's currency. --}}
         <meta property="product:price:amount" content="{{ Money::decimal($variant->price()) }}">
@@ -64,9 +67,8 @@
                             class="relative block aspect-square w-full cursor-zoom-in overflow-hidden rounded-[26px] bg-linen">
                         @foreach ($images as $index => $image)
                             @php($srcset = ProductPhoto::srcset($image))
-                            {{-- Half of a 1224 px page on a computer, the whole width minus padding on a phone. --}}
                             <img src="{{ $image->getAvailableUrl(['card']) }}" alt="{{ $image->getCustomProperty('alt') ?: $product->name }}"
-                                 @if ($srcset) srcset="{{ $srcset }}" sizes="(min-width: 872px) 584px, calc(100vw - 56px)" @endif
+                                 @if ($srcset) srcset="{{ $srcset }}" sizes="{{ $photoSizes }}" @endif
                                  @if ($index === $firstPhoto) fetchpriority="high" @else loading="lazy" x-cloak @endif
                                  x-show="active === {{ $index }}" width="1200" height="1200" style="{{ FocalPoint::style($image) }}"
                                  x-transition:enter="transition duration-700 ease-clay" x-transition:enter-start="opacity-0 blur-md scale-105"

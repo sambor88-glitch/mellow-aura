@@ -3,6 +3,7 @@
 namespace App\Modules\Workshops\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Content\Support\PagePhotoSizes;
 use App\Modules\Settings\Settings;
 use App\Modules\Shared\Support\ServiceStructuredData;
 use App\Modules\Shared\Support\SitePhoto;
@@ -20,9 +21,11 @@ class WorkshopController extends Controller
     /** Studio photos shown under the dates; the rest are on /pracownia. */
     private const GALLERY_PHOTOS = 4;
 
-    public function __invoke(WorkshopTypes $types, Settings $settings): View
+    public function __invoke(WorkshopTypes $types, Settings $settings, PagePhotoSizes $sizes): View
     {
         $workshops = $types->all();
+        $heroPath = $settings->get('studio_hero_image');
+        $hero = SitePhoto::url($heroPath);
         $lead = $settings->get('text_workshops_lead');
         $byCode = $workshops->keyBy(fn (array $workshop) => WorkshopTypes::key($workshop));
 
@@ -43,7 +46,9 @@ class WorkshopController extends Controller
                 .WorkshopStructuredData::for(route('workshops.index'), $lead, $dates),
             'phone' => $settings->get('contact_phone'),
             'location' => $settings->get('location_description'),
-            'hero' => SitePhoto::url($settings->get('studio_hero_image')),
+            'hero' => $hero,
+            // Smaller copies for a phone: the photo spans the page, and at full size it was most of what a phone waited for (MA-271).
+            'heroSrcset' => $hero !== null ? $sizes->srcset($heroPath, $hero) : null,
             'gallery' => collect((array) $settings->get('studio_gallery', []))
                 ->filter(fn (mixed $photo) => is_array($photo))
                 ->map(fn (array $photo) => ['url' => SitePhoto::url($photo['path'] ?? null), 'alt' => (string) ($photo['alt'] ?? '')])

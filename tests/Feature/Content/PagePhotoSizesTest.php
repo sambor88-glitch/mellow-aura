@@ -43,6 +43,8 @@ class PagePhotoSizesTest extends TestCase
     {
         $this->get('/')->assertOk()
             ->assertSee('sizes="(max-aspect-ratio: 3/4) 75vh, 100vw"', false)
+            // The hero photo is asked for in the <head>, before the stylesheet (MA-271).
+            ->assertSee('imagesizes="(max-aspect-ratio: 3/4) 75vh, 100vw"', false)
             ->assertSee('sizes="(max-width: 760px) 100px, 13vw"', false);
 
         $this->assertNull(app(PagePhotoSizes::class)->srcset('page-photos/nie-ma-takiego.webp', 'https://example.test/x.webp'));

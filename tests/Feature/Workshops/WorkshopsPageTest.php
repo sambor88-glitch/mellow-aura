@@ -7,6 +7,7 @@ use App\Modules\Settings\Models\Setting;
 use App\Modules\Workshops\Models\WorkshopDate;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class WorkshopsPageTest extends TestCase
@@ -175,6 +176,20 @@ class WorkshopsPageTest extends TestCase
             ->assertSee('href="'.route('content.studio').'"', false)
             ->assertDontSee('Zgubione zdjęcie')
             ->assertDontSee('Piąte');
+    }
+
+    public function test_the_studio_photo_offers_a_phone_smaller_copies_and_is_asked_for_first(): void
+    {
+        Storage::fake('public');
+        $this->settings(['studio_hero_image' => 'zdjecia/zestaw-flatlay.webp']);
+
+        $html = $this->get('/warsztaty-ceramiczne-krakow')->assertOk()->getContent();
+
+        // The photo is 321 kB at full size; a phone takes the 400 or 800 px copy (MA-271).
+        preg_match('/srcset="([^"]+)" sizes="(\(min-width: 1280px\) 1224px, calc\(100vw - 56px\))"\s+alt="" fetchpriority="high"/', $html, $img);
+        $this->assertNotEmpty($img);
+        $this->assertStringContainsString(' 400w, ', $img[1]);
+        $this->assertMatchesRegularExpression('/<link rel="preload" as="image" href="[^"]*"\s+imagesrcset="'.preg_quote($img[1], '/').'" imagesizes="'.preg_quote($img[2], '/').'"/', $html);
     }
 
     public function test_without_studio_photos_the_page_leaves_them_out(): void

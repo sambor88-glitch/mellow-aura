@@ -49,6 +49,8 @@
         ['home-float-6', 'aura-float-6', 1.3, 34],
     ];
     $heroPhoto = $photo('home-hero');
+    // The frame is narrow and tall on a phone, so there it is about three quarters of the screen height wide.
+    $heroSizes = '(max-aspect-ratio: 3/4) 75vh, 100vw';
     $kasiaPhoto = $photo('home-kasia');
     $instagramHandle = ltrim((string) $settings->get('instagram_handle'), '@');
     $dispatch = DispatchTime::label($settings, short: true);
@@ -63,6 +65,7 @@
     :description="$t('description')"
     :canonical="route('home')"
     :image="$heroImage?->getAvailableUrl(['card'])"
+    :preload-image="$heroPhoto->exists() ? ['src' => $heroPhoto->url, 'srcset' => $heroPhoto->srcset(), 'sizes' => $heroSizes] : null"
 >
     {{-- The hero slides under the floating header. --}}
     <section id="aura-hero" class="aura-hero relative -mt-[78px]" aria-labelledby="hero-title">
@@ -81,7 +84,7 @@
                      in the panel twice, for a computer and for a phone, where the frame is narrow and tall. --}}
                 <div class="aura-frame">
                     @if ($heroPhoto->exists())
-                        <img src="{{ $heroPhoto->url }}" {{ $heroPhoto->srcsetAttributes('(max-aspect-ratio: 3/4) 75vh, 100vw') }} alt="{{ $heroPhoto->alt($t('hero_alt')) }}" fetchpriority="high" width="1200" height="1500" style="{{ $heroPhoto->styleVariables() }}"
+                        <img src="{{ $heroPhoto->url }}" {{ $heroPhoto->srcsetAttributes($heroSizes) }} alt="{{ $heroPhoto->alt($t('hero_alt')) }}" fetchpriority="high" width="1200" height="1500" style="{{ $heroPhoto->styleVariables() }}"
                              class="size-full origin-[50%_75%] scale-[1.28] object-cover object-(--focus) max-[760px]:-translate-y-[32%] max-[760px]:object-(--focus-phone)">
                     @endif
                 </div>
