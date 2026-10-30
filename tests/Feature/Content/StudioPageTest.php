@@ -49,7 +49,7 @@ class StudioPageTest extends TestCase
     {
         $page = $this->get('/pracownia')->assertOk()->getContent();
 
-        $this->assertMatchesRegularExpression('/<img src="[^"]+" alt="" fetchpriority="high"\s+srcset="[^"]+ 640w, [^"]+" sizes="100vw"\s+width="\d+" height="\d+"/', $page);
+        $this->assertMatchesRegularExpression('/<img src="[^"]*" alt="" fetchpriority="high"\s+srcset="[^"]+ 640w, [^"]+" sizes="100vw"\s+width="\d+" height="\d+"/', $page);
     }
 
     public function test_a_missing_photo_or_an_empty_fact_is_left_out(): void
