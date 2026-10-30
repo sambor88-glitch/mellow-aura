@@ -15,9 +15,10 @@ use App\Modules\Shared\Support\PersonalData;
  *
  * A paid order is a sale the books must show for five years (art. 17(3)(b)): it keeps its number, dates, amounts,
  * items, the name and the NIP for the invoice. Everything else goes — e-mail, phone, address, Paczkomat, notes and
- * the texts typed for the pieces (the mug's inscription, the voucher's names and dedication). An order that was
- * never paid is no sale, so its name and NIP go too. Withdrawals, complaints and their answers keep the name and
- * their content as proof in a dispute (art. 17(3)(e)) and lose the e-mail.
+ * the texts written for the pieces (the mug's inscription, the voucher's names and dedication, Kasia's note on the
+ * page of the piece, which may name her). An order that was never paid is no sale, so its name and NIP go too.
+ * Withdrawals, complaints and their answers keep the name and their content as proof in a dispute (art. 17(3)(e))
+ * and lose the e-mail.
  */
 class AnonymizeCustomer
 {
@@ -34,6 +35,7 @@ class AnonymizeCustomer
             'recipient_name' => null,
             'sender_name' => null,
             'dedication' => null,
+            'maker_note' => null,
         ]);
 
         $wiped = [

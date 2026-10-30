@@ -58,6 +58,7 @@ class AdminProductsTest extends TestCase
                 'name' => 'Miska z odciskiem paproci',
                 'category_id' => $this->mugs->id,
                 'description' => 'Miska z gliny z odciskiem liścia.',
+                'story' => " Paprocie zbieram pod pracownią.\nKażdy liść zostawia inny rysunek. ",
                 'care_note' => 'Zmywarka tak',
                 'food_contact' => 'not_suitable',
                 'deviation' => 'Nie do zmywarki — złota krawędź',
@@ -82,6 +83,7 @@ class AdminProductsTest extends TestCase
 
         $bowl = Product::where('slug', 'miska-z-odciskiem-paproci')->firstOrFail();
         $this->assertSame(['diameter_cm' => '12,5'], $bowl->dimensions);
+        $this->assertSame("Paprocie zbieram pod pracownią.\nKażdy liść zostawia inny rysunek.", $bowl->story);
         $this->assertSame(
             [FoodContact::NotSuitable, 'Nie do zmywarki — złota krawędź', '1 cm', 'Nie stawiaj na ogniu.', true, false],
             [$bowl->food_contact, $bowl->deviation, $bowl->size_tolerance, $bowl->safety_warnings, $bowl->is_exact_piece, $bowl->is_one_off],
@@ -368,7 +370,7 @@ class AdminProductsTest extends TestCase
             'name' => 'Kubki malowane',
             'category_id' => $this->mugs->id,
             'is_published' => '1',
-            'en' => ['name' => $englishName, 'description' => 'Painted by hand, one by one.', 'care_note' => ''],
+            'en' => ['name' => $englishName, 'description' => 'Painted by hand, one by one.', 'story' => ' The first one I painted for my sister. ', 'care_note' => ''],
             'variants' => $variants,
         ];
         $mug = $this->product('Kubki malowane', 1, [7900, 9900]);
@@ -380,7 +382,7 @@ class AdminProductsTest extends TestCase
         ]))->assertRedirect('/panel/produkty#produkt-'.$mug->id);
 
         $english = $mug->translation('en');
-        $this->assertSame(['Hand-painted mugs', 'hand-painted-mugs', 'Painted by hand, one by one.', null], [$english->name, $english->slug, $english->description, $english->care_note]);
+        $this->assertSame(['Hand-painted mugs', 'hand-painted-mugs', 'Painted by hand, one by one.', 'The first one I painted for my sister.', null], [$english->name, $english->slug, $english->description, $english->story, $english->care_note]);
         $this->assertSame(['Small', 'Large'], [$small->fresh()->translation('en')->label, $large->fresh()->translation('en')->label]);
         // Polish stays in the product itself.
         $this->assertSame(['Kubki malowane', 'Mały'], [$mug->fresh()->name, $small->fresh()->label]);

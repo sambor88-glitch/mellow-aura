@@ -37,6 +37,7 @@ return [
     'custom_link' => 'Tell me your idea',
     'warnings' => 'Warnings',
     'producer' => 'Maker',
+    'story_eyebrow' => 'where the idea came from',
     'related_eyebrow' => 'goes with this',
     'related_title' => 'From the same shelf',
     'buy_bar' => 'Add to basket',

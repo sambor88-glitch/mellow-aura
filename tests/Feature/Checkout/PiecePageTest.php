@@ -88,7 +88,45 @@ class PiecePageTest extends TestCase
             ->assertOk()
             ->assertDontSee('Data wypału')
             ->assertDontSee('Szkliwo')
-            ->assertDontSee('Roślina');
+            ->assertDontSee('Roślina')
+            ->assertDontSee('Skąd ten pomysł')
+            // Without Kasia's own words the page keeps the quote every piece shares.
+            ->assertSee('nie powtórzę jej');
+    }
+
+    public function test_kasias_words_and_the_story_of_the_product_tell_about_the_piece(): void
+    {
+        $order = $this->paidOrder();
+        $vase = $order->items->firstWhere('product_name', 'Wazon z paprocią');
+        $vase->variant->product->update(['story' => "Paprocie rosną pod pracownią.\nZbieram je w maju."]);
+        $vase->update(['maker_note' => 'Lepiłam go w pierwszy mroźny poranek <b>listopada</b>.']);
+
+        $this->get('/k/'.$vase->page_token)
+            ->assertOk()
+            ->assertSeeInOrder(['Wazon z paprocią', 'Lepiłam go w pierwszy mroźny poranek &lt;b&gt;listopada&lt;/b&gt;.', 'Skąd ten pomysł', "Paprocie rosną pod pracownią.\nZbieram je w maju."], false)
+            ->assertDontSee('<b>listopada</b>', false)
+            // Kasia's words take the place of the quote every piece shares.
+            ->assertDontSee('nie powtórzę jej');
+    }
+
+    public function test_an_english_page_tells_the_story_only_in_english(): void
+    {
+        $order = $this->paidOrder();
+        $order->update(['locale' => 'en', 'currency' => 'EUR']);
+        $vase = $order->items->firstWhere('product_name', 'Wazon z paprocią');
+        $product = $vase->variant->product;
+        $product->update(['story' => 'Paprocie rosną pod pracownią.']);
+
+        $this->get('/k/'.$vase->page_token)
+            ->assertOk()
+            ->assertDontSee('Where the idea came from')
+            ->assertDontSee('Paprocie rosną pod pracownią.');
+
+        $product->translations()->create(['locale' => 'en', 'slug' => 'fern-vase', 'name' => 'Fern vase', 'story' => 'Ferns grow by the studio.']);
+
+        $this->get('/k/'.$vase->page_token)
+            ->assertOk()
+            ->assertSeeInOrder(['Where the idea came from', 'Ferns grow by the studio.']);
     }
 
     public function test_the_mug_text_is_escaped(): void
@@ -167,7 +205,7 @@ class PiecePageTest extends TestCase
             ->assertSee('href="'.$vase->pageUrl().'"', false)
             ->assertSee('href="'.route('admin.orders.piece-card', [$order, $vase]).'"', false)
             ->assertDontSee('href="'.$voucher->pageUrl().'"', false)
-            ->assertSee('Dopisz datę wypału i szkliwo');
+            ->assertSee('Dopisz datę wypału, szkliwo i kilka słów');
 
         $this->patch(route('admin.orders.piece', [$order, $vase]), ['fired_on' => '2026-10-12', 'glaze' => ' Biel cynowa ', 'plant' => ''])
             ->assertRedirect(route('admin.orders.show', $order).'#sztuka-'.$vase->id);
@@ -192,6 +230,32 @@ class PiecePageTest extends TestCase
 
         auth()->logout();
         $this->get(route('admin.orders.piece-card', [$order, $vase]))->assertRedirect('/panel/logowanie');
+    }
+
+    public function test_the_panel_saves_kasias_words_about_the_piece(): void
+    {
+        $order = $this->paidOrder();
+        $vase = $order->items->firstWhere('product_name', 'Wazon z paprocią');
+        $this->actingAs(User::factory()->create());
+
+        $this->get('/panel/zamowienia/'.$order->number)
+            ->assertOk()
+            ->assertSee('Kilka słów od Ciebie')
+            ->assertSee('bez imienia klientki')
+            ->assertDontSee('Zamówienie po angielsku — napisz po angielsku');
+
+        $this->patch(route('admin.orders.piece', [$order, $vase]), ['maker_note' => " Lepiłam go w pierwszy mroźny poranek.\n"])
+            ->assertRedirect(route('admin.orders.show', $order).'#sztuka-'.$vase->id);
+        $this->assertSame('Lepiłam go w pierwszy mroźny poranek.', $vase->fresh()->maker_note);
+        $this->get('/panel/zamowienia/'.$order->number)->assertSee('kilka słów od Ciebie');
+
+        $this->patch(route('admin.orders.piece', [$order, $vase]), ['maker_note' => str_repeat('a', 501)])
+            ->assertSessionHasErrors(['maker_note'], null, 'piece'.$vase->id);
+        $this->assertSame('Lepiłam go w pierwszy mroźny poranek.', $vase->fresh()->maker_note);
+
+        // An English order gets its note in English: the page speaks the language of the order.
+        $order->update(['locale' => 'en', 'currency' => 'EUR']);
+        $this->get('/panel/zamowienia/'.$order->number)->assertSee('Zamówienie po angielsku — napisz po angielsku');
     }
 
     public function test_the_card_and_the_certificate_carry_the_same_code(): void

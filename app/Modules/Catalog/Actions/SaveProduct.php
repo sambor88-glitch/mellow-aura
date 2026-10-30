@@ -29,7 +29,7 @@ class SaveProduct
     public function __construct(private ConvertEuroPrices $convertEuroPrices, private SendRestockNotices $sendRestockNotices) {}
 
     /**
-     * @param  array{name: string, category_id: int, description: ?string, seo_description?: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, variant_kind?: ?string, euro_from_rate?: bool, workshop_code?: ?string, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels?: array<string, string>, price_gross: int, compare_at_price: ?int, prices?: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post?: bool, voucher_seats?: ?int, media_id?: ?int, is_hidden?: bool}>, photo_alts?: array<int, string>, photo_focus?: array<int, array{x: int, y: int}>, translations?: array<string, array<string, ?string>>}  $data
+     * @param  array{name: string, category_id: int, description: ?string, story?: ?string, seo_description?: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, variant_kind?: ?string, euro_from_rate?: bool, workshop_code?: ?string, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels?: array<string, string>, price_gross: int, compare_at_price: ?int, prices?: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post?: bool, voucher_seats?: ?int, media_id?: ?int, is_hidden?: bool}>, photo_alts?: array<int, string>, photo_focus?: array<int, array{x: int, y: int}>, translations?: array<string, array<string, ?string>>}  $data
      */
     public function __invoke(?Product $product, array $data): Product
     {
@@ -40,6 +40,7 @@ class SaveProduct
                 'name' => $data['name'],
                 'category_id' => $data['category_id'],
                 'description' => $data['description'],
+                'story' => $data['story'] ?? null,
                 // Empty means the page composes it from the description.
                 'seo_description' => $data['seo_description'] ?? null,
                 'care_note' => $data['care_note'],

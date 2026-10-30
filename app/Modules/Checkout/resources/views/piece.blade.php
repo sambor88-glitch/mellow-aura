@@ -15,6 +15,8 @@
     // The general care rule from the panel is written in Polish, so an English page shows only the piece's own line.
     $care = $product?->care_note ?: ($ceramics && $polish ? $settings->get('care_rule_ceramics') : null);
     $quote = $settings->get(CertificatePdf::setting('quote', Locales::current())) ?: __('checkout::certificate.quote');
+    // Where the idea came from, in the language of the order: a product without it in that language shows nothing (MA-292).
+    $story = $product?->story;
     $facts = collect([
         [__('checkout::piece.fired'), $item->fired_on?->translatedFormat('j F Y')],
         [__('checkout::piece.glaze'), $item->glaze],
@@ -46,7 +48,12 @@
                 @if (filled($item->variant_label))
                     <p class="mt-3 text-[15px] text-label">{{ $item->variant_label }}</p>
                 @endif
-                <p class="mt-6 max-w-[46ch] font-serif text-[21px] leading-[1.35] font-light text-lead italic whitespace-pre-line">{{ $quote }}</p>
+                @if (filled($item->maker_note))
+                    {{-- Kasia's own words about this one piece (MA-292) take the place of the quote every piece shares. --}}
+                    <p class="mt-6 max-w-[46ch] font-serif text-[21px] leading-[1.45] font-light text-graphite whitespace-pre-line [overflow-wrap:anywhere]">{{ $item->maker_note }}</p>
+                @else
+                    <p class="mt-6 max-w-[46ch] font-serif text-[21px] leading-[1.35] font-light text-lead italic whitespace-pre-line">{{ $quote }}</p>
+                @endif
 
                 @if ($facts->isNotEmpty() || $item->custom_text !== null)
                     <dl class="mt-8 grid gap-0 border-t border-line">
@@ -64,6 +71,13 @@
                             </div>
                         @endif
                     </dl>
+                @endif
+
+                @if (filled($story))
+                    <section class="mt-9">
+                        <h2 class="mb-2.5 font-serif text-[24px] font-light">{{ __('checkout::piece.story_heading') }}</h2>
+                        <p class="max-w-[52ch] text-[15.5px] leading-[1.68] text-lead whitespace-pre-line">{{ $story }}</p>
+                    </section>
                 @endif
 
                 @if (filled($care))

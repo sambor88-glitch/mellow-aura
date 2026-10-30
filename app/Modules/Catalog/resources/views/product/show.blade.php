@@ -303,6 +303,14 @@
             </div>
         </div>
 
+        @if (filled($product->story))
+            {{-- Kasia's words on where the idea came from (MA-292): below the purchase column, never pushing its button down. --}}
+            <section aria-labelledby="skad-ten-pomysl" class="mt-[clamp(90px,14vh,150px)]">
+                <h2 id="skad-ten-pomysl" class="eyebrow mb-[18px]">{{ __('catalog::product.story_eyebrow') }}</h2>
+                <p class="max-w-[42ch] font-serif text-[length:clamp(21px,2.3vw,28px)] leading-[1.42] font-light text-pretty whitespace-pre-line text-graphite">{{ $product->story }}</p>
+            </section>
+        @endif
+
         @if ($related->isNotEmpty())
             <div class="mt-[clamp(90px,14vh,150px)]">
                 <p class="eyebrow mb-[18px]">{{ __('catalog::product.related_eyebrow') }}</p>

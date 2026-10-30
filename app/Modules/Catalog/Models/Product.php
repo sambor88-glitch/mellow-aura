@@ -23,7 +23,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 #[Fillable([
-    'slug', 'name', 'category_id', 'description', 'seo_description', 'dimensions', 'care_note',
+    'slug', 'name', 'category_id', 'description', 'story', 'seo_description', 'dimensions', 'care_note',
     'food_contact', 'deviation', 'size_tolerance', 'safety_warnings', 'google_category', 'show_in_google',
     'is_published', 'is_one_off', 'is_exact_piece', 'variant_kind', 'euro_from_rate', 'sort_order', 'stamp_enabled', 'workshop_code', 'occasions', 'recipients',
 ])]
@@ -33,7 +33,7 @@ class Product extends Model implements HasMedia
     use HasFactory, HasTranslations, InteractsWithMedia;
 
     /** Read in the language of the page; the Polish text lives in the columns themselves. */
-    protected array $translatable = ['slug', 'name', 'description', 'seo_description', 'care_note', 'deviation', 'size_tolerance', 'safety_warnings'];
+    protected array $translatable = ['slug', 'name', 'description', 'story', 'seo_description', 'care_note', 'deviation', 'size_tolerance', 'safety_warnings'];
 
     public function registerMediaCollections(): void
     {

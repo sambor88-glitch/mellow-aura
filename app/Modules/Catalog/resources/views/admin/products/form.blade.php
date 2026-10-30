@@ -270,6 +270,19 @@
         {!! $error('description') !!}
     </div>
 
+    {{-- In Kasia's words, below the product and on the page of every piece bought from it (MA-292). --}}
+    <div class="min-w-0">
+        <label for="{{ $formKey }}-story" class="mb-1.5 block text-[13.5px] text-graphite">Skąd ten pomysł</label>
+        <textarea id="{{ $formKey }}-story" name="story" rows="4" maxlength="1500" aria-describedby="{{ $formKey }}-story-note"
+                  placeholder="co Cię zainspirowało, co chciałaś w tym zawrzeć"
+                  @class([$input, 'w-full resize-y px-4 py-[13px] leading-[1.6]', 'border-error' => $bag->has('story'), 'border-line' => ! $bag->has('story')])>{{ $old('story', $product?->story) }}</textarea>
+        @if ($bag->has('story'))
+            <p id="{{ $formKey }}-story-note" class="mt-1.5 text-[13px] text-error">{{ $bag->first('story') }}</p>
+        @else
+            <p id="{{ $formKey }}-story-note" class="mt-1.5 text-[12.5px] text-hint">Pod produktem w sklepie i na stronie każdej kupionej sztuki. Puste pole nie pokaże się na stronie.</p>
+        @endif
+    </div>
+
     <x-shared::seo-field name="seo_description" :id="$formKey.'-seo-description'" label="Opis dla Google" :limit="155" :max="255" :rows="2" :bag="$formKey"
                          :value="$old('seo_description', $product?->seo_description)"
                          :placeholder="Seo::description($product?->description) ?? 'z początku opisu, ucięty na granicy słowa'" />
@@ -335,6 +348,7 @@
             @foreach ([
                 ['name', 'Nazwa po angielsku', 'input', 120, 'e.g. Fern imprint bowl'],
                 ['description', 'Opis po angielsku', 'textarea', 2000, 'what it’s made of, how it’s made, what to do with it'],
+                ['story', 'Skąd ten pomysł po angielsku', 'textarea', 1500, 'what inspired it, what you wanted it to hold'],
                 ['care_note', 'Pielęgnacja po angielsku', 'input', 200, 'e.g. Dishwasher safe, gold by hand only'],
                 ['deviation', 'Cecha do osobnego potwierdzenia po angielsku', 'input', 160, 'e.g. Not for dishwasher or microwave — gold rim'],
                 ['size_tolerance', 'Dopuszczalna różnica wymiarów po angielsku', 'input', 60, 'e.g. 0.5 cm'],
@@ -343,7 +357,7 @@
                 <div class="min-w-0">
                     <label for="{{ $formKey }}-en-{{ $field }}" lang="pl" class="mb-1.5 block text-[13.5px] text-graphite">{{ $label }}</label>
                     @if ($kind === 'textarea')
-                        <textarea id="{{ $formKey }}-en-{{ $field }}" name="en[{{ $field }}]" rows="{{ $field === 'description' ? 4 : 2 }}" maxlength="{{ $max }}" placeholder="{{ $placeholder }}"
+                        <textarea id="{{ $formKey }}-en-{{ $field }}" name="en[{{ $field }}]" rows="{{ in_array($field, ['description', 'story'], true) ? 4 : 2 }}" maxlength="{{ $max }}" placeholder="{{ $placeholder }}"
                                   @class([$input, 'w-full resize-y px-4 py-[13px] leading-[1.6]', 'border-error' => $bag->has('en.'.$field), 'border-line' => ! $bag->has('en.'.$field)])>{{ $en($field) }}</textarea>
                     @else
                         <input id="{{ $formKey }}-en-{{ $field }}" name="en[{{ $field }}]" value="{{ $en($field) }}" maxlength="{{ $max }}" placeholder="{{ $placeholder }}"

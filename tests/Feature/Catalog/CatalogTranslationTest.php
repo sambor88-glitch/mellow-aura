@@ -111,7 +111,7 @@ class CatalogTranslationTest extends TestCase
     public function test_the_english_product_page_is_in_english_without_złoty_only_offers(): void
     {
         [$translated] = $this->twoProducts();
-        $translated->update(['care_note' => 'Zmywarka tak', 'deviation' => 'Złota krawędź', 'dimensions' => ['height_cm' => '9']]);
+        $translated->update(['care_note' => 'Zmywarka tak', 'deviation' => 'Złota krawędź', 'story' => 'Krawędź zostawiam surową, jak wyszła z koła.', 'dimensions' => ['height_cm' => '9']]);
         $translated->translation('en')->update(['description' => 'Thrown by hand, rim left rough.', 'care_note' => 'Dishwasher safe']);
         $large = $translated->variants()->create(['label' => 'Duża', 'price_gross' => 12900, 'stock' => 1]);
         $large->translations()->create(['locale' => 'en', 'label' => 'Large']);
@@ -135,9 +135,19 @@ class CatalogTranslationTest extends TestCase
             ->assertDontSee('Please note:')
             ->assertDontSee('BLIK')
             ->assertDontSee('free from')
-            ->assertDontSee('Zmywarka tak');
+            ->assertDontSee('Zmywarka tak')
+            // The story is not written in English yet: no heading and never the Polish text.
+            ->assertDontSee('where the idea came from')
+            ->assertDontSee('Krawędź zostawiam surową');
+
+        $translated->translation('en')->update(['story' => 'I leave the rim rough, as it came off the wheel.']);
+        $this->get('/en/product/rough-edged-bowl')
+            ->assertOk()
+            ->assertSeeInOrder(['where the idea came from', 'I leave the rim rough, as it came off the wheel.']);
 
         $this->get('/produkt/miska-z-surowa-krawedzia')
+            ->assertSee('skąd ten pomysł')
+            ->assertSee('Krawędź zostawiam surową, jak wyszła z koła.')
             ->assertSee('Rozmiar i cena')
             ->assertSee('Zmywarka tak')
             ->assertSee('Złota krawędź')
