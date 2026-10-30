@@ -18,7 +18,7 @@ class PieceController extends Controller
 {
     public function __invoke(string $token): Response
     {
-        $item = OrderItem::query()->where('page_token', $token)->with(['order', 'variant.product.category', 'variant.product.media'])->first();
+        $item = OrderItem::query()->where('page_token', $token)->with(['order', 'media', 'variant.product.category', 'variant.product.media'])->first();
 
         // An unpaid order, a voucher or the gift wrapping has no piece to tell about.
         abort_if($item === null || $item->order->payment_status !== PaymentStatus::Paid || ! $item->getsCertificate(), 404);

@@ -74,6 +74,43 @@
                                     <a href="{{ route('admin.orders.piece-card', [$order, $item]) }}" target="_blank" rel="noopener"
                                        class="inline-flex min-h-11 items-center rounded-full border border-line-strong px-4 text-[13px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark hover:text-ink">Karta do paczki</a>
                                 </div>
+                                {{-- The photo of this very piece opens its page, before the shop's photo (MA-290). --}}
+                                @php($piecePhoto = $item->getFirstMedia('photo'))
+                                <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2">
+                                    @if ($piecePhoto)
+                                        <div class="relative h-[90px] w-[76px] flex-none rounded-[4px] border border-line bg-line-soft">
+                                            <img src="{{ $piecePhoto->getAvailableUrl(['thumb']) }}" alt="Zdjęcie sztuki: {{ $item->product_name }}" loading="lazy" width="76" height="90" class="size-full rounded-[3px] object-cover">
+                                            <form method="post" action="{{ route('admin.orders.piece-photo.destroy', [$order, $item]) }}" x-data x-on:submit="confirm('Usunąć zdjęcie tej sztuki? Nie da się tego cofnąć.') || $event.preventDefault()">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button aria-label="Usuń zdjęcie sztuki: {{ $item->product_name }}" class="absolute top-[3px] right-[3px] grid size-6 place-items-center rounded-full bg-ink/75 text-[13px] leading-none text-linen transition-colors duration-300 after:absolute after:-inset-2.5 hover:bg-error">×</button>
+                                            </form>
+                                        </div>
+                                    @endif
+                                    <form method="post" action="{{ route('admin.orders.piece-photo', [$order, $item]) }}" enctype="multipart/form-data"
+                                          x-data="photoPicker(@js($piecePhotoLimits))" x-on:pageshow.window="sending = false" class="contents">
+                                        @csrf
+                                        <label x-bind:class="sending && 'pointer-events-none opacity-60'"
+                                               class="relative grid h-[90px] w-[76px] flex-none cursor-pointer place-items-center rounded-[4px] border border-dashed border-line-strong bg-linen text-center text-[12px] leading-[1.3] text-brown transition-colors duration-300 hover:border-ink hover:bg-sand-dark has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy">
+                                            <span aria-hidden="true" x-text="sending ? '…' : '{{ $piecePhoto ? 'Zmień' : '+ Zdjęcie' }}'">{{ $piecePhoto ? 'Zmień' : '+ Zdjęcie' }}</span>
+                                            <span class="sr-only">{{ $piecePhoto ? 'Zmień zdjęcie sztuki' : 'Dodaj zdjęcie sztuki' }}: {{ $item->product_name }}</span>
+                                            <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" x-on:change="send($el)" class="sr-only">
+                                        </label>
+                                        <noscript><button class="min-h-11 rounded-full border border-line px-4 text-[12.5px] text-lead hover:border-ink">Wyślij zdjęcie</button></noscript>
+                                        <p class="min-w-0 flex-[1_1_160px] text-[12px] leading-[1.5] text-hint">
+                                            {{ match (true) {
+                                                $piecePhoto !== null => 'To zdjęcie otwiera stronę sztuki.',
+                                                $item->variant !== null => 'Zrób zdjęcie tej sztuki przed pakowaniem — otworzy jej stronę zamiast zdjęcia ze sklepu.',
+                                                default => 'Zrób zdjęcie tej sztuki przed pakowaniem — bez niego jej strona nie ma zdjęcia.',
+                                            } }}
+                                        </p>
+                                        <p role="status" x-text="sending ? 'Dodaję zdjęcie — chwilę to potrwa' : ''" class="basis-full text-[13px] text-lead empty:hidden"></p>
+                                        <p role="alert" x-text="error" class="basis-full text-[13px] text-error empty:hidden"></p>
+                                        @foreach ($errors->getBag('piecePhoto'.$item->id)->all() as $message)
+                                            <p class="basis-full text-[13px] text-error">{{ $message }}</p>
+                                        @endforeach
+                                    </form>
+                                </div>
                                 <details @if ($bag->any()) open @endif class="mt-1.5">
                                     <summary class="cursor-pointer text-[13px] text-brown">
                                         {{ collect([$item->fired_on ? 'wypał '.$item->fired_on->format('j.m.Y') : null, $item->glaze, $item->plant, filled($item->maker_note) ? 'kilka słów od Ciebie' : null])->filter()->join(' · ') ?: 'Dopisz datę wypału, szkliwo i kilka słów' }}

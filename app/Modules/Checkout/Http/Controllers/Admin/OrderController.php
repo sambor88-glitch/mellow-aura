@@ -74,8 +74,9 @@ class OrderController extends Controller
     public function show(Order $order, ShippingMethods $shipping): View
     {
         return view('checkout::admin.orders.show', [
-            'order' => $order->load(['items.variant.product.category', 'items.certificates', 'withdrawals']),
+            'order' => $order->load(['items.variant.product.category', 'items.certificates', 'items.media', 'withdrawals']),
             'shippingLabel' => $shipping->label($order->shipping_method),
+            'piecePhotoLimits' => PieceController::photoLimits(),
         ]);
     }
 

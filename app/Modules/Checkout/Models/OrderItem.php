@@ -8,20 +8,51 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Image\Enums\Fit;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 #[Fillable([
     'product_variant_id', 'product_name', 'variant_label', 'quantity', 'missing_quantity', 'is_made_to_order', 'unit_price_gross', 'currency', 'vat_rate', 'vat_exemption',
     'custom_text', 'custom_glaze', 'accepted_deviation', 'recipient_name', 'sender_name', 'dedication',
     'fired_on', 'glaze', 'plant', 'maker_note',
 ])]
-class OrderItem extends Model
+class OrderItem extends Model implements HasMedia
 {
+    use InteractsWithMedia;
+
     /** Every item gets the token of its page when it is saved; only a piece (getsCertificate) opens one. */
     protected static function booted(): void
     {
         static::creating(function (OrderItem $item) {
             $item->page_token ??= PieceToken::generate();
         });
+    }
+
+    /** Kasia's photo of this very piece, for its page (MA-290). One per item: a new one replaces the old. */
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('photo')->singleFile()->acceptsMimeTypes(['image/webp', 'image/jpeg', 'image/png']);
+    }
+
+    /**
+     * The same copies as a product photo, so ProductPhoto::srcset() serves the piece's page too.
+     */
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')->fit(Fit::Max, 400, 500)->format('webp')->quality(80)->nonQueued();
+        $this->addMediaConversion('phone')->fit(Fit::Max, 720, 900)->format('webp')->quality(80)->nonQueued();
+        $this->addMediaConversion('card')->fit(Fit::Max, 1200, 1500)->format('webp')->quality(82)->nonQueued();
+    }
+
+    /**
+     * What the piece's page opens with: the photo of this piece, else the photo of the product it was made as.
+     * A mug from the configurator has no product, so without its own photo it has none.
+     */
+    public function photo(): ?Media
+    {
+        return $this->getFirstMedia('photo') ?? $this->variant?->photo();
     }
 
     /**
