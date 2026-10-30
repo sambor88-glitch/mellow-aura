@@ -3,6 +3,8 @@
     $lead = $settings->get('text_gifts_lead');
     $voucherNote = $settings->get('text_gifts_voucher_note');
     $count = $ideas->count();
+    // A filter with fewer than two chips has nothing to choose from; without any left the box stays out.
+    $shownFilters = collect($filters)->filter(fn ($chips) => $chips->count() >= 2);
     $countLabel = match (true) {
         $count === 0 => '0 pomysłów',
         $count === 1 => 'Jeden pomysł',
@@ -23,9 +25,9 @@
             <p class="mb-10 max-w-[54ch] text-[17px] leading-[1.7] text-lead">{{ $lead }}</p>
         @endif
 
+        @if ($shownFilters->isNotEmpty())
         <div class="mb-[38px] rounded-[20px] border border-divider bg-cream px-6 py-[26px]">
-            @foreach ($filters as $legend => $chips)
-                @continue($chips->count() < 2)
+            @foreach ($shownFilters as $legend => $chips)
                 <nav aria-label="{{ $legend }}" @class(['mb-[22px]' => ! $loop->last])>
                     <div class="mb-3 text-[11.5px] tracking-[0.16em] text-label uppercase">{{ $legend }}</div>
                     {{-- On a phone each filter is one row swiped sideways, like the categories in the shop. --}}
@@ -42,6 +44,7 @@
                 </nav>
             @endforeach
         </div>
+        @endif
 
         <div class="mb-6 text-[13.5px] text-label" role="status">{{ $countLabel }}</div>
 

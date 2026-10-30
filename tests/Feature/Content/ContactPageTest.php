@@ -62,6 +62,20 @@ class ContactPageTest extends TestCase
             ->assertDontSee('sprzedawca');
     }
 
+    public function test_without_any_channel_in_the_panel_there_is_no_empty_frame(): void
+    {
+        $this->settings(['location_description' => null]);
+
+        $this->get('/kontakt')
+            ->assertOk()
+            ->assertSee('id="formularz"', false)
+            ->assertDontSee('border-divider bg-divider', false);
+
+        $this->settings(['location_description' => 'Kraków, okolice Błoń Krakowskich']);
+
+        $this->get('/kontakt')->assertOk()->assertSee('border-divider bg-divider', false)->assertSeeText('okolice Błoń Krakowskich');
+    }
+
     public function test_a_message_goes_to_kasia_and_her_reply_goes_to_the_sender(): void
     {
         Mail::fake();

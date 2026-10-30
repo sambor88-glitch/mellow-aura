@@ -64,6 +64,7 @@ return [
     'workshops_heading_em' => 'into clay',
     'workshops_text' => 'Small workshops in my studio. Warmth, patience, no rush — and learning to listen to yourself.',
     'workshops_price' => 'from :price / :unit',
+    'workshops_price_from' => 'from :price',
     'workshops_cta' => 'Pick a date',
 
     'instagram_heading' => 'Studio days',

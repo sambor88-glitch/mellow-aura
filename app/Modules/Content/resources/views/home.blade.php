@@ -32,7 +32,16 @@
     ]);
 
     $workshopsUrl = $link('workshops.index');
-    $workshops = array_slice((array) $settings->get('workshop_types', []), 0, 3);
+    // A row without a name would be a link without a title, so it stays out.
+    $workshops = array_slice(array_values(array_filter((array) $settings->get('workshop_types', []), fn (mixed $workshop) => is_array($workshop) && filled($workshop['name'] ?? null))), 0, 3);
+    $workshopsCollage = array_filter(array_map(
+        fn (array $spot) => [$photo($spot[0]), $spot[1]],
+        [['home-workshops-1', 'top-[6%] left-0 h-[70%] w-[58%]'], ['home-workshops-2', 'top-0 right-0 h-[44%] w-[38%]'], ['home-workshops-3', 'right-[6%] bottom-0 h-[46%] w-[46%]']],
+    ), fn (array $spot) => $spot[0]->exists());
+    $giftPhotos = array_filter(
+        [[$photo('home-gifts-1'), $t('gifts_mug_alt')], [$photo('home-gifts-2'), $t('gifts_scrunchies_alt')]],
+        fn (array $gift) => $gift[0]->exists(),
+    );
 
     $cards = array_filter([
         $link('custom-orders.index') ? [$link('custom-orders.index'), true, $t('card_custom_eyebrow'), $t('card_custom_title'), $t('card_custom_text')] : null,
@@ -226,12 +235,14 @@
     @if (($bundlesUrl = $link('bundles.index')) || $link('gifts.index'))
         <section class="mx-auto max-w-[1360px] px-[clamp(18px,4vw,48px)] pt-20 sm:pt-[clamp(90px,14vh,150px)]" aria-labelledby="gifts-title">
             <div class="glass flex flex-wrap overflow-hidden rounded-[26px]">
+                {{-- Without photos the column stays out and the text takes the whole card. --}}
+                @if ($giftPhotos)
                 <div class="flex min-w-0 flex-[1_1_300px] gap-1.5 p-1.5">
-                    @foreach ([['home-gifts-1', $t('gifts_mug_alt')], ['home-gifts-2', $t('gifts_scrunchies_alt')]] as [$place, $alt])
-                        @continue (! ($gift = $photo($place))->exists())
-                        <div class="aspect-square w-1/2 overflow-hidden rounded-[20px]"><img src="{{ $gift->url }}" {{ $gift->srcsetAttributes('(min-width: 768px) 25vw, 50vw') }} alt="{{ $gift->alt($alt) }}" loading="lazy" width="600" height="600" data-aura-parallax="6" style="{{ $gift->style() }}" class="size-full object-cover"></div>
+                    @foreach ($giftPhotos as [$gift, $alt])
+                        <div class="aspect-square min-w-0 flex-1 overflow-hidden rounded-[20px]"><img src="{{ $gift->url }}" {{ $gift->srcsetAttributes('(min-width: 768px) 25vw, 50vw') }} alt="{{ $gift->alt($alt) }}" loading="lazy" width="600" height="600" data-aura-parallax="6" style="{{ $gift->style() }}" class="size-full object-cover"></div>
                     @endforeach
                 </div>
+                @endif
                 <div class="flex min-w-0 flex-[1_1_360px] flex-col justify-center px-[clamp(24px,4vw,48px)] py-11">
                     <p class="eyebrow mb-[18px]">{{ $t('gifts_eyebrow') }}</p>
                     <h2 id="gifts-title" class="mb-4 font-serif text-[length:clamp(32px,3.8vw,52px)] leading-[1.04] font-light">{{ $em('gifts_heading') }}</h2>
@@ -261,12 +272,21 @@
             <div data-aura-rise class="flex flex-wrap gap-[clamp(16px,2vw,28px)]">
                 @foreach ($services as [$url, $place, $alt, $material, $title, $text, $from])
                     @php($servicePhoto = $photo($place))
-                    <a href="{{ $url }}" class="group relative block h-[clamp(460px,72vh,700px)] min-w-0 flex-[1_1_420px] overflow-hidden rounded-[24px] text-sand hover:text-sand focus-visible:outline-offset-4">
+                    {{-- Without a photo the card is only its dark text panel, not a tall empty frame. --}}
+                    <a href="{{ $url }}" @class([
+                        'group relative block min-w-0 flex-[1_1_420px] overflow-hidden rounded-[24px] text-sand hover:text-sand focus-visible:outline-offset-4',
+                        'h-[clamp(460px,72vh,700px)]' => $servicePhoto->exists(),
+                        'bg-ink p-3.5' => ! $servicePhoto->exists(),
+                    ])>
                         @if ($servicePhoto->exists())
                             <img src="{{ $servicePhoto->url }}" {{ $servicePhoto->srcsetAttributes('(min-width: 900px) 50vw, 100vw') }} alt="{{ $servicePhoto->alt($alt) }}" loading="lazy" width="900" height="1200" data-aura-parallax="6" style="{{ $servicePhoto->style() }}" class="absolute inset-x-0 -top-[8%] h-[116%] w-full object-cover">
+                            <span class="absolute inset-0 bg-linear-to-b from-transparent from-40% to-ink/55"></span>
                         @endif
-                        <span class="absolute inset-0 bg-linear-to-b from-transparent from-40% to-ink/55"></span>
-                        <span class="glass-dark absolute inset-x-3.5 bottom-3.5 z-2 block rounded-[18px] px-6 py-[22px] transition-transform duration-800 ease-clay group-hover:-translate-y-2">
+                        <span @class([
+                            'glass-dark z-2 block rounded-[18px] px-6 py-[22px] transition-transform duration-800 ease-clay group-hover:-translate-y-2',
+                            'absolute inset-x-3.5 bottom-3.5' => $servicePhoto->exists(),
+                            'relative' => ! $servicePhoto->exists(),
+                        ])>
                             <span class="text-[10.5px] tracking-[0.26em] text-on-dark uppercase">{{ $material }}</span>
                             <span class="mt-2 block font-serif text-[length:clamp(28px,3vw,40px)] leading-[1.05] font-light text-sand">{{ $title }}</span>
                             <span class="mt-2 block max-w-[42ch] text-[14.5px] text-on-dark">{{ $text }}</span>
@@ -295,13 +315,13 @@
                                     @if (! empty($workshop['duration_label']))
                                         <span class="block text-[10.5px] tracking-[0.16em] text-label-dark uppercase">{{ $workshop['duration_label'] }}</span>
                                     @endif
-                                    <span class="mt-1 block font-serif text-[25px] leading-[1.15] font-light text-sand">{{ $workshop['name'] ?? '' }}</span>
+                                    <span class="mt-1 block font-serif text-[25px] leading-[1.15] font-light text-sand">{{ $workshop['name'] }}</span>
                                     @if (! empty($workshop['summary']))
                                         <span class="mt-1 block text-[14px] leading-[1.55] text-on-dark-muted">{{ $workshop['summary'] }}</span>
                                     @endif
                                 </span>
                                 @isset($workshop['price_gross'])
-                                    <span class="font-serif text-[22px] font-light whitespace-nowrap text-sand">{{ $t('workshops_price', ['price' => Money::format((int) $workshop['price_gross']), 'unit' => $workshop['unit_label'] ?? '']) }}</span>
+                                    <span class="font-serif text-[22px] font-light whitespace-nowrap text-sand">{{ filled($workshop['unit_label'] ?? null) ? $t('workshops_price', ['price' => Money::format((int) $workshop['price_gross']), 'unit' => $workshop['unit_label']]) : $t('workshops_price_from', ['price' => Money::format((int) $workshop['price_gross'])]) }}</span>
                                 @endisset
                             </a>
                         @endforeach
@@ -310,12 +330,14 @@
                         <a href="{{ $workshopsUrl }}#workshop-dates" data-magnet class="fill-btn inline-flex min-h-[52px] items-center gap-2.5 rounded-full bg-linen px-[30px] text-[14px] font-medium tracking-[0.04em] text-ink [--fill:var(--color-rose)] hover:bg-rose hover:text-ink">{{ $t('workshops_cta') }} <span aria-hidden="true">→</span></a>
                     </div>
                 </div>
+                {{-- Without any photo the collage stays out and the text has the section to itself. --}}
+                @if ($workshopsCollage)
                 <div aria-hidden="true" class="relative h-[clamp(460px,70vh,680px)] min-w-0 flex-[1_1_420px]">
-                    @foreach ([['home-workshops-1', 'top-[6%] left-0 h-[70%] w-[58%]'], ['home-workshops-2', 'top-0 right-0 h-[44%] w-[38%]'], ['home-workshops-3', 'right-[6%] bottom-0 h-[46%] w-[46%]']] as [$place, $position])
-                        @continue (! ($collage = $photo($place))->exists())
+                    @foreach ($workshopsCollage as [$collage, $position])
                         <div class="absolute overflow-hidden rounded-[20px] {{ $position }}"><img src="{{ $collage->url }}" {{ $collage->srcsetAttributes('(min-width: 900px) 30vw, 60vw') }} alt="" loading="lazy" width="800" height="1000" data-aura-parallax="{{ 6 + $loop->index * 4 }}" style="{{ $collage->style() }}" class="size-full object-cover"></div>
                     @endforeach
                 </div>
+                @endif
             </div>
         </section>
     @endif
