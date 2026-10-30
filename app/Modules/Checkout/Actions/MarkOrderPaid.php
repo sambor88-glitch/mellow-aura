@@ -9,6 +9,7 @@ use App\Modules\Checkout\Events\OrderPaid;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\CustomOrders\Actions\ConfirmPayment;
 use App\Modules\Gifts\Actions\CaptureVoucherBalance;
+use App\Modules\Gifts\Actions\IssueGiftChoices;
 use App\Modules\Gifts\Actions\IssueVouchers;
 use App\Modules\Workshops\Actions\ConfirmBooking;
 use App\Modules\Workshops\Enums\BookingStatus;
@@ -22,10 +23,11 @@ use Illuminate\Support\Facades\DB;
  * under „Problem”, for Kasia to return the money. A payment for a custom order counts towards its idea here as well;
  * money for a declined idea or above the quote also puts the order under „Problem”.
  * Voucher money held for the order is spent here too (MA-211); a voucher emptied meanwhile puts it under „Problem”.
+ * Gift choice cards get their codes here as well (MA-235).
  */
 class MarkOrderPaid
 {
-    public function __construct(private DecrementStock $decrementStock, private IssueVouchers $issueVouchers, private ConfirmBooking $confirmBooking, private ConfirmPayment $confirmCustomOrderPayment, private CaptureVoucherBalance $captureVoucherBalance) {}
+    public function __construct(private DecrementStock $decrementStock, private IssueVouchers $issueVouchers, private ConfirmBooking $confirmBooking, private ConfirmPayment $confirmCustomOrderPayment, private CaptureVoucherBalance $captureVoucherBalance, private IssueGiftChoices $issueGiftChoices) {}
 
     public function __invoke(Order $order, string $providerId): Order
     {
@@ -79,6 +81,7 @@ class MarkOrderPaid
             ]);
 
             ($this->issueVouchers)($order);
+            ($this->issueGiftChoices)($order);
 
             OrderPaid::dispatch($order);
 

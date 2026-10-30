@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Gifts\Http\Controllers\Admin\GiftChoicesController;
 use App\Modules\Gifts\Http\Controllers\Admin\GiftsController;
 use App\Modules\Gifts\Http\Controllers\VoucherPdfController;
 use Illuminate\Support\Facades\Route;
@@ -15,3 +16,9 @@ Route::put('/prezenty/vouchery/opis-warsztatu', [GiftsController::class, 'vouche
 Route::put('/prezenty/szukam-prezentu', [GiftsController::class, 'giftFinder'])->name('gifts.finder');
 
 Route::get('/vouchery/{voucher}', VoucherPdfController::class)->whereNumber('voucher')->name('vouchers.pdf');
+
+// „Podaruj wybór” (MA-235).
+Route::get('/karty-wyboru', [GiftChoicesController::class, 'index'])->name('gift-choices.index');
+Route::put('/karty-wyboru/ustawienia', [GiftChoicesController::class, 'settings'])->name('gift-choices.settings');
+Route::post('/karty-wyboru/{choice}/wyslij', [GiftChoicesController::class, 'resend'])->whereNumber('choice')->name('gift-choices.resend');
+Route::post('/karty-wyboru/{choice}/decyzja', [GiftChoicesController::class, 'resolve'])->whereNumber('choice')->name('gift-choices.resolve');

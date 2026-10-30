@@ -55,3 +55,4 @@
         @endforeach
     </section>
 @endif
+@include('gifts::admin.order-gift-choices', ['order' => $order, 'card' => $card])

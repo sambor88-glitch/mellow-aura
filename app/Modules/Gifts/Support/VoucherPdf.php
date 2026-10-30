@@ -4,6 +4,7 @@ namespace App\Modules\Gifts\Support;
 
 use App\Modules\Gifts\Models\Voucher;
 use App\Modules\Settings\Settings;
+use App\Modules\Shared\Support\Money;
 use App\Modules\Shared\Support\Pdf;
 
 /**
@@ -32,7 +33,7 @@ class VoucherPdf
 
         return view('gifts::pdf.voucher', [
             'voucher' => $voucher,
-            'kind' => collect([$item?->product_name ?? 'voucher', $this->showsValue($voucher) ? $item->variant_label : null])->filter()->join(' · '),
+            'kind' => $this->kind($voucher),
             'fonts' => Pdf::fonts(),
             'notes' => is_array($notes[$product?->slug] ?? null) ? $notes[$product->slug] : [],
             'howToUse' => $this->settings->get('text_voucher_how_to_use'),
@@ -43,6 +44,21 @@ class VoucherPdf
                 ($handle = $this->settings->get('instagram_handle')) ? '@'.ltrim($handle, '@') : null,
             ])),
         ])->render();
+    }
+
+    /**
+     * What the voucher is for, above the headline. An amount voucher Kasia gave instead of a gift choice card (MA-235)
+     * has no product in the shop, so it says what it is worth.
+     */
+    private function kind(Voucher $voucher): string
+    {
+        $item = $voucher->orderItem;
+
+        if ($voucher->isAmount() && $item !== null && $item->variant === null) {
+            return 'voucher · '.Money::format((int) $voucher->amount_minor);
+        }
+
+        return collect([$item?->product_name ?? 'voucher', $this->showsValue($voucher) ? $item->variant_label : null])->filter()->join(' · ');
     }
 
     /**

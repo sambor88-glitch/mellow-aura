@@ -69,7 +69,7 @@ class PlaceOrder
             $vatExemption = $this->tax->vatExemption();
 
             foreach ($lines->flatMap(fn (CartLine $line) => $line->orderItems()) as $item) {
-                $order->items()->create([
+                $saved = $order->items()->create([
                     'product_variant_id' => $item->variantId,
                     'is_made_to_order' => $item->variantId === null,
                     'product_name' => $item->name,
@@ -87,6 +87,10 @@ class PlaceOrder
                     'dedication' => $item->dedication,
                     'sender_name' => $item->senderName,
                 ]);
+
+                if ($item->placed !== null) {
+                    ($item->placed)($saved);
+                }
             }
 
             $vouchersGross = ($this->holdVoucherBalance)($order, $voucherCodes);
