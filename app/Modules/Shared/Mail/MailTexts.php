@@ -4,13 +4,15 @@ namespace App\Modules\Shared\Mail;
 
 use App\Modules\Localization\Support\Locales;
 use App\Modules\Settings\Settings;
+use App\Modules\Shared\Support\SitePhoto;
 use Closure;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\HtmlString;
 
 /**
  * The sentences of customer mails that Kasia writes in the panel („Maile”, MA-239): per mail the subject, the
- * opening and the closing sentence, and one signature and footer for all of them. Each in the language the mail
+ * opening and the closing sentence, and one signature and footer for all of them, the signature with an optional
+ * picture above it (MA-287). Each in the language the mail
  * is rendered in; an empty field gives the default from `lang`. Plain text only: whatever she types is escaped,
  * a line break stays a line break, and {numer}-style placeholders fill in from the mail's own data.
  */
@@ -29,6 +31,9 @@ class MailTexts
      * @var array<string, array{int, int}>
      */
     public const COMMON = ['signature' => [60, 2], 'footer' => [200, 3]];
+
+    /** The picture above the signature, one for every customer mail in every language (MA-287). */
+    public const SIGNATURE_IMAGE = 'mail_signature_image';
 
     /** @var list<class-string<HasEditableTexts>> */
     private static array $mails = [];
@@ -149,6 +154,20 @@ class MailTexts
     public function footer(): string
     {
         return $this->raw('footer');
+    }
+
+    /**
+     * The picture Kasia put above the signature, with the size it shows at in a mail. A missing file gives null,
+     * so a mail goes out with the text signature alone instead of an empty frame.
+     *
+     * @return array{url: string, width: int, height: int}|null
+     */
+    public function signatureImage(): ?array
+    {
+        $image = $this->settings->get(self::SIGNATURE_IMAGE);
+        $url = is_array($image) ? SitePhoto::url($image['path'] ?? null) : null;
+
+        return $url === null ? null : ['url' => $url, 'width' => (int) $image['width'], 'height' => (int) $image['height']];
     }
 
     /**

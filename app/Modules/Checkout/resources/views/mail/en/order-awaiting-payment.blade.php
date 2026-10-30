@@ -43,7 +43,7 @@
             A question about your order? Write to me through the shop and give your order number, {{ $order->number }}.
         @endif
     </p>
-    <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">{{ $mailTexts->common('signature') }}</p>
+    <x-shared::mail.signature />
 
     <x-slot:footer>
         {{ $mailTexts->common('footer') }}<br>

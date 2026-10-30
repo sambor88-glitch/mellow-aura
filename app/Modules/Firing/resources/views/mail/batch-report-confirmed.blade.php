@@ -22,7 +22,7 @@
     @if ($contactEmail)
         <p style="margin: 0; color: #5C5043;">{{ $mailTexts->html('batch_report_confirmed', 'outro', ['imie' => $firingRequest->name]) }}</p>
     @endif
-    <p style="margin: 18px 0 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 18px; color: #855F3D;">{{ $mailTexts->common('signature') }}</p>
+    <x-shared::mail.signature />
 
     <x-slot:footer>
         {{ $mailTexts->common('footer') }}<br>

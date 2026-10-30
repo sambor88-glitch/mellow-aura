@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Settings\Http\Controllers\Admin\MailSignatureImageController;
 use App\Modules\Settings\Http\Controllers\Admin\MailTextsController;
 use App\Modules\Settings\Http\Controllers\Admin\SeoPagesController;
 use App\Modules\Settings\Http\Controllers\Admin\SettingsController;
@@ -19,3 +20,5 @@ Route::put('/google', [SeoPagesController::class, 'update'])->name('seo-pages.up
 Route::get('/maile', [MailTextsController::class, 'edit'])->name('mail-texts.edit');
 Route::put('/maile', [MailTextsController::class, 'update'])->name('mail-texts.update');
 Route::put('/maile/podglad', [MailTextsController::class, 'preview'])->name('mail-texts.preview');
+Route::post('/maile/grafika', [MailSignatureImageController::class, 'store'])->name('mail-signature-image.store');
+Route::delete('/maile/grafika', [MailSignatureImageController::class, 'destroy'])->name('mail-signature-image.destroy');

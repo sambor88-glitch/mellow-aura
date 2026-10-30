@@ -13,7 +13,8 @@ use Illuminate\View\View;
 
 /**
  * „Maile” in the panel: the subject, the opening and the closing sentence of each customer mail, and the signature
- * and footer they share (MA-239). „Podgląd” shows a mail for a made-up order with what is typed, without saving it.
+ * and footer they share (MA-239), and the picture above the signature, which MailSignatureImageController saves (MA-287).
+ * „Podgląd” shows a mail for a made-up order with what is typed, without saving it.
  * Mails to Kasia keep their texts in code.
  */
 class MailTextsController extends Controller
@@ -26,6 +27,8 @@ class MailTextsController extends Controller
             'locales' => Locales::enabled(),
             'mails' => MailTexts::mails(),
             'fields' => collect($fields)->keyBy('setting')->all(),
+            'signatureImage' => $texts->signatureImage(),
+            'signature' => $texts->common('signature'),
             'values' => collect($fields)->mapWithKeys(fn (array $field) => [$field['setting'] => $settings->get($field['setting'])])->all(),
             'defaults' => collect($fields)
                 ->mapWithKeys(fn (array $field) => [$field['setting'] => Locales::within($field['locale'], fn () => $texts->default($field['part'], $field['mail']))])
