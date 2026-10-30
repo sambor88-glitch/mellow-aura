@@ -23,7 +23,8 @@ class InstagramFeedController extends Controller
         try {
             $count = $refresh();
             $status = match (true) {
-                $settings['instagram_feed_url'] === null => 'Sekcja z Instagrama zdjęta ze strony głównej',
+                ! $settings['home_show_instagram_feed'] => 'Zapisane. Sekcja z Instagrama jest ukryta na stronie głównej.',
+                $settings['instagram_feed_url'] === null => 'Zapisane. Kanał z Behold odłączony — na stronie zostają tylko posty dodane ręcznie.',
                 $count === 0 => 'Zapisane, ale w kanale nie ma zdjęć'.($settings['instagram_feed_hashtag'] ? ' z hashtagiem '.$settings['instagram_feed_hashtag'] : '').'. Sekcja pojawi się, gdy będą.',
                 default => 'Pobrane zdjęcia: '.$count.'. Są już na stronie głównej.',
             };

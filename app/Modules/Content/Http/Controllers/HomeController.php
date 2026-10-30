@@ -22,9 +22,10 @@ class HomeController extends Controller
             // The panel stores the Polish slug; on an English page ->slug reads the English one, so compare the column.
             'hero' => $live->first(fn (Product $product) => $product->getRawOriginal('slug') === $heroSlug) ?? $live->first(),
             'featured' => $live->take(4),
-            // Posts show only while a feed is set; clearing the address hides them at once.
-            'instagramPosts' => filled($settings->get('instagram_feed_url'))
-                ? InstagramPost::query()->latest('posted_at')->take(RefreshInstagramFeed::POSTS)->get()
+            // Kasia can hide the whole section in the panel (MA-274). Her own posts come first; the feed's posts
+            // show only while a feed is set, so clearing the address takes them off at once.
+            'instagramPosts' => $settings->get('home_show_instagram_feed') !== false
+                ? InstagramPost::forHomePage(filled($settings->get('instagram_feed_url')), RefreshInstagramFeed::POSTS)
                 : collect(),
         ]);
     }

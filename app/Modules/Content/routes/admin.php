@@ -2,6 +2,7 @@
 
 use App\Modules\Content\Http\Controllers\Admin\ContentController;
 use App\Modules\Content\Http\Controllers\Admin\InstagramFeedController;
+use App\Modules\Content\Http\Controllers\Admin\InstagramPostController;
 use App\Modules\Content\Http\Controllers\Admin\PagePhotoController;
 use App\Modules\Content\Http\Controllers\Admin\ServiceExampleController;
 use App\Modules\Content\Http\Controllers\Admin\ServicesController;
@@ -16,6 +17,9 @@ Route::put('/tresci/zamowienia-indywidualne', [ContentController::class, 'custom
 Route::put('/tresci/gastronomia', [ContentController::class, 'b2bFacts'])->name('content.b2b-facts');
 Route::put('/tresci/kontakt', [ContentController::class, 'topics'])->name('content.topics');
 Route::put('/tresci/instagram', InstagramFeedController::class)->name('content.instagram');
+Route::post('/tresci/instagram/posty', [InstagramPostController::class, 'store'])->name('content.instagram-posts.store');
+Route::post('/tresci/instagram/posty/{post}/kolejnosc', [InstagramPostController::class, 'move'])->whereNumber('post')->name('content.instagram-posts.move');
+Route::delete('/tresci/instagram/posty/{post}', [InstagramPostController::class, 'destroy'])->whereNumber('post')->name('content.instagram-posts.destroy');
 
 Route::whereIn('service', ['apaszka', 'odcisk'])->group(function () {
     Route::get('/uslugi/{service?}', [ServicesController::class, 'edit'])->name('services.edit');

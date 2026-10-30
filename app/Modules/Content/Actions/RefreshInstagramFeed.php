@@ -151,14 +151,15 @@ class RefreshInstagramFeed
     }
 
     /**
-     * Removes the posts that dropped out of the feed, and their photos.
+     * Removes the posts that dropped out of the feed, and their photos. Kasia's own posts are not the feed's to remove.
      *
      * @param  list<InstagramPost>  $posts
      */
     private function keepOnly(array $posts): void
     {
         DB::transaction(function () use ($posts) {
-            $gone = InstagramPost::query()->whereKeyNot(array_map(fn (InstagramPost $post) => $post->id, $posts))->get();
+            $gone = InstagramPost::query()->where('is_manual', false)
+                ->whereKeyNot(array_map(fn (InstagramPost $post) => $post->id, $posts))->get();
 
             Storage::disk('public')->delete($gone->pluck('image_path')->all());
             InstagramPost::query()->whereKey($gone->modelKeys())->delete();

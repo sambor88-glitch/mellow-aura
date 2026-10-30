@@ -7,8 +7,8 @@ use Closure;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * The Instagram card: the Behold.so JSON feed address, an optional hashtag the posts must have and the point
- * of each photo that stays in its square tile.
+ * The Instagram card: whether the section shows on the home page at all, the Behold.so JSON feed address,
+ * an optional hashtag the posts must have and the point of each photo that stays in its square tile.
  */
 class SaveInstagramFeedRequest extends FormRequest
 {
@@ -26,6 +26,7 @@ class SaveInstagramFeedRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'home_show_instagram_feed' => ['nullable', 'boolean'],
             'instagram_feed_url' => ['nullable', 'string', 'max:255', function (string $attribute, mixed $value, Closure $fail): void {
                 if (! RefreshInstagramFeed::isFeedUrl((string) $value)) {
                     $fail('Wklej adres kanału JSON z Behold — zaczyna się od https://feeds.behold.so/');
@@ -53,13 +54,15 @@ class SaveInstagramFeedRequest extends FormRequest
     }
 
     /**
-     * @return array{instagram_feed_url: ?string, instagram_feed_hashtag: ?string}
+     * @return array{home_show_instagram_feed: bool, instagram_feed_url: ?string, instagram_feed_hashtag: ?string}
      */
     public function settings(): array
     {
         $hashtag = ltrim((string) $this->validated('instagram_feed_hashtag'), '#');
 
         return [
+            // The form sends 0 before the box, so an unticked box hides the section; a request without the field keeps it on.
+            'home_show_instagram_feed' => (bool) $this->validated('home_show_instagram_feed', true),
             'instagram_feed_url' => $this->validated('instagram_feed_url'),
             'instagram_feed_hashtag' => $hashtag === '' ? null : '#'.$hashtag,
         ];

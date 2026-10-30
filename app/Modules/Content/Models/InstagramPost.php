@@ -3,17 +3,35 @@
 namespace App\Modules\Content\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
  * A post from Kasia's Instagram with its photo saved on the shop's disk, so a visitor's browser never asks
- * Instagram or the feed provider for it.
+ * Instagram or the feed provider for it. It comes from the Behold feed or, `is_manual`, from Kasia in the panel.
  */
-#[Fillable(['external_id', 'permalink', 'caption', 'alt_text', 'image_path', 'focus_x', 'focus_y', 'posted_at'])]
+#[Fillable(['external_id', 'is_manual', 'sort_order', 'permalink', 'caption', 'alt_text', 'image_path', 'focus_x', 'focus_y', 'posted_at'])]
 class InstagramPost extends Model
 {
+    /**
+     * What the home page shows: Kasia's own posts first in her order, then the newest from the feed while one is set.
+     *
+     * @return Collection<int, InstagramPost>
+     */
+    public static function forHomePage(bool $withFeed, int $limit): Collection
+    {
+        $manual = self::query()->manual()->ordered()->take($limit)->get();
+        $feed = $withFeed && $manual->count() < $limit
+            ? self::query()->where('is_manual', false)->latest('posted_at')->take($limit - $manual->count())->get()
+            : collect();
+
+        return $manual->concat($feed)->values();
+    }
+
     public function imageUrl(): string
     {
         return Storage::disk('public')->url($this->image_path);
@@ -39,6 +57,24 @@ class InstagramPost extends Model
     }
 
     /**
+     * @param  Builder<InstagramPost>  $query
+     */
+    #[Scope]
+    protected function manual(Builder $query): void
+    {
+        $query->where('is_manual', true);
+    }
+
+    /**
+     * @param  Builder<InstagramPost>  $query
+     */
+    #[Scope]
+    protected function ordered(Builder $query): void
+    {
+        $query->orderBy('sort_order')->orderBy('id');
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -46,6 +82,8 @@ class InstagramPost extends Model
     protected function casts(): array
     {
         return [
+            'is_manual' => 'boolean',
+            'sort_order' => 'integer',
             'focus_x' => 'integer',
             'focus_y' => 'integer',
             'posted_at' => 'datetime',
