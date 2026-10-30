@@ -9,6 +9,8 @@ Decyzja Macieja 27.10: **Claude zawsze pisze po polsku** — w każdej sesji, w�
 powiadomieniach z GitHuba, harmonogramu i innych sesji. Dotyczy czatu, komentarzy i worklogów w Jirze, tytułów
 i opisów PR-ów, komentarzy na GitHubie, wiadomości commitów, raportów i wiadomości do innych sesji.
 Po angielsku zostaje tylko kod (sekcja „Język kodu”) i terminy techniczne z krótkim polskim wyjaśnieniem.
+Także krótkie komunikaty w trakcie pracy („Sprawdzam CI…”), podsumowania na koniec tury i odpowiedzi po
+przypomnieniach systemowych — 30.10 sesja MA-295 pisała je po angielsku mimo tej zasady (przypomnienie Macieja).
 
 ## Źródła prawdy
 
