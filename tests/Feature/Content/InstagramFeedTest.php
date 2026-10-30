@@ -120,13 +120,13 @@ class InstagramFeedTest extends TestCase
             ->assertFailed();
     }
 
-    public function test_clearing_the_address_takes_the_section_and_the_photos_away(): void
+    public function test_clearing_the_address_takes_the_feeds_photos_away(): void
     {
         $this->fakeFeed();
         $this->actingAs(User::factory()->create())->put('/panel/tresci/instagram', ['instagram_feed_url' => self::FEED]);
 
         $this->put('/panel/tresci/instagram', ['instagram_feed_url' => ''])
-            ->assertSessionHas('panel_status', 'Sekcja z Instagrama zdjęta ze strony głównej');
+            ->assertSessionHas('panel_status', 'Zapisane. Kanał z Behold odłączony — na stronie zostają tylko posty dodane ręcznie.');
 
         $this->assertSame(0, InstagramPost::count());
         Storage::disk('public')->assertMissing('instagram/1001.webp');

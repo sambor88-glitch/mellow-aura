@@ -320,7 +320,7 @@
                         <span class="size-2 animate-ma-pulse rounded-full bg-rose"></span>
                         <span class="text-[11.5px] tracking-[0.14em] text-label uppercase">{{ $t('instagram_live') }}</span>
                     </div>
-                    <span class="text-[12px] text-label">{{ $t('instagram_last', ['ago' => $instagramPosts->first()->posted_at->diffForHumans()]) }}</span>
+                    <span class="text-[12px] text-label">{{ $t('instagram_last', ['ago' => $instagramPosts->max('posted_at')->diffForHumans()]) }}</span>
                 </div>
                 {{-- Six photos always fill whole rows: two, three or six to a row. --}}
                 <div data-aura-rise class="grid grid-cols-2 gap-2.5 min-[520px]:grid-cols-3 min-[980px]:grid-cols-6">

@@ -28,10 +28,13 @@
     $hint = 'mt-3.5 text-[12.5px] leading-[1.6] text-label';
     $button = 'mt-[18px] min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]';
     $input = 'w-full min-w-0 rounded-[4px] border bg-white px-3 py-2.5 text-[15px] text-ink placeholder:text-hint focus:border-ink';
+    $fieldLabel = 'mb-1 block text-[12.5px] text-graphite';
+    $small = 'grid min-h-11 min-w-11 place-items-center rounded-full border border-line-strong px-3 text-[13px] text-ink hover:border-ink hover:bg-sand-dark';
+    $manualErrors = $errors->getBag('instagram-reczne');
 @endphp
 <x-admin::layout title="Treści" lead="Każde zdanie na stronach „O mnie”, „Pracownia”, „Zamówienia indywidualne”, „Dla kawiarni i restauracji”, „Kontakt” i w częstych pytaniach. Zmiany widać na stronie od razu.">
     <nav aria-label="Karty na tej stronie" class="mb-[22px] flex flex-wrap gap-2.5 text-[13px]">
-        @foreach (['teksty' => 'Teksty na stronach', 'czeste-pytania' => 'Częste pytania', 'pracownia' => 'Pracownia — dobrze wiedzieć', 'zamowienia-indywidualne' => 'Zamówienia indywidualne — kroki', 'gastronomia' => 'Dla lokali — karty', 'kontakt' => 'Sprawy w formularzu', 'instagram' => 'Instagram na stronie głównej'] as $id => $label)
+        @foreach (['teksty' => 'Teksty na stronach', 'czeste-pytania' => 'Częste pytania', 'pracownia' => 'Pracownia — dobrze wiedzieć', 'zamowienia-indywidualne' => 'Zamówienia indywidualne — kroki', 'gastronomia' => 'Dla lokali — karty', 'kontakt' => 'Sprawy w formularzu', 'instagram' => 'Instagram na stronie głównej', 'instagram-reczne' => 'Instagram — posty ręczne'] as $id => $label)
             <a href="#{{ $id }}" class="rounded-full border border-line-strong px-4 py-2 text-lead hover:border-ink hover:bg-sand hover:text-ink">{{ $label }}</a>
         @endforeach
     </nav>
@@ -189,19 +192,24 @@
             @csrf
             @method('PUT')
             <h2 class="{{ $heading }}">Instagram na stronie głównej</h2>
-            <p class="{{ $intro }}">Wklej adres kanału JSON z Behold.so. Strona pobiera z niego {{ \App\Modules\Content\Actions\RefreshInstagramFeed::POSTS }} ostatnich zdjęć co godzinę i trzyma je u siebie, więc odwiedzający nie łączą się z Instagramem.</p>
+            <p class="{{ $intro }}">Sekcja pokazuje {{ \App\Modules\Content\Actions\RefreshInstagramFeed::POSTS }} zdjęć: najpierw te, które dodasz ręcznie niżej, potem najnowsze z kanału Behold.so. Strona trzyma zdjęcia u siebie, więc odwiedzający nie łączą się z Instagramem.</p>
             @if ($errors->hasBag('instagram'))
                 <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
             @endif
+            <label class="mb-3 flex min-h-11 items-center gap-2.5 text-[14px] text-graphite">
+                <input type="hidden" name="home_show_instagram_feed" value="0">
+                <input type="checkbox" name="home_show_instagram_feed" value="1" @checked($errors->hasBag('instagram') ? old('home_show_instagram_feed') : $instagram['home_show_instagram_feed']) class="size-4 accent-ink">
+                Pokazuj sekcję z Instagrama na stronie głównej
+            </label>
             <div class="grid gap-3">
                 <x-shared::field name="instagram_feed_url" id="instagram-kanal" bag="instagram" type="url" label="Adres kanału JSON z Behold"
                                  :value="old('instagram_feed_url', $instagram['instagram_feed_url'])" placeholder="https://feeds.behold.so/…"
-                                 hint="Behold → Twój kanał → JSON. Puste pole zdejmuje sekcję ze strony głównej." />
+                                 hint="Behold → Twój kanał → JSON. Puste pole zdejmuje zdjęcia z kanału; posty dodane ręcznie zostają." />
                 <x-shared::field name="instagram_feed_hashtag" id="instagram-hashtag" bag="instagram" label="Tylko posty z hashtagiem — nieobowiązkowe"
                                  :value="old('instagram_feed_hashtag', $instagram['instagram_feed_hashtag'])" placeholder="np. #zpracowni" />
             </div>
             @if ($instagram['posts']->isNotEmpty())
-                <p class="mt-3.5 text-[12.5px] text-label">Na stronie teraz, ostatni post {{ $instagram['posts']->first()->posted_at->diffForHumans() }}. Strona tnie zdjęcia do kwadratu — jeśli coś ważnego się ucina, przesuń kadr suwakami.</p>
+                <p class="mt-3.5 text-[12.5px] text-label">{{ $instagram['home_show_instagram_feed'] ? 'Na stronie teraz' : 'Pokażą się po włączeniu sekcji' }}, ostatni post {{ $instagram['posts']->max('posted_at')->diffForHumans() }}. Strona tnie zdjęcia do kwadratu — jeśli coś ważnego się ucina, przesuń kadr suwakami.</p>
                 @if ($errors->getBag('instagram')->has('focus.*'))
                     <p class="mt-1.5 text-[13px] text-error">{{ $errors->getBag('instagram')->first('focus.*') }}</p>
                 @endif
@@ -215,5 +223,74 @@
             @endif
             <button class="{{ $button }}">Zapisz i pobierz zdjęcia</button>
         </form>
+
+        {{-- Posts added by hand (MA-274): Kasia's photo and a link to the post, before the feed's posts and in her order. --}}
+        <section id="instagram-reczne" aria-labelledby="instagram-reczne-tytul" class="{{ $card }}">
+            <h2 id="instagram-reczne-tytul" class="{{ $heading }}">Instagram — posty dodane ręcznie</h2>
+            <p class="{{ $intro }}">Bez kanału Behold albo gdy chcesz pokazać konkretne posty. Stoją przed zdjęciami z kanału, w tej kolejności. Najlepiej wyglądają 3 albo 6 — wtedy wypełniają całe rzędy.</p>
+
+            @if ($instagram['manual']->isNotEmpty())
+                <ol class="mb-4 grid gap-2.5">
+                    @foreach ($instagram['manual'] as $post)
+                        <li class="flex flex-wrap items-center gap-3 rounded-[4px] border border-line bg-white p-2.5">
+                            <img src="{{ $post->imageUrl() }}" alt="" width="64" height="64" style="object-position: {{ $post->objectPosition() }}" class="size-16 rounded-[3px] object-cover">
+                            <div class="min-w-0 flex-1">
+                                <p class="truncate text-[14px] text-ink">{{ $post->alt() }}</p>
+                                <a href="{{ $post->permalink }}" target="_blank" rel="noopener" class="block truncate text-[12.5px] text-label hover:text-navy">{{ $post->permalink }}</a>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                @unless ($loop->first)
+                                    <form method="post" action="{{ route('admin.content.instagram-posts.move', $post) }}">
+                                        @csrf
+                                        <input type="hidden" name="kierunek" value="gora">
+                                        <button aria-label="Przesuń wyżej post {{ $loop->iteration }}" class="{{ $small }}">↑</button>
+                                    </form>
+                                @endunless
+                                @unless ($loop->last)
+                                    <form method="post" action="{{ route('admin.content.instagram-posts.move', $post) }}">
+                                        @csrf
+                                        <input type="hidden" name="kierunek" value="dol">
+                                        <button aria-label="Przesuń niżej post {{ $loop->iteration }}" class="{{ $small }}">↓</button>
+                                    </form>
+                                @endunless
+                                <form method="post" action="{{ route('admin.content.instagram-posts.destroy', $post) }}"
+                                      x-data x-on:submit="confirm('Usunąć ten post ze strony? Na Instagramie zostaje.') || $event.preventDefault()">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="min-h-11 rounded-full px-3 text-[13px] text-hint hover:text-error">Usuń</button>
+                                </form>
+                            </div>
+                        </li>
+                    @endforeach
+                </ol>
+            @endif
+
+            <form method="post" action="{{ route('admin.content.instagram-posts.store') }}" enctype="multipart/form-data" novalidate
+                  class="rounded-[4px] border border-dashed border-line-strong p-3.5">
+                @csrf
+                <h3 class="mb-2.5 font-serif text-[19px]">Nowy post</h3>
+                @if ($manualErrors->any())
+                    <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby dodać post.</p>
+                @endif
+                <div class="grid gap-2.5">
+                    <div class="min-w-0">
+                        <label for="instagram-zdjecie" class="{{ $fieldLabel }}">Zdjęcie — JPG, PNG albo WebP, do 15 MB</label>
+                        <input id="instagram-zdjecie" type="file" name="photo" accept="image/jpeg,image/png,image/webp"
+                               @if ($manualErrors->has('photo')) aria-invalid="true" aria-describedby="instagram-zdjecie-blad" @endif
+                               class="block w-full text-[14px] text-graphite file:mr-3 file:min-h-11 file:rounded-full file:border file:border-line-strong file:bg-linen file:px-4 file:text-[13px] file:text-ink">
+                        @if ($manualErrors->has('photo'))
+                            <p id="instagram-zdjecie-blad" class="mt-1.5 text-[13px] text-error">{{ $manualErrors->first('photo') }}</p>
+                        @endif
+                    </div>
+                    <x-shared::field name="permalink" id="instagram-link" bag="instagram-reczne" type="url" label="Link do posta na Instagramie"
+                                     :value="old('permalink')" placeholder="https://www.instagram.com/p/…"
+                                     hint="Na Instagramie: ⋯ przy poście → Kopiuj link." />
+                    <x-shared::field name="alt" id="instagram-opis" bag="instagram-reczne" label="Co widać na zdjęciu"
+                                     :value="old('alt')" placeholder="np. kubek w szkliwie lazur na drewnianym stole"
+                                     hint="Czyta to czytnik ekranu osobom niewidomym." />
+                </div>
+                <button class="{{ $button }}">Dodaj post</button>
+            </form>
+        </section>
     </div>
 </x-admin::layout>

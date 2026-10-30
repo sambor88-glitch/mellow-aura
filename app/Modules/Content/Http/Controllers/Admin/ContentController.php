@@ -3,6 +3,7 @@
 namespace App\Modules\Content\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Content\Actions\RefreshInstagramFeed;
 use App\Modules\Content\Http\Requests\Admin\SaveB2bFactsRequest;
 use App\Modules\Content\Http\Requests\Admin\SaveContactTopicsRequest;
 use App\Modules\Content\Http\Requests\Admin\SaveCustomOrderStepsRequest;
@@ -37,9 +38,11 @@ class ContentController extends Controller
             'customOrderSteps' => $rows('custom_order_steps', ['title', 'text']),
             'b2bFacts' => $rows('b2b_facts', ['title', 'text']),
             'instagram' => [
+                'home_show_instagram_feed' => $settings->get('home_show_instagram_feed') !== false,
                 'instagram_feed_url' => $settings->get('instagram_feed_url'),
                 'instagram_feed_hashtag' => $settings->get('instagram_feed_hashtag'),
-                'posts' => InstagramPost::query()->latest('posted_at')->get(),
+                'posts' => InstagramPost::forHomePage(true, RefreshInstagramFeed::POSTS),
+                'manual' => InstagramPost::query()->manual()->ordered()->get(),
             ],
             'topics' => collect((array) $settings->get('contact_form_topics', []))
                 ->filter(fn (mixed $topic) => is_string($topic) && $topic !== '')
