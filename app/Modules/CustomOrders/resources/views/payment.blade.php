@@ -25,7 +25,7 @@
         @else
             <p class="mb-10 max-w-[52ch] text-[16.5px] text-lead">{{ $idea->name }}, zaczynam pracę, gdy tylko bank potwierdzi wpłatę.</p>
 
-            <form method="post" action="{{ route('custom-orders.payment.store', $link->token) }}" novalidate
+            <form method="post" action="{{ route('custom-orders.payment.store', $link->token) }}" novalidate data-submit-once
                   x-data="{ payment: @js($selectedPayment), blik: '' }"
                   class="flex flex-wrap items-start gap-[clamp(24px,4vw,56px)]">
                 @csrf

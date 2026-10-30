@@ -69,7 +69,7 @@
                         @php
                             $select = 'w-full min-w-0 rounded-[14px] border bg-white px-4 py-[15px] text-[15px] text-lead focus:border-ink pointer-coarse:text-[16px]';
                         @endphp
-                        <form method="post" action="{{ route('firing.store') }}" novalidate class="grid gap-[13px]"
+                        <form method="post" action="{{ route('firing.store') }}" novalidate data-submit-once class="grid gap-[13px]"
                               x-data="firingQuote(@js($services), @js(old('service', '')), @js(old('quantity', '')))">
                             @csrf
                             <x-shared::field name="name" id="firing-name" label="Imię" autocomplete="given-name" maxlength="120" />

@@ -45,7 +45,7 @@
             <h1 class="mb-4 font-serif text-[length:clamp(40px,6vw,72px)] leading-[.96] font-light tracking-[-0.02em] text-balance">{{ $t($refused ? 'refused_heading' : 'expired_heading') }}</h1>
             <p class="mb-8 max-w-[48ch] text-[16.5px] leading-[1.7] text-lead">{!! $withNumber($retryText) !!}</p>
 
-            <form method="post" action="{{ route('checkout.blik.retry') }}" novalidate x-data="{ code: '' }" class="{{ $glass }}">
+            <form method="post" action="{{ route('checkout.blik.retry') }}" novalidate data-submit-once x-data="{ code: '' }" class="{{ $glass }}">
                 @csrf
                 <div class="mb-3.5 flex items-center gap-3">
                     <span class="rounded-full bg-navy px-3 py-[5px] text-[12px] font-medium tracking-[0.06em] text-white">BLIK</span>

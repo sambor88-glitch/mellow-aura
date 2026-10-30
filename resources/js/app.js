@@ -16,6 +16,7 @@ import rememberLocaleChoice from './locale';
 import mugConfigurator from './mug';
 import pairUpload from './pair-upload';
 import photoPicker from './photos';
+import submitOnce from './submit-once';
 import { pageTransitions, whenShown } from './transitions';
 import unsavedChanges from './unsaved';
 
@@ -68,3 +69,4 @@ pageTransitions();
 // A page rendered ahead of a click sends its Analytics events only once someone sees it (MA-237).
 whenShown(trackPage);
 rememberLocaleChoice();
+submitOnce();
