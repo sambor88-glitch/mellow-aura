@@ -78,7 +78,7 @@
 
                     {{-- Esc, a click anywhere or the × closes the zoom, and focus goes back to the photo. --}}
                     <dialog x-ref="zoom" x-on:click="$el.close()" x-on:keydown.escape="$el.close()" x-on:close="$refs.zoomTrigger.focus()" aria-label="{{ __('catalog::product.zoom_dialog') }}"
-                            class="focus-on-dark fixed inset-0 size-full max-h-none max-w-none animate-ma-in cursor-zoom-out items-center justify-center bg-ink/55 p-7 backdrop-blur-[20px] open:flex backdrop:bg-transparent">
+                            class="focus-on-dark fixed inset-0 size-full max-h-none max-w-none animate-ma-in cursor-zoom-out items-center justify-center bg-ink/55 pad-safe [--pad:28px] backdrop-blur-[20px] open:flex backdrop:bg-transparent">
                         @foreach ($images as $index => $image)
                             {{-- The largest copy at most, never the original of several megabytes (MA-296). --}}
                             @php($srcset = ProductPhoto::srcset($image))

@@ -24,7 +24,7 @@
 --}}
 {{-- The open menu lifts the whole header, its stacking context, over the language hint (z-61) and the consent
      banner (z-70), which would otherwise cover „Zamknij” and the last links (MA-203). --}}
-<div x-data="stickyHeader" x-bind:style="menu && { zIndex: 90 }" class="pointer-events-none sticky top-0 z-60 px-3 pt-3.5 print:hidden">
+<div x-data="stickyHeader" x-bind:style="menu && { zIndex: 90 }" class="pointer-events-none sticky top-0 z-60 px-3 pt-[calc(14px+env(safe-area-inset-top))] print:hidden">
     {{-- The menu lives beside the pill, not in it: the pill's backdrop-filter would make a fixed menu cover the pill
          instead of the screen, and its first links would end up above the top edge (MA-81). --}}
     <div x-on:keydown.escape.window="if (menu) { menu = false; $refs.menuButton.focus() }">
@@ -55,9 +55,9 @@
         @if ($links)
             <nav id="menu" aria-label="{{ __('shared::header.menu') }}" x-cloak x-show="menu" x-trap.noscroll="menu" data-lenis-prevent
                  x-transition:enter="transition duration-500 ease-clay" x-transition:enter-start="opacity-0" x-transition:leave="transition duration-300" x-transition:leave-end="opacity-0"
-                 class="aura-overlay pointer-events-auto fixed inset-0 z-80 flex flex-col justify-center-safe gap-1.5 overflow-y-auto overscroll-contain bg-sand/72 px-[clamp(24px,8vw,80px)] pt-24 pb-10 backdrop-blur-[26px] min-[920px]:hidden">
+                 class="aura-overlay pointer-events-auto fixed inset-0 z-80 flex flex-col justify-center-safe gap-1.5 overflow-y-auto overscroll-contain bg-sand/72 pt-[calc(96px+env(safe-area-inset-top))] pr-[max(clamp(24px,8vw,80px),env(safe-area-inset-right))] pb-[calc(40px+env(safe-area-inset-bottom))] pl-[max(clamp(24px,8vw,80px),env(safe-area-inset-left))] backdrop-blur-[26px] min-[920px]:hidden">
                 <button type="button" x-on:click="menu = false; $refs.menuButton.focus()"
-                        class="absolute top-[22px] right-[22px] flex min-h-11 items-center rounded-full border border-line-strong px-4 text-[13.5px] text-ink">{{ __('shared::header.close') }}</button>
+                        class="absolute top-[calc(22px+env(safe-area-inset-top))] right-[max(22px,env(safe-area-inset-right))] flex min-h-11 items-center rounded-full border border-line-strong px-4 text-[13.5px] text-ink">{{ __('shared::header.close') }}</button>
                 @foreach ($links as $i => [$label, $route, $pattern])
                     <a href="{{ route($route) }}" @if ($isCurrent($pattern)) aria-current="page" @endif x-on:click="menu = false"
                        x-bind:class="menu ? 'translate-y-0 opacity-100 blur-none' : 'translate-y-6 opacity-0 blur-sm'"

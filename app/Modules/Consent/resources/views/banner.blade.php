@@ -15,7 +15,7 @@
              aria-labelledby="consent-title"
              class="focus-on-dark fixed inset-x-0 bottom-0 z-70 border-t border-line-dark bg-ink text-on-dark print:hidden">
         {{-- On a phone the banner stays low: shorter words and smaller gaps, so the page keeps most of the screen. --}}
-        <div class="mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-10 gap-y-3 px-[clamp(16px,4vw,28px)] pt-4 pb-[calc(16px+env(safe-area-inset-bottom))] sm:gap-y-4 sm:pt-5 sm:pb-[calc(20px+env(safe-area-inset-bottom))]">
+        <div class="mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-10 gap-y-3 pr-[max(clamp(16px,4vw,28px),env(safe-area-inset-right))] pl-[max(clamp(16px,4vw,28px),env(safe-area-inset-left))] pt-4 pb-[calc(16px+env(safe-area-inset-bottom))] sm:gap-y-4 sm:pt-5 sm:pb-[calc(20px+env(safe-area-inset-bottom))]">
             <div class="min-w-0 flex-[1_1_420px]">
                 <h2 id="consent-title" class="mb-1.5 text-[11px] tracking-[0.2em] text-label-dark uppercase">pliki cookies</h2>
                 <p class="max-w-[76ch] text-[13.5px] leading-[1.55] text-pretty sm:text-[14px] sm:leading-[1.6]">

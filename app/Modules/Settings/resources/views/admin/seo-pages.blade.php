@@ -36,7 +36,7 @@
             </section>
         @endforeach
 
-        <div class="sticky bottom-4">
+        <div class="sticky bottom-[calc(16px+env(safe-area-inset-bottom))]">
             <button class="min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen shadow-card-hover transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Zapisz wszystkie strony</button>
         </div>
     </form>
