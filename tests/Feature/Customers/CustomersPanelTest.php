@@ -53,16 +53,16 @@ class CustomersPanelTest extends TestCase
         $this->order();
         $key = CustomerKey::of('ania@example.com');
 
-        $this->get('/panel/klientki')->assertRedirect('/panel/logowanie');
+        $this->get('/panel/klienci')->assertRedirect('/panel/logowanie');
 
         $this->actingAs(User::factory()->helper()->create());
-        $this->get('/panel/klientki')->assertForbidden();
-        $this->get('/panel/klientki/'.$key)->assertForbidden();
-        $this->post('/panel/klientki/'.$key.'/kopia-danych')->assertForbidden();
-        $this->delete('/panel/klientki/'.$key, ['confirm_email' => 'ania@example.com'])->assertForbidden();
-        $this->get('/panel')->assertDontSee('Klientki');
+        $this->get('/panel/klienci')->assertForbidden();
+        $this->get('/panel/klienci/'.$key)->assertForbidden();
+        $this->post('/panel/klienci/'.$key.'/kopia-danych')->assertForbidden();
+        $this->delete('/panel/klienci/'.$key, ['confirm_email' => 'ania@example.com'])->assertForbidden();
+        $this->get('/panel')->assertDontSee('Klienci');
 
-        $this->actingAs(User::factory()->create())->get('/panel')->assertSee('Klientki');
+        $this->actingAs(User::factory()->create())->get('/panel')->assertSee('Klienci');
     }
 
     public function test_one_person_gathers_her_records_from_every_module_by_address(): void
@@ -78,7 +78,7 @@ class CustomersPanelTest extends TestCase
         Carbon::setTestNow('2026-10-28 10:00');
 
         $this->actingAs(User::factory()->create())
-            ->get('/panel/klientki')
+            ->get('/panel/klienci')
             ->assertOk()
             ->assertSeeInOrder([
                 'Anna Nowak', 'ania@example.com', '1 zamówienie · 1 zamówienie indywidualne · 1 wypał', 'ostatnio 25.10.2026',
@@ -88,10 +88,10 @@ class CustomersPanelTest extends TestCase
             ->assertSee('href="'.route('admin.customers.show', CustomerKey::of('ania@example.com')).'"', false)
             ->assertSee('Na razie żadnych.');
 
-        $this->get('/panel/klientki?szukaj=KOWALSKA')->assertSee('basia@example.com')->assertDontSee('ania@example.com');
-        $this->get('/panel/klientki?szukaj=ania@')->assertSee('ania@example.com')->assertDontSee('basia@example.com');
-        $this->get('/panel/klientki?szukaj=600100200')->assertSee('ania@example.com')->assertDontSee('basia@example.com');
-        $this->get('/panel/klientki?szukaj=Zosia')->assertSee('Nikogo nie znalazłam');
+        $this->get('/panel/klienci?szukaj=KOWALSKA')->assertSee('basia@example.com')->assertDontSee('ania@example.com');
+        $this->get('/panel/klienci?szukaj=ania@')->assertSee('ania@example.com')->assertDontSee('basia@example.com');
+        $this->get('/panel/klienci?szukaj=600100200')->assertSee('ania@example.com')->assertDontSee('basia@example.com');
+        $this->get('/panel/klienci?szukaj=Zosia')->assertSee('Nikogo nie znalazłam');
     }
 
     public function test_the_card_shows_everything_about_her_and_its_address_hides_hers(): void
@@ -105,7 +105,7 @@ class CustomersPanelTest extends TestCase
         $this->assertStringNotContainsString('ania', route('admin.customers.show', $key));
 
         $this->actingAs(User::factory()->create())
-            ->get('/panel/klientki/'.$key)
+            ->get('/panel/klienci/'.$key)
             ->assertOk()
             ->assertSeeInOrder([
                 'Anna Nowak', 'ania@example.com', '600 100 200',
@@ -117,7 +117,7 @@ class CustomersPanelTest extends TestCase
             ->assertSee('Najpierw dokończ te sprawy')
             ->assertDontSee('name="confirm_email"', false);
 
-        $this->get('/panel/klientki/'.str_repeat('0', 32))->assertNotFound();
+        $this->get('/panel/klienci/'.str_repeat('0', 32))->assertNotFound();
     }
 
     public function test_the_copy_of_her_data_downloads_as_json_and_goes_to_the_log_without_her_address(): void
@@ -128,7 +128,7 @@ class CustomersPanelTest extends TestCase
         $this->order(['email' => 'basia@example.com', 'name' => 'Basia']);
 
         $response = $this->actingAs(User::factory()->create(['name' => 'Kasia']))
-            ->post('/panel/klientki/'.CustomerKey::of('ania@example.com').'/kopia-danych')
+            ->post('/panel/klienci/'.CustomerKey::of('ania@example.com').'/kopia-danych')
             ->assertOk()
             ->assertHeader('Content-Type', 'application/json; charset=utf-8')
             ->assertHeader('Content-Disposition', 'attachment; filename="mellowaura-dane-'.now()->format('Y-m-d').'.json"');
@@ -146,7 +146,7 @@ class CustomersPanelTest extends TestCase
         $this->assertSame(1, $logged->summary['orders']);
         $this->assertStringNotContainsString('ania', json_encode($logged->getAttributes()));
 
-        $this->get('/panel/klientki')->assertSeeInOrder(['Wykonane żądania RODO', 'Kopia danych', 'zamówienia: 1 · zamówienia indywidualne: 1', 'Kasia']);
+        $this->get('/panel/klienci')->assertSeeInOrder(['Wykonane żądania RODO', 'Kopia danych', 'zamówienia: 1 · zamówienia indywidualne: 1', 'Kasia']);
     }
 
     public function test_nothing_is_erased_while_something_of_hers_is_still_open(): void
@@ -174,12 +174,12 @@ class CustomersPanelTest extends TestCase
             $case();
 
             $this->actingAs($owner)
-                ->delete('/panel/klientki/'.CustomerKey::of('ania@example.com'), ['confirm_email' => 'ania@example.com'])
+                ->delete('/panel/klienci/'.CustomerKey::of('ania@example.com'), ['confirm_email' => 'ania@example.com'])
                 ->assertRedirect(route('admin.customers.show', CustomerKey::of('ania@example.com')))
                 ->assertSessionHas('panel_status', 'Najpierw dokończ sprawy z listy — do nich potrzebny jest jeszcze jej adres.');
 
             $this->assertSame(0, PrivacyRequest::count());
-            $this->get('/panel/klientki')->assertSee('ania@example.com');
+            $this->get('/panel/klienci')->assertSee('ania@example.com');
         }
     }
 
@@ -188,9 +188,9 @@ class CustomersPanelTest extends TestCase
         $this->order();
 
         $this->actingAs(User::factory()->create())
-            ->from('/panel/klientki/'.CustomerKey::of('ania@example.com'))
-            ->delete('/panel/klientki/'.CustomerKey::of('ania@example.com'), ['confirm_email' => 'basia@example.com'])
-            ->assertRedirect('/panel/klientki/'.CustomerKey::of('ania@example.com'))
+            ->from('/panel/klienci/'.CustomerKey::of('ania@example.com'))
+            ->delete('/panel/klienci/'.CustomerKey::of('ania@example.com'), ['confirm_email' => 'basia@example.com'])
+            ->assertRedirect('/panel/klienci/'.CustomerKey::of('ania@example.com'))
             ->assertSessionHasErrors(['confirm_email' => 'Wpisz dokładnie adres z tej karty — to zabezpieczenie przed usunięciem nie tej osoby.']);
 
         $this->assertSame('ania@example.com', Order::sole()->email);
@@ -213,8 +213,8 @@ class CustomersPanelTest extends TestCase
         app(FailedJobProviderInterface::class)->log('database', 'mail', json_encode(['uuid' => (string) Str::uuid(), 'mail' => ['description' => 'Potwierdzenie zamówienia', 'to' => ['basia@example.com']]]), new RuntimeException('Postmark nie odpowiada'));
 
         $this->actingAs(User::factory()->create(['name' => 'Kasia']))
-            ->delete('/panel/klientki/'.CustomerKey::of('ania@example.com'), ['confirm_email' => ' Ania@Example.com '])
-            ->assertRedirect('/panel/klientki')
+            ->delete('/panel/klienci/'.CustomerKey::of('ania@example.com'), ['confirm_email' => ' Ania@Example.com '])
+            ->assertRedirect('/panel/klienci')
             ->assertSessionHas('panel_status', 'Dane usunięte. Zostały tylko opłacone zamówienia do księgowości oraz odstąpienia i reklamacje — bez adresu e-mail.');
 
         $paid->refresh();
@@ -244,11 +244,11 @@ class CustomersPanelTest extends TestCase
         // assertEquals: MySQL keeps a JSON column's keys in its own order.
         $this->assertEquals(['vouchers' => 1, 'gift_choices' => 0, 'shipments' => 0, 'orders' => 2, 'paid_orders' => 1, 'withdrawals' => 1, 'complaints' => 1, 'received_complaints' => 0, 'firing_requests' => 1, 'failed_mails' => 1, 'stock_notifications' => 0, 'custom_orders' => 1], $logged->summary);
 
-        $this->get('/panel/klientki')
+        $this->get('/panel/klienci')
             ->assertDontSee('ania@example.com')
             ->assertSee('basia@example.com')
             ->assertSeeInOrder(['Usunięcie danych', 'zamówienia: 2 · opłacone, zostają do księgowości: 1', 'Kasia']);
-        $this->get('/panel/klientki/'.CustomerKey::of('ania@example.com'))->assertNotFound();
+        $this->get('/panel/klienci/'.CustomerKey::of('ania@example.com'))->assertNotFound();
     }
 
     /**

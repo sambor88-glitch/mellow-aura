@@ -76,7 +76,7 @@ Pierwsza fala: `Shared` (układ strony, komponenty Blade, formatowanie kwot, SEO
 `Monitoring` (niewysłane maile w panelu, alerty o błędach, pilnowanie kolejki i harmonogramu),
 `CustomOrders` (zamówienia indywidualne: formularz ze zdjęciami, panel z wyceną, zaliczka — przed startem
 z decyzji Macieja 26.10, epik MA-16),
-`Customers` (ekran „Klientki”: osoba zebrana po e-mailu, kopia danych i usunięcie na żądanie RODO — MA-241;
+`Customers` (ekran „Klienci”: osoba zebrana po e-mailu, kopia danych i usunięcie na żądanie RODO — MA-241;
 każdy moduł usuwa dane ze swoich tabel własną akcją `AnonymizeCustomer`, opłacone zamówienia zostają do księgowości).
 Po świętach: `Workshops`, `Firing`, `Journal`.
 

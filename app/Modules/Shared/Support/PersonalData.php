@@ -5,7 +5,7 @@ namespace App\Modules\Shared\Support;
 /**
  * What a record holds after its person asked to be forgotten (GDPR art. 17, MA-241). Each module wipes its own
  * tables through its own AnonymizeCustomer action; this class keeps them writing the same placeholders, so the
- * „Klientki” screen can tell an erased record from a real address.
+ * „Klienci” screen can tell an erased record from a real address.
  */
 final class PersonalData
 {

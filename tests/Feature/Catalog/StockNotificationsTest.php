@@ -214,13 +214,13 @@ class StockNotificationsTest extends TestCase
         $owner = User::factory()->create(['name' => 'Kasia']);
         $key = CustomerKey::of('ania@example.com');
 
-        $this->actingAs($owner)->get('/panel/klientki')->assertSee('ania@example.com')->assertSee('czeka na 1 rzecz');
-        $this->actingAs($owner)->get('/panel/klientki/'.$key)->assertSeeInOrder(['Czeka na powrót', 'Wazony (Wysoki 24 cm)', 'mail po polsku']);
+        $this->actingAs($owner)->get('/panel/klienci')->assertSee('ania@example.com')->assertSee('czeka na 1 rzecz');
+        $this->actingAs($owner)->get('/panel/klienci/'.$key)->assertSeeInOrder(['Czeka na powrót', 'Wazony (Wysoki 24 cm)', 'mail po polsku']);
 
-        $copy = json_decode($this->actingAs($owner)->post('/panel/klientki/'.$key.'/kopia-danych')->assertOk()->getContent(), true);
+        $copy = json_decode($this->actingAs($owner)->post('/panel/klienci/'.$key.'/kopia-danych')->assertOk()->getContent(), true);
         $this->assertSame([['product' => 'Wazony', 'variant' => 'Wysoki 24 cm', 'language' => 'pl']], array_map(fn (array $row) => array_intersect_key($row, array_flip(['product', 'variant', 'language'])), $copy['stock_notifications']));
 
-        $this->actingAs($owner)->delete('/panel/klientki/'.$key, ['confirm_email' => 'ania@example.com'])->assertRedirect('/panel/klientki');
+        $this->actingAs($owner)->delete('/panel/klienci/'.$key, ['confirm_email' => 'ania@example.com'])->assertRedirect('/panel/klienci');
 
         $this->assertSame(['basia@example.com'], StockNotification::query()->pluck('email')->all());
         $this->assertSame(1, PrivacyRequest::query()->latest('id')->first()->summary['stock_notifications']);

@@ -100,7 +100,7 @@ class Menu
                 ['label' => 'Karty wyboru', 'route' => 'admin.gift-choices.index', 'active' => ['admin.gift-choices.*'], 'description' => 'Kubki „Podaruj wybór”: kto jeszcze nie wybrał napisu, ponowne wysłanie karty i decyzja po terminie.',
                     'count' => fn () => GiftChoice::query()->awaitingDecision()->count(),
                     'count_label' => 'po terminie'],
-                ['label' => 'Klientki', 'route' => 'admin.customers.index', 'active' => ['admin.customers.*'], 'description' => 'Wszystko o jednej osobie po adresie e-mail: zamówienia, warsztaty, pomysły i wypały. Tu też kopia jej danych i usunięcie na jej prośbę (RODO).'],
+                ['label' => 'Klienci', 'route' => 'admin.customers.index', 'active' => ['admin.customers.*'], 'description' => 'Wszystko o jednej osobie po adresie e-mail: zamówienia, warsztaty, pomysły i wypały. Tu też kopia jej danych i usunięcie na jej prośbę (RODO).'],
                 ['label' => 'Odstąpienia', 'route' => 'admin.withdrawals.index', 'active' => ['admin.withdrawals.*'], 'description' => 'Oświadczenia z formularza „Odstąp od umowy tutaj” i termin zwrotu pieniędzy.'],
                 // Complaints are saved the day they arrive by e-mail (MA-261); what waits is one without an answer.
                 ['label' => 'Reklamacje', 'route' => 'admin.complaints.index', 'active' => ['admin.complaints.*'], 'description' => 'Zapis reklamacji z maila, termin 14 dni i odpowiedź z gotowym listem — przy odmowie z oświadczeniem o mediacji.',

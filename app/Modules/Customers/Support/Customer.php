@@ -5,7 +5,7 @@ namespace App\Modules\Customers\Support;
 use Illuminate\Support\Carbon;
 
 /**
- * One person on the „Klientki” list: everything she left in the shop under one address.
+ * One person on the „Klienci” list: everything she left in the shop under one address.
  */
 final readonly class Customer
 {

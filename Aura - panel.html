@@ -647,7 +647,7 @@ const GROUPS = [
   { label: 'Sprzedaż', items: [
     { id: 'orders', label: 'Zamówienia', count: 3, countLabel: 'do wysłania', helper: true },
     { id: 'custom', label: 'Zamówienia indywidualne', count: 2, countLabel: 'nowe' },
-    { id: 'customers', label: 'Klientki' },
+    { id: 'customers', label: 'Klienci' },
     { id: 'withdrawals', label: 'Odstąpienia' },
     { id: 'complaints', label: 'Reklamacje', count: 1, countLabel: 'czeka na odpowiedź' },
   ]},
@@ -731,8 +731,8 @@ function ask(box, df) {
 forms.forEach(f => f.querySelector('.js-save').addEventListener('click', () => {
   const df = dirtyForm(f);
   const box = f.querySelector('.js-ask') || document.querySelector('.js-nav-ask');
-  if (df) { box._then = () => { markSaved(f); toast(`Zapisane: ${f.dataset.name}. Klientki już to widzą.`); }; return ask(box, df); }
-  markSaved(f); closeAsks(); toast(`Zapisane: ${f.dataset.name}. Klientki już to widzą.`);
+  if (df) { box._then = () => { markSaved(f); toast(`Zapisane: ${f.dataset.name}. Klienci już to widzą.`); }; return ask(box, df); }
+  markSaved(f); closeAsks(); toast(`Zapisane: ${f.dataset.name}. Klienci już to widzą.`);
 }));
 document.querySelectorAll('.ask').forEach(box => {
   box.querySelector('.js-save-dirty').addEventListener('click', () => { markSaved(box._dirty); closeAsks(); toast(`Zapisane: ${box._dirty.dataset.name}.`); box._dirty.querySelector('.js-save').focus(); });

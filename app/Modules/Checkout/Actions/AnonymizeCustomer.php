@@ -10,7 +10,7 @@ use App\Modules\Checkout\Models\Withdrawal;
 use App\Modules\Shared\Support\PersonalData;
 
 /**
- * Forgets a customer in Checkout's tables when she asks for it (GDPR art. 17, MA-241). Called by the „Klientki”
+ * Forgets a customer in Checkout's tables when she asks for it (GDPR art. 17, MA-241). Called by the „Klienci”
  * screen, which first makes sure nothing of hers is still on its way.
  *
  * A paid order is a sale the books must show for five years (art. 17(3)(b)): it keeps its number, dates, amounts,
