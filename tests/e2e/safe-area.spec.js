@@ -31,6 +31,9 @@ test('upright, the header, the buy bar and the cart stay off the notch and the g
     await expect(bar).toBeVisible();
     expect((await box(bar)).bottom).toBeLessThanOrEqual(844 - 34);
 
+    // The header slid away while scrolling down (aura.js); back at the top it is there again with the cart.
+    await page.evaluate(() => scrollTo(0, 0));
+    await expect(page.locator('[data-aura-header]')).not.toHaveClass(/is-away/);
     await page.locator('button[aria-controls="cart"]').click();
     const panel = page.locator('.aura-drawer-panel');
     await expect(panel).toBeVisible();
