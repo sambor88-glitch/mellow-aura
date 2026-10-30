@@ -32,14 +32,7 @@ const measured = preset === 'mobile'
             },
         },
     ]
-    : [
-        // Product page on desktop: CLS 0.076 (MA-272).
-        {
-            matchingUrlPattern: '/produkt/',
-            assertions: { ...target, 'cumulative-layout-shift': median('error', { maxNumericValue: 0.08 }) },
-        },
-        { matchingUrlPattern: '^(?!.*/produkt/)', assertions: target },
-    ];
+    : [{ matchingUrlPattern: '.*', assertions: target }];
 
 module.exports = {
     ci: {

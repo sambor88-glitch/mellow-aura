@@ -166,7 +166,9 @@
 
                 @if ($product->variants->count() > 1)
                     <div data-buy-zone class="mb-3 text-[13.5px] font-medium text-graphite">{{ __('catalog::product.size_and_price') }}</div>
-                    <div data-buy-zone class="mb-[30px] grid grid-cols-[repeat(auto-fit,minmax(92px,1fr))] gap-2.5 sm:flex sm:flex-wrap">
+                    {{-- Even columns, not a wrapping row: the width of a size no longer depends on the font, so the web font
+                         arriving does not move a size into the next row (CLS on a computer, MA-272). --}}
+                    <div data-buy-zone class="mb-[30px] grid grid-cols-[repeat(auto-fit,minmax(92px,1fr))] gap-2.5 sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))]">
                         @foreach ($product->variants as $option)
                             <a href="{{ $canonical }}?wariant={{ $option->id }}" @if ($option->is($variant)) aria-current="true" @endif @class([
                                 'block rounded-[20px] border px-[18px] py-3 text-left transition-[border-color,background-color] duration-300',
