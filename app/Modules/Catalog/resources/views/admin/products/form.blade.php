@@ -206,7 +206,7 @@
                 <p id="{{ $formKey }}-variant-kind-note" class="mt-1.5 text-[12.5px] text-hint">Tak policzę je pod zdjęciem w sklepie. Przy jednej cenie nic się nie pokaże.</p>
             @endif
         </div>
-        <p class="mt-2.5 text-[12.5px] leading-[1.5] text-hint">Puste wiersze się nie zapiszą. Jedna cena nie potrzebuje nazwy rozmiaru. Pole „szt.” zostaw puste, jeśli nie liczysz sztuk — przy zerze produkt sam znika ze sklepu. „Przed obniżką” wpisz tylko przy promocji: karta produktu przekreśli tę cenę, gdy obniżysz cenę, i sama poda najniższą cenę z 30 dni. „Ukryj” chowa rozmiar ze sklepu, a tu zostaje razem z historią cen i osobami, które czekają na powrót — odznacz, a wróci. „Usuń” kasuje go na dobre.</p>
+        <p class="mt-2.5 text-[12.5px] leading-[1.5] text-hint">Puste wiersze się nie zapiszą. Jedna cena nie potrzebuje nazwy rozmiaru. Pole „szt.” zostaw puste, jeśli nie liczysz sztuk — przy zerze produkt sam znika ze sklepu. „Przed obniżką” wpisz tylko przy promocji: karta produktu przekreśli tę cenę, gdy obniżysz cenę, i sama poda najniższą cenę z 30 dni. „Ukryj” chowa rozmiar ze sklepu, a tu zostaje razem z historią cen i zapisami „Napisz, gdy wróci” — odznacz, a wróci. „Usuń” kasuje go na dobre.</p>
         <label class="mt-2.5 flex min-h-11 items-start gap-2.5 text-[14px] text-graphite">
             <input type="checkbox" name="euro_from_rate" value="1" x-model="fromRate" @checked($fromRate) class="mt-[3px] size-4 flex-none accent-ink">
             <span>Cena w euro z kursu NBP
