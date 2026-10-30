@@ -88,8 +88,8 @@ class AdminMailSignatureImageTest extends TestCase
             }
         }
 
-        // 18 customer mails, four of them with an English template too.
-        $this->assertSame(22, $rendered);
+        // 18 customer mails, five of them in English too.
+        $this->assertSame(23, $rendered);
     }
 
     public function test_without_a_picture_or_with_its_file_gone_the_signature_stays_as_it_was(): void
@@ -127,11 +127,14 @@ class AdminMailSignatureImageTest extends TestCase
             ->post('/panel/maile/grafika')
             ->assertSessionHasErrors(['image' => 'Wybierz grafikę z telefonu albo komputera'], null, 'grafika-podpisu');
 
+        // The mistake shows under the upload.
+        $this->actingAs($user)
+            ->followingRedirects()
+            ->post('/panel/maile/grafika', ['image' => $this->png(250, 100)])
+            ->assertSee('<p role="alert" class="mt-1.5 text-[13px] text-error">Grafika jest za mała i w mailu wyjdzie nieostra — wgraj co najmniej 300 px szerokości</p>', false);
+
         $this->assertNull(Setting::find(MailTexts::SIGNATURE_IMAGE));
         $this->assertSame([], Storage::disk('public')->allFiles());
-
-        // The last mistake shows under the upload, the others went with their own redirects.
-        $this->actingAs($user)->get('/panel/maile')->assertSee('<p role="alert" class="mt-1.5 text-[13px] text-error">Wybierz grafikę z telefonu albo komputera</p>', false);
     }
 
     public function test_taking_the_picture_off_deletes_its_file(): void
