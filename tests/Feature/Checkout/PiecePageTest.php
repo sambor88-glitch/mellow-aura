@@ -258,6 +258,49 @@ class PiecePageTest extends TestCase
         $this->get('/panel/zamowienia/'.$order->number)->assertSee('Zamówienie po angielsku — napisz po angielsku');
     }
 
+    public function test_one_piece_is_named_in_the_singular_on_its_page_its_certificate_and_its_card(): void
+    {
+        $order = $this->paidOrder();
+        $vase = $order->items->firstWhere('product_name', 'Wazon z paprocią');
+        $vase->update(['product_name' => 'Wazony', 'piece_name' => 'Wazon']);
+
+        $this->get('/k/'.$vase->page_token)
+            ->assertOk()
+            ->assertSee('<title>'.__('checkout::piece.title', ['name' => 'Wazon']), false)
+            ->assertSee('tracking-[-0.02em] text-balance [overflow-wrap:anywhere]">Wazon</h1>', false)
+            ->assertDontSee('Wazony');
+
+        $this->assertStringContainsString('Wazon · Niski 16 cm', app(PieceCardPdf::class)->html($vase->fresh('order')));
+        $certificate = app(CertificatePdf::class)->html(app(IssueCertificates::class)($order->fresh()));
+        $this->assertStringContainsString('Wazon · Niski 16 cm', $certificate);
+        $this->assertStringNotContainsString('Wazony', $certificate);
+    }
+
+    public function test_an_item_without_the_name_of_one_piece_keeps_the_product_name(): void
+    {
+        $vase = $this->paidOrder()->items->firstWhere('product_name', 'Wazon z paprocią');
+        $this->assertNull($vase->piece_name);
+
+        $this->get('/k/'.$vase->page_token)->assertOk()->assertSee('[overflow-wrap:anywhere]">Wazon z paprocią</h1>', false);
+        $this->assertStringContainsString('Wazon z paprocią · Niski 16 cm', app(PieceCardPdf::class)->html($vase->fresh('order')));
+    }
+
+    public function test_the_products_from_the_prototype_get_the_name_of_one_piece_unless_it_was_changed(): void
+    {
+        $category = Category::factory()->create();
+        $vases = Product::factory()->create(['slug' => 'wazony', 'name' => 'Wazony', 'category_id' => $category->id]);
+        $vases->translations()->create(['locale' => 'en', 'slug' => 'vases', 'name' => 'Vases']);
+        $platters = Product::factory()->create(['slug' => 'patery', 'name' => 'Patery', 'piece_name' => 'Patera z nóżką', 'category_id' => $category->id]);
+        $plates = Product::factory()->create(['slug' => 'talerze', 'name' => 'Talerze obiadowe', 'category_id' => $category->id]);
+        $bowls = Product::factory()->create(['slug' => 'miski', 'name' => 'Miski', 'category_id' => $category->id]);
+
+        (require base_path('app/Modules/Catalog/Database/Migrations/2026_10_30_220100_name_one_piece_of_the_seeded_products.php'))->up();
+
+        $this->assertSame(['Wazon', 'Vase'], [$vases->fresh()->piece_name, $vases->fresh()->translation('en')->piece_name]);
+        // Kasia's own name stays, and a product renamed in the panel may no longer be what the prototype sold.
+        $this->assertSame(['Patera z nóżką', null, 'Miska'], [$platters->fresh()->piece_name, $plates->fresh()->piece_name, $bowls->fresh()->piece_name]);
+    }
+
     public function test_the_card_and_the_certificate_carry_the_same_code(): void
     {
         $order = $this->paidOrder();

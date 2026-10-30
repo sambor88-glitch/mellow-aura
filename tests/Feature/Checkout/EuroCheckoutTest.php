@@ -167,6 +167,29 @@ class EuroCheckoutTest extends TestCase
         $this->assertSame('pl', app()->getLocale());
     }
 
+    public function test_an_english_order_names_one_piece_in_english_or_not_at_all(): void
+    {
+        $variant = $this->basket();
+        // Written only in Polish: the English piece keeps its English product name, never „Kubek malowany”.
+        $variant->product->update(['piece_name' => 'Kubek malowany']);
+        $this->post('/en/checkout', $this->form())->assertRedirect('/en/checkout/confirmation');
+
+        $item = Order::sole()->items()->sole();
+        $this->assertSame(['Painted mug', null], [$item->product_name, $item->piece_name]);
+        $this->get('/k/'.$item->page_token)->assertOk()->assertSee('Painted mug')->assertDontSee('Kubek malowany');
+    }
+
+    public function test_an_english_order_copies_the_english_name_of_one_piece(): void
+    {
+        $variant = $this->basket();
+        $variant->product->update(['piece_name' => 'Kubek malowany']);
+        $variant->product->translation('en')->update(['name' => 'Painted mugs', 'piece_name' => 'Painted mug']);
+        $this->post('/en/checkout', $this->form())->assertRedirect('/en/checkout/confirmation');
+
+        $item = Order::sole()->items()->sole();
+        $this->assertSame(['Painted mugs', 'Painted mug'], [$item->product_name, $item->piece_name]);
+    }
+
     public function test_blik_never_takes_euro(): void
     {
         $this->basket();

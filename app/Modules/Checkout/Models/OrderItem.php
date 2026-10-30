@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
-    'product_variant_id', 'product_name', 'variant_label', 'quantity', 'missing_quantity', 'is_made_to_order', 'unit_price_gross', 'currency', 'vat_rate', 'vat_exemption',
+    'product_variant_id', 'product_name', 'piece_name', 'variant_label', 'quantity', 'missing_quantity', 'is_made_to_order', 'unit_price_gross', 'currency', 'vat_rate', 'vat_exemption',
     'custom_text', 'custom_glaze', 'accepted_deviation', 'recipient_name', 'sender_name', 'dedication',
     'fired_on', 'glaze', 'plant', 'maker_note',
 ])]
@@ -55,6 +55,15 @@ class OrderItem extends Model
     public function getsCertificate(): bool
     {
         return $this->variant !== null ? ! $this->variant->product->isVoucher() : $this->custom_text !== null;
+    }
+
+    /**
+     * What one piece is called on its page, its certificate and its card: „Wazon”, not the product's „Wazony” (MA-291).
+     * An item from before the name, or from a product without one, keeps the product's name.
+     */
+    public function pieceName(): string
+    {
+        return $this->piece_name ?? $this->product_name;
     }
 
     /** The page behind the QR code on the certificate and the card in the parcel (MA-234). */

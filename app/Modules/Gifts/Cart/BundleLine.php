@@ -105,6 +105,7 @@ class BundleLine extends CartLine
             quantity: $this->quantity,
             unitPrice: $shares[$index],
             deviation: $item->variant->product->inPageLanguageOrPolish('deviation') ?: null,
+            pieceName: $item->variant->product->piece_name,
         ))->all();
     }
 }

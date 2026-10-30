@@ -27,12 +27,12 @@
     $btnGlass = 'fill-btn glass inline-flex min-h-[52px] items-center gap-2.5 rounded-full px-[30px] text-[14px] font-medium tracking-[0.04em] text-ink transition-[border-color,color] duration-300 [--fill:var(--color-cream)] hover:border-ink hover:text-ink active:scale-[.97]';
 @endphp
 
-<x-shared::layout :title="__('checkout::piece.title', ['name' => $item->product_name])" :noindex="true">
+<x-shared::layout :title="__('checkout::piece.title', ['name' => $item->pieceName()])" :noindex="true">
     <div class="mx-auto max-w-[1160px] animate-ma-view px-[clamp(18px,4vw,48px)] pt-10 pb-24">
         <div class="flex flex-wrap items-start gap-[clamp(28px,5vw,72px)]">
             <div class="min-w-0 flex-[1_1_420px]">
                 @if ($photo)
-                    <img src="{{ $photo->getAvailableUrl(['card']) }}" alt="{{ $photo->getCustomProperty('alt') ?: $item->product_name }}" fetchpriority="high"
+                    <img src="{{ $photo->getAvailableUrl(['card']) }}" alt="{{ $photo->getCustomProperty('alt') ?: $item->pieceName() }}" fetchpriority="high"
                          @if ($srcset) srcset="{{ $srcset }}" sizes="(min-width: 872px) 520px, calc(100vw - 36px)" @endif
                          width="1200" height="1500" style="{{ FocalPoint::style($photo) }}"
                          class="block aspect-[4/5] w-full rounded-[26px] bg-linen object-cover">
@@ -44,7 +44,7 @@
 
             <div class="min-w-0 flex-[1_1_380px]">
                 <p class="eyebrow mb-5">{{ __('checkout::piece.eyebrow') }}</p>
-                <h1 class="font-serif text-[length:clamp(38px,6.4vw,72px)] leading-[.98] font-light tracking-[-0.02em] text-balance [overflow-wrap:anywhere]">{{ $item->product_name }}</h1>
+                <h1 class="font-serif text-[length:clamp(38px,6.4vw,72px)] leading-[.98] font-light tracking-[-0.02em] text-balance [overflow-wrap:anywhere]">{{ $item->pieceName() }}</h1>
                 @if (filled($item->variant_label))
                     <p class="mt-3 text-[15px] text-label">{{ $item->variant_label }}</p>
                 @endif

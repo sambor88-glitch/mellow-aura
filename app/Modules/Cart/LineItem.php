@@ -28,5 +28,7 @@ final readonly class LineItem
         public ?string $deviation = null,
         /** @var ?Closure(OrderItem): void */
         public ?Closure $placed = null,
+        // One piece of the product in the language of the order („Wazon”); null keeps $name on its page (MA-291).
+        public ?string $pieceName = null,
     ) {}
 }

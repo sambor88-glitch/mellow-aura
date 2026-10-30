@@ -119,6 +119,8 @@ class ProductLine extends CartLine
             unitPrice: $this->unitPrice(),
             // Never dropped for want of a translation: the checkout asks to accept it.
             deviation: $this->variant->product->inPageLanguageOrPolish('deviation') ?: null,
+            // Only in the language of the page: an English order never names its piece in Polish.
+            pieceName: $this->variant->product->piece_name,
         )];
     }
 }

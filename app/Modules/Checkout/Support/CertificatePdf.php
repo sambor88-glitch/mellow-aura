@@ -121,7 +121,7 @@ class CertificatePdf
 
         return [
             'number' => (string) $certificate->number,
-            'work' => collect([$item->product_name, $item->variant_label])->filter()->join(' · '),
+            'work' => collect([$item->pieceName(), $item->variant_label])->filter()->join(' · '),
             'text' => $item->custom_text === null ? null : str_replace("\n", ' / ', $item->custom_text),
             'ceramics' => $ceramics,
             // Filled in the panel (MA-234); left empty they stay lines to write on by hand.

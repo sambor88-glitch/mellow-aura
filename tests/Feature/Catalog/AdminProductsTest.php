@@ -401,6 +401,36 @@ class AdminProductsTest extends TestCase
         $this->assertFalse($mug->fresh()->hasTranslation('en'));
     }
 
+    public function test_the_name_of_one_piece_is_saved_in_each_language_and_can_be_emptied(): void
+    {
+        $owner = User::factory()->create();
+        $vase = $this->product('Wazony', 1, [23900]);
+        $size = $vase->variants()->sole();
+        $form = fn (string $piece, string $englishPiece) => [
+            'form' => 'produkt-'.$vase->id,
+            'name' => 'Wazony',
+            'piece_name' => $piece,
+            'category_id' => $this->mugs->id,
+            'is_published' => '1',
+            'en' => ['name' => 'Vases', 'piece_name' => $englishPiece],
+            'variants' => [['id' => $size->id, 'label' => $size->label, 'label_en' => 'Low', 'price' => '239']],
+        ];
+
+        $this->actingAs($owner)->get('/panel/produkty')
+            ->assertSee('Nazwa jednej sztuki')
+            ->assertSee('Nazwa jednej sztuki po angielsku');
+
+        $this->actingAs($owner)->put('/panel/produkty/'.$vase->id, $form(' Wazon ', 'Vase'))->assertRedirect('/panel/produkty#produkt-'.$vase->id);
+        $this->assertSame(['Wazony', 'Wazon', 'Vase'], [$vase->fresh()->name, $vase->fresh()->piece_name, $vase->fresh()->translation('en')->piece_name]);
+
+        $this->actingAs($owner)->put('/panel/produkty/'.$vase->id, $form('', ''));
+        $this->assertNull($vase->fresh()->piece_name);
+        $this->assertNull($vase->fresh()->translation('en')->piece_name);
+
+        $this->actingAs($owner)->from('/panel/produkty')->put('/panel/produkty/'.$vase->id, $form(str_repeat('a', 121), ''))
+            ->assertSessionHasErrorsIn('produkt-'.$vase->id, ['piece_name' => 'Nazwę jednej sztuki zmieszczę do 120 znaków']);
+    }
+
     public function test_an_english_name_needs_english_size_names_too(): void
     {
         $mug = $this->product('Kubki malowane', 1, [7900, 9900]);
