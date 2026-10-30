@@ -37,10 +37,9 @@
     <div x-data="{ favorites: location.hash === '#ulubione', ids: @js($products->pluck('id')), get savedHere() { return this.ids.filter((id) => $store.favorites.has(id)).length } }"
          x-on:hashchange.window="favorites = location.hash === '#ulubione'"
          class="mx-auto max-w-[1280px] animate-ma-view px-7 pt-9 pb-24 md:pt-14">
-        <nav aria-label="{{ __('catalog::shop.breadcrumb') }}" class="mb-[22px] text-[12px] text-hint">
-            <a href="{{ route('home') }}" class="text-hint hover:text-navy">{{ __('catalog::shop.home') }}</a>
-            / @if ($category) <a href="{{ route('shop.index') }}" class="text-hint hover:text-navy">{{ __('catalog::shop.products') }}</a> / @endif<span class="text-lead">{{ $category->name ?? __('catalog::shop.products') }}</span>
-        </nav>
+        <x-shared::breadcrumb class="mb-[22px]" :items="$category
+            ? [[__('catalog::shop.products'), route('shop.index')], [$category->name, null]]
+            : [[__('catalog::shop.products'), null]]" />
 
         <h1 class="mb-3.5 font-serif text-[length:clamp(38px,5vw,66px)] leading-[normal] font-light tracking-[-0.02em]">
             <span x-show="! favorites">{{ $category->name ?? __('catalog::shop.heading') }}</span><span x-cloak x-show="favorites">{{ __('catalog::shop.favorites') }}</span>

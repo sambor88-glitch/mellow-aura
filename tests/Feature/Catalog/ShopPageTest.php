@@ -112,7 +112,7 @@ class ShopPageTest extends TestCase
     {
         $this->get('/sklep')
             ->assertOk()
-            ->assertSeeInOrder(['aria-label="Okruszki"', 'href="'.url('/').'"', 'Strona główna', '/', '<span class="text-lead">Sklep</span>', '</nav>'], false)
+            ->assertSeeInOrder(['aria-label="Ścieżka nawigacji"', 'href="'.url('/').'"', 'Strona główna', '/', '<span aria-current="page" class="text-lead">Sklep</span>', '</nav>'], false)
             ->assertDontSee('Produkty</span>', false);
     }
 
@@ -123,7 +123,7 @@ class ShopPageTest extends TestCase
 
         $response = $this->get('/sklep/jedwab')
             ->assertOk()
-            ->assertSeeInOrder(['aria-label="Okruszki"', 'href="'.url('/').'"', 'Strona główna', 'href="'.url('/sklep').'"', 'Sklep', 'Jedwab'], false);
+            ->assertSeeInOrder(['aria-label="Ścieżka nawigacji"', 'href="'.url('/').'"', 'Strona główna', 'href="'.url('/sklep').'"', 'Sklep', '<span aria-current="page" class="text-lead">Jedwab</span>'], false);
 
         $breadcrumbs = $this->structuredData($response->getContent())->firstWhere('@type', 'BreadcrumbList');
 

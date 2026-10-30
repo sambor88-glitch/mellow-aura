@@ -47,8 +47,10 @@ class PiecePageTest extends TestCase
             $this->assertMatchesRegularExpression('/^'.PieceToken::PATTERN.'$/', $token);
         }
         // Not the id, not the order number, not sequential: two items of one order share nothing guessable.
-        $this->assertStringNotContainsString((string) $order->items->first()->id, $tokens->first());
+        // Random characters may hold the id's digits by chance (MA-286), so the id is compared whole, not searched for.
+        $this->assertNotSame((string) $order->items->first()->id, $tokens->first());
         $this->assertStringNotContainsString((string) $order->number, $tokens->first());
+        $this->assertNotSame(substr($tokens->first(), 0, 8), substr($tokens->get(1), 0, 8));
         $this->assertGreaterThan(1e17, strlen(PieceToken::ALPHABET) ** PieceToken::LENGTH);
         $this->assertStringNotContainsString('0', PieceToken::ALPHABET.'1lio');
     }

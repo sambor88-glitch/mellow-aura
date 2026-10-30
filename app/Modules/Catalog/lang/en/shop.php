@@ -14,7 +14,6 @@ return [
     'shortcut_scarf' => 'From your scarf',
     'shortcut_imprint' => 'Your plant imprint',
     'shortcut_custom_orders' => 'Custom order',
-    'breadcrumb' => 'Breadcrumb',
     'home' => 'Home',
     'products' => 'Shop',
     'heading' => 'Shop',

@@ -6,6 +6,8 @@ return [
     'eyebrow' => 'checkout &middot; BLIK',
     'wait_heading' => 'Confirm the payment in your banking app',
     'wait_text' => 'Order :number is waiting. Once your bank confirms, this page moves on by itself.',
+    'wait_text_booking' => 'Booking :number is waiting. Once your bank confirms, this page moves on by itself.',
+    'wait_text_custom_order' => 'Payment :number is waiting. Once your bank confirms, this page moves on by itself.',
     'checking' => 'Waiting for your bank to confirm',
     'time_left' => 'Time left to confirm: :time',
     'noscript' => 'This page checks the payment every 5 seconds.',

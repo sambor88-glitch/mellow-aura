@@ -4,7 +4,7 @@
     $voucherNote = $settings->get('text_gifts_voucher_note');
     $count = $ideas->count();
     $countLabel = match (true) {
-        $count === 0 => 'Nic nie pasuje do tych warunków — poluzuj budżet albo zmień okazję',
+        $count === 0 => '0 pomysłów',
         $count === 1 => 'Jeden pomysł',
         in_array($count % 10, [2, 3, 4], true) && ! in_array($count % 100, [12, 13, 14], true) => $count.' pomysły',
         default => $count.' pomysłów',

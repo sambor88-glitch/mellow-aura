@@ -168,7 +168,7 @@ class Przelewy24GatewayTest extends TestCase
         // A card has no transfer to make: the page waits for Przelewy24, it does not ask for a transfer.
         $this->get('/zamowienie/potwierdzenie')->assertOk()
             ->assertSee('Dziękuję. Czekam na potwierdzenie.')
-            ->assertSee('czeka, aż Przelewy24 potwierdzi płatność', false)
+            ->assertSee('czeka, aż Przelewy24 potwierdzą płatność', false)
             ->assertSee('Sprawdź jeszcze raz')
             ->assertDontSee('Czekam na przelew');
         $this->assertSame(PaymentStatus::Pending, Order::sole()->payment_status);

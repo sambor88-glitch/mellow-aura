@@ -195,7 +195,7 @@ class BriefFormTest extends TestCase
 
         $this->followingRedirects()
             ->post('/zamowienia-indywidualne', $this->form(['description' => 'Szósty pomysł']))
-            ->assertSee('Mam już od Ciebie kilka wiadomości i na wszystkie odpiszę. Kolejną wyślesz za godzinę, a jeśli to pilne, napisz na WhatsApp +48 600 100 200.')
+            ->assertSee('Mam już od Ciebie kilka wiadomości i na wszystkie odpiszę. Kolejną wyślesz za godzinę, a jeśli to pilne, napisz na WhatsAppie +48 600 100 200.')
             ->assertSee('Szósty pomysł');
 
         $this->assertDatabaseCount('custom_order_requests', 5);

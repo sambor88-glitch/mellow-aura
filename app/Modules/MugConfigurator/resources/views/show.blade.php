@@ -55,9 +55,7 @@
              glaze: @js($startGlaze['code']),
              ink: @js($ink['hex']),
          })">
-        <nav aria-label="{{ $t('breadcrumb') }}" class="mb-[26px] text-[12.5px] text-label">
-            <a href="{{ route('home') }}" class="text-label hover:text-navy">{{ $t('home') }}</a> &middot; <span class="text-lead">{{ $t('name') }}</span>
-        </nav>
+        <x-shared::breadcrumb class="mb-[26px]" :items="[[$t('name'), null]]" />
 
         <div class="flex flex-wrap items-start gap-[clamp(28px,5vw,72px)]">
             <div class="min-w-0 flex-[1_1_440px] min-[852px]:sticky min-[852px]:top-24">

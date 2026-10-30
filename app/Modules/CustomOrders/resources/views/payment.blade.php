@@ -20,7 +20,7 @@
             <div class="{{ $glass }} max-w-[620px]">
                 <h2 class="mb-3 font-serif text-[30px] leading-none font-light">Ten link jest już nieaktualny</h2>
                 <p class="mb-5 text-[15px] leading-[1.65] text-lead">Napisz do mnie albo odpisz na maila z linkiem — wyślę nowy.</p>
-                <a href="{{ route('content.contact', ['temat' => 'Zamówienie indywidualne']) }}" class="inline-flex min-h-[52px] items-center rounded-full bg-ink px-[30px] text-[14px] text-linen transition duration-300 hover:bg-rose hover:text-ink">Piszę do Kasi</a>
+                <a href="{{ route('content.contact', ['temat' => 'Zamówienie indywidualne']) }}" class="inline-flex min-h-[52px] items-center rounded-full bg-ink px-[30px] text-[14px] text-linen transition duration-300 hover:bg-rose hover:text-ink">Napisz do mnie</a>
             </div>
         @else
             <p class="mb-10 max-w-[52ch] text-[16.5px] text-lead">{{ $idea->name }}, zaczynam pracę, gdy tylko bank potwierdzi wpłatę.</p>

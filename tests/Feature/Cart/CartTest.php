@@ -56,6 +56,14 @@ class CartTest extends TestCase
             ->assertJson(['count' => 1, 'notice' => 'To ostatnia sztuka — kolejną zrobię na zamówienie']);
     }
 
+    public function test_a_one_off_does_not_promise_another_to_order(): void
+    {
+        $plate = $this->variant('Talerz z paprocią', 'Jeden', 14900, stock: 1, product: ['is_one_off' => true]);
+
+        $this->postJson('/koszyk', ['variant_id' => $plate->id, 'quantity' => 2])
+            ->assertJson(['count' => 1, 'notice' => 'To unikat — drugiej takiej sztuki nie będzie']);
+    }
+
     public function test_changing_the_quantity_and_removing_a_line(): void
     {
         $vase = $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 2);

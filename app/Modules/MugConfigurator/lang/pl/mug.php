@@ -13,7 +13,6 @@ return [
     'added' => 'Kubek z Twoim napisem w koszyku',
     'title' => 'Kubek z napisem na zamówienie — Twój tekst wbity w glinę',
     'description' => 'Zaprojektuj kubek z własnym napisem: litery wbijane stemplem w glinę, trzy rozmiary, pięć kolorów szkliwa. Prezent, którego nie ma nikt inny. Kraków.',
-    'breadcrumb' => 'Okruszki',
     'home' => 'Strona główna',
     'preview' => 'Podgląd',
     'model' => 'Model 3D',

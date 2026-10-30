@@ -124,6 +124,9 @@ class GiftChoiceTest extends TestCase
         $mail->assertHasSubject('Karty wyboru z MellowAury');
         $mail->assertSeeInOrderInHtml(['Twoje karty wyboru', 'Średni 300 ml', 'dla: Ola', 'wybór do 19 stycznia 2027', $choices[0]->code, 'Wyślę ją na ewa@example.com 24 grudnia rano.']);
         $mail->assertDontSeeInHtml('95 zł');
+        // The mail may be passed on as it is, so it says where the code goes (MA-288).
+        $mail->assertSeeInHtml('wpisze kod na stronie <a href="'.route('gift-choice.index').'"', false);
+        $mail->assertSeeInText('wpisze kod na stronie '.route('gift-choice.index').',');
         $this->assertCount(4, $mail->attachments());
 
         $arrived = new GiftChoiceArrived($choices[2]->fresh());

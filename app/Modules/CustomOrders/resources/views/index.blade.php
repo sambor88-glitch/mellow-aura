@@ -64,7 +64,7 @@
                         </div>
                     @elseif (session('brief_throttled'))
                         <p role="alert" class="mt-4 mb-6 rounded-[20px] border border-alert-line bg-alert p-4 text-[14px] leading-[1.6] text-alert-text">
-                            Mam już od Ciebie kilka wiadomości i na wszystkie odpiszę. Kolejną wyślesz za godzinę{{ $whatsApp ? ', a jeśli to pilne, napisz na WhatsApp '.$phone : '' }}.
+                            Mam już od Ciebie kilka wiadomości i na wszystkie odpiszę. Kolejną wyślesz za godzinę{{ $whatsApp ? ', a jeśli to pilne, napisz na WhatsAppie '.$phone : '' }}.
                         </p>
                     @else
                         <p class="mb-6 text-[14px] text-label">Kilka zdań wystarczy — resztę dopytam.</p>
@@ -162,7 +162,7 @@
                         </form>
 
                         @if ($whatsApp)
-                            <p class="mt-5 border-t border-sand-dark pt-5 text-[13.5px] leading-[1.6] text-muted">Woli Ci się pisać na WhatsAppie? <a href="{{ $whatsApp }}" target="_blank" rel="noopener" class="whitespace-nowrap">{{ $phone }}</a></p>
+                            <p class="mt-5 border-t border-sand-dark pt-5 text-[13.5px] leading-[1.6] text-muted">Wolisz pisać na WhatsAppie? <a href="{{ $whatsApp }}" target="_blank" rel="noopener" class="whitespace-nowrap">{{ $phone }}</a></p>
                         @endif
                     @else
                         <ul class="mb-7 grid gap-2.5">
@@ -182,9 +182,6 @@
                                    'bg-ink text-linen hover:bg-rose hover:text-ink' => ! $whatsApp,
                                ])>Napisz przez formularz</a>
                         </div>
-                        @if ($whatsApp)
-                            <p class="mt-5 border-t border-sand-dark pt-5 text-[13.5px] leading-[1.6] text-muted">Woli Ci się pisać na WhatsAppie? <a href="{{ $whatsApp }}" target="_blank" rel="noopener" class="whitespace-nowrap">{{ $phone }}</a></p>
-                        @endif
                     @endif
                 </div>
             </div>

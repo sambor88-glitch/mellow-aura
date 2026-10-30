@@ -38,7 +38,7 @@
                     Płatność za zapis {!! $number !!} przyszła, gdy ostatnie miejsce na {{ $when }} zajęła już inna osoba.
                     Napiszę do Ciebie: zwrócę {{ $order->vouchers_gross > 0 ? 'wpłatę, a kwotę z vouchera oddam na voucher,' : 'całą wpłatę' }} albo zaproponuję inny termin.
                 @else
-                    Przelewy24 jeszcze nie dało znać, że pieniądze są. Miejsce na {{ $when }} czeka na Ciebie — zapis {!! $number !!}.
+                    Czekam, aż bank potwierdzi płatność. Zwykle trwa to kilka sekund. Miejsce na {{ $when }} czeka na Ciebie — zapis {!! $number !!}.
                     <a href="{{ route('workshops.booking.confirmation') }}" class="mt-2 block text-graphite underline underline-offset-4 hover:text-ink">Sprawdź jeszcze raz</a>
                 @endif
             </p>
