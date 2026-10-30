@@ -42,9 +42,9 @@
                     <div class="glass mb-4 rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]">
                         <h2 class="mb-4 flex items-baseline gap-3 font-serif text-[30px] leading-none font-light"><span aria-hidden="true" class="text-[22px] text-rose italic">i</span>{{ $t('contact') }}</h2>
                         <div class="grid gap-[13px]">
-                            <x-shared::field name="email" :label="$t('email')" type="email" autocomplete="email" :hint="$t('email_hint')" />
-                            <x-shared::field name="phone" :label="$t('phone')" type="tel" autocomplete="tel" :hint="$t($needsDelivery ? 'phone_hint_parcel' : 'phone_hint')" />
-                            <x-shared::field name="name" :label="$t('name')" autocomplete="name" />
+                            <x-shared::field name="email" :label="$t('email')" type="email" autocomplete="email" :hint="$t('email_hint')" aria-required="true" />
+                            <x-shared::field name="phone" :label="$t('phone')" type="tel" autocomplete="tel" :hint="$t($needsDelivery ? 'phone_hint_parcel' : 'phone_hint')" aria-required="true" />
+                            <x-shared::field name="name" :label="$t('name')" autocomplete="name" aria-required="true" />
                         </div>
 
                         <details @if ($moreOpen) open @endif class="group mt-4 border-t border-line pt-4">
@@ -53,9 +53,9 @@
                                 <span aria-hidden="true" class="group-open:hidden">+</span><span aria-hidden="true" class="hidden group-open:inline">−</span>
                             </summary>
                             <div class="mt-3.5 grid animate-ma-up-quick gap-[13px]">
-                                <x-shared::field name="invoice_nip" :label="$t('nip')" inputmode="numeric" />
+                                <x-shared::field name="invoice_nip" :label="$t('nip')" inputmode="numeric" :optional="true" />
                                 @if ($needsDelivery)
-                                    <x-shared::field name="note" :label="$t('note')" :placeholder="$t('note_placeholder')" />
+                                    <x-shared::field name="note" :label="$t('note')" :placeholder="$t('note_placeholder')" :optional="true" />
                                 @endif
                             </div>
                         </details>
@@ -104,10 +104,12 @@
                             @if ($methods->has('courier'))
                                 <div x-show="shipping === 'courier'" @if ($selectedShipping !== 'courier') x-cloak @endif class="mt-4 grid gap-[13px] border-t border-line pt-4">
                                     <p class="text-[13.5px] text-brown">{{ $t('courier_address') }}</p>
-                                    <x-shared::field name="street" :label="$t('street')" autocomplete="address-line1" />
+                                    <x-shared::field name="street" :label="$t('street')" autocomplete="address-line1" aria-required="true" />
                                     <div class="flex flex-wrap gap-[13px]">
-                                        <x-shared::field name="postal_code" :label="$t('postal_code')" autocomplete="postal-code" inputmode="numeric" placeholder="30-001" class="flex-[0_1_130px]" />
-                                        <x-shared::field name="city" :label="$t('city')" autocomplete="address-level2" class="flex-[1_1_150px]" />
+                                        {{-- The phone's number pad has no dash, so the dash comes by itself after two digits. --}}
+                                        <x-shared::field name="postal_code" :label="$t('postal_code')" autocomplete="postal-code" inputmode="numeric" placeholder="30-001" aria-required="true" class="flex-[0_1_130px]"
+                                                         x-on:input="$el.value = $el.value.replace(/\D/g, '').slice(0, 5).replace(/^(\d{2})(\d)/, '$1-$2')" />
+                                        <x-shared::field name="city" :label="$t('city')" autocomplete="address-level2" aria-required="true" class="flex-[1_1_150px]" />
                                     </div>
                                 </div>
                             @endif
@@ -128,10 +130,10 @@
                             </dialog>
                         @endif
                     @else
-                        {{-- Vouchers sent as PDFs alone: the e-mail is the delivery, so there is nothing to choose. --}}
+                        {{-- Vouchers sent as PDFs alone: the e-mail is the delivery, so there is nothing to choose — and nothing looks chosen. --}}
                         <div class="glass mb-4 rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]">
-                            <div class="mb-4 flex items-baseline gap-3 font-serif text-[30px] leading-none font-light"><span aria-hidden="true" class="text-[22px] text-rose italic">ii</span>{{ $t('delivery') }}</div>
-                            <div class="flex items-center gap-3.5 rounded-[18px] border border-ink bg-cream px-[18px] py-4">
+                            <h2 class="mb-4 flex items-baseline gap-3 font-serif text-[30px] leading-none font-light"><span aria-hidden="true" class="text-[22px] text-rose italic">ii</span>{{ $t('delivery') }}</h2>
+                            <div class="flex items-center gap-3.5 rounded-[18px] bg-cream/60 px-[18px] py-4">
                                 <span class="min-w-0 flex-1">
                                     <span class="block text-[15px]">{{ $t('delivery_email') }}</span>
                                     <span class="mt-0.5 block text-[12.5px] text-label">{{ $t('delivery_email_note') }}</span>
@@ -162,7 +164,8 @@
                     </fieldset>
                 </div>
 
-                <div class="min-w-[min(100%,260px)] flex-[1_1_340px] min-[900px]:sticky min-[900px]:top-24">
+                {{-- Pinned only as far as the screen reaches: taller than the screen, it scrolls on its own, so „Płacę” is never out of reach. --}}
+                <div class="min-w-[min(100%,260px)] flex-[1_1_340px] min-[900px]:sticky min-[900px]:top-24 min-[900px]:max-h-[calc(100dvh-7rem)] min-[900px]:overflow-y-auto min-[900px]:overscroll-contain min-[900px]:rounded-[26px]">
                     <div class="glass rounded-[26px] p-[clamp(20px,3vw,30px)]">
                         <h2 class="mb-[18px] font-serif text-[30px] leading-none font-light">{{ $t('your_order') }}</h2>
                         @foreach ($lines as $line)
@@ -237,9 +240,9 @@
                                 </div>
                             </details>
                         @endif
-                        <div class="flex items-baseline justify-between border-t border-line pt-3.5">
+                        <div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 border-t border-line pt-3.5">
                             <span class="text-[14.5px]" x-text="vouchersPaid > 0 ? @js($t('to_pay')) : @js($t('total'))">{{ $vouchers->sum('amount') > 0 ? $t('to_pay') : $t('total') }}</span>
-                            <span x-text="$store.cart.format(due)" class="font-serif text-[40px] leading-none font-light tabular-nums">{{ $money($subtotal + $shippingGross - $vouchers->sum('amount')) }}</span>
+                            <span x-text="$store.cart.format(due)" class="font-serif text-[length:clamp(30px,10vw,40px)] leading-none font-light whitespace-nowrap tabular-nums">{{ $money($subtotal + $shippingGross - $vouchers->sum('amount')) }}</span>
                         </div>
                         <p x-show="vouchersPaid > 0 && due === 0" @if ($subtotal + $shippingGross > $vouchers->sum('amount')) x-cloak @endif class="mt-2 text-[13px] text-label">{{ $t('voucher_covers') }}</p>
 

@@ -197,6 +197,8 @@
         background: var(--color-sand);
         color: var(--color-ink);
         -webkit-font-smoothing: antialiased;
+        /* Room for the cookie banner while it is open (resources/js/consent.js), so the end of the page can scroll out from under it. */
+        padding-bottom: var(--consent-h, 0px);
     }
 
     a {

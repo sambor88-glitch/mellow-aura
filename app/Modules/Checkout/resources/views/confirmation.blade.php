@@ -68,6 +68,38 @@
                     {{ $t('shortage') }}
                 </p>
             @endif
+            @if (! $paid && $byTransfer)
+                {{-- The same details as the mail (OrderSummary), so nobody has to switch to the inbox to pay. Each one copies with a tap. --}}
+                @php
+                    $due = $order->amountDue();
+                    $account = $settings->get('company_bank_account');
+                    $transfer = collect([
+                        'transfer_amount' => [$order->money($due), number_format($due / 100, 2, ',', '')],
+                        'transfer_title' => [$order->number, $order->number],
+                        'transfer_account' => $account ? [$account, str_replace(' ', '', $account)] : null,
+                        'transfer_recipient' => ($recipient = $settings->get('company_name')) ? [$recipient, $recipient] : null,
+                    ])->filter();
+                @endphp
+                <section aria-labelledby="transfer-title" class="glass mx-auto mb-6 w-full max-w-[480px] rounded-[24px] px-[clamp(20px,4vw,30px)] py-[26px] text-left">
+                    <h2 id="transfer-title" class="eyebrow mb-4">{{ $t('transfer_details') }}</h2>
+                    <dl class="grid gap-3">
+                        @foreach ($transfer as $key => [$shown, $copy])
+                            <div x-data="{ copied: false }" class="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-line pb-3 last:border-b-0 last:pb-0">
+                                <dt class="w-full text-[12.5px] text-label">{{ $t($key) }}</dt>
+                                <dd class="min-w-0 flex-1 text-[15.5px] [overflow-wrap:anywhere] tabular-nums select-all">{{ $shown }}</dd>
+                                <dd class="flex-none">
+                                    <button type="button" x-on:click="navigator.clipboard && navigator.clipboard.writeText(@js($copy)).then(() => { copied = true; setTimeout(() => copied = false, 2000) }, () => {})"
+                                            aria-label="{{ $t('copy_label', ['field' => $t($key)]) }}"
+                                            class="min-h-11 rounded-full border border-line-strong px-4 text-[13px] text-ink transition-colors duration-300 hover:border-ink hover:bg-sand-dark">
+                                        <span x-text="copied ? @js($t('copied')) : @js($t('copy'))">{{ $t('copy') }}</span>
+                                    </button>
+                                    <span x-text="copied ? @js($t('copied')) : ''" role="status" class="sr-only"></span>
+                                </dd>
+                            </div>
+                        @endforeach
+                    </dl>
+                </section>
+            @endif
             <div class="glass mb-6 inline-flex min-w-[min(380px,100%)] flex-col gap-3.5 rounded-[24px] px-[30px] py-[26px] text-left">
                 <div class="flex justify-between gap-[30px] text-[14.5px]"><span class="text-label">{{ $t($paid ? 'paid' : 'to_pay') }}</span><span>{{ $order->money($paid ? $order->total_gross : $order->amountDue()) }}</span></div>
                 @if ($order->vouchers_gross > 0)

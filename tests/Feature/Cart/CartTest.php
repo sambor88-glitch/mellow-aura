@@ -43,6 +43,8 @@ class CartTest extends TestCase
             ->assertJson(['count' => 1, 'notice' => 'Wazony — dodane do koszyka']);
 
         $this->assertStringContainsString('239 zł', $response->json('content'));
+        // The ways to pay under the button are the checkout's own (PaymentMethod::for), not a list typed into the view.
+        $this->assertMatchesRegularExpression('/BLIK.*Karta.*Przelewy24.*Przelew tradycyjny/s', $response->json('content'));
     }
 
     public function test_the_cart_never_holds_more_than_is_on_the_shelf(): void
@@ -72,7 +74,11 @@ class CartTest extends TestCase
         $this->patchJson('/koszyk/v'.$vase->id, ['quantity' => 5])
             ->assertJson(['count' => 2, 'notice' => 'Na półce mam 2 szt. — więcej zrobię na zamówienie']);
 
-        $response = $this->deleteJson('/koszyk/v'.$vase->id)->assertJson(['count' => 0]);
+        // The drawer reads the change out (role="status"), so a screen reader hears more than a new number.
+        $this->patchJson('/koszyk/v'.$vase->id, ['quantity' => 1])
+            ->assertJson(['count' => 1, 'notice' => 'Wazony — w koszyku: 1 szt.']);
+
+        $response = $this->deleteJson('/koszyk/v'.$vase->id)->assertJson(['count' => 0, 'notice' => 'Wazony — usunięte z koszyka']);
 
         $this->assertStringContainsString('Jeszcze pusto', $response->json('content'));
     }

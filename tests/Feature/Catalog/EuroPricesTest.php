@@ -124,7 +124,9 @@ class EuroPricesTest extends TestCase
         $this->post('/en/basket', ['variant_id' => $small->id], ['Accept' => 'application/json'])
             ->assertOk()
             ->assertJson(['count' => 1, 'notice' => 'Painted mug — added to your basket'])
-            ->assertJsonPath('content', fn (string $content) => str_contains($content, '€39') && str_contains($content, 'Total') && ! str_contains($content, 'zł'));
+            ->assertJsonPath('content', fn (string $content) => str_contains($content, '€39') && str_contains($content, 'Total') && ! str_contains($content, 'zł'))
+            // The ways to pay in euro (PaymentMethod::for): card and Przelewy24, no BLIK.
+            ->assertJsonPath('content', fn (string $content) => (bool) preg_match('/Card.*Przelewy24/s', $content) && ! str_contains($content, 'BLIK'));
 
         // Nothing goes into a euro basket without a euro price.
         $this->post('/en/basket', ['variant_id' => $large->id], ['Accept' => 'application/json'])->assertNotFound();
@@ -134,8 +136,7 @@ class EuroPricesTest extends TestCase
         $this->get('/en/shop')
             ->assertSee('data-count="1"', false)
             ->assertSee('href="'.url('/en/checkout').'"', false)
-            ->assertSee('Go to checkout')
-            ->assertDontSee('Przelewy24');
+            ->assertSee('Go to checkout');
         $this->get('/sklep')
             ->assertSee('data-count="2"', false)
             ->assertSee('328 zł')

@@ -53,14 +53,20 @@ class CartController extends Controller
         $current = $cart->lines()->get($line);
         $quantity = $cart->update($line, $wanted);
 
-        return $this->respond($request, $cart, $current && $quantity < $wanted ? $current->limitNotice() : null);
+        return $this->respond($request, $cart, match (true) {
+            $current === null => null,
+            $quantity < $wanted => $current->limitNotice(),
+            $quantity === 0 => __('cart::line.removed', ['name' => $current->name()]),
+            default => __('cart::line.quantity', ['name' => $current->name(), 'count' => $quantity]),
+        });
     }
 
     public function destroy(Request $request, Cart $cart, string $line): JsonResponse|RedirectResponse
     {
+        $current = $cart->lines()->get($line);
         $cart->remove($line);
 
-        return $this->respond($request, $cart, null);
+        return $this->respond($request, $cart, $current ? __('cart::line.removed', ['name' => $current->name()]) : null);
     }
 
     /**

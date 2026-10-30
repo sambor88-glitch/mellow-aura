@@ -147,7 +147,7 @@
                     @endunless
                 </div>
 
-                <div class="min-w-[min(100%,260px)] flex-[1_1_340px] min-[900px]:sticky min-[900px]:top-24">
+                <div class="min-w-[min(100%,260px)] flex-[1_1_340px] min-[900px]:sticky min-[900px]:top-24 min-[900px]:max-h-[calc(100dvh-7rem)] min-[900px]:overflow-y-auto min-[900px]:overscroll-contain min-[900px]:rounded-[26px]">
                     <div class="glass rounded-[26px] p-[clamp(20px,3vw,30px)]">
                         <h2 class="mb-[18px] font-serif text-[30px] leading-none font-light">Twój zapis</h2>
                         <div class="mb-3.5 border-b border-line pb-3.5">
@@ -166,9 +166,9 @@
                                     @enderror
                                 </span>
                             </div>
-                            <div class="flex items-baseline justify-between">
+                            <div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
                                 <span class="text-[14.5px]">Płacisz voucherem</span>
-                                <span class="font-serif text-[40px] leading-none font-light tabular-nums">{{ Money::format(0) }}</span>
+                                <span class="font-serif text-[length:clamp(30px,10vw,40px)] leading-none font-light whitespace-nowrap tabular-nums">{{ Money::format(0) }}</span>
                             </div>
                         @else
                             @foreach ($voucherUses as $index => $use)
@@ -197,9 +197,9 @@
                                     </div>
                                 </details>
                             @endif
-                            <div class="flex items-baseline justify-between">
+                            <div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
                                 <span class="text-[14.5px]">Do zapłaty</span>
-                                <span x-text="format(due)" class="font-serif text-[40px] leading-none font-light tabular-nums">{{ Money::format($due) }}</span>
+                                <span x-text="format(due)" class="font-serif text-[length:clamp(30px,10vw,40px)] leading-none font-light whitespace-nowrap tabular-nums">{{ Money::format($due) }}</span>
                             </div>
                             <p x-show="vouchersPaid > 0 && due === 0" @if ($vouchersPaid === 0 || $due > 0) x-cloak @endif class="mt-2 text-[13px] text-label">Voucher pokrywa całość — nic nie dopłacasz.</p>
                         @endif
