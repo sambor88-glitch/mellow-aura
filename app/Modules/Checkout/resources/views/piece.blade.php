@@ -7,8 +7,12 @@
 @php
     // Only what the piece is — never who bought it, for how much or where it went (MA-234).
     $product = $item->variant?->product;
-    $photo = $item->variant?->photo();
+    // The photo of this very piece from the panel, else the shop's photo of its product (MA-290).
+    $photo = $item->photo();
     $srcset = $photo ? ProductPhoto::srcset($photo) : null;
+    $alt = $photo?->collection_name === 'photo'
+        ? __('checkout::piece.photo_alt', ['name' => $item->product_name])
+        : ($photo?->getCustomProperty('alt') ?: $item->product_name);
     $polish = Locales::current() === Locales::default();
     // A mug from the configurator has no product in the shop, but it is ceramics too (as on the certificate).
     $ceramics = $product === null || $product->category?->group === CategoryGroup::Ceramics;
@@ -30,19 +34,17 @@
 <x-shared::layout :title="__('checkout::piece.title', ['name' => $item->product_name])" :noindex="true">
     <div class="mx-auto max-w-[1160px] animate-ma-view px-[clamp(18px,4vw,48px)] pt-10 pb-24">
         <div class="flex flex-wrap items-start gap-[clamp(28px,5vw,72px)]">
-            <div class="min-w-0 flex-[1_1_420px]">
-                @if ($photo)
-                    <img src="{{ $photo->getAvailableUrl(['card']) }}" alt="{{ $photo->getCustomProperty('alt') ?: $item->product_name }}" fetchpriority="high"
+            {{-- Only Kasia's photos: a piece without one opens with its name, never with an empty frame or someone else's picture. --}}
+            @if ($photo)
+                <div class="min-w-0 flex-[1_1_420px]">
+                    <img src="{{ $photo->getAvailableUrl(['card']) }}" alt="{{ $alt }}" fetchpriority="high"
                          @if ($srcset) srcset="{{ $srcset }}" sizes="(min-width: 872px) 520px, calc(100vw - 36px)" @endif
                          width="1200" height="1500" style="{{ FocalPoint::style($photo) }}"
                          class="block aspect-[4/5] w-full rounded-[26px] bg-linen object-cover">
-                @else
-                    {{-- Only Kasia's photos: a piece without one shows an empty frame, never someone else's picture. --}}
-                    <div class="flex aspect-[4/5] w-full items-center justify-center rounded-[26px] bg-linen p-8 text-center text-[14px] text-label">{{ __('checkout::piece.photo_missing') }}</div>
-                @endif
-            </div>
+                </div>
+            @endif
 
-            <div class="min-w-0 flex-[1_1_380px]">
+            <div @class(['min-w-0 flex-[1_1_380px]', 'max-w-[720px]' => ! $photo])>
                 <p class="eyebrow mb-5">{{ __('checkout::piece.eyebrow') }}</p>
                 <h1 class="font-serif text-[length:clamp(38px,6.4vw,72px)] leading-[.98] font-light tracking-[-0.02em] text-balance [overflow-wrap:anywhere]">{{ $item->product_name }}</h1>
                 @if (filled($item->variant_label))

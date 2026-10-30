@@ -3,7 +3,7 @@
 return [
     'title' => ':name — from the MellowAura studio',
     'eyebrow' => 'the story of one piece',
-    'photo_missing' => 'The photo of this piece is still on its way.',
+    'photo_alt' => ':name — a photo of this very piece from the studio',
     'fired' => 'Fired on',
     'glaze' => 'Glaze',
     'plant' => 'Plant',

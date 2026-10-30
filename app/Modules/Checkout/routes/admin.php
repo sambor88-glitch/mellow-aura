@@ -14,6 +14,8 @@ Route::patch('/zamowienia/{order:number}/status', [OrderController::class, 'stat
 Route::patch('/zamowienia/{order:number}/wplata', [OrderController::class, 'paid'])->name('orders.paid');
 Route::get('/zamowienia/{order:number}/certyfikaty', CertificateController::class)->name('orders.certificates');
 Route::patch('/zamowienia/{order:number}/sztuka/{item}', [PieceController::class, 'update'])->whereNumber('item')->name('orders.piece');
+Route::post('/zamowienia/{order:number}/sztuka/{item}/zdjecie', [PieceController::class, 'storePhoto'])->whereNumber('item')->name('orders.piece-photo');
+Route::delete('/zamowienia/{order:number}/sztuka/{item}/zdjecie', [PieceController::class, 'destroyPhoto'])->whereNumber('item')->name('orders.piece-photo.destroy');
 Route::get('/zamowienia/{order:number}/sztuka/{item}/karta', [PieceController::class, 'card'])->whereNumber('item')->name('orders.piece-card');
 Route::get('/certyfikat', [CertificateTextsController::class, 'edit'])->name('certificate.edit');
 Route::put('/certyfikat', [CertificateTextsController::class, 'update'])->name('certificate.update');
