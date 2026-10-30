@@ -10,7 +10,7 @@
     $empty = 'rounded-[4px] border border-dashed border-line-strong bg-linen px-5 py-4 text-[13px] text-label';
 @endphp
 <x-admin::layout :title="$customer->name">
-    <a href="{{ route('admin.customers.index') }}" class="mb-5 inline-block text-[13px] text-lead">← Wszystkie klientki</a>
+    <a href="{{ route('admin.customers.index') }}" class="mb-5 inline-block text-[13px] text-lead">← Wszyscy klienci</a>
 
     <div class="{{ $card }} mb-8 flex flex-wrap items-center gap-x-6 gap-y-3">
         <div class="min-w-0 flex-[1_1_260px]">

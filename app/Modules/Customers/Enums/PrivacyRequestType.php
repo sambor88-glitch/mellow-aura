@@ -3,7 +3,7 @@
 namespace App\Modules\Customers\Enums;
 
 /**
- * The two GDPR requests „Klientki” carries out: a copy of everything about a person (art. 15 and 20) and
+ * The two GDPR requests „Klienci” carries out: a copy of everything about a person (art. 15 and 20) and
  * forgetting her (art. 17).
  */
 enum PrivacyRequestType: string

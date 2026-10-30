@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * A GDPR request carried out from „Klientki”. It names the person only by CustomerKey.
+ * A GDPR request carried out from „Klienci”. It names the person only by CustomerKey.
  *
  * @property PrivacyRequestType $type
  * @property string $customer_key

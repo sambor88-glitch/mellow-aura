@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Every GDPR request Kasia carried out from „Klientki” (MA-241): a copy of the data or an erasure. The person
+        // Every GDPR request Kasia carried out from „Klienci” (MA-241): a copy of the data or an erasure. The person
         // is kept only as CustomerKey — a keyed hash of her address — so the log itself forgets her too, yet a later
         // request from the same address still finds what was done before.
         Schema::create('privacy_requests', function (Blueprint $table) {

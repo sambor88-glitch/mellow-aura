@@ -1,7 +1,7 @@
 @php
     $field = 'min-w-0 rounded-[4px] border border-line bg-white px-3 py-2.5 text-[14px] text-ink focus:border-ink';
 @endphp
-<x-admin::layout title="Klientki" lead="Każda osoba, która coś kupiła, zapisała się, wysłała pomysł albo wsad — zebrana po adresie e-mail. Tu przygotujesz jej kopię danych albo usuniesz dane, gdy o to poprosi.">
+<x-admin::layout title="Klienci" lead="Każda osoba, która coś kupiła, zapisała się, wysłała pomysł albo wsad — zebrana po adresie e-mail. Tu przygotujesz jej kopię danych albo usuniesz dane, gdy o to poprosi.">
     <form method="get" action="{{ route('admin.customers.index') }}" role="search" class="mb-6 flex flex-wrap items-end gap-2.5">
         <label for="szukaj" class="grid min-w-0 flex-[1_1_280px] gap-1.5 text-[12.5px] text-label">
             Imię, e-mail albo telefon

@@ -41,7 +41,7 @@ class PanelMenuTest extends TestCase
             ->assertOk()
             ->assertSeeInOrder([
                 'Na dziś',
-                'Sprzedaż', 'Zamówienia', 'Zamówienia indywidualne', 'Klientki', 'Odstąpienia', 'Reklamacje',
+                'Sprzedaż', 'Zamówienia', 'Zamówienia indywidualne', 'Klienci', 'Odstąpienia', 'Reklamacje',
                 'Oferta', 'Produkty', 'Kategorie', 'Kubek z napisem', 'Prezenty i zestawy', 'Warsztaty', 'Wypały', 'Usługi',
                 'Strona', 'Treści', 'Zdjęcia stron', 'Google', 'Maile', 'Certyfikat unikatu',
                 'Ustawienia', 'Ustawienia', 'Konta', 'Niewysłane maile',
@@ -105,7 +105,7 @@ class PanelMenuTest extends TestCase
         $this->assertStringContainsString('Sprzedaż', $menu);
         $this->assertStringContainsString('Zamówienia', $menu);
         $this->assertStringContainsString(', 1 do wysłania', $menu);
-        foreach (['Oferta', 'Strona', 'Ustawienia', 'Zamówienia indywidualne', 'Klientki', 'Niewysłane maile', 'nowe'] as $hidden) {
+        foreach (['Oferta', 'Strona', 'Ustawienia', 'Zamówienia indywidualne', 'Klienci', 'Niewysłane maile', 'nowe'] as $hidden) {
             $this->assertStringNotContainsString($hidden, $menu);
         }
         // Only what the helper can open counts on the phone's „Menu”.

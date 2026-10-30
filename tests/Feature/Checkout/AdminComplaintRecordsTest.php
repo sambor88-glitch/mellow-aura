@@ -169,13 +169,13 @@ class AdminComplaintRecordsTest extends TestCase
         $open = $this->complaint('Anna Nowak', '2026-11-18');
 
         $this->actingAs($this->owner)
-            ->get('/panel/klientki/'.CustomerKey::of('ania@example.com'))
+            ->get('/panel/klienci/'.CustomerKey::of('ania@example.com'))
             ->assertOk()
             ->assertSeeInOrder(['Odstąpienia i reklamacje', '18.11.2026', 'Reklamacja', 'odpowiedz do 2.12 — zostało 12 dni', 'Pęknięta miska'])
             // An open complaint still needs her address for the answer.
             ->assertSee('Reklamacja z 18.11.2026 — odpowiedz do 2.12 — zostało 12 dni');
 
-        $copy = json_decode($this->post('/panel/klientki/'.CustomerKey::of('ania@example.com').'/kopia-danych')->getContent(), true);
+        $copy = json_decode($this->post('/panel/klienci/'.CustomerKey::of('ania@example.com').'/kopia-danych')->getContent(), true);
         $this->assertSame('Pęknięta miska, zdjęcie w mailu.', $copy['received_complaints'][0]['description']);
 
         $open->update(['status' => ComplaintStatus::Answered]);

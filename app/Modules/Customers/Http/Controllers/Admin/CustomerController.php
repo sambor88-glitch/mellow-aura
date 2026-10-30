@@ -17,7 +17,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
 
 /**
- * „Klientki” in the panel (MA-241): everyone who bought, booked, asked or complained, found by name, address or
+ * „Klienci” in the panel (MA-241): everyone who bought, booked, asked or complained, found by name, address or
  * phone; one card per person; and the two GDPR requests — a copy of her data and forgetting her. The owner's alone
  * (PanelAccess): a helper packing orders has no business with whole customer histories.
  */

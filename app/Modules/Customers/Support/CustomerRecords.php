@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
- * Everything the shop keeps about one address, read through the other modules' models: the card in „Klientki”,
+ * Everything the shop keeps about one address, read through the other modules' models: the card in „Klienci”,
  * the copy of the data she can ask for (art. 15) and what still stands in the way of forgetting her (art. 17).
  */
 class CustomerRecords
