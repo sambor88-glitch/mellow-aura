@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 /**
- * Product sizes from the catalogue. A hidden product drops out of the cart.
+ * Product sizes from the catalogue. A hidden product or a hidden size drops out of the cart.
  */
 class ProductLines implements LineType
 {
@@ -60,6 +60,7 @@ class ProductLines implements LineType
         return ProductVariant::query()
             ->with('product.media', 'product.category', 'prices')
             ->whereKey($ids)
+            ->visible()
             ->whereRelation('product', 'is_published', true)
             ->get()
             ->keyBy('id');
@@ -69,6 +70,7 @@ class ProductLines implements LineType
     {
         return ProductVariant::query()
             ->with('product.media', 'product.category')
+            ->visible()
             ->whereRelation('product', 'is_published', true)
             ->pricedIn()
             ->findOrFail($request->integer('variant_id'));

@@ -24,7 +24,7 @@ class CatalogSitemap
         Category::query()->whereIn('id', $liveCategoryIds)->orderBy('sort_order')->get()
             ->each(fn (Category $category) => $sitemap->add(SitemapPages::versions('shop.category', [$category])));
 
-        Product::query()->where('is_published', true)->whereHas('variants')->with(['variants', 'media'])->orderBy('sort_order')->get()
+        Product::query()->where('is_published', true)->whereHas('variants', fn ($variants) => $variants->visible())->with(['variants' => fn ($variants) => $variants->visible(), 'media'])->orderBy('sort_order')->get()
             ->each(function (Product $product) use ($sitemap) {
                 $changed = collect([$product->updated_at])
                     ->merge($product->variants->pluck('updated_at'))

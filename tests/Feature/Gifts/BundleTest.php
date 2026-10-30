@@ -54,8 +54,15 @@ class BundleTest extends TestCase
         $single = $this->bundle([7900]);
         $madeToOrder = $this->bundle([7900, 6900]);
         $madeToOrder->items[0]->variant->update(['stock' => null]);
+        // A part hidden in the panel takes the set off the shelf like a sold-out one (MA-279).
+        $hiddenPart = $this->bundle([7900, 6900]);
+        $hiddenPart->items[1]->variant->update(['is_hidden' => true]);
 
         $this->assertEqualsCanonicalizing([$live->id, $madeToOrder->id], Bundle::query()->live()->pluck('id')->all());
+
+        $hiddenPart->items[1]->variant->update(['is_hidden' => false]);
+
+        $this->assertContains($hiddenPart->id, Bundle::query()->live()->pluck('id')->all());
     }
 
     /**

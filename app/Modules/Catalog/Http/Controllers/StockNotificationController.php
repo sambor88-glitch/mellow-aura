@@ -25,7 +25,7 @@ class StockNotificationController extends Controller
         $variant = ProductVariant::query()->with('product')->findOrFail($request->integer('variant_id'));
 
         // Only a size that is sold out and has a page in this language.
-        abort_if($variant->isInStock() || ! $variant->product->is_published || ! $variant->product->availableIn(Locales::current()) || $variant->price() === null, 404);
+        abort_if($variant->isInStock() || $variant->is_hidden || ! $variant->product->is_published || ! $variant->product->availableIn(Locales::current()) || $variant->price() === null, 404);
 
         // A bot sees the same answer as a person, and nothing is kept.
         if (! $request->isFromBot()) {

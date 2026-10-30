@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-#[Fillable(['product_id', 'label', 'price_gross', 'compare_at_price', 'stock', 'sent_by_post', 'voucher_seats', 'media_id'])]
+#[Fillable(['product_id', 'label', 'price_gross', 'compare_at_price', 'stock', 'sent_by_post', 'voucher_seats', 'media_id', 'is_hidden'])]
 class ProductVariant extends Model
 {
     /** @use HasFactory<ProductVariantFactory> */
@@ -46,7 +46,7 @@ class ProductVariant extends Model
      */
     public static function priceRange(): ?array
     {
-        $prices = static::query()->inStock()->whereRelation('product', 'is_published', true)
+        $prices = static::query()->visible()->inStock()->whereRelation('product', 'is_published', true)
             ->toBase()
             ->selectRaw('min(price_gross) as lowest, max(price_gross) as highest')
             ->first();
@@ -135,6 +135,18 @@ class ProductVariant extends Model
     }
 
     /**
+     * Variants not hidden in the panel (MA-279). A hidden one is off the shop — product page, cards, feeds, cart —
+     * but keeps its history, so it can come back.
+     *
+     * @param  Builder<ProductVariant>  $query
+     */
+    #[Scope]
+    protected function visible(Builder $query): void
+    {
+        $query->where('is_hidden', false);
+    }
+
+    /**
      * Variants in stock or without stock tracking.
      *
      * @param  Builder<ProductVariant>  $query
@@ -209,6 +221,7 @@ class ProductVariant extends Model
             'stock' => 'integer',
             'sent_by_post' => 'boolean',
             'media_id' => 'integer',
+            'is_hidden' => 'boolean',
         ];
     }
 }

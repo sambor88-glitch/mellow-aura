@@ -22,7 +22,7 @@ class VoucherPageController extends Controller
     {
         $vouchers = Product::query()->live()
             ->whereRelation('category', 'group', CategoryGroup::Workshops->value)
-            ->with(['category', 'variants', 'media'])
+            ->with(['category', 'variants' => fn ($variants) => $variants->visible(), 'media'])
             ->orderBy('sort_order')
             ->orderBy('id')
             ->get();
