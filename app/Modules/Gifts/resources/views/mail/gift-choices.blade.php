@@ -25,7 +25,7 @@
     </table>
 
     <p style="margin: 0 0 4px; color: #5C5043;">
-        Osoba, która dostanie kartę, wpisze kod na stronie, wymyśli napis, wybierze kolor wnętrza i poda adres. Dostawa jest już opłacona.
+        Osoba, która dostanie kartę, wpisze kod na stronie <a href="{{ route('gift-choice.index') }}" style="color: #855F3D;">{{ route('gift-choice.index') }}</a>, wymyśli napis, wybierze kolor wnętrza i poda adres. Dostawa jest już opłacona.
         @if ($contactEmail)
             {{ $mailTexts->html('gift_choices', 'outro', $fill) }}
         @endif
