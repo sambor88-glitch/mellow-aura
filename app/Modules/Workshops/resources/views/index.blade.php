@@ -53,7 +53,7 @@
                         $code = WorkshopTypes::key($workshop);
                         $count = $dateCounts->get($code, 0);
                     @endphp
-                    <article class="flex animate-ma-up flex-col rounded-[20px] border border-divider bg-cream px-7 py-[30px]" style="animation-delay: {{ $loop->index * 0.06 }}s">
+                    <article id="workshop-{{ $code }}" class="flex animate-ma-up scroll-mt-24 flex-col rounded-[20px] border border-divider bg-cream px-7 py-[30px]" style="animation-delay: {{ $loop->index * 0.06 }}s">
                         {{-- The price under the name: beside it, it squeezed the name into two or three lines in a narrow card. --}}
                         <div class="mb-3.5 flex flex-col gap-2">
                             <h2 class="min-w-0 font-serif text-[26px] leading-[1.15] text-balance">{{ $workshop['name'] }}</h2>

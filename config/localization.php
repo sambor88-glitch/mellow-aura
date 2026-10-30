@@ -73,8 +73,18 @@ return [
         // The page of a bought piece speaks the language of its order and has no twin (MA-234).
         'piece.show' => 'shop.index',
         'workshops.index' => 'content.about',
+        'workshops.booking.create' => 'content.about',
+        'workshops.booking.calendar' => 'content.about',
+        'workshops.booking.confirmation' => 'content.about',
         'vouchers.index' => 'shop.index',
+        'vouchers.pdf' => 'shop.index',
         'gifts.index' => 'shop.index',
+        // A card for choosing a mug is bought and redeemed in złoty.
+        'gift-choice.index' => 'shop.index',
+        'gift-choice.show' => 'shop.index',
+        // BLIK exists in złoty only; an English cart has no BLIK to wait for.
+        'checkout.blik' => 'shop.index',
+        'checkout.blik.status' => 'shop.index',
         // Back on /en/ with euro prices (MA-127).
         'bundles.index' => 'shop.index',
         'journal.index' => 'content.about',
@@ -83,6 +93,9 @@ return [
         'content.b2b' => 'custom-orders.index',
         'content.imprint' => 'custom-orders.index',
         'content.scarf' => 'custom-orders.index',
+        // The quote and its payment are written in Polish, like the custom order they belong to.
+        'custom-orders.payment.show' => 'custom-orders.index',
+        'custom-orders.payment.confirmation' => 'custom-orders.index',
     ],
 
 ];

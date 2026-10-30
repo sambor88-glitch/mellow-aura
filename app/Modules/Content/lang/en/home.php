@@ -11,6 +11,7 @@ return [
     'float_link' => 'See :name',
     'hero_bar' => 'Ceramics and silk from one pair of hands, from a studio in Kraków',
     'hero_bar_cta' => 'See the shop',
+    'hero_product_cta' => 'View',
     'eyebrow' => 'home studio · kraków',
     'heading' => 'Clay and silk from :em hands.',
     'heading_em' => 'one pair of',

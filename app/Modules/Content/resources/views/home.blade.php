@@ -2,6 +2,7 @@
 @use('App\Modules\Shared\Support\DispatchTime')
 @use('App\Modules\Shared\Support\Money')
 @use('App\Modules\Localization\Support\Locales')
+@use('App\Modules\Workshops\Support\WorkshopTypes')
 @inject('settings', 'App\Modules\Settings\Settings')
 @inject('pagePhotos', 'App\Modules\Content\Support\PagePhotos')
 @php
@@ -53,6 +54,7 @@
     $heroSizes = '(max-aspect-ratio: 3/4) 75vh, 100vw';
     $kasiaPhoto = $photo('home-kasia');
     $instagramHandle = ltrim((string) $settings->get('instagram_handle'), '@');
+    $newTab = new Illuminate\Support\HtmlString('<span class="sr-only"> ('.e(__('shared::links.new_tab')).')</span>');
     $dispatch = DispatchTime::label($settings, short: true);
 
     $btnMain = 'fill-btn aura-btn-main inline-flex min-h-[52px] items-center gap-2.5 rounded-full bg-ink px-[30px] text-[14px] font-medium tracking-[0.04em] text-linen transition-[background-color,color] duration-300 [--fill:var(--color-rose)] hover:bg-rose hover:text-ink active:scale-[.97]';
@@ -145,7 +147,11 @@
                                     <span class="self-start rounded-full bg-rose px-2.5 py-0.5 text-[11px] tracking-[0.06em] text-ink">{{ $heroBadge }}</span>
                                 @endif
                                 <strong class="font-serif text-[21px] leading-tight font-light">{{ $hero->name }}</strong>
-                                <span class="aura-fact-label text-[13px] text-label"><x-catalog::price-label :product="$hero" /></span>
+                                {{-- „Zobacz” tells this tile apart from the facts beside it: it is the one that leads somewhere. --}}
+                                <span class="flex flex-wrap items-baseline justify-between gap-x-3">
+                                    <span class="aura-fact-label text-[13px] text-label"><x-catalog::price-label :product="$hero" /></span>
+                                    <span class="text-[13px] whitespace-nowrap underline decoration-1 underline-offset-4">{{ $t('hero_product_cta') }} <span aria-hidden="true">→</span></span>
+                                </span>
                             </a>
                         @endif
                     </div>
@@ -282,8 +288,9 @@
                     <h2 id="workshops-title" class="font-serif text-[length:clamp(44px,6.2vw,96px)] leading-[.95] font-light tracking-[-0.02em] text-sand">{{ $em('workshops_heading', 'text-rose italic whitespace-nowrap') }}</h2>
                     <p class="mt-6 max-w-[44ch] text-[17.5px] leading-[1.68] text-on-dark-muted">{{ $t('workshops_text') }}</p>
                     <div data-aura-rise class="mt-9 grid gap-2.5">
+                        {{-- Each row leads to its own card on the workshops page, where its dates are. --}}
                         @foreach ($workshops as $workshop)
-                            <a href="{{ $workshopsUrl }}" class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 rounded-[18px] border border-linen/14 bg-linen/6 px-5 py-[18px] text-on-dark backdrop-blur-[16px] transition-[background-color,border-color] duration-300 hover:border-linen/40 hover:bg-linen/12 hover:text-on-dark">
+                            <a href="{{ $workshopsUrl }}#workshop-{{ WorkshopTypes::key($workshop) }}" class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 rounded-[18px] border border-linen/14 bg-linen/6 px-5 py-[18px] text-on-dark backdrop-blur-[16px] transition-[background-color,border-color] duration-300 hover:border-linen/40 hover:bg-linen/12 hover:text-on-dark">
                                 <span class="min-w-0 flex-[1_1_240px]">
                                     @if (! empty($workshop['duration_label']))
                                         <span class="block text-[10.5px] tracking-[0.16em] text-label-dark uppercase">{{ $workshop['duration_label'] }}</span>
@@ -300,7 +307,7 @@
                         @endforeach
                     </div>
                     <div class="mt-8">
-                        <a href="{{ $workshopsUrl }}" data-magnet class="fill-btn inline-flex min-h-[52px] items-center gap-2.5 rounded-full bg-linen px-[30px] text-[14px] font-medium tracking-[0.04em] text-ink [--fill:var(--color-rose)] hover:bg-rose hover:text-ink">{{ $t('workshops_cta') }} <span aria-hidden="true">→</span></a>
+                        <a href="{{ $workshopsUrl }}#workshop-dates" data-magnet class="fill-btn inline-flex min-h-[52px] items-center gap-2.5 rounded-full bg-linen px-[30px] text-[14px] font-medium tracking-[0.04em] text-ink [--fill:var(--color-rose)] hover:bg-rose hover:text-ink">{{ $t('workshops_cta') }} <span aria-hidden="true">→</span></a>
                     </div>
                 </div>
                 <div aria-hidden="true" class="relative h-[clamp(460px,70vh,680px)] min-w-0 flex-[1_1_420px]">
@@ -324,7 +331,7 @@
                     <h2 id="instagram-title" class="{{ $sectionTitle }}">{{ $t('instagram_heading') }} <span aria-hidden="true" class="text-brown">🪐</span></h2>
                 </div>
                 @if ($instagramHandle !== '')
-                    <a href="https://www.instagram.com/{{ $instagramHandle }}/" target="_blank" rel="noopener" data-magnet class="{{ $btnGlass }}">{{ $t('instagram_follow') }}</a>
+                    <a href="https://www.instagram.com/{{ $instagramHandle }}/" target="_blank" rel="noopener" data-magnet class="{{ $btnGlass }}">{{ $t('instagram_follow') }}{{ $newTab }}</a>
                 @endif
             </div>
             <div class="glass rounded-[26px] p-3.5">
@@ -339,7 +346,7 @@
                 <div data-aura-rise class="grid grid-cols-2 gap-2.5 min-[520px]:grid-cols-3 min-[980px]:grid-cols-6">
                     @foreach ($instagramPosts as $post)
                         <a href="{{ $post->permalink }}" target="_blank" rel="noopener" class="block overflow-hidden rounded-[14px] bg-linen">
-                            <img src="{{ $post->imageUrl() }}" alt="{{ $post->alt() }}" loading="lazy" width="1080" height="1080" style="object-position: {{ $post->objectPosition() }}" class="block aspect-square w-full object-cover transition-transform duration-[1.1s] ease-clay hover:scale-[1.06]">
+                            <img src="{{ $post->imageUrl() }}" alt="{{ $post->alt() }}" loading="lazy" width="1080" height="1080" style="object-position: {{ $post->objectPosition() }}" class="block aspect-square w-full object-cover transition-transform duration-[1.1s] ease-clay hover:scale-[1.06]">{{ $newTab }}
                         </a>
                     @endforeach
                 </div>

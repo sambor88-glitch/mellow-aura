@@ -19,6 +19,8 @@
     ]);
 
     $studioLinks = array_filter([
+        $link('about', 'content.about'),
+        $link('studio_page', 'content.studio'),
         $link('workshops', 'workshops.index'),
         $link('custom_orders', 'custom-orders.index'),
         $link('scarf', 'content.scarf'),
@@ -34,6 +36,9 @@
     $city = $settings->get('footer_city');
     $nip = $settings->get('company_nip');
     $whatsApp = $phone ? 'https://wa.me/'.preg_replace('/\D+/', '', $phone) : null;
+    // The number rings on a phone; WhatsApp has its own pill above.
+    $call = $phone ? 'tel:'.preg_replace('/[^\d+]+/', '', $phone) : null;
+    $newTab = __('shared::links.new_tab');
 
     $social = array_filter([
         'Instagram' => $instagram ? 'https://www.instagram.com/'.ltrim($instagram, '@').'/' : null,
@@ -51,7 +56,7 @@
             @if ($social)
                 <div class="flex flex-wrap gap-3">
                     @foreach ($social as $label => $href)
-                        <a href="{{ $href }}" target="_blank" rel="noopener" class="rounded-full border border-line-dark px-[17px] py-[9px] text-[12.5px] text-sand hover:border-rose hover:text-rose">{{ $label }}</a>
+                        <a href="{{ $href }}" target="_blank" rel="noopener" class="rounded-full border border-line-dark px-[17px] py-[9px] text-[12.5px] text-sand hover:border-rose hover:text-rose">{{ $label }} <span aria-hidden="true">↗</span><span class="sr-only"> ({{ $newTab }})</span></a>
                     @endforeach
                 </div>
             @endif
@@ -82,8 +87,8 @@
         <div class="basis-full sm:flex-[0_1_200px]">
             <div class="mb-4 text-[10.5px] tracking-[0.24em] text-label-dark uppercase">{{ __('shared::footer.contact') }}</div>
             <div class="flex flex-col gap-[11px] text-[14.5px] text-on-dark-muted">
-                @if ($whatsApp)
-                    <a href="{{ $whatsApp }}" target="_blank" rel="noopener" class="text-on-dark hover:text-rose">{{ $phone }}</a>
+                @if ($call)
+                    <a href="{{ $call }}" class="text-on-dark hover:text-rose">{{ $phone }}</a>
                 @endif
                 @if ($email)
                     <a href="mailto:{{ $email }}" class="text-on-dark [overflow-wrap:anywhere] hover:text-rose">{{ $email }}</a>
@@ -94,12 +99,8 @@
                 @if ($city)
                     <span>{{ $city }}</span>
                 @endif
-                {{-- The contact page tells when the exact address is given, so this line leads there. --}}
-                @if ($visit = $link('by_appointment', 'content.contact'))
-                    <a href="{{ $visit[1] }}" class="text-on-dark hover:text-rose">{{ $visit[0] }}</a>
-                @else
-                    <span>{{ __('shared::footer.by_appointment') }}</span>
-                @endif
+                {{-- A fact, not a link: „Napisz do mnie” above already leads to the contact page. --}}
+                <span>{{ __('shared::footer.by_appointment') }}</span>
             </div>
         </div>
     </div>
@@ -112,7 +113,7 @@
     <div class="mx-auto flex max-w-[1280px] flex-wrap justify-between gap-x-7 gap-y-4 border-t border-divider-dark px-7 pt-[22px] pb-10 text-[12.5px] text-label-dark">
         <span>© {{ now()->year }} MellowAura &middot; Katarzyna Samborska{{ $nip ? ' · NIP '.$nip : '' }}</span>
         <div class="flex flex-wrap gap-[22px]">
-            @foreach (array_filter([$link('faq', 'content.faq'), $link('terms', 'content.terms'), $link('privacy', 'content.privacy'), $link('withdrawal', 'withdrawal.create')]) as [$label, $href])
+            @foreach (array_filter([$link('terms', 'content.terms'), $link('privacy', 'content.privacy'), $link('withdrawal', 'withdrawal.create')]) as [$label, $href])
                 <a href="{{ $href }}" class="text-label-dark hover:text-rose">{{ $label }}</a>
             @endforeach
             @if ($cookies = $link('cookies', 'consent.edit'))
