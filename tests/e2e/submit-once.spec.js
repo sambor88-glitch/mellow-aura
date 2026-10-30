@@ -26,8 +26,9 @@ test('a second tap on „Wyślij wiadomość” sends no second message', async 
     await page.locator('#contact-message').fill('Czy kubek mieści 400 ml?');
 
     const form = page.locator('form[data-submit-once]');
-    const button = form.getByRole('button', { name: 'Wyślij wiadomość' });
-    await button.click();
+    await expect(form.getByRole('button', { name: 'Wyślij wiadomość' })).toBeVisible();
+    // A click through the page itself: Playwright's click would wait for the navigation held back above.
+    await form.evaluate((element) => element.querySelector('button:not([type="button"])').click());
     await expect(form).toHaveAttribute('aria-busy', 'true');
 
     // The button no longer takes taps, so the second one goes to the form itself, as a script or Enter would.
