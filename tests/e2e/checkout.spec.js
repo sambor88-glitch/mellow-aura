@@ -127,7 +127,20 @@ test('a customer buys a product and Kasia ships it', async ({ page }, testInfo) 
         await expect(page.locator('[name="email"]')).toBeFocused();
         expect(new URL(page.url()).pathname).toBe('/zamowienie');
 
-        await page.locator('[name="email"]').fill(email);
+        // The sentence stays under the field, not only in the pill that fades, until the field is corrected (MA-284).
+        const emailField = page.locator('[name="email"]');
+        const emailCheck = page.locator('#email-check');
+
+        await expect(emailCheck).toHaveText('Wpisz e-mail — wyślę na niego potwierdzenie');
+        await expect(emailField).toHaveAttribute('aria-invalid', 'true');
+        await expect(emailField).toHaveAttribute('aria-describedby', 'email-check');
+        await page.waitForTimeout(3000);
+        await expect(emailCheck).toBeVisible();
+
+        await emailField.fill(email);
+        await expect(emailCheck).toHaveCount(0);
+        await expect(emailField).not.toHaveAttribute('aria-invalid', 'true');
+        await expect(emailField).toHaveAttribute('aria-describedby', 'email-note');
         await page.locator('[name="phone"]').fill('600100200');
         await page.locator('[name="name"]').fill('Anna Testowa');
         await page.locator('input[name="shipping_method"][value="parcel_locker"]').check({ force: true });
@@ -147,6 +160,7 @@ test('a customer buys a product and Kasia ships it', async ({ page }, testInfo) 
         // Contact, delivery and terms are done, so the code is the one thing left.
         await pay.click();
         await expect(page.locator('#blik_code')).toBeFocused();
+        await expect(page.locator('#blik_code-check')).toHaveText('Wpisz 6-cyfrowy kod z aplikacji banku');
 
         // Contact → delivery → payment, and the code right above the pay button, on a phone and a desktop alike.
         const top = async (selector) => (await page.locator(selector).first().boundingBox()).y;
