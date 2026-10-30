@@ -83,10 +83,11 @@ class ProductStructuredData
             $group->image($images);
         }
 
-        return $group->toScript().BreadcrumbStructuredData::for([
+        // The same trail the page shows: a category not written in this language has no page in it (MA-296).
+        return $group->toScript().BreadcrumbStructuredData::for(array_values(array_filter([
             [__('catalog::shop.heading'), route('shop.index')],
-            [$product->category->name, route('shop.category', $product->category)],
+            $product->category->hasTranslation(Locales::current()) ? [$product->category->name, route('shop.category', $product->category)] : null,
             [$product->name, $url],
-        ]);
+        ])));
     }
 }

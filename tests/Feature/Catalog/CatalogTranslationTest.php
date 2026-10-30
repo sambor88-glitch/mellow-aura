@@ -167,10 +167,9 @@ class CatalogTranslationTest extends TestCase
         $this->get('/en/shop')->assertOk()->assertSee('Voucher na warsztaty');
     }
 
-    /** @return array{Product, Product} */
     public function test_a_category_without_english_leaves_no_empty_eyebrow_on_an_english_page(): void
     {
-        $category = Category::factory()->create(['name' => 'Ceramika', 'slug' => 'ceramika']);
+        $category = Category::factory()->create(['name' => 'Półka próbna', 'slug' => 'polka-probna']);
         $bowl = Product::factory()->create(['name' => 'Miska z surową krawędzią', 'slug' => 'miska-z-surowa-krawedzia', 'category_id' => $category->id, 'is_one_off' => false]);
         $bowl->translations()->create(['locale' => 'en', 'name' => 'Rough-edged bowl', 'slug' => 'rough-edged-bowl']);
         $variant = ProductVariant::factory()->create(['product_id' => $bowl->id, 'stock' => 2]);
@@ -180,18 +179,22 @@ class CatalogTranslationTest extends TestCase
         $this->get('/en/shop')
             ->assertOk()
             ->assertSee('Rough-edged bowl')
-            ->assertDontSee('Ceramika')
+            ->assertDontSee('Półka próbna')
             ->assertDontSee('max-sm:tracking-[0.06em]">', false);
 
         $this->get('/en/product/rough-edged-bowl')
             ->assertOk()
             ->assertSee('Rough-edged bowl')
-            ->assertDontSee('Ceramika')
-            ->assertDontSee('<p class="eyebrow mb-4">', false);
+            ->assertDontSee('Półka próbna')
+            ->assertDontSee('<p class="eyebrow mb-4">', false)
+            // Nor does the trail for Google: the category has no English page to link to.
+            ->assertDontSee(url('/en/shop').'/', false)
+            ->assertDontSee(str_replace('/', '\\/', url('/en/shop').'/'), false);
 
-        $this->get('/produkt/miska-z-surowa-krawedzia')->assertSee('<p class="eyebrow mb-4">Ceramika</p>', false);
+        $this->get('/produkt/miska-z-surowa-krawedzia')->assertSee('<p class="eyebrow mb-4">Półka próbna</p>', false);
     }
 
+    /** @return array{Product, Product} */
     private function twoProducts(): array
     {
         $category = Category::factory()->create(['name' => 'Ceramika', 'slug' => 'ceramika']);
