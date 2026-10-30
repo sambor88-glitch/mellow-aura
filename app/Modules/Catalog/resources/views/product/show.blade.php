@@ -342,7 +342,7 @@
              the photo and the form stand side by side (from 872 px) they are in view anyway, so the bar is gone. --}}
         @if (Route::has('cart.store') && $variant->isInStock())
             <div x-data="buyBar" x-cloak x-bind:class="shown || 'invisible translate-y-full'"
-                 class="border border-line bg-cream shadow-[0_18px_40px_-24px_rgba(47,38,32,.55)] sticky bottom-[calc(12px+env(safe-area-inset-bottom))] z-50 mt-10 flex items-center gap-3 rounded-full py-2 pr-2 pl-5 transition duration-500 ease-clay min-[872px]:hidden">
+                 class="border border-line bg-cream shadow-[0_18px_40px_-24px_rgba(47,38,32,.55)] sticky bottom-[calc(12px+env(safe-area-inset-bottom)+var(--consent-h,0px))] z-50 mt-10 flex items-center gap-3 rounded-full py-2 pr-2 pl-5 transition duration-500 ease-clay min-[872px]:hidden">
                 <div class="min-w-0 flex-auto">
                     <div class="font-serif text-[22px] leading-none">{{ $price($variant) }}</div>
                     @if ($variant->label)

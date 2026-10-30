@@ -33,6 +33,11 @@ export default (config) => ({
     fallback: false,
 
     init() {
+        // The page keeps the banner's height free at its end (--consent-h in app.css), and the pinned buy bar rides
+        // above it, so on a phone the banner never covers „Płacę” or „Do koszyka”. Hidden, it measures 0.
+        const root = document.documentElement;
+        new ResizeObserver(() => root.style.setProperty('--consent-h', `${this.$el.offsetHeight}px`)).observe(this.$el);
+
         // The footer's „Ustawienia cookies” opens the banner here instead of leaving the page.
         document.addEventListener('click', (event) => {
             if (event.target.closest('[data-consent-open]')) {

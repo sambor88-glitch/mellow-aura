@@ -11,7 +11,8 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class ProductPhoto
 {
     /**
-     * Widths declared in the srcset, taken from the conversions in Product::registerMediaConversions().
+     * Widths declared in the srcset, taken from the conversions in Product::registerMediaConversions()
+     * (OrderItem has the same ones for the photo of a sold piece).
      */
     private const WIDTHS = ['thumb' => 400, 'phone' => 720, 'card' => 1200];
 

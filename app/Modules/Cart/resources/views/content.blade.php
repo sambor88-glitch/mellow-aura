@@ -1,3 +1,4 @@
+@use('App\Modules\Checkout\Enums\PaymentMethod')
 @use('App\Modules\Localization\Support\Locales')
 @use('App\Modules\Shared\Support\Money')
 @inject('cart', 'App\Modules\Cart\Cart')
@@ -15,6 +16,8 @@
     $cheapestShipping = $inZloty ? collect((array) $settings->get('shipping_methods', []))->pluck('price_gross')->filter(fn ($price) => $price > 0)->min() : null;
     // Vouchers sent as PDFs alone come by e-mail: no free-shipping threshold to reach and no delivery to pay for.
     $needsDelivery = $cart->needsDelivery();
+    // The same list as the checkout: BLIK only in złoty.
+    $payments = collect(PaymentMethod::for($currency));
 @endphp
 <div class="min-h-0 flex-1 overflow-y-auto px-[26px] py-[22px]">
     @forelse ($lines as $line)
@@ -62,7 +65,7 @@
 </div>
 
 @if ($lines->isNotEmpty())
-    <div class="border-t border-line bg-linen/60 px-[26px] pt-[22px] pb-[26px]">
+    <div class="border-t border-line bg-linen/60 px-[26px] pt-[22px] pb-[calc(26px+env(safe-area-inset-bottom))]">
         @if ($needsDelivery && $freeReached)
             <div class="mb-3.5 flex items-center gap-[9px] rounded-[16px] border border-success-line bg-success-soft px-3.5 py-[11px] text-[13px] text-success-text">
                 <span aria-hidden="true" class="inline-block animate-ma-check">✓</span><span>{{ __('cart::content.free_reached') }}</span>
@@ -93,10 +96,12 @@
         @if (Locales::has('checkout.index', Locales::current()))
             <a href="{{ route('checkout.index') }}" class="fill-btn block rounded-full bg-ink p-4 text-center text-[14.5px] font-medium tracking-[0.03em] text-linen transition duration-300 [--fill:var(--color-rose)] hover:bg-rose hover:text-ink active:scale-[.97]">{{ __('cart::content.checkout') }} <span aria-hidden="true">→</span></a>
         @endif
-        @if ($inZloty)
-            <div class="mt-3.5 flex items-center justify-center gap-2.5 text-[11.5px] tracking-[0.1em] text-label uppercase">
-                <span class="rounded-full bg-navy px-2.5 py-[3px] text-[10px] font-semibold tracking-[0.08em] text-white">BLIK</span>
-                <span>Przelewy24</span><span>&middot;</span><span>karta</span>
+        @if ($payments->isNotEmpty())
+            <div class="mt-3.5 flex flex-wrap items-center justify-center gap-2.5 text-[11.5px] tracking-[0.1em] text-label uppercase">
+                @if ($payments->contains(PaymentMethod::Blik))
+                    <span class="rounded-full bg-navy px-2.5 py-[3px] text-[10px] font-semibold tracking-[0.08em] text-white">BLIK</span>
+                @endif
+                {!! $payments->reject(fn (PaymentMethod $method) => $method === PaymentMethod::Blik)->map(fn (PaymentMethod $method) => '<span>'.e($method->title()).'</span>')->join('<span aria-hidden="true">&middot;</span>') !!}
             </div>
         @endif
     </div>

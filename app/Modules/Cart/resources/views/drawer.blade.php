@@ -17,14 +17,14 @@
 
     {{-- On a phone the drawer fills the screen and already shows the new line, so the pill would only cover
          „Przejdź do zamówienia”: there it is read out to a screen reader but not shown. --}}
-    <div role="status" class="pointer-events-none fixed bottom-[26px] left-1/2 w-max max-w-[calc(100%-32px)] -translate-x-1/2">
+    <div role="status" class="pointer-events-none fixed bottom-[calc(26px+env(safe-area-inset-bottom))] left-1/2 w-max max-w-[calc(100%-32px)] -translate-x-1/2">
         <div x-cloak x-show="$store.cart.opened && $store.cart.notice" x-text="$store.cart.notice"
              class="animate-ma-up-quick rounded-full bg-ink px-6 py-3.5 text-center text-[14px] text-sand shadow-pill max-sm:sr-only"></div>
     </div>
 </dialog>
 
 {{-- The same confirmation when the drawer is closed, e.g. an error after "Dodaj do koszyka". --}}
-<div x-data role="status" class="pointer-events-none fixed bottom-[26px] left-1/2 z-120 w-max max-w-[calc(100%-32px)] -translate-x-1/2">
+<div x-data role="status" class="pointer-events-none fixed bottom-[calc(26px+env(safe-area-inset-bottom))] left-1/2 z-120 w-max max-w-[calc(100%-32px)] -translate-x-1/2">
     <div x-cloak x-show="! $store.cart.opened && $store.cart.notice" x-text="$store.cart.notice"
          class="animate-ma-up-quick rounded-full bg-ink px-6 py-3.5 text-center text-[14px] text-sand shadow-pill"></div>
 </div>

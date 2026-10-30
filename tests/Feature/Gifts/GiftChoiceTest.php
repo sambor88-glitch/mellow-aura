@@ -351,6 +351,37 @@ class GiftChoiceTest extends TestCase
         $this->get($bought->chooseUrl())->assertOk()->assertSee('Wymyśl swój napis');
     }
 
+    public function test_kasia_finds_a_card_by_its_code_the_order_number_a_name_or_an_email(): void
+    {
+        Mail::fake();
+        $owner = User::factory()->create();
+        $chosen = $this->paidCard(['recipient_name' => 'Ola']);
+        $chosen->update(['chosen_at' => now()]);
+        $emailed = $this->paidCard(['delivery' => 'email', 'recipient_email' => 'ewa@example.com', 'send_on' => '2026-12-24', 'recipient_name' => 'Ewa']);
+        $find = fn (string $typed) => $this->actingAs($owner)->get(route('admin.gift-choices.index', ['szukaj' => $typed]))->assertOk();
+
+        // A chosen card is off the default list, so only a search brings it back.
+        $this->actingAs($owner)->get(route('admin.gift-choices.index'))->assertSee($emailed->code)->assertDontSee($chosen->code);
+
+        // Typed from a phone call: lower case, no dashes.
+        $find(strtolower(str_replace('-', '', $chosen->code)))
+            ->assertSeeInOrder([$chosen->code, 'dla: Ola', 'Wybrane'])
+            ->assertDontSee($emailed->code)
+            ->assertSee('value="'.strtolower(str_replace('-', '', $chosen->code)).'"', false)
+            ->assertSee('Pokaż wszystkie');
+        $find(strtolower($emailed->orderItem->order->number))->assertSee($emailed->code)->assertDontSee($chosen->code);
+        $find('ewa@example')->assertSee($emailed->code)->assertDontSee($chosen->code);
+        $find('Ola')->assertSee($chosen->code)->assertDontSee($emailed->code);
+        // The buyer's name finds every card she bought.
+        $find('Anna Nowak')->assertSee($chosen->code)->assertSee($emailed->code);
+
+        $find('MA-ZZZZ-ZZZZ')
+            ->assertSee('Nie znalazłam takiej karty')
+            ->assertSee(route('admin.gifts.edit').'#sprawdz-voucher', false)
+            ->assertDontSee($chosen->code)
+            ->assertDontSee($emailed->code);
+    }
+
     /**
      * @param  array<string, mixed>  $overrides
      * @return array<string, mixed>

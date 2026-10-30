@@ -3,6 +3,8 @@
 namespace App\Modules\Checkout\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Catalog\Http\Requests\Admin\PhotoRules;
+use App\Modules\Checkout\Actions\SetPiecePhoto;
 use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Checkout\Models\OrderItem;
@@ -10,14 +12,35 @@ use App\Modules\Checkout\Support\PieceCardPdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Validator;
 
 /**
- * What only the studio knows about a piece — the firing date, the glaze, the plant, a few words from Kasia — and the card with the QR code
- * to its page, printed for the parcel (MA-234). Both only for a piece of a paid order, like its certificate.
+ * What only the studio knows about a piece — the firing date, the glaze, the plant, a few words from Kasia, its own photo
+ * (MA-290) — and the card with the QR code to its page, printed for the parcel (MA-234). All only for a piece of a paid
+ * order, like its certificate.
  */
 class PieceController extends Controller
 {
+    private const PHOTO_MAX_KILOBYTES = 10 * 1024;
+
+    // A bigger photo would not fit in PHP's memory while it is scaled down, as with product photos.
+    private const PHOTO_MAX_SIDE = 8192;
+
+    /**
+     * What the page checks before sending the photo (photoPicker): one file, up to 10 MB.
+     *
+     * @return array{maxFiles: int, maxFileBytes: int, maxTotalBytes: int}
+     */
+    public static function photoLimits(): array
+    {
+        return [
+            ...PhotoRules::limits(),
+            'maxFiles' => 1,
+            'maxFileBytes' => (int) min(self::PHOTO_MAX_KILOBYTES * 1024, UploadedFile::getMaxFilesize()),
+        ];
+    }
+
     public function update(Request $request, Order $order, OrderItem $item): RedirectResponse
     {
         $this->ensurePiece($order, $item);
@@ -44,6 +67,48 @@ class PieceController extends Controller
 
         return to_route('admin.orders.show', $order)
             ->with('panel_status', 'Zapisane — widać to na stronie sztuki i na certyfikacie.')
+            ->withFragment('sztuka-'.$item->id);
+    }
+
+    public function storePhoto(Request $request, Order $order, OrderItem $item, SetPiecePhoto $setPhoto): RedirectResponse
+    {
+        $this->ensurePiece($order, $item);
+
+        $notPhoto = 'Tego pliku nie dodam — wybierz zdjęcie JPG, PNG albo WebP';
+        $validator = Validator::make($request->all(), [
+            'photo' => [
+                'bail', 'required', 'file', 'mimetypes:image/jpeg,image/png,image/webp', 'max:'.self::PHOTO_MAX_KILOBYTES,
+                'dimensions:max_width='.self::PHOTO_MAX_SIDE.',max_height='.self::PHOTO_MAX_SIDE,
+            ],
+        ], [
+            'photo.required' => 'Wybierz zdjęcie z telefonu albo komputera',
+            'photo.uploaded' => 'Zdjęcie nie doszło — może jest za duże. Spróbuj mniejszego',
+            'photo.file' => $notPhoto,
+            'photo.mimetypes' => $notPhoto,
+            'photo.max' => 'Zdjęcie jest za duże — do 10 MB',
+            'photo.dimensions' => 'Zdjęcie jest za duże — zmniejsz je do '.self::PHOTO_MAX_SIDE.' px na dłuższym boku',
+        ]);
+
+        if ($validator->fails()) {
+            return to_route('admin.orders.show', $order)->withErrors($validator, 'piecePhoto'.$item->id)->withFragment('sztuka-'.$item->id);
+        }
+
+        $replaced = $item->hasMedia('photo');
+        $setPhoto($item, $request->file('photo'));
+
+        return to_route('admin.orders.show', $order)
+            ->with('panel_status', $replaced ? 'Zdjęcie zmienione — widać je na stronie sztuki.' : 'Zdjęcie dodane — widać je na stronie sztuki.')
+            ->withFragment('sztuka-'.$item->id);
+    }
+
+    public function destroyPhoto(Order $order, OrderItem $item): RedirectResponse
+    {
+        $this->ensurePiece($order, $item);
+
+        $item->clearMediaCollection('photo');
+
+        return to_route('admin.orders.show', $order)
+            ->with('panel_status', 'Zdjęcie usunięte ze strony sztuki.')
             ->withFragment('sztuka-'.$item->id);
     }
 

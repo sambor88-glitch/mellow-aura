@@ -3,7 +3,7 @@
 return [
     'title' => ':name — z pracowni MellowAura',
     'eyebrow' => 'historia jednej sztuki',
-    'photo_missing' => 'Zdjęcie tej sztuki jeszcze się robi.',
+    'photo_alt' => ':name — zdjęcie tej sztuki z pracowni',
     'fired' => 'Data wypału',
     'glaze' => 'Szkliwo',
     'plant' => 'Roślina',
