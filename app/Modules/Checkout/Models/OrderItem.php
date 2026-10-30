@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable([
     'product_variant_id', 'product_name', 'variant_label', 'quantity', 'missing_quantity', 'is_made_to_order', 'unit_price_gross', 'currency', 'vat_rate', 'vat_exemption',
     'custom_text', 'custom_glaze', 'accepted_deviation', 'recipient_name', 'sender_name', 'dedication',
-    'fired_on', 'glaze', 'plant',
+    'fired_on', 'glaze', 'plant', 'maker_note',
 ])]
 class OrderItem extends Model
 {

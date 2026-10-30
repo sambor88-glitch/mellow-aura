@@ -56,6 +56,24 @@ class ProductPageTest extends TestCase
             ->assertSee('ostatnia sztuka — kolejną zrobię na zamówienie');
     }
 
+    public function test_where_the_idea_came_from_shows_below_the_purchase_only_when_written(): void
+    {
+        $vases = Category::factory()->create(['group' => CategoryGroup::Ceramics]);
+        $product = Product::factory()->create(['slug' => 'wazony', 'name' => 'Wazony', 'category_id' => $vases->id]);
+        ProductVariant::factory()->create(['product_id' => $product->id, 'price_gross' => 23900, 'stock' => 3]);
+
+        $this->get('/produkt/wazony')->assertOk()->assertDontSee('skąd ten pomysł');
+
+        $product->update(['story' => "Paprocie rosną pod pracownią.\n<b>Zbieram je w maju.</b>"]);
+
+        // Below the purchase column, so the story never pushes the button down; typed in the panel, so escaped.
+        $this->get('/produkt/wazony')
+            ->assertOk()
+            ->assertSeeInOrder(['Dodaj do koszyka', 'skąd ten pomysł', 'Paprocie rosną pod pracownią.'])
+            ->assertSee('&lt;b&gt;Zbieram je w maju.&lt;/b&gt;', false)
+            ->assertDontSee('<b>Zbieram', false);
+    }
+
     public function test_a_phone_keeps_the_price_and_the_button_at_the_bottom_only_while_the_piece_can_be_bought(): void
     {
         $product = Product::factory()->create(['slug' => 'wazony', 'name' => 'Wazony']);

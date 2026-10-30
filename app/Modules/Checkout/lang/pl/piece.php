@@ -8,6 +8,7 @@ return [
     'glaze' => 'Szkliwo',
     'plant' => 'Roślina',
     'text' => 'Napis',
+    'story_heading' => 'Skąd ten pomysł',
     'care_heading' => 'Jak się nią opiekować',
     'similar_heading' => 'Chcesz drugą taką?',
     'similar_text' => 'Identycznej nie powtórzę. Napisz, co Ci się w niej podoba — zrobię podobną, tylko Twoją.',

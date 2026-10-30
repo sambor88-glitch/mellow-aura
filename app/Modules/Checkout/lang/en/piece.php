@@ -8,6 +8,7 @@ return [
     'glaze' => 'Glaze',
     'plant' => 'Plant',
     'text' => 'Lettering',
+    'story_heading' => 'Where the idea came from',
     'care_heading' => 'How to look after it',
     'similar_heading' => 'Would you like another one?',
     'similar_text' => 'I can’t make the same one twice. Tell me what you love about it — I’ll make a similar one, just for you.',

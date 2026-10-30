@@ -199,7 +199,7 @@ class CustomersPanelTest extends TestCase
     public function test_erasing_keeps_the_paid_sale_for_the_books_and_forgets_the_rest(): void
     {
         $paid = $this->order(['invoice_nip' => '6762460000', 'note' => 'Proszę zapakować na prezent', 'shipping_address' => ['street' => 'Długa 1', 'postal_code' => '30-001', 'city' => 'Kraków'], 'locker_code' => 'KRA01M']);
-        $mug = $paid->items()->create(['product_name' => 'Kubek z napisem', 'variant_label' => '300 ml', 'quantity' => 1, 'unit_price_gross' => 12900, 'custom_text' => 'Ania']);
+        $mug = $paid->items()->create(['product_name' => 'Kubek z napisem', 'variant_label' => '300 ml', 'quantity' => 1, 'unit_price_gross' => 12900, 'custom_text' => 'Ania', 'maker_note' => 'Dla Ani na trzydzieste urodziny.']);
         $gift = $paid->items()->create(['product_name' => 'Voucher', 'variant_label' => '200 zł', 'quantity' => 1, 'unit_price_gross' => 20000, 'recipient_name' => 'Zosia', 'sender_name' => 'Ania', 'dedication' => 'Wszystkiego dobrego']);
         $voucher = Voucher::factory()->create(['order_item_id' => $gift->id, 'recipient_name' => 'Zosia', 'sender_name' => 'Ania', 'dedication' => 'Wszystkiego dobrego']);
         $failed = $this->order(['email' => 'ANIA@example.com', 'status' => OrderStatus::New, 'payment_status' => PaymentStatus::Failed, 'paid_at' => null, 'invoice_nip' => '6762460000']);
@@ -219,7 +219,7 @@ class CustomersPanelTest extends TestCase
 
         $paid->refresh();
         $this->assertSame(['Anna Nowak', '6762460000', 25500, PersonalData::ERASED_EMAIL, '', null, null, null], [$paid->name, $paid->invoice_nip, $paid->total_gross, $paid->email, $paid->phone, $paid->shipping_address, $paid->locker_code, $paid->note]);
-        $this->assertSame(['Kubek z napisem', 12900, null], [$mug->fresh()->product_name, $mug->fresh()->unit_price_gross, $mug->fresh()->custom_text]);
+        $this->assertSame(['Kubek z napisem', 12900, null, null], [$mug->fresh()->product_name, $mug->fresh()->unit_price_gross, $mug->fresh()->custom_text, $mug->fresh()->maker_note]);
         $this->assertSame([null, null, null], [$gift->fresh()->recipient_name, $gift->fresh()->sender_name, $gift->fresh()->dedication]);
         $this->assertSame([$voucher->code, null, null, null], [$voucher->fresh()->code, $voucher->fresh()->recipient_name, $voucher->fresh()->sender_name, $voucher->fresh()->dedication]);
 

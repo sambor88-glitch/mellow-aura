@@ -76,7 +76,7 @@
                                 </div>
                                 <details @if ($bag->any()) open @endif class="mt-1.5">
                                     <summary class="cursor-pointer text-[13px] text-brown">
-                                        {{ collect([$item->fired_on ? 'wypał '.$item->fired_on->format('j.m.Y') : null, $item->glaze, $item->plant])->filter()->join(' · ') ?: 'Dopisz datę wypału i szkliwo' }}
+                                        {{ collect([$item->fired_on ? 'wypał '.$item->fired_on->format('j.m.Y') : null, $item->glaze, $item->plant, filled($item->maker_note) ? 'kilka słów od Ciebie' : null])->filter()->join(' · ') ?: 'Dopisz datę wypału, szkliwo i kilka słów' }}
                                     </summary>
                                     <form method="post" action="{{ route('admin.orders.piece', [$order, $item]) }}" class="mt-2.5 grid gap-3">
                                         @csrf
@@ -89,6 +89,23 @@
                                         </div>
                                         <x-shared::field name="plant" id="plant-{{ $item->id }}" label="Roślina" :bag="'piece'.$item->id" maxlength="120"
                                                          :value="$bag->any() ? old('plant') : ($item->plant ?? '')" hint="Nieobowiązkowe — puste pola nie pokażą się klientce" />
+                                        {{-- Shown only on the page of the piece, in place of the quote every piece shares (MA-292). --}}
+                                        @php($noteError = $bag->first('maker_note'))
+                                        <div class="min-w-0">
+                                            <label for="maker_note-{{ $item->id }}" class="mb-1.5 block text-[13.5px] text-graphite">Kilka słów od Ciebie</label>
+                                            <textarea id="maker_note-{{ $item->id }}" name="maker_note" rows="3" maxlength="500" aria-describedby="maker_note-{{ $item->id }}-note"
+                                                      placeholder="co myślałaś, robiąc tę sztukę" @if ($noteError) aria-invalid="true" @endif
+                                                      @class([
+                                                          'w-full min-w-0 resize-y rounded-[14px] border bg-white px-4 py-[13px] text-[15px] leading-[1.6] text-ink transition-[border-color,box-shadow] duration-300 pointer-coarse:text-[16px] placeholder:text-hint focus:border-ink focus:shadow-[0_0_0_4px_rgb(36_65_126/.14)]',
+                                                          'border-error' => $noteError,
+                                                          'border-line' => ! $noteError,
+                                                      ])>{{ $bag->any() ? old('maker_note') : ($item->maker_note ?? '') }}</textarea>
+                                            @if ($noteError)
+                                                <p id="maker_note-{{ $item->id }}-note" class="mt-1.5 text-[13px] text-error">{{ $noteError }}</p>
+                                            @else
+                                                <p id="maker_note-{{ $item->id }}-note" class="mt-1.5 text-[12.5px] text-hint">Na stronie sztuki zamiast wspólnego cytatu. Widzi ją każdy, kto ma kartę z kodem — bez imienia klientki.@if ($order->locale === 'en') Zamówienie po angielsku — napisz po angielsku.@endif</p>
+                                            @endif
+                                        </div>
                                         <button class="{{ $action }}">Zapisz na stronie sztuki i certyfikacie</button>
                                     </form>
                                 </details>

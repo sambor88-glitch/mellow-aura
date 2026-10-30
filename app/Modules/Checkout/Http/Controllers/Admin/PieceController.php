@@ -13,7 +13,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 
 /**
- * What only the studio knows about a piece — the firing date, the glaze, the plant — and the card with the QR code
+ * What only the studio knows about a piece — the firing date, the glaze, the plant, a few words from Kasia — and the card with the QR code
  * to its page, printed for the parcel (MA-234). Both only for a piece of a paid order, like its certificate.
  */
 class PieceController extends Controller
@@ -27,11 +27,13 @@ class PieceController extends Controller
             'fired_on' => ['nullable', 'date', 'before_or_equal:today'],
             'glaze' => ['nullable', 'string', 'max:120'],
             'plant' => ['nullable', 'string', 'max:120'],
+            'maker_note' => ['nullable', 'string', 'max:500'],
         ], [
             'fired_on.date' => 'Wpisz datę, np. 12.10.2026',
             'fired_on.before_or_equal' => 'Wypał nie może być w przyszłości — sprawdź datę',
             'glaze.max' => 'Szkliwo zmieść w 120 znakach',
             'plant.max' => 'Roślinę zmieść w 120 znakach',
+            'maker_note.max' => 'Kilka słów zmieść w 500 znakach — napisz krócej',
         ]);
 
         if ($validator->fails()) {

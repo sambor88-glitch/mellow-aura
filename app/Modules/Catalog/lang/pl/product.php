@@ -36,6 +36,7 @@ return [
     'custom_link' => 'Napisz, co wymyśliłaś',
     'warnings' => 'Ostrzeżenia',
     'producer' => 'Producent',
+    'story_eyebrow' => 'skąd ten pomysł',
     'related_eyebrow' => 'pasuje do tego',
     'related_title' => 'Z tej samej półki',
     'buy_bar' => 'Do koszyka',
