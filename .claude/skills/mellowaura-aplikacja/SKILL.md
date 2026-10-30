@@ -78,6 +78,17 @@ Na karcie produktu cena i „Do koszyka" nie mogą wyjechać poza ekran przy prz
 
 `env(safe-area-inset-bottom)` odsuwa przycisk od paska gestów na iPhonie. Bez tego palec trafia w pasek systemowy.
 
+`env()` działa tylko dzięki `viewport-fit=cover` w `<meta name="viewport">` (layout strony i panelu, MA-302).
+Bez niego Safari podaje 0. Z nim strona sięga pod wcięcie i pasek gestów, więc:
+
+- treść w przepływie strony chroni `body` — ma boczne `padding` z `safe-area-inset-left/right` (`app.css`);
+- coś przypiętego do dolnej krawędzi (pasek, dymek, baner) dodaje `env(safe-area-inset-bottom)` do swojego odstępu;
+- nakładka na cały ekran (szuflada, powiększone zdjęcie, mapa paczkomatów) dostaje `pad-safe [--pad:10px]`
+  zamiast `p-2.5` — własny odstęp, ale nigdy mniejszy niż wcięcie;
+- elementy przy bocznej krawędzi nakładki (menu, „Zamknij”) biorą `max(odstęp, env(safe-area-inset-left/right))`.
+
+Test `tests/e2e/safe-area.spec.js` sprawdza to w Chromium z wcięciami iPhone 13 (`Emulation.setSafeAreaInsetsOverride`).
+
 W aplikacji (`catalog::product.show`, `resources/js/buy-bar.js`) pasek wysyła formularz karty przez `form="add-to-cart"`.
 Znika, gdy na ekranie jest którakolwiek część formularza oznaczona `data-buy-zone` (wybór rozmiaru i `#add-to-cart`,
 na kubku cały `#mug-form`) — nie zasłania rozmiarów, a dwa „Do koszyka” nie stoją naraz (MA-255). Tło pełne
