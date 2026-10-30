@@ -88,8 +88,7 @@ class CartTest extends TestCase
         Setting::create(['key' => 'stamp_text_max_chars', 'value' => 22]);
         $mug = $this->variant('Kubki z cytatem', 'Twój tekst', 7900, stock: null, product: ['stamp_enabled' => true]);
 
-        $this->get('/produkt/kubki-z-cytatem')->assertSee('Co mam wbić w glinę?');
-
+        // The shop sends this size to the mug configurator now (MA-275), but a page opened before still posts it.
         $this->postJson('/koszyk', ['variant_id' => $mug->id])
             ->assertUnprocessable()
             ->assertJson(['message' => 'Napisz, co mam wbić w glinę']);

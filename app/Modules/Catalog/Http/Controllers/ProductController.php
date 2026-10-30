@@ -9,6 +9,7 @@ use App\Modules\Localization\Support\Locales;
 use App\Modules\Settings\Settings;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Illuminate\View\View;
 
 class ProductController extends Controller
@@ -24,6 +25,16 @@ class ProductController extends Controller
         }
 
         $product->loadShelf();
+
+        // A mug with the customer's own text is made in the mug configurator now (MA-275): the old address of that size
+        // leads there, and so does a stamped product that has nothing else on the shelf.
+        if ($product->stamp_enabled && Route::has('mug.index')) {
+            $ownText = $product->variants()->whereNull('stock')->pluck('id');
+
+            if ($ownText->contains((int) $request->query('wariant')) || ($ownText->isNotEmpty() && $product->variants->isEmpty())) {
+                return to_route('mug.index', status: 301);
+            }
+        }
 
         // Written in English but not priced in euro yet: the English shop is the closest thing, for now.
         if ($product->variants->isEmpty() && Locales::current() !== Locales::default()) {

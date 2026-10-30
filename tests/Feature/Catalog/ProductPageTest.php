@@ -93,10 +93,10 @@ class ProductPageTest extends TestCase
         $breadcrumbs = $blocks->firstWhere('@type', 'BreadcrumbList');
 
         $this->assertSame('kubki-z-cytatem', $group['productGroupID']);
-        $this->assertCount(2, $group['hasVariant']);
+        // The mug with the customer's own text is made in the mug configurator, not offered here (MA-275).
+        $this->assertCount(1, $group['hasVariant']);
         $this->assertSame('79.00', $group['hasVariant'][0]['offers']['price']);
         $this->assertSame('https://schema.org/OutOfStock', $group['hasVariant'][0]['offers']['availability']);
-        $this->assertSame('https://schema.org/InStock', $group['hasVariant'][1]['offers']['availability']);
         $this->assertSame(url('/produkt/kubki-z-cytatem').'?wariant='.$sold->id, $group['hasVariant'][0]['offers']['url']);
         $this->assertSame(['Sklep', 'Kubki i filiżanki', 'Kubki z cytatem'], array_column($breadcrumbs['itemListElement'], 'name'));
 
@@ -122,13 +122,31 @@ class ProductPageTest extends TestCase
             'returnMethod' => 'https://schema.org/ReturnByMail',
             'returnFees' => 'https://schema.org/ReturnFeesCustomerResponsibility',
         ], $shelf['hasMerchantReturnPolicy']);
+    }
 
-        // A mug with the customer's own text is made for them: no return and no promised dispatch time.
-        $ownText = $group['hasVariant'][1]['offers'];
-        $this->assertSame('https://schema.org/MerchantReturnNotPermitted', $ownText['hasMerchantReturnPolicy']['returnPolicyCategory']);
-        $this->assertArrayNotHasKey('merchantReturnDays', $ownText['hasMerchantReturnPolicy']);
-        $this->assertCount(2, $ownText['shippingDetails']);
-        $this->assertArrayNotHasKey('deliveryTime', $ownText['shippingDetails'][0]);
+    public function test_a_mug_with_the_customers_own_text_is_made_in_the_mug_configurator(): void
+    {
+        $product = Product::factory()->create(['slug' => 'kubki-z-cytatem', 'name' => 'Kubki z cytatem', 'stamp_enabled' => true]);
+        ProductVariant::factory()->create(['product_id' => $product->id, 'label' => 'Królowa matka', 'stock' => 1]);
+        $ownText = ProductVariant::factory()->create(['product_id' => $product->id, 'label' => 'Twój tekst', 'stock' => null]);
+
+        $this->get('/produkt/kubki-z-cytatem')
+            ->assertOk()
+            ->assertSee('Królowa matka')
+            ->assertDontSee('?wariant='.$ownText->id, false)
+            ->assertDontSee('name="custom_text"', false);
+
+        // The old address of that size, from Google or a shared link, leads to the configurator.
+        $this->get('/produkt/kubki-z-cytatem?wariant='.$ownText->id)->assertRedirect(route('mug.index'))->assertStatus(301);
+    }
+
+    public function test_a_stamped_product_with_only_the_customers_own_text_leaves_the_shop_for_the_mug_configurator(): void
+    {
+        $product = Product::factory()->create(['slug' => 'kubek-z-twoim-tekstem', 'name' => 'Kubek z Twoim tekstem', 'stamp_enabled' => true]);
+        ProductVariant::factory()->create(['product_id' => $product->id, 'label' => 'Twój tekst', 'stock' => null]);
+
+        $this->get('/sklep')->assertOk()->assertDontSee('href="'.route('product.show', $product).'"', false);
+        $this->get('/produkt/kubek-z-twoim-tekstem')->assertRedirect(route('mug.index'))->assertStatus(301);
     }
 
     public function test_shipping_is_free_from_the_threshold_and_a_voucher_has_no_parcel_or_return_in_its_data(): void
