@@ -377,11 +377,6 @@
                     "price_gross": 7900,
                     "stock": 1,
                     "image": "zdjecia/kubek-nie-powinnam.webp"
-                },
-                {
-                    "label": "Twój tekst",
-                    "price_gross": 7900,
-                    "stock": null
                 }
             ],
             "images": [

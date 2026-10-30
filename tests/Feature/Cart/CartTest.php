@@ -83,27 +83,6 @@ class CartTest extends TestCase
         $this->postJson('/koszyk', ['variant_id' => $vase->id])->assertNotFound();
     }
 
-    public function test_a_mug_with_your_own_text_needs_the_text_and_keeps_each_text_apart(): void
-    {
-        Setting::create(['key' => 'stamp_text_max_chars', 'value' => 22]);
-        $mug = $this->variant('Kubki z cytatem', 'Twój tekst', 7900, stock: null, product: ['stamp_enabled' => true]);
-
-        // The shop sends this size to the mug configurator now (MA-275), but a page opened before still posts it.
-        $this->postJson('/koszyk', ['variant_id' => $mug->id])
-            ->assertUnprocessable()
-            ->assertJson(['message' => 'Napisz, co mam wbić w glinę']);
-
-        $this->postJson('/koszyk', ['variant_id' => $mug->id, 'custom_text' => str_repeat('A', 23)])->assertUnprocessable();
-
-        $this->postJson('/koszyk', ['variant_id' => $mug->id, 'custom_text' => 'jeszcze  nie teraz']);
-        $content = $this->postJson('/koszyk', ['variant_id' => $mug->id, 'custom_text' => 'kawa <b>najpierw</b>'])
-            ->assertJson(['count' => 2])
-            ->json('content');
-
-        $this->assertStringContainsString('„JESZCZE NIE TERAZ”', $content);
-        $this->assertStringContainsString('„KAWA &lt;B&gt;NAJPIERW&lt;/B&gt;”', $content);
-    }
-
     public function test_the_product_page_offers_the_chosen_variant_but_not_a_sold_out_one(): void
     {
         $vase = $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3);

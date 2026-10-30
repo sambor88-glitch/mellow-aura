@@ -46,14 +46,13 @@ class ProductStructuredData
                 ->itemCondition(OfferItemCondition::NewCondition);
 
             if ($shipped && $home) {
-                // A mug with the customer's own text is made first, so it gives no delivery time and can't be returned.
-                $shipping = OfferStructuredData::shipping(DeliveryOffers::for($variant->price_gross, ! $variant->takesCustomText(), $settings));
+                $shipping = OfferStructuredData::shipping(DeliveryOffers::for($variant->price_gross, true, $settings));
 
                 if ($shipping !== []) {
                     $offer->shippingDetails($shipping);
                 }
 
-                $offer->hasMerchantReturnPolicy(OfferStructuredData::returns(! $variant->takesCustomText()));
+                $offer->hasMerchantReturnPolicy(OfferStructuredData::returns(true));
             }
 
             $item = Schema::product()

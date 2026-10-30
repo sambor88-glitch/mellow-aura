@@ -27,7 +27,7 @@ class GiftFinderController extends Controller
         $budgets = BudgetRanges::from($settings);
         $budget = $budgets->firstWhere('key', (string) $request->query('budget', ''));
 
-        $ideas = Product::query()->live()->with(['category', 'variants' => fn ($variants) => $variants->offered(), 'media'])->orderBy('sort_order')->orderBy('id')->get()
+        $ideas = Product::query()->live()->with(['category', 'variants', 'media'])->orderBy('sort_order')->orderBy('id')->get()
             ->filter(fn (Product $product) => $recipient === null || in_array($recipient->value, $product->recipients ?? [], true))
             ->filter(fn (Product $product) => $occasion === null || in_array($occasion->value, $product->occasions ?? [], true))
             ->filter(fn (Product $product) => $budget === null || BudgetRanges::contains($budget, (int) $product->variants->min('price_gross')))

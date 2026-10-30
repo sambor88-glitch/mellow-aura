@@ -10,7 +10,7 @@ use App\Modules\Catalog\Support\VariantAnalyticsItem;
 use App\Modules\Shared\Support\FocalPoint;
 
 /**
- * A size of a product from the catalogue, with the customer's own text when the product is stamped.
+ * A size of a product from the catalogue. A mug with the customer's own text comes from the mug configurator (MugLine).
  */
 class ProductLine extends CartLine
 {
@@ -20,17 +20,16 @@ class ProductLine extends CartLine
         string $key,
         int $quantity,
         public readonly ProductVariant $variant,
-        public readonly ?string $customText = null,
     ) {
         parent::__construct($key, $quantity);
     }
 
     /**
-     * The same variant with a different text is a separate line.
+     * The same variant with different details typed by the customer (a voucher's names) is a separate line.
      */
-    public static function keyFor(ProductVariant $variant, ?string $customText = null): string
+    public static function keyFor(ProductVariant $variant, ?string $details = null): string
     {
-        return 'v'.$variant->id.($customText === null ? '' : '-'.substr(hash('sha256', $customText), 0, 12));
+        return 'v'.$variant->id.($details === null ? '' : '-'.substr(hash('sha256', $details), 0, 12));
     }
 
     public function unitPrice(): int
@@ -51,7 +50,7 @@ class ProductLine extends CartLine
 
     public function details(): ?string
     {
-        return $this->customText !== null ? '„'.$this->customText.'”' : ($this->variant->inPageLanguageOrPolish('label') ?: null);
+        return $this->variant->inPageLanguageOrPolish('label') ?: null;
     }
 
     public function thumbnailUrl(): ?string
@@ -107,7 +106,6 @@ class ProductLine extends CartLine
             'type' => static::TYPE,
             'variant_id' => $this->variant->id,
             'quantity' => $quantity,
-            'custom_text' => $this->customText,
         ];
     }
 
@@ -119,7 +117,6 @@ class ProductLine extends CartLine
             label: $this->variant->inPageLanguageOrPolish('label'),
             quantity: $this->quantity,
             unitPrice: $this->unitPrice(),
-            customText: $this->customText,
             // Never dropped for want of a translation: the checkout asks to accept it.
             deviation: $this->variant->product->inPageLanguageOrPolish('deviation') ?: null,
         )];

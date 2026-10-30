@@ -45,9 +45,9 @@ class OrderEmailsTest extends TestCase
         Setting::create(['key' => 'contact_email', 'value' => 'kasia@example.com']);
         Setting::create(['key' => 'contact_phone', 'value' => '+48 600 700 800']);
         $vase = $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3);
-        $mug = $this->variant('Kubki z cytatem', 'Twój tekst', 7900, stock: null, product: ['stamp_enabled' => true]);
+        $mug = $this->variant('Kubki z cytatem', 'Królowa matka', 7900, stock: null);
         $this->postJson('/koszyk', ['variant_id' => $vase->id]);
-        $this->postJson('/koszyk', ['variant_id' => $mug->id, 'custom_text' => 'jeszcze nie teraz']);
+        $this->postJson('/koszyk', ['variant_id' => $mug->id]);
 
         $this->post('/zamowienie', $this->form(['expected_total' => 33400]))->assertRedirect('/zamowienie/potwierdzenie');
 
@@ -56,6 +56,9 @@ class OrderEmailsTest extends TestCase
         // The summary right after ordering, the confirmation once paid and Kasia's notice.
         Mail::assertQueued(OrderAwaitingPayment::class, fn (OrderAwaitingPayment $mail) => $mail->hasTo('ania@example.com', 'Anna Nowak') && $mail->order->is($order));
         Mail::assertQueuedCount(3);
+
+        // A text to stamp, as a mug from the configurator brings it.
+        $order->items()->where('product_variant_id', $mug->id)->update(['custom_text' => 'JESZCZE NIE TERAZ']);
 
         $mail = new OrderConfirmed($order);
         $mail->assertHasSubject('Zamówienie '.$order->number.' jest opłacone');
@@ -228,8 +231,9 @@ class OrderEmailsTest extends TestCase
 
     public function test_a_pickup_gets_no_address_and_the_customers_text_is_escaped(): void
     {
-        $mug = $this->variant('Kubki z cytatem', 'Twój tekst', 7900, stock: null, product: ['stamp_enabled' => true]);
-        $order = $this->placeOrder($mug, ['shipping_method' => 'studio_pickup'], customText: '<b>ALE JEDNAK</b>');
+        $mug = $this->variant('Kubki z cytatem', 'Królowa matka', 7900, stock: null);
+        $order = $this->placeOrder($mug, ['shipping_method' => 'studio_pickup']);
+        $order->items()->update(['custom_text' => '<b>ALE JEDNAK</b>']);
 
         $mail = new OrderConfirmed($order->load('items'));
         $mail->assertSeeInHtml('Odbiór w pracowni');
@@ -253,9 +257,9 @@ class OrderEmailsTest extends TestCase
     /**
      * @param  array<string, mixed>  $data
      */
-    private function placeOrder(ProductVariant $variant, array $data = [], ?string $customText = null): Order
+    private function placeOrder(ProductVariant $variant, array $data = []): Order
     {
-        $line = new ProductLine('v'.$variant->id, 1, $variant->load('product'), $customText);
+        $line = new ProductLine('v'.$variant->id, 1, $variant->load('product'));
 
         return app(PlaceOrder::class)(collect([$line->key => $line]), [
             'name' => 'Anna Nowak', 'email' => 'ania@example.com', 'phone' => '600100200',

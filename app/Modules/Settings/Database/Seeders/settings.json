@@ -283,10 +283,6 @@
         ]
     },
     {
-        "key": "stamp_text_max_chars",
-        "value": 22
-    },
-    {
         "key": "voucher_recipient_name_max_chars",
         "value": 40
     },

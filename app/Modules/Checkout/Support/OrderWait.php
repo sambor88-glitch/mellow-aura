@@ -14,7 +14,7 @@ use Carbon\CarbonInterface;
  * The wait is counted in calendar days, as Kasia says it; the deadline in working days, as the shop promises it.
  *
  * The dispatch time is for pieces from the shelf. A piece with a text stamped to order (the mug from the configurator,
- * a product with „stamp_enabled”) takes as long as the panel's „gotowe w 4–8 tygodni” — words, not a number — so such
+ * that is) takes as long as the panel's „gotowe w 4–8 tygodni” — words, not a number — so such
  * an order has no deadline here and is never late by the shelf's one.
  */
 class OrderWait

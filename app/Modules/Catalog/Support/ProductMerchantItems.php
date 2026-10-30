@@ -25,7 +25,7 @@ class ProductMerchantItems
         $products = Product::query()
             ->where('is_published', true)
             ->where('show_in_google', true)
-            ->with(['category', 'variants' => fn ($variants) => $variants->offered(), 'media'])
+            ->with(['category', 'variants', 'media'])
             ->orderBy('sort_order')
             ->orderBy('id')
             ->get();
@@ -52,13 +52,12 @@ class ProductMerchantItems
                     image: $photo,
                     price: $reduced ? $variant->compare_at_price : $variant->price_gross,
                     available: $variant->isInStock(),
-                    // A voucher and a mug with the customer's own text don't wait on the shelf, so no delivery time is promised.
-                    delivery: DeliveryOffers::for($variant->price_gross, ! $variant->takesCustomText() && ! $product->isVoucher(), $this->settings),
+                    // A voucher doesn't wait on the shelf, so no delivery time is promised.
+                    delivery: DeliveryOffers::for($variant->price_gross, ! $product->isVoucher(), $this->settings),
                     additionalImages: $images->reject(fn (string $image) => $image === $photo)->values()->all(),
                     salePrice: $reduced ? $variant->price_gross : null,
                     googleCategory: $product->google_category?->value,
                     productType: $product->category->group->label().' > '.$product->category->name,
-                    returnable: ! $variant->takesCustomText(),
                     groupId: 'p'.$product->id,
                 );
             }

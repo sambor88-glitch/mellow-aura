@@ -31,8 +31,8 @@ class CatalogSeederTest extends TestCase
         $this->assertSame(8, Category::count());
         $this->assertSame(17, Product::count());
         $this->assertSame(13, Product::where('is_published', true)->count());
-        $this->assertSame(50, ProductVariant::count());
-        $this->assertSame(50, PriceHistory::count());
+        $this->assertSame(49, ProductVariant::count());
+        $this->assertSame(49, PriceHistory::count());
         $this->assertSame(0, ProductVariant::whereNotNull('compare_at_price')->count());
     }
 
@@ -72,7 +72,8 @@ class CatalogSeederTest extends TestCase
 
         $quoteMugs = Product::where('slug', 'kubki-z-cytatem')->firstOrFail();
 
-        $this->assertSame([1, 1, 1, 1, null], $quoteMugs->variants()->orderBy('id')->pluck('stock')->all());
+        // One piece of each lettering; a text of your own is ordered in the mug configurator (MA-277).
+        $this->assertSame([1, 1, 1, 1], $quoteMugs->variants()->orderBy('id')->pluck('stock')->all());
     }
 
     public function test_running_it_again_keeps_changes_made_in_the_panel(): void
@@ -86,7 +87,7 @@ class CatalogSeederTest extends TestCase
 
         $this->assertSame(25900, $variant->fresh()->price_gross);
         $this->assertSame(17, Product::count());
-        $this->assertSame(50, ProductVariant::count());
+        $this->assertSame(49, ProductVariant::count());
         $this->assertSame(21, Media::count());
     }
 

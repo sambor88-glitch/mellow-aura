@@ -42,5 +42,4 @@ return [
     'category_link' => ':category w sklepie',
     'ready_heading' => 'Gotowe od ręki w sklepie',
     'card_add' => 'Do koszyka',
-    'card_lettering' => 'Wybierz napis',
 ];
