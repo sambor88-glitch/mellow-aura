@@ -1,7 +1,9 @@
+@use('App\Modules\Localization\Support\Locales')
 @php
-    // Buttons to pages that don't exist yet fall back to the contact page, so this page never ends in a dead end.
-    $workshopsUrl = Route::has('workshops.index') ? route('workshops.index') : null;
-    $firingUrl = Route::has('firing.index') ? route('firing.index') : null;
+    // Buttons to pages that don't exist yet, or not in the language of this page, fall back to the contact page,
+    // so this page never ends in a dead end and /en/studio never leads to a Polish page.
+    $workshopsUrl = Locales::has('workshops.index', Locales::current()) ? route('workshops.index') : null;
+    $firingUrl = Locales::has('firing.index', Locales::current()) ? route('firing.index') : null;
 @endphp
 
 <x-shared::layout title="Pracownia w Krakowie — ciepło, empatia, cierpliwość"

@@ -44,6 +44,8 @@ class HomePageTest extends TestCase
             ->assertSee('<title>MellowAura — ceramika i rękodzieło z jedwabiu, Kraków</title>', false)
             ->assertSee('<link rel="canonical" href="'.url('/').'">', false)
             ->assertSee('href="'.route('product.show', 'patery').'"', false)
+            // The hero piece is the one tile among the facts that leads somewhere, and says so.
+            ->assertSeeInOrder(['href="'.route('product.show', 'patery').'"', 'Zobacz <span aria-hidden="true">→</span>'], false)
             ->assertSee('nowość')
             ->assertSeeText('domowa pracownia · kraków')
             ->assertDontSeeText('home studio')
@@ -86,7 +88,12 @@ class HomePageTest extends TestCase
             ->assertOk()
             ->assertSeeText('Zanurz dłonie w glinie')
             ->assertSee('od 220 zł / os.')
-            ->assertSee('href="'.route('workshops.index').'"', false);
+            ->assertSee('href="'.route('workshops.index').'"', false)
+            // A row leads to its own card, the button to the dates — not to the top of the page.
+            ->assertSee('href="'.route('workshops.index').'#workshop-lepienie_z_reki"', false)
+            ->assertSee('href="'.route('workshops.index').'#workshop-dates"', false);
+
+        $this->get('/warsztaty-ceramiczne-krakow')->assertSee('id="workshop-lepienie_z_reki"', false);
     }
 
     public function test_an_empty_shop_does_not_break_the_home_page(): void

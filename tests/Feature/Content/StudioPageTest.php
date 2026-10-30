@@ -69,6 +69,16 @@ class StudioPageTest extends TestCase
             ->assertDontSee('Zapytaj o warsztaty');
     }
 
+    public function test_on_the_english_page_the_buttons_never_lead_to_a_polish_page(): void
+    {
+        $this->get('/en/studio')
+            ->assertOk()
+            ->assertSee('href="'.url('/en/contact').'"', false)
+            ->assertDontSee('href="'.url('/warsztaty-ceramiczne-krakow').'"', false)
+            ->assertDontSee('href="'.url('/wypal-ceramiki-krakow').'"', false)
+            ->assertDontSee('Wypalę Twoje prace');
+    }
+
     public function test_the_about_page_leads_here(): void
     {
         $this->get('/o-mnie')->assertSeeInOrder(['href="'.route('content.studio').'"', 'Zobacz, jak tworzę'], false);

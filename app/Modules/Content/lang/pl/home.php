@@ -9,6 +9,7 @@ return [
     'float_link' => 'Zobacz :name',
     'hero_bar' => 'Ceramika i jedwab z jednej pary rąk, z krakowskiej pracowni',
     'hero_bar_cta' => 'Zobacz sklep',
+    'hero_product_cta' => 'Zobacz',
     'eyebrow' => 'domowa pracownia · kraków',
     'heading' => 'Glina i jedwab z :em rąk.',
     'heading_em' => 'jednej pary',
