@@ -25,15 +25,21 @@ test('a second tap on „Wyślij wiadomość” sends no second message', async 
     await page.locator('#contact-email').fill('ola@example.test');
     await page.locator('#contact-message').fill('Czy kubek mieści 400 ml?');
 
-    const form = page.locator('form[data-submit-once]');
-    await expect(form.getByRole('button', { name: 'Wyślij wiadomość' })).toBeVisible();
-    // A click through the page itself: Playwright's click would wait for the navigation held back above.
-    await form.evaluate((element) => element.querySelector('button:not([type="button"])').click());
-    await expect(form).toHaveAttribute('aria-busy', 'true');
+    await expect(page.locator('form[data-submit-once]').getByRole('button', { name: 'Wyślij wiadomość' })).toBeVisible();
 
-    // The button no longer takes taps, so the second one goes to the form itself, as a script or Enter would.
-    await form.evaluate((element) => element.requestSubmit());
-    await page.waitForTimeout(300);
+    // Both taps inside the page: while the navigation is held back, Playwright's click and locators wait for it.
+    // The second one goes to the form itself, as a script or Enter would, because the button no longer takes taps.
+    const busy = await page.evaluate(async () => {
+        const form = document.querySelector('form[data-submit-once]');
+        form.querySelector('button:not([type="button"])').click();
+        const busyAfterFirst = form.getAttribute('aria-busy');
+        await new Promise((resolve) => setTimeout(resolve, 150));
+        form.requestSubmit();
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
+        return busyAfterFirst;
+    });
+    expect(busy).toBe('true');
     expect(posts).toHaveLength(1);
 
     const loaded = page.waitForEvent('load');
