@@ -52,8 +52,8 @@ class VariantPhotoTest extends TestCase
             ->assertSeeInOrder(['alt="Kubek z napisem królowa matka"', 'loading="lazy"', 'alt="Kubek z napisem ochujeję"', 'fetchpriority="high"'], false);
 
         $this->get('/produkt/kubki-z-cytatem?wariant='.$queen->id)->assertSee('x-data="{ active: 0 }"', false);
-        // "Twój tekst" has no photo of its own and opens on the first one.
-        $this->get('/produkt/kubki-z-cytatem?wariant='.$ownText->id)->assertSee('x-data="{ active: 0 }"', false);
+        // "Twój tekst" is made in the mug configurator now (MA-275).
+        $this->get('/produkt/kubki-z-cytatem?wariant='.$ownText->id)->assertRedirect(route('mug.index'));
     }
 
     public function test_search_engines_and_google_shopping_get_the_photo_of_each_variant(): void
@@ -66,7 +66,7 @@ class VariantPhotoTest extends TestCase
         $group = $this->structuredData($this->get('/produkt/kubki-z-cytatem')->getContent())->firstWhere('@type', 'ProductGroup');
 
         $this->assertSame(
-            ['kubek-krolowa-matka-card.webp', 'kubek-ochujeje-card.webp', 'kubek-krolowa-matka-card.webp'],
+            ['kubek-krolowa-matka-card.webp', 'kubek-ochujeje-card.webp'],
             array_map(fn (array $variant) => basename($variant['image']), $group['hasVariant']),
         );
 

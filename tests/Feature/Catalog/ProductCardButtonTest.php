@@ -58,14 +58,14 @@ class ProductCardButtonTest extends TestCase
     }
 
     #[DataProvider('pages')]
-    public function test_a_mug_with_your_lettering_leads_to_its_page(string $page): void
+    public function test_a_mug_with_your_lettering_is_left_to_the_mug_configurator(string $page): void
     {
+        // Lettering of your own is chosen in the mug configurator with its preview (MA-275), not from a card.
         $stamped = $this->product('Kubek z Twoim tekstem', [7900], ['stamp_enabled' => true], stock: null);
 
-        $response = $this->get($page)->assertOk();
-
-        $this->assertCardLink($response, $stamped, 'Wybierz napis');
-        $response->assertDontSee('name="variant_id"', false);
+        $this->get($page)->assertOk()
+            ->assertDontSee('href="'.route('product.show', $stamped).'"', false)
+            ->assertDontSee('name="variant_id"', false);
     }
 
     public function test_the_shop_and_the_gift_finder_draw_the_same_card(): void

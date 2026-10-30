@@ -90,7 +90,7 @@ class MerchantFeedTest extends TestCase
         $this->assertSame(['v'.$shown->variants()->value('id')], array_keys($items));
     }
 
-    public function test_a_mug_with_the_customers_text_and_a_voucher_promise_no_delivery_time_and_the_mug_cannot_be_returned(): void
+    public function test_a_mug_with_the_customers_text_stays_out_and_a_voucher_promises_no_delivery_time(): void
     {
         $this->deliveryOptions();
         $mugs = $this->product([
@@ -108,10 +108,8 @@ class MerchantFeedTest extends TestCase
 
         $items = $this->items($this->get('/google-merchant.xml')->getContent());
 
-        $mug = $items['v'.$ownText->id];
-        $this->assertSame('in_stock', (string) $mug->availability);
-        $this->assertSame('personalizowane', (string) $mug->return_policy_label);
-        $this->assertSame(['PL', 'InPost Paczkomat', '16.00 PLN'], $this->shipping($mug->shipping[0]));
+        // Your own lettering is ordered in the mug configurator, not as a size of a stamped product (MA-275).
+        $this->assertArrayNotHasKey('v'.$ownText->id, $items);
 
         $card = $items['v'.$amount->id];
         $this->assertSame('in_stock', (string) $card->availability);

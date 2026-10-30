@@ -155,6 +155,20 @@ class ProductVariant extends Model
     }
 
     /**
+     * Variants the shop offers. A mug with the customer's own text is made in the mug configurator (/kubek-z-napisem)
+     * with its preview, sizes and glazes, so a stamped product no longer sells it as one of its sizes (MA-275).
+     * The rows stay for the orders and carts that already have them.
+     *
+     * @param  Builder<ProductVariant>  $query
+     */
+    #[Scope]
+    protected function offered(Builder $query): void
+    {
+        $query->where(fn (Builder $offered) => $offered->whereNotNull('stock')
+            ->orWhereHas('product', fn (Builder $product) => $product->where('stamp_enabled', false)));
+    }
+
+    /**
      * Variants for sale in a currency — the currency of the page unless named. Every variant has a złoty price.
      *
      * @param  Builder<ProductVariant>  $query
