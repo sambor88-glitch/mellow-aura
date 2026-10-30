@@ -172,7 +172,7 @@
                     <p class="mb-6 max-w-[52ch] text-[15px] leading-[1.65] text-lead">Pracownia: {{ $location }}. Dokładny adres podaję po zapisie.</p>
                 @endif
                 @if ($vouchersUrl)
-                    <a href="{{ $vouchersUrl }}" class="border-b border-line-strong pb-[3px] text-[13.5px] tracking-[0.06em]">Warsztat na prezent? Zobacz vouchery →</a>
+                    <a href="{{ $vouchersUrl }}" class="border-b border-line-strong pb-[3px] text-[13.5px] tracking-[0.06em]">Warsztat na prezent? Zobacz vouchery <span aria-hidden="true">→</span></a>
                 @endif
             </div>
             <div class="min-w-[min(100%,280px)] flex-[0_1_340px]">
@@ -202,7 +202,7 @@
             <div class="pt-[76px]">
                 <div class="mb-5 flex flex-wrap items-baseline justify-between gap-4">
                     <h2 class="font-serif text-[length:clamp(28px,3.4vw,40px)] font-light">Pracownia</h2>
-                    <a href="{{ route('content.studio') }}" class="border-b border-line-strong pb-[3px] text-[13.5px] tracking-[0.06em]">Zobacz pracownię →</a>
+                    <a href="{{ route('content.studio') }}" class="border-b border-line-strong pb-[3px] text-[13.5px] tracking-[0.06em]">Zobacz pracownię <span aria-hidden="true">→</span></a>
                 </div>
                 <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3.5">
                     @foreach ($gallery as $photo)

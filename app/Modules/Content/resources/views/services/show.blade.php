@@ -14,7 +14,7 @@
             'photoAlt' => 'Opaska i scrunchie uszyte z jedwabnej apaszki',
             'cta' => 'Napisz, co chcesz przysłać',
             'brief' => 'apaszka',
-            'other' => [Service::Imprint, 'Odcisk Twojej rośliny →'],
+            'other' => [Service::Imprint, 'Odcisk Twojej rośliny'],
             'examplesLead' => 'Tkaniny, które do mnie przyszły, obok tego, co z nich uszyłam. Przeciągnij uchwyt na zdjęciu, żeby zobaczyć zmianę.',
             'pricesHeading' => 'Co wychodzi z jednej apaszki',
             'shop' => ['jedwab', 'kosmetyczki-i-piorniki'],
@@ -28,7 +28,7 @@
             'photoAlt' => 'Talerz z odciskiem prawdziwej rośliny',
             'cta' => 'Napisz, co chcesz odcisnąć',
             'brief' => 'odcisk',
-            'other' => [Service::Scarf, 'Z Twojej apaszki →'],
+            'other' => [Service::Scarf, 'Z Twojej apaszki'],
             'examplesLead' => 'Rośliny, które do mnie przyszły, obok ceramiki, na której zostawiły ślad. Przeciągnij uchwyt na zdjęciu, żeby zobaczyć zmianę.',
             'pricesHeading' => 'Na czym odciskam',
             'shop' => ['talerze-i-miski', 'wazony-i-patery'],
@@ -56,7 +56,7 @@
                     @endif
                     <div class="cta-row">
                         <a href="{{ $briefUrl }}" class="rounded-full bg-ink px-8 py-4 text-[14px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">{{ $page['cta'] }}</a>
-                        <a href="{{ route($page['other'][0]->route()) }}" class="rounded-full border border-line-strong px-8 py-4 text-[14px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark hover:text-ink active:scale-[.98]">{{ $page['other'][1] }}</a>
+                        <a href="{{ route($page['other'][0]->route()) }}" class="rounded-full border border-line-strong px-8 py-4 text-[14px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark hover:text-ink active:scale-[.98]">{{ $page['other'][1] }} <span aria-hidden="true">→</span></a>
                     </div>
                     @if ($phone)
                         <p class="mt-5 text-[14.5px] text-lead">Szybciej na WhatsAppie: <a href="https://wa.me/{{ preg_replace('/\D+/', '', $phone) }}" target="_blank" rel="noopener" class="whitespace-nowrap">{{ $phone }}</a></p>

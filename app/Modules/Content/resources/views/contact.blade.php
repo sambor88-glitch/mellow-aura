@@ -23,7 +23,7 @@
     }.($replyTime ? ' '.$replyTime : '');
 
     $channel = 'flex items-center justify-between gap-4 bg-cream px-6 py-[22px] text-ink hover:bg-sand-dark hover:text-ink';
-    $channelLabel = 'mb-[5px] block text-[11px] tracking-[0.18em] text-gold uppercase';
+    $channelLabel = 'mb-[5px] block text-[11px] tracking-[0.18em] text-brown uppercase';
 @endphp
 
 <x-shared::layout title="Kontakt — pracownia MellowAura, Kraków" :description="$description" :canonical="route('content.contact')">

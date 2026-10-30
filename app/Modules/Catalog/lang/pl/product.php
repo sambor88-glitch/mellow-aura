@@ -28,7 +28,7 @@ return [
     'blik' => 'zapłacisz w :time kodem z aplikacji banku',
     'blik_plain' => 'zapłacisz kodem z aplikacji banku',
     'shipping' => 'Wysyłka',
-    'packing_link' => 'Jak pakuję i wysyłam →',
+    'packing_link' => 'Jak pakuję i wysyłam',
     'free_from' => 'gratis od :price',
     'certificate' => 'Certyfikat unikatu',
     'certificate_ceramics' => 'W paczce karta z numerem, datą wypału i podpisem',

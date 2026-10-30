@@ -28,7 +28,7 @@ return [
     'blik' => 'pay in :time with a code from your banking app',
     'blik_plain' => 'pay with a code from your banking app',
     'shipping' => 'Shipping',
-    'packing_link' => 'How I pack and ship →',
+    'packing_link' => 'How I pack and ship',
     'free_from' => 'free from :price',
     'certificate' => 'Certificate of uniqueness',
     'certificate_ceramics' => 'A card in the parcel with its number, firing date and my signature',

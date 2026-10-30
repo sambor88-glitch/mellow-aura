@@ -89,10 +89,10 @@
             {{-- The categories take their own row on a wide screen, so none drops alone into a second one;
                  the search and the sorting share the row under them. --}}
             <div x-init="const chip = $el.querySelector('[aria-current=page]'); if (chip && chip.offsetLeft + chip.offsetWidth > $el.clientWidth) $el.scrollLeft = chip.offsetLeft - 28"
-                 class="relative -mx-7 flex w-[calc(100%+56px)] snap-x snap-mandatory scroll-px-7 gap-2 overflow-x-auto px-7 pb-1 [scrollbar-width:none] md:order-first md:mx-0 md:w-full md:flex-wrap md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
+                 class="relative -mx-7 flex w-[calc(100%+56px)] snap-x snap-mandatory scroll-px-7 gap-2.5 overflow-x-auto px-7 pb-1 [scrollbar-width:none] md:order-first md:mx-0 md:w-full md:flex-wrap md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
                 @foreach ($chips as $chip)
                     <a href="{{ $chip['url'] }}" @if ($chip['active']) aria-current="page" x-bind:aria-current="favorites ? 'false' : 'page'" x-bind:class="favorites && 'border-line-strong! bg-transparent! text-lead!'" @endif @class([
-                        'shrink-0 snap-start rounded-full border px-5 py-2.5 text-[13.5px] tracking-[0.03em] whitespace-nowrap',
+                        'inline-flex min-h-11 shrink-0 snap-start items-center rounded-full border px-5 text-[13.5px] tracking-[0.03em] whitespace-nowrap',
                         'border-ink bg-ink text-linen hover:text-linen' => $chip['active'],
                         'border-line-strong text-lead hover:text-navy' => ! $chip['active'],
                     ])>{{ $chip['label'] }} <span class="ml-0.5 text-[12px] opacity-85">{{ $chip['count'] }}</span></a>
@@ -100,10 +100,10 @@
                 @if ($wholeShop)
                     <a href="#ulubione" x-cloak x-show="$store.favorites.count > 0 || favorites" x-bind:aria-current="favorites ? 'page' : 'false'"
                        x-bind:class="favorites ? 'border-ink bg-ink text-linen hover:text-linen' : 'border-line-strong text-lead hover:text-navy'"
-                       class="shrink-0 snap-start rounded-full border px-5 py-2.5 text-[13.5px] tracking-[0.03em] whitespace-nowrap">♥ {{ __('catalog::shop.favorites_chip') }} <span class="ml-0.5 text-[12px] opacity-85" x-text="savedHere"></span></a>
+                       class="inline-flex min-h-11 shrink-0 snap-start items-center rounded-full border px-5 text-[13.5px] tracking-[0.03em] whitespace-nowrap">♥ {{ __('catalog::shop.favorites_chip') }} <span class="ml-0.5 text-[12px] opacity-85" x-text="savedHere"></span></a>
                 @else
                     <a href="{{ route('shop.index') }}#ulubione" x-cloak x-show="$store.favorites.count > 0"
-                       class="shrink-0 snap-start rounded-full border border-line-strong px-5 py-2.5 text-[13.5px] tracking-[0.03em] whitespace-nowrap text-lead hover:text-navy">♥ {{ __('catalog::shop.favorites_chip') }} <span class="ml-0.5 text-[12px] opacity-85" x-text="$store.favorites.count"></span></a>
+                       class="inline-flex min-h-11 shrink-0 snap-start items-center rounded-full border border-line-strong px-5 text-[13.5px] tracking-[0.03em] whitespace-nowrap text-lead hover:text-navy">♥ {{ __('catalog::shop.favorites_chip') }} <span class="ml-0.5 text-[12px] opacity-85" x-text="$store.favorites.count"></span></a>
                 @endif
             </div>
             <div class="hidden flex-wrap items-center gap-1.5 md:flex">
