@@ -8,7 +8,7 @@
 
 @endforeach
 
-Osoba, która dostanie kartę, wpisze kod na stronie, wymyśli napis, wybierze kolor wnętrza i poda adres. Dostawa jest już opłacona.@if ($contactEmail) {!! $mailTexts->text('gift_choices', 'outro', $fill) !!}@endif
+Osoba, która dostanie kartę, wpisze kod na stronie {!! route('gift-choice.index') !!}, wymyśli napis, wybierze kolor wnętrza i poda adres. Dostawa jest już opłacona.@if ($contactEmail) {!! $mailTexts->text('gift_choices', 'outro', $fill) !!}@endif
 
 
 {!! $mailTexts->signature() !!}
