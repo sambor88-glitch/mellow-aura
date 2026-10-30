@@ -77,14 +77,14 @@ class HomeFloatLinksTest extends TestCase
     public function test_on_the_english_page_only_a_product_written_in_english_and_priced_in_euro_gets_a_link(): void
     {
         $translated = $this->product('Misa laguna', 'misa-laguna', english: true);
-        $polishOnly = $this->product('Wazon rzeźbiony', 'wazon-rzezbiony');
+        $polishOnly = $this->product('Wazon z uchem', 'wazon-z-uchem');
         $this->pick('home-float-1', $translated);
         $this->pick('home-float-2', $polishOnly);
 
         $hero = $this->hero($this->get('/en')->assertOk()->getContent());
 
         $this->assertStringContainsString('href="'.url('/en/product/lagoon-bowl').'" aria-label="See Lagoon bowl"', $hero);
-        $this->assertStringNotContainsString('wazon-rzezbiony', $hero);
+        $this->assertStringNotContainsString('wazon-z-uchem', $hero);
         $this->assertSame(1, substr_count($hero, 'aria-label="See'));
     }
 
