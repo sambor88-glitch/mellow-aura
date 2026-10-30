@@ -14,7 +14,7 @@
     $company = collect(['company_name', 'company_nip', 'company_regon', 'company_address'])->mapWithKeys(fn (string $key) => [$key => $settings->get($key)]);
 
     $description = match (true) {
-        filled($phone) => 'Napisz na WhatsApp '.$phone.' albo przez formularz. Odpisuję zwykle tego samego dnia.',
+        filled($phone) => 'Napisz na WhatsAppie '.$phone.' albo przez formularz. Odpisuję zwykle tego samego dnia.',
         filled($instagram) => 'Napisz na Instagramie @'.$instagram.' albo przez formularz. Odpisuję zwykle tego samego dnia.',
         default => 'Napisz do mnie przez formularz. Odpisuję zwykle tego samego dnia.',
     };
@@ -73,11 +73,11 @@
                         <p role="status" class="mb-5 rounded-[20px] border border-line-strong bg-sand-dark p-4 text-[14px] leading-[1.6] text-graphite">Wiadomość poszła. Odpisuję zwykle tego samego dnia.</p>
                     @elseif (session('contact_failed'))
                         <p role="alert" class="mb-5 rounded-[20px] border border-alert-line bg-alert p-4 text-[14px] leading-[1.6] text-alert-text">
-                            Coś się zacięło po mojej stronie i wiadomość nie wyszła. Twój tekst jest nadal w formularzu — spróbuj za chwilę{{ $phone ? ' albo napisz na WhatsApp '.$phone : '' }}.
+                            Coś się zacięło po mojej stronie i wiadomość nie wyszła. Twój tekst jest nadal w formularzu — spróbuj za chwilę{{ $phone ? ' albo napisz na WhatsAppie '.$phone : '' }}.
                         </p>
                     @elseif (session('contact_throttled'))
                         <p role="alert" class="mb-5 rounded-[20px] border border-alert-line bg-alert p-4 text-[14px] leading-[1.6] text-alert-text">
-                            Mam już od Ciebie kilka wiadomości i na wszystkie odpiszę. Kolejną wyślesz za godzinę{{ $phone ? ', a jeśli to pilne, napisz na WhatsApp '.$phone : '' }}.
+                            Mam już od Ciebie kilka wiadomości i na wszystkie odpiszę. Kolejną wyślesz za godzinę{{ $phone ? ', a jeśli to pilne, napisz na WhatsAppie '.$phone : '' }}.
                         </p>
                     @endif
 

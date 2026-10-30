@@ -13,9 +13,10 @@ return [
     'items' => 'Produkty',
     'delivery' => 'Dostawa',
     'delivery_email' => 'mailem, gratis',
-    'delivery_free_from' => 'gratis od :price',
+    'delivery_free' => 'gratis',
     'delivery_from' => 'od :price',
     'delivery_at_checkout' => 'w zamówieniu',
     'total' => 'Razem',
+    'plus_delivery' => '+ dostawa',
     'checkout' => 'Przejdź do zamówienia',
 ];

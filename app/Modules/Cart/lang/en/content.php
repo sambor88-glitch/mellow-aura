@@ -14,9 +14,10 @@ return [
     'items' => 'Items',
     'delivery' => 'Delivery',
     'delivery_email' => 'by e-mail, free',
-    'delivery_free_from' => 'free from :price',
+    'delivery_free' => 'free',
     'delivery_from' => 'from :price',
     'delivery_at_checkout' => 'at checkout',
     'total' => 'Total',
+    'plus_delivery' => '+ delivery',
     'checkout' => 'Go to checkout',
 ];

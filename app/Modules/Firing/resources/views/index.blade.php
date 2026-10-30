@@ -59,7 +59,7 @@
                         </div>
                     @elseif (session('firing_throttled'))
                         <p role="alert" class="mb-5 rounded-[20px] border border-alert-line bg-alert p-4 text-[14px] leading-[1.6] text-alert-text">
-                            Mam już od Ciebie kilka zgłoszeń i na wszystkie odpiszę. Kolejne wyślesz za godzinę{{ $phone ? ', a jeśli to pilne, napisz na WhatsApp '.$phone : '' }}.
+                            Mam już od Ciebie kilka zgłoszeń i na wszystkie odpiszę. Kolejne wyślesz za godzinę{{ $phone ? ', a jeśli to pilne, napisz na WhatsAppie '.$phone : '' }}.
                         </p>
                     @else
                         <p class="mb-5 text-[14.5px] leading-[1.6] text-muted">Wybierz wypał i wpisz, ile mniej więcej ważą prace. Wycenę z cennika zobaczysz od razu, a ja odpiszę z terminem.</p>

@@ -19,7 +19,7 @@ return [
     'deviation_label' => 'Zwróć uwagę:',
     'deviation_confirm' => 'Przy zamówieniu poproszę, żebyś to potwierdziła osobnym polem.',
     'stock_last' => 'ostatnia sztuka — kolejną zrobię na zamówienie',
-    'stock_few' => ':count szt. na półce — kolejną zrobię na zamówienie',
+    'stock_one_off' => 'jedyna sztuka — drugiej takiej nie będzie',
     'fewer' => 'Mniej sztuk',
     'more' => 'Więcej sztuk',
     'add_to_cart' => 'Dodaj do koszyka',

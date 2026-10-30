@@ -159,7 +159,14 @@
             <div class="min-w-[min(100%,280px)] flex-[0_1_340px]">
                 <div class="focus-on-dark rounded-[20px] bg-ink px-7 py-[30px] text-divider">
                     <div class="mb-[18px] text-[11px] tracking-[0.2em] text-gold uppercase">zapisy</div>
-                    <p class="mb-5 font-serif text-[21px] leading-[1.4] text-cream">Napisz, który warsztat i ile osób — odpiszę z wolnymi terminami.</p>
+                    <p class="mb-5 font-serif text-[21px] leading-[1.4] text-cream">
+                        {{-- With dates on the page they are booked online; the box is for what the calendar does not cover (MA-294). --}}
+                        @if ($dates->isNotEmpty())
+                            Żaden termin nie pasuje albo przychodzi grupa? Napisz, który warsztat i ile osób — znajdę inny dzień.
+                        @else
+                            Napisz, który warsztat i ile osób — odpiszę z wolnymi terminami.
+                        @endif
+                    </p>
                     <div class="grid gap-3">
                         @if ($phone)
                             <a href="https://wa.me/{{ preg_replace('/\D+/', '', $phone) }}" target="_blank" rel="noopener"
@@ -168,9 +175,6 @@
                         <a href="{{ $contactUrl }}"
                            class="rounded-full border border-line-dark p-[15px] text-center text-[14.5px] text-sand transition duration-300 hover:border-rose hover:text-rose active:scale-[.98]">Napisz przez formularz</a>
                     </div>
-                    @if ($phone)
-                        <p class="mt-3.5 text-[12.5px] leading-[1.55] text-label-dark">WhatsApp: {{ $phone }}</p>
-                    @endif
                 </div>
             </div>
         </div>

@@ -22,7 +22,7 @@
         Service::Imprint => [
             'title' => 'Pamiątka z bukietu ślubnego — kwiat odciśnięty w glinie',
             'description' => 'Co zrobić z bukietem po weselu? Odciskam zasuszony kwiat w glinie i wypalam. Zostaje talerz, z którego jesz, a nie kwiat za szkłem.',
-            'serviceName' => 'Talerz z odciskiem Twojego kwiatu',
+            'serviceName' => 'Talerz z odciskiem Twojej rośliny',
             'eyebrow' => 'usługa &middot; z Twojej rośliny',
             'photo' => 'service-imprint',
             'photoAlt' => 'Talerz z odciskiem prawdziwej rośliny',

@@ -20,9 +20,9 @@
             </h1>
             <p class="mx-auto mb-8 max-w-[50ch] text-[17px] leading-[1.7] text-lead">
                 @if ($paid)
-                    Wpłata {!! $number !!} ({{ $order->money($order->total_gross) }}) jest opłacona. Potwierdzenie przyjdzie na {{ $order->email }}.
+                    Wpłata {!! $number !!} ({{ $order->money($order->total_gross) }}) doszła. Potwierdzenie przyjdzie na {{ $order->email }}.
                 @else
-                    Przelewy24 jeszcze nie dało znać, że pieniądze są — wpłata {!! $number !!}.
+                    Czekam, aż bank potwierdzi wpłatę {!! $number !!}. Zwykle trwa to kilka sekund.
                     <a href="{{ route('custom-orders.payment.confirmation') }}" class="mt-2 block text-graphite underline underline-offset-4 hover:text-ink">Sprawdź jeszcze raz</a>
                 @endif
             </p>

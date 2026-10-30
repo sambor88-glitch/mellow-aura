@@ -49,13 +49,11 @@
     <x-consent::analytics-event name="view_item" :params="AnalyticsItem::params($variant->price(), [VariantAnalyticsItem::make($variant)])" />
 
     <div class="mx-auto max-w-[1360px] animate-ma-view px-[clamp(18px,4vw,48px)] pt-9 pb-24">
-        <nav aria-label="{{ __('catalog::shop.breadcrumb') }}" class="mb-7 text-[12.5px] text-label">
-            <a href="{{ route('shop.index') }}" class="text-label hover:text-navy">{{ __('catalog::shop.heading') }}</a>
-            @if ($product->category->hasTranslation(Locales::current()))
-                &middot; <a href="{{ route('shop.category', $product->category) }}" class="text-label hover:text-navy">{{ $product->category->name }}</a>
-            @endif
-            &middot; <span class="text-lead">{{ $product->name }}</span>
-        </nav>
+        <x-shared::breadcrumb class="mb-7" :items="array_values(array_filter([
+            [__('catalog::shop.products'), route('shop.index')],
+            $product->category->hasTranslation(Locales::current()) ? [$product->category->name, route('shop.category', $product->category)] : null,
+            [$product->name, null],
+        ]))" />
 
         <div class="flex flex-wrap items-start gap-[clamp(28px,5vw,72px)]">
             <div class="min-w-0 flex-[1_1_460px]" x-data="{ active: {{ $firstPhoto }} }">
@@ -195,10 +193,11 @@
                     </div>
                 @endif
 
-                @if ($variant->stock === 1)
+                {{-- A one-off has no "next one to order"; a lettered one-off already says so in the box above (MA-294). --}}
+                @if ($variant->stock === 1 && ! ($product->is_one_off && $product->stamp_enabled))
                     <div class="mb-5 flex items-center gap-2.5 rounded-[16px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text">
                         <span class="size-[7px] flex-none rounded-full bg-error"></span>
-                        <span>{{ __('catalog::product.stock_last') }}</span>
+                        <span>{{ __($product->is_one_off ? 'catalog::product.stock_one_off' : 'catalog::product.stock_last') }}</span>
                     </div>
                 @endif
 

@@ -14,7 +14,7 @@
            aria-describedby="voucher-for-hint"
            class="w-full min-w-0 rounded-[20px] border border-line bg-white px-[15px] py-[13px] text-[16px] text-ink placeholder:text-hint focus:border-ink">
     <div id="voucher-for-hint" class="mt-2 mb-4 flex justify-between gap-3 text-[12.5px] text-hint">
-        <span>Nieobowiązkowe — puste pole nie pokaże się na voucherze</span>
+        <span>Puste pole zostawi na voucherze linię do wpisania ręcznie</span>
         <span class="flex-none whitespace-nowrap" x-text="recipient.length + ' / {{ $nameMax }}'">0 / {{ $nameMax }}</span>
     </div>
 
@@ -40,9 +40,16 @@
     <div class="rounded-[20px] border border-divider bg-sand px-[22px] py-7 text-center">
         <div class="mb-3.5 text-[10.5px] tracking-[0.3em] text-brown uppercase">mellowaura &middot; voucher</div>
         <div class="mb-2.5 font-serif text-[24px] leading-[1.2] font-light text-balance">{{ $product->name }}</div>
-        <div class="mb-3 font-serif text-[21px] text-brown italic [overflow-wrap:anywhere]" x-text="recipient.trim() || 'Imię osoby, która go dostanie'">Imię osoby, która go dostanie</div>
-        <p class="mx-auto mb-4 max-w-[36ch] text-[14.5px] leading-[1.6] whitespace-pre-line text-lead [overflow-wrap:anywhere]" x-text="dedication.trim() || 'Tu pojawi się Twoja dedykacja.'">Tu pojawi się Twoja dedykacja.</p>
-        <div x-show="sender.trim()" x-cloak class="mb-3 text-[14px] text-graphite [overflow-wrap:anywhere]">od: <span x-text="sender.trim()"></span></div>
+        {{-- Mirrors pdf/voucher.blade.php: an empty name is a line to fill in by hand, an empty dedication is not printed (MA-294). --}}
+        <div class="mb-3 font-serif text-[21px] text-brown italic [overflow-wrap:anywhere]">
+            <span x-show="recipient.trim()" x-cloak x-text="recipient.trim()"></span>
+            <span x-show="! recipient.trim()" class="mx-auto block h-[1.2em] w-[60%] border-b border-line-strong"><span class="sr-only">linia na imię</span></span>
+        </div>
+        <p x-show="dedication.trim()" x-cloak class="mx-auto mb-4 max-w-[36ch] text-[14.5px] leading-[1.6] whitespace-pre-line text-lead [overflow-wrap:anywhere]" x-text="dedication.trim()"></p>
+        <div class="mb-3 flex items-baseline justify-center gap-1.5 text-[14px] text-graphite [overflow-wrap:anywhere]">od:
+            <span x-show="sender.trim()" x-cloak x-text="sender.trim()"></span>
+            <span x-show="! sender.trim()" class="inline-block h-[1em] w-32 border-b border-line-strong"><span class="sr-only">linia na podpis</span></span>
+        </div>
         <div class="text-[12px] text-label">Ważny do {{ $validUntil }}</div>
     </div>
 </div>

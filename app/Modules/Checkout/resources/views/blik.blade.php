@@ -7,11 +7,12 @@
     $waiting = $secondsLeft > 0;
     $refused = $order->payment_status === PaymentStatus::Failed || $errors->has('blik_code');
     // A workshop booking and a custom order's payment have no cart to wait, so they say what does.
-    $retryText = ($refused ? 'refused_text' : 'expired_text').match (true) {
+    $kind = match (true) {
         $booking !== null => '_booking',
         $customOrderPayment !== null => '_custom_order',
         default => '',
     };
+    $retryText = ($refused ? 'refused_text' : 'expired_text').$kind;
     $glass = 'glass rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]';
 @endphp
 <x-shared::layout :title="$t('title')" :noindex="true">
@@ -25,7 +26,7 @@
         @if ($waiting)
             <div x-data="blikWait(@js(['seconds' => $secondsLeft, 'total' => BlikController::SECONDS, 'statusUrl' => route('checkout.blik.status'), 'texts' => ['left' => $t('time_left')]]))">
                 <h1 class="mb-4 font-serif text-[length:clamp(40px,6vw,72px)] leading-[.96] font-light tracking-[-0.02em] text-balance">{{ $t('wait_heading') }}</h1>
-                <p class="mb-8 max-w-[48ch] text-[16.5px] leading-[1.7] text-lead">{!! $withNumber('wait_text') !!}</p>
+                <p class="mb-8 max-w-[48ch] text-[16.5px] leading-[1.7] text-lead">{!! $withNumber('wait_text'.$kind) !!}</p>
 
                 <div class="{{ $glass }} text-center">
                     <div class="mb-4 flex items-center justify-center gap-3">
