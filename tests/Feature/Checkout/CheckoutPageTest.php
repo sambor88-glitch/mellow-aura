@@ -38,7 +38,7 @@ class CheckoutPageTest extends TestCase
             ->assertSee('<title>Zamówienie | MellowAura</title>', false)
             ->assertSee('<meta name="robots" content="noindex">', false)
             ->assertSeeInOrder([
-                'Jeszcze trzy pola', 'E-mail', 'Telefon', 'Imię i nazwisko', 'Faktura na firmę, dopisek do paczki',
+                'Ostatni krok', 'E-mail', 'Telefon', 'Imię i nazwisko', 'Faktura na firmę, dopisek do paczki',
                 'Sposób dostawy', 'InPost Paczkomat', '16 zł', 'Odbiór w pracowni', 'gratis',
                 'Płatność', 'BLIK', 'Karta', 'Przelewy24', 'Przelew tradycyjny',
                 'Twoje zamówienie', 'Wazony', 'Niski 16 cm', '1 szt.', '239 zł', 'Razem', '255 zł',

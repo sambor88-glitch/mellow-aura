@@ -15,7 +15,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 
 /**
- * Three fields, delivery, payment and accepting the terms are required, and so is accepting each unexpected
+ * The contact fields, delivery, payment and accepting the terms are required, and so is accepting each unexpected
  * feature of a product in the cart (terms §4.5). A cart of vouchers sent as PDFs has no delivery to choose.
  * The courier needs the address, and the address goes with the courier alone: the parcel locker and pickup
  * at the studio have no door to deliver to, but the parcel locker needs its code: without one Kasia has nowhere

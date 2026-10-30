@@ -48,7 +48,7 @@ class EuroCheckoutTest extends TestCase
         $this->get('/en/checkout')
             ->assertOk()
             ->assertSee('<title>Checkout | MellowAura</title>', false)
-            ->assertSee('Three fields <em class="text-brown italic">and done</em>', false)
+            ->assertSee('Last step <em class="text-brown italic">and done</em>', false)
             ->assertSee('€39')
             // Delivery in euro, under its English name; a method without a euro price is not offered.
             ->assertSee('InPost parcel locker')
@@ -65,7 +65,7 @@ class EuroCheckoutTest extends TestCase
             ->assertDontSee('149 zł<', false);
 
         $this->get('/zamowienie')
-            ->assertSee('Jeszcze trzy pola')
+            ->assertSee('Ostatni krok')
             ->assertDontSee('€');
     }
 
