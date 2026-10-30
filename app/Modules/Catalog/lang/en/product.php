@@ -24,7 +24,8 @@ return [
     'more' => 'More',
     'add_to_cart' => 'Add to basket',
     // BLIK and free shipping exist only in Poland; an English page leaves them out (see the view).
-    'blik' => 'pay in 10 seconds with a code from your banking app',
+    'blik' => 'pay in :time with a code from your banking app',
+    'blik_plain' => 'pay with a code from your banking app',
     'shipping' => 'Shipping',
     'packing_link' => 'How I pack and ship →',
     'free_from' => 'free from :price',

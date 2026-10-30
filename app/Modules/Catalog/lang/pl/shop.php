@@ -19,7 +19,8 @@ return [
     'heading' => 'Sklep',
     'favorites' => 'Ulubione',
     'favorites_intro' => 'Rzeczy zapisane sercem. Lista zostaje tylko w tej przeglądarce — nie wysyłam jej nigdzie.',
-    'intro' => 'Wszystko, co stoi teraz na półce w pracowni. Ceramika jest wypalona i gotowa do wysyłki — jeśli czegoś nie ma, znaczy, że już pojechało do kogoś.',
+    // The sentence after it comes from the panel (text_shop_intro_note).
+    'intro' => 'Wszystko, co stoi teraz na półce w pracowni.',
     'search_placeholder' => 'Szukaj — kubek, wazon, jedwab',
     'search_label' => 'Szukaj produktów',
     'search_clear' => 'Wyczyść szukanie',

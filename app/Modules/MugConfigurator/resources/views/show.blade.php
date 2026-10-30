@@ -20,7 +20,8 @@
     $money = fn (int $amount) => Money::format($amount, $currency);
     $polish = Locales::current() === Locales::default();
     $heading = $polish ? $settings->get('text_mug_heading', $t('name')) : $t('name');
-    $lead = $polish ? $settings->get('text_mug_lead') : $t('description');
+    $description = $options->description();
+    $lead = $polish ? $settings->get('text_mug_lead') : $description;
     $note = $polish ? $settings->get('text_mug_note') : null;
     $leadTime = $polish ? $settings->get('text_mug_lead_time') : null;
     $bulkOrder = $polish ? $settings->get('text_mug_bulk_order') : null;
@@ -30,6 +31,7 @@
     $closeup = $options->letteringPhotoUrl('closeup');
     $fired = $options->letteringPhotoUrl('fired');
     $freeShipping = $polish ? $settings->get('free_shipping_threshold') : null;
+    $blikTime = $settings->get('text_blik_time');
     $giftChoice = $polish && View::exists('gifts::choice.configurator');
 
     $eyebrow = 'text-[13.5px] font-medium text-graphite';
@@ -38,7 +40,7 @@
 
 <x-shared::layout
     :title="$t('title')"
-    :description="$t('description')"
+    :$description
     :canonical="route('mug.index')"
     :image="$photo"
 >
@@ -190,7 +192,7 @@
                 @if ($polish)
                     <div class="mt-4 flex items-center gap-2.5 text-[12.5px] text-muted">
                         <span class="rounded-full bg-navy px-2.5 py-[3px] text-[10px] font-semibold text-white">BLIK</span>
-                        <span>{{ $t('pay') }}{{ $freeShipping ? ' · '.$t('free_from', ['price' => $money((int) $freeShipping)]) : '' }}</span>
+                        <span>{{ $blikTime ? $t('pay', ['time' => $blikTime]) : $t('pay_plain') }}{{ $freeShipping ? ' · '.$t('free_from', ['price' => $money((int) $freeShipping)]) : '' }}</span>
                     </div>
                 @endif
 

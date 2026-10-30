@@ -19,7 +19,7 @@ return [
     'heading' => 'Shop',
     'favorites' => 'Saved',
     'favorites_intro' => 'Pieces saved with a heart. The list stays in this browser only — I don’t send it anywhere.',
-    'intro' => 'Everything on the studio shelf right now. The ceramics are fired and ready to ship — if something’s missing, it has already gone to someone.',
+    'intro' => 'Everything on the studio shelf right now.',
     'search_placeholder' => 'Search — mug, vase, silk',
     'search_label' => 'Search the shop',
     'search_clear' => 'Clear search',

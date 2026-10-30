@@ -1,3 +1,4 @@
+@use('App\Modules\Shared\Support\Seo')
 @inject('pagePhotos', 'App\Modules\Content\Support\PagePhotos')
 @php
     // The topic name matches the contact form's list from the panel; if it is renamed, the form simply opens without it.
@@ -18,7 +19,7 @@
 @endphp
 
 <x-shared::layout title="Zamówienia indywidualne — ceramika na zamówienie"
-                  description="Serwis na wesele, urna dla kota, kubek z Twoim napisem. Bezpłatny szkic i wycena w pięć dni, płatność BLIK-iem, realizacja około czterech tygodni."
+                  :description="Seo::description($lead ?? 'Ceramika na zamówienie z krakowskiej pracowni MellowAura.')"
                   :canonical="route('custom-orders.index')">
     <x-slot:head>{!! $structuredData !!}</x-slot:head>
     <div class="mx-auto max-w-[1280px] animate-ma-view px-7 pt-14 pb-24">

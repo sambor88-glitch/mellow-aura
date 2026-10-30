@@ -10,6 +10,8 @@
         : __('catalog::shop.title');
 
     $dispatch = DispatchTime::label($settings, short: true);
+    // Kasia's sentence about the shelf is Polish; an English page leaves it out until the panel has English texts (MA-188).
+    $shelfNote = Locales::current() === Locales::default() ? $settings->get('text_shop_intro_note') : null;
     $shipping = $dispatch ? __('catalog::shop.shipping', ['dispatch' => $dispatch]) : '';
     // Without a description from the panel a category names what is in it, so no two categories share one.
     $description = Seo::description(match (true) {
@@ -47,7 +49,7 @@
 
         <p x-cloak x-show="favorites" class="mb-[26px] max-w-[58ch] text-[16.5px] text-muted">{{ __('catalog::shop.favorites_intro') }}</p>
         @if (! $category)
-            <p x-show="! favorites" class="mb-[26px] max-w-[58ch] text-[16.5px] text-muted">{{ __('catalog::shop.intro') }}</p>
+            <p x-show="! favorites" class="mb-[26px] max-w-[58ch] text-[16.5px] text-muted">{{ __('catalog::shop.intro') }}{{ $shelfNote ? ' '.$shelfNote : '' }}</p>
         @elseif (filled($category->intro))
             <p x-show="! favorites" class="mb-[26px] max-w-[58ch] text-[16.5px] text-muted">{{ $category->intro }}</p>
         @endif

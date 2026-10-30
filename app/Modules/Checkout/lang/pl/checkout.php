@@ -77,7 +77,6 @@ return [
     'pay' => 'Płacę :amount',
     'badges' => ['Przelewy24'],
     'wallet_badges' => ['Apple Pay', 'Google Pay'],
-    'wrapping' => 'Ceramikę zawijam w wióry i podwójny karton',
 
     // Said by the pay button and the pill at the bottom of the screen (resources/js/checkout.js).
     'js' => [

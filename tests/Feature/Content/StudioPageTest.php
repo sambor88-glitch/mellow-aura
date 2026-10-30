@@ -26,7 +26,7 @@ class StudioPageTest extends TestCase
         $this->get('/pracownia')
             ->assertOk()
             ->assertSee('<title>Pracownia w Krakowie — ciepło, empatia, cierpliwość</title>', false)
-            ->assertSee('<meta name="description" content="Kameralna domowa pracownia w Krakowie: jeden stół, do sześciu osób, dwa wypały w cenie warsztatu.">', false)
+            ->assertSee('<meta name="description" content="Kameralna domowa pracownia w Krakowie: do 6 osób, od 5 lat, dwa wypały w cenie, wysyłka prac.">', false)
             ->assertSee('<link rel="canonical" href="'.route('content.studio').'">', false)
             ->assertSeeInOrder(['pracownia &middot; kraków', 'Kameralna pracownia. Ciepło, empatia, cierpliwość.'], false)
             ->assertSee('from-scrim/72', false)

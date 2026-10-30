@@ -28,7 +28,7 @@ class FiringPageTest extends TestCase
         $response = $this->get('/wypal-ceramiki-krakow')
             ->assertOk()
             ->assertSee('<title>Wypał ceramiki Kraków — cennik wypałów na zlecenie</title>', false)
-            ->assertSee('<meta name="description" content="Wypał biskwitowy i na ostro do 1240°C, wypał złota, cała półka na wyłączność. Cennik od 30 zł za kilogram.">', false)
+            ->assertSee('<meta name="description" content="Wypał ceramiki na zlecenie w Krakowie, cennik od 30 zł za kilogram: wypał biskwitowy, wypał niskotemperaturowy do 1050°C, wypał wysokotemperaturowy do…">', false)
             ->assertSeeInOrder(['wypały na zlecenie', 'Wypalę Twoje prace', 'Lepisz w domu i nie masz pieca?'])
             ->assertSeeInOrder(['Wypał biskwitowy', 'liczony od wagi prac', '30 zł', '/ kg', 'Wypał niskotemperaturowy do 1050°C', '40 zł', '/ kg', 'Wypał wysokotemperaturowy do 1240°C', '50 zł', '/ kg', 'Cała półka na wyłączność', '180 zł', 'Szkliwienie przeze mnie'])
             ->assertSee('Wsad zbieram raz w tygodniu, zwykle w czwartek.')
