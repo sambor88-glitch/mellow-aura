@@ -70,7 +70,10 @@ class ContactPageTest extends TestCase
             ->assertOk()
             ->assertSee('id="formularz"', false)
             ->assertDontSee('border-divider bg-divider', false);
+    }
 
+    public function test_the_studio_location_alone_keeps_the_frame(): void
+    {
         $this->settings(['location_description' => 'Kraków, okolice Błoń Krakowskich']);
 
         $this->get('/kontakt')->assertOk()->assertSee('border-divider bg-divider', false)->assertSeeText('okolice Błoń Krakowskich');
