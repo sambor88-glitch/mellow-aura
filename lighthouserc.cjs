@@ -22,13 +22,14 @@ const target = {
 // Each one has a task to reach the target; tighten the number back to `target` when it is done.
 const measured = preset === 'mobile'
     ? [
-        // Phone LCP 3.0–4.2 s, Performance 79–90 (MA-271).
+        // Phone after the first part of MA-271 (30.10): LCP 2.5–3.2 s, Performance 85–94, with up to ±0.5 s between runs.
+        // The margin keeps that noise from failing the job; the fonts are the next step to the target.
         {
             matchingUrlPattern: '.*',
             assertions: {
                 ...target,
-                'categories:performance': median('error', { minScore: 0.75 }),
-                'largest-contentful-paint': median('error', { maxNumericValue: 4500 }),
+                'categories:performance': median('error', { minScore: 0.8 }),
+                'largest-contentful-paint': median('error', { maxNumericValue: 4000 }),
             },
         },
     ]
