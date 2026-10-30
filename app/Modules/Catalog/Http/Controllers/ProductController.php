@@ -30,6 +30,12 @@ class ProductController extends Controller
             return to_route('shop.index');
         }
 
+        // Every size hidden in the panel (MA-279): off for a while, so back to its shelf without a 301.
+        if ($product->variants->isEmpty() && $product->variants()->exists()) {
+            return to_route('shop.category', $product->category);
+        }
+
+        // A hidden size's old link (a feed, a shared address) opens the first size still on show.
         $variant = $product->variants->firstWhere('id', (int) $request->query('wariant')) ?? $product->variants->first();
 
         abort_if($variant === null, 404);

@@ -77,7 +77,8 @@ class Bundle extends Model
     }
 
     /**
-     * Published sets of at least two parts, each of them on sale now.
+     * Published sets of at least two parts, each of them on sale now. A part hidden in the panel takes the set off
+     * the shelf like a sold-out one (MA-279): it comes back with the part.
      *
      * @param  Builder<Bundle>  $query
      */
@@ -87,7 +88,7 @@ class Bundle extends Model
         $query->where('is_published', true)
             ->has('items', '>=', self::MIN_PARTS)
             ->whereDoesntHave('items.variant', fn (Builder $variant) => $variant->where(
-                fn (Builder $unavailable) => $unavailable->where('stock', 0)->orWhereRelation('product', 'is_published', false),
+                fn (Builder $unavailable) => $unavailable->where('stock', 0)->orWhere('is_hidden', true)->orWhereRelation('product', 'is_published', false),
             ));
     }
 

@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\Mail;
  * link, not the row, so it still goes out from the queue after the row is gone; if it never does, it waits in
  * „Niewysłane maile”.
  *
- * Someone waiting on a page the product no longer has — hidden, not written in her language, no price in her
- * currency — keeps waiting: a link to a page that is not there would waste her one mail.
+ * Someone waiting on a page the product no longer has — hidden (the product or the size), not written in her
+ * language, no price in her currency — keeps waiting: a link to a page that is not there would waste her one mail.
  */
 class SendRestockNotices
 {
@@ -26,7 +26,7 @@ class SendRestockNotices
     {
         $variant->refresh()->load('product');
 
-        if (! $variant->isInStock() || ! $variant->product->is_published) {
+        if (! $variant->isInStock() || $variant->is_hidden || ! $variant->product->is_published) {
             return 0;
         }
 

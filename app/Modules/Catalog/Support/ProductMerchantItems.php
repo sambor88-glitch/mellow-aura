@@ -25,7 +25,7 @@ class ProductMerchantItems
         $products = Product::query()
             ->where('is_published', true)
             ->where('show_in_google', true)
-            ->with(['category', 'variants', 'media'])
+            ->with(['category', 'variants' => fn ($variants) => $variants->visible(), 'media'])
             ->orderBy('sort_order')
             ->orderBy('id')
             ->get();

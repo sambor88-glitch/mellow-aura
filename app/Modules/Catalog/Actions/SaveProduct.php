@@ -29,7 +29,7 @@ class SaveProduct
     public function __construct(private ConvertEuroPrices $convertEuroPrices, private SendRestockNotices $sendRestockNotices) {}
 
     /**
-     * @param  array{name: string, category_id: int, description: ?string, seo_description?: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, variant_kind?: ?string, euro_from_rate?: bool, workshop_code?: ?string, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels?: array<string, string>, price_gross: int, compare_at_price: ?int, prices?: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post?: bool, voucher_seats?: ?int, media_id?: ?int}>, photo_alts?: array<int, string>, photo_focus?: array<int, array{x: int, y: int}>, translations?: array<string, array<string, ?string>>}  $data
+     * @param  array{name: string, category_id: int, description: ?string, seo_description?: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, variant_kind?: ?string, euro_from_rate?: bool, workshop_code?: ?string, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels?: array<string, string>, price_gross: int, compare_at_price: ?int, prices?: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post?: bool, voucher_seats?: ?int, media_id?: ?int, is_hidden?: bool}>, photo_alts?: array<int, string>, photo_focus?: array<int, array{x: int, y: int}>, translations?: array<string, array<string, ?string>>}  $data
      */
     public function __invoke(?Product $product, array $data): Product
     {
@@ -81,14 +81,15 @@ class SaveProduct
             $kept = [];
 
             foreach ($data['variants'] as $row) {
-                $values = ['label' => $row['label'], 'price_gross' => $row['price_gross'], 'compare_at_price' => $row['compare_at_price'] ?? null, 'stock' => $row['stock'], 'sent_by_post' => $row['sent_by_post'] ?? false, 'voucher_seats' => $row['voucher_seats'] ?? null, 'media_id' => in_array($row['media_id'] ?? null, $photoIds, true) ? $row['media_id'] : null];
+                $values = ['label' => $row['label'], 'price_gross' => $row['price_gross'], 'compare_at_price' => $row['compare_at_price'] ?? null, 'stock' => $row['stock'], 'sent_by_post' => $row['sent_by_post'] ?? false, 'voucher_seats' => $row['voucher_seats'] ?? null, 'media_id' => in_array($row['media_id'] ?? null, $photoIds, true) ? $row['media_id'] : null, 'is_hidden' => $row['is_hidden'] ?? false];
                 $variant = $row['id'] === null ? null : $existing->get($row['id']);
 
                 if ($variant !== null) {
-                    $wasSoldOut = $variant->stock === 0;
+                    // Back on show counts as back on the shelf: a hidden size takes no sign-ups, but may have kept old ones.
+                    $wasOffShelf = $variant->stock === 0 || $variant->is_hidden;
                     $variant->update($values);
 
-                    if ($wasSoldOut && $variant->isInStock()) {
+                    if ($wasOffShelf && $variant->isInStock() && ! $variant->is_hidden) {
                         $restocked[] = $variant;
                     }
                 } else {

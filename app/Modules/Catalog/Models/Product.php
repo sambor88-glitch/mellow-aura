@@ -53,7 +53,7 @@ class Product extends Model implements HasMedia
     }
 
     /**
-     * Published products with at least one variant on the shelf or without stock tracking — on a page in another
+     * Published products with at least one visible variant on the shelf or without stock tracking — on a page in another
      * language, only the ones written in it and priced in its currency.
      *
      * @param  Builder<Product>  $query
@@ -62,13 +62,13 @@ class Product extends Model implements HasMedia
     protected function live(Builder $query): void
     {
         $query->where('is_published', true)
-            ->whereHas('variants', fn (Builder $variants) => $variants->inStock()->pricedIn())
+            ->whereHas('variants', fn (Builder $variants) => $variants->visible()->inStock()->pricedIn())
             ->translatedInto();
     }
 
     /**
      * What a product card and a product page read, in the language and the currency of the page: on /en/ only the
-     * variants with a euro price, so no card ever shows a złoty amount under a euro sign.
+     * variants with a euro price, so no card ever shows a złoty amount under a euro sign. Hidden variants never.
      *
      * @param  Builder<Product>  $query
      */
@@ -97,7 +97,7 @@ class Product extends Model implements HasMedia
         $translated = Locales::current() !== Locales::default();
 
         return [
-            'variants' => fn ($variants) => $variants->pricedIn()->orderBy('id')->when($translated, fn ($variants) => $variants->with('translations')),
+            'variants' => fn ($variants) => $variants->visible()->pricedIn()->orderBy('id')->when($translated, fn ($variants) => $variants->with('translations')),
             'category' => fn ($category) => $category->when($translated, fn ($category) => $category->with('translations')),
             'media',
         ];
@@ -107,7 +107,7 @@ class Product extends Model implements HasMedia
     public function availableIn(string $locale): bool
     {
         return $this->hasTranslation($locale)
-            && ($locale === Locales::default() || $this->variants()->pricedIn(Locales::currency($locale))->exists());
+            && ($locale === Locales::default() || $this->variants()->visible()->pricedIn(Locales::currency($locale))->exists());
     }
 
     /**

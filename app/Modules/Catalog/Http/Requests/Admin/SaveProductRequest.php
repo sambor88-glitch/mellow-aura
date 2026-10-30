@@ -71,6 +71,7 @@ class SaveProductRequest extends FormRequest
             'variants.*.compare_at_eur' => ['nullable', new PriceBeforeReduction('price_eur')],
             'variants.*.stock' => ['nullable', 'integer', 'min:0', 'max:9999'],
             'variants.*.sent_by_post' => ['nullable', 'boolean'],
+            'variants.*.is_hidden' => ['nullable', 'boolean'],
             // A workshop voucher: which workshop from the price list, and how many seats each size books.
             'workshop_code' => ['nullable', 'string', Rule::in(app(WorkshopTypes::class)->all()->map(WorkshopTypes::key(...))->all())],
             'variants.*.voucher_seats' => ['nullable', 'integer', 'min:1', 'max:'.BookingController::MAX_SEATS],
@@ -162,7 +163,7 @@ class SaveProductRequest extends FormRequest
      * The validated form in the shape SaveProduct takes: prices in grosze, empty dimensions left out,
      * photo descriptions and focal points keyed by photo id.
      *
-     * @return array{name: string, category_id: int, description: ?string, seo_description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, variant_kind: ?string, euro_from_rate: bool, workshop_code: ?string, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels: array<string, string>, price_gross: int, compare_at_price: ?int, prices: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post: bool, voucher_seats: ?int, media_id: ?int}>, photo_alts: array<int, string>, photo_focus: array<int, array{x: int, y: int}>}
+     * @return array{name: string, category_id: int, description: ?string, seo_description: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, variant_kind: ?string, euro_from_rate: bool, workshop_code: ?string, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels: array<string, string>, price_gross: int, compare_at_price: ?int, prices: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post: bool, voucher_seats: ?int, media_id: ?int, is_hidden: bool}>, photo_alts: array<int, string>, photo_focus: array<int, array{x: int, y: int}>}
      */
     public function product(): array
     {
@@ -206,6 +207,7 @@ class SaveProductRequest extends FormRequest
                 'sent_by_post' => (bool) ($row['sent_by_post'] ?? false),
                 'voucher_seats' => filled($row['voucher_seats'] ?? null) ? (int) $row['voucher_seats'] : null,
                 'media_id' => filled($row['media_id'] ?? null) ? (int) $row['media_id'] : null,
+                'is_hidden' => (bool) ($row['is_hidden'] ?? false),
             ], $data['variants']),
             'photo_alts' => array_map(fn (mixed $alt) => trim((string) $alt), (array) ($data['photo_alts'] ?? [])),
             'photo_focus' => array_map(fn (array $point) => ['x' => (int) $point['x'], 'y' => (int) $point['y']], (array) ($data['photo_focus'] ?? [])),
