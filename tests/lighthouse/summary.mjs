@@ -58,8 +58,31 @@ for (const preset of presets) {
             .map((audit) => `${audit.title} (−${Math.round(audit.metricSavings.LCP)} ms)`);
         const shifts = report.audits['cumulative-layout-shift'].numericValue >= 0.01 ? nodes('layout-shifts').slice(0, 3) : [];
 
+        // Where the LCP time goes: time to first byte, the wait before the photo is asked for, its download, the paint.
+        const phases = [];
+        const findPhases = (value) => {
+            if (!value || typeof value !== 'object') return;
+            if ((value.subpart || value.phase) && typeof value.duration === 'number') {
+                phases.push(`${value.label ?? value.phase ?? value.subpart} ${Math.round(value.duration)} ms`);
+            }
+            Object.values(value).forEach(findPhases);
+        };
+        findPhases(report.audits['lcp-breakdown-insight']?.details ?? report.audits['largest-contentful-paint-element']?.details);
+        // What the page downloads before its LCP (as observed, unthrottled): on a slow phone it all shares the line with the photo.
+        const observedLcp = report.audits.metrics?.details?.items?.[0]?.observedLargestContentfulPaint;
+        const start = report.audits['network-requests']?.details?.items?.[0]?.networkRequestTime ?? 0;
+        const before = (report.audits['network-requests']?.details?.items ?? [])
+            .filter((request) => observedLcp !== undefined && request.networkRequestTime - start < observedLcp);
+        const kilobytes = (bytes) => `${Math.round(bytes / 1024)} kB`;
+        const heaviest = [...before].sort((a, b) => b.transferSize - a.transferSize).slice(0, 6)
+            .map((request) => `${new URL(request.url).pathname.split('/').pop()} ${kilobytes(request.transferSize)}`);
+
         diagnostics.push(`**${new URL(run.url).pathname} · ${preset}**`);
         diagnostics.push(`- LCP element: \`${(nodes('largest-contentful-paint-element')[0] ?? 'n/a').slice(0, 160)}\``);
+        if (phases.length) diagnostics.push(`- LCP phases: ${phases.join('; ')}`);
+        if (before.length) {
+            diagnostics.push(`- Before LCP: ${before.length} requests, ${kilobytes(before.reduce((sum, request) => sum + request.transferSize, 0))}; heaviest: ${heaviest.join(', ')}`);
+        }
         if (savings.length) diagnostics.push(`- LCP savings: ${savings.join('; ')}`);
         if (shifts.length) diagnostics.push(`- Layout shifts: ${shifts.map((node) => `\`${node.slice(0, 120)}\``).join(', ')}`);
         diagnostics.push('');
