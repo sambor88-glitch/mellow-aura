@@ -9,7 +9,6 @@ use App\Modules\Catalog\Models\ProductVariant;
 use App\Modules\Settings\Settings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Validation\Rule;
 
 /**
  * Product sizes from the catalogue. A hidden product drops out of the cart.
@@ -35,19 +34,11 @@ class ProductLines implements LineType
 
         $data = $request->validate([
             'quantity' => ['sometimes', 'integer', 'min:1', 'max:'.Cart::MAX_QUANTITY],
-            'custom_text' => [Rule::requiredIf($variant->takesCustomText()), 'nullable', 'string', 'max:'.(int) $this->settings->get('stamp_text_max_chars', 22)],
         ], [
             'quantity.max' => CartLine::tooManyNotice(),
-            'custom_text.required' => __('cart::line.text_required'),
-            'custom_text.max' => __('cart::line.text_max'),
         ]);
 
-        // Letters are stamped in capitals; a text sent for a product without stamping is ignored.
-        $customText = $variant->takesCustomText()
-            ? mb_strtoupper((string) preg_replace('/\s+/u', ' ', trim($data['custom_text'])))
-            : null;
-
-        return new ProductLine(ProductLine::keyFor($variant, $customText), (int) ($data['quantity'] ?? 1), $variant, $customText);
+        return new ProductLine(ProductLine::keyFor($variant), (int) ($data['quantity'] ?? 1), $variant);
     }
 
     /**
@@ -57,7 +48,7 @@ class ProductLines implements LineType
      */
     protected function line(string $key, int $quantity, ProductVariant $variant, array $row): ProductLine
     {
-        return new ProductLine($key, $quantity, $variant, $row['custom_text'] ?? null);
+        return new ProductLine($key, $quantity, $variant);
     }
 
     /**

@@ -135,15 +135,6 @@ class ProductVariant extends Model
     }
 
     /**
-     * On a stamped product the variant without stock tracking is made to order with the customer's
-     * own text ("Twój tekst"), next to the ready one-off mugs that each have a stock of 1.
-     */
-    public function takesCustomText(): bool
-    {
-        return $this->product->stamp_enabled && $this->stock === null;
-    }
-
-    /**
      * Variants in stock or without stock tracking.
      *
      * @param  Builder<ProductVariant>  $query
@@ -152,20 +143,6 @@ class ProductVariant extends Model
     protected function inStock(Builder $query): void
     {
         $query->where(fn (Builder $stock) => $stock->whereNull('stock')->orWhere('stock', '>', 0));
-    }
-
-    /**
-     * Variants the shop offers. A mug with the customer's own text is made in the mug configurator (/kubek-z-napisem)
-     * with its preview, sizes and glazes, so a stamped product no longer sells it as one of its sizes (MA-275).
-     * The rows stay for the orders and carts that already have them.
-     *
-     * @param  Builder<ProductVariant>  $query
-     */
-    #[Scope]
-    protected function offered(Builder $query): void
-    {
-        $query->where(fn (Builder $offered) => $offered->whereNotNull('stock')
-            ->orWhereHas('product', fn (Builder $product) => $product->where('stamp_enabled', false)));
     }
 
     /**

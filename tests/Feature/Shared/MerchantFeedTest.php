@@ -90,15 +90,9 @@ class MerchantFeedTest extends TestCase
         $this->assertSame(['v'.$shown->variants()->value('id')], array_keys($items));
     }
 
-    public function test_a_mug_with_the_customers_text_stays_out_and_a_voucher_promises_no_delivery_time(): void
+    public function test_a_voucher_promises_no_delivery_time(): void
     {
         $this->deliveryOptions();
-        $mugs = $this->product([
-            'name' => 'Kubki z cytatem',
-            'stamp_enabled' => true,
-            'category_id' => Category::factory()->create(['group' => CategoryGroup::Ceramics])->id,
-        ]);
-        $ownText = ProductVariant::factory()->create(['product_id' => $mugs->id, 'label' => 'Twój tekst', 'price_gross' => 7900, 'stock' => null]);
         $voucher = $this->product([
             'name' => 'Voucher kwotowy',
             'category_id' => Category::factory()->create(['name' => 'Vouchery', 'group' => CategoryGroup::Workshops])->id,
@@ -107,9 +101,6 @@ class MerchantFeedTest extends TestCase
         $amount = ProductVariant::factory()->create(['product_id' => $voucher->id, 'label' => '150 zł', 'price_gross' => 15000, 'stock' => null]);
 
         $items = $this->items($this->get('/google-merchant.xml')->getContent());
-
-        // Your own lettering is ordered in the mug configurator, not as a size of a stamped product (MA-275).
-        $this->assertArrayNotHasKey('v'.$ownText->id, $items);
 
         $card = $items['v'.$amount->id];
         $this->assertSame('in_stock', (string) $card->availability);

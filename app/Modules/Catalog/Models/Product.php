@@ -62,7 +62,7 @@ class Product extends Model implements HasMedia
     protected function live(Builder $query): void
     {
         $query->where('is_published', true)
-            ->whereHas('variants', fn (Builder $variants) => $variants->offered()->inStock()->pricedIn())
+            ->whereHas('variants', fn (Builder $variants) => $variants->inStock()->pricedIn())
             ->translatedInto();
     }
 
@@ -97,7 +97,7 @@ class Product extends Model implements HasMedia
         $translated = Locales::current() !== Locales::default();
 
         return [
-            'variants' => fn ($variants) => $variants->offered()->pricedIn()->orderBy('id')->when($translated, fn ($variants) => $variants->with('translations')),
+            'variants' => fn ($variants) => $variants->pricedIn()->orderBy('id')->when($translated, fn ($variants) => $variants->with('translations')),
             'category' => fn ($category) => $category->when($translated, fn ($category) => $category->with('translations')),
             'media',
         ];

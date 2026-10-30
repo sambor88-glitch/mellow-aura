@@ -57,14 +57,14 @@ class PlaceOrderTest extends TestCase
             ->assertSee('Regulamin zaakceptowany: wersja 0.2 z 16 września 2026, 20.11.2026, 17:40');
     }
 
-    public function test_paying_saves_the_order_with_copies_of_names_prices_and_the_mug_text(): void
+    public function test_paying_saves_the_order_with_copies_of_names_and_prices(): void
     {
         Setting::create(['key' => 'dispatch_days_min', 'value' => 3]);
         Setting::create(['key' => 'dispatch_days_max', 'value' => 5]);
         $vase = $this->variant('Wazony', 'Niski 16 cm', 23900, stock: 3);
-        $mug = $this->variant('Kubki z cytatem', 'Twój tekst', 7900, stock: null, product: ['stamp_enabled' => true]);
+        $mug = $this->variant('Kubki malowane', 'Na zamówienie', 7900, stock: null);
         $this->postJson('/koszyk', ['variant_id' => $vase->id]);
-        $this->postJson('/koszyk', ['variant_id' => $mug->id, 'custom_text' => 'jeszcze nie teraz']);
+        $this->postJson('/koszyk', ['variant_id' => $mug->id]);
 
         $this->post('/zamowienie', $this->form(['expected_total' => 33400]))
             ->assertRedirect('/zamowienie/potwierdzenie');
@@ -77,7 +77,7 @@ class PlaceOrderTest extends TestCase
         $this->assertSame(['Anna Nowak', 'ania@example.com', '600100200'], [$order->name, $order->email, $order->phone]);
         $this->assertSame(['parcel_locker', 1600, 33400], [$order->shipping_method, $order->shipping_gross, $order->total_gross]);
         $this->assertSame(
-            [['Wazony', 'Niski 16 cm', 1, 23900, null], ['Kubki z cytatem', 'Twój tekst', 1, 7900, 'JESZCZE NIE TERAZ']],
+            [['Wazony', 'Niski 16 cm', 1, 23900, null], ['Kubki malowane', 'Na zamówienie', 1, 7900, null]],
             $order->items->map(fn ($item) => [$item->product_name, $item->variant_label, $item->quantity, $item->unit_price_gross, $item->custom_text])->all(),
         );
 
@@ -87,7 +87,7 @@ class PlaceOrderTest extends TestCase
         $this->assertSame(['PLN', 'PLN'], $order->items()->orderBy('id')->pluck('currency')->all());
         $this->assertSame('Wazony', $order->items()->orderBy('id')->value('product_name'));
 
-        // The confirmed payment took the vase off the shelf; the mug with the customer's text has no stock.
+        // The confirmed payment took the vase off the shelf; the mug made to order has no stock to take.
         $this->assertSame(2, $vase->fresh()->stock);
         $this->assertNull($mug->fresh()->stock);
 

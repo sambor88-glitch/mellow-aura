@@ -43,7 +43,6 @@ class VariantPhotoTest extends TestCase
     {
         $queen = ProductVariant::factory()->create(['product_id' => $this->mugs->id, 'label' => 'Królowa matka', 'stock' => 1, 'media_id' => $this->photos[0]->id]);
         $second = ProductVariant::factory()->create(['product_id' => $this->mugs->id, 'label' => 'Ochujeję', 'stock' => 1, 'media_id' => $this->photos[1]->id]);
-        $ownText = ProductVariant::factory()->create(['product_id' => $this->mugs->id, 'label' => 'Twój tekst', 'stock' => null]);
 
         $this->get('/produkt/kubki-z-cytatem?wariant='.$second->id)
             ->assertOk()
@@ -52,15 +51,12 @@ class VariantPhotoTest extends TestCase
             ->assertSeeInOrder(['alt="Kubek z napisem królowa matka"', 'loading="lazy"', 'alt="Kubek z napisem ochujeję"', 'fetchpriority="high"'], false);
 
         $this->get('/produkt/kubki-z-cytatem?wariant='.$queen->id)->assertSee('x-data="{ active: 0 }"', false);
-        // "Twój tekst" is made in the mug configurator now (MA-275).
-        $this->get('/produkt/kubki-z-cytatem?wariant='.$ownText->id)->assertRedirect(route('mug.index'));
     }
 
     public function test_search_engines_and_google_shopping_get_the_photo_of_each_variant(): void
     {
         ProductVariant::factory()->create(['product_id' => $this->mugs->id, 'label' => 'Królowa matka', 'stock' => 1, 'media_id' => $this->photos[0]->id]);
         $second = ProductVariant::factory()->create(['product_id' => $this->mugs->id, 'label' => 'Ochujeję', 'stock' => 1, 'media_id' => $this->photos[1]->id]);
-        ProductVariant::factory()->create(['product_id' => $this->mugs->id, 'label' => 'Twój tekst', 'stock' => null]);
         $this->mugs->update(['show_in_google' => true]);
 
         $group = $this->structuredData($this->get('/produkt/kubki-z-cytatem')->getContent())->firstWhere('@type', 'ProductGroup');

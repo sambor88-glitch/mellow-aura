@@ -208,28 +208,11 @@
                 @endif
 
                 @if (Route::has('cart.store') && $variant->isInStock())
-                    @php($stampMax = (int) $settings->get('stamp_text_max_chars', 22))
-                    <form id="add-to-cart" data-buy-zone method="post" action="{{ route('cart.store') }}" x-data="{ quantity: 1, text: @js((string) old('custom_text')) }"
+                    <form id="add-to-cart" data-buy-zone method="post" action="{{ route('cart.store') }}" x-data="{ quantity: 1 }"
                           x-on:submit.prevent="$store.cart.send($el)" data-fly-to-cart class="mb-[26px]">
                         @csrf
                         <input type="hidden" name="variant_id" value="{{ $variant->id }}">
                         <input type="hidden" name="quantity" value="1" x-bind:value="quantity">
-
-                        @if ($variant->takesCustomText())
-                            <div class="glass mb-[26px] animate-ma-up-quick rounded-[20px] px-5 py-[22px]">
-                                <label for="custom-text" class="mb-3 block text-[11.5px] tracking-[0.16em] text-label uppercase">{{ __('catalog::product.stamp_label') }}</label>
-                                <input id="custom-text" name="custom_text" x-model="text" maxlength="{{ $stampMax }}" required autocomplete="off"
-                                       placeholder="{{ __('catalog::product.stamp_placeholder') }}" aria-describedby="custom-text-hint"
-                                       class="w-full min-w-0 rounded-[14px] border border-line bg-white px-4 py-[15px] text-[17px] tracking-[0.12em] text-ink uppercase placeholder:text-label focus:border-ink focus:shadow-[0_0_0_4px_rgb(36_65_126/.14)] focus:outline-none">
-                                <div id="custom-text-hint" class="mt-2.5 flex justify-between gap-3 text-[12.5px] text-label">
-                                    <span>{{ __('catalog::product.stamp_hint') }}</span>
-                                    <span x-text="text.length + ' / {{ $stampMax }}'">0 / {{ $stampMax }}</span>
-                                </div>
-                                @error('custom_text')
-                                    <p class="mt-2 text-[13px] text-error">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        @endif
 
                         {{-- A voucher asks for the name and dedication to print; the Gifts module brings the fields. --}}
                         @if ($product->isVoucher())

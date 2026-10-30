@@ -11,9 +11,8 @@
     $kind = $product->variant_kind ?? \App\Modules\Catalog\Enums\VariantKind::Options;
     $variantsLabel = $kind->count($variants);
     // One button in the shop and in the gift finder (MA-259). A single size goes straight to the cart and the customer
-    // stays on the shelf; several sizes, or lettering to write, lead to the product page — the card never guesses.
+    // stays on the shelf; several sizes lead to the product page — the card never guesses.
     $only = $variants === 1 ? $product->variants->first() : null;
-    $needsLettering = $only && $product->stamp_enabled && $only->stock === null;
     $soldOut = $product->variants->every(fn ($variant) => ! $variant->isInStock());
 @endphp
 <div data-shelf-card @class(['group relative flex animate-ma-up flex-col', 'h-full' => $withButton]) style="animation-delay: {{ $delay }}s">
@@ -48,7 +47,7 @@
 @if ($withButton && ! $soldOut)
     {{-- At the bottom of the card, so the buttons in a row line up when a name takes two lines. --}}
     <div class="mt-auto pt-3">
-    @if ($only && ! $needsLettering)
+    @if ($only)
         <form method="post" action="{{ route('cart.store') }}" x-data x-on:submit.prevent="$store.cart.send($el)">
             @csrf
             <input type="hidden" name="variant_id" value="{{ $only->id }}">
@@ -58,7 +57,7 @@
         </form>
     @else
         <a href="{{ route('product.show', $product) }}" class="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-line-strong px-[18px] py-[9px] text-[13px] text-ink transition duration-300 hover:border-ink hover:bg-ink hover:text-linen active:scale-[.97] sm:w-auto">
-            {{ $needsLettering ? __('catalog::shop.card_lettering') : $kind->choose() }}<span class="sr-only">: {{ $product->name }}</span>
+            {{ $kind->choose() }}<span class="sr-only">: {{ $product->name }}</span>
         </a>
     @endif
     </div>
