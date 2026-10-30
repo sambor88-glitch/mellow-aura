@@ -27,7 +27,7 @@
             {{ $mailTexts->html('vouchers', 'outro', ['kod' => $vouchers->pluck('code')->join(', ')]) }}
         @endif
     </p>
-    <p style="margin: 18px 0 0; color: #2F2620;">{{ $mailTexts->common('signature') }}</p>
+    <x-shared::mail.signature plain />
 
     <x-slot:footer>{{ $mailTexts->common('footer') }}<br>{{ $vouchers->count() === 1 ? 'Voucher' : 'Vouchery' }} do zamówienia {{ $order->number }} w sklepie MellowAura.</x-slot:footer>
 </x-shared::mail.layout>

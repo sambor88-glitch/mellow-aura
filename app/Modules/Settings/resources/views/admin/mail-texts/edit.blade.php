@@ -12,8 +12,49 @@
     $input = 'w-full min-w-0 rounded-[4px] border bg-white px-3 py-2.5 text-[15px] text-ink placeholder:text-hint focus:border-ink';
     $label = 'mb-1 block text-[12.5px] text-graphite';
     $invalidMails = collect($fields)->filter(fn (array $field) => $field['mail'] !== null && $bag->has($field['setting']))->pluck('mail')->unique()->all();
+    $imageBag = $errors->getBag('grafika-podpisu');
 @endphp
-<x-admin::layout title="Maile" lead="Maile, które sklep wysyła klientkom. Układ, kwoty i dane zamówienia biorą się same — tu zmienisz temat, pierwsze i ostatnie zdanie oraz podpis i stopkę.">
+<x-admin::layout title="Maile" lead="Maile, które sklep wysyła klientkom. Układ, kwoty i dane zamówienia biorą się same — tu zmienisz temat, pierwsze i ostatnie zdanie, podpis z grafiką i stopkę.">
+    <section id="grafika-podpisu" aria-labelledby="grafika-podpisu-tytul" class="mb-6 max-w-[880px] scroll-mt-6 rounded-[4px] border border-line bg-cream p-[22px]">
+        <h2 id="grafika-podpisu-tytul" class="mb-2.5 text-[11.5px] tracking-[0.16em] text-label uppercase">Grafika nad podpisem — w każdym mailu</h2>
+        <p class="mb-4 max-w-[62ch] text-[13.5px] leading-[1.6] text-muted">Np. Twój odręczny podpis albo logo, w mailach po polsku i po angielsku. Pod grafiką zostaje podpis z pola „Podpis”, bo część programów pocztowych nie pokazuje obrazków. Przezroczyste tło dostaje kremowy kolor maila.</p>
+        <div class="grid items-start gap-[18px] sm:grid-cols-2">
+            <div class="min-w-0">
+                <p class="mb-1 text-[12.5px] text-graphite">Tak to zobaczą klienci</p>
+                @if ($signatureImage)
+                    <div class="rounded-[3px] border border-sand-dark bg-cream px-[18px] py-4">
+                        <img src="{{ $signatureImage['url'] }}" width="{{ $signatureImage['width'] }}" height="{{ $signatureImage['height'] }}" alt="Grafika nad podpisem" class="block h-auto max-w-full">
+                        <p class="mt-1.5 font-[Georgia,'Times_New_Roman',serif] text-[18px] text-brown italic">{{ $signature }}</p>
+                    </div>
+                @else
+                    <div class="grid min-h-[120px] place-items-center rounded-[3px] border border-dashed border-line-strong bg-sand-dark px-4 text-center text-[13px] text-hint">Bez grafiki — maile mają sam podpis</div>
+                @endif
+            </div>
+            <div class="min-w-0">
+                <form method="post" action="{{ route('admin.mail-signature-image.store') }}" enctype="multipart/form-data" novalidate x-data="{ sending: false }">
+                    @csrf
+                    <label class="block cursor-pointer rounded-[4px] border border-dashed border-line-strong bg-linen p-4 text-center transition duration-300 hover:border-ink hover:bg-sand-dark active:scale-[.98] has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy">
+                        <span class="block text-[14px] text-lead" x-text="sending ? 'Wgrywam grafikę…' : @js($signatureImage ? 'Wgraj inną grafikę' : 'Wybierz grafikę z telefonu albo komputera')">{{ $signatureImage ? 'Wgraj inną grafikę' : 'Wybierz grafikę z telefonu albo komputera' }}</span>
+                        <span class="mt-1 block text-[12.5px] text-hint">JPG, PNG albo WebP, co najmniej {{ \App\Modules\Settings\Http\Requests\Admin\StoreMailSignatureImageRequest::MIN_WIDTH }} px szerokości</span>
+                        <input type="file" name="image" accept="image/jpeg,image/png,image/webp" class="sr-only"
+                               x-on:change="if ($el.files.length) { sending = true; $el.form.requestSubmit() }">
+                    </label>
+                    @if ($imageBag->has('image'))
+                        <p role="alert" class="mt-1.5 text-[13px] text-error">{{ $imageBag->first('image') }}</p>
+                    @endif
+                    <noscript><button class="mt-3 min-h-11 w-full rounded-full bg-ink px-4 text-[14px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Wgraj wybraną grafikę</button></noscript>
+                </form>
+                @if ($signatureImage)
+                    <form method="post" action="{{ route('admin.mail-signature-image.destroy') }}" class="mt-1">
+                        @csrf
+                        @method('DELETE')
+                        <button class="min-h-11 text-[12.5px] text-label hover:text-ink">Zdejmij grafikę z maili</button>
+                    </form>
+                @endif
+            </div>
+        </div>
+    </section>
+
     <form id="maile" method="post" action="{{ route('admin.mail-texts.update') }}" novalidate class="max-w-[880px] scroll-mt-6 rounded-[4px] border border-line bg-cream p-[22px]">
         @csrf
         @method('PUT')

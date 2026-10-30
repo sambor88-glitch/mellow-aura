@@ -28,7 +28,7 @@
     @if ($contactEmail)
         <p style="margin: 0 0 4px; color: #5C5043;">{{ $mailTexts->html('gift_choice_arrived', 'outro', $fill) }}</p>
     @endif
-    <p style="margin: 18px 0 0; color: #2F2620;">{{ $mailTexts->common('signature') }}</p>
+    <x-shared::mail.signature plain />
 
     <x-slot:footer>{{ $mailTexts->common('footer') }}</x-slot:footer>
 </x-shared::mail.layout>
