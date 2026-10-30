@@ -1,3 +1,4 @@
+@use('App\Modules\Catalog\Support\ProductPhoto')
 @use('App\Modules\Catalog\Support\ShopShortcuts')
 @use('App\Modules\Localization\Support\Locales')
 @use('App\Modules\Shared\Support\DispatchTime')
@@ -22,9 +23,12 @@
     });
 
     $shortcuts = array_filter(ShopShortcuts::ROUTES, fn (string $route) => Locales::has($route, Locales::current()));
+    // The first card's photo is the largest thing on a phone's first screen.
+    $firstPhoto = $products->first()?->getFirstMedia('images');
 @endphp
 
-<x-shared::layout :title="$title" :description="$description" :canonical="$baseUrl" :noindex="$search !== ''">
+<x-shared::layout :title="$title" :description="$description" :canonical="$baseUrl" :noindex="$search !== ''"
+                  :preload-image="$firstPhoto ? ProductPhoto::preload($firstPhoto, ProductPhoto::cardSizes()) : null">
     @isset($structuredData)
         <x-slot:head>{!! $structuredData !!}</x-slot:head>
     @endisset

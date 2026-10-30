@@ -19,8 +19,13 @@ class PagePhotoSizes
 {
     public const DIRECTORY = PagePhotos::DIRECTORY.'/sizes';
 
-    /** @var list<int> */
-    private const WIDTHS = [400, 800, 1600];
+    /**
+     * 200 for the small photos around the home hero, 640 for a photo across a phone (MA-271): with only 400 and 800
+     * a phone took twice the pixels it shows.
+     *
+     * @var list<int>
+     */
+    private const WIDTHS = [200, 400, 640, 800, 1600];
 
     /**
      * The srcset for a photo path saved in PagePhotos, or null when there is nothing smaller to offer.

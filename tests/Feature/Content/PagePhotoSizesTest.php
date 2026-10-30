@@ -25,14 +25,20 @@ class PagePhotoSizesTest extends TestCase
 
     public function test_a_photo_from_zdjecia_gets_a_smaller_copy_made_once(): void
     {
-        // wazon-rzezbiony.webp is 904 px wide: copies of 400 and 800 px, the photo itself as the largest.
+        // wazon-rzezbiony.webp is 904 px wide: copies of 200, 400, 640 and 800 px, the photo itself as the largest.
         $photo = app(PagePhotos::class)->get('home-float-5');
         $srcset = $photo->srcset();
         $copies = Storage::disk('public')->files(PagePhotoSizes::DIRECTORY);
 
-        $this->assertCount(2, $copies);
-        $this->assertSame([400, 800], array_map(fn (string $copy) => getimagesize(Storage::disk('public')->path($copy))[0], $copies));
-        $this->assertSame(Storage::disk('public')->url($copies[0]).' 400w, '.Storage::disk('public')->url($copies[1]).' 800w, '.$photo->url.' 904w', $srcset);
+        $this->assertCount(4, $copies);
+        $this->assertSame([200, 400, 640, 800], array_map(fn (string $copy) => getimagesize(Storage::disk('public')->path($copy))[0], $copies));
+        $this->assertSame(implode(', ', [
+            Storage::disk('public')->url($copies[0]).' 200w',
+            Storage::disk('public')->url($copies[1]).' 400w',
+            Storage::disk('public')->url($copies[2]).' 640w',
+            Storage::disk('public')->url($copies[3]).' 800w',
+            $photo->url.' 904w',
+        ]), $srcset);
         $this->assertSame('srcset="'.e($srcset).'" sizes="100px"', (string) $photo->srcsetAttributes('100px'));
 
         $photo->srcset();
@@ -43,6 +49,8 @@ class PagePhotoSizesTest extends TestCase
     {
         $this->get('/')->assertOk()
             ->assertSee('sizes="(max-aspect-ratio: 3/4) 75vh, 100vw"', false)
+            // The hero photo is asked for in the <head>, before the stylesheet (MA-271).
+            ->assertSee('imagesizes="(max-aspect-ratio: 3/4) 75vh, 100vw"', false)
             ->assertSee('sizes="(max-width: 760px) 100px, 13vw"', false);
 
         $this->assertNull(app(PagePhotoSizes::class)->srcset('page-photos/nie-ma-takiego.webp', 'https://example.test/x.webp'));

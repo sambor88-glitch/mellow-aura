@@ -9,11 +9,14 @@
     $filtered = $workshops->filter(fn (array $workshop) => $dateCounts->has(WorkshopTypes::key($workshop)));
     $pills = collect([['code' => null, 'label' => 'Wszystkie']])
         ->concat($filtered->map(fn (array $workshop) => ['code' => WorkshopTypes::key($workshop), 'label' => $workshop['name']]));
+    // The photo spans the 1280 px page without its padding.
+    $heroSizes = '(min-width: 1280px) 1224px, calc(100vw - 56px)';
 @endphp
 
 <x-shared::layout title="Warsztaty ceramiczne Kraków — kameralnie, do 6 osób"
                   description="Warsztaty ceramiczne w Krakowie: lepienie kubków, szkliwienie, sesje 1:1, dla par i rodzin. Glina, narzędzia i dwa wypały w cenie. Terminy i cennik."
-                  :canonical="route('workshops.index')">
+                  :canonical="route('workshops.index')"
+                  :preload-image="$hero !== null ? ['src' => $hero, 'srcset' => $heroSrcset, 'sizes' => $heroSizes] : null">
     <x-slot:head>{!! $structuredData !!}</x-slot:head>
     {{-- „Terminy (n)” on a card shows that workshop's dates only; without JS the list shows them all. --}}
     <div x-data="{
@@ -39,7 +42,7 @@
         @endif
 
         @if ($hero !== null)
-            <img src="{{ $hero }}" alt="" width="1280" height="520"
+            <img src="{{ $hero }}" @if ($heroSrcset) srcset="{{ $heroSrcset }}" sizes="{{ $heroSizes }}" @endif alt="" fetchpriority="high" width="1280" height="520"
                  class="mb-[76px] block h-[clamp(240px,40vh,460px)] w-full rounded-[20px] bg-line-soft object-cover">
         @endif
 

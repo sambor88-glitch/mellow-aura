@@ -122,8 +122,8 @@ class AdminPagePhotosTest extends TestCase
         $this->get('/ceramika-dla-gastronomii')->assertOk()->assertSee('src="'.Storage::disk('public')->url($path).'"', false);
         // A phone gets a smaller copy of the 1600 px photo (MA-232).
         $copies = Storage::disk('public')->files(PagePhotoSizes::DIRECTORY);
-        $this->assertCount(2, $copies);
-        $this->get('/ceramika-dla-gastronomii')->assertSee(Storage::disk('public')->url($copies[0]).' 400w', false)
+        $this->assertCount(4, $copies);
+        $this->get('/ceramika-dla-gastronomii')->assertSee(Storage::disk('public')->url($copies[1]).' 400w', false)
             ->assertSee(Storage::disk('public')->url($path).' 1600w', false);
         $this->get('/panel/zdjecia-stron')->assertSee('Przywróć pierwsze zdjęcie');
 

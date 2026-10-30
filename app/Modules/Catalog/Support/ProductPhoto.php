@@ -34,4 +34,22 @@ class ProductPhoto
 
         return count($candidates) > 1 ? implode(', ', $candidates) : null;
     }
+
+    /**
+     * How wide a product card shows its photo: about 400 px on a computer, half or the whole phone screen.
+     */
+    public static function cardSizes(int $phoneColumns = 2): string
+    {
+        return '(min-width: 640px) 400px, '.($phoneColumns > 1 ? 'calc(50vw - 35px)' : 'calc(100vw - 56px)');
+    }
+
+    /**
+     * The layout's preloadImage for a page that opens with this photo, with the same src, srcset and sizes as its <img>.
+     *
+     * @return array{src: string, srcset: ?string, sizes: string}
+     */
+    public static function preload(Media $photo, string $sizes): array
+    {
+        return ['src' => $photo->getAvailableUrl(['card']), 'srcset' => self::srcset($photo), 'sizes' => $sizes];
+    }
 }
