@@ -86,6 +86,29 @@ class GiftFinderTest extends TestCase
             ->assertSee('href="'.route('gifts.index').'"', false);
     }
 
+    public function test_filters_with_nothing_to_choose_from_leave_no_empty_box(): void
+    {
+        $chip = fn (string $label) => ['label' => $label, 'url' => route('gifts.index'), 'active' => true];
+
+        $this->view('gifts::gifts.index', [
+            'ideas' => collect(),
+            'filters' => ['Dla kogo' => collect([$chip('Dla każdego')]), 'Okazja' => collect([$chip('Wszystkie okazje')]), 'Budżet' => collect()],
+            'resetUrl' => route('gifts.index'),
+            'filtered' => false,
+            'voucherCategory' => null,
+            'voucherValidity' => '12 miesięcy',
+        ])
+            ->assertSee('Powiedz, dla kogo')
+            ->assertDontSee('mb-[38px] rounded-[20px] border border-divider bg-cream', false)
+            ->assertDontSee('Dla każdego');
+
+        // With a real choice in one filter the box is there with that filter only.
+        $this->get('/prezenty')
+            ->assertOk()
+            ->assertSee('mb-[38px] rounded-[20px] border border-divider bg-cream', false)
+            ->assertSee('aria-label="Budżet"', false);
+    }
+
     public function test_the_voucher_note_shows_with_its_validity_when_vouchers_are_on_sale(): void
     {
         Setting::create(['key' => 'text_gifts_voucher_note', 'value' => 'Voucher kwotowy działa i na warsztaty, i na wszystko ze sklepu.']);

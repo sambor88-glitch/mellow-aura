@@ -48,6 +48,22 @@ class FiringPageTest extends TestCase
         ], array_map(fn (array $offer) => [$offer['itemOffered']['name'], $offer['price'], $offer['priceSpecification']['unitText'] ?? null], $service['hasOfferCatalog']['itemListElement']));
     }
 
+    public function test_without_a_price_list_the_page_asks_for_a_message_instead_of_a_form_that_is_not_there(): void
+    {
+        Setting::query()->where('key', 'kiln_prices')->update(['value' => json_encode([])]);
+        Setting::query()->where('key', 'text_kiln_note')->update(['value' => json_encode(null)]);
+
+        $this->get('/wypal-ceramiki-krakow')
+            ->assertOk()
+            ->assertSeeInOrder(['Zapytaj o wypał', 'Cennik wypałów właśnie układam', 'Napisz przez formularz'])
+            ->assertDontSee('Zgłoś wsad')
+            ->assertDontSee('Wybierz wypał i wpisz')
+            ->assertDontSee('Wolisz najpierw zapytać?')
+            ->assertDontSee('<table', false)
+            // No empty column next to the box.
+            ->assertDontSee('min-w-0 flex-[1_1_420px]', false);
+    }
+
     public function test_a_reduced_firing_price_shows_the_lowest_price_from_30_days(): void
     {
         $this->actingAs(User::factory()->create())

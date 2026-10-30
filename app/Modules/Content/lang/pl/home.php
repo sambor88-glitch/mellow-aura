@@ -63,6 +63,7 @@ return [
     'workshops_heading_em' => 'w glinie',
     'workshops_text' => 'Kameralne warsztaty w mojej pracowni. Ciepło, empatia, cierpliwość — i nauka słuchania siebie.',
     'workshops_price' => 'od :price / :unit',
+    'workshops_price_from' => 'od :price',
     'workshops_cta' => 'Wybierz termin',
 
     'instagram_heading' => 'Codzienność pracowni',
