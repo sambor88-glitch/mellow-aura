@@ -9,6 +9,7 @@ use App\Modules\Customers\Models\PrivacyRequest;
 use App\Modules\Customers\Support\CustomerRecords;
 use App\Modules\CustomOrders\Actions\AnonymizeCustomer as AnonymizeCustomOrders;
 use App\Modules\Firing\Actions\AnonymizeCustomer as AnonymizeFiringRequests;
+use App\Modules\Gifts\Actions\AnonymizeGiftChoices;
 use App\Modules\Gifts\Actions\AnonymizeVouchers;
 use App\Modules\Monitoring\Actions\ForgetFailedMails;
 use App\Modules\Shipping\Actions\AnonymizeShipments;
@@ -30,6 +31,7 @@ class AnonymizeCustomer
         private AnonymizeFiringRequests $firingRequests,
         private ForgetFailedMails $failedMails,
         private AnonymizeStockNotifications $stockNotifications,
+        private AnonymizeGiftChoices $giftChoices,
     ) {}
 
     /**
@@ -46,6 +48,7 @@ class AnonymizeCustomer
         return DB::transaction(function () use ($records, $email, $performedBy) {
             $summary = [
                 'vouchers' => ($this->vouchers)($records->orders->flatMap->items->pluck('id')),
+                'gift_choices' => ($this->giftChoices)($records->orders->flatMap->items->pluck('id'), $email),
                 'shipments' => ($this->shipments)($records->orders->pluck('id')),
                 ...($this->orders)($email),
                 'firing_requests' => ($this->firingRequests)($email),

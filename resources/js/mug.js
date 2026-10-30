@@ -18,6 +18,11 @@ export default ({ maxLines, maxChars, prices, texts, glazes, size, glaze, ink })
         // The field has focus: on a phone the small preview shows above it and the bottom bar steps aside.
         writing: false,
         limitNotice: '',
+        // „Podaruj wybór” (MA-235): the buyer picks the size only, the person it is for writes the text later.
+        // A link to #podaruj-wybor opens the configurator that way.
+        gift: window.location.hash === '#podaruj-wybor',
+        // What the delivery to her adds to the card; the card's form sets it.
+        giftDelivery: 0,
         // Kasia's photo with the text on it comes first; the 3D mug waits behind its button.
         view: 'photo',
         // Known before the first paint, so the switch above the photo never pushes it down; WebGL itself is tried on the press.
@@ -83,6 +88,10 @@ export default ({ maxLines, maxChars, prices, texts, glazes, size, glaze, ink })
 
         get price() {
             return this.$store.cart.format(prices[this.size] ?? 0);
+        },
+
+        get giftPrice() {
+            return this.$store.cart.format((prices[this.size] ?? 0) + this.giftDelivery);
         },
 
         get glazeName() {

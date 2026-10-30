@@ -242,7 +242,7 @@ class CustomersPanelTest extends TestCase
         $logged = PrivacyRequest::sole();
         $this->assertSame([PrivacyRequestType::Erasure, CustomerKey::of('ania@example.com'), 'Kasia'], [$logged->type, $logged->customer_key, $logged->performed_by]);
         // assertEquals: MySQL keeps a JSON column's keys in its own order.
-        $this->assertEquals(['vouchers' => 1, 'shipments' => 0, 'orders' => 2, 'paid_orders' => 1, 'withdrawals' => 1, 'complaints' => 1, 'received_complaints' => 0, 'firing_requests' => 1, 'failed_mails' => 1, 'stock_notifications' => 0, 'custom_orders' => 1], $logged->summary);
+        $this->assertEquals(['vouchers' => 1, 'gift_choices' => 0, 'shipments' => 0, 'orders' => 2, 'paid_orders' => 1, 'withdrawals' => 1, 'complaints' => 1, 'received_complaints' => 0, 'firing_requests' => 1, 'failed_mails' => 1, 'stock_notifications' => 0, 'custom_orders' => 1], $logged->summary);
 
         $this->get('/panel/klientki')
             ->assertDontSee('ania@example.com')

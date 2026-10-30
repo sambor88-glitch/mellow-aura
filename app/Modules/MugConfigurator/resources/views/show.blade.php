@@ -30,6 +30,7 @@
     $closeup = $options->letteringPhotoUrl('closeup');
     $fired = $options->letteringPhotoUrl('fired');
     $freeShipping = $polish ? $settings->get('free_shipping_threshold') : null;
+    $giftChoice = $polish && View::exists('gifts::choice.configurator');
 
     $eyebrow = 'text-[13.5px] font-medium text-graphite';
     $pill = 'glass min-h-11 rounded-full px-[14px] py-1.5 text-[12.5px] text-lead transition duration-300 hover:border-ink active:scale-[.98]';
@@ -103,7 +104,17 @@
                     <p class="mb-8 max-w-[46ch] text-[16.5px] leading-[1.7] text-pretty text-lead">{{ $lead }}</p>
                 @endif
 
-                <form id="mug-form" x-ref="form" method="post" action="{{ route('cart.store') }}" x-on:submit.prevent="add($el)">
+                {{-- „Podaruj wybór” (MA-235): the person it is for writes the text herself. Polish and złoty only. --}}
+                @if ($giftChoice)
+                    <div role="group" aria-label="{{ __('gifts::choice.configurator.delivery') }}" class="glass mb-6 inline-flex flex-wrap gap-1 rounded-[26px] p-1">
+                        <button type="button" x-on:click="gift = false" aria-pressed="true" x-bind:aria-pressed="(! gift).toString()"
+                                class="min-h-11 rounded-full px-4 text-[13.5px] text-graphite transition-colors duration-300 aria-pressed:bg-ink aria-pressed:text-linen">{{ __('gifts::choice.configurator.own') }}</button>
+                        <button type="button" x-on:click="gift = true" aria-pressed="false" x-bind:aria-pressed="gift.toString()"
+                                class="min-h-11 rounded-full px-4 text-[13.5px] text-graphite transition-colors duration-300 aria-pressed:bg-ink aria-pressed:text-linen">{{ __('gifts::choice.configurator.switch') }}</button>
+                    </div>
+                @endif
+
+                <form id="mug-form" x-ref="form" method="post" action="{{ route('cart.store') }}" x-on:submit.prevent="add($el)" x-show="! gift">
                     @csrf
                     <input type="hidden" name="type" value="mug">
 
@@ -174,6 +185,10 @@
                     </button>
                 </form>
 
+                @if ($giftChoice)
+                    @include('gifts::choice.configurator', ['sizes' => $sizes, 'startSize' => $startSize, 'money' => $money])
+                @endif
+
                 @if ($polish)
                     <div class="mt-4 flex items-center gap-2.5 text-[12.5px] text-muted">
                         <span class="rounded-full bg-navy px-2.5 py-[3px] text-[10px] font-semibold text-white">BLIK</span>
@@ -223,13 +238,13 @@
         {{-- On a phone the price and the button stay at the bottom (mellowaura-aplikacja), out of the way while typing
              and while any part of the form is in view. A solid ground, not glass: text showed through it (MA-255).
              Empty, the button says what is missing. --}}
-        <div x-data="buyBar('#mug-form')" x-cloak x-bind:class="(shown && ! writing) || 'invisible translate-y-full'"
+        <div x-data="buyBar('#mug-form, #gift-form')" x-cloak x-bind:class="(shown && ! writing) || 'invisible translate-y-full'"
              class="border border-line bg-cream shadow-[0_18px_40px_-24px_rgba(47,38,32,.55)] sticky bottom-[calc(12px+env(safe-area-inset-bottom))] z-50 mt-10 flex items-center gap-3 rounded-full py-2 pr-2 pl-5 transition duration-500 ease-clay min-[852px]:hidden">
             <div class="min-w-0 flex-auto">
-                <div class="font-serif text-[22px] leading-none" x-text="price">{{ $money($startSize['price']) }}</div>
-                <div class="mt-1 truncate text-[11.5px] text-label" x-text="@js($sizes->pluck('title', 'label'))[size] + ' · ' + @js($t('inside')) + ' ' + glazeName">{{ $startSize['title'] }} · {{ $t('inside') }} {{ $startGlaze['name'] }}</div>
+                <div class="font-serif text-[22px] leading-none" x-text="gift ? giftPrice : price">{{ $money($startSize['price']) }}</div>
+                <div class="mt-1 truncate text-[11.5px] text-label" x-text="@js($sizes->pluck('title', 'label'))[size] + (gift ? @js($giftChoice ? ' · '.__('gifts::choice.line.name') : '') : ' · ' + @js($t('inside')) + ' ' + glazeName)">{{ $startSize['title'] }} · {{ $t('inside') }} {{ $startGlaze['name'] }}</div>
             </div>
-            <button type="button" x-on:click="text.trim() ? $refs.form.requestSubmit() : focusText()" x-text="text.trim() ? @js($t('to_basket')) : @js($t('type_text'))"
+            <button type="button" x-on:click="gift ? $refs.giftForm.requestSubmit() : (text.trim() ? $refs.form.requestSubmit() : focusText())" x-text="gift || text.trim() ? @js($t('to_basket')) : @js($t('type_text'))"
                     class="fill-btn flex-none rounded-full bg-ink px-6 py-[14px] text-[14px] text-linen transition duration-300 [--fill:var(--color-rose)] hover:bg-rose hover:text-ink active:scale-[.97]">{{ $t('type_text') }}</button>
         </div>
     </div>

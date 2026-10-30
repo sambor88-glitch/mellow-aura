@@ -9,6 +9,7 @@ use App\Modules\Checkout\Models\Complaint;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\CustomOrders\Enums\CustomOrderStatus;
 use App\Modules\CustomOrders\Models\CustomOrderRequest;
+use App\Modules\Gifts\Models\GiftChoice;
 use App\Modules\Monitoring\Support\FailedMails;
 use Closure;
 use Illuminate\Support\Facades\Route;
@@ -95,6 +96,10 @@ class Menu
                 ['label' => 'Zamówienia indywidualne', 'route' => 'admin.custom-orders.index', 'active' => ['admin.custom-orders.*'], 'description' => 'Pomysły z formularza ze zdjęciami: wycena, zaliczka, realizacja i wysyłka.',
                     'count' => fn () => CustomOrderRequest::query()->where('status', CustomOrderStatus::New)->count(),
                     'count_label' => 'nowe'],
+                // A card past its last day waits for Kasia's decision: a plain mug or a voucher (MA-235).
+                ['label' => 'Karty wyboru', 'route' => 'admin.gift-choices.index', 'active' => ['admin.gift-choices.*'], 'description' => 'Kubki „Podaruj wybór”: kto jeszcze nie wybrał napisu, ponowne wysłanie karty i decyzja po terminie.',
+                    'count' => fn () => GiftChoice::query()->awaitingDecision()->count(),
+                    'count_label' => 'po terminie'],
                 ['label' => 'Klientki', 'route' => 'admin.customers.index', 'active' => ['admin.customers.*'], 'description' => 'Wszystko o jednej osobie po adresie e-mail: zamówienia, warsztaty, pomysły i wypały. Tu też kopia jej danych i usunięcie na jej prośbę (RODO).'],
                 ['label' => 'Odstąpienia', 'route' => 'admin.withdrawals.index', 'active' => ['admin.withdrawals.*'], 'description' => 'Oświadczenia z formularza „Odstąp od umowy tutaj” i termin zwrotu pieniędzy.'],
                 // Complaints are saved the day they arrive by e-mail (MA-261); what waits is one without an answer.

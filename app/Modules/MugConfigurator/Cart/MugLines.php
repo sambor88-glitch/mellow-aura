@@ -6,9 +6,9 @@ use App\Modules\Cart\Cart;
 use App\Modules\Cart\CartLine;
 use App\Modules\Cart\LineType;
 use App\Modules\MugConfigurator\Support\MugOptions;
+use App\Modules\MugConfigurator\Support\MugText;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
 
 /**
  * Mugs from the configurator. Prices come from the sizes in the panel; a line whose size or glaze was
@@ -16,7 +16,7 @@ use Illuminate\Validation\ValidationException;
  */
 class MugLines implements LineType
 {
-    public function __construct(private MugOptions $options) {}
+    public function __construct(private MugOptions $options, private MugText $text) {}
 
     public function lines(array $rows): iterable
     {
@@ -38,19 +38,17 @@ class MugLines implements LineType
     {
         $sizes = $this->options->sizes();
         $glazes = $this->options->glazes();
-        $maxLines = $this->options->maxLines();
-        $maxChars = $this->options->maxCharsPerLine();
+        [$textRules, $textMessages] = MugText::rules();
 
-        $request->merge(['text' => $this->tidy($request->input('text'))]);
+        $request->merge(['text' => MugText::tidy($request->input('text'))]);
 
         $data = $request->validate([
-            'text' => ['required', 'string', 'regex:/^[\p{L}\p{N}\p{P}\p{Sm}\p{Sc} \n]+$/u'],
+            'text' => $textRules,
             'size' => ['required', Rule::in($sizes->pluck('label')->all())],
             'glaze' => ['required', Rule::in($glazes->pluck('code')->all())],
             'quantity' => ['sometimes', 'integer', 'min:1', 'max:'.Cart::MAX_QUANTITY],
         ], [
-            'text.required' => __('mug-configurator::mug.validation.text_required'),
-            'text.regex' => __('mug-configurator::mug.validation.text_regex'),
+            ...$textMessages,
             'size.required' => __('mug-configurator::mug.validation.size'),
             'size.in' => __('mug-configurator::mug.validation.size'),
             'glaze.required' => __('mug-configurator::mug.validation.glaze'),
@@ -58,15 +56,7 @@ class MugLines implements LineType
             'quantity.max' => CartLine::tooManyNotice(),
         ]);
 
-        $lines = explode("\n", $data['text']);
-
-        if (count($lines) > $maxLines) {
-            throw ValidationException::withMessages(['text' => trans_choice('mug-configurator::mug.validation.too_many_lines', $maxLines)]);
-        }
-
-        if (collect($lines)->contains(fn (string $line) => mb_strlen($line) > $maxChars)) {
-            throw ValidationException::withMessages(['text' => __('mug-configurator::mug.validation.too_long', ['max' => $maxChars])]);
-        }
+        $this->text->fits($data['text']);
 
         $size = $sizes->firstWhere('label', $data['size']);
         $glaze = $glazes->firstWhere('code', $data['glaze']);
@@ -79,21 +69,5 @@ class MugLines implements LineType
             $glaze,
             $this->options->photoUrl(),
         );
-    }
-
-    /**
-     * Letters are stamped in capitals. Each line loses spaces at its ends and doubled spaces inside,
-     * and empty lines go.
-     */
-    private function tidy(mixed $text): string
-    {
-        if (! is_string($text)) {
-            return '';
-        }
-
-        return collect(preg_split('/\r\n|\r|\n/', $text))
-            ->map(fn (string $line) => mb_strtoupper(trim((string) preg_replace('/[^\S\n]+/u', ' ', $line))))
-            ->filter(fn (string $line) => $line !== '')
-            ->join("\n");
     }
 }
