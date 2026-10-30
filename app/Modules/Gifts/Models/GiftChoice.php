@@ -6,6 +6,7 @@ use App\Modules\Checkout\Models\Order;
 use App\Modules\Checkout\Models\OrderItem;
 use App\Modules\Gifts\Enums\GiftChoiceResolution;
 use App\Modules\Gifts\Enums\GiftChoiceStatus;
+use App\Modules\Gifts\Support\VoucherCode;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -83,6 +84,26 @@ class GiftChoice extends Model
     public function scopeAwaitingDecision(Builder $query): void
     {
         $query->issued()->whereNull('chosen_at')->whereNull('resolution')->where('choose_by', '<', today()->toDateString());
+    }
+
+    /**
+     * What someone tells Kasia about a card (MA-289): its code however it was typed, the buyer's order number,
+     * or the name or e-mail of the buyer or of the person it is for.
+     *
+     * @param  Builder<self>  $query
+     */
+    public function scopeMatching(Builder $query, string $typed): void
+    {
+        $like = '%'.$typed.'%';
+
+        $query->where(fn (Builder $query) => $query
+            ->where('code', VoucherCode::normalize($typed))
+            ->orWhere('recipient_name', 'like', $like)
+            ->orWhere('recipient_email', 'like', $like)
+            ->orWhereHas('orderItem.order', fn (Builder $order) => $order
+                ->where('number', mb_strtoupper($typed))
+                ->orWhere('name', 'like', $like)
+                ->orWhere('email', 'like', $like)));
     }
 
     /** Goes by e-mail to the person it is for, rather than printed by the buyer. */
