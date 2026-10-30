@@ -23,7 +23,7 @@
         a { color: #855F3D; text-decoration: none; transition: color .3s, background-color .3s, border-color .3s; }
         a:hover { color: #24417E; }
         :focus-visible { outline: 2px solid #24417E; outline-offset: 2px; }
-        .page { display: flex; min-height: 100vh; flex-direction: column; }
+        .page { display: flex; min-height: 100vh; min-height: 100svh; flex-direction: column; }
         .wrap { max-width: 1280px; margin: 0 auto; padding: 0 28px; }
         header { border-bottom: 1px solid #E2D7C7; }
         header .wrap { padding-top: 16px; padding-bottom: 16px; }

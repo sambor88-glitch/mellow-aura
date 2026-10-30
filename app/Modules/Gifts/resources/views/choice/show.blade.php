@@ -82,15 +82,15 @@
                     <textarea id="mug-text" name="text" x-ref="text" x-init="setText(@js(old('text', '')))" x-on:input="typed($event)" x-on:focus="startWriting()" x-on:blur="writing = false"
                               data-enter="{{ $m('enter') }}" data-limit="{{ $m('limit', ['lines' => trans_choice('mug-configurator::mug.lines_choice', $maxLines), 'chars' => trans_choice('mug-configurator::mug.chars_choice', $maxChars)]) }}"
                               rows="{{ min(3, $maxLines) }}" autocomplete="off" spellcheck="false"
-                              placeholder="{!! $m('placeholder') !!}" aria-describedby="mug-text-rules"
-                              @error('text') aria-invalid="true" @enderror
+                              placeholder="{!! $m('placeholder') !!}"
+                              @error('text') aria-invalid="true" aria-describedby="mug-text-error mug-text-rules" @else aria-describedby="mug-text-rules" @enderror
                               @class([
                                   'block w-full min-w-0 resize-none rounded-[18px] border bg-white px-[18px] py-[17px] font-serif text-[24px] leading-[1.4] font-light tracking-[0.14em] text-ink uppercase transition-[border-color,box-shadow] duration-300 placeholder:text-line-strong focus:border-ink focus:shadow-[0_0_0_4px_rgb(36_65_126/.14)] focus:outline-none',
                                   'border-error' => $errors->has('text'),
                                   'border-line' => ! $errors->has('text'),
                               ])>{{ old('text') }}</textarea>
                     @error('text')
-                        <p class="mt-2 text-[13px] text-error">{{ $message }}</p>
+                        <p id="mug-text-error" class="mt-2 text-[13px] text-error">{{ $message }}</p>
                     @enderror
                     <div class="mt-3 mb-[30px] flex flex-wrap items-center justify-between gap-3 text-[12.5px] text-label">
                         <span id="mug-text-rules">
@@ -104,7 +104,7 @@
                         </span>
                     </div>
 
-                    <fieldset class="mb-[34px]">
+                    <fieldset class="mb-[34px]" @error('glaze') aria-describedby="mug-glaze-error" @enderror>
                         <legend class="mb-3 {{ $eyebrow }}">{{ $m('glaze') }}</legend>
                         <div class="flex flex-wrap gap-3">
                             @foreach ($glazes as $glaze)
@@ -116,7 +116,7 @@
                             @endforeach
                         </div>
                         @error('glaze')
-                            <p class="mt-2 text-[13px] text-error">{{ $message }}</p>
+                            <p id="mug-glaze-error" class="mt-2 text-[13px] text-error">{{ $message }}</p>
                         @enderror
                     </fieldset>
 
@@ -130,7 +130,7 @@
                         </div>
                     </div>
 
-                    <fieldset class="{{ $panel }}">
+                    <fieldset class="{{ $panel }}" @error('shipping_method') aria-describedby="shipping-method-error" @enderror>
                         <legend class="float-left mb-4 w-full font-serif text-[28px] leading-none font-light">{{ $c('delivery_way') }}</legend>
                         <div class="clear-both grid gap-2.5">
                             @foreach ($methods as $method)
@@ -148,7 +148,7 @@
                             @endforeach
                         </div>
                         @error('shipping_method')
-                            <p class="mt-2 text-[13px] text-error">{{ $message }}</p>
+                            <p id="shipping-method-error" class="mt-2 text-[13px] text-error">{{ $message }}</p>
                         @enderror
 
                         @if ($methods->has('parcel_locker'))

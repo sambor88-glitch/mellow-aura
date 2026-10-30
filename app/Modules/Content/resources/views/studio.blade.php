@@ -12,7 +12,10 @@
     <div class="animate-ma-view pb-24">
         @if ($hero !== null)
             <div class="relative">
-                <img src="{{ $hero }}" alt="" class="block h-[clamp(320px,46vh,520px)] w-full bg-line-soft object-cover brightness-82">
+                <img src="{{ $hero }}" alt="" fetchpriority="high"
+                     @if ($heroSrcset) srcset="{{ $heroSrcset }}" sizes="100vw" @endif
+                     @if ($heroSize) width="{{ $heroSize['width'] }}" height="{{ $heroSize['height'] }}" @endif
+                     class="block h-[clamp(320px,46vh,520px)] w-full bg-line-soft object-cover brightness-82">
                 {{-- Darker in the lower 40 %, so the small eyebrow keeps 4.5:1 on a light photo. --}}
                 <div class="absolute inset-0 flex items-end bg-linear-to-t from-scrim/72 via-scrim/60 via-40% to-scrim/5">
                     <div class="mx-auto w-full max-w-[1280px] px-7 pb-12">
@@ -48,7 +51,7 @@
                 @if ($facts->isNotEmpty())
                     <div class="min-w-0 basis-full sm:min-w-[260px] sm:flex-[0_1_300px]">
                         <div class="rounded-[20px] border border-divider bg-cream p-7">
-                            <h2 class="mb-[18px] text-[11px] tracking-[0.2em] text-gold uppercase">dobrze wiedzieć</h2>
+                            <h2 class="mb-[18px] text-[11px] tracking-[0.2em] text-brown uppercase">dobrze wiedzieć</h2>
                             <dl class="grid gap-4 text-[14.5px] leading-[1.6] text-lead">
                                 @foreach ($facts as $fact)
                                     <div>

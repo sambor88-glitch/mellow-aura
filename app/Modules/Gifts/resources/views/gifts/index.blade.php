@@ -30,10 +30,10 @@
                     <div class="mb-3 text-[11.5px] tracking-[0.16em] text-label uppercase">{{ $legend }}</div>
                     {{-- On a phone each filter is one row swiped sideways, like the categories in the shop. --}}
                     <div x-init="const chip = $el.querySelector('[aria-current=true]'); if (chip && chip.offsetLeft + chip.offsetWidth > $el.clientWidth) $el.scrollLeft = chip.offsetLeft - 24"
-                         class="relative -mx-6 flex snap-x snap-mandatory scroll-px-6 gap-[9px] overflow-x-auto px-6 pb-1 [scrollbar-width:none] md:mx-0 md:flex-wrap md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
+                         class="relative -mx-6 flex snap-x snap-mandatory scroll-px-6 gap-2.5 overflow-x-auto px-6 pb-1 [scrollbar-width:none] md:mx-0 md:flex-wrap md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
                         @foreach ($chips as $chip)
                             <a href="{{ $chip['url'] }}" @if ($chip['active']) aria-current="true" @endif @class([
-                                'shrink-0 snap-start rounded-full border px-[17px] py-[9px] text-[13px] whitespace-nowrap',
+                                'inline-flex min-h-11 shrink-0 snap-start items-center rounded-full border px-[17px] text-[13px] whitespace-nowrap',
                                 'border-ink bg-ink text-linen hover:text-linen' => $chip['active'],
                                 'border-line-strong text-lead hover:border-ink hover:text-ink' => ! $chip['active'],
                             ])>{{ $chip['label'] }}</a>

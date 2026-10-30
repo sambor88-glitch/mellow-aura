@@ -33,7 +33,7 @@ return [
     'shop_eyebrow' => 'shop',
     'shop_heading' => 'What’s in :em right now',
     'shop_heading_em' => 'the studio',
-    'shop_all' => 'See everything →',
+    'shop_all' => 'See everything',
 
     'gifts_mug_alt' => 'Hand-painted mug',
     'gifts_scrunchies_alt' => 'Silk scrunchies',
@@ -56,8 +56,8 @@ return [
     'imprint_material' => 'clay',
     'imprint_title' => 'Your plant imprint',
     'imprint_text' => 'A flower from a wedding bouquet stays in the clay. The plant burns away, the drawing stays.',
-    'from_price' => 'from :price →',
-    'how_it_works' => 'How it works →',
+    'from_price' => 'from :price',
+    'how_it_works' => 'How it works',
 
     'workshops_eyebrow' => 'pottery workshops · kraków',
     'workshops_heading' => 'Sink your hands :em',
@@ -67,7 +67,7 @@ return [
     'workshops_cta' => 'Pick a date',
 
     'instagram_heading' => 'Studio days',
-    'instagram_follow' => 'Follow on Instagram →',
+    'instagram_follow' => 'Follow on Instagram',
     'instagram_live' => 'straight from Instagram',
     'instagram_last' => 'last post :ago',
 

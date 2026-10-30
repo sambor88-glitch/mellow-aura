@@ -56,10 +56,10 @@
 
         <div class="flex flex-wrap items-center gap-x-8 gap-y-3 text-[14px]">
             @if (Route::has('workshops.index'))
-                <a href="{{ route('workshops.index') }}" class="inline-flex min-h-11 items-center">Zobacz, jak wyglądają warsztaty →</a>
+                <a href="{{ route('workshops.index') }}" class="inline-flex min-h-11 items-center">Zobacz, jak wyglądają warsztaty <span aria-hidden="true">→</span></a>
             @endif
             @if (Route::has('gifts.index'))
-                <a href="{{ route('gifts.index') }}" class="inline-flex min-h-11 items-center">Szukasz innego prezentu? →</a>
+                <a href="{{ route('gifts.index') }}" class="inline-flex min-h-11 items-center">Szukasz innego prezentu? <span aria-hidden="true">→</span></a>
             @endif
             @if ($phone)
                 <span class="text-muted">Pytania o vouchery: <a href="https://wa.me/{{ preg_replace('/\D+/', '', $phone) }}" target="_blank" rel="noopener" class="whitespace-nowrap">WhatsApp {{ $phone }}</a></span>

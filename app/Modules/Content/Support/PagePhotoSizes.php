@@ -59,6 +59,19 @@ class PagePhotoSizes
         }
     }
 
+    /**
+     * Width and height of the photo for the <img> attributes, so the browser keeps its place before it loads.
+     *
+     * @return ?array{width: int, height: int}
+     */
+    public function dimensions(string $path): ?array
+    {
+        $source = $this->source($path);
+        $size = $source !== null ? @getimagesize($source) : false;
+
+        return $size ? ['width' => $size[0], 'height' => $size[1]] : null;
+    }
+
     /** Deletes the copies of an uploaded photo that left its place. */
     public function forget(string $path): void
     {
