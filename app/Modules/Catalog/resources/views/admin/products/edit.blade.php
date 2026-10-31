@@ -104,9 +104,18 @@
     $error = fn (string $key) => $bag->has($key) ? '<p class="mt-1.5 text-[13px] text-error">'.e($bag->first($key)).'</p>' : '';
     $tabDot = fn (string $key) => $errorTabs->contains($key) || ($key === 'desc' && (blank($product->description) || $photos->isEmpty()));
     $editUrl = fn (int $id) => route('admin.products.edit', $id);
+    // The tabs of the card in the shared component (MA-315): the number of sizes, „na później” and a dot where something is missing.
+    $tabItems = collect($tabs)->map(fn (string $label, string $key) => [
+        'label' => $label,
+        'count' => $key === 'sale' ? count($rows) : null,
+        'note' => $key === 'en' && ! $englishOn ? 'na później' : null,
+        'dot' => $tabDot($key) ? ($errorTabs->contains($key) ? 'error' : 'todo') : null,
+    ])->all();
 @endphp
 <x-admin::layout :title="$product->name" :heading="false">
-    <div x-data="productCard(@js($tab), @js($promo))">
+    <div x-data="productCard(@js($promo))">
+      <x-admin::tabs :tabs="$tabItems" label="Części karty produktu" :active="$tab">
+       <x-slot:head>
         <div class="-mt-2 mb-2 flex items-center justify-between gap-3">
             <a href="{{ route('admin.products.index') }}" class="inline-flex min-h-11 items-center gap-1.5 text-[13px] text-lead hover:text-ink">← Produkty</a>
             <div role="group" aria-label="Inny produkt" class="flex items-center gap-0.5 text-[12.5px] text-label tabular-nums">
@@ -146,23 +155,7 @@
             </div>
         </div>
 
-        <div role="tablist" aria-label="Części karty produktu" x-on:keydown.arrow-right.prevent="move($event)" x-on:keydown.arrow-left.prevent="move($event)"
-             class="sticky top-[env(safe-area-inset-top,0px)] z-30 -mx-4 mt-3.5 mb-[18px] flex gap-1 overflow-x-auto border-b border-line bg-sand-dark px-4 py-2.5 [scrollbar-width:none] md:mx-0 md:px-0">
-            @foreach ($tabs as $key => $label)
-                <button type="button" role="tab" id="tab-{{ $key }}" data-tab="{{ $key }}" aria-controls="panel-{{ $key }}"
-                        aria-selected="{{ $tab === $key ? 'true' : 'false' }}" x-bind:aria-selected="(tab === @js($key)).toString()"
-                        tabindex="{{ $tab === $key ? 0 : -1 }}" x-bind:tabindex="tab === @js($key) ? 0 : -1" x-on:click="show(@js($key))"
-                        class="inline-flex min-h-10 flex-none items-center gap-2 rounded-full border border-transparent px-4 text-[13.5px] text-lead transition-colors hover:border-line-strong hover:bg-sand hover:text-ink aria-selected:border-ink aria-selected:bg-ink aria-selected:text-linen">
-                    {{ $label }}
-                    @if ($key === 'sale')<span class="text-[11.5px] text-label tabular-nums">{{ count($rows) }}</span>@endif
-                    @if ($key === 'en' && ! $englishOn)<span class="text-[11px] text-label">na później</span>@endif
-                    @if ($tabDot($key))
-                        <span aria-hidden="true" @class(['size-[7px] rounded-full', 'bg-error' => $errorTabs->contains($key), 'bg-brown' => ! $errorTabs->contains($key)])></span>
-                        <span class="sr-only">{{ $errorTabs->contains($key) ? ' — są błędy' : ' — do uzupełnienia' }}</span>
-                    @endif
-                </button>
-            @endforeach
-        </div>
+       </x-slot:head>
 
         <div class="flex flex-wrap items-start gap-[22px]">
             <form id="{{ $formKey }}" method="post" action="{{ route('admin.products.update', $product) }}" novalidate data-unsaved-name="{{ $product->name }}"
@@ -179,7 +172,7 @@
                 @endif
 
                 {{-- Ceny i sztuki — the most common change, so the card opens here. --}}
-                <section role="tabpanel" id="panel-sale" aria-labelledby="tab-sale" x-show="tab === 'sale'" @if ($tab !== 'sale') style="display: none" @endif class="grid gap-[18px]">
+                <x-admin::tab-panel name="sale" class="grid gap-[18px]">
                     <div>
                         <h2 class="{{ $legend }}">Ceny i sztuki</h2>
                         <p class="{{ $lead }} mt-1">Enter zapisuje. Puste „Na półce” — nie liczysz sztuk; przy zerze rozmiar sam znika ze sklepu.</p>
@@ -237,10 +230,10 @@
                     @endif
                     <p class="flex flex-wrap items-center gap-x-1.5 rounded-[4px] bg-sand px-3.5 py-3 text-[13px] text-lead">Ceny w euro i nazwy rozmiarów po angielsku są w zakładce
                         <button type="button" x-on:click="show('en')" class="min-h-8 text-brown underline decoration-line-strong underline-offset-[3px] hover:text-ink">English</button></p>
-                </section>
+                </x-admin::tab-panel>
 
                 {{-- Opis i zdjęcia --}}
-                <section role="tabpanel" id="panel-desc" aria-labelledby="tab-desc" x-show="tab === 'desc'" @if ($tab !== 'desc') style="display: none" @endif class="grid gap-[18px]">
+                <x-admin::tab-panel name="desc" class="grid gap-[18px]">
                     <div id="zdjecia" class="scroll-mt-24">
                         <h2 class="{{ $legend }}">Zdjęcia</h2>
                         <p class="{{ $lead }} mt-1">Pierwsze to okładka w sklepie. Strzałkami ‹ › zmieniasz kolejność.</p>
@@ -353,10 +346,10 @@
                             @endif
                         </div>
                     </div>
-                </section>
+                </x-admin::tab-panel>
 
                 {{-- Szczegóły: dimensions, and what the terms and the law want a buyer to know. --}}
-                <section role="tabpanel" id="panel-details" aria-labelledby="tab-details" x-show="tab === 'details'" @if ($tab !== 'details') style="display: none" @endif class="grid gap-[18px]">
+                <x-admin::tab-panel name="details" class="grid gap-[18px]">
                     <div>
                         <h2 class="{{ $legend }}">Wymiary</h2>
                         <p class="{{ $lead }} mt-1">Wpisz tylko to, co pasuje. Puste pola nie pokażą się na stronie.</p>
@@ -418,10 +411,10 @@
                         <span aria-hidden="true" class="switch-track mt-px"></span>
                         <span>Unikat — każda sztuka jest jedna</span>
                     </label>
-                </section>
+                </x-admin::tab-panel>
 
                 {{-- Prezent i Google --}}
-                <section role="tabpanel" id="panel-gift" aria-labelledby="tab-gift" x-show="tab === 'gift'" @if ($tab !== 'gift') style="display: none" @endif class="grid gap-[18px]">
+                <x-admin::tab-panel name="gift" class="grid gap-[18px]">
                     <div>
                         <h2 class="{{ $legend }}">„Szukam prezentu”</h2>
                         <p class="{{ $lead }} mt-1">Produkt pokaże się w podpowiedziach prezentów dla zaznaczonych okazji i osób.</p>
@@ -465,10 +458,10 @@
                         <span aria-hidden="true" class="switch-track mt-px"></span>
                         <span>Pokazuj w Zakupach Google<span class="mt-0.5 block text-[12.5px] text-hint">Trafi tam, gdy jest widoczny w sklepie i ma zdjęcie. Google zagląda do sklepu raz na dobę.</span></span>
                     </label>
-                </section>
+                </x-admin::tab-panel>
 
                 {{-- English: written here even while the English shop is off, so it waits ready. --}}
-                <section role="tabpanel" id="panel-en" aria-labelledby="tab-en" x-show="tab === 'en'" @if ($tab !== 'en') style="display: none" @endif class="grid gap-[18px]">
+                <x-admin::tab-panel name="en" class="grid gap-[18px]">
                     @unless ($englishOn)
                         <p class="rounded-[4px] border border-line-strong bg-sand px-4 py-3 text-[13px] text-lead">Angielski sklep jeszcze nie działa — włączymy go razem ze sprzedażą do UE. To, co tu wpiszesz, poczeka.</p>
                     @endunless
@@ -557,7 +550,7 @@
                                                  :placeholder="Seo::description($english?->description) ?? 'from the start of the description, cut at a word'" />
                         </div>
                     </div>
-                </section>
+                </x-admin::tab-panel>
 
                 {{-- The save row sticks to the bottom on glass once something changes (MA-251). Enter saves: the first button is „Zapisz w sklepie”. --}}
                 <div class="mt-[22px] flex flex-wrap items-center justify-end gap-2.5">
@@ -622,5 +615,6 @@
             <form id="zdjecie-{{ $photo->id }}-usun" method="post" action="{{ route('admin.products.photos.destroy', [$product, $photo]) }}" class="hidden"
                   x-data x-on:submit="confirm('Usunąć to zdjęcie? Nie da się tego cofnąć.') || $event.preventDefault()">@csrf @method('DELETE')</form>
         @endforeach
+      </x-admin::tabs>
     </div>
 </x-admin::layout>

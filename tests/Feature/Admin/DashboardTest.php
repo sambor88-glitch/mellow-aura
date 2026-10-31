@@ -94,7 +94,7 @@ class DashboardTest extends TestCase
         $response = $this->actingAs(User::factory()->helper()->create())->get('/panel')->assertOk();
         $tiles = (string) str($response->getContent())->betweenFirst('<main', 'Wymaga Twojej reakcji');
 
-        $this->assertSame(2, substr_count($tiles, 'tracking-[0.14em] text-label uppercase'));
+        $this->assertSame(2, substr_count($tiles, 'md:tracking-[0.14em] md:uppercase'));
         $this->assertStringContainsString('do wysłania', $tiles);
         $this->assertStringContainsString('problem', $tiles);
         $response->assertSee('Anna Nowak')

@@ -4,9 +4,12 @@ namespace App\Modules\CustomOrders\Models;
 
 use App\Modules\CustomOrders\Enums\BriefKind;
 use App\Modules\CustomOrders\Enums\CustomOrderStatus;
+use App\Modules\CustomOrders\Enums\ErasureReason;
+use App\Modules\Shared\Support\PersonalData;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Support\Carbon;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -26,12 +29,45 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property ?int $quote
  * @property ?string $notes
  * @property CustomOrderStatus $status
+ * @property ?Carbon $shipped_at
+ * @property ?Carbon $erased_at
+ * @property ?ErasureReason $erased_because
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class CustomOrderRequest extends Model implements HasMedia
 {
     use InteractsWithMedia;
 
+    /** A shipped piece: the description and photos show what was agreed, so they stay as long as the warranty (rękojmia) runs. */
+    public const KEEP_SHIPPED_YEARS = 2;
+
+    /** Days from shipping until the parcel surely arrived — the two years count from handing the piece over. */
+    public const DELIVERY_DAYS = 30;
+
+    /** An idea that did not become an order: its data and photos stay this long after the last contact. */
+    public const KEEP_UNORDERED_MONTHS = 3;
+
     protected $guarded = ['id'];
+
+    /**
+     * The date the piece went out comes with the status: set when an idea becomes „Wysłane”, cleared when Kasia
+     * moves it back.
+     */
+    protected static function booted(): void
+    {
+        static::saving(function (self $request) {
+            if (! $request->isDirty('status')) {
+                return;
+            }
+
+            if ($request->status !== CustomOrderStatus::Shipped) {
+                $request->shipped_at = null;
+            } elseif (! $request->isDirty('shipped_at') && ($request->shipped_at === null || $request->getOriginal('status') !== CustomOrderStatus::Shipped)) {
+                $request->shipped_at = now();
+            }
+        });
+    }
 
     /**
      * The customer's photos stay on the private disk: they can show her home, her family or someone's keepsake.
@@ -78,6 +114,67 @@ class CustomOrderRequest extends Model implements HasMedia
     }
 
     /**
+     * The last time anything happened between Kasia and the customer about this idea: the idea saved in the panel,
+     * a payment link sent or paid. A note Kasia saves counts too — it keeps the data a little longer, never shorter.
+     */
+    public function lastContactAt(): Carbon
+    {
+        return collect([$this->created_at, $this->updated_at])
+            ->merge($this->paymentLinks->pluck('created_at'))
+            ->merge($this->paymentLinks->pluck('paid_at'))
+            ->filter()
+            ->map(fn ($date) => Carbon::instance($date))
+            ->max();
+    }
+
+    /**
+     * Until when the privacy policy keeps the customer's data and photos (MA-312); null while the piece is being
+     * made — they are needed for the work. A shipped piece keeps them two years from handing over, counted from
+     * shipping plus a month for the delivery; an idea that did not become an order — declined or left in „Nowe”,
+     * „Wycena”, „Zaliczka” — three months from the last contact.
+     */
+    public function keptUntil(): ?Carbon
+    {
+        return match ($this->status) {
+            CustomOrderStatus::InProgress => null,
+            CustomOrderStatus::Shipped => ($this->shipped_at ?? $this->updated_at)->copy()->addDays(self::DELIVERY_DAYS)->addYearsNoOverflow(self::KEEP_SHIPPED_YEARS),
+            default => $this->lastContactAt()->copy()->addMonthsNoOverflow(self::KEEP_UNORDERED_MONTHS),
+        };
+    }
+
+    /**
+     * Forgets the customer: her name, contact, the description, Kasia's note about her and the photos — files and
+     * media records. The kind, the status, Kasia's quote and the payment links stay, so the money paid through them
+     * still adds up; the payments are orders in Checkout and stay there for the books. The idea's own dates stay as
+     * they were: its last save is still the last contact.
+     *
+     * @return int how many photos went
+     */
+    public function erase(ErasureReason $because): int
+    {
+        $photos = $this->getMedia('photos')->count();
+
+        $this->clearMediaCollection('photos');
+
+        $this->timestamps = false;
+        $this->forceFill([
+            'name' => PersonalData::ERASED_NAME,
+            'email' => PersonalData::ERASED_EMAIL,
+            'phone' => null,
+            'quantity' => null,
+            'needed_by' => null,
+            'budget' => null,
+            'description' => '',
+            'notes' => null,
+            'erased_at' => now(),
+            'erased_because' => $because,
+        ])->save();
+        $this->timestamps = true;
+
+        return $photos;
+    }
+
+    /**
      * The lines both mails list, label => value; an empty one is left out.
      *
      * @return array<string, string>
@@ -101,6 +198,9 @@ class CustomOrderRequest extends Model implements HasMedia
             'kind' => BriefKind::class,
             'quote' => 'integer',
             'status' => CustomOrderStatus::class,
+            'shipped_at' => 'datetime',
+            'erased_at' => 'datetime',
+            'erased_because' => ErasureReason::class,
         ];
     }
 }

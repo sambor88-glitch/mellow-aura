@@ -477,7 +477,7 @@ class AdminProductsTest extends TestCase
 
         $this->actingAs($owner)->get('/panel/produkty/'.$vases->id)
             ->assertOk()
-            ->assertSee("productCard('sale'", false)
+            ->assertSee("panelTabs('sale'", false)
             ->assertSeeInOrder(['1 z 2', 'Ceny i sztuki', 'Opis i zdjęcia', 'Szczegóły', 'Prezent i Google', 'English'])
             ->assertSee('name="next" value="'.$plates->id.'"', false);
 
@@ -511,7 +511,7 @@ class AdminProductsTest extends TestCase
             ->assertRedirect('/panel/produkty/'.$vases->id);
 
         $this->get('/panel/produkty/'.$vases->id)
-            ->assertSee("productCard('details'", false)
+            ->assertSee("panelTabs('details'", false)
             ->assertSee('W wymiarach wpisz tylko liczby, np. 24 albo 12,5');
     }
 

@@ -1,5 +1,7 @@
+{{-- Prezenty i zestawy (MA-319): zestawy, „Szukam prezentu” i vouchery w zakładkach; zestaw zwija się do jednej linii. --}}
+@use('App\Modules\Shared\Support\Money')
 @php
-    $card = 'scroll-mt-6 rounded-[4px] border border-line bg-cream px-[26px] py-7';
+    $card = 'scroll-mt-24 rounded-[4px] border border-line bg-cream px-[18px] py-5 md:px-[26px] md:py-7';
     $heading = 'mb-1 font-serif text-[25px]';
     $intro = 'mb-5 text-[13.5px] leading-[1.6] text-label';
     $alert = 'mb-3.5 rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text';
@@ -26,8 +28,18 @@
     ];
 @endphp
 <x-admin::layout title="Prezenty i zestawy" lead="Zestawy z rabatem, „Szukam prezentu” i vouchery. Zmiany widać na stronie od razu.">
-    <div class="flex flex-wrap items-start gap-[26px]">
-        <div class="grid min-w-0 flex-[1_1_420px] gap-[22px]">
+  <x-admin::tabs :tabs="['zestawy' => ['label' => 'Zestawy', 'count' => $bundles->count()], 'szukam-prezentu' => 'Szukam prezentu', 'vouchery' => 'Vouchery']" label="Części ekranu prezentów">
+    <x-admin::tab-panel name="zestawy" class="grid max-w-[880px] gap-[22px]">
+            <details id="nowy-zestaw" class="group scroll-mt-24 rounded-[4px] border border-dashed border-line-strong bg-cream" @if ($errors->getBag('nowy-zestaw')->any()) open @endif>
+                <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 px-[18px] py-3 text-[14.5px] text-ink md:px-[26px] [&::-webkit-details-marker]:hidden">
+                    + Nowy zestaw
+                    <span aria-hidden="true" class="text-[15px] text-label transition-transform group-open:rotate-180">⌄</span>
+                </summary>
+                <div class="px-[18px] pb-5 md:px-[26px] md:pb-7">
+                    <p class="{{ $intro }}">Dwie do czterech rzeczy ze sklepu, sprzedawane razem taniej. Nowy zestaw stanie na końcu strony.</p>
+                    @include('gifts::admin.bundle-form', ['bundle' => null, 'formKey' => 'nowy-zestaw'])
+                </div>
+            </details>
             <section class="{{ $card }}">
                 <h2 class="{{ $heading }}">Zestawy prezentowe</h2>
                 <p class="{{ $intro }}">Cena zestawu liczy się sama z cen wybranych rzeczy minus Twój rabat. Gdy któraś rzecz się wyprzeda albo ją ukryjesz, zestaw sam zniknie ze strony i wróci razem z nią.</p>
@@ -37,31 +49,36 @@
                         <p class="mx-auto max-w-[42ch] text-[13.5px] text-label">Pierwszy złożysz w karcie „Nowy zestaw” — z dwóch do czterech rzeczy ze sklepu.</p>
                     </div>
                 @else
-                    <div class="grid gap-4">
+                    <div class="grid gap-2.5">
                         @foreach ($bundles as $bundle)
-                            <div id="zestaw-{{ $bundle->id }}" class="scroll-mt-6 rounded-[4px] border border-sand-dark bg-linen p-4">
-                                @include('gifts::admin.bundle-form', ['bundle' => $bundle, 'formKey' => 'zestaw-'.$bundle->id])
-                            </div>
+                            <details id="zestaw-{{ $bundle->id }}" class="group scroll-mt-24 rounded-[4px] border border-sand-dark bg-linen" @if ($errors->getBag('zestaw-'.$bundle->id)->any()) open @endif>
+                                <summary class="flex min-h-14 cursor-pointer list-none items-center gap-3 px-4 py-3 [&::-webkit-details-marker]:hidden">
+                                    <span class="min-w-0 flex-1">
+                                        <span class="block text-[15px] text-ink">{{ $bundle->name }}</span>
+                                        <span class="block text-[12.5px] text-label tabular-nums">{{ Money::format($bundle->price()) }} · rabat {{ $bundle->discount_percent }}% · {{ $bundle->is_published ? 'na stronie' : 'ukryty' }}</span>
+                                    </span>
+                                    <span aria-hidden="true" class="flex-none text-[15px] text-label transition-transform group-open:rotate-180">⌄</span>
+                                </summary>
+                                <div class="border-t border-sand-dark p-4">
+                                    @include('gifts::admin.bundle-form', ['bundle' => $bundle, 'formKey' => 'zestaw-'.$bundle->id])
+                                </div>
+                            </details>
                         @endforeach
                     </div>
                 @endif
             </section>
-
-            <section id="nowy-zestaw" class="{{ $card }}">
-                <h2 class="{{ $heading }}">Nowy zestaw</h2>
-                <p class="{{ $intro }}">Dwie do czterech rzeczy ze sklepu, sprzedawane razem taniej. Nowy zestaw stanie na końcu strony.</p>
-                @include('gifts::admin.bundle-form', ['bundle' => null, 'formKey' => 'nowy-zestaw'])
-            </section>
-        </div>
-
-        <div class="grid min-w-0 flex-[1_1_320px] gap-[22px]">
+            <details class="group" @if ($textErrors->any()) open @endif>
+                <summary class="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 text-[14px] text-lead [&::-webkit-details-marker]:hidden">
+                    Teksty na stronie zestawów
+                    <span aria-hidden="true" class="text-[15px] text-label transition-transform group-open:rotate-180">⌄</span>
+                </summary>
             <form id="teksty" method="post" action="{{ route('admin.gifts.texts') }}" novalidate class="{{ $card }}">
                 @csrf
                 @method('PUT')
                 <h2 class="{{ $heading }}">Teksty na stronie zestawów</h2>
                 <p class="{{ $intro }}">Enter w nagłówku przenosi wyraz do nowej linii — dokładnie tak, jak zobaczy to klientka.</p>
                 @if ($textErrors->any())
-                    <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+                    <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
                 @endif
                 <div class="grid gap-3.5">
                     @foreach ($textFields as [$key, $label, $rows, $max])
@@ -78,14 +95,17 @@
                 <p class="mt-3.5 text-[12.5px] leading-[1.6] text-hint">Puste zdanie nie pokaże się na stronie. Cenę pakowania zmieniasz w Ustawieniach, razem z dostawą.</p>
                 <button class="{{ $button }}">Zapisz teksty na stronie</button>
             </form>
+            </details>
+    </x-admin::tab-panel>
 
+    <x-admin::tab-panel name="szukam-prezentu" class="grid max-w-[880px] gap-[22px]">
             <form id="szukam-prezentu" method="post" action="{{ route('admin.gifts.finder') }}" novalidate class="{{ $card }}">
                 @csrf
                 @method('PUT')
                 <h2 class="{{ $heading }}">Szukam prezentu</h2>
                 <p class="{{ $intro }}">Przedziały budżetu to przyciski na stronie. Produkt trafia do przedziału według swojej najniższej ceny. Okazje i „dla kogo” zaznaczasz przy każdym produkcie.</p>
                 @if ($finderErrors->any())
-                    <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+                    <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
                 @endif
                 <fieldset>
                     <legend class="mb-2 text-[11.5px] tracking-[0.1em] text-label uppercase">Budżet</legend>
@@ -129,7 +149,9 @@
                 </div>
                 <button class="{{ $button }}">Zapisz „Szukam prezentu”</button>
             </form>
+    </x-admin::tab-panel>
 
+    <x-admin::tab-panel name="vouchery" class="grid max-w-[880px] gap-[22px]">
             <section id="sprawdz-voucher" class="{{ $card }}">
                 <h2 class="{{ $heading }}">Sprawdź voucher</h2>
                 <p class="{{ $intro }}">Wpisz kod z vouchera: zobaczysz, czy jest ważny i czy ktoś się nim już zapisał. Tu też uzupełnisz warsztat i miejsca, przedłużysz ważność albo oznaczysz voucher jako wykorzystany, gdy zapisujesz kogoś ręcznie — wtedy kod nie zadziała już na stronie.</p>
@@ -161,7 +183,7 @@
                 <h2 class="{{ $heading }}">Vouchery</h2>
                 <p class="{{ $intro }}">Imię i dedykacja wpisane przy zakupie trafiają na voucher w PDF. Zmiany dotyczą vouchera kupionego od teraz.</p>
                 @if ($voucherErrors->any())
-                    <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+                    <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
                 @endif
                 <div class="grid gap-3">
                     @foreach ($voucherNumbers as [$key, $label, $unit])
@@ -222,12 +244,17 @@
                     <h2 class="{{ $heading }}">Opis warsztatu na voucherze</h2>
                     <p class="{{ $intro }}">Cztery krótkie punkty pod dedykacją, osobno dla każdego vouchera. Puste pole nie pokaże się na voucherze — przy voucherze kwotowym zostaw wszystkie puste.</p>
                     @if ($noteErrors->any())
-                        <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+                        <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
                     @endif
-                    <div class="grid gap-5">
+                    <div class="grid">
                         @foreach ($voucherProducts as $product)
-                            <fieldset class="grid gap-3 border-t border-sand-dark pt-4 first:border-t-0 first:pt-0">
-                                <legend class="float-left mb-1 w-full font-serif text-[19px]">{{ $product->name }}</legend>
+                            {{-- Each voucher folds to its name; one with a mistake stays open (MA-319). --}}
+                            <details class="group border-t border-sand-dark first:border-t-0" @if (collect($noteErrors->keys())->contains(fn ($key) => str_starts_with($key, 'notes.'.$product->slug.'.'))) open @endif>
+                                <summary class="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 py-2 font-serif text-[19px] [&::-webkit-details-marker]:hidden">
+                                    {{ $product->name }}
+                                    <span aria-hidden="true" class="font-sans text-[15px] text-label transition-transform group-open:rotate-180">⌄</span>
+                                </summary>
+                              <div class="grid gap-3 pb-4">
                                 @foreach (['expect' => 'Czego się spodziewać', 'activities' => 'Co będziecie robili', 'takeaway' => 'Z czym wyjdziecie', 'preparation' => 'Jak się przygotować'] as $field => $label)
                                     @php($key = 'notes.'.$product->slug.'.'.$field)
                                     <div class="min-w-0">
@@ -240,12 +267,13 @@
                                         @endif
                                     </div>
                                 @endforeach
-                            </fieldset>
+                              </div>
+                            </details>
                         @endforeach
                     </div>
                     <button class="{{ $button }}">Zapisz opisy na voucherach</button>
                 </form>
             @endif
-        </div>
-    </div>
+    </x-admin::tab-panel>
+  </x-admin::tabs>
 </x-admin::layout>

@@ -1,3 +1,4 @@
+{{-- Ustawienia (MA-321): one part at a time in tabs; every form keeps its #id, so saving and links to a field open its tab. --}}
 @use('App\Modules\Shared\Support\Money')
 @php
     // Three forms on one page: each card saves on its own and keeps its own mistakes.
@@ -30,7 +31,7 @@
     // Two empty rows for new tiles; left empty, they are not saved.
     $tileRows = [...$savedTiles, ['title' => '', 'text' => ''], ['title' => '', 'text' => '']];
 
-    $card = 'scroll-mt-6 rounded-[4px] border border-line bg-cream p-[22px]';
+    $card = 'scroll-mt-24 rounded-[4px] border border-line bg-cream px-[18px] py-5 md:p-[22px]';
     $heading = 'mb-3 text-[11.5px] tracking-[0.16em] text-label uppercase';
     $alert = 'mb-3.5 rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text';
     $hint = 'mt-3.5 text-[12.5px] leading-[1.6] text-label';
@@ -38,13 +39,14 @@
     $tileInput = 'w-full min-w-0 rounded-[4px] border bg-white px-3 py-2.5 text-[14px] text-ink placeholder:text-hint focus:border-ink';
 @endphp
 <x-admin::layout title="Ustawienia" lead="Dostawa, dane pracowni i firmy, karta produktu, statystyki i kafelki o materiale. Zmiany widać na stronie od razu.">
-    <div class="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] items-start gap-[22px]">
+  <x-admin::tabs :tabs="['dostawa' => 'Dostawa i opłaty', 'pracownia' => 'Pracownia', 'firma' => 'Firma', 'karta-produktu' => 'Karta produktu', 'statystyki' => 'Statystyki', 'materialy' => 'Materiały']" label="Części ustawień">
+    <x-admin::tab-panel name="dostawa" class="max-w-[880px]">
         <form id="dostawa" method="post" action="{{ route('admin.settings.shipping') }}" novalidate class="{{ $card }}">
             @csrf
             @method('PUT')
             <h2 class="{{ $heading }}">Dostawa i opłaty</h2>
             @if ($shippingErrors->any())
-                <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+                <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
             @endif
             <div class="grid gap-3">
                 @foreach ($moneyRows as [$name, $key, $label, $value, $unit])
@@ -92,13 +94,14 @@
             <p class="{{ $hint }}">Ceny „w angielskiej kasie” płaci klientka z angielskiej wersji sklepu, w euro. Dostawa bez ceny w euro nie pokazuje się tam wcale. Darmowa wysyłka działa tylko w złotych.</p>
             <button class="{{ $button }}">Zapisz dostawę</button>
         </form>
-
+    </x-admin::tab-panel>
+    <x-admin::tab-panel name="pracownia" class="max-w-[880px]">
         <form id="pracownia" method="post" action="{{ route('admin.settings.studio') }}" novalidate class="{{ $card }}">
             @csrf
             @method('PUT')
             <h2 class="{{ $heading }}">Dane pracowni</h2>
             @if ($errors->hasBag('pracownia'))
-                <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+                <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
             @endif
             <div class="grid gap-3">
                 <x-shared::field name="contact_phone" id="pracownia-telefon" type="tel" bag="pracownia" label="Telefon (WhatsApp)"
@@ -123,14 +126,14 @@
             <p class="{{ $hint }}">Telefon, e-mail i profile podmieniają się w stopce, na stronie kontaktu, w formularzach i w danych dla Google. Dokładny adres nie pokazuje się nigdzie na stronie — trafia tylko do maila po zapisie na warsztat.</p>
             <button class="{{ $button }}">Zapisz dane pracowni</button>
         </form>
-    </div>
-
-    <form id="firma" method="post" action="{{ route('admin.settings.company') }}" novalidate class="{{ $card }} mt-[22px]">
+    </x-admin::tab-panel>
+    <x-admin::tab-panel name="firma" class="max-w-[880px]">
+    <form id="firma" method="post" action="{{ route('admin.settings.company') }}" novalidate class="{{ $card }}">
         @csrf
         @method('PUT')
         <h2 class="{{ $heading }}">Dane firmy — do regulaminu i dla operatora płatności</h2>
         @if ($errors->hasBag('firma'))
-            <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+            <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
         @endif
         <p class="mb-3.5 text-[13.5px] leading-[1.6] text-label">Wpisz je tak, jak są w CEIDG. Regulamin, polityka prywatności, strona kontaktu i stopka biorą je stąd. Operator płatności sprawdza, czy NIP na stronie zgadza się z wnioskiem.</p>
         <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,260px),1fr))] gap-3">
@@ -154,13 +157,14 @@
         <p class="{{ $hint }}">Nie wpisuj tu adresu domowej pracowni — pokazujemy tylko adres z CEIDG. Puste pole zostaje w regulaminie jako miejsce do uzupełnienia.</p>
         <button class="{{ $button }}">Zapisz dane firmy</button>
     </form>
-
-    <form id="karta-produktu" method="post" action="{{ route('admin.settings.product-card') }}" novalidate class="{{ $card }} mt-[22px]">
+    </x-admin::tab-panel>
+    <x-admin::tab-panel name="karta-produktu" class="max-w-[880px]">
+    <form id="karta-produktu" method="post" action="{{ route('admin.settings.product-card') }}" novalidate class="{{ $card }}">
         @csrf
         @method('PUT')
         <h2 class="{{ $heading }}">Karta produktu — wspólne dla wszystkich</h2>
         @if ($errors->hasBag('karta-produktu'))
-            <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+            <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
         @endif
         <p class="mb-3.5 max-w-[70ch] text-[13.5px] leading-[1.6] text-label">Pokażą się na karcie każdego produktu, który nie ma własnych. Własne wpisujesz w Produktach.</p>
         <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,260px),1fr))] gap-3">
@@ -173,8 +177,9 @@
         </div>
         <button class="{{ $button }}">Zapisz kartę produktu</button>
     </form>
-
-    <form id="statystyki" method="post" action="{{ route('admin.settings.analytics') }}" novalidate class="{{ $card }} mt-[22px]">
+    </x-admin::tab-panel>
+    <x-admin::tab-panel name="statystyki" class="max-w-[880px]">
+    <form id="statystyki" method="post" action="{{ route('admin.settings.analytics') }}" novalidate class="{{ $card }}">
         @csrf
         @method('PUT')
         <h2 class="{{ $heading }}">Statystyki — Google Analytics</h2>
@@ -188,13 +193,14 @@
         </div>
         <button class="{{ $button }}">Zapisz statystyki</button>
     </form>
-
-    <form id="materialy" method="post" action="{{ route('admin.settings.materials') }}" novalidate class="{{ $card }} mt-[22px]">
+    </x-admin::tab-panel>
+    <x-admin::tab-panel name="materialy" class="max-w-[880px]">
+    <form id="materialy" method="post" action="{{ route('admin.settings.materials') }}" novalidate class="{{ $card }}">
         @csrf
         @method('PUT')
         <h2 class="{{ $heading }}">Materiały — kafelki na „O mnie”</h2>
         @if ($tileErrors->any())
-            <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+            <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
         @endif
         <div class="grid gap-3.5 sm:gap-2.5">
             @foreach ($tileRows as $index => $tile)
@@ -230,4 +236,6 @@
         <p class="{{ $hint }}">Kafelek bez opisu nie pokaże się na stronie. W puste wiersze na dole wpisz nowe kafelki.</p>
         <button class="{{ $button }}">Zapisz kafelki</button>
     </form>
+    </x-admin::tab-panel>
+  </x-admin::tabs>
 </x-admin::layout>

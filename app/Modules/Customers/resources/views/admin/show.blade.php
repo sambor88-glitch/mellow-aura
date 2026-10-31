@@ -8,11 +8,19 @@
     $heading = 'mb-3 font-serif text-[24px]';
     $button = 'min-h-11 rounded-full border border-line-strong px-5 text-[13px] text-ink hover:border-ink hover:bg-sand';
     $empty = 'rounded-[4px] border border-dashed border-line-strong bg-linen px-5 py-4 text-[13px] text-label';
+    // The contact on top, the history in tabs (MA-326); „Odstąpienia i reklamacje” only when there are any.
+    $hasCases = $records->withdrawals->isNotEmpty() || $records->receivedComplaints->isNotEmpty() || $records->complaints->isNotEmpty();
+    $tabs = array_filter([
+        'zamowienia' => ['label' => 'Zamówienia i warsztaty', 'count' => $records->orders->count()],
+        'pomysly' => ['label' => 'Pomysły i wypały', 'count' => $records->customOrders->count() + $records->firingRequests->count()],
+        'sprawy' => $hasCases ? 'Odstąpienia i reklamacje' : null,
+        'rodo' => 'Dane i RODO',
+    ]);
 @endphp
 <x-admin::layout :title="$customer->name">
     <a href="{{ route('admin.customers.index') }}" class="mb-5 inline-block text-[13px] text-lead">← Wszyscy klienci</a>
 
-    <div class="{{ $card }} mb-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+    <div class="{{ $card }} mb-5 flex flex-wrap items-center gap-x-6 gap-y-3">
         <div class="min-w-0 flex-[1_1_260px]">
             <div class="text-[14.5px] text-ink [overflow-wrap:anywhere]">{{ $customer->email }}</div>
             @if ($customer->phones !== [])
@@ -26,6 +34,8 @@
         </form>
     </div>
 
+  <x-admin::tabs :tabs="$tabs" label="Historia klientki">
+    <x-admin::tab-panel name="zamowienia">
     <section aria-labelledby="zamowienia" class="mb-10">
         <h2 id="zamowienia" class="{{ $heading }}">Zamówienia i warsztaty</h2>
         @forelse ($records->orders as $order)
@@ -54,6 +64,9 @@
         @endif
     </section>
 
+    </x-admin::tab-panel>
+
+    <x-admin::tab-panel name="pomysly">
     <section aria-labelledby="indywidualne" class="mb-10">
         <h2 id="indywidualne" class="{{ $heading }}">Zamówienia indywidualne</h2>
         @forelse ($records->customOrders as $idea)
@@ -99,7 +112,10 @@
         </section>
     @endif
 
-    @if ($records->withdrawals->isNotEmpty() || $records->receivedComplaints->isNotEmpty() || $records->complaints->isNotEmpty())
+    </x-admin::tab-panel>
+
+    @if ($hasCases)
+      <x-admin::tab-panel name="sprawy">
         <section aria-labelledby="sprawy" class="mb-10">
             <h2 id="sprawy" class="{{ $heading }}">Odstąpienia i reklamacje</h2>
             @foreach ($records->withdrawals as $withdrawal)
@@ -119,9 +135,11 @@
                 </div>
             @endforeach
         </section>
+      </x-admin::tab-panel>
     @endif
 
-    <section aria-labelledby="usuniecie" class="mb-10 rounded-[4px] border border-line bg-cream px-[26px] py-7">
+    <x-admin::tab-panel name="rodo">
+    <section aria-labelledby="usuniecie" class="mb-10 rounded-[4px] border border-line bg-cream px-[18px] py-5 md:px-[26px] md:py-7">
         <h2 id="usuniecie" class="mb-2 font-serif text-[24px]">Usuń jej dane</h2>
         <p class="mb-4 max-w-[64ch] text-[13.5px] text-graphite">
             Na jej prośbę (RODO, art. 17). Znikną e-mail, telefon, adres, Paczkomat, notatki, napisy na kubkach, dedykacje, zdjęcia z pomysłów
@@ -169,4 +187,6 @@
             @endforeach
         </section>
     @endif
+    </x-admin::tab-panel>
+  </x-admin::tabs>
 </x-admin::layout>
