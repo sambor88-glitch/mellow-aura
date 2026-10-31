@@ -8,6 +8,7 @@ use App\Modules\Checkout\Events\OrderShipped;
 use App\Modules\Checkout\Events\WithdrawalSubmitted;
 use App\Modules\Checkout\Listeners\SendOrderEmails;
 use App\Modules\Checkout\Listeners\SendOrderSummary;
+use App\Modules\Checkout\Listeners\SendServerPurchase;
 use App\Modules\Checkout\Listeners\SendShippingNotice;
 use App\Modules\Checkout\Listeners\SendWithdrawalEmails;
 use App\Modules\Checkout\Mail\OrderAwaitingPayment;
@@ -34,6 +35,7 @@ class CheckoutServiceProvider extends ModuleServiceProvider
 
         Event::listen(OrderPlaced::class, SendOrderSummary::class);
         Event::listen(OrderPaid::class, SendOrderEmails::class);
+        Event::listen(OrderPaid::class, SendServerPurchase::class);
         Event::listen(OrderShipped::class, SendShippingNotice::class);
         Event::listen(WithdrawalSubmitted::class, SendWithdrawalEmails::class);
     }

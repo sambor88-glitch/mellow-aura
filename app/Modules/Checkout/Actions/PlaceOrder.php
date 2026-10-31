@@ -7,6 +7,7 @@ use App\Modules\Checkout\Enums\OrderStatus;
 use App\Modules\Checkout\Enums\PaymentMethod;
 use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Models\Order;
+use App\Modules\Checkout\Support\AnalyticsClient;
 use App\Modules\Checkout\Support\OrderTax;
 use App\Modules\Gifts\Actions\HoldVoucherBalance;
 use App\Modules\Gifts\Exceptions\BalanceNotAccepted;
@@ -21,10 +22,12 @@ use Illuminate\Support\Facades\DB;
  * Stock is not touched here: it comes off only when the payment is confirmed.
  * Amount vouchers pay first, from their balance (MA-211): the money is held in the same transaction, the order keeps
  * how much they paid, and an order they pay in full needs no other way to pay.
+ * With the customer's yes to statistics the order also keeps Google Analytics' id of her browser and the items
+ * as the browser counts them, for the purchase measured from the server once it is paid (MA-264).
  */
 class PlaceOrder
 {
-    public function __construct(private OrderTax $tax, private HoldVoucherBalance $holdVoucherBalance) {}
+    public function __construct(private OrderTax $tax, private HoldVoucherBalance $holdVoucherBalance, private AnalyticsClient $analytics) {}
 
     /**
      * @param  Collection<string, CartLine>  $lines
@@ -35,7 +38,11 @@ class PlaceOrder
      */
     public function __invoke(Collection $lines, array $data, int $shippingGross, array $voucherCodes = []): Order
     {
-        return DB::transaction(function () use ($lines, $data, $shippingGross, $voucherCodes) {
+        // Every way to order — the checkout, a workshop, a custom order's payment, a gift choice — comes from the
+        // customer's own browser, so the request holds her cookies; a command or a queued job holds none.
+        $analytics = $this->analytics->fromRequest(app()->bound('request') ? request() : null);
+
+        return DB::transaction(function () use ($lines, $data, $shippingGross, $voucherCodes, $analytics) {
             $address = array_filter(Arr::only($data, ['street', 'postal_code', 'city']));
 
             $order = Order::create([
@@ -60,6 +67,11 @@ class PlaceOrder
                 'invoice_nip' => $data['invoice_nip'] ?? null,
                 'terms_version' => $data['terms_version'] ?? null,
                 'terms_accepted_at' => isset($data['terms_version']) ? now() : null,
+                ...$analytics,
+                // The same items the confirmation page hands Google Analytics in the browser, so both count one purchase.
+                'analytics_items' => $analytics['ga_client_id'] !== null
+                    ? $lines->map(fn (CartLine $line) => $line->analyticsItem())->values()->all()
+                    : null,
             ]);
 
             $order->update(['number' => 'MA-'.$order->created_at->year.'-'.(1000 + $order->id)]);
