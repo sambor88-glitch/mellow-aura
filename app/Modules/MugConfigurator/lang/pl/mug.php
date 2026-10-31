@@ -12,7 +12,10 @@ return [
     'details' => '„:text” · :size · wnętrze :glaze',
     'added' => 'Kubek z Twoim napisem w koszyku',
     'title' => 'Kubek z napisem na zamówienie — Twój tekst wbity w glinę',
-    'description' => 'Zaprojektuj kubek z własnym napisem: litery wbijane stemplem w glinę, trzy rozmiary, pięć kolorów szkliwa. Prezent, którego nie ma nikt inny. Kraków.',
+    // :options is counted from the panel (MugOptions::description), e.g. „, trzy rozmiary, pięć kolorów szkliwa”.
+    'description' => 'Zaprojektuj kubek z własnym napisem: litery wbijane stemplem w glinę:options. Prezent, którego nie ma nikt inny. Kraków.',
+    'size_count' => '{1} jeden rozmiar|{2} dwa rozmiary|{3} trzy rozmiary|{4} cztery rozmiary|[5,*] :count rozmiarów',
+    'glaze_count' => '{1} jeden kolor szkliwa|{2} dwa kolory szkliwa|{3} trzy kolory szkliwa|{4} cztery kolory szkliwa|{5} pięć kolorów szkliwa|{6} sześć kolorów szkliwa|[7,*] :count kolorów szkliwa',
     'home' => 'Strona główna',
     'preview' => 'Podgląd',
     'model' => 'Model 3D',
@@ -36,7 +39,9 @@ return [
     'size' => 'Rozmiar',
     'glaze' => 'Kolor wnętrza',
     'add' => 'Dodaj do koszyka',
-    'pay' => 'zapłacisz w 10 sekund',
+    // :time from the panel (text_blik_time); without it the line says only how to pay.
+    'pay' => 'zapłacisz w :time',
+    'pay_plain' => 'płatność kodem z aplikacji banku',
     'free_from' => 'wysyłka gratis od :price',
     'bulk' => 'Zamawiasz więcej?',
     'refusals' => 'Czego nie wbiję',

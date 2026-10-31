@@ -1,3 +1,4 @@
+@use('App\Modules\Checkout\Enums\PaymentMethod')
 @inject('settings', 'App\Modules\Settings\Settings')
 @use('App\Modules\Localization\Support\Locales')
 @php
@@ -35,6 +36,15 @@
     $email = $settings->get('contact_email');
     $city = $settings->get('footer_city');
     $nip = $settings->get('company_nip');
+    // The business name from CEIDG („Dane firmy”); the brand is not repeated when the name already carries it.
+    $company = $settings->get('company_name');
+    $owner = implode(' · ', array_filter([
+        $company !== null && str_contains($company, 'MellowAura') ? null : 'MellowAura',
+        $company,
+        $nip ? 'NIP '.$nip : null,
+    ]));
+    // The ways to pay in the currency of this page, the same list as at checkout.
+    $payments = collect(PaymentMethod::for(Locales::currency()))->map(fn (PaymentMethod $method) => $method->title())->join(' · ');
     $whatsApp = $phone ? 'https://wa.me/'.preg_replace('/\D+/', '', $phone) : null;
     // The number rings on a phone; WhatsApp has its own pill above.
     $call = $phone ? 'tel:'.preg_replace('/[^\d+]+/', '', $phone) : null;
@@ -56,7 +66,7 @@
             @if ($social)
                 <div class="flex flex-wrap gap-3">
                     @foreach ($social as $label => $href)
-                        <a href="{{ $href }}" target="_blank" rel="noopener" class="rounded-full border border-line-dark px-[17px] py-[9px] text-[12.5px] text-sand hover:border-rose hover:text-rose">{{ $label }} <span aria-hidden="true">↗</span><span class="sr-only"> ({{ $newTab }})</span></a>
+                        <a href="{{ $href }}" target="_blank" rel="noopener" class="inline-flex min-h-11 items-center rounded-full border border-line-dark px-[17px] text-[12.5px] text-sand hover:border-rose hover:text-rose">{{ $label }} <span aria-hidden="true">↗</span><span class="sr-only"> ({{ $newTab }})</span></a>
                     @endforeach
                 </div>
             @endif
@@ -110,17 +120,17 @@
         @foreach (mb_str_split('Mellow') as $letter)<span class="inline-block">{{ $letter }}</span>@endforeach<em class="text-rose">@foreach (mb_str_split('Aura') as $letter)<span class="inline-block">{{ $letter }}</span>@endforeach</em>
     </div>
 
-    <div class="mx-auto flex max-w-[1280px] flex-wrap justify-between gap-x-7 gap-y-4 border-t border-divider-dark px-7 pt-[22px] pb-10 text-[12.5px] text-label-dark">
-        <span>© {{ now()->year }} MellowAura &middot; Katarzyna Samborska{{ $nip ? ' · NIP '.$nip : '' }}</span>
-        <div class="flex flex-wrap gap-[22px]">
+    <div class="mx-auto flex max-w-[1280px] flex-wrap items-center justify-between gap-x-7 gap-y-2 border-t border-divider-dark px-7 pt-3 pb-8 text-[12.5px] text-label-dark">
+        <span>© {{ now()->year }} {{ $owner }}</span>
+        <div class="flex flex-wrap items-center gap-x-[22px]">
             @foreach (array_filter([$link('terms', 'content.terms'), $link('privacy', 'content.privacy'), $link('withdrawal', 'withdrawal.create')]) as [$label, $href])
-                <a href="{{ $href }}" class="text-label-dark hover:text-rose">{{ $label }}</a>
+                <a href="{{ $href }}" class="inline-flex min-h-11 items-center text-label-dark hover:text-rose">{{ $label }}</a>
             @endforeach
             @if ($cookies = $link('cookies', 'consent.edit'))
                 {{-- With the banner on the page, the link opens it in place. --}}
-                <a href="{{ $cookies[1] }}" data-consent-open class="text-label-dark hover:text-rose">{{ $cookies[0] }}</a>
+                <a href="{{ $cookies[1] }}" data-consent-open class="inline-flex min-h-11 items-center text-label-dark hover:text-rose">{{ $cookies[0] }}</a>
             @endif
-            @if ($payments = __('shared::footer.payments'))
+            @if ($payments !== '')
                 <span>{{ $payments }}</span>
             @endif
         </div>

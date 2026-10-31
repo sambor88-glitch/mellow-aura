@@ -1,10 +1,13 @@
 @use('App\Modules\Checkout\Enums\PaymentMethod')
 @use('App\Modules\Localization\Support\Locales')
 @use('App\Modules\Shared\Support\Money')
+@inject('settings', 'App\Modules\Settings\Settings')
 @php
     // Every amount here is in the currency of the basket.
     $money = fn (int $amount) => Money::format($amount, Locales::currency());
     $t = fn (string $key, array $replace = []) => __('checkout::checkout.'.$key, $replace);
+    // How Kasia packs, from the panel; Polish, so an English checkout leaves it out until MA-188.
+    $packing = $needsDelivery && Locales::current() === Locales::default() ? $settings->get('text_checkout_packing') : null;
     // A sentence with markup in it: the sentence is escaped, the markup put in place of its placeholder.
     $withLink = fn (string $sentence, string $placeholder, string $html) => str_replace($placeholder, $html, e($sentence));
     // Vouchers sent as PDFs alone need no note for the parcel, only an invoice may. The address sits with the courier.
@@ -47,8 +50,8 @@
                             <x-shared::field name="name" :label="$t('name')" autocomplete="name" aria-required="true" />
                         </div>
 
-                        <details @if ($moreOpen) open @endif class="group mt-4 border-t border-line pt-4">
-                            <summary class="flex cursor-pointer list-none justify-between gap-3 text-[13.5px] text-brown [&::-webkit-details-marker]:hidden">
+                        <details @if ($moreOpen) open @endif class="group mt-4 border-t border-line pt-1">
+                            <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-[13.5px] text-brown [&::-webkit-details-marker]:hidden">
                                 <span>{{ $t($needsDelivery ? 'more_parcel' : 'more') }}</span>
                                 <span aria-hidden="true" class="group-open:hidden">+</span><span aria-hidden="true" class="hidden group-open:inline">−</span>
                             </summary>
@@ -303,8 +306,8 @@
                         <div class="mt-3.5 flex flex-wrap justify-center gap-3 text-[11.5px] tracking-[0.08em] text-label uppercase">
                             {!! collect(config('services.przelewy24.wallets') ? __('checkout::checkout.wallet_badges') : [])->merge($t('badges'))->map(fn (string $badge) => '<span>'.e($badge).'</span>')->join('<span>&middot;</span>') !!}
                         </div>
-                        @if ($needsDelivery)
-                            <p class="mt-3 text-center text-[12px] leading-[1.5] text-hint">{{ $t('wrapping') }}</p>
+                        @if ($packing)
+                            <p class="mt-3 text-center text-[12px] leading-[1.5] text-hint">{{ $packing }}</p>
                         @endif
                     </div>
                 </div>

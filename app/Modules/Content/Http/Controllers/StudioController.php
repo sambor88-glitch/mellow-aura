@@ -3,6 +3,7 @@
 namespace App\Modules\Content\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Content\Support\PagePhotoSizes;
 use App\Modules\Settings\Settings;
 use App\Modules\Shared\Support\SitePhoto;
 use Illuminate\View\View;
@@ -13,10 +14,15 @@ use Illuminate\View\View;
  */
 class StudioController extends Controller
 {
-    public function __invoke(Settings $settings): View
+    public function __invoke(Settings $settings, PagePhotoSizes $sizes): View
     {
+        $heroPath = $settings->get('studio_hero_image');
+        $hero = SitePhoto::url($heroPath);
+
         return view('content::studio', [
-            'hero' => SitePhoto::url($settings->get('studio_hero_image')),
+            'hero' => $hero,
+            'heroSrcset' => $hero !== null ? $sizes->srcset((string) $heroPath, $hero) : null,
+            'heroSize' => $hero !== null ? $sizes->dimensions((string) $heroPath) : null,
             'lead' => $settings->get('text_studio_lead'),
             'paragraphs' => array_filter([$settings->get('text_studio_paragraph_1'), $settings->get('text_studio_paragraph_2')]),
             'facts' => collect((array) $settings->get('studio_facts', []))

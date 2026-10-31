@@ -1,3 +1,4 @@
+@use('App\Modules\Localization\Support\Locales')
 @inject('pagePhotos', 'App\Modules\Content\Support\PagePhotos')
 @inject('settings', 'App\Modules\Settings\Settings')
 @php
@@ -6,6 +7,8 @@
     $instagram = ltrim((string) $settings->get('instagram_handle'), '@');
     $email = $settings->get('contact_email');
     $location = $settings->get('location_description');
+    // How soon Kasia answers, in her words from the panel; Polish, so an English page leaves it out until MA-188.
+    $replyTime = Locales::current() === Locales::default() ? $settings->get('text_reply_time') : null;
     $topics = (array) $settings->get('contact_form_topics', []);
     // A link such as /kontakt?temat=Wypał moich prac picks the topic in advance.
     $chosenTopic = old('topic', in_array(request()->query('temat'), $topics, true) ? request()->query('temat') : null);
@@ -14,13 +17,13 @@
     $company = collect(['company_name', 'company_nip', 'company_regon', 'company_address'])->mapWithKeys(fn (string $key) => [$key => $settings->get($key)]);
 
     $description = match (true) {
-        filled($phone) => 'Napisz na WhatsAppie '.$phone.' albo przez formularz. Odpisuję zwykle tego samego dnia.',
-        filled($instagram) => 'Napisz na Instagramie @'.$instagram.' albo przez formularz. Odpisuję zwykle tego samego dnia.',
-        default => 'Napisz do mnie przez formularz. Odpisuję zwykle tego samego dnia.',
-    };
+        filled($phone) => 'Napisz na WhatsAppie '.$phone.' albo przez formularz.',
+        filled($instagram) => 'Napisz na Instagramie @'.$instagram.' albo przez formularz.',
+        default => 'Napisz do mnie przez formularz.',
+    }.($replyTime ? ' '.$replyTime : '');
 
     $channel = 'flex items-center justify-between gap-4 bg-cream px-6 py-[22px] text-ink hover:bg-sand-dark hover:text-ink';
-    $channelLabel = 'mb-[5px] block text-[11px] tracking-[0.18em] text-gold uppercase';
+    $channelLabel = 'mb-[5px] block text-[11px] tracking-[0.18em] text-brown uppercase';
 @endphp
 
 <x-shared::layout title="Kontakt — pracownia MellowAura, Kraków" :description="$description" :canonical="route('content.contact')">
@@ -73,7 +76,7 @@
             <div class="min-w-[min(100%,290px)] flex-[1_1_340px]">
                 <div id="formularz" class="scroll-mt-6 rounded-[20px] border border-divider bg-cream px-[30px] py-8">
                     @if (session('contact_sent'))
-                        <p role="status" class="mb-5 rounded-[20px] border border-line-strong bg-sand-dark p-4 text-[14px] leading-[1.6] text-graphite">Wiadomość poszła. Odpisuję zwykle tego samego dnia.</p>
+                        <p role="status" class="mb-5 rounded-[20px] border border-line-strong bg-sand-dark p-4 text-[14px] leading-[1.6] text-graphite">Wiadomość poszła.{{ $replyTime ? ' '.$replyTime : '' }}</p>
                     @elseif (session('contact_failed'))
                         <p role="alert" class="mb-5 rounded-[20px] border border-alert-line bg-alert p-4 text-[14px] leading-[1.6] text-alert-text">
                             Coś się zacięło po mojej stronie i wiadomość nie wyszła. Twój tekst jest nadal w formularzu — spróbuj za chwilę{{ $phone ? ' albo napisz na WhatsAppie '.$phone : '' }}.

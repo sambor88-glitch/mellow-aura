@@ -20,7 +20,8 @@
     $money = fn (int $amount) => Money::format($amount, $currency);
     $polish = Locales::current() === Locales::default();
     $heading = $polish ? $settings->get('text_mug_heading', $t('name')) : $t('name');
-    $lead = $polish ? $settings->get('text_mug_lead') : $t('description');
+    $description = $options->description();
+    $lead = $polish ? $settings->get('text_mug_lead') : $description;
     $note = $polish ? $settings->get('text_mug_note') : null;
     $leadTime = $polish ? $settings->get('text_mug_lead_time') : null;
     $bulkOrder = $polish ? $settings->get('text_mug_bulk_order') : null;
@@ -30,6 +31,7 @@
     $closeup = $options->letteringPhotoUrl('closeup');
     $fired = $options->letteringPhotoUrl('fired');
     $freeShipping = $polish ? $settings->get('free_shipping_threshold') : null;
+    $blikTime = $settings->get('text_blik_time');
     $giftChoice = $polish && View::exists('gifts::choice.configurator');
 
     $eyebrow = 'text-[13.5px] font-medium text-graphite';
@@ -38,7 +40,7 @@
 
 <x-shared::layout
     :title="$t('title')"
-    :description="$t('description')"
+    :$description
     :canonical="route('mug.index')"
     :image="$photo"
 >
@@ -62,9 +64,9 @@
                 {{-- Two previews where WebGL can work: Kasia's photo with the text on it, shown first, and the model. --}}
                 <div x-show="has3d" role="group" aria-label="{{ $t('preview') }}" class="glass mb-3 inline-flex gap-1 rounded-full p-1 motion-reduce:hidden">
                     <button type="button" x-on:click="view = 'photo'" aria-pressed="true" x-bind:aria-pressed="view === 'photo'"
-                            class="min-h-10 rounded-full px-4 text-[13px] text-graphite transition-colors duration-300 aria-pressed:bg-ink aria-pressed:text-linen">{{ $t('on_photo') }}</button>
+                            class="min-h-11 rounded-full px-4 text-[13px] text-graphite transition-colors duration-300 aria-pressed:bg-ink aria-pressed:text-linen">{{ $t('on_photo') }}</button>
                     <button type="button" x-on:click="show3d()" aria-pressed="false" x-bind:aria-pressed="view === '3d'"
-                            class="min-h-10 rounded-full px-4 text-[13px] text-graphite transition-colors duration-300 aria-pressed:bg-ink aria-pressed:text-linen">{{ $t('model') }}</button>
+                            class="min-h-11 rounded-full px-4 text-[13px] text-graphite transition-colors duration-300 aria-pressed:bg-ink aria-pressed:text-linen">{{ $t('model') }}</button>
                 </div>
                 <div x-ref="stage3d" x-cloak x-show="view === '3d'" role="img" x-bind:aria-label="@js($t('preview_label')) + (text.trim() || @js($t('preview_empty')))"
                      class="relative aspect-square w-full cursor-grab touch-pan-y overflow-hidden rounded-[26px] border border-glass-line bg-[radial-gradient(ellipse_at_50%_42%,rgb(252_249_244/.95),rgb(243_237_228/.55)_60%,rgb(237_228_216/.25))] active:cursor-grabbing">
@@ -190,7 +192,7 @@
                 @if ($polish)
                     <div class="mt-4 flex items-center gap-2.5 text-[12.5px] text-muted">
                         <span class="rounded-full bg-navy px-2.5 py-[3px] text-[10px] font-semibold text-white">BLIK</span>
-                        <span>{{ $t('pay') }}{{ $freeShipping ? ' · '.$t('free_from', ['price' => $money((int) $freeShipping)]) : '' }}</span>
+                        <span>{{ $blikTime ? $t('pay', ['time' => $blikTime]) : $t('pay_plain') }}{{ $freeShipping ? ' · '.$t('free_from', ['price' => $money((int) $freeShipping)]) : '' }}</span>
                     </div>
                 @endif
 

@@ -24,5 +24,4 @@ return [
     'privacy' => 'Polityka prywatności',
     'withdrawal' => 'Odstąp od umowy tutaj',
     'cookies' => 'Ustawienia cookies',
-    'payments' => 'BLIK · Przelewy24 · karta',
 ];

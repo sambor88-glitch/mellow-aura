@@ -24,7 +24,4 @@ return [
     'privacy' => 'Privacy policy',
     'withdrawal' => 'Withdraw from a purchase here',
     'cookies' => 'Cookie settings',
-    // Empty, not null: null falls back to the Polish line. Left out until the euro checkout settles
-    // which methods it offers (MA-127) — BLIK is złoty-only.
-    'payments' => '',
 ];

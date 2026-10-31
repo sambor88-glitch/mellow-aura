@@ -57,12 +57,21 @@
                                 <a href="{{ route($page['route']) }}" target="_blank" rel="noopener" class="font-sans text-[13px]">Zobacz stronę →</a>
                             @endif
                         </legend>
-                        @foreach ($page['fields'] as $key => [$label, $rows, $max])
+                        @foreach ($page['fields'] as $key => $field)
+                            @php
+                                [$label, $rows, $max] = $field;
+                                $fieldHint = $field[3] ?? null;
+                                $describedBy = implode(' ', array_filter([$fieldHint ? 'teksty-'.$key.'-hint' : null, $textErrors->has($key) ? 'teksty-'.$key.'-error' : null]));
+                            @endphp
                             <div class="min-w-0">
                                 <label for="teksty-{{ $key }}" class="mb-1.5 block text-[13.5px] text-graphite">{{ $label }}</label>
                                 <textarea id="teksty-{{ $key }}" name="{{ $key }}" rows="{{ $rows }}" maxlength="{{ $max }}"
-                                          @if ($textErrors->has($key)) aria-invalid="true" aria-describedby="teksty-{{ $key }}-error" @endif
+                                          @if ($textErrors->has($key)) aria-invalid="true" @endif
+                                          @if ($describedBy) aria-describedby="{{ $describedBy }}" @endif
                                           @class([$input, 'resize-y leading-[1.6]', 'border-error' => $textErrors->has($key), 'border-line' => ! $textErrors->has($key)])>{{ old($key, $texts[$key]) }}</textarea>
+                                @if ($fieldHint)
+                                    <p id="teksty-{{ $key }}-hint" class="mt-1.5 text-[12.5px] leading-[1.5] text-label">{{ $fieldHint }}</p>
+                                @endif
                                 @if ($textErrors->has($key))
                                     <p id="teksty-{{ $key }}-error" class="mt-1.5 text-[13px] text-error">{{ $textErrors->first($key) }}</p>
                                 @endif

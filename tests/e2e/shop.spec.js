@@ -42,6 +42,12 @@ test('a phone sees the first products on the first screen and sorts from one but
     expect(searchBox.height).toBeGreaterThanOrEqual(44);
     expect(sortBox.height).toBeGreaterThanOrEqual(44);
     expect(Math.abs(searchBox.y - sortBox.y), 'the search and the sorting share a row').toBeLessThan(4);
+    // Category chips, the social links and the legal links in the footer are finger-sized too (MA-299).
+    const shortTargets = await page.evaluate(() => [...document.querySelectorAll('main a.snap-start, footer a[target="_blank"], footer .border-t a')]
+        .filter((link) => link.offsetParent !== null)
+        .filter((link) => link.getBoundingClientRect().height < 44)
+        .map((link) => link.textContent.trim()));
+    expect(shortTargets, 'links lower than 44 px').toEqual([]);
     await noSidewaysScroll(page);
     await page.screenshot({ path: testInfo.outputPath('shop-390.png') });
 

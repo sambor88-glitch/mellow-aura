@@ -52,7 +52,7 @@
             <form method="post" action="{{ route('cart.destroy', $line->key) }}" x-on:submit.prevent="$store.cart.send($el)" class="self-start">
                 @csrf
                 @method('DELETE')
-                <button data-focus="{{ $line->key }}-remove" aria-label="{{ __('cart::content.remove_label', ['name' => $line->name()]) }}" class="relative p-0.5 text-[12px] text-hint after:absolute after:-inset-3 hover:text-error">{{ __('cart::content.remove') }}</button>
+                <button data-focus="{{ $line->key }}-remove" aria-label="{{ __('cart::content.remove_label', ['name' => $line->name()]) }}" class="-my-3 -mr-2 inline-flex min-h-11 items-center px-2 text-[12px] text-hint hover:text-error">{{ __('cart::content.remove') }}</button>
             </form>
         </div>
     @empty

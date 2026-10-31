@@ -10,11 +10,18 @@ use Illuminate\Foundation\Http\FormRequest;
  */
 class SavePageTextsRequest extends FormRequest
 {
-    /** @var list<array{title: string, route: ?string, fields: array<string, array{string, int, int}>}> label, rows, max length */
+    /** @var list<array{title: string, route: ?string, fields: array<string, array{0: string, 1: int, 2: int, 3?: string}>}> label, rows, max length, hint */
     public const PAGES = [
         ['title' => 'Strona główna', 'route' => 'home', 'fields' => [
+            'text_home_lead_mug' => ['Zdanie o kubkach pod „Glina i jedwab z jednej pary rąk”', 2, 200, 'Dopisuje się po zdaniu o ceramice i jedwabiu.'],
+            'text_home_fact_handmade' => ['Liczba przy „ręczna robota” pod zdjęciem', 1, 12, 'Np. 100%. Puste pole usuwa ten kafelek.'],
+            'text_home_materials' => ['Słowa w przesuwanym pasku — każde w osobnej linii', 4, 200, 'Pierwszy rząd pod zdjęciem: materiały, z których robisz.'],
             'text_home_kasia_heading' => ['„Cześć, jestem Kasia” — nagłówek', 2, 160],
             'text_home_kasia_paragraph' => ['„Cześć, jestem Kasia” — akapit', 4, 600],
+            'text_home_card_b2b' => ['Kafelek „Ceramika dla kawiarni i restauracji” — zdanie pod nagłówkiem', 2, 200],
+        ]],
+        ['title' => 'Sklep', 'route' => 'shop.index', 'fields' => [
+            'text_shop_intro_note' => ['Zdanie po „Wszystko, co stoi teraz na półce w pracowni.”', 2, 200],
         ]],
         ['title' => 'O mnie', 'route' => 'content.about', 'fields' => [
             'text_about_paragraph_1' => ['Pierwszy akapit — większym pismem', 4, 900],
@@ -40,6 +47,11 @@ class SavePageTextsRequest extends FormRequest
         ]],
         ['title' => 'Kontakt', 'route' => 'content.contact', 'fields' => [
             'text_contact_lead' => ['Zdanie pod „Napisz do mnie”', 2, 300],
+            'text_reply_time' => ['Jak szybko odpisujesz', 1, 120, 'Np. „Odpisuję zwykle tego samego dnia.” Widać je po wysłaniu wiadomości, w opisie strony dla Google i na dole „Wysyłka i pielęgnacja”.'],
+        ]],
+        ['title' => 'Płatność i kasa', 'route' => null, 'fields' => [
+            'text_blik_time' => ['Ile trwa płatność BLIK-iem', 1, 30, 'Np. 10 sekund. Widać to na stronie głównej, na karcie produktu i przy kubku z napisem. Puste pole zostawia samo „zapłacisz kodem z aplikacji banku”.'],
+            'text_checkout_packing' => ['Jak pakujesz — zdanie pod przyciskiem płatności w kasie', 2, 160],
         ]],
         ['title' => 'Stopka na każdej stronie', 'route' => null, 'fields' => [
             'text_footer_tagline' => ['Hasło pod logo', 2, 200],
