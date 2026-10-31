@@ -1,10 +1,15 @@
 @use('App\Modules\Shared\Support\Money')
+@use('App\Modules\Shared\Support\Seo')
+@use('Illuminate\Support\Str')
 @php
     // The topic name matches the contact form's list from the panel; if it is renamed, the form simply opens without it.
     $contactUrl = route('content.contact', ['temat' => 'Wypał moich prac']);
     // The lowest price per kilogram comes from the panel, like every number on the page.
     $fromPerKilogram = $prices->where('unit', 'kg')->min('price_gross');
-    $description = 'Wypał biskwitowy i na ostro do 1240°C, wypał złota, cała półka na wyłączność.'.($fromPerKilogram ? ' Cennik od '.Money::input($fromPerKilogram).' zł za kilogram.' : '');
+    // The description follows the price list, so it never names a firing or a temperature the page doesn't have.
+    $description = Seo::description('Wypał ceramiki na zlecenie w Krakowie'
+        .($fromPerKilogram ? ', cennik od '.Money::format($fromPerKilogram).' za kilogram' : '')
+        .($prices->isNotEmpty() ? ': '.$prices->map(fn (array $price) => Str::lcfirst(trim($price['label'])))->join(', ') : '').'.');
 @endphp
 
 <x-shared::layout title="Wypał ceramiki Kraków — cennik wypałów na zlecenie" :description="$description" :canonical="route('firing.index')">

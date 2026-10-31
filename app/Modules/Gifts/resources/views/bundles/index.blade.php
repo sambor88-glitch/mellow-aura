@@ -1,15 +1,23 @@
 @use('App\Modules\Shared\Support\Money')
+@use('App\Modules\Shared\Support\Seo')
+@use('Illuminate\Support\Str')
 @inject('settings', 'App\Modules\Settings\Settings')
 @php
     $heading = $settings->get('text_bundles_heading', 'Zestawy prezentowe');
     $lead = $settings->get('text_bundles_lead');
     $wrapHeading = $settings->get('text_gift_wrap_heading', 'Pakowanie na prezent');
     $wrapLead = $settings->get('text_gift_wrap_lead');
+    // The description follows the sets and the wrapping price from the panel; wrapping is paid extra, so it is never „wrapped”.
+    $wrapPrice = $settings->get('gift_wrap_price');
+    $description = Seo::description(collect([
+        $bundles->isNotEmpty() ? 'Gotowe zestawy: '.$bundles->map(fn ($bundle) => Str::lcfirst(trim($bundle->name)))->join(', ').'. Taniej niż osobno.' : 'Gotowe zestawy z ceramiki i jedwabiu.',
+        is_numeric($wrapPrice) ? 'Pakowanie na prezent za '.Money::format((int) $wrapPrice).'.' : null,
+    ])->filter()->join(' '));
 @endphp
 
 <x-shared::layout
     title="Zestawy prezentowe — ceramika i jedwab w pudełku"
-    description="Gotowe zestawy: kubek i scrunchie w jednym odcieniu, talerz z filiżanką, kadzielnica z podstawką. Taniej niż osobno, zapakowane na prezent."
+    :$description
     :canonical="route('bundles.index')"
     :image="$bundles->first()?->items->first()?->variant->product->getFirstMedia('images')?->getAvailableUrl(['card'])"
 >

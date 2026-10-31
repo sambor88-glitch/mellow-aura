@@ -30,6 +30,7 @@
     // The general care rule from the panel is written in Polish, so an English page shows only the piece's own line.
     $care = $product->care_note ?: ($inZloty && $product->category->group === CategoryGroup::Ceramics ? $settings->get('care_rule_ceramics') : null);
     $freeShipping = $inZloty ? $settings->get('free_shipping_threshold') : null;
+    $blikTime = $settings->get('text_blik_time');
     // A voucher is not a thing in a parcel: no dimensions note, certificate or producer details.
     $isGoods = ! $product->isVoucher();
     $tolerance = $product->size_tolerance ?: $settings->get('size_tolerance');
@@ -244,7 +245,7 @@
                 @if ($inZloty)
                     <div class="mb-[34px] flex items-center gap-2.5 text-[12.5px] text-muted">
                         <span class="rounded-full bg-navy px-2.5 py-[3px] text-[10px] font-semibold text-white">BLIK</span>
-                        <span>{{ __('catalog::product.blik') }}</span>
+                        <span>{{ $blikTime ? __('catalog::product.blik', ['time' => $blikTime]) : __('catalog::product.blik_plain') }}</span>
                     </div>
                 @endif
 

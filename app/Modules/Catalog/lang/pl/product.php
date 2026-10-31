@@ -24,7 +24,9 @@ return [
     'fewer' => 'Mniej sztuk',
     'more' => 'Więcej sztuk',
     'add_to_cart' => 'Dodaj do koszyka',
-    'blik' => 'zapłacisz w 10 sekund kodem z aplikacji banku',
+    // :time from the panel (text_blik_time); without it the line says only how to pay.
+    'blik' => 'zapłacisz w :time kodem z aplikacji banku',
+    'blik_plain' => 'zapłacisz kodem z aplikacji banku',
     'shipping' => 'Wysyłka',
     'packing_link' => 'Jak pakuję i wysyłam',
     'free_from' => 'gratis od :price',
