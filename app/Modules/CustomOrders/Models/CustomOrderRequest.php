@@ -4,6 +4,8 @@ namespace App\Modules\CustomOrders\Models;
 
 use App\Modules\CustomOrders\Enums\BriefKind;
 use App\Modules\CustomOrders\Enums\CustomOrderStatus;
+use App\Modules\CustomOrders\Enums\ErasureReason;
+use App\Modules\Shared\Support\PersonalData;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -28,7 +30,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property ?string $notes
  * @property CustomOrderStatus $status
  * @property ?Carbon $shipped_at
- * @property ?Carbon $photos_deleted_at
+ * @property ?Carbon $erased_at
+ * @property ?ErasureReason $erased_because
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
@@ -36,13 +39,13 @@ class CustomOrderRequest extends Model implements HasMedia
 {
     use InteractsWithMedia;
 
-    /** A shipped piece: the photos show what was agreed, so they stay as long as the warranty (rękojmia) runs. */
+    /** A shipped piece: the description and photos show what was agreed, so they stay as long as the warranty (rękojmia) runs. */
     public const KEEP_SHIPPED_YEARS = 2;
 
     /** Days from shipping until the parcel surely arrived — the two years count from handing the piece over. */
     public const DELIVERY_DAYS = 30;
 
-    /** An idea that did not become an order: its photos stay this long after the last contact. */
+    /** An idea that did not become an order: its data and photos stay this long after the last contact. */
     public const KEEP_UNORDERED_MONTHS = 3;
 
     protected $guarded = ['id'];
@@ -112,7 +115,7 @@ class CustomOrderRequest extends Model implements HasMedia
 
     /**
      * The last time anything happened between Kasia and the customer about this idea: the idea saved in the panel,
-     * a payment link sent or paid. A note Kasia saves counts too — it keeps the photos a little longer, never shorter.
+     * a payment link sent or paid. A note Kasia saves counts too — it keeps the data a little longer, never shorter.
      */
     public function lastContactAt(): Carbon
     {
@@ -125,12 +128,12 @@ class CustomOrderRequest extends Model implements HasMedia
     }
 
     /**
-     * Until when the privacy policy keeps the photos (MA-312); null while the piece is being made — they are needed
-     * for the work. A shipped piece keeps them two years from handing over, counted from shipping plus a month for
-     * the delivery; an idea that did not become an order — declined or left in „Nowe”, „Wycena”, „Zaliczka” —
-     * three months from the last contact.
+     * Until when the privacy policy keeps the customer's data and photos (MA-312); null while the piece is being
+     * made — they are needed for the work. A shipped piece keeps them two years from handing over, counted from
+     * shipping plus a month for the delivery; an idea that did not become an order — declined or left in „Nowe”,
+     * „Wycena”, „Zaliczka” — three months from the last contact.
      */
-    public function photosKeptUntil(): ?Carbon
+    public function keptUntil(): ?Carbon
     {
         return match ($this->status) {
             CustomOrderStatus::InProgress => null,
@@ -140,26 +143,35 @@ class CustomOrderRequest extends Model implements HasMedia
     }
 
     /**
-     * Deletes the photos — files and media records — and notes when, so the panel says they are gone. The idea's
-     * own dates stay as they were: the time it was last saved is the last contact.
+     * Forgets the customer: her name, contact, the description, Kasia's note about her and the photos — files and
+     * media records. The kind, the status, Kasia's quote and the payment links stay, so the money paid through them
+     * still adds up; the payments are orders in Checkout and stay there for the books. The idea's own dates stay as
+     * they were: its last save is still the last contact.
      *
      * @return int how many photos went
      */
-    public function deletePhotos(): int
+    public function erase(ErasureReason $because): int
     {
-        $count = $this->getMedia('photos')->count();
-
-        if ($count === 0) {
-            return 0;
-        }
+        $photos = $this->getMedia('photos')->count();
 
         $this->clearMediaCollection('photos');
 
         $this->timestamps = false;
-        $this->forceFill(['photos_deleted_at' => now()])->save();
+        $this->forceFill([
+            'name' => PersonalData::ERASED_NAME,
+            'email' => PersonalData::ERASED_EMAIL,
+            'phone' => null,
+            'quantity' => null,
+            'needed_by' => null,
+            'budget' => null,
+            'description' => '',
+            'notes' => null,
+            'erased_at' => now(),
+            'erased_because' => $because,
+        ])->save();
         $this->timestamps = true;
 
-        return $count;
+        return $photos;
     }
 
     /**
@@ -187,7 +199,8 @@ class CustomOrderRequest extends Model implements HasMedia
             'quote' => 'integer',
             'status' => CustomOrderStatus::class,
             'shipped_at' => 'datetime',
-            'photos_deleted_at' => 'datetime',
+            'erased_at' => 'datetime',
+            'erased_because' => ErasureReason::class,
         ];
     }
 }

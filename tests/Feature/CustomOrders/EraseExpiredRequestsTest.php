@@ -3,28 +3,35 @@
 namespace Tests\Feature\CustomOrders;
 
 use App\Models\User;
-use App\Modules\CustomOrders\Actions\PrunePhotos;
+use App\Modules\Checkout\Models\Order;
+use App\Modules\CustomOrders\Actions\AnonymizeCustomer;
+use App\Modules\CustomOrders\Actions\EraseExpiredRequests;
 use App\Modules\CustomOrders\Enums\BriefKind;
 use App\Modules\CustomOrders\Enums\CustomOrderStatus;
+use App\Modules\CustomOrders\Enums\ErasureReason;
 use App\Modules\CustomOrders\Enums\PaymentLinkStatus;
 use App\Modules\CustomOrders\Models\CustomOrderRequest;
+use App\Modules\CustomOrders\Models\PaymentLink;
 use App\Modules\Monitoring\Support\Alerts;
 use App\Modules\Settings\Database\Seeders\SettingsSeeder;
+use App\Modules\Shared\Support\PersonalData;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Mockery;
+use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Tests\TestCase;
 
 /**
- * MA-312: the photos from the custom order form go once the privacy policy no longer keeps them.
+ * MA-312: the customer's data and photos from the custom order form go once the privacy policy no longer keeps them.
  */
-class PrunePhotosTest extends TestCase
+class EraseExpiredRequestsTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -32,6 +39,7 @@ class PrunePhotosTest extends TestCase
     {
         parent::setUp();
 
+        Mail::fake();
         $this->withoutVite();
         $this->seed(SettingsSeeder::class);
         Storage::fake('local');
@@ -57,28 +65,31 @@ class PrunePhotosTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider unorderedStatuses
-     */
-    public function test_an_idea_without_an_order_keeps_its_photos_three_months_from_the_last_contact(CustomOrderStatus $status): void
+    #[DataProvider('unorderedStatuses')]
+    public function test_an_idea_without_an_order_is_erased_three_months_after_the_last_contact(CustomOrderStatus $status): void
     {
         Carbon::setTestNow('2026-01-15 12:00');
-        $idea = $this->ideaWithPhotos(['status' => $status]);
+        $idea = $this->ideaWithPhotos(['status' => $status, 'quote' => 45000, 'notes' => 'Zadzwonić']);
         $paths = $this->paths($idea);
 
         Carbon::setTestNow('2026-04-14 12:00');
-        $this->artisan('custom-orders:prune-photos')->assertSuccessful();
+        $this->artisan('custom-orders:erase-expired')->assertSuccessful();
+        $this->assertSame('Ola', $idea->fresh()->name);
         $this->assertCount(2, $idea->fresh()->getMedia('photos'));
 
         Carbon::setTestNow('2026-04-16 12:00');
-        $this->artisan('custom-orders:prune-photos')->assertSuccessful();
+        $this->artisan('custom-orders:erase-expired')->assertSuccessful();
 
         $idea->refresh();
+        $this->assertSame(
+            [PersonalData::ERASED_NAME, PersonalData::ERASED_EMAIL, null, null, null, null, '', null],
+            [$idea->name, $idea->email, $idea->phone, $idea->quantity, $idea->needed_by, $idea->budget, $idea->description, $idea->notes],
+        );
+        $this->assertSame([BriefKind::Mugs, $status, 45000], [$idea->kind, $idea->status, $idea->quote]);
+        $this->assertTrue($idea->erased_at->equalTo('2026-04-16 12:00'));
+        $this->assertSame(ErasureReason::Retention, $idea->erased_because);
         $this->assertCount(0, $idea->getMedia('photos'));
         $this->assertSame(0, Media::query()->count());
-        $this->assertTrue($idea->photos_deleted_at->equalTo('2026-04-16 12:00'));
-        $this->assertSame($status, $idea->status);
-        $this->assertSame('Kubki dla świadków', $idea->description);
         foreach ($paths as $path) {
             Storage::disk('local')->assertMissing($path);
         }
@@ -96,37 +107,52 @@ class PrunePhotosTest extends TestCase
         $idea->paymentLinks()->create(['token' => str_repeat('a', 40), 'amount' => 10000, 'status' => PaymentLinkStatus::Open, 'expires_at' => now()->addDays(14)]);
 
         Carbon::setTestNow('2026-05-31 12:00');
-        app(PrunePhotos::class)();
-        $this->assertCount(2, $idea->fresh()->getMedia('photos'));
+        app(EraseExpiredRequests::class)();
+        $this->assertNull($idea->fresh()->erased_at);
 
         Carbon::setTestNow('2026-06-02 12:00');
-        app(PrunePhotos::class)();
-        $this->assertCount(0, $idea->fresh()->getMedia('photos'));
+        app(EraseExpiredRequests::class)();
+        $this->assertNotNull($idea->fresh()->erased_at);
     }
 
-    public function test_a_shipped_piece_keeps_its_photos_two_years_from_handing_over(): void
+    public function test_a_shipped_piece_is_kept_two_years_from_handing_over_and_its_payment_stays(): void
     {
         Carbon::setTestNow('2026-01-10 12:00');
-        $idea = $this->ideaWithPhotos(['status' => CustomOrderStatus::InProgress]);
+        $idea = $this->ideaWithPhotos(['quote' => 90000, 'status' => CustomOrderStatus::Quoting]);
+        $this->actingAs(User::factory()->create())
+            ->post(route('admin.custom-orders.payment-links.store', $idea), ['part' => 'full'])
+            ->assertSessionHasNoErrors();
+        $this->post(route('custom-orders.payment.store', PaymentLink::query()->sole()->token), ['payment_method' => 'blik', 'blik_code' => '123456', 'accept_terms' => '1'])
+            ->assertRedirect(route('custom-orders.payment.confirmation'));
+        $this->assertSame(CustomOrderStatus::InProgress, $idea->fresh()->status);
+        $order = Order::query()->sole();
 
         Carbon::setTestNow('2026-03-01 12:00');
-        $idea->update(['status' => CustomOrderStatus::Shipped]);
+        $idea->fresh()->update(['status' => CustomOrderStatus::Shipped]);
         $this->assertTrue($idea->fresh()->shipped_at->equalTo('2026-03-01 12:00'));
 
         // 30 days for the delivery, then two years.
         Carbon::setTestNow('2028-03-30 12:00');
-        $this->artisan('custom-orders:prune-photos')->assertSuccessful();
+        $this->artisan('custom-orders:erase-expired')->assertSuccessful();
+        $this->assertNull($idea->fresh()->erased_at);
         $this->assertCount(2, $idea->fresh()->getMedia('photos'));
 
         Carbon::setTestNow('2028-04-01 12:00');
-        $this->artisan('custom-orders:prune-photos')->assertSuccessful();
-        $this->assertCount(0, $idea->fresh()->getMedia('photos'));
-        $this->assertSame(CustomOrderStatus::Shipped, $idea->fresh()->status);
+        $this->artisan('custom-orders:erase-expired')->assertSuccessful();
+
+        $idea->refresh();
+        $this->assertSame(PersonalData::ERASED_EMAIL, $idea->email);
+        $this->assertCount(0, $idea->getMedia('photos'));
+        $this->assertSame([CustomOrderStatus::Shipped, 90000, 90000], [$idea->status, $idea->quote, $idea->paidAmount()]);
+        $this->assertSame(
+            $order->only(['name', 'email', 'phone', 'total_gross', 'status', 'payment_status']),
+            $order->fresh()->only(['name', 'email', 'phone', 'total_gross', 'status', 'payment_status']),
+        );
     }
 
     public function test_a_piece_moved_back_from_shipped_forgets_the_shipping_date(): void
     {
-        $idea = $this->ideaWithPhotos(['status' => CustomOrderStatus::Shipped]);
+        $idea = $this->idea(['status' => CustomOrderStatus::Shipped]);
         $this->assertNotNull($idea->shipped_at);
 
         $idea->update(['status' => CustomOrderStatus::InProgress]);
@@ -136,16 +162,17 @@ class PrunePhotosTest extends TestCase
         $this->assertNull($idea->fresh()->shipped_at);
     }
 
-    public function test_a_piece_being_made_keeps_its_photos(): void
+    public function test_a_piece_being_made_is_left_alone(): void
     {
         Carbon::setTestNow('2024-01-15 12:00');
         $idea = $this->ideaWithPhotos(['status' => CustomOrderStatus::InProgress]);
 
         Carbon::setTestNow('2026-10-31 12:00');
-        $this->artisan('custom-orders:prune-photos')->assertSuccessful();
+        $this->artisan('custom-orders:erase-expired')->assertSuccessful();
 
+        $this->assertSame('Ola', $idea->fresh()->name);
         $this->assertCount(2, $idea->fresh()->getMedia('photos'));
-        $this->assertNull($idea->fresh()->photos_deleted_at);
+        $this->assertNull($idea->fresh()->erased_at);
     }
 
     public function test_the_count_goes_to_the_log_and_the_idea_keeps_its_dates(): void
@@ -157,12 +184,15 @@ class PrunePhotosTest extends TestCase
 
         Log::spy();
         Carbon::setTestNow('2026-05-01 12:00');
-        $this->artisan('custom-orders:prune-photos')
-            ->expectsOutput('Photos deleted: 4, requests: 2, failed: 0.')
+        $this->artisan('custom-orders:erase-expired')
+            ->expectsOutput('Requests erased: 3, photos deleted: 4, failed: 0.')
             ->assertSuccessful();
 
-        Log::shouldHaveReceived('info')->with('custom-orders:prune-photos deleted 4 photos of 2 custom order requests.')->once();
+        Log::shouldHaveReceived('info')->with('custom-orders:erase-expired erased 3 custom order requests with 4 photos.')->once();
         $this->assertTrue($idea->fresh()->updated_at->equalTo('2026-01-15 12:00'));
+
+        // Nothing left to erase the next night.
+        $this->artisan('custom-orders:erase-expired')->expectsOutput('Requests erased: 0, photos deleted: 0, failed: 0.');
     }
 
     public function test_one_failing_idea_does_not_stop_the_others_and_sends_an_alert(): void
@@ -178,37 +208,43 @@ class PrunePhotosTest extends TestCase
         });
 
         $alerts = Mockery::mock(Alerts::class);
-        $alerts->shouldReceive('send')->once()->withArgs(fn (string $key, string $subject, string $details) => $key === 'custom-orders-prune-photos'
+        $alerts->shouldReceive('send')->once()->withArgs(fn (string $key, string $subject, string $details) => $key === 'custom-orders-erase-expired'
             && str_contains($details, '#'.$broken->id.': Dysk tylko do odczytu'));
         $this->app->instance(Alerts::class, $alerts);
 
         Carbon::setTestNow('2026-05-01 12:00');
-        $this->artisan('custom-orders:prune-photos')->assertFailed();
+        $this->artisan('custom-orders:erase-expired')->assertFailed();
 
+        $this->assertNotNull($fine->fresh()->erased_at);
         $this->assertCount(0, $fine->fresh()->getMedia('photos'));
-        $this->assertNull($broken->fresh()->photos_deleted_at);
+        $this->assertNull($broken->fresh()->erased_at);
     }
 
-    public function test_the_panel_says_when_the_photos_were_deleted(): void
+    public function test_the_panel_says_when_and_why_the_data_went(): void
     {
         Carbon::setTestNow('2026-01-15 12:00');
-        $idea = $this->ideaWithPhotos(['status' => CustomOrderStatus::Declined]);
+        $expired = $this->ideaWithPhotos(['status' => CustomOrderStatus::Declined]);
+        $this->ideaWithPhotos(['status' => CustomOrderStatus::Declined, 'email' => 'basia@example.com']);
+
+        Carbon::setTestNow('2026-02-10 12:00');
+        app(AnonymizeCustomer::class)('Basia@example.com');
 
         Carbon::setTestNow('2026-05-01 12:00');
-        $this->artisan('custom-orders:prune-photos')->assertSuccessful();
+        $this->artisan('custom-orders:erase-expired')->assertSuccessful();
 
         $this->actingAs(User::factory()->create())
             ->get('/panel/zamowienia-indywidualne?status=declined')
             ->assertOk()
-            ->assertSee('Zdjęcia usunięte 1.05.2026')
-            ->assertDontSee('Zdjęcia od Ola');
+            ->assertSee('Dane i zdjęcia usunięte 1.05.2026 — minął czas przechowywania')
+            ->assertSee('Dane i zdjęcia usunięte 10.02.2026 — na prośbę klientki')
+            ->assertDontSee('Kubki dla świadków');
 
-        $this->get('/panel/zamowienia-indywidualne/'.$idea->id.'/zdjecia/1')->assertNotFound();
+        $this->get('/panel/zamowienia-indywidualne/'.$expired->id.'/zdjecia/1')->assertNotFound();
     }
 
-    public function test_it_runs_once_a_night(): void
+    public function test_it_runs_once_a_night_after_the_backup(): void
     {
-        $event = collect(app(Schedule::class)->events())->first(fn ($event) => str_contains($event->command ?? '', 'custom-orders:prune-photos'));
+        $event = collect(app(Schedule::class)->events())->first(fn ($event) => str_contains($event->command ?? '', 'custom-orders:erase-expired'));
 
         $this->assertNotNull($event);
         $this->assertSame('30 3 * * *', $event->expression);
@@ -232,7 +268,11 @@ class PrunePhotosTest extends TestCase
         return CustomOrderRequest::query()->create([
             'name' => 'Ola',
             'email' => 'ola@example.com',
+            'phone' => '600 100 200',
             'kind' => BriefKind::Mugs,
+            'quantity' => '6',
+            'needed_by' => 'na wrzesień',
+            'budget' => 'ok. 600 zł',
             'description' => 'Kubki dla świadków',
             'status' => CustomOrderStatus::New,
             ...$attributes,

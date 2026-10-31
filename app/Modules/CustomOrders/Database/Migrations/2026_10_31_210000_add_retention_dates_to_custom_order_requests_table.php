@@ -12,11 +12,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // When the piece went out — the two years the photos are kept count from it (MA-312) — and when the photos
-        // were deleted, so the panel says so instead of showing an empty gallery.
+        // When the piece went out — the two years the idea is kept count from it (MA-312) — and when and why the
+        // customer's data and photos were erased: the time to keep them ran out, or she asked (MA-241). The panel
+        // says so instead of showing an empty gallery.
         Schema::table('custom_order_requests', function (Blueprint $table) {
             $table->dateTime('shipped_at')->nullable()->after('status');
-            $table->dateTime('photos_deleted_at')->nullable()->after('shipped_at');
+            $table->dateTime('erased_at')->nullable()->after('shipped_at');
+            // ErasureReason value.
+            $table->string('erased_because', 20)->nullable()->after('erased_at');
         });
 
         // Ideas shipped before this column existed: the last save is the closest date there is.
@@ -29,7 +32,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('custom_order_requests', function (Blueprint $table) {
-            $table->dropColumn(['shipped_at', 'photos_deleted_at']);
+            $table->dropColumn(['shipped_at', 'erased_at', 'erased_because']);
         });
     }
 };

@@ -2,7 +2,7 @@
 
 namespace App\Modules\CustomOrders;
 
-use App\Modules\CustomOrders\Console\PrunePhotosCommand;
+use App\Modules\CustomOrders\Console\EraseExpiredRequestsCommand;
 use App\Modules\CustomOrders\Mail\BriefConfirmed;
 use App\Modules\CustomOrders\Mail\PaymentLinkSent;
 use App\Modules\Shared\ModuleServiceProvider;
@@ -22,8 +22,8 @@ class CustomOrdersServiceProvider extends ModuleServiceProvider
 
     public function register(): void
     {
-        // Photos past the time the privacy policy keeps them go once a night, after the backup at 02:50 (MA-312).
-        $this->callAfterResolving(Schedule::class, fn (Schedule $schedule) => $schedule->command(PrunePhotosCommand::class)->dailyAt('03:30')->withoutOverlapping());
+        // Data and photos past the time the privacy policy keeps them go once a night, after the backup at 02:50 (MA-312).
+        $this->callAfterResolving(Schedule::class, fn (Schedule $schedule) => $schedule->command(EraseExpiredRequestsCommand::class)->dailyAt('03:30')->withoutOverlapping());
     }
 
     public function boot(): void
@@ -31,7 +31,7 @@ class CustomOrdersServiceProvider extends ModuleServiceProvider
         parent::boot();
 
         if ($this->app->runningInConsole()) {
-            $this->commands([PrunePhotosCommand::class]);
+            $this->commands([EraseExpiredRequestsCommand::class]);
         }
     }
 }
