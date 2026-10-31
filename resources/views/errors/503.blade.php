@@ -1,10 +1,11 @@
 @extends('errors::layout')
+@use('App\Modules\Shared\Support\ErrorPage')
 
-@section('title', 'Krótka przerwa')
-@section('eyebrow', 'krótka przerwa')
-@section('heading', 'Robię porządki na stronie')
-@section('lead', 'Za kilka minut wszystko wróci na swoje miejsce, razem z Twoim koszykiem. Zajrzyj za chwilę.')
+@section('title', ErrorPage::text('503.title'))
+@section('eyebrow', ErrorPage::text('503.eyebrow'))
+@section('heading', ErrorPage::text('503.heading'))
+@section('lead', ErrorPage::text('503.lead'))
 
 @section('actions')
-    <a href="{{ url()->full() }}" class="button button-primary">Odśwież stronę</a>
+    <a href="{{ url()->full() }}" class="button button-primary">{{ ErrorPage::text('503.refresh') }}</a>
 @endsection

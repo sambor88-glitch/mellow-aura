@@ -52,9 +52,10 @@ class FooterLinksTest extends TestCase
         // The wording the EU directive gives the withdrawal button (2023/2673, art. 11a) stays as it is.
         $this->assertStringContainsString('>Odstąp od umowy tutaj</a>', $footer);
 
+        // About and the studio wait for their English texts (MA-301).
         $english = $this->footer('/en/shop');
-        $this->assertStringContainsString('<a href="'.url('/en/about').'" class="text-on-dark hover:text-rose">About me</a>', $english);
-        $this->assertStringContainsString('<a href="'.url('/en/studio').'" class="text-on-dark hover:text-rose">The studio</a>', $english);
+        $this->assertStringNotContainsString('>About me</a>', $english);
+        $this->assertStringNotContainsString('>The studio</a>', $english);
     }
 
     private function footer(string $page): string

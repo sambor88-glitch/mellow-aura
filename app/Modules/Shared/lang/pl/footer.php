@@ -23,5 +23,7 @@ return [
     'terms' => 'Regulamin',
     'privacy' => 'Polityka prywatności',
     'withdrawal' => 'Odstąp od umowy tutaj',
+    // Polish pages are never marked; the key exists so both languages have it.
+    'in_polish' => '',
     'cookies' => 'Ustawienia cookies',
 ];

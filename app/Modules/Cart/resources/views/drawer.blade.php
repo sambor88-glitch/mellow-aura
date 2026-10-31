@@ -1,6 +1,8 @@
 @inject('cart', 'App\Modules\Cart\Cart')
 {{-- A modal dialog: focus stays inside, and Esc, a click on the backdrop or × closes it. --}}
-<dialog id="cart" data-count="{{ $cart->count() }}" x-data aria-labelledby="cart-title"
+<dialog id="cart" data-count="{{ $cart->count() }}" x-data
+        data-failure="{{ __('cart::drawer.failure') }}" data-favorite-saved-header="{{ __('cart::drawer.favorite_saved_header') }}"
+        data-favorite-saved-shop="{{ __('cart::drawer.favorite_saved_shop') }}" data-favorite-removed="{{ __('cart::drawer.favorite_removed') }}" aria-labelledby="cart-title"
         x-on:click.self="$el.close()" x-on:keydown.escape="$el.close()" x-on:close="$store.cart.closed()"
         class="aura-overlay fixed inset-0 size-full max-h-none max-w-none animate-ma-in justify-end bg-ink/28 pad-safe [--pad:10px] text-ink backdrop-blur-[6px] open:flex backdrop:bg-transparent">
     {{-- A glass panel lifted off the edge that slides in out of a blur (mellowaura-design, „Szuflada koszyka”). --}}
