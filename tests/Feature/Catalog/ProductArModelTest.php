@@ -37,14 +37,14 @@ class ProductArModelTest extends TestCase
     public function test_a_product_without_a_model_has_no_button(): void
     {
         $this->get('/produkt/kubek-mleczna-droga')->assertOk()->assertDontSee('Zobacz u siebie');
-        $this->actingAs($this->owner)->get('/panel/produkty')->assertOk()->assertSee('Model 3D — jeszcze żadnego');
+        $this->actingAs($this->owner)->get('/panel/produkty/'.$this->product->id)->assertOk()->assertSee('Model 3D — jeszcze żadnego');
     }
 
     public function test_a_model_added_in_the_panel_shows_on_the_product_page_and_is_sent_as_gltf(): void
     {
         $this->actingAs($this->owner)
             ->post($this->modelUrl(), ['model' => $this->glb('Scan 2026-10-31.glb')])
-            ->assertRedirect('/panel/produkty#produkt-'.$this->product->id)
+            ->assertRedirect('/panel/produkty/'.$this->product->id.'?tab=desc#model-3d')
             ->assertSessionHas('panel_status', 'Model 3D dodany');
 
         $model = $this->product->fresh()->arModel();
@@ -56,7 +56,7 @@ class ProductArModelTest extends TestCase
         // A model is not a photo: no thumbnails made from it.
         $this->assertSame([], array_filter($model->generated_conversions));
 
-        $this->get('/panel/produkty')->assertOk()->assertSee('Model 3D — klientki zobaczą go u siebie')->assertSee($model->file_name);
+        $this->get('/panel/produkty/'.$this->product->id)->assertOk()->assertSee('Model 3D — klientki zobaczą go u siebie')->assertSee($model->file_name);
 
         $url = route('product.model', [$model, $model->file_name]);
         $this->get('/produkt/kubek-mleczna-droga')
@@ -86,7 +86,7 @@ class ProductArModelTest extends TestCase
         $this->get(route('product.model', [$first, $first->file_name]))->assertNotFound();
 
         $this->delete($this->modelUrl())
-            ->assertRedirect('/panel/produkty#produkt-'.$this->product->id)
+            ->assertRedirect('/panel/produkty/'.$this->product->id.'?tab=desc#model-3d')
             ->assertSessionHas('panel_status', 'Model 3D usunięty');
 
         $this->assertNull($this->product->fresh()->arModel());
@@ -105,7 +105,7 @@ class ProductArModelTest extends TestCase
 
         foreach ([$renamed, $cut, $wrongName] as $file) {
             $this->post($this->modelUrl(), ['model' => $file])
-                ->assertRedirect('/panel/produkty#produkt-'.$this->product->id)
+                ->assertRedirect('/panel/produkty/'.$this->product->id.'?tab=desc#model-3d')
                 ->assertSessionHasErrors(['model' => 'Tego pliku nie dodam — wybierz model 3D w formacie GLB'], errorBag: 'model-'.$this->product->id);
         }
 
