@@ -51,14 +51,16 @@ test('a change in one form is never lost silently', async ({ page }) => {
     await threshold.fill('401');
     await expect(delivery).toHaveAttribute('data-dirty', '');
 
-    // Saving another card asks in the page and stays here.
+    // Saving another card, in another tab (MA-321), asks in the page and stays here.
+    await page.getByRole('tab', { name: 'Pracownia' }).click();
     await studio.locator('button:not([type="button"])').last().click();
     await expect(question).toContainText('Masz niezapisane zmiany w „Dostawa i opłaty”. Zapisz je najpierw albo porzuć.');
     expect(new URL(page.url()).pathname).toBe('/panel/ustawienia');
 
-    // „Wróć do…” leads back to the changed card.
+    // „Wróć do…” leads back to the changed card and opens its tab (MA-315).
     await question.getByRole('button', { name: 'Wróć do „Dostawa i opłaty”' }).click();
     await expect(question).toHaveCount(0);
+    await expect(threshold).toBeVisible();
     await expect(threshold).toHaveValue('401');
 
     // A link in the menu asks too, and dropping the change follows it.
