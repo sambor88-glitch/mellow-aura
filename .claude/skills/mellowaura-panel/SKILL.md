@@ -60,6 +60,24 @@ kolejne przewijają się na karcie w sklepie po najechaniu. Wgrywanie wielu plik
 Pasek z ośmioma zakładkami łamie się na wąskim ekranie — to akceptowalne w prototypie, we wdrożeniu
 zaplanuj boczne menu. Nie dodawaj dziewiątej zakładki bez tej zmiany.
 
+## Długie ekrany: zakładki i lista (MA-309, MA-315)
+
+Ekran, który na iPhonie ma więcej niż 3 ekrany przewijania, dzielisz. Wzorzec jest w kodzie i w `Aura - panel.html`, ekran 6.
+
+- **Zakładki** — `<x-admin::tabs :tabs="[...]" label="…">` i w nim `<x-admin::tab-panel name="…">`. Każdy formularz zostaje
+  w swojej zakładce z własnym zapisem i swoim `id`. Kontroler przekierowuje z `->withFragment('id')`, więc po zapisie
+  wraca ta sama zakładka. Zakładka może mieć licznik (`'count'`) i kropkę (`'dot' => 'error'|'todo'`).
+- **Lista rzeczy zwinięta do jednej linii** — `<details>` z `<summary>`: nazwa, pod nią jedna linia szczegółu,
+  po prawej to, czego brakuje („Google ✓”, „bez wstępu”). Rzecz z błędem ma `open`. Nowa rzecz to zwinięte „+ Nowy …”.
+- **Jedna rzecz naraz** — przy dużych pozycjach (Zdjęcia stron, Kategorie) lista znika po stuknięciu,
+  a na jej miejscu jest jedna rzecz z „← Wszystkie …” i, gdy to ma sens, „Zapisz i następna →” (`name="next"`).
+- **Błędy** — pole z błędem ma `aria-invalid="true"`, a komunikat nad formularzem `data-error`. Wtedy zakładka sama się
+  otwiera i dostaje czerwoną kropkę (`resources/js/panel-tabs.js`).
+- **Linki** — `#id` otwiera zakładkę i rozwija `<details>`, `#id-pola` ustawia w polu kursor. `?tab=` w adresie
+  wybiera zakładkę; bez niego ekran wraca do ostatnio używanej.
+- Na telefonie tytuł ekranu jest tylko w górnym pasku (`x-admin::layout`), a karty mają `px-[18px] py-5`
+  zamiast `px-[26px] py-7`.
+
 ## Kafelek z liczbą
 
 Panel otwiera rząd czterech liczb: dziś, ten tydzień, do wysłania, do odpisania.
