@@ -1,3 +1,4 @@
+{{-- Kubek z napisem (MA-322): the photos, where the lettering sits, the sizes with prices and the page texts in tabs. --}}
 @use('App\Modules\MugConfigurator\Support\MugOptions')
 @use('App\Modules\Shared\Support\Money')
 @php
@@ -46,7 +47,7 @@
         'fired' => ['Gotowy napis po wypale', 'Prawdziwy napis na kubku po wypale. Stoi pod podglądem, żeby było widać, jak czcionka z podglądu wygląda w glinie.'],
     ];
 
-    $card = 'scroll-mt-6 rounded-[4px] border border-line bg-cream px-[26px] py-7';
+    $card = 'scroll-mt-24 rounded-[4px] border border-line bg-cream px-[18px] py-5 md:px-[26px] md:py-7';
     $heading = 'mb-1 font-serif text-[25px]';
     $intro = 'mb-[18px] text-[13.5px] leading-[1.6] text-label';
     $alert = 'mb-3.5 rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text';
@@ -55,8 +56,8 @@
     $border = fn ($bag, string $key) => $bag->has($key) ? 'border-error' : 'border-line';
 @endphp
 <x-admin::layout title="Kubek z napisem" lead="Zdjęcie pod napisy, rozmiary z cenami i to, jak napis siedzi na kubku. Zmiany widać na stronie od razu.">
-    <div class="flex flex-wrap items-start gap-[26px]">
-        <div class="grid min-w-0 flex-[1_1_360px] gap-[22px]">
+  <x-admin::tabs :tabs="['zdjecie' => 'Zdjęcia', 'napis' => 'Położenie napisu', 'rozmiary' => 'Rozmiary i ceny', 'teksty' => 'Teksty']" label="Części ekranu kubka">
+    <x-admin::tab-panel name="zdjecie" class="grid max-w-[880px] gap-[22px]">
             <section id="zdjecie" class="{{ $card }}">
                 <h2 class="{{ $heading }}">Zdjęcie kubka pod napisy</h2>
                 <p class="{{ $intro }}">Na tym zdjęciu klientka widzi swój tekst. Najlepiej Twój własny kubek, sfotografowany prosto z boku, na jednolitym tle — i <strong class="font-medium">bez żadnego napisu</strong>, bo tekst ze strony nałoży się na istniejący.</p>
@@ -121,13 +122,67 @@
                 @endif
             </section>
 
+    </x-admin::tab-panel>
+
+    <x-admin::tab-panel name="napis" class="grid max-w-[880px] gap-[22px]">
+            <form id="napis" method="post" action="{{ route('admin.mug.look') }}" novalidate class="{{ $card }}"
+                  x-data="{ x: @js($look['x']), y: @js($look['y']), size: @js($look['size']), rotation: @js($look['rotation']), ink: @js($look['ink']), inks: @js($inks->keyBy('code')) }">
+                @csrf
+                @method('PUT')
+                <h2 class="{{ $heading }}">Gdzie ma siedzieć napis</h2>
+                <p class="{{ $intro }}">Ustaw raz pod swoje zdjęcie. Podgląd pokazuje efekt na żywo.</p>
+                @if ($lookErrors->any())
+                    <p role="alert" data-error class="{{ $alert }}">{{ $lookErrors->first() }}</p>
+                @endif
+                <div class="relative mb-5 overflow-hidden rounded-[4px] bg-line-soft">
+                    @if ($photo)
+                        <img src="{{ $photo }}" alt="Podgląd ustawienia napisu" width="1200" height="1200" class="block aspect-square w-full object-cover">
+                    @else
+                        <div class="aspect-square w-full"></div>
+                    @endif
+                    <div aria-hidden="true" class="absolute w-[60%] text-center text-[15px]"
+                         style="left: {{ $look['x'] }}%; top: {{ $look['y'] }}%; transform: translate(-50%, -50%) rotate({{ $look['rotation'] }}deg)"
+                         x-bind:style="{ left: x + '%', top: y + '%', transform: 'translate(-50%, -50%) rotate(' + rotation + 'deg)' }">
+                        <span class="block leading-[1.35] tracking-[0.16em] [overflow-wrap:anywhere]"
+                              style="font-size: {{ $look['size'] }}%; color: {{ $ink['hex'] }}"
+                              x-bind:style="{ fontSize: size + '%', color: inks[ink]?.hex }">TWÓJ NAPIS</span>
+                    </div>
+                </div>
+
+                <fieldset>
+                    <legend class="mb-1 text-[12.5px] text-muted">Kolor napisu — <span x-text="inks[ink]?.name">{{ $ink['name'] }}</span></legend>
+                    <p class="mb-2.5 text-[12px] leading-[1.5] text-hint">Tylko dla Ciebie — klientki tego nie wybierają. Dopasuj do kubka, który masz w tle.</p>
+                    <div class="mb-5 flex flex-wrap gap-2.5">
+                        @foreach ($inks as $colour)
+                            <label title="{{ $colour['name'] }}" style="background-color: {{ $colour['hex'] }}"
+                                   class="relative size-[34px] cursor-pointer rounded-full border-2 border-transparent shadow-[inset_0_0_0_2px_var(--color-cream),inset_0_0_0_3px_rgba(47,38,32,.22)] after:absolute after:-inset-1.5 has-checked:border-ink has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy">
+                                <input type="radio" name="ink" value="{{ $colour['code'] }}" x-model="ink" @checked($look['ink'] === $colour['code']) class="sr-only">
+                                <span class="sr-only">{{ $colour['name'] }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                </fieldset>
+
+                <div class="grid gap-3.5">
+                    @foreach ([['x_percent', 'x', 'W poziomie', 10, 90, '%'], ['y_percent', 'y', 'W pionie', 10, 90, '%'], ['size_percent', 'size', 'Wielkość liter', 50, 220, '%'], ['rotation_deg', 'rotation', 'Przekrzywienie', -15, 15, '°']] as [$name, $model, $label, $min, $max, $unit])
+                        <label class="block">
+                            <span class="mb-1.5 block text-[12.5px] text-muted">{{ $label }} — <span x-text="{{ $model }} + '{{ $unit }}'">{{ $look[$model] }}{{ $unit }}</span></span>
+                            <input type="range" name="{{ $name }}" min="{{ $min }}" max="{{ $max }}" value="{{ $look[$model] }}" x-model.number="{{ $model }}" class="h-11 w-full accent-ink">
+                        </label>
+                    @endforeach
+                </div>
+                <button class="{{ $button }}">Zapisz położenie i kolor napisu</button>
+            </form>
+    </x-admin::tab-panel>
+
+    <x-admin::tab-panel name="rozmiary" class="grid max-w-[880px] gap-[22px]">
             <form id="rozmiary" method="post" action="{{ route('admin.mug.sizes') }}" novalidate class="{{ $card }}" x-data="{ chars: @js((string) $maxChars), lines: @js((string) $maxLines) }">
                 @csrf
                 @method('PUT')
                 <h2 class="{{ $heading }}">Rozmiary, pojemność i ceny</h2>
                 <p class="{{ $intro }}">Pojemność w mililitrach dopisuje się sama do nazwy. Zostaw puste, jeśli nie chcesz jej podawać.</p>
                 @if ($sizeErrors->any())
-                    <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+                    <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
                 @endif
                 <div class="grid gap-2.5">
                     @foreach ($sizeRows as $index => $row)
@@ -195,65 +250,16 @@
                 </div>
                 <button class="{{ $button }}">Zapisz rozmiary i limit znaków</button>
             </form>
-        </div>
+    </x-admin::tab-panel>
 
-        <div class="grid min-w-0 flex-[1_1_320px] gap-[22px]">
-            <form id="napis" method="post" action="{{ route('admin.mug.look') }}" novalidate class="{{ $card }}"
-                  x-data="{ x: @js($look['x']), y: @js($look['y']), size: @js($look['size']), rotation: @js($look['rotation']), ink: @js($look['ink']), inks: @js($inks->keyBy('code')) }">
-                @csrf
-                @method('PUT')
-                <h2 class="{{ $heading }}">Gdzie ma siedzieć napis</h2>
-                <p class="{{ $intro }}">Ustaw raz pod swoje zdjęcie. Podgląd pokazuje efekt na żywo.</p>
-                @if ($lookErrors->any())
-                    <p role="alert" class="{{ $alert }}">{{ $lookErrors->first() }}</p>
-                @endif
-                <div class="relative mb-5 overflow-hidden rounded-[4px] bg-line-soft">
-                    @if ($photo)
-                        <img src="{{ $photo }}" alt="Podgląd ustawienia napisu" width="1200" height="1200" class="block aspect-square w-full object-cover">
-                    @else
-                        <div class="aspect-square w-full"></div>
-                    @endif
-                    <div aria-hidden="true" class="absolute w-[60%] text-center text-[15px]"
-                         style="left: {{ $look['x'] }}%; top: {{ $look['y'] }}%; transform: translate(-50%, -50%) rotate({{ $look['rotation'] }}deg)"
-                         x-bind:style="{ left: x + '%', top: y + '%', transform: 'translate(-50%, -50%) rotate(' + rotation + 'deg)' }">
-                        <span class="block leading-[1.35] tracking-[0.16em] [overflow-wrap:anywhere]"
-                              style="font-size: {{ $look['size'] }}%; color: {{ $ink['hex'] }}"
-                              x-bind:style="{ fontSize: size + '%', color: inks[ink]?.hex }">TWÓJ NAPIS</span>
-                    </div>
-                </div>
-
-                <fieldset>
-                    <legend class="mb-1 text-[12.5px] text-muted">Kolor napisu — <span x-text="inks[ink]?.name">{{ $ink['name'] }}</span></legend>
-                    <p class="mb-2.5 text-[12px] leading-[1.5] text-hint">Tylko dla Ciebie — klientki tego nie wybierają. Dopasuj do kubka, który masz w tle.</p>
-                    <div class="mb-5 flex flex-wrap gap-2.5">
-                        @foreach ($inks as $colour)
-                            <label title="{{ $colour['name'] }}" style="background-color: {{ $colour['hex'] }}"
-                                   class="relative size-[34px] cursor-pointer rounded-full border-2 border-transparent shadow-[inset_0_0_0_2px_var(--color-cream),inset_0_0_0_3px_rgba(47,38,32,.22)] after:absolute after:-inset-1.5 has-checked:border-ink has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy">
-                                <input type="radio" name="ink" value="{{ $colour['code'] }}" x-model="ink" @checked($look['ink'] === $colour['code']) class="sr-only">
-                                <span class="sr-only">{{ $colour['name'] }}</span>
-                            </label>
-                        @endforeach
-                    </div>
-                </fieldset>
-
-                <div class="grid gap-3.5">
-                    @foreach ([['x_percent', 'x', 'W poziomie', 10, 90, '%'], ['y_percent', 'y', 'W pionie', 10, 90, '%'], ['size_percent', 'size', 'Wielkość liter', 50, 220, '%'], ['rotation_deg', 'rotation', 'Przekrzywienie', -15, 15, '°']] as [$name, $model, $label, $min, $max, $unit])
-                        <label class="block">
-                            <span class="mb-1.5 block text-[12.5px] text-muted">{{ $label }} — <span x-text="{{ $model }} + '{{ $unit }}'">{{ $look[$model] }}{{ $unit }}</span></span>
-                            <input type="range" name="{{ $name }}" min="{{ $min }}" max="{{ $max }}" value="{{ $look[$model] }}" x-model.number="{{ $model }}" class="h-11 w-full accent-ink">
-                        </label>
-                    @endforeach
-                </div>
-                <button class="{{ $button }}">Zapisz położenie i kolor napisu</button>
-            </form>
-
+    <x-admin::tab-panel name="teksty" class="grid max-w-[880px] gap-[22px]">
             <form id="teksty" method="post" action="{{ route('admin.mug.texts') }}" novalidate class="{{ $card }}">
                 @csrf
                 @method('PUT')
                 <h2 class="{{ $heading }}">Teksty na stronie kubka</h2>
                 <p class="{{ $intro }}">Puste zdanie nie pokaże się na stronie.</p>
                 @if ($textErrors->any())
-                    <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+                    <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
                 @endif
                 <div class="grid gap-3.5">
                     @foreach ($textFields as [$key, $label, $rows])
@@ -269,6 +275,6 @@
                 </div>
                 <button class="{{ $button }}">Zapisz teksty na stronie</button>
             </form>
-        </div>
-    </div>
+    </x-admin::tab-panel>
+  </x-admin::tabs>
 </x-admin::layout>
