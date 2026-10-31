@@ -5,9 +5,9 @@ namespace App\Modules\CustomOrders\Models;
 use App\Modules\CustomOrders\Enums\BriefKind;
 use App\Modules\CustomOrders\Enums\CustomOrderStatus;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Support\Carbon;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
