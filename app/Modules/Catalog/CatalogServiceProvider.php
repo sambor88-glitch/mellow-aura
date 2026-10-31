@@ -2,11 +2,14 @@
 
 namespace App\Modules\Catalog;
 
+use App\Modules\Admin\Support\Search\PanelSearch;
 use App\Modules\Catalog\Console\SyncEuroRateCommand;
 use App\Modules\Catalog\Mail\BackInStock;
 use App\Modules\Catalog\Models\ProductVariant;
 use App\Modules\Catalog\Support\CatalogSitemap;
 use App\Modules\Catalog\Support\ProductMerchantItems;
+use App\Modules\Catalog\Support\Search\ProductSearch;
+use App\Modules\Catalog\Support\Search\ProductSettingsSearch;
 use App\Modules\Shared\ModuleServiceProvider;
 use App\Modules\Shared\Support\BusinessStructuredData;
 use App\Modules\Shared\Support\MerchantFeed;
@@ -21,6 +24,7 @@ class CatalogServiceProvider extends ModuleServiceProvider
     {
         $this->callAfterResolving(SitemapPages::class, fn (SitemapPages $pages) => $pages->add(new CatalogSitemap));
         $this->callAfterResolving(MerchantFeed::class, fn (MerchantFeed $feed) => $feed->add(fn () => $this->app->make(ProductMerchantItems::class)()));
+        $this->callAfterResolving(PanelSearch::class, fn (PanelSearch $search) => $search->add(new ProductSearch)->add(new ProductSettingsSearch));
 
         // Euro prices that follow the NBP rate move within the hour of a new rate.
         $this->callAfterResolving(Schedule::class, fn (Schedule $schedule) => $schedule->command(SyncEuroRateCommand::class)->hourly()->withoutOverlapping());

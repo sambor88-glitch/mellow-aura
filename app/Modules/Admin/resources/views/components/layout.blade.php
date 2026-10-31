@@ -3,6 +3,7 @@
      has its own button under the thumb. actions: a button next to the title instead of the lead. --}}
 @props(['title', 'lead' => null, 'heading' => true, 'compact' => false])
 @use('App\Modules\Admin\Menu')
+@use('App\Modules\Admin\Support\Search\QuickActions')
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -15,7 +16,13 @@
 </head>
 <body class="bg-sand-dark" x-data="{ menu: false }" x-on:keydown.escape.window="if (menu) { menu = false; $refs.menuButton.focus() }">
     {{-- On a phone the sections hide under „Menu” and the bar names the screen, so the orders come first (MA-249). --}}
-    <header class="border-b border-line">
+    {{-- The search (MA-308) lives in the header: the pill on a computer, the magnifier next to „Menu” on a phone. --}}
+    @php($owner = auth()->user()?->isOwner())
+    <header class="border-b border-line" @auth x-data="panelSearch(@js([
+        'url' => route('admin.search'),
+        'quick' => app(QuickActions::class)->all(auth()->user()),
+        'account' => auth()->id(),
+    ]))" @endauth>
         <div class="mx-auto flex max-w-[1280px] items-center gap-x-3 px-4 py-3 md:gap-x-6 md:px-7 md:py-4">
             @auth
                 <button type="button" x-ref="menuButton" x-on:click="menu = ! menu" aria-controls="panel-menu" aria-expanded="false" x-bind:aria-expanded="menu.toString()"
@@ -28,11 +35,23 @@
                     @endif
                 </button>
                 <span aria-hidden="true" class="min-w-0 flex-1 truncate font-serif text-[21px] font-light md:hidden">{{ $title }}</span>
+                <button type="button" x-on:click="show()" aria-haspopup="dialog" aria-label="Szukaj w panelu"
+                        class="grid size-11 flex-none place-items-center rounded-full border border-line-strong bg-cream text-ink md:hidden">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" class="size-[18px] fill-none stroke-current stroke-[1.6] [stroke-linecap:round]"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg>
+                </button>
             @endauth
             <a href="{{ auth()->check() ? route('admin.dashboard') : url('/') }}" @class(['flex-col gap-0.5 text-ink hover:text-ink', 'hidden md:flex' => auth()->check(), 'flex' => auth()->guest()])>
                 <span class="font-serif text-[22px] leading-none tracking-[0.16em] uppercase">mellowaura</span>
                 <span class="text-[9px] tracking-[0.3em] text-label uppercase">mój panel</span>
             </a>
+            @auth
+                <button type="button" x-on:click="show()" aria-haspopup="dialog" aria-keyshortcuts="Control+K Meta+K /"
+                        class="ml-6 hidden min-h-11 max-w-[520px] min-w-0 flex-1 items-center gap-2.5 rounded-full border border-line-strong bg-cream pr-2 pl-4 text-left text-[13.5px] text-hint transition-colors duration-300 hover:border-ink hover:text-lead md:flex">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" class="size-[18px] flex-none fill-none stroke-current stroke-[1.6] [stroke-linecap:round]"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg>
+                    <span class="min-w-0 flex-1 truncate">{{ $owner ? 'Szukaj produktu, zamówienia, klientki, ustawienia…' : 'Szukaj zamówienia…' }}</span>
+                    <span aria-hidden="true" x-text="shortcut" class="flex-none rounded-full border border-line bg-linen px-2.5 py-0.5 text-[11px] tracking-[0.04em] text-label">Ctrl K</span>
+                </button>
+            @endauth
             <a href="{{ url('/') }}" @class(['ml-auto text-[13px] text-lead hover:text-navy', 'hidden md:inline' => auth()->check()])>Zobacz stronę</a>
             @auth
                 <form method="post" action="{{ route('admin.logout') }}" class="flex-none">
@@ -41,6 +60,9 @@
                 </form>
             @endauth
         </div>
+        @auth
+            @include('admin::search')
+        @endauth
     </header>
 
     <div class="mx-auto max-w-[1280px] animate-ma-view px-4 pt-5 pb-24 md:px-7 md:pt-11 md:pb-16">

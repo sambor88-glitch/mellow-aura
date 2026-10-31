@@ -2,7 +2,9 @@
 
 namespace App\Modules\Customers;
 
+use App\Modules\Admin\Support\Search\PanelSearch;
 use App\Modules\Customers\Support\CustomerDirectory;
+use App\Modules\Customers\Support\Search\CustomerSearch;
 use App\Modules\Shared\ModuleServiceProvider;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +16,11 @@ use Illuminate\Support\Facades\Route;
  */
 class CustomersServiceProvider extends ModuleServiceProvider
 {
+    public function register(): void
+    {
+        $this->callAfterResolving(PanelSearch::class, fn (PanelSearch $search) => $search->add(new CustomerSearch));
+    }
+
     public function boot(): void
     {
         parent::boot();

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Workshops;
 
+use App\Modules\Admin\Support\Search\PanelSearch;
 use App\Modules\Checkout\Events\OrderPaid;
 use App\Modules\Shared\ModuleServiceProvider;
 use App\Modules\Shared\Support\SitemapPages;
@@ -12,6 +13,7 @@ use App\Modules\Workshops\Mail\BookingConfirmed;
 use App\Modules\Workshops\Mail\BookingMoved;
 use App\Modules\Workshops\Mail\BookingOverbooked;
 use App\Modules\Workshops\Mail\BookingReminder;
+use App\Modules\Workshops\Support\Search\WorkshopDateSearch;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Event;
 
@@ -32,6 +34,7 @@ class WorkshopsServiceProvider extends ModuleServiceProvider
     public function register(): void
     {
         $this->callAfterResolving(SitemapPages::class, fn (SitemapPages $pages) => $pages->routes('workshops.index'));
+        $this->callAfterResolving(PanelSearch::class, fn (PanelSearch $search) => $search->add(new WorkshopDateSearch));
         // The reminder about a day before each workshop (MA-138).
         $this->callAfterResolving(Schedule::class, fn (Schedule $schedule) => $schedule->command(SendRemindersCommand::class)->hourly()->withoutOverlapping());
     }

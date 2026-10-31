@@ -13,8 +13,8 @@ use Illuminate\Support\Str;
  */
 final class PanelAccess
 {
-    /** Route names a helper may open. */
-    private const HELPER_ROUTES = ['admin.dashboard', 'admin.logout', 'admin.orders.*', 'admin.vouchers.pdf'];
+    /** Route names a helper may open. The search answers her only from these screens (MA-308). */
+    private const HELPER_ROUTES = ['admin.dashboard', 'admin.logout', 'admin.search', 'admin.orders.*', 'admin.vouchers.pdf'];
 
     /** Route names under HELPER_ROUTES that are still the owner's alone. */
     private const OWNER_ROUTES = ['admin.orders.paid'];
