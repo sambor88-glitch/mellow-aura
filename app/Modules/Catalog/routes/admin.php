@@ -14,8 +14,9 @@ Route::get('/produkty/{product}', [ProductController::class, 'edit'])->whereNumb
 Route::post('/produkty', [ProductController::class, 'store'])->name('products.store');
 Route::put('/produkty/strona-glowna', [ProductController::class, 'hero'])->name('products.hero');
 Route::put('/produkty/ceny-w-euro', [ProductController::class, 'euroMarkup'])->name('products.euro-markup');
+// Dragging a row on the list sends the whole new order at once (MA-307).
+Route::put('/produkty/kolejnosc', [ProductController::class, 'reorder'])->name('products.reorder');
 Route::put('/produkty/{product}', [ProductController::class, 'update'])->whereNumber('product')->name('products.update');
-Route::post('/produkty/{product}/przesun', [ProductController::class, 'move'])->whereNumber('product')->name('products.move');
 Route::post('/produkty/{product}/widocznosc', [ProductController::class, 'toggle'])->whereNumber('product')->name('products.toggle');
 
 // A photo is found through its product, so a photo of another product gives 404.
