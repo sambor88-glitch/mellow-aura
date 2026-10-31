@@ -29,6 +29,10 @@ return [
      * plant-imprint services, the journal and the gift finder.
      *
      * Not yet: the gift sets come back with their euro prices and English texts (MA-127).
+     *
+     * Back once their texts are in English (MA-301): the content pages wait for MA-187, the terms, the privacy policy
+     * and the withdrawal form for MA-131. Their texts are written in Polish in the views, so under /en/ they showed
+     * Polish under an English address. Links to them from an English page keep the Polish address.
      */
     'paths' => [
         'en' => [
@@ -46,17 +50,6 @@ return [
             'checkout.store' => 'checkout',
             'checkout.confirmation' => 'checkout/confirmation',
             'checkout.resume' => 'checkout/resume',
-            'content.about' => 'about',
-            'content.studio' => 'studio',
-            'content.contact' => 'contact',
-            'content.contact.send' => 'contact',
-            'content.faq' => 'shipping-and-care',
-            'custom-orders.index' => 'custom-orders',
-            'content.terms' => 'terms',
-            'content.privacy' => 'privacy-policy',
-            'withdrawal.create' => 'withdrawal',
-            'withdrawal.store' => 'withdrawal',
-            'withdrawal.confirmation' => 'withdrawal/confirmation',
             'consent.edit' => 'cookie-settings',
             'consent.store' => 'cookie-settings',
         ],
@@ -72,10 +65,10 @@ return [
         'shop.category' => 'shop.index',
         // The page of a bought piece speaks the language of its order and has no twin (MA-234).
         'piece.show' => 'shop.index',
-        'workshops.index' => 'content.about',
-        'workshops.booking.create' => 'content.about',
-        'workshops.booking.calendar' => 'content.about',
-        'workshops.booking.confirmation' => 'content.about',
+        'workshops.index' => 'shop.index',
+        'workshops.booking.create' => 'shop.index',
+        'workshops.booking.calendar' => 'shop.index',
+        'workshops.booking.confirmation' => 'shop.index',
         'vouchers.index' => 'shop.index',
         'vouchers.pdf' => 'shop.index',
         'gifts.index' => 'shop.index',
@@ -87,15 +80,25 @@ return [
         'checkout.blik.status' => 'shop.index',
         // Back on /en/ with euro prices (MA-127).
         'bundles.index' => 'shop.index',
-        'journal.index' => 'content.about',
-        'journal.show' => 'content.about',
-        'firing.index' => 'content.studio',
-        'content.b2b' => 'custom-orders.index',
-        'content.imprint' => 'custom-orders.index',
-        'content.scarf' => 'custom-orders.index',
+        'journal.index' => 'shop.index',
+        'journal.show' => 'shop.index',
+        'firing.index' => 'shop.index',
+        'content.b2b' => 'shop.index',
+        'content.imprint' => 'shop.index',
+        'content.scarf' => 'shop.index',
         // The quote and its payment are written in Polish, like the custom order they belong to.
-        'custom-orders.payment.show' => 'custom-orders.index',
-        'custom-orders.payment.confirmation' => 'custom-orders.index',
+        'custom-orders.payment.show' => 'shop.index',
+        'custom-orders.payment.confirmation' => 'shop.index',
+        // Polish only until their texts are in English (MA-187, MA-131); see „paths” above.
+        'content.about' => 'shop.index',
+        'content.studio' => 'shop.index',
+        'content.contact' => 'shop.index',
+        'content.faq' => 'shop.index',
+        'custom-orders.index' => 'shop.index',
+        'content.terms' => 'shop.index',
+        'content.privacy' => 'shop.index',
+        'withdrawal.create' => 'shop.index',
+        'withdrawal.confirmation' => 'shop.index',
     ],
 
 ];

@@ -43,7 +43,7 @@
     <p style="margin: 12px 0 0; font-size: 13.5px; color: #5C5043;">
         Attached are the shop terms{{ $order->terms_version ? ' ('.$order->terms_version.')' : '' }} and the model withdrawal form.
         @if (Route::has('withdrawal.create'))
-            The easiest way to withdraw is online: <a href="{{ route('withdrawal.create', ['zamowienie' => $order->number]) }}" style="color: #855F3D;">withdraw from the contract here</a>.
+            The easiest way to withdraw is online: <a href="{{ route('withdrawal.create', ['zamowienie' => $order->number]) }}" style="color: #855F3D;">withdraw from the contract here</a> (the form is in Polish).
         @endif
     </p>
     <x-shared::mail.signature />

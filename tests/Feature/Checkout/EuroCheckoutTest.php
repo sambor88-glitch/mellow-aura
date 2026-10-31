@@ -61,7 +61,8 @@ class EuroCheckoutTest extends TestCase
             ->assertSee('value="online_transfer"', false)
             ->assertDontSee('value="blik"', false)
             ->assertDontSee('value="bank_transfer"', false)
-            ->assertSee('I accept the <a href="'.url('/en/terms').'"', false)
+            // The terms are in Polish until MA-131, and the link says so (MA-301).
+            ->assertSee('I accept the <a href="'.url('/regulamin').'" target="_blank" rel="noopener">shop terms (in Polish)</a>', false)
             ->assertDontSee('149 zł<', false);
 
         $this->get('/zamowienie')

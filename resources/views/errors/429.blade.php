@@ -1,10 +1,11 @@
 @extends('errors::layout')
+@use('App\Modules\Shared\Support\ErrorPage')
 
-@section('title', 'Za dużo prób')
-@section('eyebrow', 'chwila przerwy')
-@section('heading', 'Za dużo prób w krótkim czasie')
-@section('lead', 'Tak strona chroni się przed automatami, które wysyłają formularze setkami. Odczekaj minutę i spróbuj jeszcze raz.')
+@section('title', ErrorPage::text('429.title'))
+@section('eyebrow', ErrorPage::text('429.eyebrow'))
+@section('heading', ErrorPage::text('429.heading'))
+@section('lead', ErrorPage::text('429.lead'))
 
 @section('actions')
-    <a href="{{ url('/') }}" class="button button-secondary">Strona główna</a>
+    <a href="{{ ErrorPage::home() }}" class="button button-secondary">{{ ErrorPage::text('home') }}</a>
 @endsection

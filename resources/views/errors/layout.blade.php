@@ -3,8 +3,9 @@
     may be exactly that one of them is broken. Colours and type follow resources/css/app.css; the site's typefaces load
     only when the build is in place. No error codes on screen — the code goes to the log, not to the customer.
 --}}
+@use('App\Modules\Shared\Support\ErrorPage')
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="{{ ErrorPage::locale() }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -48,9 +49,9 @@
     <div class="page">
         <header>
             <div class="wrap">
-                <a href="{{ url('/') }}" class="brand">
+                <a href="{{ ErrorPage::home() }}" class="brand">
                     <span class="brand-name">mellowaura</span>
-                    <span class="brand-tagline">ceramika &middot; rękodzieło &middot; kraków</span>
+                    <span class="brand-tagline">{{ ErrorPage::text('tagline') }}</span>
                 </a>
             </div>
         </header>

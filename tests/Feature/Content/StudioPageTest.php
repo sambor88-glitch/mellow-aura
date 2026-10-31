@@ -69,14 +69,10 @@ class StudioPageTest extends TestCase
             ->assertDontSee('Zapytaj o warsztaty');
     }
 
-    public function test_on_the_english_page_the_buttons_never_lead_to_a_polish_page(): void
+    public function test_the_studio_page_waits_for_its_english_texts(): void
     {
-        $this->get('/en/studio')
-            ->assertOk()
-            ->assertSee('href="'.url('/en/contact').'"', false)
-            ->assertDontSee('href="'.url('/warsztaty-ceramiczne-krakow').'"', false)
-            ->assertDontSee('href="'.url('/wypal-ceramiki-krakow').'"', false)
-            ->assertDontSee('Wypalę Twoje prace');
+        // Its texts are written in Polish (MA-301), so there is no English address until they are translated (MA-187).
+        $this->get('/en/studio')->assertNotFound();
     }
 
     public function test_the_about_page_leads_here(): void

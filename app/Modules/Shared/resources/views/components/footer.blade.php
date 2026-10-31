@@ -7,6 +7,10 @@
         ? [__('shared::footer.'.$key), route($route, $parameters)]
         : null;
     $polish = Locales::current() === Locales::default();
+    // The terms, the privacy policy and the withdrawal form must be one click away on every page of the shop. Until
+    // they are in English (MA-131) an English page links to the Polish ones and says so.
+    $legal = fn (string $key, string $route) => $link($key, $route)
+        ?? (Route::has($route) ? [__('shared::footer.'.$key).' '.__('shared::footer.in_polish'), route($route), 'pl'] : null);
 
     $shopLinks = array_filter([
         $link('all', 'shop.index'),
@@ -29,7 +33,8 @@
         $link('firing', 'firing.index'),
     ]);
 
-    $tagline = $settings->get('text_footer_tagline');
+    // Kasia writes it in Polish in the panel; an English page leaves it out until it has an English version (MA-304).
+    $tagline = $polish ? $settings->get('text_footer_tagline') : null;
     $instagram = $settings->get('instagram_handle');
     $phone = $settings->get('contact_phone');
     $email = $settings->get('contact_email');
@@ -113,8 +118,8 @@
     <div class="mx-auto flex max-w-[1280px] flex-wrap justify-between gap-x-7 gap-y-4 border-t border-divider-dark px-7 pt-[22px] pb-10 text-[12.5px] text-label-dark">
         <span>© {{ now()->year }} MellowAura &middot; Katarzyna Samborska{{ $nip ? ' · NIP '.$nip : '' }}</span>
         <div class="flex flex-wrap gap-[22px]">
-            @foreach (array_filter([$link('terms', 'content.terms'), $link('privacy', 'content.privacy'), $link('withdrawal', 'withdrawal.create')]) as [$label, $href])
-                <a href="{{ $href }}" class="text-label-dark hover:text-rose">{{ $label }}</a>
+            @foreach (array_filter([$legal('terms', 'content.terms'), $legal('privacy', 'content.privacy'), $legal('withdrawal', 'withdrawal.create')]) as $legalLink)
+                <a href="{{ $legalLink[1] }}" {!! isset($legalLink[2]) ? 'hreflang="'.e($legalLink[2]).'" ' : '' !!}class="text-label-dark hover:text-rose">{{ $legalLink[0] }}</a>
             @endforeach
             @if ($cookies = $link('cookies', 'consent.edit'))
                 {{-- With the banner on the page, the link opens it in place. --}}

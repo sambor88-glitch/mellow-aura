@@ -1,3 +1,5 @@
+import { text } from './cart';
+
 /*
  * Favourites, saved with the heart on a product. As the privacy policy says, the list lives only in this
  * browser's storage and never reaches the server: the shop page filters its own cards with it.
@@ -41,7 +43,7 @@ export default {
         }
 
         // Below 520 px the header has no heart (header.blade.php), so the shop filter is the way back (MA-294).
-        const where = window.matchMedia('(min-width: 520px)').matches ? 'w nagłówku' : 'w sklepie pod „♥ Ulubione”';
-        window.Alpine.store('cart').say(saved ? `Zapisane w ulubionych — znajdziesz je ${where}` : 'Usunięte z ulubionych');
+        const where = window.matchMedia('(min-width: 520px)').matches ? 'favoriteSavedHeader' : 'favoriteSavedShop';
+        window.Alpine.store('cart').say(text(saved ? where : 'favoriteRemoved'));
     },
 };

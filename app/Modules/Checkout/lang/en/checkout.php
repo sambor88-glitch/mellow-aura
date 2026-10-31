@@ -50,9 +50,10 @@ return [
     'items' => 'Items',
     'total' => 'Total',
     'accept_terms' => 'I accept the :link',
-    'terms_link' => 'shop terms',
+    // The terms and the privacy policy are in Polish until MA-131, and the link says so.
+    'terms_link' => 'shop terms (in Polish)',
     'privacy' => 'I keep your details only while I fulfil your order — see the :link.',
-    'privacy_link' => 'privacy policy',
+    'privacy_link' => 'privacy policy (in Polish)',
     'pay' => 'Pay :amount',
     'badges' => ['Visa', 'Mastercard'],
     'wallet_badges' => ['Apple Pay', 'Google Pay'],
