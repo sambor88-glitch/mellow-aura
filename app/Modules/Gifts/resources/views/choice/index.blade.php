@@ -10,7 +10,7 @@
         <form method="post" action="{{ route('gift-choice.find') }}" novalidate class="glass rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]">
             @csrf
             <x-shared::field name="code" :label="$t('code')" :hint="$t('code_hint')" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="20" placeholder="MA-____-____" />
-            <button class="fill-btn mt-5 min-h-[58px] w-full rounded-full bg-ink px-[30px] py-[18px] text-[15px] font-medium tracking-[0.02em] text-linen transition duration-300 [--fill:var(--color-rose)] hover:bg-rose hover:text-ink active:scale-[.97]">{{ $t('find') }}</button>
+            <x-shared::button class="mt-5 w-full">{{ $t('find') }}</x-shared::button>
         </form>
     </div>
 </x-shared::layout>

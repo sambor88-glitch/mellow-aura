@@ -18,7 +18,7 @@
             <form method="post" action="{{ route('stock-notifications.destroy', $token) }}" class="mt-3">
                 @csrf
                 @method('DELETE')
-                <button class="min-h-11 rounded-full border border-line-strong px-5 text-[13px] text-lead transition-colors duration-300 hover:border-ink hover:text-ink">{{ __('catalog::restock.unsubscribe') }}</button>
+                <x-shared::button variant="secondary" size="md">{{ __('catalog::restock.unsubscribe') }}</x-shared::button>
             </form>
         @endif
     @else
@@ -34,11 +34,7 @@
                 <input id="restock-email" type="email" name="email" value="{{ old('email') }}" required autocomplete="email" inputmode="email" maxlength="255"
                        placeholder="{{ __('catalog::restock.email_placeholder') }}"
                        @error('email') aria-invalid="true" aria-describedby="restock-email-error" @enderror
-                       @class([
-                           'w-full min-w-0 rounded-[14px] border bg-white px-4 py-[14px] text-[15px] text-ink placeholder:text-label focus:border-ink focus:shadow-[0_0_0_4px_rgb(36_65_126/.14)] focus:outline-none pointer-coarse:text-[16px]',
-                           'border-error' => $errors->has('email'),
-                           'border-line' => ! $errors->has('email'),
-                       ])>
+                       class="field-control">
                 @error('email')
                     <p id="restock-email-error" class="mt-1.5 text-[13px] text-error">{{ $message }}</p>
                 @enderror
@@ -59,7 +55,7 @@
                 <label for="restock-website">{{ __('catalog::restock.website') }}</label>
                 <input id="restock-website" name="website" tabindex="-1" autocomplete="off">
             </div>
-            <button class="fill-btn min-h-[54px] rounded-full bg-ink px-5 py-4 text-[14.5px] font-medium tracking-[0.03em] text-linen transition duration-300 [--fill:var(--color-rose)] hover:bg-rose hover:text-ink active:scale-[.97]">{{ __('catalog::restock.submit') }}</button>
+            <x-shared::button>{{ __('catalog::restock.submit') }}</x-shared::button>
             @if (Route::has('content.privacy'))
                 <p class="text-[12px] leading-[1.5] text-hint">{!! str_replace(':link', '<a href="'.e(route('content.privacy')).'">'.e(__('catalog::restock.privacy_link')).'</a>', e(__('catalog::restock.privacy'))) !!}</p>
             @endif

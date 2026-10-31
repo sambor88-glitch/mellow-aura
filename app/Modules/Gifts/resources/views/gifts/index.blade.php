@@ -58,9 +58,9 @@
                 <h2 class="mb-2 font-serif text-[26px] font-normal">Nic nie pasuje do tych warunków</h2>
                 <p class="mb-[22px] text-[15.5px] text-lead">Poluzuj budżet albo napisz do mnie — zrobię coś na zamówienie w Twojej kwocie.</p>
                 @if (Route::has('custom-orders.index'))
-                    <a href="{{ route('custom-orders.index') }}" class="inline-block rounded-full bg-ink px-7 py-3.5 text-[14px] text-linen hover:bg-rose hover:text-ink">Napisz, czego szukasz</a>
+                    <x-shared::button href="{{ route('custom-orders.index') }}">Napisz, czego szukasz</x-shared::button>
                 @else
-                    <a href="{{ $resetUrl }}" class="inline-block rounded-full bg-ink px-7 py-3.5 text-[14px] text-linen hover:bg-rose hover:text-ink">Pokaż wszystkie pomysły</a>
+                    <x-shared::button href="{{ $resetUrl }}">Pokaż wszystkie pomysły</x-shared::button>
                 @endif
             </div>
         @endif
@@ -77,7 +77,7 @@
                     <h2 class="mb-2 font-serif text-[length:clamp(24px,3vw,32px)] leading-[1.2] font-normal text-cream">Nie wiesz, co wybrać?</h2>
                     <p class="text-[15.5px] text-on-dark-muted">{{ collect([$voucherNote, 'Ważny '.$voucherValidity.'.'])->filter()->join(' ') }}</p>
                 </div>
-                <a href="{{ route('vouchers.index') }}" class="flex-none rounded-full bg-rose px-[30px] py-[15px] text-[14.5px] text-ink hover:bg-sand hover:text-ink">Zobacz vouchery</a>
+                <x-shared::button href="{{ route('vouchers.index') }}" variant="light" class="flex-none">Zobacz vouchery</x-shared::button>
             </div>
         @endif
 

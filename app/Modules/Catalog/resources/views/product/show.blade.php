@@ -227,17 +227,17 @@
 
                         <div class="flex flex-wrap items-center gap-3.5">
                             <div class="glass flex items-center rounded-full">
-                                <button type="button" x-on:click="quantity = Math.max(1, quantity - 1)" aria-label="{{ __('catalog::product.fewer') }}" class="h-[46px] w-11 text-[18px] text-muted">−</button>
+                                <button type="button" x-on:click="quantity = Math.max(1, quantity - 1)" aria-label="{{ __('catalog::product.fewer') }}" class="h-[50px] w-11 text-[18px] text-muted">−</button>
                                 <span x-text="quantity" aria-live="polite" class="min-w-[26px] text-center text-[15px]">1</span>
                                 <button type="button" x-on:click="quantity++" @if ($variant->stock !== null) x-bind:disabled="quantity >= {{ $variant->stock }}" @endif
-                                        aria-label="{{ __('catalog::product.more') }}" class="h-[46px] w-11 text-[18px] text-muted disabled:cursor-not-allowed disabled:text-line-strong">+</button>
+                                        aria-label="{{ __('catalog::product.more') }}" class="h-[50px] w-11 text-[18px] text-muted disabled:cursor-not-allowed disabled:text-line-strong">+</button>
                             </div>
                             {{-- On a phone the button takes its own full row and the heart stays beside the quantity, not alone below. --}}
-                            <button type="submit" data-magnet class="fill-btn min-h-[54px] flex-[1_1_200px] rounded-full max-sm:order-last max-sm:basis-full bg-ink px-5 py-4 text-[14.5px] font-medium tracking-[0.03em] whitespace-nowrap text-linen transition duration-300 [--fill:var(--color-rose)] hover:bg-rose hover:text-ink active:scale-[.97]">
+                            <x-shared::button data-magnet class="flex-[1_1_200px] max-sm:order-last max-sm:basis-full whitespace-nowrap">
                                 {{ __('catalog::product.add_to_cart') }} &middot; <span x-text="$store.cart.format({{ $variant->price() }} * quantity)">{{ $price($variant) }}</span>
-                            </button>
+                            </x-shared::button>
                             <x-catalog::favorite-button :product="$product"
-                                                        class="glass size-[54px] flex-none rounded-full text-[20px] hover:border-ink max-sm:ml-auto" />
+                                                        class="glass size-[52px] flex-none rounded-full text-[20px] hover:border-ink max-sm:ml-auto" />
                         </div>
                     </form>
                 @endif
@@ -344,8 +344,7 @@
                         <div class="mt-1 truncate text-[11.5px] text-label">{{ $variant->label }}</div>
                     @endif
                 </div>
-                <button type="submit" form="add-to-cart"
-                        class="fill-btn flex-none rounded-full bg-ink px-6 py-[14px] text-[14px] text-linen transition duration-300 [--fill:var(--color-rose)] hover:bg-rose hover:text-ink active:scale-[.97]">{{ __('catalog::product.buy_bar') }}</button>
+                <x-shared::button form="add-to-cart" class="flex-none">{{ __('catalog::product.buy_bar') }}</x-shared::button>
             </div>
         @endif
     </div>

@@ -30,7 +30,7 @@
                 {{-- The sentence is ours from lang; only the address comes from the panel, so only it is escaped. --}}
                 <p class="mb-8 max-w-[46ch] text-[16.5px] leading-[1.7] text-pretty text-lead">{!! $t('write', ['email' => '<a href="mailto:'.e($contactEmail).'">'.e($contactEmail).'</a>']) !!}</p>
             @endif
-            <a href="{{ route('mug.index') }}" class="inline-flex min-h-11 items-center rounded-full bg-ink px-6 text-[14px] text-linen hover:bg-rose hover:text-ink">{{ $t('shop') }}</a>
+            <x-shared::button href="{{ route('mug.index') }}">{{ $t('shop') }}</x-shared::button>
         @endif
     </div>
 </x-shared::layout>

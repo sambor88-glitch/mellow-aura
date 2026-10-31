@@ -57,7 +57,7 @@
                        inputmode="numeric" autocomplete="one-time-code" placeholder="••••••" aria-describedby="blik_code-note" autofocus
                        @error('blik_code') aria-invalid="true" @enderror
                        @class([
-                           'w-full min-w-0 rounded-[18px] border bg-white p-[18px] text-center font-serif text-[36px] leading-none font-light tracking-[0.45em] text-ink tabular-nums transition-[border-color,box-shadow] duration-300 placeholder:text-line-strong focus:border-navy focus:shadow-[0_0_0_4px_rgb(36_65_126/.14)] focus:outline-none',
+                           'w-full min-w-0 rounded-[14px] border bg-white p-[18px] text-center font-serif text-[36px] leading-none font-light tracking-[0.45em] text-ink tabular-nums transition-[border-color,box-shadow] duration-300 placeholder:text-line-strong focus:border-navy focus:shadow-[0_0_0_4px_rgb(36_65_126/.14)] focus:outline-none',
                            'border-error' => $errors->has('blik_code'),
                            'border-navy-line' => ! $errors->has('blik_code'),
                        ])>
@@ -66,9 +66,9 @@
                 @else
                     <p id="blik_code-note" class="mt-2.5 text-center text-[12.5px] text-navy-hint">{{ $t('hint') }}</p>
                 @enderror
-                <button type="submit" class="fill-btn mt-5 min-h-[60px] w-full rounded-full bg-navy p-[17px] text-[15px] font-medium tracking-[0.02em] text-linen transition duration-300 [--fill:var(--color-ink)] hover:bg-ink active:scale-[.97]">
+                <x-shared::button variant="pay" class="mt-5">
                     {{ $t('pay', ['amount' => $order->money($order->amountDue())]) }}
-                </button>
+                </x-shared::button>
             </form>
             {{-- Back to the checkout with the cart as it was, the workshop's form or the payment link: another way to pay is a new order there. --}}
             <p class="mt-6 text-center text-[14px]"><a href="{{ $otherUrl }}" class="text-graphite underline underline-offset-4 hover:text-ink">{{ $t('other') }}</a></p>

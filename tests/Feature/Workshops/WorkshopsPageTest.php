@@ -101,7 +101,7 @@ class WorkshopsPageTest extends TestCase
 
         // Each card: the number of its dates and a jump to the list, or a question when it has none.
         $response->assertSeeInOrder([
-            'Lepienie kubków', 'href="#workshop-dates" x-on:click.prevent="show(\'hand_building\')"', 'Terminy (2) <span aria-hidden="true">↓</span>',
+            'Lepienie kubków', 'href="#workshop-dates" x-on:click.prevent="show(&#039;hand_building&#039;)"', 'Terminy (2) <span aria-hidden="true">↓</span>',
             'Szkliwienie i malowanie', 'show(\'glazing\')', 'Terminy (2)',
             'Sesja indywidualna 1:1', 'href="'.$contact.'"', 'Zapytaj o termin',
             'Warsztat dla pary', 'Zapytaj o termin',

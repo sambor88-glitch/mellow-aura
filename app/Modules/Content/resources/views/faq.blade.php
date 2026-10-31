@@ -68,7 +68,7 @@
                     Jak odstąpić od umowy i złożyć reklamację, piszę w&nbsp;<a href="{{ route('content.terms') }}#regulamin-12-prawo-odstapienia-od-umowy">regulaminie, w&nbsp;§12 i&nbsp;§13</a>.
                 </p>
                 @if (Route::has('withdrawal.create'))
-                    <a href="{{ route('withdrawal.create') }}" class="mt-5 inline-block rounded-full border border-line-strong px-[26px] py-[13px] text-[14px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark hover:text-ink active:scale-[.98]">Odstąp od umowy tutaj</a>
+                    <x-shared::button href="{{ route('withdrawal.create') }}" variant="secondary" size="md" class="mt-5">Odstąp od umowy tutaj</x-shared::button>
                 @endif
             </section>
         @endif
@@ -78,7 +78,7 @@
                 <h2 class="mb-1.5 font-serif text-[24px]">Nie ma tu Twojego pytania?</h2>
                 <p class="text-[15px] text-muted">{{ $phone ? 'Napisz na WhatsAppie — to najszybsza droga do mnie.' : 'Napisz do mnie'.($replyTime ? ' — '.Str::lcfirst(rtrim($replyTime, '.')) : '').'.' }}</p>
             </div>
-            <a href="{{ route('content.contact') }}" class="rounded-full bg-ink px-[30px] py-[15px] text-[14px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Kontakt</a>
+            <x-shared::button href="{{ route('content.contact') }}">Kontakt</x-shared::button>
         </div>
     </div>
 </x-shared::layout>

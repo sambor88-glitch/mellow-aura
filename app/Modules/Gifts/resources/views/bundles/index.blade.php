@@ -68,9 +68,9 @@
                             @if ($price < $full)
                                 <span class="text-[15px] text-muted">osobno {{ Money::format($full) }} · oszczędzasz {{ Money::format($full - $price) }}</span>
                             @endif
-                            <button class="ml-auto min-h-11 rounded-full bg-ink px-7 py-3.5 max-sm:ml-0 max-sm:basis-full text-[14px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">
+                            <x-shared::button class="ml-auto max-sm:ml-0 max-sm:basis-full">
                                 Do koszyka<span class="sr-only">: {{ $bundle->name }}</span>
-                            </button>
+                            </x-shared::button>
                         </form>
                     </div>
                 </article>
@@ -78,7 +78,7 @@
                 <div class="rounded-[20px] bg-sand-dark px-9 py-11 text-center">
                     <h2 class="mb-2 font-serif text-[26px] font-normal">Zestawy wrócą, gdy wyjdą z pieca</h2>
                     <p class="mb-[22px] text-[15.5px] text-lead">Części z zestawów pojechały już do kogoś. Każdą rzecz ze sklepu kupisz też osobno.</p>
-                    <a href="{{ route('shop.index') }}" class="inline-block rounded-full bg-ink px-7 py-3.5 text-[14px] text-linen hover:bg-rose hover:text-ink">Zobacz produkty</a>
+                    <x-shared::button href="{{ route('shop.index') }}">Zobacz produkty</x-shared::button>
                 </div>
             @endforelse
         </div>
@@ -97,17 +97,17 @@
                           x-on:submit.prevent="(await $store.cart.send($el)) && (wrapped = true)">
                         @csrf
                         <input type="hidden" name="type" value="gift_wrap">
-                        <button class="min-h-11 rounded-full border border-line-strong bg-cream px-[26px] py-3.5 text-[14px] text-ink transition duration-300 hover:border-ink active:scale-[.98]">
+                        <x-shared::button variant="secondary">
                             Zapakuj na prezent — {{ Money::format($wrapPrice) }}
-                        </button>
+                        </x-shared::button>
                     </form>
                     <form method="post" action="{{ route('cart.destroy', 'wrap') }}" x-show="wrapped" @unless ($wrapped) x-cloak @endunless
                           x-on:submit.prevent="(await $store.cart.send($el)) && (wrapped = false)">
                         @csrf
                         @method('DELETE')
-                        <button class="min-h-11 rounded-full border border-ink bg-cream px-[26px] py-3.5 text-[14px] text-ink transition duration-300 hover:bg-sand active:scale-[.98]">
+                        <x-shared::button variant="secondary" class="border-ink!">
                             <span aria-hidden="true" class="text-success">✓</span> Pakowanie dodane · usuń
-                        </button>
+                        </x-shared::button>
                     </form>
                 </div>
             </div>

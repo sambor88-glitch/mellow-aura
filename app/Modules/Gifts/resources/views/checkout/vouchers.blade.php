@@ -14,10 +14,9 @@
         </p>
         <div class="flex flex-col items-start gap-2.5">
             @foreach ($vouchers as $voucher)
-                <a href="{{ URL::temporarySignedRoute('vouchers.pdf', now()->addDay(), ['voucher' => $voucher->code]) }}"
-                   class="inline-flex min-h-11 items-center rounded-full border border-line-strong px-5 py-2.5 text-[14px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark hover:text-ink active:scale-[.98]">
+                <x-shared::button href="{{ URL::temporarySignedRoute('vouchers.pdf', now()->addDay(), ['voucher' => $voucher->code]) }}" variant="secondary" size="md">
                     Pobierz voucher {{ $voucher->code }}{{ $voucher->recipient_name ? ' dla: '.$voucher->recipient_name : '' }}
-                </a>
+                </x-shared::button>
             @endforeach
         </div>
     </div>
