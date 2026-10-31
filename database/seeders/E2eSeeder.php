@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Modules\Gifts\Models\Voucher;
+use App\Modules\Settings\Models\Setting;
 use App\Modules\Workshops\Models\WorkshopDate;
 use Illuminate\Database\Seeder;
 
@@ -19,6 +20,9 @@ class E2eSeeder extends Seeder
     /** The prefix in the codes, e.g. MA-DESK-AAA2; tests/e2e/vouchers.spec.js builds the same codes. */
     public const SCREENS = ['DESK', 'PHNE'];
 
+    /** The shop's e-mail in the panel; tests/e2e/custom-orders.spec.js reads Kasia's mails sent to it. */
+    public const CONTACT_EMAIL = 'kasia-e2e@mellow-aura.test';
+
     public function run(): void
     {
         foreach (self::SCREENS as $screen) {
@@ -31,6 +35,9 @@ class E2eSeeder extends Seeder
                 ]);
             }
         }
+
+        // Kasia's address from the panel: without it the idea from the custom order form never reaches her (MA-200).
+        Setting::query()->updateOrCreate(['key' => 'contact_email'], ['value' => self::CONTACT_EMAIL]);
 
         // Far after the dates tests/e2e/workshops.spec.js adds, the desktop's two first, then the phone's.
         foreach ([20, 21, 22, 23] as $days) {
