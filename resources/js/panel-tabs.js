@@ -9,10 +9,11 @@ export default (initial, keys) => ({
     bad: [],
 
     init() {
-        const panel = (key) => this.$root.querySelector(`[data-tab-panel="${CSS.escape(key)}"]`);
-        const holding = (element) => (element ? keys.find((key) => panel(key)?.contains(element)) : undefined);
+        // A tab may show more than one part: one beside a form it cannot sit in (the mail image, MA-324).
+        const parts = (key) => [...this.$root.querySelectorAll(`[data-tab-panel="${CSS.escape(key)}"]`)];
+        const holding = (element) => (element ? keys.find((key) => parts(key).some((part) => part.contains(element))) : undefined);
 
-        this.bad = keys.filter((key) => panel(key)?.querySelector(MISTAKE));
+        this.bad = keys.filter((key) => parts(key).some((part) => part.querySelector(MISTAKE)));
 
         const asked = new URL(location.href).searchParams.get('tab');
         const target = this.hashed();
