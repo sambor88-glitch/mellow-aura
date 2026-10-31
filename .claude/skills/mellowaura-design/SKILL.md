@@ -102,6 +102,10 @@ Newsreader: 300, 400 + kursywa 300, 400    — nagłówki, liczby, ceny, cytaty,
 Instrument Sans: 400, 500, 600             — interfejs, akapity, przyciski
 ```
 
+W aplikacji pliki leżą w repozytorium (`resources/fonts/web`, MA-271): jeden woff2 na grubość, łacina z polskimi
+literami, zrobione skryptem `subset.sh` z plików Google. Nowa grubość albo styl = nowy plik z tego skryptu i wpis
+w `vite.config.js`; bez tego przeglądarka podrobi pogrubienie albo kursywę.
+
 - **Nagłówki zawsze `font-weight: 300`.** Pogrubiony Newsreader wygląda jak inna firma.
 - **Skala jest większa niż w starym stylu** — Aura żyje z kontrastu wielkości:
   | Element | Rozmiar |
