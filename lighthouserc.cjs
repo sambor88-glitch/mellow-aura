@@ -22,14 +22,15 @@ const target = {
 // Each one has a task to reach the target; tighten the number back to `target` when it is done.
 const measured = preset === 'mobile'
     ? [
-        // Phone after the first part of MA-271 (30.10): LCP 2.5–3.2 s, Performance 85–94, with up to ±0.5 s between runs.
-        // The margin keeps that noise from failing the job; the fonts are the next step to the target.
+        // Phone after the fonts in MA-271 (31.10, measured locally): LCP 2.3–2.9 s, Performance 89–93; CI runs about 0.3 s slower,
+        // with up to ±0.5 s between runs. The margin keeps that noise from failing the job. Without any web font the pages
+        // reach 1.9–2.2 s, so what is left of the gap is the fonts being fetched before the photo at all.
         {
             matchingUrlPattern: '.*',
             assertions: {
                 ...target,
-                'categories:performance': median('error', { minScore: 0.8 }),
-                'largest-contentful-paint': median('error', { maxNumericValue: 4000 }),
+                'categories:performance': median('error', { minScore: 0.85 }),
+                'largest-contentful-paint': median('error', { maxNumericValue: 3500 }),
             },
         },
     ]
