@@ -54,7 +54,7 @@ class ProductArModelTest extends TestCase
         $this->assertStringEndsWith('.glb', $model->file_name);
         $this->assertSame(GlbFile::MIME_TYPE, $model->mime_type);
         // A model is not a photo: no thumbnails made from it.
-        $this->assertSame([], $model->generated_conversions->filter()->all());
+        $this->assertSame([], array_filter($model->generated_conversions));
 
         $this->get('/panel/produkty')->assertOk()->assertSee('Model 3D — klientki zobaczą go u siebie')->assertSee($model->file_name);
 
@@ -96,7 +96,8 @@ class ProductArModelTest extends TestCase
         $this->actingAs($this->owner);
 
         // A photo renamed to .glb, a glTF file of the wrong length, and no file at all.
-        $renamed = UploadedFile::fake()->createWithContent('kubek.glb', (string) file_get_contents(UploadedFile::fake()->image('kubek.jpg')->getRealPath()));
+        $photo = UploadedFile::fake()->image('kubek.jpg');
+        $renamed = UploadedFile::fake()->createWithContent('kubek.glb', (string) file_get_contents($photo->getRealPath()));
         $cut = UploadedFile::fake()->createWithContent('kubek.glb', substr($this->glbBytes(), 0, -4));
         $wrongName = UploadedFile::fake()->createWithContent('kubek.obj', $this->glbBytes());
 
