@@ -3,7 +3,7 @@
 @use('App\Modules\Checkout\Enums\PaymentMethod')
 @use('App\Modules\Checkout\Enums\PaymentStatus')
 @php
-    $card = 'rounded-[4px] border border-line bg-cream px-[26px] py-7';
+    $card = 'rounded-[4px] border border-line bg-cream px-[18px] py-5 md:px-[26px] md:py-7';
     $row = 'flex flex-wrap justify-between gap-x-6 gap-y-0.5';
     $address = $order->shipping_address;
     $paid = $order->payment_status === PaymentStatus::Paid;
@@ -14,10 +14,12 @@
 <x-admin::layout title="Zamówienie {{ $order->number }}">
     <a href="{{ route('admin.orders.index') }}" class="mb-5 inline-block text-[13.5px]">← Wszystkie zamówienia</a>
 
-    <div class="flex flex-wrap gap-[26px]">
-        <div class="grid min-w-0 flex-[1_1_340px] content-start gap-[26px]">
+    {{-- On a phone the two columns become one, and what Kasia needs while packing comes first: an unhandled withdrawal,
+         the status with the next step, then the address. The items follow (MA-314). --}}
+    <div class="flex flex-wrap gap-[26px] max-md:flex-col max-md:gap-4">
+        <div class="grid min-w-0 flex-[1_1_340px] content-start gap-[26px] max-md:contents">
             @foreach ($order->withdrawals as $withdrawal)
-                <section @class(['rounded-[4px] border px-[26px] py-6', 'border-alert-line bg-alert text-alert-text' => $withdrawal->handled_at === null, 'border-line bg-linen text-lead' => $withdrawal->handled_at !== null])>
+                <section @class(['rounded-[4px] border px-[26px] py-6 max-md:-order-4', 'border-alert-line bg-alert text-alert-text' => $withdrawal->handled_at === null, 'border-line bg-linen text-lead' => $withdrawal->handled_at !== null])>
                     <h2 class="mb-1.5 font-serif text-[21px]">Odstąpienie od umowy — {{ $withdrawal->scope->label() }}</h2>
                     <p class="text-[14px] leading-[1.6]">
                         Oświadczenie przyszło {{ $withdrawal->submittedAtLabel() }} przez formularz na stronie.
@@ -163,7 +165,7 @@
             @includeIf('gifts::admin.order-vouchers', ['order' => $order, 'card' => $card])
             @includeIf('workshops::admin.order-booking', ['order' => $order, 'card' => $card])
 
-            <section class="{{ $card }}">
+            <section class="{{ $card }} max-md:-order-2">
                 <h2 class="mb-4 font-serif text-[23px]">Dostawa</h2>
                 <dl class="grid gap-3 text-[14px]">
                     <div class="{{ $row }}"><dt class="text-label">Sposób</dt><dd>{{ $shippingLabel }}</dd></div>
@@ -183,8 +185,8 @@
             </section>
         </div>
 
-        <div class="grid min-w-0 flex-[0_1_300px] content-start gap-[26px]">
-            <section class="{{ $card }}" aria-labelledby="status-heading">
+        <div class="grid min-w-0 flex-[0_1_300px] content-start gap-[26px] max-md:contents">
+            <section class="{{ $card }} max-md:-order-3" aria-labelledby="status-heading">
                 <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
                     <h2 id="status-heading" class="font-serif text-[23px]">Status</h2>
                     <span class="rounded-full px-3 py-[5px] text-[11.5px] {{ $order->status->chipClass() }}">{{ $order->status->label() }}</span>

@@ -4,13 +4,19 @@
         @includeIf('monitoring::admin.dashboard-notice')
     @endcan
 
-    <div class="mb-9 flex flex-wrap gap-2.5 md:gap-4">
+    {{-- On a phone the tiles are a row of counters, so what waits starts on the first screen (MA-313). --}}
+    <div class="mb-9 flex flex-wrap gap-2 max-md:mb-6 md:gap-4">
         @foreach ($tiles as $tile)
-            <a href="{{ $tile['route'] }}" class="block min-w-0 flex-[1_1_140px] rounded-[4px] border border-line bg-cream px-4 py-4 text-ink md:flex-[1_1_180px] md:px-[22px] md:py-5 transition-colors duration-300 hover:border-ink hover:text-ink">
-                <span @class(['block font-serif text-[28px] leading-none font-light tabular-nums md:text-[34px]', 'text-label' => $tile['value'] === 0])>{{ $tile['value'] }}</span>
-                <span class="mt-1.5 block text-[11.5px] tracking-[0.14em] text-label uppercase">{{ $tile['label'] }}</span>
-                <span @class(['mt-2 block text-[12.5px]', 'text-error' => $tile['late'], 'text-hint' => ! $tile['late']])>{{ $tile['hint'] }}</span>
-                <span class="mt-3.5 block text-[12.5px]">{{ $tile['go'] }} →</span>
+            <a href="{{ $tile['route'] }}" @class([
+                'min-w-0 border bg-cream text-ink transition-colors duration-300 hover:border-ink hover:text-ink',
+                'inline-flex min-h-11 flex-none items-baseline gap-1.5 rounded-full px-3.5 py-2 md:block md:flex-[1_1_180px] md:rounded-[4px] md:px-[22px] md:py-5',
+                'border-error md:border-line' => $tile['late'],
+                'border-line' => ! $tile['late'],
+            ])>
+                <span @class(['font-serif text-[19px] leading-none font-light tabular-nums md:block md:text-[34px]', 'text-label' => $tile['value'] === 0, 'max-md:text-error' => $tile['late']])>{{ $tile['value'] }}</span>
+                <span class="text-[12.5px] text-label lowercase md:mt-1.5 md:block md:text-[11.5px] md:tracking-[0.14em] md:uppercase">{{ $tile['label'] }}</span>
+                <span @class(['mt-2 hidden text-[12.5px] md:block', 'text-error' => $tile['late'], 'text-hint' => ! $tile['late']])>{{ $tile['hint'] }}</span>
+                <span class="mt-3.5 hidden text-[12.5px] md:block">{{ $tile['go'] }} →</span>
             </a>
         @endforeach
     </div>
