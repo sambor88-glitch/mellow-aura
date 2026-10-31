@@ -227,6 +227,8 @@ class PanelSearchTest extends TestCase
             ->assertSee('role="combobox"', false)
             ->assertSee('aria-label="Szukaj w panelu"', false)
             ->assertSee('Dodaj termin warsztatu')
+            // Signing out clears „Ostatnio otwierane” on the device.
+            ->assertSee('x-on:submit="forget()"', false)
             ->assertSee('panel'.str_repeat('\\', 3).'/szukaj', false);
     }
 }

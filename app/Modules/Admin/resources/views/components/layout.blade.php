@@ -54,7 +54,7 @@
             @endauth
             <a href="{{ url('/') }}" @class(['ml-auto text-[13px] text-lead hover:text-navy', 'hidden md:inline' => auth()->check()])>Zobacz stronę</a>
             @auth
-                <form method="post" action="{{ route('admin.logout') }}" class="flex-none">
+                <form method="post" action="{{ route('admin.logout') }}" x-on:submit="forget()" class="flex-none">
                     @csrf
                     <button class="min-h-11 min-w-11 px-1 text-[13px] text-label hover:text-ink">Wyloguj</button>
                 </form>
