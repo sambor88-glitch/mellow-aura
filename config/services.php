@@ -25,6 +25,12 @@ return [
         'shipx_sandbox' => (bool) env('INPOST_SHIPX_SANDBOX', false),
     ],
 
+    // Google Analytics Measurement Protocol (Checkout\Support\MeasurementProtocol, MA-264): the purchase told from the
+    // server. The measurement ID comes from the panel; without the secret nothing is sent.
+    'ga4' => [
+        'api_secret' => env('GA4_API_SECRET'),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

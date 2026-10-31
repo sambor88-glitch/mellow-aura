@@ -296,6 +296,10 @@ npm install && npm run dev        # Vite na Macu, nie w kontenerze
   Po każdej zmianie w Environment: Deploy, potem **Restart workera w Processes**, potem próbne zamówienie
   i sprawdzenie Postmark → Activity.
 - Log aplikacji: Forge → strona → Observe → Logs → Site Log. Wpisy z alertów zaczynają się od `Błąd:` i `Komunikat:`.
+- Zakup mierzony z serwera (MA-264, `Checkout\Listeners\SendServerPurchase`): po opłaceniu zamówienia kolejka wysyła `purchase`
+  do GA4 przez Measurement Protocol, z numerem zamówienia jako `transaction_id` (ten sam co w przeglądarce, GA4 liczy raz).
+  ID pomiaru z panelu, sekret w `GA4_API_SECRET` (GA4 → Administracja → Strumienie danych → Measurement Protocol API secrets).
+  Bez sekretu albo bez zgody na statystyki przy zamówieniu nic nie idzie. Poza produkcją zdarzenie ma `debug_mode` (DebugView).
 - Mapa paczkomatów w kasie (MA-72): `INPOST_GEOWIDGET_TOKEN` z InPost Managera. Pusty token = samo pole na kod paczkomatu.
 - Nadawanie paczek z panelu (MA-132, moduł `Shipping`): `INPOST_SHIPX_TOKEN` i `INPOST_SHIPX_ORGANIZATION_ID`
   z InPost Managera (Moje konto → API), `INPOST_SHIPX_SANDBOX=true` dla konta testowego. Bez nich panel mówi,

@@ -47,6 +47,16 @@ class Consent
     }
 
     /**
+     * Whether Google Ads may use the customer's e-mail, hashed, to match a purchase to an ad (consent mode's
+     * ad_user_data, enhanced conversions — MA-264). The banner asks about statistics only, so for now never:
+     * this turns into a real answer when the banner gets a question about ads.
+     */
+    public function allowsAdUserData(Request $request): bool
+    {
+        return false;
+    }
+
+    /**
      * When the visitor chose, for „Twój wybór z 16 września 2026”.
      */
     public function decidedAt(Request $request): ?Carbon
