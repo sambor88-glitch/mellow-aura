@@ -4,6 +4,7 @@ namespace App\Modules\Checkout\Support;
 
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Consent\Support\Consent;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 
 /**
@@ -36,7 +37,7 @@ class MeasurementProtocol
     }
 
     /**
-     * @throws \Illuminate\Http\Client\RequestException when Google answers with an error, so the queue tries again
+     * @throws RequestException when Google answers with an error, so the queue tries again
      */
     public function sendPurchase(Order $order): void
     {
