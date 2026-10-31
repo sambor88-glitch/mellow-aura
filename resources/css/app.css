@@ -636,6 +636,41 @@
     backdrop-filter: blur(18px) saturate(1.4);
 }
 
+/*
+ * One look for every input, select and textarea on the site (MA-300, mellowaura-design „Pole formularza”):
+ * white, 14 px corners, ink border and a navy ring on focus, the error colour once the field is marked invalid.
+ * 16 px text on a touch screen, or Safari on an iPhone zooms in.
+ */
+@utility field-control {
+    width: 100%;
+    min-width: 0;
+    border: 1px solid var(--color-line);
+    border-radius: 14px;
+    background: #fff;
+    padding: 15px 16px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--color-ink);
+    transition: border-color .3s, box-shadow .3s;
+
+    &::placeholder {
+        color: var(--color-hint);
+    }
+
+    &:focus {
+        border-color: var(--color-ink);
+        box-shadow: 0 0 0 4px rgb(36 65 126 / .14);
+    }
+
+    &[aria-invalid="true"] {
+        border-color: var(--color-error);
+    }
+
+    @media (pointer: coarse) {
+        font-size: 16px;
+    }
+}
+
 @utility glass-dark {
     background: var(--color-glass-dark);
     border: 1px solid var(--color-glass-dark-line);

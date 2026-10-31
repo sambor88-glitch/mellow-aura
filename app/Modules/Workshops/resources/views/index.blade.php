@@ -83,11 +83,11 @@
                             </ul>
                         @endif
                         @if ($count > 0)
-                            <a href="#workshop-dates" x-on:click.prevent="show(@js($code))"
-                               @class(['inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-ink px-6 py-3 text-[14px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]', 'mt-5' => $workshop['includes'], 'mt-auto' => ! $workshop['includes']])>Terminy ({{ $count }}) <span aria-hidden="true">↓</span></a>
+                            <x-shared::button href="#workshop-dates" size="md" x-on:click.prevent="show({{ \Illuminate\Support\Js::from($code) }})"
+                                              :class="$workshop['includes'] ? 'mt-5' : 'mt-auto'">Terminy ({{ $count }}) <span aria-hidden="true">↓</span></x-shared::button>
                         @else
-                            <a href="{{ $contactUrl }}"
-                               @class(['inline-flex min-h-11 items-center justify-center rounded-full border border-ink px-6 py-3 text-[14px] text-ink transition duration-300 hover:bg-ink hover:text-linen active:scale-[.97]', 'mt-5' => $workshop['includes'], 'mt-auto' => ! $workshop['includes']])>Zapytaj o termin</a>
+                            <x-shared::button href="{{ $contactUrl }}" variant="secondary" size="md"
+                                              :class="$workshop['includes'] ? 'mt-5' : 'mt-auto'">Zapytaj o termin</x-shared::button>
                         @endif
                     </article>
                 @endforeach
@@ -169,11 +169,9 @@
                     </p>
                     <div class="grid gap-3">
                         @if ($phone)
-                            <a href="https://wa.me/{{ preg_replace('/\D+/', '', $phone) }}" target="_blank" rel="noopener"
-                               class="rounded-full bg-rose p-[15px] text-center text-[14.5px] text-ink transition duration-300 hover:bg-sand hover:text-ink active:scale-[.97]">Napisz na WhatsAppie</a>
+                            <x-shared::button href="https://wa.me/{{ preg_replace('/\D+/', '', $phone) }}" variant="light" target="_blank" rel="noopener">Napisz na WhatsAppie</x-shared::button>
                         @endif
-                        <a href="{{ $contactUrl }}"
-                           class="rounded-full border border-line-dark p-[15px] text-center text-[14.5px] text-sand transition duration-300 hover:border-rose hover:text-rose active:scale-[.98]">Napisz przez formularz</a>
+                        <x-shared::button href="{{ $contactUrl }}" variant="outline-light">Napisz przez formularz</x-shared::button>
                     </div>
                 </div>
             </div>

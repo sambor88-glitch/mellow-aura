@@ -30,10 +30,9 @@
                             @endforeach
                         </ol>
                     </details>
-                    <button type="button" x-data x-on:click="window.print()"
-                            class="mt-5 min-h-11 rounded-full border border-line-strong px-5 py-2.5 text-[13px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark active:scale-[.98]">
+                    <x-shared::button variant="secondary" size="md" type="button" x-data x-on:click="window.print()" class="mt-5">
                         Wydrukuj albo zapisz jako PDF
-                    </button>
+                    </x-shared::button>
                 </nav>
             @endif
 

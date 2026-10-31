@@ -14,7 +14,7 @@
     $due = $price * $seats - $vouchersPaid;
     $link = 'min-h-11 text-[12.5px] text-brown underline underline-offset-2 hover:text-ink';
     $glass = 'glass mb-4 rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]';
-    $radio = 'group flex cursor-pointer items-center gap-3.5 rounded-[18px] border border-line bg-cream/60 px-[18px] py-[15px] transition-[border-color,background-color,transform] duration-300 hover:-translate-y-0.5 hover:border-ink has-checked:border-navy has-checked:bg-navy-soft has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy';
+    $radio = 'group flex cursor-pointer items-center gap-3.5 rounded-[20px] border border-line bg-cream/60 px-[18px] py-[15px] transition-[border-color,background-color,transform] duration-300 hover:-translate-y-0.5 hover:border-ink has-checked:border-navy has-checked:bg-navy-soft has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy';
 @endphp
 
 <x-shared::layout :title="'Zapis: '.$workshop['name'].' | MellowAura'" :noindex="true">
@@ -30,7 +30,7 @@
             <div class="{{ $glass }} max-w-[620px]">
                 <h2 class="mb-3 font-serif text-[30px] leading-none font-light">Ten termin jest już pełny</h2>
                 <p class="mb-5 text-[15px] leading-[1.65] text-lead">Wybierz inny termin albo napisz do mnie — gdy ktoś zrezygnuje, dam znać.</p>
-                <a href="{{ route('workshops.index') }}#workshop-dates" class="inline-flex min-h-[52px] items-center rounded-full bg-ink px-[30px] text-[14px] text-linen transition duration-300 hover:bg-rose hover:text-ink">Wybieram inny termin</a>
+                <x-shared::button href="{{ route('workshops.index') }}#workshop-dates">Wybieram inny termin</x-shared::button>
             </div>
         @else
             <form method="post" action="{{ route('workshops.booking.store', $date) }}" novalidate data-submit-once x-on:pageshow.window="if ($event.persisted) sending = false"
@@ -81,11 +81,7 @@
                                 <label for="seats" class="mb-1.5 block text-[13.5px] text-graphite">Ile miejsc @if ($workshop['unit_label'])<span class="text-label">({{ $workshop['unit_label'] }})</span>@endif</label>
                                 <select id="seats" name="seats" x-model.number="seats" aria-describedby="seats-note"
                                         @error('seats') aria-invalid="true" @enderror
-                                        @class([
-                                            'w-full min-w-0 rounded-[14px] border bg-white px-4 py-[15px] text-[15px] text-ink focus:border-ink pointer-coarse:text-[16px]',
-                                            'border-error' => $errors->has('seats'),
-                                            'border-line' => ! $errors->has('seats'),
-                                        ])>
+                                        class="field-control">
                                     @for ($count = 1; $count <= $maxSeats; $count++)
                                         <option value="{{ $count }}" @selected($seats === $count)>{{ $count }}</option>
                                     @endfor
@@ -133,7 +129,7 @@
                                    inputmode="numeric" autocomplete="one-time-code" placeholder="••••••" aria-describedby="blik_code-note"
                                    @error('blik_code') aria-invalid="true" @enderror
                                    @class([
-                                       'w-full min-w-0 rounded-[18px] border bg-white p-[18px] text-center font-serif text-[36px] leading-none font-light tracking-[0.45em] text-ink tabular-nums transition-[border-color,box-shadow] duration-300 placeholder:text-line-strong focus:border-navy focus:shadow-[0_0_0_4px_rgb(36_65_126/.14)] focus:outline-none',
+                                       'w-full min-w-0 rounded-[14px] border bg-white p-[18px] text-center font-serif text-[36px] leading-none font-light tracking-[0.45em] text-ink tabular-nums transition-[border-color,box-shadow] duration-300 placeholder:text-line-strong focus:border-navy focus:shadow-[0_0_0_4px_rgb(36_65_126/.14)] focus:outline-none',
                                        'border-error' => $errors->has('blik_code'),
                                        'border-navy-line' => ! $errors->has('blik_code'),
                                    ])>
@@ -192,8 +188,7 @@
                                         <x-shared::field name="voucher_code" label="Kod z vouchera" hint="Voucher na warsztat albo na kwotę — kilka voucherów dodaj po kolei." x-ref="voucherCode"
                                                          x-on:keydown.enter.prevent="send(addVoucherTo)" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="30"
                                                          placeholder="MA-7KQ2-9XHT" />
-                                        <button type="button" x-on:click="send(addVoucherTo)"
-                                                class="min-h-11 rounded-full border border-line-strong px-5 text-[13.5px] text-ink transition duration-300 hover:border-ink hover:bg-sand">Użyj vouchera</button>
+                                        <x-shared::button variant="secondary" size="md" type="button" x-on:click="send(addVoucherTo)">Użyj vouchera</x-shared::button>
                                     </div>
                                 </details>
                             @endif
@@ -218,14 +213,14 @@
                             <p id="accept-terms-error" class="mt-1.5 text-[13px] text-error">{{ $message }}</p>
                         @enderror
 
-                        <button type="submit" class="fill-btn mt-5 min-h-[60px] w-full rounded-full bg-navy p-[17px] text-[15px] font-medium tracking-[0.02em] text-linen transition duration-300 [--fill:var(--color-ink)] hover:bg-ink active:scale-[.97]">
+                        <x-shared::button variant="pay" class="mt-5">
                             @if ($byWorkshopVoucher)
                                 Zapisuję się z voucherem
                             @else
                                 <span x-show="due > 0" @if ($due === 0) x-cloak @endif>Rezerwuję i płacę <span x-text="format(due)">{{ Money::format($due) }}</span></span>
                                 <span x-show="due === 0" @if ($due > 0) x-cloak @endif>Zapisuję się, płaci voucher</span>
                             @endif
-                        </button>
+                        </x-shared::button>
                         <p class="mt-3 text-center text-[12px] leading-[1.5] text-hint">
                             <span x-show="due > 0" @if ($byWorkshopVoucher || $due === 0) x-cloak @endif>Trzymam miejsce {{ WorkshopBooking::HOLD_MINUTES }} minut na płatność.</span>
                             @if ($location) Pracownia: {{ $location }}. @endif Dokładny adres podaję po zapisie.

@@ -26,7 +26,7 @@
                     <a href="{{ route('custom-orders.payment.confirmation') }}" class="mt-2 block text-graphite underline underline-offset-4 hover:text-ink">Sprawdź jeszcze raz</a>
                 @endif
             </p>
-            <a href="{{ route('home') }}" class="inline-flex min-h-[52px] items-center rounded-full border border-ink px-[30px] text-[14px] text-ink transition duration-300 hover:bg-ink hover:text-linen active:scale-[.97]">Wracam na stronę</a>
+            <x-shared::button href="{{ route('home') }}" variant="secondary">Wracam na stronę</x-shared::button>
         </div>
     </div>
     </div>

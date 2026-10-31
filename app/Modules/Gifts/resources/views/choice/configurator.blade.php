@@ -7,8 +7,8 @@
     $nameMax = (int) $settings->get('voucher_recipient_name_max_chars', 40);
     $noteMax = (int) $settings->get('voucher_dedication_max_chars', 180);
     $eyebrow = 'text-[13.5px] font-medium text-graphite';
-    $input = 'w-full min-w-0 rounded-[20px] border border-line bg-white px-[15px] py-[13px] text-[16px] text-ink placeholder:text-hint focus:border-ink';
-    $radio = 'group flex cursor-pointer items-start gap-3.5 rounded-[18px] border border-line bg-white/60 px-[18px] py-4 transition-colors duration-300 hover:border-ink has-checked:border-ink has-checked:bg-sand-dark';
+    $input = 'field-control';
+    $radio = 'group flex cursor-pointer items-start gap-3.5 rounded-[20px] border border-line bg-white/60 px-[18px] py-4 transition-colors duration-300 hover:border-ink has-checked:border-ink has-checked:bg-sand-dark';
 @endphp
 <form id="gift-form" x-ref="giftForm" method="post" action="{{ route('cart.store') }}" x-on:submit.prevent="$store.cart.send($el)"
       x-show="gift" x-cloak x-init="giftDelivery = {{ $delivery }}" x-data="{ delivery: 'print', recipient: '', sender: '', dedication: '' }">
@@ -45,7 +45,7 @@
 
         <label for="gift-note" class="mb-1.5 block text-[13.5px] text-graphite">{{ $t('dedication') }}</label>
         <textarea id="gift-note" name="dedication" x-model="dedication" maxlength="{{ $noteMax }}" rows="3" placeholder="{{ $t('dedication_placeholder') }}" aria-describedby="gift-note-hint"
-                  class="{{ $input }} block resize-y font-sans leading-[1.55]"></textarea>
+                  class="{{ $input }} block resize-y font-sans leading-[1.6]"></textarea>
         <div id="gift-note-hint" class="mt-2 flex justify-between gap-3 text-[12.5px] text-hint">
             <span>{{ $t('dedication_hint') }}</span>
             <span class="flex-none whitespace-nowrap" x-text="dedication.length + ' / {{ $noteMax }}'">0 / {{ $noteMax }}</span>
@@ -82,7 +82,7 @@
     <p class="mb-2 text-[13px] leading-[1.6] text-label">{{ $t('terms', ['days' => $terms->days()]) }}</p>
     <p class="mb-6 text-[13px] leading-[1.6] text-label" x-text="@js($t('price', ['mug' => '__MUG__', 'delivery' => $money($delivery)])).replace('__MUG__', $store.cart.format(@js($sizes->pluck('price_gross', 'label'))[size] ?? 0))">{{ $t('price', ['mug' => $money($startSize['price_gross']), 'delivery' => $money($delivery)]) }}</p>
 
-    <button type="submit" class="fill-btn min-h-[58px] w-full rounded-full bg-ink px-[30px] py-[18px] text-[15px] font-medium tracking-[0.02em] text-linen transition duration-300 [--fill:var(--color-rose)] hover:bg-rose hover:text-ink active:scale-[.97]">
+    <x-shared::button class="w-full">
         {{ $t('add') }} &middot; <span x-text="giftPrice">{{ $money($startSize['price_gross'] + $delivery) }}</span>
-    </button>
+    </x-shared::button>
 </form>

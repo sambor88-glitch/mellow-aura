@@ -53,7 +53,7 @@
                     <a href="{{ $googleCalendar }}" target="_blank" rel="noopener" class="inline-flex min-h-11 items-center underline underline-offset-4 hover:text-ink">Kalendarz Google</a>
                 </p>
             @endif
-            <a href="{{ route('workshops.index') }}" class="inline-flex min-h-[52px] items-center rounded-full border border-ink px-[30px] text-[14px] text-ink transition duration-300 hover:bg-ink hover:text-linen active:scale-[.97]">Wracam do warsztatów</a>
+            <x-shared::button href="{{ route('workshops.index') }}" variant="secondary">Wracam do warsztatów</x-shared::button>
         </div>
     </div>
     </div>

@@ -10,7 +10,7 @@
     // Vouchers sent as PDFs alone need no note for the parcel, only an invoice may. The address sits with the courier.
     $more = $needsDelivery ? ['invoice_nip', 'note'] : ['invoice_nip'];
     $moreOpen = $errors->hasAny($more) || collect($more)->contains(fn (string $field) => filled(old($field)));
-    $radio = 'group flex cursor-pointer items-center gap-3.5 rounded-[18px] border border-line bg-cream/60 px-[18px] transition-[border-color,background-color,transform] duration-300 hover:-translate-y-0.5 hover:border-ink has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy';
+    $radio = 'group flex cursor-pointer items-center gap-3.5 rounded-[20px] border border-line bg-cream/60 px-[18px] transition-[border-color,background-color,transform] duration-300 hover:-translate-y-0.5 hover:border-ink has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy';
 @endphp
 
 <x-shared::layout :title="$t('title')" :noindex="true">
@@ -22,7 +22,7 @@
             <div class="py-16 text-center">
                 <h1 class="mb-4 font-serif text-[length:clamp(44px,6vw,88px)] leading-[.96] font-light tracking-[-0.02em]">{{ $t('empty_title') }}</h1>
                 <p class="mx-auto mb-8 max-w-[46ch] text-[17px] leading-[1.7] text-lead">{{ $t('empty_text') }}</p>
-                <a href="{{ route('shop.index') }}" class="fill-btn inline-flex min-h-[52px] items-center rounded-full bg-ink px-[30px] text-[14px] text-linen [--fill:var(--color-rose)] hover:bg-rose hover:text-ink">{{ $t('empty_cta') }}</a>
+                <x-shared::button href="{{ route('shop.index') }}">{{ $t('empty_cta') }}</x-shared::button>
             </div>
         @else
             <p class="eyebrow mb-[18px]">{!! $t('eyebrow') !!}</p>
@@ -90,10 +90,9 @@
                                                      autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="16" :placeholder="$t('locker_placeholder')" />
                                     @if ($config['lockerMap'])
                                         <div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
-                                            <button type="button" x-on:click="openLockerMap()"
-                                                    class="min-h-11 rounded-full border border-glass-line bg-cream/60 px-6 text-[14px] text-ink transition-colors duration-300 hover:border-ink hover:bg-cream">
+                                            <x-shared::button variant="secondary" size="md" type="button" x-on:click="openLockerMap()">
                                                 {{ $t('locker_map') }}
-                                            </button>
+                                            </x-shared::button>
                                             <p x-text="lockerAddress" aria-live="polite" class="min-w-0 flex-1 text-[13px] text-label"></p>
                                         </div>
                                     @endif
@@ -233,10 +232,9 @@
                                                      x-on:keydown.enter.prevent="addVoucher()" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="30"
                                                      :placeholder="$t('voucher_placeholder')" />
                                     {{-- A button, not a second submit: Enter anywhere else in the form still means „Płacę”. --}}
-                                    <button type="button" x-on:click="addVoucher()"
-                                            class="mt-2.5 min-h-11 rounded-full border border-glass-line bg-cream/60 px-6 text-[14px] text-ink transition-colors duration-300 hover:border-ink hover:bg-cream">
+                                    <x-shared::button variant="secondary" size="md" type="button" x-on:click="addVoucher()" class="mt-2.5">
                                         {{ $t('voucher_add') }}
-                                    </button>
+                                    </x-shared::button>
                                 </div>
                             </details>
                         @endif
@@ -286,7 +284,7 @@
                                        @if ($blikError) aria-invalid="true" @endif
                                        x-bind:class="blik.length === 6 && 'border-navy shadow-[0_0_0_4px_rgb(36_65_126/.14)]'"
                                        @class([
-                                           'w-full min-w-0 rounded-[18px] border bg-white px-3 py-4 text-center font-serif text-[34px] leading-none font-light tracking-[0.4em] text-ink tabular-nums transition-[border-color,box-shadow] duration-300 placeholder:text-line-strong focus:border-navy focus:shadow-[0_0_0_4px_rgb(36_65_126/.14)] focus:outline-none',
+                                           'w-full min-w-0 rounded-[14px] border bg-white px-3 py-4 text-center font-serif text-[34px] leading-none font-light tracking-[0.4em] text-ink tabular-nums transition-[border-color,box-shadow] duration-300 placeholder:text-line-strong focus:border-navy focus:shadow-[0_0_0_4px_rgb(36_65_126/.14)] focus:outline-none',
                                            'border-error' => $blikError,
                                            'border-navy-line' => ! $blikError,
                                        ])>
@@ -296,10 +294,9 @@
                         @endif
 
                         {{-- The button breathes once the form is ready (mellowaura-design, „Kod BLIK”). --}}
-                        <button type="submit" x-bind:class="ready ? 'animate-[auraRing_1.8s_ease-in-out_infinite]' : 'bg-label!'"
-                                class="fill-btn mt-5 min-h-[60px] w-full rounded-full bg-navy p-[17px] text-[15px] font-medium tracking-[0.02em] text-linen transition duration-300 [--fill:var(--color-ink)] hover:bg-ink active:scale-[.97]">
+                        <x-shared::button variant="pay" x-bind:class="ready ? 'animate-[auraRing_1.8s_ease-in-out_infinite]' : 'bg-label!'" class="mt-5">
                             <span x-text="label">{{ $t('pay', ['amount' => $money($subtotal + $shippingGross - $vouchers->sum('amount'))]) }}</span>
-                        </button>
+                        </x-shared::button>
                         <div class="mt-3.5 flex flex-wrap justify-center gap-3 text-[11.5px] tracking-[0.08em] text-label uppercase">
                             {!! collect(config('services.przelewy24.wallets') ? __('checkout::checkout.wallet_badges') : [])->merge($t('badges'))->map(fn (string $badge) => '<span>'.e($badge).'</span>')->join('<span>&middot;</span>') !!}
                         </div>

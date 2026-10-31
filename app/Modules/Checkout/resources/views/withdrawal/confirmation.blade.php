@@ -34,6 +34,6 @@
             <li>Pieniądze zwrócę w ciągu 14 dni od dziś, tą samą metodą płatności. Mogę z tym poczekać, aż rzeczy do mnie wrócą albo dostanę dowód ich nadania.</li>
         </ol>
 
-        <a href="{{ route('shop.index') }}" class="inline-block rounded-full border border-line-strong px-[30px] py-[15px] text-[14px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark hover:text-ink">Wróć do sklepu</a>
+        <x-shared::button href="{{ route('shop.index') }}" variant="secondary">Wróć do sklepu</x-shared::button>
     </div>
 </x-shared::layout>

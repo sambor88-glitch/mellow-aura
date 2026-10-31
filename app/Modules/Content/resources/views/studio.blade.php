@@ -41,9 +41,9 @@
                         <p class="mb-5 text-[16.5px] leading-[1.72] text-lead">{{ $paragraph }}</p>
                     @endforeach
                     <div class="mt-3 cta-row">
-                        <a href="{{ $workshopsUrl ?? route('content.contact') }}" class="rounded-full bg-ink px-[30px] py-[15px] text-[14px] text-linen transition-[background-color,transform] duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">{{ $workshopsUrl ? 'Terminy i cennik' : 'Zapytaj o warsztaty' }}</a>
+                        <x-shared::button href="{{ $workshopsUrl ?? route('content.contact') }}">{{ $workshopsUrl ? 'Terminy i cennik' : 'Zapytaj o warsztaty' }}</x-shared::button>
                         @if ($firingUrl)
-                            <a href="{{ $firingUrl }}" class="rounded-full border border-line-strong px-[30px] py-[15px] text-[14px] text-ink transition-[border-color,background-color,transform] duration-300 hover:border-ink hover:bg-sand-dark hover:text-ink active:scale-[.98]">Wypalę Twoje prace</a>
+                            <x-shared::button href="{{ $firingUrl }}" variant="secondary">Wypalę Twoje prace</x-shared::button>
                         @endif
                     </div>
                 </div>

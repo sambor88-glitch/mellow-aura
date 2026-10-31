@@ -66,8 +66,6 @@
     $newTab = new Illuminate\Support\HtmlString('<span class="sr-only"> ('.e(__('shared::links.new_tab')).')</span>');
     $dispatch = DispatchTime::label($settings, short: true);
 
-    $btnMain = 'fill-btn aura-btn-main inline-flex min-h-[52px] items-center gap-2.5 rounded-full bg-ink px-[30px] text-[14px] font-medium tracking-[0.04em] text-linen transition-[background-color,color] duration-300 [--fill:var(--color-rose)] hover:bg-rose hover:text-ink active:scale-[.97]';
-    $btnGlass = 'fill-btn aura-btn-glass glass inline-flex min-h-[52px] items-center gap-2.5 rounded-full px-[30px] text-[14px] font-medium tracking-[0.04em] text-ink transition-[border-color,color] duration-300 [--fill:var(--color-cream)] hover:border-ink hover:text-ink active:scale-[.97]';
     $sectionTitle = 'font-serif text-[length:clamp(40px,5.6vw,84px)] leading-[.98] font-light tracking-[-0.02em] text-balance';
 @endphp
 
@@ -122,7 +120,7 @@
                      It keeps clear of „Aura”: on a phone it sits low under the word, on a wider screen to the left of it. --}}
                 <div data-hero-meta class="absolute inset-x-3 bottom-3 z-6 mx-auto flex w-auto max-w-[680px] items-center gap-3 rounded-[22px] border border-glass-line bg-cream/90 py-2 pr-2 pl-4 backdrop-blur-[18px] sm:inset-x-[clamp(18px,4vw,48px)] sm:bottom-4 sm:mx-0 sm:w-fit sm:gap-6 sm:rounded-full sm:py-1.5 sm:pr-1.5 sm:pl-7">
                     <p class="min-w-0 flex-1 font-serif text-[length:clamp(15px,1.4vw,18px)] leading-[1.3] text-brown italic text-balance sm:max-w-[15em]">{{ $t('hero_bar') }}</p>
-                    <a href="{{ route('shop.index') }}" class="{{ $btnMain }} flex-none min-h-12! px-[18px]! text-[13.5px]! sm:px-6!">{{ $t('hero_bar_cta') }} <span aria-hidden="true">→</span></a>
+                    <x-shared::button href="{{ route('shop.index') }}" size="md" class="aura-btn-main flex-none max-sm:px-[18px]">{{ $t('hero_bar_cta') }} <span aria-hidden="true">→</span></x-shared::button>
                 </div>
             </div>
 
@@ -135,11 +133,11 @@
                          A label may break there rather than spill out of its pill on a 320 px screen. --}}
                     <div @class(['mt-8 grid grid-cols-2 gap-3 md:flex md:flex-wrap [&>*]:justify-center [&>*]:text-center md:[&>*]:whitespace-nowrap max-md:[&>*]:px-4! [&>.aura-btn-main]:col-span-2', '[&>*:last-child]:col-span-2' => ! $workshopsUrl])>
                         @if ($mugUrl = $link('mug.index'))
-                            <a href="{{ $mugUrl }}" data-magnet class="{{ $btnMain }}">{{ $t('cta_mug') }} <span aria-hidden="true">→</span></a>
+                            <x-shared::button href="{{ $mugUrl }}" data-magnet class="aura-btn-main">{{ $t('cta_mug') }} <span aria-hidden="true">→</span></x-shared::button>
                         @endif
-                        <a href="{{ route('shop.index') }}" data-magnet class="{{ $btnGlass }}">{{ $t('cta_shop') }}</a>
+                        <x-shared::button href="{{ route('shop.index') }}" variant="glass" data-magnet class="aura-btn-glass">{{ $t('cta_shop') }}</x-shared::button>
                         @if ($workshopsUrl)
-                            <a href="{{ $workshopsUrl }}" data-magnet class="{{ $btnGlass }}">{{ $t('cta_workshops') }}</a>
+                            <x-shared::button href="{{ $workshopsUrl }}" variant="glass" data-magnet class="aura-btn-glass">{{ $t('cta_workshops') }}</x-shared::button>
                         @endif
                     </div>
                     <div class="mt-8 grid max-w-[720px] grid-cols-2 items-stretch gap-3 md:auto-cols-fr md:grid-flow-col md:grid-cols-none [&>*:last-child:nth-child(odd)]:col-span-2 md:[&>*:last-child:nth-child(odd)]:col-span-1">
@@ -207,7 +205,7 @@
                     <div class="mt-12 flex flex-wrap items-center gap-x-8 gap-y-5">
                         <span class="font-serif text-[length:clamp(34px,4vw,54px)] leading-none font-light text-brown italic">{{ $t('kasia_signature') }}</span>
                         @if ($aboutUrl = $link('content.about'))
-                            <a href="{{ $aboutUrl }}" data-magnet class="{{ $btnGlass }}">{{ $t('kasia_more') }} <span aria-hidden="true">→</span></a>
+                            <x-shared::button href="{{ $aboutUrl }}" variant="glass" data-magnet class="aura-btn-glass">{{ $t('kasia_more') }} <span aria-hidden="true">→</span></x-shared::button>
                         @endif
                     </div>
                 </div>
@@ -249,10 +247,10 @@
                     <p class="mb-7 max-w-[46ch] text-[16.5px] leading-[1.66] text-lead">{{ $t('gifts_text') }}</p>
                     <div class="cta-row">
                         @if ($bundlesUrl)
-                            <a href="{{ $bundlesUrl }}" data-magnet class="{{ $btnMain }}">{{ $t('gifts_bundles') }} <span aria-hidden="true">→</span></a>
+                            <x-shared::button href="{{ $bundlesUrl }}" data-magnet class="aura-btn-main">{{ $t('gifts_bundles') }} <span aria-hidden="true">→</span></x-shared::button>
                         @endif
                         @if ($giftsUrl = $link('gifts.index'))
-                            <a href="{{ $giftsUrl }}" data-magnet class="{{ $btnGlass }}">{{ $t('gifts_finder') }}</a>
+                            <x-shared::button href="{{ $giftsUrl }}" variant="glass" data-magnet class="aura-btn-glass">{{ $t('gifts_finder') }}</x-shared::button>
                         @endif
                     </div>
                 </div>
@@ -327,7 +325,7 @@
                         @endforeach
                     </div>
                     <div class="mt-8">
-                        <a href="{{ $workshopsUrl }}#workshop-dates" data-magnet class="fill-btn inline-flex min-h-[52px] items-center gap-2.5 rounded-full bg-linen px-[30px] text-[14px] font-medium tracking-[0.04em] text-ink [--fill:var(--color-rose)] hover:bg-rose hover:text-ink">{{ $t('workshops_cta') }} <span aria-hidden="true">→</span></a>
+                        <x-shared::button href="{{ $workshopsUrl }}#workshop-dates" variant="light" data-magnet>{{ $t('workshops_cta') }} <span aria-hidden="true">→</span></x-shared::button>
                     </div>
                 </div>
                 {{-- Without any photo the collage stays out and the text has the section to itself. --}}
@@ -353,7 +351,7 @@
                     <h2 id="instagram-title" class="{{ $sectionTitle }}">{{ $t('instagram_heading') }} <span aria-hidden="true" class="text-brown">🪐</span></h2>
                 </div>
                 @if ($instagramHandle !== '')
-                    <a href="https://www.instagram.com/{{ $instagramHandle }}/" target="_blank" rel="noopener" data-magnet class="{{ $btnGlass }}">{{ $t('instagram_follow') }} <span aria-hidden="true">→</span>{{ $newTab }}</a>
+                    <x-shared::button href="https://www.instagram.com/{{ $instagramHandle }}/" variant="glass" target="_blank" rel="noopener" data-magnet class="aura-btn-glass">{{ $t('instagram_follow') }} <span aria-hidden="true">→</span>{{ $newTab }}</x-shared::button>
                 @endif
             </div>
             <div class="glass rounded-[26px] p-3.5">

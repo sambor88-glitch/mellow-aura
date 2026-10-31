@@ -20,7 +20,9 @@
             @if ($prices->isNotEmpty() || $note)
             <div class="min-w-0 flex-[1_1_420px]">
                 @if ($prices->isNotEmpty())
-                    <table class="w-full overflow-hidden rounded-[20px] border border-divider bg-cream">
+                    {{-- Rounded corners on the wrapper: a <table> with border-collapse keeps square ones. --}}
+                    <div class="overflow-hidden rounded-[20px] border border-divider bg-cream">
+                    <table class="w-full">
                         <thead>
                             <tr class="border-b border-divider bg-linen text-[11.5px] tracking-[0.16em] text-label uppercase">
                                 <th scope="col" class="px-4 py-5 text-left font-normal sm:px-6">usługa</th>
@@ -45,6 +47,7 @@
                             @endforeach
                         </tbody>
                     </table>
+                    </div>
                 @endif
                 @if ($note)
                     <p class="mt-3.5 text-[13px] leading-[1.6] text-hint">{{ $note }}</p>
@@ -72,7 +75,7 @@
 
                     @if ($prices->isNotEmpty())
                         @php
-                            $select = 'w-full min-w-0 rounded-[14px] border bg-white px-4 py-[15px] text-[15px] text-lead focus:border-ink pointer-coarse:text-[16px]';
+                            $select = 'field-control text-lead';
                         @endphp
                         <form method="post" action="{{ route('firing.store') }}" novalidate data-submit-once class="grid gap-[13px]"
                               x-data="firingQuote(@js($services), @js(old('service', '')), @js(old('quantity', '')))">
@@ -85,7 +88,7 @@
                                 <label for="firing-service" class="mb-1.5 block text-[13.5px] text-graphite">Rodzaj wypału</label>
                                 <select id="firing-service" name="service" x-model="service"
                                         @error('service') aria-invalid="true" aria-describedby="firing-service-error" @enderror
-                                        @class([$select, 'border-error' => $errors->has('service'), 'border-line' => ! $errors->has('service')])>
+                                        class="{{ $select }}">
                                     <option value="">Wybierz</option>
                                     @foreach ($services as $service)
                                         <option value="{{ $service['code'] }}" @selected(old('service') === $service['code'])>{{ $service['label'] }}</option>
@@ -103,7 +106,7 @@
                                 <input id="firing-quantity" name="quantity" x-model="quantity" inputmode="decimal" value="{{ old('quantity') }}" maxlength="6"
                                        :placeholder="unit === 'piece' ? '4' : '2,5'"
                                        @error('quantity') aria-invalid="true" aria-describedby="firing-quantity-error" @else aria-describedby="firing-quantity-note" @enderror
-                                       @class([$select, 'text-ink placeholder:text-hint', 'border-error' => $errors->has('quantity'), 'border-line' => ! $errors->has('quantity')])>
+                                       class="field-control">
                                 @error('quantity')
                                     <p id="firing-quantity-error" class="mt-1.5 text-[13px] text-error">{{ $message }}</p>
                                 @else
@@ -116,7 +119,7 @@
                                     <label for="firing-day" class="mb-1.5 block text-[13.5px] text-graphite">Kiedy przywieziesz prace?</label>
                                     <select id="firing-day" name="drop_off_on"
                                             @error('drop_off_on') aria-invalid="true" aria-describedby="firing-day-error" @enderror
-                                            @class([$select, 'border-error' => $errors->has('drop_off_on'), 'border-line' => ! $errors->has('drop_off_on')])>
+                                            class="{{ $select }}">
                                         <option value="">Wybierz dzień</option>
                                         @foreach ($loadDays as $date => $label)
                                             <option value="{{ $date }}" @selected(old('drop_off_on') === $date)>{{ $label }}</option>
@@ -132,11 +135,7 @@
                                 <label for="firing-message" class="mb-1.5 block text-[13.5px] text-graphite">Coś jeszcze?</label>
                                 <textarea id="firing-message" name="message" rows="3" maxlength="2000" placeholder="Ile prac, jaka glina, czym szkliwione"
                                           @error('message') aria-invalid="true" aria-describedby="firing-message-error" @enderror
-                                          @class([
-                                              'w-full min-w-0 resize-y rounded-[20px] border bg-white px-4 py-[14px] text-[15px] leading-[1.6] text-ink placeholder:text-hint focus:border-ink pointer-coarse:text-[16px]',
-                                              'border-error' => $errors->has('message'),
-                                              'border-line' => ! $errors->has('message'),
-                                          ])>{{ old('message') }}</textarea>
+                                          class="field-control resize-y leading-[1.6]">{{ old('message') }}</textarea>
                                 @error('message')
                                     <p id="firing-message-error" class="mt-1.5 text-[13px] text-error">{{ $message }}</p>
                                 @enderror
@@ -152,7 +151,7 @@
                                 <label for="firing-website">Strona internetowa</label>
                                 <input id="firing-website" name="website" tabindex="-1" autocomplete="off">
                             </div>
-                            <button class="rounded-full bg-ink p-4 text-[14.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Wyślij zgłoszenie</button>
+                            <x-shared::button>Wyślij zgłoszenie</x-shared::button>
                             <p class="text-[12px] leading-[1.5] text-hint">Zgłoszenie trafi prosto do mnie, a Ty dostaniesz kopię z wyceną. Więcej o danych w <a href="{{ route('content.privacy') }}">polityce prywatności</a>.</p>
                         </form>
                     @endif
@@ -162,11 +161,9 @@
                             <p class="text-[13.5px] leading-[1.6] text-muted">Wolisz najpierw zapytać?</p>
                         @endif
                         @if ($phone)
-                            <a href="https://wa.me/{{ preg_replace('/\D+/', '', $phone) }}" target="_blank" rel="noopener"
-                               class="rounded-full border border-line-strong p-[13px] text-center text-[14px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark hover:text-ink active:scale-[.98]">Napisz na WhatsAppie</a>
+                            <x-shared::button href="https://wa.me/{{ preg_replace('/\D+/', '', $phone) }}" variant="secondary" target="_blank" rel="noopener">Napisz na WhatsAppie</x-shared::button>
                         @endif
-                        <a href="{{ $contactUrl }}"
-                           class="rounded-full border border-line-strong p-[13px] text-center text-[14px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark hover:text-ink active:scale-[.98]">Napisz przez formularz</a>
+                        <x-shared::button href="{{ $contactUrl }}" variant="secondary">Napisz przez formularz</x-shared::button>
                     </div>
                 </div>
             </div>

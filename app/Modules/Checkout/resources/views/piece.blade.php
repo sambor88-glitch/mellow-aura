@@ -27,8 +27,6 @@
         [__('checkout::piece.plant'), $item->plant],
     ])->filter(fn (array $fact) => filled($fact[1]));
     $handle = ltrim((string) $settings->get('instagram_handle'), '@');
-    $btnMain = 'fill-btn inline-flex min-h-[52px] items-center gap-2.5 rounded-full bg-ink px-[30px] text-[14px] font-medium tracking-[0.04em] text-linen transition-[background-color,color] duration-300 [--fill:var(--color-rose)] hover:bg-rose hover:text-ink active:scale-[.97]';
-    $btnGlass = 'fill-btn glass inline-flex min-h-[52px] items-center gap-2.5 rounded-full px-[30px] text-[14px] font-medium tracking-[0.04em] text-ink transition-[border-color,color] duration-300 [--fill:var(--color-cream)] hover:border-ink hover:text-ink active:scale-[.97]';
 @endphp
 
 <x-shared::layout :title="__('checkout::piece.title', ['name' => $item->pieceName()])" :noindex="true">
@@ -94,9 +92,9 @@
                     <p class="mt-2.5 mb-6 max-w-[46ch] text-[15px] leading-[1.6] text-lead">{{ __('checkout::piece.similar_text') }}</p>
                     <div class="cta-row">
                         @if (Route::has('custom-orders.index'))
-                            <a href="{{ route('custom-orders.index') }}#formularz" class="{{ $btnMain }}">{{ __('checkout::piece.similar_cta') }} <span aria-hidden="true">→</span></a>
+                            <x-shared::button href="{{ route('custom-orders.index') }}#formularz">{{ __('checkout::piece.similar_cta') }} <span aria-hidden="true">→</span></x-shared::button>
                         @endif
-                        <a href="{{ route('shop.index') }}" class="{{ $btnGlass }}">{{ __('checkout::piece.shop_cta') }}</a>
+                        <x-shared::button href="{{ route('shop.index') }}" variant="glass">{{ __('checkout::piece.shop_cta') }}</x-shared::button>
                     </div>
                 </section>
 

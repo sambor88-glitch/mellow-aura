@@ -52,11 +52,7 @@
                     <textarea id="withdrawal-items" name="items" rows="3" maxlength="2000"
                               aria-describedby="withdrawal-items-note"
                               @error('items') aria-invalid="true" @enderror
-                              @class([
-                                  'w-full min-w-0 resize-y rounded-[20px] border bg-white px-4 py-[14px] text-[15px] leading-[1.6] text-ink placeholder:text-hint focus:border-ink pointer-coarse:text-[16px]',
-                                  'border-error' => $errors->has('items'),
-                                  'border-line' => ! $errors->has('items'),
-                              ])
+                              class="field-control resize-y leading-[1.6]"
                               placeholder="np. Kubek „Królowa matka”, 1 szt.">{{ old('items') }}</textarea>
                     @error('items')
                         <p id="withdrawal-items-note" class="mt-1.5 text-[13px] text-error">{{ $message }}</p>
@@ -65,7 +61,7 @@
                     @enderror
                 </div>
 
-                <button class="mt-2 rounded-full bg-ink p-4 text-[14.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Potwierdź odstąpienie od umowy</button>
+                <x-shared::button class="mt-2">Potwierdź odstąpienie od umowy</x-shared::button>
                 <p class="text-[12px] leading-[1.5] text-hint">Dane z formularza zapisuję, żeby rozliczyć zwrot. Więcej w <a href="{{ route('content.privacy') }}">polityce prywatności</a>.</p>
             </form>
         </div>

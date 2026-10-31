@@ -3,7 +3,7 @@
 @php
     $amount = Money::format($link->amount);
     $glass = 'glass mb-4 rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]';
-    $radio = 'group flex cursor-pointer items-center gap-3.5 rounded-[18px] border border-line bg-cream/60 px-[18px] py-[15px] transition-[border-color,background-color,transform] duration-300 hover:-translate-y-0.5 hover:border-ink has-checked:border-navy has-checked:bg-navy-soft has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy';
+    $radio = 'group flex cursor-pointer items-center gap-3.5 rounded-[20px] border border-line bg-cream/60 px-[18px] py-[15px] transition-[border-color,background-color,transform] duration-300 hover:-translate-y-0.5 hover:border-ink has-checked:border-navy has-checked:bg-navy-soft has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy';
 @endphp
 
 <x-shared::layout title="Płatność za zamówienie indywidualne | MellowAura" :noindex="true">
@@ -62,7 +62,7 @@
                                    inputmode="numeric" autocomplete="one-time-code" placeholder="••••••" aria-describedby="blik_code-note"
                                    @error('blik_code') aria-invalid="true" @enderror
                                    @class([
-                                       'w-full min-w-0 rounded-[18px] border bg-white p-[18px] text-center font-serif text-[36px] leading-none font-light tracking-[0.45em] text-ink tabular-nums transition-[border-color,box-shadow] duration-300 placeholder:text-line-strong focus:border-navy focus:shadow-[0_0_0_4px_rgb(36_65_126/.14)] focus:outline-none',
+                                       'w-full min-w-0 rounded-[14px] border bg-white p-[18px] text-center font-serif text-[36px] leading-none font-light tracking-[0.45em] text-ink tabular-nums transition-[border-color,box-shadow] duration-300 placeholder:text-line-strong focus:border-navy focus:shadow-[0_0_0_4px_rgb(36_65_126/.14)] focus:outline-none',
                                        'border-error' => $errors->has('blik_code'),
                                        'border-navy-line' => ! $errors->has('blik_code'),
                                    ])>
@@ -103,9 +103,9 @@
                             <p id="accept-terms-error" class="mt-1.5 text-[13px] text-error">{{ $message }}</p>
                         @enderror
 
-                        <button type="submit" class="fill-btn mt-5 min-h-[60px] w-full rounded-full bg-navy p-[17px] text-[15px] font-medium tracking-[0.02em] text-linen transition duration-300 [--fill:var(--color-ink)] hover:bg-ink active:scale-[.97]">
+                        <x-shared::button variant="pay" class="mt-5">
                             Płacę {{ $amount }}
-                        </button>
+                        </x-shared::button>
                         <p class="mt-3 text-center text-[12px] leading-[1.5] text-hint">Link jest ważny do {{ $link->expires_at->locale('pl')->translatedFormat('j F') }}.</p>
                     </div>
                 </div>

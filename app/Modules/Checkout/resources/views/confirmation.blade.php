@@ -51,10 +51,10 @@
                     <div class="flex flex-wrap items-center justify-center gap-3">
                         <form method="POST" action="{{ $resumeUrl }}">
                             @csrf
-                            <button type="submit" class="inline-flex min-h-[52px] items-center rounded-full bg-ink px-[30px] text-[14px] font-medium text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.98]">{{ $t('resume') }}</button>
+                            <x-shared::button>{{ $t('resume') }}</x-shared::button>
                         </form>
                         @if ($own)
-                            <a href="{{ route('checkout.index') }}" class="inline-flex min-h-[52px] items-center rounded-full border border-line-strong px-[30px] text-[14px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark active:scale-[.98]">{{ $t('change_payment') }}</a>
+                            <x-shared::button href="{{ route('checkout.index') }}" variant="secondary">{{ $t('change_payment') }}</x-shared::button>
                         @endif
                     </div>
                 </div>
@@ -118,7 +118,7 @@
                 @endif
             </div>
             <p class="mb-8 text-[13.5px] text-muted">{{ $t('spam') }}</p>
-            <a href="{{ route('home') }}" class="fill-btn inline-flex min-h-[52px] items-center gap-2.5 rounded-full bg-ink px-[30px] text-[14px] font-medium text-linen [--fill:var(--color-rose)] hover:bg-rose hover:text-ink">{{ $t('home') }} <span aria-hidden="true">→</span></a>
+            <x-shared::button href="{{ route('home') }}">{{ $t('home') }} <span aria-hidden="true">→</span></x-shared::button>
         </div>
     </div>
     </div>

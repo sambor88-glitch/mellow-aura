@@ -21,7 +21,7 @@
                     @if ($lead)
                         <p class="mb-8 max-w-[48ch] text-[17px] leading-[1.7] text-pretty text-line-strong">{{ $lead }}</p>
                     @endif
-                    <a href="{{ $contactUrl }}" class="inline-block rounded-full bg-rose px-8 py-4 text-[14.5px] text-ink transition duration-300 hover:bg-sand hover:text-ink active:scale-[.97]">Poproś o wycenę</a>
+                    <x-shared::button href="{{ $contactUrl }}" variant="light">Poproś o wycenę</x-shared::button>
                 </div>
                 <div class="min-w-0 flex-[1_1_320px]">
                     @if (($photo = $pagePhotos->get('b2b'))->exists())
@@ -58,7 +58,7 @@
                         <p class="mt-2 text-[14px] text-muted">Albo napisz na WhatsAppie: <a href="{{ $whatsApp }}" target="_blank" rel="noopener" class="whitespace-nowrap">{{ $phone }}</a></p>
                     @endif
                 </div>
-                <a href="{{ $contactUrl }}" class="flex-none rounded-full bg-ink px-8 py-4 text-[14.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Umów spotkanie</a>
+                <x-shared::button href="{{ $contactUrl }}" class="flex-none">Umów spotkanie</x-shared::button>
             </div>
         </div>
     </div>

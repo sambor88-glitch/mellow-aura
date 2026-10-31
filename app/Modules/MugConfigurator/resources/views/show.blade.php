@@ -132,7 +132,7 @@
                               data-enter="{{ $t('enter') }}" data-limit="{{ $t('limit', ['lines' => trans_choice('mug-configurator::mug.lines_choice', $maxLines), 'chars' => trans_choice('mug-configurator::mug.chars_choice', $maxChars)]) }}"
                               rows="{{ min(3, $maxLines) }}" autocomplete="off" spellcheck="false"
                               placeholder="{!! $t('placeholder') !!}" aria-describedby="mug-text-rules"
-                              class="block w-full min-w-0 resize-none rounded-[18px] border border-line bg-white px-[18px] py-[17px] font-serif text-[24px] leading-[1.4] font-light tracking-[0.14em] text-ink uppercase transition-[border-color,box-shadow] duration-300 placeholder:text-line-strong focus:border-ink focus:shadow-[0_0_0_4px_rgb(36_65_126/.14)] focus:outline-none"></textarea>
+                              class="block w-full min-w-0 resize-none rounded-[14px] border border-line bg-white px-[18px] py-[17px] font-serif text-[24px] leading-[1.4] font-light tracking-[0.14em] text-ink uppercase transition-[border-color,box-shadow] duration-300 placeholder:text-line-strong focus:border-ink focus:shadow-[0_0_0_4px_rgb(36_65_126/.14)] focus:outline-none"></textarea>
                     <div class="mt-3 mb-[30px] flex flex-wrap items-center justify-between gap-3 text-[12.5px] text-label">
                         <span id="mug-text-rules">
                             <span x-text="lineInfo">{{ $t('enter') }}</span><span class="sr-only">. {{ $t('rules', ['lines' => $maxLines, 'chars' => $maxChars]) }}</span>
@@ -178,9 +178,9 @@
                         </div>
                     </fieldset>
 
-                    <button type="submit" data-magnet class="fill-btn min-h-[58px] w-full rounded-full bg-ink px-[30px] py-[18px] text-[15px] font-medium tracking-[0.02em] text-linen transition duration-300 [--fill:var(--color-rose)] hover:bg-rose hover:text-ink active:scale-[.97]">
+                    <x-shared::button data-magnet class="w-full">
                         {{ $t('add') }} &middot; <span x-text="price">{{ $money($startSize['price']) }}</span>
-                    </button>
+                    </x-shared::button>
                 </form>
 
                 @if ($giftChoice)
@@ -242,8 +242,7 @@
                 <div class="font-serif text-[22px] leading-none" x-text="gift ? giftPrice : price">{{ $money($startSize['price']) }}</div>
                 <div class="mt-1 truncate text-[11.5px] text-label" x-text="@js($sizes->pluck('title', 'label'))[size] + (gift ? @js($giftChoice ? ' · '.__('gifts::choice.line.name') : '') : ' · ' + @js($t('inside')) + ' ' + glazeName)">{{ $startSize['title'] }} · {{ $t('inside') }} {{ $startGlaze['name'] }}</div>
             </div>
-            <button type="button" x-on:click="gift ? $refs.giftForm.requestSubmit() : (text.trim() ? $refs.form.requestSubmit() : focusText())" x-text="gift || text.trim() ? @js($t('to_basket')) : @js($t('type_text'))"
-                    class="fill-btn flex-none rounded-full bg-ink px-6 py-[14px] text-[14px] text-linen transition duration-300 [--fill:var(--color-rose)] hover:bg-rose hover:text-ink active:scale-[.97]">{{ $t('type_text') }}</button>
+            <x-shared::button type="button" x-on:click="gift ? $refs.giftForm.requestSubmit() : (text.trim() ? $refs.form.requestSubmit() : focusText())" x-text="gift || text.trim() ? {{ \Illuminate\Support\Js::from($t('to_basket')) }} : {{ \Illuminate\Support\Js::from($t('type_text')) }}" class="flex-none">{{ $t('type_text') }}</x-shared::button>
         </div>
     </div>
 </x-shared::layout>

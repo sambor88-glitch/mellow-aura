@@ -72,7 +72,7 @@
 
                     @if ($withForm)
                         @php
-                            $box = 'w-full min-w-0 rounded-[14px] border bg-white px-4 py-[15px] text-[15px] text-ink placeholder:text-hint focus:border-ink pointer-coarse:text-[16px]';
+                            $box = 'field-control';
                             $photoErrors = collect($errors->get('photos'))->merge(collect($errors->get('photos.*'))->flatten())->unique();
                             $kind = old('kind', $chosenKind?->value);
                         @endphp
@@ -87,7 +87,7 @@
                                 <label for="brief-kind" class="mb-1.5 block text-[13.5px] text-graphite">Co to ma być?</label>
                                 <select id="brief-kind" name="kind"
                                         @error('kind') aria-invalid="true" aria-describedby="brief-kind-error" @enderror
-                                        @class([$box, 'text-lead', 'border-error' => $errors->has('kind'), 'border-line' => ! $errors->has('kind')])>
+                                        class="{{ $box }} text-lead">
                                     <option value="">Wybierz</option>
                                     @foreach ($kinds as $option)
                                         <option value="{{ $option->value }}" @selected($kind === $option->value)>{{ $option->label() }}</option>
@@ -111,11 +111,7 @@
                                 <label for="brief-description" class="mb-1.5 block text-[13.5px] text-graphite">Twój pomysł</label>
                                 <textarea id="brief-description" name="description" rows="5" maxlength="3000" placeholder="Kolor, kształt, dla kogo, skąd inspiracja"
                                           @error('description') aria-invalid="true" aria-describedby="brief-description-error" @enderror
-                                          @class([
-                                              'w-full min-w-0 resize-y rounded-[20px] border bg-white px-4 py-[14px] text-[15px] leading-[1.6] text-ink placeholder:text-hint focus:border-ink pointer-coarse:text-[16px]',
-                                              'border-error' => $errors->has('description'),
-                                              'border-line' => ! $errors->has('description'),
-                                          ])>{{ old('description') }}</textarea>
+                                          class="field-control resize-y leading-[1.6]">{{ old('description') }}</textarea>
                                 @error('description')
                                     <p id="brief-description-error" class="mt-1.5 text-[13px] text-error">{{ $message }}</p>
                                 @enderror
@@ -131,8 +127,9 @@
                                 <input type="hidden" name="photos_chosen" x-bind:value="previews.length">
                                 <div x-show="previews.length" x-cloak class="mt-2.5 flex flex-wrap gap-2">
                                     <template x-for="(url, index) in previews" x-bind:key="url">
-                                        <div class="relative h-[70px] w-[58px] rounded-[20px] border border-line bg-line-soft">
-                                            <img x-bind:src="url" x-bind:alt="'Zdjęcie ' + (index + 1)" width="58" height="70" class="size-full rounded-[3px] object-cover">
+                                        <div class="relative h-[70px] w-[58px] rounded-[14px] border border-line bg-line-soft">
+                                            {{-- The photo follows the frame's corner; no overflow-hidden, it would clip the finger-sized × above. --}}
+                                            <img x-bind:src="url" x-bind:alt="'Zdjęcie ' + (index + 1)" width="58" height="70" class="size-full rounded-[13px] object-cover">
                                             <button type="button" x-on:click="remove(index)" x-bind:aria-label="'Nie wysyłaj zdjęcia ' + (index + 1)"
                                                     class="absolute top-[3px] right-[3px] grid size-5 place-items-center rounded-full bg-ink/75 text-[11px] leading-none text-linen transition-colors duration-300 after:absolute after:-inset-3 hover:bg-error">×</button>
                                         </div>
@@ -156,8 +153,7 @@
                                 <label for="brief-website">Strona internetowa</label>
                                 <input id="brief-website" name="website" tabindex="-1" autocomplete="off">
                             </div>
-                            <button class="rounded-full bg-ink p-4 text-[14.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]"
-                                    x-text="preparing ? 'Przygotowuję zdjęcia…' : (sending ? 'Wysyłam…' : 'Wyślij pomysł')">Wyślij pomysł</button>
+                            <x-shared::button x-text="preparing ? 'Przygotowuję zdjęcia…' : (sending ? 'Wysyłam…' : 'Wyślij pomysł')">Wyślij pomysł</x-shared::button>
                             <p class="text-[12px] leading-[1.5] text-hint">Opis i zdjęcia trafią tylko do mnie, a Ty dostaniesz kopię mailem. Więcej o danych w <a href="{{ route('content.privacy') }}">polityce prywatności</a>.</p>
                         </form>
 
@@ -172,8 +168,7 @@
                         </ul>
                         <div class="grid gap-3">
                             @if ($whatsApp)
-                                <a href="{{ $whatsApp }}" target="_blank" rel="noopener"
-                                   class="rounded-full bg-ink p-[15px] text-center text-[14.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Napisz na WhatsAppie</a>
+                                <x-shared::button href="{{ $whatsApp }}" target="_blank" rel="noopener">Napisz na WhatsAppie</x-shared::button>
                             @endif
                             <a href="{{ $contactUrl }}"
                                @class([

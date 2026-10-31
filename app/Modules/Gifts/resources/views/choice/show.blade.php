@@ -14,7 +14,7 @@
     $eyebrow = 'text-[13.5px] font-medium text-graphite';
     $pill = 'glass min-h-11 rounded-full px-[14px] py-1.5 text-[12.5px] text-lead transition duration-300 hover:border-ink active:scale-[.98]';
     $panel = 'glass mb-4 rounded-[26px] px-[clamp(20px,3vw,34px)] py-[clamp(22px,3vw,30px)]';
-    $radio = 'group flex cursor-pointer items-center gap-3.5 rounded-[18px] border border-line bg-white/60 px-[18px] transition-colors duration-300 hover:border-ink';
+    $radio = 'group flex cursor-pointer items-center gap-3.5 rounded-[20px] border border-line bg-white/60 px-[18px] transition-colors duration-300 hover:border-ink';
 @endphp
 <x-shared::layout :title="$t('title')" :description="$t('description')" :canonical="route('gift-choice.index')" noindex :image="$photo">
     <div class="mx-auto max-w-[1360px] animate-ma-view px-[clamp(18px,4vw,48px)] pt-9 pb-24"
@@ -85,7 +85,7 @@
                               placeholder="{!! $m('placeholder') !!}"
                               @error('text') aria-invalid="true" aria-describedby="mug-text-error mug-text-rules" @else aria-describedby="mug-text-rules" @enderror
                               @class([
-                                  'block w-full min-w-0 resize-none rounded-[18px] border bg-white px-[18px] py-[17px] font-serif text-[24px] leading-[1.4] font-light tracking-[0.14em] text-ink uppercase transition-[border-color,box-shadow] duration-300 placeholder:text-line-strong focus:border-ink focus:shadow-[0_0_0_4px_rgb(36_65_126/.14)] focus:outline-none',
+                                  'block w-full min-w-0 resize-none rounded-[14px] border bg-white px-[18px] py-[17px] font-serif text-[24px] leading-[1.4] font-light tracking-[0.14em] text-ink uppercase transition-[border-color,box-shadow] duration-300 placeholder:text-line-strong focus:border-ink focus:shadow-[0_0_0_4px_rgb(36_65_126/.14)] focus:outline-none',
                                   'border-error' => $errors->has('text'),
                                   'border-line' => ! $errors->has('text'),
                               ])>{{ old('text') }}</textarea>
@@ -170,7 +170,7 @@
                     </fieldset>
 
                     <p class="mb-4 text-[13.5px] leading-[1.6] text-brown">{{ $t('check') }}</p>
-                    <button type="submit" class="fill-btn min-h-[58px] w-full rounded-full bg-ink px-[30px] py-[18px] text-[15px] font-medium tracking-[0.02em] text-linen transition duration-300 [--fill:var(--color-rose)] hover:bg-rose hover:text-ink active:scale-[.97]">{{ $t('submit') }}</button>
+                    <x-shared::button class="w-full">{{ $t('submit') }}</x-shared::button>
                     <p class="mt-3 text-[12.5px] text-label">{{ $t('privacy') }} <a href="{{ route('content.privacy') }}">Polityka prywatności</a></p>
                 </form>
             </div>

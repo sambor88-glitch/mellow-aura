@@ -12,7 +12,7 @@
     <label for="voucher-for" class="mb-1.5 block text-[13.5px] text-graphite">Imię na voucherze</label>
     <input id="voucher-for" name="recipient_name" x-model="recipient" maxlength="{{ $nameMax }}" placeholder="np. Ania" autocomplete="off"
            aria-describedby="voucher-for-hint"
-           class="w-full min-w-0 rounded-[20px] border border-line bg-white px-[15px] py-[13px] text-[16px] text-ink placeholder:text-hint focus:border-ink">
+           class="field-control">
     <div id="voucher-for-hint" class="mt-2 mb-4 flex justify-between gap-3 text-[12.5px] text-hint">
         <span>Puste pole zostawi na voucherze linię do wpisania ręcznie</span>
         <span class="flex-none whitespace-nowrap" x-text="recipient.length + ' / {{ $nameMax }}'">0 / {{ $nameMax }}</span>
@@ -21,7 +21,7 @@
     <label for="voucher-from" class="mb-1.5 block text-[13.5px] text-graphite">Od kogo</label>
     <input id="voucher-from" name="sender_name" x-model="sender" maxlength="{{ $nameMax }}" placeholder="np. Kasia i Tomek" autocomplete="off"
            aria-describedby="voucher-from-hint"
-           class="w-full min-w-0 rounded-[20px] border border-line bg-white px-[15px] py-[13px] text-[16px] text-ink placeholder:text-hint focus:border-ink">
+           class="field-control">
     <div id="voucher-from-hint" class="mt-2 mb-4 flex justify-between gap-3 text-[12.5px] text-hint">
         <span>Puste pole zostawi na voucherze linię do podpisu</span>
         <span class="flex-none whitespace-nowrap" x-text="sender.length + ' / {{ $nameMax }}'">0 / {{ $nameMax }}</span>
@@ -30,7 +30,7 @@
     <label for="voucher-note" class="mb-1.5 block text-[13.5px] text-graphite">Dedykacja</label>
     <textarea id="voucher-note" name="dedication" x-model="dedication" maxlength="{{ $noteMax }}" rows="3" placeholder="Kilka słów od Ciebie"
               aria-describedby="voucher-note-hint"
-              class="block w-full min-w-0 resize-y rounded-[20px] border border-line bg-white px-[15px] py-[13px] font-sans text-[16px] leading-[1.55] text-ink placeholder:text-hint focus:border-ink"></textarea>
+              class="field-control block resize-y font-sans leading-[1.6]"></textarea>
     <div id="voucher-note-hint" class="mt-2 flex justify-between gap-3 text-[12.5px] text-hint">
         <span>Trafi na voucher w PDF, który dostaniesz mailem</span>
         <span class="flex-none whitespace-nowrap" x-text="dedication.length + ' / {{ $noteMax }}'">0 / {{ $noteMax }}</span>

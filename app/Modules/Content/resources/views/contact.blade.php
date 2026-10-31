@@ -93,11 +93,7 @@
                                 <label for="contact-topic" class="mb-1.5 block text-[13.5px] text-graphite">W jakiej sprawie?</label>
                                 <select id="contact-topic" name="topic"
                                         @error('topic') aria-invalid="true" aria-describedby="contact-topic-error" @enderror
-                                        @class([
-                                            'w-full min-w-0 rounded-[20px] border bg-white px-4 py-[15px] text-[15px] text-lead focus:border-ink pointer-coarse:text-[16px]',
-                                            'border-error' => $errors->has('topic'),
-                                            'border-line' => ! $errors->has('topic'),
-                                        ])>
+                                        class="field-control text-lead">
                                     <option value="">Wybierz, jeśli chcesz</option>
                                     @foreach ($topics as $topic)
                                         <option value="{{ $topic }}" @selected($chosenTopic === $topic)>{{ $topic }}</option>
@@ -112,11 +108,7 @@
                             <label for="contact-message" class="mb-1.5 block text-[13.5px] text-graphite">Twoja wiadomość</label>
                             <textarea id="contact-message" name="message" rows="6" maxlength="3000"
                                       @error('message') aria-invalid="true" aria-describedby="contact-message-error" @enderror
-                                      @class([
-                                          'w-full min-w-0 resize-y rounded-[20px] border bg-white px-4 py-[14px] text-[15px] leading-[1.6] text-ink focus:border-ink pointer-coarse:text-[16px]',
-                                          'border-error' => $errors->has('message'),
-                                          'border-line' => ! $errors->has('message'),
-                                      ])>{{ $startedMessage }}</textarea>
+                                      class="field-control resize-y leading-[1.6]">{{ $startedMessage }}</textarea>
                             @error('message')
                                 <p id="contact-message-error" class="mt-1.5 text-[13px] text-error">{{ $message }}</p>
                             @enderror
@@ -126,7 +118,7 @@
                             <label for="contact-website">Strona internetowa</label>
                             <input id="contact-website" name="website" tabindex="-1" autocomplete="off">
                         </div>
-                        <button class="rounded-full bg-ink p-4 text-[14.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Wyślij wiadomość</button>
+                        <x-shared::button>Wyślij wiadomość</x-shared::button>
                         <p class="text-[12px] leading-[1.5] text-hint">Wiadomość trafi prosto do mnie mailem. Więcej o danych w <a href="{{ route('content.privacy') }}">polityce prywatności</a>.</p>
                     </form>
                 </div>
