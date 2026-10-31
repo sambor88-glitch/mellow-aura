@@ -1,34 +1,7 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
-import { bunny } from 'laravel-vite-plugin/fonts';
+import { local } from 'laravel-vite-plugin/fonts';
 import tailwindcss from '@tailwindcss/vite';
-
-/**
- * laravel-vite-plugin 3.2 writes a woff @font-face right after the woff2 one, with the same family,
- * weight and unicode-range. The later rule wins in CSS, so every visit downloaded the bigger woff
- * file — 176 kB of fonts on the home page instead of about 125 kB. Until the plugin stops emitting
- * woff, the rules go out of the generated stylesheet. Every browser we support reads woff2, and the
- * files stay in the build, so a preload link or the manifest still points at something real.
- */
-function woff2Only() {
-    return {
-        name: 'mellowaura:woff2-only',
-        enforce: 'post',
-        generateBundle(options, bundle) {
-            for (const asset of Object.values(bundle)) {
-                if (asset.type !== 'asset' || ! asset.fileName.endsWith('.css')) {
-                    continue;
-                }
-
-                const css = asset.source.toString();
-
-                if (css.includes('format("woff")')) {
-                    asset.source = css.replace(/@font-face \{[^}]*format\("woff"\)[^}]*\}\n*/g, '');
-                }
-            }
-        },
-    };
-}
 
 export default defineConfig({
     plugins: [
@@ -37,24 +10,33 @@ export default defineConfig({
             // Photos from zdjecia/ that Blade sections use through Vite::asset().
             assets: ['zdjecia/*.webp'],
             refresh: true,
+            // The site's own files from resources/fonts/web (MA-271): one woff2 per weight with Latin and the Polish letters,
+            // instead of a `latin` and a `latin-ext` file from Bunny for each. How they are made: resources/fonts/web/subset.sh.
+            // Only the variants the pages render; the panel uses the same ones. Preloaded: the body text and the light headings,
+            // which every page shows on the first screen (text paints about 0.3 s sooner on a phone); the rest loads when used.
             fonts: [
-                // latin-ext carries ą ę ł ś ż ź ć ń; without it Polish letters fell back to a system font mid-word.
-                // No preload: that would pull every weight of both families at once, also the ones a page never uses.
-                bunny('Instrument Sans', {
-                    weights: [400, 500, 600],
-                    subsets: ['latin', 'latin-ext'],
-                    preload: false,
+                local('Instrument Sans', {
+                    variants: [
+                        { src: 'resources/fonts/web/InstrumentSans-Regular.woff2', weight: 400 },
+                        { src: 'resources/fonts/web/InstrumentSans-Medium.woff2', weight: 500 },
+                        { src: 'resources/fonts/web/InstrumentSans-SemiBold.woff2', weight: 600 },
+                    ],
+                    preload: [{ weight: 400 }],
+                    optimizedFallbacks: false,
                 }),
-                bunny('Newsreader', {
-                    weights: [300, 400],
-                    styles: ['normal', 'italic'],
-                    subsets: ['latin', 'latin-ext'],
-                    preload: false,
+                local('Newsreader', {
+                    variants: [
+                        { src: 'resources/fonts/web/Newsreader-Light.woff2', weight: 300 },
+                        { src: 'resources/fonts/web/Newsreader-LightItalic.woff2', weight: 300, style: 'italic' },
+                        { src: 'resources/fonts/web/Newsreader-Regular.woff2', weight: 400 },
+                        { src: 'resources/fonts/web/Newsreader-Italic.woff2', weight: 400, style: 'italic' },
+                    ],
+                    preload: [{ weight: 300 }],
+                    optimizedFallbacks: false,
                 }),
             ],
         }),
         tailwindcss(),
-        woff2Only(),
     ],
     server: {
         watch: {
