@@ -29,7 +29,7 @@ Pliki `.dc.html` otwierają się w przeglądarce i muszą leżeć obok `support.
 
 ## Stos
 
-Laravel 13 + Blade, Alpine.js, GSAP z ScrollTrigger, Lenis i three.js (tylko kubek 3D) przez npm, MySQL, własny panel na Blade (nie Filament), paczki Spatie: medialibrary,
+Laravel 13 + Blade, Alpine.js, GSAP z ScrollTrigger, Lenis, three.js (tylko kubek 3D) i `@google/model-viewer` (tylko „Zobacz u siebie”, AR — MA-310) przez npm, MySQL, własny panel na Blade (nie Filament), paczki Spatie: medialibrary,
 sitemap, schema-org. Serwer na Forge, przed nim Cloudflare. PHP 8.4 lokalnie i na serwerze.
 Bez Next.js, Astro i WooCommerce — uzasadnienie w planie, punkt 3.
 

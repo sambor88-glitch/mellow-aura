@@ -73,7 +73,7 @@
         default => 'desc',
     };
     $errorTabs = collect($bag->keys())->map($tabOf)->unique()->values();
-    $tab = $errorTabs->first() ?? ($photoBag->any() ? 'desc' : $tab);
+    $tab = $errorTabs->first() ?? ($photoBag->any() || $errors->getBag('model-'.$product->id)->any() ? 'desc' : $tab);
     $tabs = ['sale' => 'Ceny i sztuki', 'desc' => 'Opis i zdjęcia', 'details' => 'Szczegóły', 'gift' => 'Prezent i Google', 'en' => 'English'];
     $englishOn = Locales::isEnabled('en');
 
@@ -296,6 +296,31 @@
                             </div>
                         </details>
                     @endif
+                    {{-- „Zobacz u siebie” on the product page (MA-310): only with a model here. The forms sit outside the product form. --}}
+                    @php($arModel = $product->arModel())
+                    @php($modelErrors = collect($errors->getBag('model-'.$product->id)->all())->unique())
+                    <div id="model-3d" class="grid scroll-mt-24 gap-2 rounded-[4px] border border-divider bg-linen px-4 py-3">
+                        <p class="text-[14px] text-graphite">{{ $arModel ? 'Model 3D — klientki zobaczą go u siebie' : 'Model 3D — jeszcze żadnego' }}</p>
+                        <div class="flex flex-wrap items-center gap-2">
+                            @if ($arModel)
+                                <span class="min-w-0 text-[13px] text-lead break-all">{{ $arModel->file_name }}</span>
+                                <span class="text-[12px] text-hint tabular-nums">{{ $arModel->human_readable_size }}</span>
+                            @endif
+                            <label x-data="{ sending: false }" x-on:pageshow.window="sending = false" x-bind:class="sending && 'pointer-events-none opacity-60'"
+                                   class="inline-flex min-h-11 cursor-pointer items-center rounded-full border border-line-strong bg-cream px-4 text-[12.5px] text-lead hover:border-ink has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy">
+                                <span x-text="sending ? 'Wysyłam model…' : @js($arModel ? 'Podmień model' : 'Dodaj model (GLB)')">{{ $arModel ? 'Podmień model' : 'Dodaj model (GLB)' }}</span>
+                                <span class="sr-only">: {{ $product->name }}</span>
+                                <input type="file" form="model-dodaj" name="model" accept=".glb,model/gltf-binary" x-on:change="if ($el.files.length) { sending = true; $el.form.requestSubmit() }" class="sr-only">
+                            </label>
+                            @if ($arModel)
+                                <button form="model-usun" class="min-h-11 rounded-full px-3 text-[12.5px] text-error hover:underline">Usuń model<span class="sr-only">: {{ $product->name }}</span></button>
+                            @endif
+                        </div>
+                        <p class="text-[12px] leading-[1.5] text-hint">Plik GLB ze skanu (RealityScan, Polycam), najlepiej do 5 MB, w prawdziwej wielkości. Z modelem na karcie produktu pojawia się „Zobacz u siebie”.</p>
+                        @foreach ($modelErrors as $message)
+                            <p role="alert" class="text-[13px] text-error">{{ $message }}</p>
+                        @endforeach
+                    </div>
                     <div class="grid gap-4">
                         <x-shared::field name="name" :id="$formKey.'-name'" label="Nazwa" :value="$old('name', $product->name)" :bag="$formKey" maxlength="120" placeholder="np. Miska z odciskiem paproci" />
                         <x-shared::field name="piece_name" :id="$formKey.'-piece-name'" label="Nazwa jednej sztuki" :value="$old('piece_name', $product->piece_name)" :bag="$formKey" maxlength="120" placeholder="np. Wazon"
@@ -586,7 +611,10 @@
             </aside>
         </div>
 
-        {{-- Photo forms live outside the product form; the buttons on the photos point at them with form="…". --}}
+        {{-- Photo and 3D model forms live outside the product form; the buttons on them point here with form="…". --}}
+        <form id="model-dodaj" method="post" action="{{ route('admin.products.model.store', $product) }}" enctype="multipart/form-data" class="hidden">@csrf</form>
+        <form id="model-usun" method="post" action="{{ route('admin.products.model.destroy', $product) }}" class="hidden"
+              x-data x-on:submit="confirm('Usunąć model 3D? Przycisk „Zobacz u siebie” zniknie z karty produktu.') || $event.preventDefault()">@csrf @method('DELETE')</form>
         <form id="zdjecia-dodaj" method="post" action="{{ route('admin.products.photos.store', $product) }}" enctype="multipart/form-data" class="hidden">@csrf</form>
         @foreach ($photos as $photo)
             <form id="zdjecie-{{ $photo->id }}-lewo" method="post" action="{{ route('admin.products.photos.move', [$product, $photo]) }}" class="hidden">@csrf<input type="hidden" name="kierunek" value="lewo"></form>

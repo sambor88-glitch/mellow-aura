@@ -43,4 +43,13 @@ return [
     'related_eyebrow' => 'pasuje do tego',
     'related_title' => 'Z tej samej półki',
     'buy_bar' => 'Do koszyka',
+    // „Zobacz u siebie” — the 3D model in augmented reality (MA-310).
+    'ar_open' => 'Zobacz u siebie',
+    'ar_dialog' => ':name w 3D',
+    'ar_place' => 'Postaw na swoim stole',
+    'ar_loading' => 'Wczytuję model — chwilę to potrwa.',
+    'ar_failed' => 'Model się nie wczytał. Spróbuj jeszcze raz za chwilę.',
+    'ar_drag' => 'Przeciągnij, żeby obrócić.',
+    'ar_phone_hint' => 'Na telefonie postawisz go na swoim stole — w prawdziwej wielkości.',
+    'ar_close' => 'Zamknij podgląd 3D',
 ];

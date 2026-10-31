@@ -51,6 +51,7 @@
              maxLines: {{ $maxLines }},
              maxChars: {{ $maxChars }},
              prices: @js($sizes->pluck('price', 'label')),
+             capacities: @js($sizes->pluck('capacity_ml', 'label')->filter()),
              texts: @js(__('mug-configurator::mug.js')),
              glazes: @js($glazes->keyBy('code')),
              size: @js($startSize['label']),
@@ -71,6 +72,11 @@
                 <div x-ref="stage3d" x-cloak x-show="view === '3d'" role="img" x-bind:aria-label="@js($t('preview_label')) + (text.trim() || @js($t('preview_empty')))"
                      class="relative aspect-square w-full cursor-grab touch-pan-y overflow-hidden rounded-[26px] border border-glass-line bg-[radial-gradient(ellipse_at_50%_42%,rgb(252_249_244/.95),rgb(243_237_228/.55)_60%,rgb(237_228_216/.25))] active:cursor-grabbing">
                     <span aria-hidden="true" class="glass pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full px-3.5 py-2 text-[10.5px] tracking-[0.22em] whitespace-nowrap text-label uppercase">{{ $t('drag') }}</span>
+                </div>
+                {{-- „Zobacz u siebie” (MA-310): the 3D mug with this text, in the size's real capacity, on the visitor's table. --}}
+                <div x-cloak x-show="view === '3d' && capacity" class="mt-3">
+                    <x-catalog::ar-view :name="$t('name')"
+                                        :data="'arViewer({ source: () => arModel(), alt: '.Js::from(__('catalog::product.ar_dialog', ['name' => $t('name')])).', texts: '.Js::from(['place' => __('catalog::product.ar_place')]).' })'" />
                 </div>
                 <div x-show="view === 'photo'" class="relative overflow-hidden rounded-[26px] bg-linen">
                     @if ($photo)

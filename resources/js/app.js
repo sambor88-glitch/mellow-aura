@@ -1,6 +1,7 @@
 import Alpine from 'alpinejs';
 import focus from '@alpinejs/focus';
 import { trackPage } from './analytics';
+import arViewer from './ar';
 import beforeAfter from './before-after';
 import blikWait from './blik';
 import briefPhotos from './brief-photos';
@@ -28,6 +29,7 @@ Alpine.plugin(focus);
 
 Alpine.store('cart', cart);
 Alpine.store('favorites', favorites);
+Alpine.data('arViewer', arViewer);
 Alpine.data('beforeAfter', beforeAfter);
 Alpine.data('blikWait', blikWait);
 Alpine.data('briefPhotos', briefPhotos);
