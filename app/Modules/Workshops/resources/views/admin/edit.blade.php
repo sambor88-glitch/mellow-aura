@@ -1,3 +1,4 @@
+{{-- Warsztaty (MA-320): the calendar first, the price list in a tab of its own, each workshop folded to its name and price. --}}
 @php
     $bag = $errors->getBag('warsztaty');
     $fields = \App\Modules\Workshops\Http\Requests\Admin\SaveWorkshopTypesRequest::FIELDS;
@@ -10,7 +11,7 @@
     $filled = $rows->count();
     $rows = [...$rows->all(), array_fill_keys($fields, '')];
 
-    $card = 'scroll-mt-6 rounded-[4px] border border-line bg-cream p-[22px]';
+    $card = 'scroll-mt-24 rounded-[4px] border border-line bg-cream px-[18px] py-5 md:p-[22px]';
     $input = 'w-full min-w-0 rounded-[4px] border bg-white px-3 py-2.5 text-[15px] text-ink placeholder:text-hint focus:border-ink';
     $label = 'mb-1 block text-[12.5px] text-graphite';
 
@@ -18,6 +19,83 @@
     $seats = fn (int $count) => $count.' '.($count === 1 ? 'miejsce' : (in_array($count % 10, [2, 3, 4], true) && ! in_array($count % 100, [12, 13, 14], true) ? 'miejsca' : 'miejsc'));
 @endphp
 <x-admin::layout title="Warsztaty" lead="Cennik na stronie warsztatów i terminarz. Terminy pokażą się na stronie razem z zapisami online — do tego czasu klientki piszą na WhatsAppie albo przez formularz.">
+  <x-admin::tabs :tabs="['terminy' => ['label' => 'Terminarz', 'count' => $dates->count()], 'cennik' => 'Cennik']" label="Części ekranu warsztatów">
+    <x-admin::tab-panel name="terminy">
+    <section id="terminy" aria-labelledby="terminy-tytul" class="flex max-w-[880px] scroll-mt-24 flex-wrap items-start gap-[22px]">
+        <div class="{{ $card }} min-w-0 flex-[1_1_380px]">
+            <h2 id="terminy-tytul" class="mb-1.5 text-[11.5px] tracking-[0.16em] text-label uppercase">Terminarz</h2>
+            <p class="mb-4 text-[13.5px] leading-[1.6] text-muted">Najbliższe terminy. Te, które minęły, znikają z listy same.</p>
+            @if ($dates->isEmpty())
+                <p class="rounded-[4px] border border-dashed border-line-strong px-4 py-5 text-[14px] text-muted">Nie ma jeszcze żadnego terminu. Dodaj pierwszy obok.</p>
+            @else
+                <ul class="overflow-hidden rounded-[4px] border border-line bg-white">
+                    @foreach ($dates as $date)
+                        <li id="termin-{{ $date->id }}" class="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-line px-4 py-3 last:border-b-0">
+                            <div class="min-w-0 flex-[1_1_180px]">
+                                <div class="text-[14.5px] text-ink">{{ $date->starts_at->translatedFormat('l, j F') }}</div>
+                                <div class="mt-0.5 text-[12.5px] text-muted">{{ collect([$date->starts_at->format('H:i').($date->ends_at ? ' – '.$date->ends_at->format('H:i') : ''), $names[$date->workshop_code] ?? 'warsztatu nie ma już w cenniku'])->join(' · ') }}</div>
+                            </div>
+                            <span class="text-[12.5px] text-graphite tabular-nums">{{ $seats($date->seats) }}</span>
+                            <a href="{{ route('admin.workshops.dates.bookings', $date) }}" class="inline-flex min-h-11 items-center text-[13px] tabular-nums">Zapisy · zajęte {{ $date->seatsTaken() }}</a>
+                            <form method="post" action="{{ route('admin.workshops.dates.destroy', $date) }}"
+                                  x-data x-on:submit="confirm('Usunąć ten termin z terminarza?') || $event.preventDefault()">
+                                @csrf
+                                @method('DELETE')
+                                <button aria-label="Usuń termin: {{ $names[$date->workshop_code] ?? 'warsztat' }}, {{ $date->starts_at->translatedFormat('j F, H:i') }}"
+                                        class="min-h-11 rounded-full px-3 text-[13px] text-hint hover:text-error">Usuń</button>
+                            </form>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
+        </div>
+
+        <form method="post" action="{{ route('admin.workshops.dates.store') }}" novalidate class="{{ $card }} grid min-w-0 flex-[0_1_320px] gap-3">
+            @csrf
+            <h2 class="text-[11.5px] tracking-[0.16em] text-label uppercase">Dodaj termin</h2>
+            @if ($names->isEmpty())
+                <p class="text-[13.5px] leading-[1.6] text-muted">Najpierw wpisz w cenniku warsztat z nazwą i ceną.</p>
+            @else
+                @if ($dateErrors->any())
+                    <p role="alert" class="rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text">Popraw zaznaczone pola, żeby dodać termin.</p>
+                @endif
+                @foreach ([
+                    'workshop' => ['Warsztat', null],
+                    'date' => ['Dzień', ['type' => 'date', 'min' => now()->format('Y-m-d')]],
+                    'start' => ['Początek', ['type' => 'time', 'step' => 300]],
+                    'end' => ['Koniec — jeśli chcesz podać', ['type' => 'time', 'step' => 300]],
+                    'seats' => ['Ile miejsc', ['type' => 'number', 'min' => 1, 'max' => \App\Modules\Workshops\Http\Requests\Admin\StoreWorkshopDateRequest::MAX_SEATS, 'inputmode' => 'numeric', 'placeholder' => 'np. 6']],
+                ] as $field => [$text, $extra])
+                    @php
+                        $has = $dateErrors->has($field);
+                    @endphp
+                    <div class="min-w-0">
+                        <label for="termin-{{ $field }}" class="{{ $label }}">{{ $text }}</label>
+                        @if ($field === 'workshop')
+                            <select id="termin-workshop" name="workshop" @if ($has) aria-invalid="true" aria-describedby="termin-workshop-note" @endif
+                                    @class([$input, 'border-error' => $has, 'border-line' => ! $has])>
+                                @foreach ($names as $code => $name)
+                                    <option value="{{ $code }}" @selected(old('workshop') === $code)>{{ $name }}</option>
+                                @endforeach
+                            </select>
+                        @else
+                            <input id="termin-{{ $field }}" name="{{ $field }}" value="{{ old($field) }}"
+                                   @foreach ($extra as $attribute => $value) {{ $attribute }}="{{ $value }}" @endforeach
+                                   @if ($has) aria-invalid="true" aria-describedby="termin-{{ $field }}-note" @endif
+                                   @class([$input, 'tabular-nums', 'border-error' => $has, 'border-line' => ! $has])>
+                        @endif
+                        @if ($has)
+                            <p id="termin-{{ $field }}-note" class="mt-1.5 text-[13px] text-error">{{ $dateErrors->first($field) }}</p>
+                        @endif
+                    </div>
+                @endforeach
+                <p class="text-[12.5px] leading-[1.6] text-label">Dzień wybierasz z kalendarza. Sesję 1:1 bez stałej daty umawiasz dalej na WhatsAppie.</p>
+                <button class="mt-1 min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Dodaj do terminarza</button>
+            @endif
+        </form>
+    </section>
+    </x-admin::tab-panel>
+    <x-admin::tab-panel name="cennik">
     <form id="cennik" method="post" action="{{ route('admin.workshops.update') }}" novalidate class="{{ $card }} max-w-[880px]">
         @csrf
         @method('PUT')
@@ -30,7 +108,7 @@
         </div>
         <p class="mb-4 max-w-[62ch] text-[13.5px] leading-[1.6] text-muted">Warsztat bez nazwy albo ceny nie pokaże się na stronie. Puste pole — np. czas trwania — po prostu się nie wyświetli.</p>
         @if ($bag->any())
-            <p role="alert" class="mb-3.5 rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text">Popraw zaznaczone pola, żeby zapisać.</p>
+            <p role="alert" data-error class="mb-3.5 rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text">Popraw zaznaczone pola, żeby zapisać.</p>
         @endif
 
         <div class="mb-5 min-w-0">
@@ -62,7 +140,16 @@
                     $has = fn (string $field) => $bag->has('workshops.'.$index.'.'.$field);
                     $error = fn (string $field) => $bag->first('workshops.'.$index.'.'.$field);
                 @endphp
-                <fieldset @class(['rounded-[4px] border p-3.5', 'border-sand-dark bg-linen' => ! $new, 'border-dashed border-line-strong' => $new])>
+                <details @class(['group rounded-[4px] border', 'border-sand-dark bg-linen' => ! $new, 'border-dashed border-line-strong' => $new])
+                         @if (collect($fields)->contains(fn ($field) => $has($field))) open @endif>
+                    <summary class="flex min-h-12 cursor-pointer list-none items-center gap-3 px-3.5 py-2.5 [&::-webkit-details-marker]:hidden">
+                        <span class="min-w-0 flex-1 truncate text-[14.5px] text-ink">{{ $new ? '+ Nowy warsztat' : ($row['name'] ?: 'Warsztat '.($index + 1)) }}</span>
+                        @unless ($new)
+                            <span class="flex-none text-[13px] text-label tabular-nums">{{ filled($row['price'] ?? null) ? $row['price'].' zł' : 'bez ceny' }}</span>
+                        @endunless
+                        <span aria-hidden="true" class="flex-none text-[15px] text-label transition-transform group-open:rotate-180">⌄</span>
+                    </summary>
+                <fieldset class="px-3.5 pb-3.5">
                     <legend class="sr-only">{{ $new ? 'Nowy warsztat' : ($row['name'] ?: 'Warsztat '.($index + 1)) }}</legend>
                     <input type="hidden" name="{{ $name }}[code]" value="{{ $row['code'] ?? '' }}">
                     <input type="hidden" name="{{ $name }}[unit]" value="{{ $row['unit'] ?? '' }}">
@@ -117,6 +204,7 @@
                         <x-shared::admin.row-actions :name="$name" :index="$index" :last="$filled - 1" :label="$row['name'] ?: 'warsztat '.($index + 1)" :removed="(bool) ($row['remove'] ?? false)" />
                     @endunless
                 </fieldset>
+                </details>
             @endforeach
         </div>
         @if ($bag->has('workshops'))
@@ -125,76 +213,6 @@
         <p class="mt-3.5 text-[12.5px] leading-[1.6] text-label">W pusty wiersz na dole wpisz nowy warsztat. Strzałki zapisują cały cennik i przestawiają warsztat o jedno miejsce. „Przed obniżką” wpisz tylko przy promocji: strona przekreśli tę cenę, gdy obniżysz cenę, i sama poda najniższą cenę z 30 dni.</p>
         <button class="mt-[18px] min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Zapisz cennik warsztatów</button>
     </form>
-
-    <section id="terminy" aria-labelledby="terminy-tytul" class="mt-[22px] flex max-w-[880px] scroll-mt-6 flex-wrap items-start gap-[22px]">
-        <div class="{{ $card }} min-w-0 flex-[1_1_380px]">
-            <h2 id="terminy-tytul" class="mb-1.5 text-[11.5px] tracking-[0.16em] text-label uppercase">Terminarz</h2>
-            <p class="mb-4 text-[13.5px] leading-[1.6] text-muted">Najbliższe terminy. Te, które minęły, znikają z listy same.</p>
-            @if ($dates->isEmpty())
-                <p class="rounded-[4px] border border-dashed border-line-strong px-4 py-5 text-[14px] text-muted">Nie ma jeszcze żadnego terminu. Dodaj pierwszy obok.</p>
-            @else
-                <ul class="overflow-hidden rounded-[4px] border border-line bg-white">
-                    @foreach ($dates as $date)
-                        <li id="termin-{{ $date->id }}" class="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-line px-4 py-3 last:border-b-0">
-                            <div class="min-w-0 flex-[1_1_180px]">
-                                <div class="text-[14.5px] text-ink">{{ $date->starts_at->translatedFormat('l, j F') }}</div>
-                                <div class="mt-0.5 text-[12.5px] text-muted">{{ collect([$date->starts_at->format('H:i').($date->ends_at ? ' – '.$date->ends_at->format('H:i') : ''), $names[$date->workshop_code] ?? 'warsztatu nie ma już w cenniku'])->join(' · ') }}</div>
-                            </div>
-                            <span class="text-[12.5px] text-graphite tabular-nums">{{ $seats($date->seats) }}</span>
-                            <a href="{{ route('admin.workshops.dates.bookings', $date) }}" class="inline-flex min-h-11 items-center text-[13px] tabular-nums">Zapisy · zajęte {{ $date->seatsTaken() }}</a>
-                            <form method="post" action="{{ route('admin.workshops.dates.destroy', $date) }}"
-                                  x-data x-on:submit="confirm('Usunąć ten termin z terminarza?') || $event.preventDefault()">
-                                @csrf
-                                @method('DELETE')
-                                <button aria-label="Usuń termin: {{ $names[$date->workshop_code] ?? 'warsztat' }}, {{ $date->starts_at->translatedFormat('j F, H:i') }}"
-                                        class="min-h-11 rounded-full px-3 text-[13px] text-hint hover:text-error">Usuń</button>
-                            </form>
-                        </li>
-                    @endforeach
-                </ul>
-            @endif
-        </div>
-
-        <form method="post" action="{{ route('admin.workshops.dates.store') }}" novalidate class="{{ $card }} grid min-w-0 flex-[0_1_320px] gap-3">
-            @csrf
-            <h2 class="text-[11.5px] tracking-[0.16em] text-label uppercase">Dodaj termin</h2>
-            @if ($names->isEmpty())
-                <p class="text-[13.5px] leading-[1.6] text-muted">Najpierw wpisz w cenniku warsztat z nazwą i ceną.</p>
-            @else
-                @if ($dateErrors->any())
-                    <p role="alert" class="rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text">Popraw zaznaczone pola, żeby dodać termin.</p>
-                @endif
-                @foreach ([
-                    'workshop' => ['Warsztat', null],
-                    'date' => ['Dzień', ['type' => 'date', 'min' => now()->format('Y-m-d')]],
-                    'start' => ['Początek', ['type' => 'time', 'step' => 300]],
-                    'end' => ['Koniec — jeśli chcesz podać', ['type' => 'time', 'step' => 300]],
-                    'seats' => ['Ile miejsc', ['type' => 'number', 'min' => 1, 'max' => \App\Modules\Workshops\Http\Requests\Admin\StoreWorkshopDateRequest::MAX_SEATS, 'inputmode' => 'numeric', 'placeholder' => 'np. 6']],
-                ] as $field => [$text, $extra])
-                    @php($has = $dateErrors->has($field))
-                    <div class="min-w-0">
-                        <label for="termin-{{ $field }}" class="{{ $label }}">{{ $text }}</label>
-                        @if ($field === 'workshop')
-                            <select id="termin-workshop" name="workshop" @if ($has) aria-invalid="true" aria-describedby="termin-workshop-note" @endif
-                                    @class([$input, 'border-error' => $has, 'border-line' => ! $has])>
-                                @foreach ($names as $code => $name)
-                                    <option value="{{ $code }}" @selected(old('workshop') === $code)>{{ $name }}</option>
-                                @endforeach
-                            </select>
-                        @else
-                            <input id="termin-{{ $field }}" name="{{ $field }}" value="{{ old($field) }}"
-                                   @foreach ($extra as $attribute => $value) {{ $attribute }}="{{ $value }}" @endforeach
-                                   @if ($has) aria-invalid="true" aria-describedby="termin-{{ $field }}-note" @endif
-                                   @class([$input, 'tabular-nums', 'border-error' => $has, 'border-line' => ! $has])>
-                        @endif
-                        @if ($has)
-                            <p id="termin-{{ $field }}-note" class="mt-1.5 text-[13px] text-error">{{ $dateErrors->first($field) }}</p>
-                        @endif
-                    </div>
-                @endforeach
-                <p class="text-[12.5px] leading-[1.6] text-label">Dzień wybierasz z kalendarza. Sesję 1:1 bez stałej daty umawiasz dalej na WhatsAppie.</p>
-                <button class="mt-1 min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Dodaj do terminarza</button>
-            @endif
-        </form>
-    </section>
+    </x-admin::tab-panel>
+  </x-admin::tabs>
 </x-admin::layout>
