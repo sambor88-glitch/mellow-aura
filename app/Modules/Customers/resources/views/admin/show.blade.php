@@ -36,11 +36,12 @@
 
   <x-admin::tabs :tabs="$tabs" label="Historia klientki">
     <x-admin::tab-panel name="zamowienia">
-    <section aria-labelledby="zamowienia" class="mb-10">
-        <h2 id="zamowienia" class="{{ $heading }}">Zamówienia i warsztaty</h2>
+    {{-- The newest five first; the rest wait under „Pokaż wszystkie”, so the tab stays short for a regular customer (MA-326). --}}
+    <section aria-labelledby="zamowienia" class="mb-10" x-data="{ all: false }">
+        <h2 id="zamowienia" class="sr-only">Zamówienia i warsztaty</h2>
         @forelse ($records->orders as $order)
             @php($booking = $order->workshopBooking)
-            <div class="{{ $card }} mb-2.5 flex flex-wrap items-center gap-3.5">
+            <div class="{{ $card }} mb-2.5 flex flex-wrap items-center gap-3.5" @if ($loop->index >= 5) x-show="all" style="display: none" @endif>
                 <div class="flex-none text-[12.5px] text-hint tabular-nums">
                     <div>{{ $order->number }}</div>
                     <div>{{ $order->created_at->format('j.m.Y') }}</div>
@@ -58,6 +59,9 @@
         @empty
             <p class="{{ $empty }}">Żadnego zamówienia.</p>
         @endforelse
+        @if ($records->orders->count() > 5)
+            <button type="button" x-show="! all" x-on:click="all = true" class="{{ $button }}">Pokaż wszystkie ({{ $records->orders->count() }})</button>
+        @endif
 
         @if ($records->vouchers->isNotEmpty())
             <p class="mt-3 text-[13px] text-label">Kupione vouchery: {{ $records->vouchers->map(fn ($voucher) => $voucher->code.($voucher->recipient_name ? ' dla '.$voucher->recipient_name : ''))->join(', ') }}</p>
@@ -117,7 +121,7 @@
     @if ($hasCases)
       <x-admin::tab-panel name="sprawy">
         <section aria-labelledby="sprawy" class="mb-10">
-            <h2 id="sprawy" class="{{ $heading }}">Odstąpienia i reklamacje</h2>
+            <h2 id="sprawy" class="sr-only">Odstąpienia i reklamacje</h2>
             @foreach ($records->withdrawals as $withdrawal)
                 <div class="{{ $card }} mb-2.5 text-[13.5px]">
                     <span class="text-hint tabular-nums">{{ $withdrawal->submitted_at->format('j.m.Y') }}</span> · Odstąpienie od umowy {{ $withdrawal->order_number }} · {{ $withdrawal->handled_at ? 'załatwione' : 'czeka na zwrot' }}
