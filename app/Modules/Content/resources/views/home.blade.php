@@ -24,6 +24,15 @@
     $heroBadge = $polish ? $settings->get('home_hero_badge') : null;
     $kasiaHeading = $polish ? $settings->get('text_home_kasia_heading') : null;
     $kasiaParagraph = $polish ? $settings->get('text_home_kasia_paragraph') : null;
+    $leadMug = $polish ? $settings->get('text_home_lead_mug') : null;
+    $b2bCardText = $polish ? $settings->get('text_home_card_b2b') : null;
+    // The first row of floating words names the materials, so Kasia keeps it true; the English page keeps its own.
+    $materials = $polish
+        ? array_values(array_filter(array_map('trim', explode("\n", (string) $settings->get('text_home_materials'))), 'strlen'))
+        : $t('words')[0];
+    // Facts under the hero, each from the panel; an empty one drops out. A number reads the same in both languages.
+    $handmade = $settings->get('text_home_fact_handmade');
+    $blikTime = $settings->get('text_blik_time');
 
     $lowestPrice = fn (mixed $rows) => collect(is_array($rows) ? $rows : [])->pluck('price_gross')->filter()->min();
     $services = array_filter([
@@ -45,7 +54,7 @@
 
     $cards = array_filter([
         $link('custom-orders.index') ? [$link('custom-orders.index'), true, $t('card_custom_eyebrow'), $t('card_custom_title'), $t('card_custom_text')] : null,
-        $link('content.b2b') ? [$link('content.b2b'), false, $t('card_b2b_eyebrow'), $t('card_b2b_title'), $t('card_b2b_text')] : null,
+        $link('content.b2b') ? [$link('content.b2b'), false, $t('card_b2b_eyebrow'), $t('card_b2b_title'), $b2bCardText] : null,
         $link('firing.index') ? [$link('firing.index'), false, $t('card_firing_eyebrow'), $t('card_firing_title'), $t('card_firing_text')] : null,
     ]);
 
@@ -130,7 +139,7 @@
                 <div data-hero-copy class="mx-auto max-w-[1360px] px-[clamp(18px,4vw,48px)] pt-14 pb-5">
                     <p class="eyebrow mb-[22px]">{{ $t('eyebrow') }}</p>
                     <h1 id="hero-title" class="max-w-[12ch] font-serif text-[length:clamp(42px,6.4vw,92px)] leading-[.96] font-light tracking-[-0.02em] text-balance">{{ $em('heading') }}</h1>
-                    <p class="aura-lead mt-6 max-w-[46ch] text-[17.5px] leading-[1.68] text-pretty text-lead">{{ $t('lead') }}</p>
+                    <p class="aura-lead mt-6 max-w-[46ch] text-[17.5px] leading-[1.68] text-pretty text-lead">{{ $t('lead') }}{{ $leadMug ? ' '.$leadMug : '' }}</p>
                     {{-- On a phone an even grid: the main button across, the others in two equal columns, a single one across.
                          A label may break there rather than spill out of its pill on a 320 px screen. --}}
                     <div @class(['mt-8 grid grid-cols-2 gap-3 md:flex md:flex-wrap [&>*]:justify-center [&>*]:text-center md:[&>*]:whitespace-nowrap max-md:[&>*]:px-4! [&>.aura-btn-main]:col-span-2', '[&>*:last-child]:col-span-2' => ! $workshopsUrl])>
@@ -144,7 +153,7 @@
                     </div>
                     <div class="mt-8 grid max-w-[720px] grid-cols-2 items-stretch gap-3 md:auto-cols-fr md:grid-flow-col md:grid-cols-none [&>*:last-child:nth-child(odd)]:col-span-2 md:[&>*:last-child:nth-child(odd)]:col-span-1">
                         {{-- BLIK only where the price is in złoty: it does not exist in euro. --}}
-                        @foreach (array_filter([['100%', $t('fact_handmade')], Locales::currency() === 'PLN' ? ['BLIK', $t('fact_blik')] : null, $dispatch ? [$dispatch, $t('fact_dispatch')] : null]) as [$value, $label])
+                        @foreach (array_filter([$handmade ? [$handmade, $t('fact_handmade')] : null, Locales::currency() === 'PLN' && $blikTime ? ['BLIK', $t('fact_blik', ['time' => $blikTime])] : null, $dispatch ? [$dispatch, $t('fact_dispatch')] : null]) as [$value, $label])
                             <div class="aura-fact glass flex flex-col gap-1 rounded-2xl px-5 py-3.5">
                                 <strong class="font-serif text-[26px] leading-none font-light">{{ $value }}</strong>
                                 <span class="aura-fact-label text-[10.5px] tracking-[0.16em] text-label uppercase">{{ $label }}</span>
@@ -186,7 +195,7 @@
                         </div>
                     @endforeach
                     <a href="{{ route('shop.index') }}" class="grid aspect-[4/5] w-[min(clamp(250px,26vw,360px),44vh)] flex-none snap-start place-items-center self-start rounded-[18px] border border-dashed border-line-strong text-ink transition-[background-color,border-color] duration-400 hover:border-ink hover:bg-glass hover:text-ink">
-                        <span class="p-5 text-center font-serif text-[32px] leading-[1.1] font-light italic">{{ $t('shop_all') }}</span>
+                        <span class="p-5 text-center font-serif text-[32px] leading-[1.1] font-light italic">{{ $t('shop_all') }} <span aria-hidden="true">→</span></span>
                     </a>
                 </div>
             </div>
@@ -221,7 +230,7 @@
     @endif
 
     <div aria-hidden="true" class="overflow-hidden pt-4 pb-12 sm:pb-16">
-        @foreach ([['left', '', $t('words')[0], 1], ['right', 'aura-row-outline', $t('words')[1], 0]] as [$direction, $class, $words, $italic])
+        @foreach (array_filter([$materials ? ['left', '', $materials, 1] : null, ['right', 'aura-row-outline', $t('words')[1], 0]]) as [$direction, $class, $words, $italic])
             <div data-aura-row="{{ $direction }}" class="aura-row {{ $class }}">
                 @foreach ([1, 2, 3] as $copy)
                     @foreach ($words as $i => $word)
@@ -290,7 +299,7 @@
                             <span class="text-[10.5px] tracking-[0.26em] text-on-dark uppercase">{{ $material }}</span>
                             <span class="mt-2 block font-serif text-[length:clamp(28px,3vw,40px)] leading-[1.05] font-light text-sand">{{ $title }}</span>
                             <span class="mt-2 block max-w-[42ch] text-[14.5px] text-on-dark">{{ $text }}</span>
-                            <span class="mt-3.5 block text-[14px] text-rose">{{ $from ? $t('from_price', ['price' => Money::format((int) $from)]) : $t('how_it_works') }}</span>
+                            <span class="mt-3.5 block text-[14px] text-rose">{{ $from ? $t('from_price', ['price' => Money::format((int) $from)]) : $t('how_it_works') }} <span aria-hidden="true">→</span></span>
                         </span>
                     </a>
                 @endforeach
@@ -353,7 +362,7 @@
                     <h2 id="instagram-title" class="{{ $sectionTitle }}">{{ $t('instagram_heading') }} <span aria-hidden="true" class="text-brown">🪐</span></h2>
                 </div>
                 @if ($instagramHandle !== '')
-                    <a href="https://www.instagram.com/{{ $instagramHandle }}/" target="_blank" rel="noopener" data-magnet class="{{ $btnGlass }}">{{ $t('instagram_follow') }}{{ $newTab }}</a>
+                    <a href="https://www.instagram.com/{{ $instagramHandle }}/" target="_blank" rel="noopener" data-magnet class="{{ $btnGlass }}">{{ $t('instagram_follow') }} <span aria-hidden="true">→</span>{{ $newTab }}</a>
                 @endif
             </div>
             <div class="glass rounded-[26px] p-3.5">
@@ -389,7 +398,9 @@
                         <span @class(['text-[10.5px] tracking-[0.24em] uppercase transition-colors duration-500 group-hover:text-graphite', 'text-rose' => $dark, 'text-brown' => ! $dark])>{{ $eyebrow }}</span>
                         <span>
                             <span class="mb-2.5 block font-serif text-[31px] leading-[1.1] font-light">{{ $title }}</span>
-                            <span @class(['block text-[14.5px] leading-[1.6] transition-colors duration-500 group-hover:text-graphite', 'text-on-dark' => $dark, 'text-muted' => ! $dark])>{{ $text }}</span>
+                            @if ($text)
+                                <span @class(['block text-[14.5px] leading-[1.6] transition-colors duration-500 group-hover:text-graphite', 'text-on-dark' => $dark, 'text-muted' => ! $dark])>{{ $text }}</span>
+                            @endif
                         </span>
                     </a>
                 @endforeach

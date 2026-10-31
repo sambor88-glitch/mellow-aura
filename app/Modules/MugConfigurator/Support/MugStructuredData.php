@@ -63,7 +63,7 @@ class MugStructuredData
             ->hasVariant($variants->all());
 
         // Kasia's lead from the panel is Polish; an English page describes the mug in its own words.
-        if (filled($lead = $home ? $settings->get('text_mug_lead') : __('mug-configurator::mug.description'))) {
+        if (filled($lead = $home ? $settings->get('text_mug_lead') : $options->description())) {
             $group->description((string) $lead);
         }
 

@@ -1,3 +1,4 @@
+@use('App\Modules\Shared\Support\Seo')
 @inject('pagePhotos', 'App\Modules\Content\Support\PagePhotos')
 @php
     // The topic name matches the contact form's list from the panel; if it is renamed, the form simply opens without it.
@@ -18,7 +19,7 @@
 @endphp
 
 <x-shared::layout title="Zamówienia indywidualne — ceramika na zamówienie"
-                  description="Serwis na wesele, urna dla kota, kubek z Twoim napisem. Bezpłatny szkic i wycena w pięć dni, płatność BLIK-iem, realizacja około czterech tygodni."
+                  :description="Seo::description($lead ?? 'Ceramika na zamówienie z krakowskiej pracowni MellowAura.')"
                   :canonical="route('custom-orders.index')">
     <x-slot:head>{!! $structuredData !!}</x-slot:head>
     <div class="mx-auto max-w-[1280px] animate-ma-view px-7 pt-14 pb-24">
@@ -100,10 +101,10 @@
 
                             <div class="min-w-0">
                                 <div class="grid grid-cols-2 gap-[13px]">
-                                    <x-shared::field name="quantity" id="brief-quantity" label="Ile sztuk?" maxlength="60" placeholder="np. 6" />
-                                    <x-shared::field name="needed_by" id="brief-needed-by" label="Na kiedy?" maxlength="60" placeholder="np. 14 lutego" />
+                                    <x-shared::field name="quantity" id="brief-quantity" label="Ile sztuk?" maxlength="60" placeholder="np. 6" describedby="brief-quantity-when-note" />
+                                    <x-shared::field name="needed_by" id="brief-needed-by" label="Na kiedy?" maxlength="60" placeholder="np. 14 lutego" describedby="brief-quantity-when-note" />
                                 </div>
-                                <p class="mt-1.5 text-[12.5px] text-hint">Nieobowiązkowe — jeśli już wiesz</p>
+                                <p id="brief-quantity-when-note" class="mt-1.5 text-[12.5px] text-hint">Nieobowiązkowe — jeśli już wiesz</p>
                             </div>
                             <x-shared::field name="budget" id="brief-budget" label="Budżet, jaki masz w głowie" maxlength="60" hint="Nieobowiązkowe — pomoże mi dobrać wykonanie" />
 
@@ -124,9 +125,9 @@
                             <div class="min-w-0">
                                 <label class="relative block cursor-pointer rounded-[20px] border border-dashed border-line-strong bg-linen p-[22px] text-center transition duration-300 hover:border-ink hover:bg-sand-dark active:scale-[.98] has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy">
                                     <span class="block text-[14px] text-lead" x-text="previews.length ? 'Dodaj kolejne zdjęcia' : 'Wybierz zdjęcia z telefonu albo komputera'">Wybierz zdjęcia z telefonu albo komputera</span>
-                                    <span class="mt-1 block text-[12.5px] text-hint">Inspiracje, szkic, apaszka albo roślina — do {{ $photoLimits['maxFiles'] }} zdjęć</span>
+                                    <span id="brief-photos-note" class="mt-1 block text-[12.5px] text-hint">Inspiracje, szkic, apaszka albo roślina — do {{ $photoLimits['maxFiles'] }} zdjęć JPG, PNG lub WebP, każde do {{ intdiv($photoLimits['maxFileBytes'], 1048576) }} MB</span>
                                     <input type="file" name="photos[]" x-ref="photos" accept="image/jpeg,image/png,image/webp" multiple x-on:change="add($el)" class="sr-only"
-                                           @if ($photoErrors->isNotEmpty()) aria-invalid="true" aria-describedby="brief-photos-error" @endif>
+                                           @if ($photoErrors->isNotEmpty()) aria-invalid="true" aria-describedby="brief-photos-note brief-photos-error" @else aria-describedby="brief-photos-note" @endif>
                                 </label>
                                 <input type="hidden" name="photos_chosen" x-bind:value="previews.length">
                                 <div x-show="previews.length" x-cloak class="mt-2.5 flex flex-wrap gap-2">

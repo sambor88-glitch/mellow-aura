@@ -156,7 +156,7 @@ class EnglishVersionTest extends TestCase
         $this->assertStringContainsString('>Shop everything</a>', $english);
         $this->assertStringContainsString('>Cookie settings</a>', $english);
         // The legal pages stay one click away, in Polish and saying so (MA-301).
-        $this->assertStringContainsString('<a href="'.url('/regulamin').'" hreflang="pl" class="text-label-dark hover:text-rose">Terms (in Polish)</a>', $english);
+        $this->assertStringContainsString('<a href="'.url('/regulamin').'" hreflang="pl" class="inline-flex min-h-11 items-center text-label-dark hover:text-rose">Terms (in Polish)</a>', $english);
         $this->assertStringContainsString('>Privacy policy (in Polish)</a>', $english);
         $this->assertStringContainsString('>Withdraw from a purchase here (in Polish)</a>', $english);
         $this->assertStringNotContainsString('/en/custom-orders', $english);
@@ -170,7 +170,7 @@ class EnglishVersionTest extends TestCase
         $polish = $footer($this->get('/sklep')->getContent());
         $this->assertStringContainsString('>Wszystkie produkty</a>', $polish);
         $this->assertStringContainsString('>Warsztaty i cennik</a>', $polish);
-        $this->assertStringContainsString('BLIK · Przelewy24 · karta', $polish);
+        $this->assertStringContainsString('<span>BLIK · Karta · Przelewy24 · Przelew tradycyjny</span>', $polish);
         $this->assertStringContainsString('<span>Pracownia na zapisy</span>', $polish);
     }
 

@@ -15,12 +15,12 @@ return [
     'eyebrow' => 'home studio · kraków',
     'heading' => 'Clay and silk from :em hands.',
     'heading_em' => 'one pair of',
-    'lead' => 'Ceramics shaped by hand and silk accessories sewn from reclaimed fabric — two crafts in one small Kraków studio. And mugs with lettering pressed in by stamp, which no dishwasher will ever wash off.',
+    'lead' => 'Ceramics shaped by hand and silk accessories sewn from reclaimed fabric — two crafts in one small Kraków studio.',
     'cta_mug' => 'Design your mug',
     'cta_shop' => 'Browse the shop',
     'cta_workshops' => 'Workshops',
     'fact_handmade' => 'made by hand',
-    'fact_blik' => 'pay in 10 seconds',
+    'fact_blik' => 'pay in :time',
     'fact_dispatch' => 'to dispatch',
 
     'kasia_eyebrow' => 'Hi, I’m Kasia',
@@ -28,12 +28,12 @@ return [
     'kasia_more' => 'Get to know me',
     'kasia_alt' => 'A cup and saucer from the MellowAura studio',
 
-    'words' => [['clay', 'silk', 'linen', '24k gold'], ['rawness', 'softness', 'less waste', 'one of a kind', 'kraków']],
+    'words' => [['clay', 'silk', 'linen', 'gold'], ['rawness', 'softness', 'less waste', 'one of a kind', 'kraków']],
 
     'shop_eyebrow' => 'shop',
     'shop_heading' => 'What’s in :em right now',
     'shop_heading_em' => 'the studio',
-    'shop_all' => 'See everything →',
+    'shop_all' => 'See everything',
 
     'gifts_mug_alt' => 'Hand-painted mug',
     'gifts_scrunchies_alt' => 'Silk scrunchies',
@@ -56,8 +56,8 @@ return [
     'imprint_material' => 'clay',
     'imprint_title' => 'Your plant imprint',
     'imprint_text' => 'A flower from a wedding bouquet stays in the clay. The plant burns away, the drawing stays.',
-    'from_price' => 'from :price →',
-    'how_it_works' => 'How it works →',
+    'from_price' => 'from :price',
+    'how_it_works' => 'How it works',
 
     'workshops_eyebrow' => 'pottery workshops · kraków',
     'workshops_heading' => 'Sink your hands :em',
@@ -68,7 +68,7 @@ return [
     'workshops_cta' => 'Pick a date',
 
     'instagram_heading' => 'Studio days',
-    'instagram_follow' => 'Follow on Instagram →',
+    'instagram_follow' => 'Follow on Instagram',
     'instagram_live' => 'straight from Instagram',
     'instagram_last' => 'last post :ago',
 
@@ -77,7 +77,6 @@ return [
     'card_custom_text' => 'A dinner set as a gift, for a christening or a wedding — or the one thing you can’t find anywhere.',
     'card_b2b_eyebrow' => 'for cafés',
     'card_b2b_title' => 'Ceramics for cafés and restaurants',
-    'card_b2b_text' => 'Repeatable forms that survive the dishwasher and daily service.',
     'card_firing_eyebrow' => 'kiln space',
     'card_firing_title' => 'I’ll fire your work',
     'card_firing_text' => 'Room in my kiln for makers without their own — bisque and high firing.',

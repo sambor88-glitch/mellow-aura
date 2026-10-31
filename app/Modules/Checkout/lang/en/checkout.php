@@ -57,7 +57,6 @@ return [
     'pay' => 'Pay :amount',
     'badges' => ['Visa', 'Mastercard'],
     'wallet_badges' => ['Apple Pay', 'Google Pay'],
-    'wrapping' => 'I wrap ceramics in wood wool and a double box',
 
     'js' => [
         'locker_map_failed' => 'The map of lockers didn’t load. Type the locker’s code from the InPost app',

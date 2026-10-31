@@ -50,17 +50,18 @@
 </a>
 @if ($withButton && ! $soldOut)
     {{-- At the bottom of the card, so the buttons in a row line up when a name takes two lines. --}}
+    {{-- Below 360 px a smaller font and padding keep „Wybierz rozmiar” on one line in a 125 px card (MA-305). --}}
     <div class="mt-auto pt-3">
     @if ($only)
         <form method="post" action="{{ route('cart.store') }}" x-data x-on:submit.prevent="$store.cart.send($el)">
             @csrf
             <input type="hidden" name="variant_id" value="{{ $only->id }}">
-            <button class="min-h-11 w-full rounded-full border border-line-strong px-[18px] py-[9px] text-[13px] text-ink transition duration-300 hover:border-ink hover:bg-ink hover:text-linen active:scale-[.97] sm:w-auto">
+            <button class="min-h-11 w-full rounded-full border border-line-strong px-[18px] py-[9px] text-[13px] text-ink max-[359px]:px-2.5 max-[359px]:text-[12px] transition duration-300 hover:border-ink hover:bg-ink hover:text-linen active:scale-[.97] sm:w-auto">
                 {{ __('catalog::shop.card_add') }}<span class="sr-only">: {{ $product->name }}</span>
             </button>
         </form>
     @else
-        <a href="{{ route('product.show', $product) }}" class="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-line-strong px-[18px] py-[9px] text-[13px] text-ink transition duration-300 hover:border-ink hover:bg-ink hover:text-linen active:scale-[.97] sm:w-auto">
+        <a href="{{ route('product.show', $product) }}" class="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-line-strong px-[18px] py-[9px] text-[13px] text-ink max-[359px]:px-2.5 max-[359px]:text-[12px] transition duration-300 hover:border-ink hover:bg-ink hover:text-linen active:scale-[.97] sm:w-auto">
             {{ $variants === 1 ? __('catalog::shop.card_voucher') : $kind->choose() }}<span class="sr-only">: {{ $product->name }}</span>
         </a>
     @endif

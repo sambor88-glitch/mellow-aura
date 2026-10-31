@@ -29,6 +29,7 @@ class WorkshopsPageTest extends TestCase
         $response = $this->get('/warsztaty-ceramiczne-krakow')
             ->assertOk()
             ->assertSee('<title>Warsztaty ceramiczne Kraków — kameralnie, do 6 osób</title>', false)
+            ->assertSee('<meta name="description" content="Warsztaty ceramiczne w Krakowie. Ceny zawierają glinę, narzędzia, szkliwa i wypały. Lepienie kubków, szkliwienie i malowanie, sesja indywidualna 1:1…">', false)
             ->assertSee('<link rel="canonical" href="'.route('workshops.index').'">', false)
             ->assertSeeInOrder(['warsztaty &middot; cennik', 'Zanurz dłonie<br>w glinie', 'Ceny zawierają glinę, narzędzia, szkliwa i wypały.'], false)
             ->assertSeeInOrder(['Lepienie kubków', '220 zł', 'os.', '2 godziny', 'grupa do 6 osób', 'Pierwszy raz w glinie', 'Glina i wszystkie narzędzia', 'Herbata i coś słodkiego'])

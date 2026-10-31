@@ -1,15 +1,23 @@
 @use('App\Modules\Shared\Support\Money')
+@use('App\Modules\Shared\Support\Seo')
+@use('Illuminate\Support\Str')
 @inject('settings', 'App\Modules\Settings\Settings')
 @php
     $heading = $settings->get('text_bundles_heading', 'Zestawy prezentowe');
     $lead = $settings->get('text_bundles_lead');
     $wrapHeading = $settings->get('text_gift_wrap_heading', 'Pakowanie na prezent');
     $wrapLead = $settings->get('text_gift_wrap_lead');
+    // The description follows the sets and the wrapping price from the panel; wrapping is paid extra, so it is never „wrapped”.
+    $wrapPrice = $settings->get('gift_wrap_price');
+    $description = Seo::description(collect([
+        $bundles->isNotEmpty() ? 'Gotowe zestawy: '.$bundles->map(fn ($bundle) => Str::lcfirst(trim($bundle->name)))->join(', ').'. Taniej niż osobno.' : 'Gotowe zestawy z ceramiki i jedwabiu.',
+        is_numeric($wrapPrice) ? 'Pakowanie na prezent za '.Money::format((int) $wrapPrice).'.' : null,
+    ])->filter()->join(' '));
 @endphp
 
 <x-shared::layout
     title="Zestawy prezentowe — ceramika i jedwab w pudełku"
-    description="Gotowe zestawy: kubek i scrunchie w jednym odcieniu, talerz z filiżanką, kadzielnica z podstawką. Taniej niż osobno, zapakowane na prezent."
+    :$description
     :canonical="route('bundles.index')"
     :image="$bundles->first()?->items->first()?->variant->product->getFirstMedia('images')?->getAvailableUrl(['card'])"
 >
@@ -45,10 +53,10 @@
                         @if ($bundle->description)
                             <p class="mb-[18px] max-w-[52ch] text-[15.5px] leading-[1.64] text-lead">{{ $bundle->description }}</p>
                         @endif
-                        <ul class="mb-5 grid justify-items-start gap-2 sm:flex sm:flex-wrap" aria-label="W zestawie">
+                        <ul class="mb-5 grid justify-items-start gap-2.5 sm:flex sm:flex-wrap" aria-label="W zestawie">
                             @foreach ($bundle->items as $item)
                                 {{-- A live set has only published parts, so each one has its page in the shop. --}}
-                                <li><a href="{{ route('product.show', $item->variant->product) }}" class="inline-block rounded-full bg-sand-dark px-[13px] py-1.5 text-[12px] tracking-[0.06em] text-muted transition-colors duration-300 hover:bg-line-soft hover:text-ink">{{ $item->variant->product->name }}</a></li>
+                                <li><a href="{{ route('product.show', $item->variant->product) }}" class="inline-flex min-h-11 items-center rounded-full bg-sand-dark px-[13px] text-[12px] tracking-[0.06em] text-muted transition-colors duration-300 hover:bg-line-soft hover:text-ink">{{ $item->variant->product->name }}</a></li>
                             @endforeach
                         </ul>
                         <form method="post" action="{{ route('cart.store') }}" x-data x-on:submit.prevent="$store.cart.send($el)" class="flex flex-wrap items-center gap-4">

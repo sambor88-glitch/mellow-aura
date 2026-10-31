@@ -13,12 +13,12 @@ return [
     'eyebrow' => 'domowa pracownia · kraków',
     'heading' => 'Glina i jedwab z :em rąk.',
     'heading_em' => 'jednej pary',
-    'lead' => 'Ceramika formowana w dłoniach i jedwabne dodatki szyte z tkanin z drugiego obiegu — dwie dziedziny w jednej krakowskiej pracowni. Do tego kubki z napisem wbijanym stemplem, którego nie zetrze żadna zmywarka.',
+    'lead' => 'Ceramika formowana w dłoniach i jedwabne dodatki szyte z tkanin z drugiego obiegu — dwie dziedziny w jednej krakowskiej pracowni.',
     'cta_mug' => 'Zaprojektuj kubek z napisem',
     'cta_shop' => 'Zobacz produkty',
     'cta_workshops' => 'Warsztaty',
     'fact_handmade' => 'ręczna robota',
-    'fact_blik' => 'płatność w 10 sekund',
+    'fact_blik' => 'płatność w :time',
     'fact_dispatch' => 'wysyłka zamówienia',
 
     'kasia_eyebrow' => 'Cześć, jestem Kasia',
@@ -26,12 +26,13 @@ return [
     'kasia_more' => 'Poznaj mnie bliżej',
     'kasia_alt' => 'Filiżanka z talerzykiem z pracowni MellowAura',
 
-    'words' => [['glina', 'jedwab', 'len', 'złoto 24k'], ['surowość', 'miękkość', 'less waste', 'unikat', 'kraków']],
+    // The first row comes from the panel (text_home_materials) on the Polish page.
+    'words' => [[], ['surowość', 'miękkość', 'less waste', 'unikat', 'kraków']],
 
     'shop_eyebrow' => 'sklep',
     'shop_heading' => 'Co teraz jest :em',
     'shop_heading_em' => 'w pracowni',
-    'shop_all' => 'Wszystkie produkty →',
+    'shop_all' => 'Wszystkie produkty',
 
     'gifts_mug_alt' => 'Kubek malowany ręcznie',
     'gifts_scrunchies_alt' => 'Jedwabne scrunchies',
@@ -54,8 +55,8 @@ return [
     'imprint_material' => 'glina',
     'imprint_title' => 'Odcisk Twojej rośliny',
     'imprint_text' => 'Kwiat z bukietu ślubnego zostaje w glinie. Roślina znika, rysunek zostaje.',
-    'from_price' => 'od :price →',
-    'how_it_works' => 'Jak to działa →',
+    'from_price' => 'od :price',
+    'how_it_works' => 'Jak to działa',
 
     'workshops_eyebrow' => 'warsztaty ceramiczne · kraków',
     'workshops_heading' => 'Zanurz dłonie :em',
@@ -66,7 +67,7 @@ return [
     'workshops_cta' => 'Wybierz termin',
 
     'instagram_heading' => 'Codzienność pracowni',
-    'instagram_follow' => 'Obserwuj na Instagramie →',
+    'instagram_follow' => 'Obserwuj na Instagramie',
     'instagram_live' => 'prosto z Instagrama',
     'instagram_last' => 'ostatni post :ago',
 
@@ -75,7 +76,6 @@ return [
     'card_custom_text' => 'Serwis na prezent, chrzciny, wesele albo jedna rzecz, której nigdzie nie ma.',
     'card_b2b_eyebrow' => 'dla lokali',
     'card_b2b_title' => 'Ceramika dla kawiarni i restauracji',
-    'card_b2b_text' => 'Powtarzalne formy, które wytrzymują zmywarkę i codzienny serwis.',
     'card_firing_eyebrow' => 'zaplecze',
     'card_firing_title' => 'Wypalę Twoje prace',
     'card_firing_text' => 'Miejsce w piecu dla osób bez własnego zaplecza — biskwit i wypał na ostro.',

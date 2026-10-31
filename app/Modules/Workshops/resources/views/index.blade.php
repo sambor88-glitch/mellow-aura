@@ -1,5 +1,9 @@
+@use('App\Modules\Checkout\Enums\PaymentMethod')
 @use('App\Modules\Shared\Support\Money')
+@use('App\Modules\Shared\Support\Seo')
+@use('App\Modules\Workshops\Http\Controllers\BookingController')
 @use('App\Modules\Workshops\Support\WorkshopTypes')
+@use('Illuminate\Support\Str')
 @php
     // The topic name matches the contact form's list from the panel; if it is renamed, the form simply opens without it.
     $contactUrl = route('content.contact', ['temat' => 'Warsztaty i terminy']);
@@ -11,10 +15,25 @@
         ->concat($filtered->map(fn (array $workshop) => ['code' => WorkshopTypes::key($workshop), 'label' => $workshop['name']]));
     // The photo spans the 1280 px page without its padding.
     $heroSizes = '(min-width: 1280px) 1224px, calc(100vw - 56px)';
+
+    // The title, the description and the payment line follow the price list and the booking form, so they never promise
+    // a group size, an inclusion or a way to pay the page doesn't have.
+    $largestGroup = $workshops->map(fn (array $workshop) => preg_match('/do (\d+) os/u', (string) ($workshop['group_label'] ?? ''), $match) ? (int) $match[1] : null)->filter()->max();
+    $title = 'Warsztaty ceramiczne Kraków — kameralnie'.($largestGroup ? ', do '.$largestGroup.' osób' : '');
+    $description = Seo::description(collect([
+        'Warsztaty ceramiczne w Krakowie.',
+        $lead ? Str::before($lead, '. ').(str_contains($lead, '. ') ? '.' : '') : null,
+        $workshops->isNotEmpty() ? Str::ucfirst($workshops->map(fn (array $workshop) => Str::lcfirst(trim($workshop['name'])))->join(', ')).'.' : null,
+    ])->filter()->join(' '));
+    $payWith = collect(BookingController::paymentMethods())->map(fn (PaymentMethod $method) => match ($method) {
+        PaymentMethod::Blik => 'BLIK-iem',
+        PaymentMethod::Card => 'kartą',
+        PaymentMethod::OnlineTransfer => 'przez Przelewy24',
+        default => Str::lower($method->label()),
+    });
 @endphp
 
-<x-shared::layout title="Warsztaty ceramiczne Kraków — kameralnie, do 6 osób"
-                  description="Warsztaty ceramiczne w Krakowie: lepienie kubków, szkliwienie, sesje 1:1, dla par i rodzin. Glina, narzędzia i dwa wypały w cenie. Terminy i cennik."
+<x-shared::layout :$title :$description
                   :canonical="route('workshops.index')"
                   :preload-image="$hero !== null ? ['src' => $hero, 'srcset' => $heroSrcset, 'sizes' => $heroSizes] : null">
     <x-slot:head>{!! $structuredData !!}</x-slot:head>
@@ -99,7 +118,7 @@
                 @if ($dates->isNotEmpty())
                     <section aria-labelledby="workshop-dates" class="mb-14">
                         <h2 id="workshop-dates" class="mb-2 scroll-mt-24 font-serif text-[length:clamp(28px,3.4vw,40px)] font-light">Najbliższe terminy</h2>
-                        <p class="mb-[26px] text-[15.5px] text-muted">Wybierz termin i zapłać BLIK-iem, kartą albo przez Przelewy24 — miejsce jest Twoje od razu.</p>
+                        <p class="mb-[26px] text-[15.5px] text-muted">Wybierz termin{{ $payWith->isNotEmpty() ? ' i zapłać '.$payWith->join(', ', ' albo ') : '' }} — miejsce jest Twoje od razu.</p>
                         @if ($filtered->count() > 1)
                             {{-- Buttons only work with JS, so without it the row is not there at all. On a phone one row swiped sideways. --}}
                             <div x-cloak x-ref="pills" role="group" aria-label="Pokaż terminy warsztatu"
@@ -153,7 +172,7 @@
                     <p class="mb-6 max-w-[52ch] text-[15px] leading-[1.65] text-lead">Pracownia: {{ $location }}. Dokładny adres podaję po zapisie.</p>
                 @endif
                 @if ($vouchersUrl)
-                    <a href="{{ $vouchersUrl }}" class="border-b border-line-strong pb-[3px] text-[13.5px] tracking-[0.06em]">Warsztat na prezent? Zobacz vouchery →</a>
+                    <a href="{{ $vouchersUrl }}" class="border-b border-line-strong pb-[3px] text-[13.5px] tracking-[0.06em]">Warsztat na prezent? Zobacz vouchery <span aria-hidden="true">→</span></a>
                 @endif
             </div>
             <div class="min-w-[min(100%,280px)] flex-[0_1_340px]">
@@ -183,7 +202,7 @@
             <div class="pt-[76px]">
                 <div class="mb-5 flex flex-wrap items-baseline justify-between gap-4">
                     <h2 class="font-serif text-[length:clamp(28px,3.4vw,40px)] font-light">Pracownia</h2>
-                    <a href="{{ route('content.studio') }}" class="border-b border-line-strong pb-[3px] text-[13.5px] tracking-[0.06em]">Zobacz pracownię →</a>
+                    <a href="{{ route('content.studio') }}" class="border-b border-line-strong pb-[3px] text-[13.5px] tracking-[0.06em]">Zobacz pracownię <span aria-hidden="true">→</span></a>
                 </div>
                 <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3.5">
                     @foreach ($gallery as $photo)

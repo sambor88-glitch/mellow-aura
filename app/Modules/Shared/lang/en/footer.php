@@ -26,7 +26,4 @@ return [
     // Next to a legal page that exists in Polish only (MA-301).
     'in_polish' => '(in Polish)',
     'cookies' => 'Cookie settings',
-    // Empty, not null: null falls back to the Polish line. Left out until the euro checkout settles
-    // which methods it offers (MA-127) — BLIK is złoty-only.
-    'payments' => '',
 ];

@@ -1,18 +1,27 @@
 @use('App\Modules\Localization\Support\Locales')
+@use('App\Modules\Shared\Support\Seo')
+@use('Illuminate\Support\Str')
 @php
     // Buttons to pages that don't exist yet, or not in the language of this page, fall back to the contact page,
     // so this page never ends in a dead end and /en/studio never leads to a Polish page.
     $workshopsUrl = Locales::has('workshops.index', Locales::current()) ? route('workshops.index') : null;
     $firingUrl = Locales::has('firing.index', Locales::current()) ? route('firing.index') : null;
+    // The description follows the facts from the panel, so it never promises what the page doesn't.
+    $description = Seo::description('Kameralna domowa pracownia w Krakowie'.($facts->isNotEmpty()
+        ? ': '.$facts->map(fn (array $fact) => Str::lcfirst(trim($fact['title'])))->join(', ').'.'
+        : '.'));
 @endphp
 
 <x-shared::layout title="Pracownia w Krakowie — ciepło, empatia, cierpliwość"
-                  description="Kameralna domowa pracownia w Krakowie: jeden stół, do sześciu osób, dwa wypały w cenie warsztatu."
+                  :$description
                   :canonical="route('content.studio')">
     <div class="animate-ma-view pb-24">
         @if ($hero !== null)
             <div class="relative">
-                <img src="{{ $hero }}" alt="" class="block h-[clamp(320px,46vh,520px)] w-full bg-line-soft object-cover brightness-82">
+                <img src="{{ $hero }}" alt="" fetchpriority="high"
+                     @if ($heroSrcset) srcset="{{ $heroSrcset }}" sizes="100vw" @endif
+                     @if ($heroSize) width="{{ $heroSize['width'] }}" height="{{ $heroSize['height'] }}" @endif
+                     class="block h-[clamp(320px,46vh,520px)] w-full bg-line-soft object-cover brightness-82">
                 {{-- Darker in the lower 40 %, so the small eyebrow keeps 4.5:1 on a light photo. --}}
                 <div class="absolute inset-0 flex items-end bg-linear-to-t from-scrim/72 via-scrim/60 via-40% to-scrim/5">
                     <div class="mx-auto w-full max-w-[1280px] px-7 pb-12">
@@ -48,7 +57,7 @@
                 @if ($facts->isNotEmpty())
                     <div class="min-w-0 basis-full sm:min-w-[260px] sm:flex-[0_1_300px]">
                         <div class="rounded-[20px] border border-divider bg-cream p-7">
-                            <h2 class="mb-[18px] text-[11px] tracking-[0.2em] text-gold uppercase">dobrze wiedzieć</h2>
+                            <h2 class="mb-[18px] text-[11px] tracking-[0.2em] text-brown uppercase">dobrze wiedzieć</h2>
                             <dl class="grid gap-4 text-[14.5px] leading-[1.6] text-lead">
                                 @foreach ($facts as $fact)
                                     <div>

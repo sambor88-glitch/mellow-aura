@@ -32,7 +32,7 @@ class ServicePagesTest extends TestCase
             ->assertSee('<title>Przeszycie apaszki po babci — opaska z Twojej tkaniny</title>', false)
             ->assertSee('<link rel="canonical" href="'.route('content.scarf').'">', false)
             ->assertSeeInOrder(['usługa &middot; z Twojej tkaniny', "Apaszka babci\nnie musi leżeć\nw szafie", 'Przyślij mi tkaninę, która coś dla Ciebie znaczy', 'Szyję z tkanin z drugiego obiegu'], false)
-            ->assertSeeInOrder(['href="'.route('custom-orders.index', ['usluga' => 'apaszka']).'#formularz"', 'Napisz, co chcesz przysłać', 'href="'.route('content.imprint').'"', 'Odcisk Twojej rośliny →'], false)
+            ->assertSeeInOrder(['href="'.route('custom-orders.index', ['usluga' => 'apaszka']).'#formularz"', 'Napisz, co chcesz przysłać', 'href="'.route('content.imprint').'"', 'Odcisk Twojej rośliny <span aria-hidden="true">→</span>'], false)
             ->assertSeeInOrder(['01', 'Wysyłasz zdjęcie tkaniny', 'Powiem od razu', '04', 'Szyję i odsyłam'])
             ->assertSee('Kod Paczkomatu, do którego wyślesz paczkę, podam w wiadomości.')
             ->assertSeeInOrder(['Co wychodzi z jednej apaszki', 'Opaska szeroka, pikowana', 'z apaszki 65 × 65 cm zostaje zapas', '119 zł', 'Zestaw: opaska i dwie scrunchies', '199 zł'])
