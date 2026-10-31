@@ -18,8 +18,8 @@ use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 
 /**
- * The product form in the panel. Every product on the list has its own form, so mistakes come back
- * in that form's error bag and the page scrolls to the product they belong to.
+ * The product form in the panel: the short form for a new product and the card of one product (MA-307).
+ * Mistakes come back in the form's own error bag, on the screen they were made on.
  */
 class SaveProductRequest extends FormRequest
 {
@@ -244,6 +244,9 @@ class SaveProductRequest extends FormRequest
 
     protected function getRedirectUrl(): string
     {
-        return route('admin.products.index').'#'.$this->formKey();
+        $product = $this->route('product');
+
+        // The card opens the tab with the first mistake by itself.
+        return $product ? route('admin.products.edit', $product) : route('admin.products.create');
     }
 }

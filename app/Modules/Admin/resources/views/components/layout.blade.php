@@ -1,4 +1,6 @@
-@props(['title', 'lead' => null])
+{{-- heading: false when the screen draws its own title (the product card). compact: on a phone the bar above already names
+     the screen, so the big title stays for wider screens. actions: a button next to the title instead of the lead. --}}
+@props(['title', 'lead' => null, 'heading' => true, 'compact' => false])
 @use('App\Modules\Admin\Menu')
 <!DOCTYPE html>
 <html lang="pl">
@@ -41,15 +43,19 @@
     </header>
 
     <div class="mx-auto max-w-[1280px] animate-ma-view px-4 pt-7 pb-24 md:px-7 md:pt-11">
-        <div class="mb-[30px] flex flex-wrap items-end justify-between gap-5">
-            <div>
-                <div class="mb-3.5 text-[10.5px] tracking-[0.3em] text-brown uppercase">tylko dla Ciebie &middot; nie widzą tego klienci</div>
-                <h1 class="font-serif text-[length:clamp(32px,4.4vw,52px)] leading-[1.04] font-light">{{ $title }}</h1>
+        @if ($heading)
+            <div @class(['mb-[30px] flex flex-wrap items-end justify-between gap-5', 'max-md:hidden' => $compact])>
+                <div>
+                    <div class="mb-3.5 text-[10.5px] tracking-[0.3em] text-brown uppercase">tylko dla Ciebie &middot; nie widzą tego klienci</div>
+                    <h1 class="font-serif text-[length:clamp(32px,4.4vw,52px)] leading-[1.04] font-light">{{ $title }}</h1>
+                </div>
+                @isset($actions)
+                    <div class="flex flex-wrap gap-2.5">{{ $actions }}</div>
+                @elseif ($lead)
+                    <p class="max-w-[40ch] text-[14px] text-pretty text-muted">{{ $lead }}</p>
+                @endisset
             </div>
-            @if ($lead)
-                <p class="max-w-[40ch] text-[14px] text-pretty text-muted">{{ $lead }}</p>
-            @endif
-        </div>
+        @endif
 
         <div class="flex flex-wrap gap-x-10 gap-y-6">
             @auth

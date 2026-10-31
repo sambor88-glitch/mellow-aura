@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 /**
- * The 3D model under each product in the panel (MA-310): add or replace, and delete.
+ * The 3D model on the „Opis i zdjęcia” tab of the product card (MA-310): add or replace, and delete.
  * With a model, the product page shows „Zobacz u siebie”.
  */
 class ProductModelController extends Controller
@@ -40,6 +40,6 @@ class ProductModelController extends Controller
 
     private function backTo(Product $product): string
     {
-        return route('admin.products.index').'#produkt-'.$product->id;
+        return route('admin.products.edit', [$product, 'tab' => 'desc']).'#model-3d';
     }
 }

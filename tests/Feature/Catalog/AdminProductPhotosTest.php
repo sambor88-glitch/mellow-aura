@@ -40,7 +40,7 @@ class AdminProductPhotosTest extends TestCase
                 UploadedFile::fake()->image('IMG_4821.jpg', 3200, 2400),
                 UploadedFile::fake()->image('IMG_4822.png', 800, 1000),
             ]])
-            ->assertRedirect('/panel/produkty#produkt-'.$this->product->id)
+            ->assertRedirect('/panel/produkty/'.$this->product->id.'?tab=desc#zdjecia')
             ->assertSessionHas('panel_status', '2 zdjęcia dodane');
 
         [$first, $second] = $this->product->fresh()->getMedia('images')->all();
@@ -55,7 +55,7 @@ class AdminProductPhotosTest extends TestCase
         // No description yet: the shop describes the photo with the product name.
         $this->assertNull($first->getCustomProperty('alt'));
 
-        $this->get('/panel/produkty')->assertOk()->assertSee('2 zdjęcia')->assertSee($first->getUrl('thumb'), false);
+        $this->get('/panel/produkty/'.$this->product->id)->assertOk()->assertSee('2 zdjęcia')->assertSee($first->getUrl('thumb'), false);
     }
 
     public function test_a_phone_photo_is_turned_upright_once_and_loses_its_exif(): void
@@ -77,7 +77,7 @@ class AdminProductPhotosTest extends TestCase
         [$first, $second] = $this->product->fresh()->getMedia('images')->all();
 
         $this->post($this->photosUrl().'/'.$second->id.'/przesun', ['kierunek' => 'lewo'])
-            ->assertRedirect('/panel/produkty#produkt-'.$this->product->id);
+            ->assertRedirect('/panel/produkty/'.$this->product->id.'?tab=desc#zdjecia');
         $this->assertSame([$second->id, $first->id], $this->product->fresh()->getMedia('images')->pluck('id')->all());
 
         $path = $first->getPath();
@@ -112,7 +112,7 @@ class AdminProductPhotosTest extends TestCase
         [$first, $second] = $this->product->fresh()->getMedia('images')->all();
         $second->setCustomProperty('alt', 'Stary opis')->save();
 
-        $this->get('/panel/produkty')->assertSee('Opisy i kadr zdjęć')->assertSee('name="photo_alts['.$first->id.']"', false);
+        $this->get('/panel/produkty/'.$this->product->id)->assertSee('Opisy i kadr zdjęć')->assertSee('name="photo_alts['.$first->id.']"', false);
 
         $this->put('/panel/produkty/'.$this->product->id, [
             'form' => 'produkt-'.$this->product->id,
@@ -136,7 +136,7 @@ class AdminProductPhotosTest extends TestCase
         [$first, $second] = $this->product->fresh()->getMedia('images')->all();
         $second->setCustomProperty('focus', ['x' => 10, 'y' => 10])->save();
 
-        $this->get('/panel/produkty')
+        $this->get('/panel/produkty/'.$this->product->id)
             ->assertSee('Opisy i kadr zdjęć')
             ->assertSee('name="photo_focus['.$first->id.'][y]"', false)
             ->assertSee('object-position: 50% 50%', false);
@@ -181,7 +181,7 @@ class AdminProductPhotosTest extends TestCase
                 'variants' => [['label' => '', 'price' => '249', 'stock' => '1']],
                 'photos' => [UploadedFile::fake()->image('wazon.jpg', 1600, 2000)],
             ])
-            ->assertRedirect('/panel/produkty');
+            ->assertRedirectContains('?tab=desc');
 
         $cover = Product::where('slug', 'wazon-rzezbiony')->firstOrFail()->getFirstMedia('images');
 

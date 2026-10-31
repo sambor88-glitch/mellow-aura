@@ -19,29 +19,65 @@ use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 /**
- * Products in the panel, like the prototype's „Produkty” tab: a form to add one, the home page hero,
- * the markup on euro prices that follow the NBP rate, and the whole offer with order, visibility, photos and an edit form under each product.
+ * Products in the panel (MA-307): a list to work on, a short form for a new product, the card of one product in tabs,
+ * and the settings that apply to all of them — the home page hero and the markup on euro prices that follow the NBP rate.
  */
 class ProductController extends Controller
 {
-    public function index(Settings $settings): View
+    /** The tabs of the product card, in their order. */
+    public const TABS = ['sale', 'desc', 'details', 'gift', 'en'];
+
+    public function index(): View
     {
         return view('catalog::admin.products.index', [
             'products' => Product::query()
-                // Translations for the English marker on the list and the English block in each form;
-                // the people waiting for a sold-out size help Kasia decide what to make next (MA-266).
-                ->with(['category', 'variants' => fn ($query) => $query->orderBy('id')->withCount('stockNotifications'), 'variants.translations', 'variants.prices', 'media', 'translations'])
+                // Translations for the English marker on the list; the people waiting for a sold-out size help Kasia
+                // decide what to make next (MA-266).
+                ->with(['category', 'variants' => fn ($query) => $query->orderBy('id')->withCount('stockNotifications'), 'variants.prices', 'media', 'translations'])
                 ->orderBy('sort_order')
                 ->orderBy('id')
                 ->get(),
+        ]);
+    }
+
+    public function create(): View
+    {
+        return view('catalog::admin.products.create', [
             'categories' => Category::query()->orderBy('sort_order')->get(),
-            'heroSlug' => $settings->get('home_hero_product'),
-            'heroBadge' => $settings->get('home_hero_badge'),
-            'euroMarkup' => $settings->get(ConvertEuroPrices::MARKUP),
             'photoLimits' => PhotoRules::limits(),
         ]);
     }
 
+    public function edit(Request $request, Product $product): View
+    {
+        $product->load(['category', 'variants' => fn ($query) => $query->orderBy('id')->withCount('stockNotifications'), 'variants.translations', 'variants.prices', 'media', 'translations']);
+        // The card walks to the product before and after it, in the order of the shop.
+        $order = Product::query()->orderBy('sort_order')->orderBy('id')->pluck('id');
+        $at = $order->search($product->id);
+
+        return view('catalog::admin.products.edit', [
+            'product' => $product,
+            'categories' => Category::query()->orderBy('sort_order')->get(),
+            'photoLimits' => PhotoRules::limits(),
+            'tab' => in_array($request->query('tab'), self::TABS, true) ? $request->query('tab') : 'sale',
+            'position' => $at + 1,
+            'total' => $order->count(),
+            'previous' => $at > 0 ? $order[$at - 1] : null,
+            'next' => $order[$at + 1] ?? null,
+        ]);
+    }
+
+    public function settings(Settings $settings): View
+    {
+        return view('catalog::admin.products.settings', [
+            'products' => Product::query()->where('is_published', true)->orderBy('sort_order')->orderBy('id')->get(),
+            'heroSlug' => $settings->get('home_hero_product'),
+            'heroBadge' => $settings->get('home_hero_badge'),
+            'euroMarkup' => $settings->get(ConvertEuroPrices::MARKUP),
+        ]);
+    }
+
+    /** A new product opens on its description: that is what the short form leaves for later. */
     public function store(SaveProductRequest $request, SaveProduct $saveProduct, AddProductPhotos $addPhotos): RedirectResponse
     {
         $product = $saveProduct(null, $request->product());
@@ -50,24 +86,26 @@ class ProductController extends Controller
             $addPhotos($product, $request->file('photos'));
         }
 
-        return to_route('admin.products.index')
-            ->with('panel_status', $product->name.' — '.($product->is_published ? 'opublikowane w sklepie' : 'zapisane jako ukryte'));
+        return to_route('admin.products.edit', [$product, 'tab' => 'desc'])
+            ->with('panel_status', $product->name.' — '.($product->is_published ? 'opublikowane w sklepie. Dopisz jeszcze opis.' : 'zapisane jako ukryte'));
     }
 
+    /** „Zapisz i następny” saves and opens the next product on the same tab. */
     public function update(SaveProductRequest $request, Product $product, SaveProduct $saveProduct): RedirectResponse
     {
         $saveProduct($product, $request->product());
+        $tab = in_array($request->input('tab'), self::TABS, true) ? $request->input('tab') : 'sale';
+        $next = $request->filled('next') ? Product::query()->find($request->integer('next')) : null;
 
-        return to_route('admin.products.index')
-            ->withFragment('produkt-'.$product->id)
-            ->with('panel_status', 'Zapisane. Klienci już to widzą.');
+        return to_route('admin.products.edit', [$next ?? $product, 'tab' => $tab])
+            ->with('panel_status', $next ? 'Zapisane. Teraz: '.$next->name.'.' : 'Zapisane. Klienci już to widzą.');
     }
 
     public function move(Request $request, Product $product, MoveProduct $moveProduct): RedirectResponse
     {
         $moveProduct($product, $request->input('kierunek') === 'wyzej' ? -1 : 1);
 
-        return to_route('admin.products.index')->withFragment('produkt-'.$product->id);
+        return to_route('admin.products.index', ['kolejnosc' => 1])->withFragment('produkt-'.$product->id);
     }
 
     public function toggle(Product $product): RedirectResponse
@@ -95,7 +133,7 @@ class ProductController extends Controller
             'home_hero_badge' => $data['home_hero_badge'] ?? null,
         ]);
 
-        return to_route('admin.products.index')->with('panel_status', 'Zapisane. Strona główna już to pokazuje.');
+        return to_route('admin.products.settings')->with('panel_status', 'Zapisane. Strona główna już to pokazuje.');
     }
 
     /**
@@ -115,7 +153,7 @@ class ProductController extends Controller
         $saveSettings([ConvertEuroPrices::MARKUP => isset($data[ConvertEuroPrices::MARKUP]) ? (int) $data[ConvertEuroPrices::MARKUP] : null]);
         $convertEuroPrices();
 
-        return to_route('admin.products.index')
+        return to_route('admin.products.settings')
             ->withFragment('ceny-w-euro')
             ->with('panel_status', 'Zapisane. Ceny w euro z kursu NBP już liczą się z tym narzutem.');
     }

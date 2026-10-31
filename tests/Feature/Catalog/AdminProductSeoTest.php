@@ -39,7 +39,7 @@ class AdminProductSeoTest extends TestCase
         $owner = User::factory()->create();
 
         $this->actingAs($owner)->put('/panel/produkty/'.$this->mug->id, $this->form('Kubek malowany ręcznie w Krakowie — każdy inny.'))
-            ->assertRedirect('/panel/produkty#produkt-'.$this->mug->id);
+            ->assertRedirect('/panel/produkty/'.$this->mug->id.'?tab=sale');
 
         $this->assertSame('Kubek malowany ręcznie w Krakowie — każdy inny.', $this->mug->fresh()->seo_description);
         $this->get('/produkt/kubki-malowane')
@@ -60,7 +60,7 @@ class AdminProductSeoTest extends TestCase
         $this->mug->update(['seo_description' => str_repeat('a', 160)]);
 
         $this->actingAs(User::factory()->create())
-            ->get('/panel/produkty')
+            ->get('/panel/produkty/'.$this->mug->id)
             ->assertOk()
             ->assertSee('Opis dla Google')
             ->assertSee('Google utnie po 155 znakach')

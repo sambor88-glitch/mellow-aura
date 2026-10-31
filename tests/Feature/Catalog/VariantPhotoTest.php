@@ -96,10 +96,10 @@ class VariantPhotoTest extends TestCase
         $foreign = $this->photo($vase, 'wazon-rzezbiony.webp', 'Wazon');
         $owner = User::factory()->create();
 
-        $this->actingAs($owner)->get('/panel/produkty')
+        $this->actingAs($owner)->get('/panel/produkty/'.$this->mugs->id)
             ->assertOk()
-            ->assertSee('aria-label="Zdjęcie, rozmiar 1"', false)
-            ->assertSee('„Zdjęcie” to fotka, którą karta produktu pokaże po wybraniu tego rozmiaru');
+            ->assertSee('aria-label="Zdjęcie, Królowa matka"', false)
+            ->assertSee('„Zdjęcie po wybraniu” to fotka, którą karta produktu pokaże po wybraniu tego rozmiaru');
 
         $this->actingAs($owner)
             ->put('/panel/produkty/'.$this->mugs->id, [
@@ -112,10 +112,10 @@ class VariantPhotoTest extends TestCase
                     ['id' => $second->id, 'label' => 'Ochujeję', 'price' => '79', 'stock' => '1', 'media_id' => (string) $foreign->id],
                 ],
             ])
-            ->assertRedirect('/panel/produkty#produkt-'.$this->mugs->id);
+            ->assertRedirect('/panel/produkty/'.$this->mugs->id.'?tab=sale');
 
         $this->assertSame([$this->photos[0]->id, null], $this->mugs->variants()->orderBy('id')->pluck('media_id')->all());
-        $this->actingAs($owner)->get('/panel/produkty')
+        $this->actingAs($owner)->get('/panel/produkty/'.$this->mugs->id)
             ->assertSee('<option value="'.$this->photos[0]->id.'" selected>zdjęcie 1</option>', false);
 
         // A deleted photo leaves its size on the first one.

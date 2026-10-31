@@ -105,16 +105,16 @@ class HiddenVariantTest extends TestCase
             ],
         ];
 
-        $this->actingAs($admin)->get('/panel/produkty')->assertOk()->assertSee('name="variants[1][is_hidden]"', false);
+        $this->actingAs($admin)->get('/panel/produkty/'.$product->id)->assertOk()->assertSee('name="variants[1][is_hidden]"', false);
 
         // Back in stock while hidden: she keeps waiting, the size is not on the page yet.
-        $this->actingAs($admin)->put('/panel/produkty/'.$product->id, $form(true, '2'))->assertRedirect('/panel/produkty#produkt-'.$product->id);
+        $this->actingAs($admin)->put('/panel/produkty/'.$product->id, $form(true, '2'))->assertRedirect('/panel/produkty/'.$product->id.'?tab=sale');
 
         $this->assertTrue($moon->fresh()->is_hidden);
         $this->assertSame(1, $moon->priceHistory()->count());
         $this->assertSame(1, StockNotification::count());
         Mail::assertNothingQueued();
-        $this->actingAs($admin)->get('/panel/produkty')->assertSee('name="variants[1][is_hidden]" value="1" checked', false);
+        $this->actingAs($admin)->get('/panel/produkty/'.$product->id)->assertSee('name="variants[1][is_hidden]" value="1" checked', false);
 
         $this->actingAs($admin)->put('/panel/produkty/'.$product->id, $form(false, '2'));
 

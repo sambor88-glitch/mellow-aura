@@ -38,14 +38,17 @@ class AdminProductsTest extends TestCase
 
     public function test_the_list_shows_every_product_with_its_state(): void
     {
-        $this->product('Wazony', 1, [23900, 29900]);
+        $vases = $this->product('Wazony', 1, [23900, 29900]);
         $this->product('Szkic miski', 2, [8900], ['is_published' => false]);
 
+        // One row per product without a single form on the list (MA-307); the switch tells what is in the shop.
         $this->actingAs(User::factory()->create())
             ->get('/panel/produkty')
             ->assertOk()
             ->assertSee('Dodaj produkt')
-            ->assertSeeInOrder(['Wszystko, co masz w ofercie', 'Wazony', 'widoczny w sklepie', 'od 239 zł', 'Szkic miski', 'ukryty w sklepie', '89 zł']);
+            ->assertSee('href="'.route('admin.products.edit', $vases).'"', false)
+            ->assertDontSee('name="variants[', false)
+            ->assertSeeInOrder(['Wazony', 'od 239 zł', 'aria-checked="true" aria-label="Widoczny w sklepie: Wazony"', 'Szkic miski', '89 zł', 'aria-checked="false" aria-label="Widoczny w sklepie: Szkic miski"'], false);
     }
 
     public function test_adding_a_product_publishes_it_with_sizes_prices_and_details(): void
@@ -78,8 +81,8 @@ class AdminProductsTest extends TestCase
                     ['label' => '', 'price' => '', 'stock' => ''],
                 ],
             ])
-            ->assertRedirect('/panel/produkty')
-            ->assertSessionHas('panel_status', 'Miska z odciskiem paproci — opublikowane w sklepie');
+            ->assertRedirectContains('?tab=desc')
+            ->assertSessionHas('panel_status', 'Miska z odciskiem paproci — opublikowane w sklepie. Dopisz jeszcze opis.');
 
         $bowl = Product::where('slug', 'miska-z-odciskiem-paproci')->firstOrFail();
         $this->assertSame(['diameter_cm' => '12,5'], $bowl->dimensions);
@@ -115,7 +118,7 @@ class AdminProductsTest extends TestCase
                     'is_published' => '1',
                     'variants' => [['label' => '', 'price' => '99', 'stock' => '1']],
                 ])
-                ->assertRedirect('/panel/produkty');
+                ->assertRedirectContains('?tab=desc');
         }
 
         $this->get('/sklep')->assertSeeInOrder(['Talerze', 'Patery', 'Wazony']);
@@ -138,7 +141,7 @@ class AdminProductsTest extends TestCase
                     ['label' => 'Średni 300 ml', 'price' => '89', 'stock' => ''],
                 ],
             ])
-            ->assertRedirect('/panel/produkty#produkt-'.$mug->id);
+            ->assertRedirect('/panel/produkty/'.$mug->id.'?tab=sale');
 
         $mug->refresh();
         $this->assertSame(['Kubki malowane ręcznie', 'kubki-malowane'], [$mug->name, $mug->slug]);
@@ -163,7 +166,7 @@ class AdminProductsTest extends TestCase
                 'is_published' => '1',
                 'variants' => [['label' => '', 'price' => '59', 'stock' => '1']],
             ])
-            ->assertRedirect('/panel/produkty');
+            ->assertRedirectContains('?tab=desc');
         $this->assertSame('', Product::where('slug', 'kadzielnica')->firstOrFail()->variants()->value('label'));
 
         $this->actingAs($owner)
@@ -178,7 +181,7 @@ class AdminProductsTest extends TestCase
                     ['label' => 'Duży', 'price' => '79 zł', 'stock' => ''],
                 ],
             ])
-            ->assertRedirect('/panel/produkty#produkt-'.$mug->id)
+            ->assertRedirect('/panel/produkty/'.$mug->id)
             ->assertSessionHasErrorsIn('produkt-'.$mug->id, [
                 'variants.0.label' => 'Nazwij każdy rozmiar — np. Mały 12 cm',
                 'variants.1.price' => 'Wpisz cenę, np. 79 albo 79,90',
@@ -201,31 +204,31 @@ class AdminProductsTest extends TestCase
             ->assertSessionHasErrorsIn('produkt-'.$vase->id, ['variants.0.compare_at' => 'Cena przed obniżką musi być wyższa niż obecna — albo zostaw puste pole']);
 
         $this->put('/panel/produkty/'.$vase->id, $form(['price' => '199', 'compare_at' => '239']))
-            ->assertRedirect('/panel/produkty#produkt-'.$vase->id)
+            ->assertRedirect('/panel/produkty/'.$vase->id.'?tab=sale')
             ->assertSessionHas('panel_status', 'Zapisane. Klienci już to widzą.');
 
         $this->assertSame([19900, 23900], [$size->fresh()->price_gross, $size->fresh()->compare_at_price]);
         $this->get('/produkt/wazony')->assertSeeInOrder(['199 zł', '239 zł', 'Najniższa cena z 30 dni przed obniżką: 239 zł']);
-        $this->get('/panel/produkty')->assertSee('value="239"', false);
+        $this->get('/panel/produkty/'.$vase->id)->assertSee('value="239"', false);
     }
 
     public function test_the_form_asks_what_the_terms_need_and_names_the_tolerance_from_the_settings(): void
     {
         Setting::create(['key' => 'size_tolerance', 'value' => '0,5 cm']);
-        $this->product('Talerze', 1, [8900], ['food_contact' => FoodContact::Suitable, 'deviation' => 'Nie do mikrofalówki', 'is_exact_piece' => true]);
+        $plates = $this->product('Talerze', 1, [8900], ['food_contact' => FoodContact::Suitable, 'deviation' => 'Nie do mikrofalówki', 'is_exact_piece' => true]);
 
         $this->actingAs(User::factory()->create())
-            ->get('/panel/produkty')
+            ->get('/panel/produkty/'.$plates->id)
             ->assertOk()
-            ->assertSeeInOrder(['Zanim ktoś kupi', 'Kontakt z żywnością', '<option value="suitable" selected>Tak — do jedzenia i picia</option>', 'value="Nie do mikrofalówki"', 'placeholder="jak w Ustawieniach: 0,5 cm"', 'Puste pole — obowiązuje różnica z Ustawień: 0,5 cm.', 'Ostrzeżenia', 'name="is_exact_piece" value="1" checked'], false);
+            ->assertSeeInOrder(['placeholder="jak w Ustawieniach: 0,5 cm"', 'Puste pole — obowiązuje różnica z Ustawień: 0,5 cm.', 'Prawo i pielęgnacja', 'Kontakt z żywnością', '<option value="suitable" selected>Tak — do jedzenia i picia</option>', 'value="Nie do mikrofalówki"', 'Ostrzeżenia', 'name="is_exact_piece" value="1" checked'], false);
     }
 
     public function test_the_form_asks_what_the_variants_differ_in(): void
     {
-        $this->product('Voucher kwotowy', 1, [15000, 25000], ['variant_kind' => VariantKind::Amounts]);
+        $voucher = $this->product('Voucher kwotowy', 1, [15000, 25000], ['variant_kind' => VariantKind::Amounts]);
 
         $this->actingAs(User::factory()->create())
-            ->get('/panel/produkty')
+            ->get('/panel/produkty/'.$voucher->id)
             ->assertOk()
             ->assertSeeInOrder(['Czym różnią się rozmiary', 'Rozmiarem — „3 rozmiary”', '<option value="amounts" selected>Kwotą — „3 kwoty”</option>', 'Kolorem', 'Czymś innym — „3 warianty”'], false);
     }
@@ -238,8 +241,11 @@ class AdminProductsTest extends TestCase
         $this->product('Kubki malowane', 2, [7900]);
         $owner = User::factory()->create();
 
-        $page = $this->actingAs($owner)->get('/panel/produkty')->assertOk()->getContent();
-        $this->assertSame(3, substr_count($page, '][sent_by_post]"'), 'Two sizes of the voucher and one spare row, none for the mugs.');
+        $page = $this->actingAs($owner)->get('/panel/produkty/'.$voucher->id)->assertOk()->getContent();
+        $this->assertSame(3, substr_count($page, '][sent_by_post]"'), 'Two sizes of the voucher and the row „+ Dodaj rozmiar” copies.');
+        $this->actingAs($owner)->get('/panel/produkty/'.$voucher->variants()->value('product_id'))->assertOk();
+        $mugs = Product::where('name', 'Kubki malowane')->sole();
+        $this->assertStringNotContainsString('][sent_by_post]"', $this->actingAs($owner)->get('/panel/produkty/'.$mugs->id)->getContent(), 'Goods are never asked.');
         $this->assertStringContainsString('Zaznacz „pocztą” przy rozmiarze, który drukujesz i wysyłasz', $page);
 
         $this->actingAs($owner)
@@ -253,7 +259,7 @@ class AdminProductsTest extends TestCase
                     ['id' => $posted->id, 'label' => 'Wysyłka pocztą', 'price' => '390', 'stock' => '', 'sent_by_post' => '1'],
                 ],
             ])
-            ->assertRedirect('/panel/produkty#produkt-'.$voucher->id);
+            ->assertRedirect('/panel/produkty/'.$voucher->id.'?tab=sale');
 
         $this->assertSame([false, true], $voucher->variants()->orderBy('id')->pluck('sent_by_post')->all());
         $this->assertSame([false, true], $voucher->variants()->orderBy('id')->get()->map->needsDelivery()->all());
@@ -263,7 +269,7 @@ class AdminProductsTest extends TestCase
         $mug->update(['sent_by_post' => false]);
         $this->assertTrue($mug->needsDelivery());
 
-        $this->actingAs($owner)->get('/panel/produkty')->assertSee('name="variants[1][sent_by_post]" value="1" checked', false);
+        $this->actingAs($owner)->get('/panel/produkty/'.$voucher->id)->assertSee('name="variants[1][sent_by_post]" value="1" checked', false);
     }
 
     public function test_a_workshop_voucher_names_its_workshop_and_the_seats_of_each_size(): void
@@ -275,9 +281,11 @@ class AdminProductsTest extends TestCase
         $this->product('Kubki malowane', 2, [7900]);
         $owner = User::factory()->create();
 
-        $page = $this->actingAs($owner)->get('/panel/produkty')->assertOk()->getContent();
+        $page = $this->actingAs($owner)->get('/panel/produkty/'.$voucher->id)->assertOk()->getContent();
         $this->assertSame(1, substr_count($page, 'name="workshop_code"'), 'Only the voucher names a workshop.');
-        $this->assertSame(3, substr_count($page, '][voucher_seats]"'), 'Two sizes of the voucher and one spare row, none for the mugs.');
+        $this->assertSame(3, substr_count($page, '][voucher_seats]"'), 'Two sizes of the voucher and the row „+ Dodaj rozmiar” copies.');
+        $mugs = Product::where('name', 'Kubki malowane')->sole();
+        $this->assertStringNotContainsString('name="workshop_code"', $this->actingAs($owner)->get('/panel/produkty/'.$mugs->id)->getContent());
 
         $form = [
             'form' => 'produkt-'.$voucher->id,
@@ -291,11 +299,11 @@ class AdminProductsTest extends TestCase
             ],
         ];
 
-        $this->actingAs($owner)->put('/panel/produkty/'.$voucher->id, $form)->assertRedirect('/panel/produkty#produkt-'.$voucher->id);
+        $this->actingAs($owner)->put('/panel/produkty/'.$voucher->id, $form)->assertRedirect('/panel/produkty/'.$voucher->id.'?tab=sale');
 
         $this->assertSame('hand_building', $voucher->fresh()->workshop_code);
         $this->assertSame([null, 2], $voucher->variants()->orderBy('id')->pluck('voucher_seats')->all());
-        $this->actingAs($owner)->get('/panel/produkty')->assertSee('<option value="hand_building" selected>Lepienie kubków</option>', false);
+        $this->actingAs($owner)->get('/panel/produkty/'.$voucher->id)->assertSee('<option value="hand_building" selected>Lepienie kubków</option>', false);
 
         $this->actingAs($owner)->put('/panel/produkty/'.$voucher->id, ['workshop_code' => 'pottery_wheel', 'variants' => [[...$form['variants'][1], 'voucher_seats' => '7']], ...array_diff_key($form, ['workshop_code' => 1, 'variants' => 1])])
             ->assertSessionHasErrorsIn('produkt-'.$voucher->id, ['workshop_code' => 'Wybierz warsztat z cennika', 'variants.0.voucher_seats' => 'Wpisz liczbę miejsc od 1 do 6']);
@@ -307,7 +315,7 @@ class AdminProductsTest extends TestCase
         $owner = User::factory()->create();
 
         $this->actingAs($owner)
-            ->get('/panel/produkty')
+            ->get('/panel/produkty/'.$vase->id)
             ->assertSeeInOrder(['Zakupy Google', 'Rodzaj w Google', '<option value="">Niech Google dobierze sam</option>', '<option value="602" selected>Wazony</option>', 'name="show_in_google" value="1" checked', 'Pokazuj w Zakupach Google'], false);
 
         $form = [
@@ -352,7 +360,7 @@ class AdminProductsTest extends TestCase
 
         $this->actingAs(User::factory()->create())
             ->put('/panel/produkty/strona-glowna', ['home_hero_product' => 'patery', 'home_hero_badge' => 'ostatnie sztuki'])
-            ->assertRedirect('/panel/produkty');
+            ->assertRedirect('/panel/produkty/ustawienia');
 
         $this->assertSame('patery', Setting::find('home_hero_product')->value);
         $this->get('/')->assertOk()->assertSee('ostatnie sztuki');
@@ -379,7 +387,7 @@ class AdminProductsTest extends TestCase
         $this->actingAs($owner)->put('/panel/produkty/'.$mug->id, $form($mug, 'Hand-painted mugs', [
             ['id' => $small->id, 'label' => 'Mały', 'label_en' => 'Small', 'price' => '79'],
             ['id' => $large->id, 'label' => 'Duży', 'label_en' => 'Large', 'price' => '99'],
-        ]))->assertRedirect('/panel/produkty#produkt-'.$mug->id);
+        ]))->assertRedirect('/panel/produkty/'.$mug->id.'?tab=sale');
 
         $english = $mug->translation('en');
         $this->assertSame(['Hand-painted mugs', 'hand-painted-mugs', 'Painted by hand, one by one.', 'The first one I painted for my sister.', null], [$english->name, $english->slug, $english->description, $english->story, $english->care_note]);
@@ -416,11 +424,11 @@ class AdminProductsTest extends TestCase
             'variants' => [['id' => $size->id, 'label' => $size->label, 'label_en' => 'Low', 'price' => '239']],
         ];
 
-        $this->actingAs($owner)->get('/panel/produkty')
+        $this->actingAs($owner)->get('/panel/produkty/'.$vase->id)
             ->assertSee('Nazwa jednej sztuki')
             ->assertSee('Nazwa jednej sztuki po angielsku');
 
-        $this->actingAs($owner)->put('/panel/produkty/'.$vase->id, $form(' Wazon ', 'Vase'))->assertRedirect('/panel/produkty#produkt-'.$vase->id);
+        $this->actingAs($owner)->put('/panel/produkty/'.$vase->id, $form(' Wazon ', 'Vase'))->assertRedirect('/panel/produkty/'.$vase->id.'?tab=sale');
         $this->assertSame(['Wazony', 'Wazon', 'Vase'], [$vase->fresh()->name, $vase->fresh()->piece_name, $vase->fresh()->translation('en')->piece_name]);
 
         $this->actingAs($owner)->put('/panel/produkty/'.$vase->id, $form('', ''));
@@ -452,6 +460,67 @@ class AdminProductsTest extends TestCase
         $this->assertFalse($mug->fresh()->hasTranslation('en'));
     }
 
+    public function test_the_card_opens_on_prices_and_saving_can_walk_to_the_next_product(): void
+    {
+        $vases = $this->product('Wazony', 1, [23900]);
+        $plates = $this->product('Talerze', 2, [8900]);
+        $owner = User::factory()->create();
+
+        $this->actingAs($owner)->get('/panel/produkty/'.$vases->id)
+            ->assertOk()
+            ->assertSee("productCard('sale'", false)
+            ->assertSeeInOrder(['1 z 2', 'Ceny i sztuki', 'Opis i zdjęcia', 'Szczegóły', 'Prezent i Google', 'English'])
+            ->assertSee('name="next" value="'.$plates->id.'"', false);
+
+        $this->put('/panel/produkty/'.$vases->id, [
+            'form' => 'produkt-'.$vases->id,
+            'name' => 'Wazony',
+            'category_id' => $this->mugs->id,
+            'is_published' => '1',
+            'tab' => 'details',
+            'next' => (string) $plates->id,
+            'variants' => [['id' => $vases->variants()->value('id'), 'label' => '', 'price' => '249', 'stock' => '']],
+        ])->assertRedirect('/panel/produkty/'.$plates->id.'?tab=details')
+            ->assertSessionHas('panel_status', 'Zapisane. Teraz: Talerze.');
+
+        $this->assertSame(24900, $vases->variants()->value('price_gross'));
+    }
+
+    public function test_a_mistake_opens_the_tab_it_belongs_to(): void
+    {
+        $vases = $this->product('Wazony', 1, [23900]);
+
+        $this->actingAs(User::factory()->create())
+            ->from('/panel/produkty/'.$vases->id)
+            ->put('/panel/produkty/'.$vases->id, [
+                'form' => 'produkt-'.$vases->id,
+                'name' => 'Wazony',
+                'category_id' => $this->mugs->id,
+                'dimensions' => ['height_cm' => 'wysoki'],
+                'variants' => [['id' => $vases->variants()->value('id'), 'label' => '', 'price' => '239', 'stock' => '']],
+            ])
+            ->assertRedirect('/panel/produkty/'.$vases->id);
+
+        $this->get('/panel/produkty/'.$vases->id)
+            ->assertSee("productCard('details'", false)
+            ->assertSee('W wymiarach wpisz tylko liczby, np. 24 albo 12,5');
+    }
+
+    public function test_a_new_product_and_the_product_settings_have_their_own_screens(): void
+    {
+        $this->product('Wazony', 1, [23900]);
+        $owner = User::factory()->create();
+
+        $this->actingAs($owner)->get('/panel/produkty/nowy')
+            ->assertOk()
+            ->assertSeeInOrder(['Zdjęcia', 'Nazwa', 'Rodzaj w sklepie', 'Jedna cena', 'Kilka rozmiarów', 'Opublikuj w sklepie', 'Zapisz jako ukryty'])
+            ->assertDontSee('name="description"', false);
+
+        $this->actingAs($owner)->get('/panel/produkty/ustawienia')
+            ->assertOk()
+            ->assertSeeInOrder(['Produkt na dużym zdjęciu', 'Wazony', 'Narzut w procentach']);
+    }
+
     public function test_the_list_marks_what_is_in_the_english_shop_and_the_form_shows_it(): void
     {
         $mug = $this->product('Kubki malowane', 1, [7900]);
@@ -459,19 +528,19 @@ class AdminProductsTest extends TestCase
         $mug->variants->first()->prices()->create(['currency' => 'EUR', 'amount_minor' => 1900]);
         $bowl = $this->product('Miska', 2, [6900]);
         $bowl->translations()->create(['locale' => 'en', 'name' => 'Bowl', 'slug' => 'bowl']);
-        $this->product('Talerz', 3, [5900]);
+        $plate = $this->product('Talerz', 3, [5900]);
+        $owner = User::factory()->create();
 
-        $this->actingAs(User::factory()->create())
+        $this->actingAs($owner)
             ->get('/panel/produkty')
             ->assertOk()
-            ->assertSee('Kubki i filiżanki &middot; widoczny w sklepie &middot; EN </div>', false)
-            ->assertSee('Kubki i filiżanki &middot; widoczny w sklepie &middot; EN bez ceny w euro </div>', false)
-            ->assertSee('Kubki i filiżanki &middot; widoczny w sklepie</div>', false)
+            ->assertSeeInOrder(['Kubki malowane', 'Kubki i filiżanki · EN</div>', 'Miska', 'Kubki i filiżanki · EN bez ceny w euro</div>', 'Talerz', 'Kubki i filiżanki</div>'], false);
+        $this->actingAs($owner)->get('/panel/produkty/'.$mug->id)
             ->assertSee('value="Hand-painted mugs"', false)
             ->assertSee('value="19"', false)
-            ->assertSee('Produkt jest w angielskim sklepie pod adresem /en/product/hand-painted-mugs')
-            ->assertSee('Produkt pokaże się pod adresem /en/product/bowl, gdy wpiszesz cenę w euro przy rozmiarze.')
-            ->assertSee('Bez angielskiej nazwy produkt nie pokaże się w angielskim sklepie.');
+            ->assertSee('Produkt jest w angielskim sklepie pod adresem /en/product/hand-painted-mugs');
+        $this->actingAs($owner)->get('/panel/produkty/'.$bowl->id)->assertSee('Produkt pokaże się pod adresem /en/product/bowl, gdy wpiszesz cenę w euro przy rozmiarze.');
+        $this->actingAs($owner)->get('/panel/produkty/'.$plate->id)->assertSee('Bez angielskiej nazwy produkt nie pokaże się w angielskim sklepie.');
     }
 
     public function test_a_euro_price_is_typed_in_by_hand_with_its_own_history_and_can_be_taken_away(): void
