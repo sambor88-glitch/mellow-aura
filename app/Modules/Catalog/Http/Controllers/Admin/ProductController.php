@@ -5,8 +5,10 @@ namespace App\Modules\Catalog\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Modules\Catalog\Actions\AddProductPhotos;
 use App\Modules\Catalog\Actions\ConvertEuroPrices;
+use App\Modules\Catalog\Actions\DuplicateProduct;
 use App\Modules\Catalog\Actions\ReorderProducts;
 use App\Modules\Catalog\Actions\SaveProduct;
+use App\Modules\Catalog\Actions\SetStock;
 use App\Modules\Catalog\Http\Requests\Admin\PhotoRules;
 use App\Modules\Catalog\Http\Requests\Admin\SaveProductRequest;
 use App\Modules\Catalog\Models\Category;
@@ -122,13 +124,59 @@ class ProductController extends Controller
         return to_route('admin.products.index')->with('panel_status', $message);
     }
 
-    public function toggle(Product $product): RedirectResponse
+    /** The switch on the list. From the list's script it answers in JSON, so the toast can offer „Cofnij” (MA-307). */
+    public function toggle(Request $request, Product $product): JsonResponse|RedirectResponse
     {
-        $product->update(['is_published' => ! $product->is_published]);
+        $product->update(['is_published' => $request->has('published') ? $request->boolean('published') : ! $product->is_published]);
+        $message = $product->name.' — '.($product->is_published ? 'widać w sklepie' : 'ukryte w sklepie');
+
+        if ($request->expectsJson()) {
+            return response()->json(['published' => $product->is_published, 'message' => $message]);
+        }
 
         return to_route('admin.products.index')
             ->withFragment('produkt-'.$product->id)
-            ->with('panel_status', $product->name.' — '.($product->is_published ? 'widać w sklepie' : 'ukryte w sklepie'));
+            ->with('panel_status', $message);
+    }
+
+    /**
+     * Pieces on the shelf from the list's − and + (MA-307): sizes of this product only, each saved at once.
+     * „Cofnij” sends the numbers from before the same way.
+     */
+    public function stock(Request $request, Product $product, SetStock $setStock): JsonResponse
+    {
+        $ids = $product->variants()->pluck('id')->all();
+        $data = $request->validate([
+            'stock' => ['required', 'array'],
+            'stock.*' => ['nullable', 'integer', 'min:0', 'max:9999'],
+        ], [
+            'stock.*.integer' => 'Wpisz liczbę sztuk, np. 3',
+            'stock.*.min' => 'Liczba sztuk nie może być mniejsza niż 0',
+            'stock.*.max' => 'Najwyżej :max sztuk',
+        ]);
+        abort_unless(collect(array_keys($data['stock']))->every(fn ($id) => in_array((int) $id, $ids, true)), 422);
+
+        foreach ($product->variants()->whereKey(array_keys($data['stock']))->get() as $variant) {
+            $setStock($variant, $data['stock'][$variant->id] === null ? null : (int) $data['stock'][$variant->id]);
+        }
+
+        $visible = $product->variants()->where('is_hidden', false)->get();
+        $counted = $visible->contains(fn ($variant) => $variant->stock !== null);
+
+        return response()->json([
+            'stock' => $counted ? $visible->sum(fn ($variant) => (int) $variant->stock).' szt.' : '—',
+            'message' => 'Sztuki zapisane — tak stoi w sklepie.',
+        ]);
+    }
+
+    /** „Duplikuj”: a hidden copy opens with its name ready to change (MA-307). */
+    public function duplicate(Product $product, DuplicateProduct $duplicateProduct): RedirectResponse
+    {
+        $copy = $duplicateProduct($product);
+
+        return to_route('admin.products.edit', [$copy, 'tab' => 'desc'])
+            ->with('duplicated', true)
+            ->with('panel_status', 'Kopia gotowa i ukryta w sklepie. Zmień nazwę i to, co się różni.');
     }
 
     public function hero(Request $request, SaveSettings $saveSettings): RedirectResponse
