@@ -26,10 +26,13 @@ class MeasurementProtocol
         return filled(config('services.ga4.api_secret')) && $this->consent->measurementId() !== null;
     }
 
-    /** The order may be told: Analytics is on and the customer said yes when ordering. */
+    /**
+     * The order may be told: Analytics is on and the customer said yes when ordering. An order worth nothing — a mug
+     * chosen with a gift choice card, paid for by whoever bought the card — is no sale and stays out.
+     */
     public function covers(Order $order): bool
     {
-        return $this->isEnabled() && filled($order->ga_client_id);
+        return $this->isEnabled() && filled($order->ga_client_id) && $order->total_gross > 0;
     }
 
     /**

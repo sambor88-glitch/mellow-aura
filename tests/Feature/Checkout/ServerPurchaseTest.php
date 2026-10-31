@@ -111,6 +111,16 @@ class ServerPurchaseTest extends TestCase
         Http::assertNothingSent();
     }
 
+    public function test_an_order_worth_nothing_is_no_sale(): void
+    {
+        $order = $this->order(consent: true);
+        $order->update(['total_gross' => 0, 'shipping_gross' => 0, 'analytics_sent_at' => null]);
+
+        OrderPaid::dispatch($order->fresh());
+
+        Http::assertSentCount(1);
+    }
+
     public function test_a_repeated_confirmation_or_event_sends_no_second_purchase(): void
     {
         $order = $this->order(consent: true);
