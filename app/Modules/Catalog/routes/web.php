@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Catalog\Http\Controllers\ProductController;
+use App\Modules\Catalog\Http\Controllers\ProductModelController;
 use App\Modules\Catalog\Http\Controllers\ShopController;
 use App\Modules\Catalog\Http\Controllers\StockNotificationController;
 use Illuminate\Support\Facades\Route;
@@ -8,6 +9,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/sklep', ShopController::class)->name('shop.index');
 Route::get('/sklep/{category:slug}', ShopController::class)->name('shop.category');
 Route::get('/produkt/{product:slug}', ProductController::class)->name('product.show');
+// The 3D model for „Zobacz u siebie” (MA-310). The name at the end is for Scene Viewer, which looks at the extension.
+Route::get('/modele-3d/{media}/{name}', ProductModelController::class)->whereNumber('media')->where('name', '[a-z0-9-]+\.glb')->name('product.model');
 
 // „Napisz do mnie, gdy wróci” on a sold-out size (MA-266).
 Route::post('/powiadom-o-dostepnosci', [StockNotificationController::class, 'store'])->middleware('throttle:6,1')->name('stock-notifications.store');

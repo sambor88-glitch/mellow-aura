@@ -5,10 +5,12 @@
  */
 const SOUND_KEY = 'ma-sound';
 
-export default ({ maxLines, maxChars, prices, texts, glazes, size, glaze, ink }) => {
+export default ({ maxLines, maxChars, prices, capacities = {}, texts, glazes, size, glaze, ink }) => {
     // The audio context and the 3D mug stay outside Alpine's reactive state.
     let audio = null;
     let mug = null;
+    // The last model made for „Zobacz u siebie”, freed when the next one is made.
+    let modelUrl = null;
 
     return {
         text: '',
@@ -65,6 +67,26 @@ export default ({ maxLines, maxChars, prices, texts, glazes, size, glaze, ink })
                 this.has3d = false;
                 this.view = 'photo';
             }
+        },
+
+        // The chosen size's capacity from the panel; without it the mug has no real size, so no AR (MA-310).
+        get capacity() {
+            return capacities[this.size] ?? null;
+        },
+
+        // „Zobacz u siebie” on the 3D mug: a model file with the text typed so far, made in the browser.
+        async arModel() {
+            if (! mug || ! this.capacity) {
+                throw new Error('No 3D mug');
+            }
+
+            const glb = await mug.toGlb(this.capacity);
+            if (modelUrl) {
+                URL.revokeObjectURL(modelUrl);
+            }
+            modelUrl = URL.createObjectURL(new Blob([glb], { type: 'model/gltf-binary' }));
+
+            return modelUrl;
         },
 
         get preview() {

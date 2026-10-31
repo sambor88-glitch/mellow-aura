@@ -252,7 +252,8 @@ Każdy efekt ma jedno miejsce. Nie przenoś ich gdzie indziej bez powodu.
 | --- | --- |
 | `gsap` + `ScrollTrigger` | wszystko, co zależy od przewijania, przypinanie sekcji, liczniki |
 | `lenis` | płynne przewijanie; `lenis.stop()` przy otwartym koszyku, menu i widoku produktu |
-| `three` (r128 w plikach Aura, 0.180 w aplikacji) | wyłącznie kubek 3D (`resources/js/mug3d.js`), ładowany osobnym plikiem tylko na `/kubek-z-napisem` |
+| `three` (r128 w plikach Aura, 0.183 w aplikacji) | wyłącznie kubek 3D (`resources/js/mug3d.js`), ładowany osobnym plikiem tylko na `/kubek-z-napisem` |
+| `@google/model-viewer` | wyłącznie „Zobacz u siebie” (AR, MA-310, `resources/js/ar.js`): okno z modelem 3D, na telefonie produkt na stole klientki. Ładowany osobnym plikiem dopiero po kliknięciu |
 
 W plikach Aura biblioteki idą z cdnjs/jsdelivr. W Laravelu instalujesz je przez npm i wiążesz w Vite obok Alpine.
 Innych bibliotek do animacji nie dokładaj.

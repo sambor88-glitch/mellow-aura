@@ -43,4 +43,13 @@ return [
     'related_eyebrow' => 'goes with this',
     'related_title' => 'From the same shelf',
     'buy_bar' => 'Add to basket',
+    // „See it at home” — the 3D model in augmented reality (MA-310).
+    'ar_open' => 'See it at home',
+    'ar_dialog' => ':name in 3D',
+    'ar_place' => 'Place it on your table',
+    'ar_loading' => 'Loading the model — just a moment.',
+    'ar_failed' => 'The model didn’t load. Please try again in a moment.',
+    'ar_drag' => 'Drag to turn it around.',
+    'ar_phone_hint' => 'On your phone you can place it on your own table — in its real size.',
+    'ar_close' => 'Close the 3D view',
 ];

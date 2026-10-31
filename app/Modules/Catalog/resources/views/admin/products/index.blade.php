@@ -164,6 +164,42 @@
                             </div>
                         </div>
 
+                        {{-- „Zobacz u siebie” on the product page (MA-310): only with a model here. --}}
+                        @php
+                            $arModel = $product->arModel();
+                            $modelErrors = collect($errors->getBag('model-'.$product->id)->all())->unique();
+                        @endphp
+                        <div class="mt-3.5 border-t border-dashed border-sand-dark pt-3">
+                            <h3 class="mb-[9px] text-[11px] tracking-[0.14em] text-hint uppercase">{{ $arModel ? 'Model 3D — klientki zobaczą go u siebie' : 'Model 3D — jeszcze żadnego' }}</h3>
+                            <div class="flex flex-wrap items-center gap-2">
+                                @if ($arModel)
+                                    <span class="min-w-0 text-[13px] text-lead break-all">{{ $arModel->file_name }}</span>
+                                    <span class="text-[12px] text-hint tabular-nums">{{ $arModel->human_readable_size }}</span>
+                                @endif
+                                <form method="post" action="{{ route('admin.products.model.store', $product) }}" enctype="multipart/form-data" x-data="{ sending: false }" x-on:pageshow.window="sending = false" class="contents">
+                                    @csrf
+                                    <label x-bind:class="sending && 'pointer-events-none opacity-60'"
+                                           class="inline-flex min-h-11 cursor-pointer items-center rounded-full border border-line px-4 text-[12.5px] text-lead hover:border-ink has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy">
+                                        <span x-text="sending ? 'Wysyłam model…' : @js($arModel ? 'Podmień model' : 'Dodaj model (GLB)')">{{ $arModel ? 'Podmień model' : 'Dodaj model (GLB)' }}</span>
+                                        <span class="sr-only">: {{ $product->name }}</span>
+                                        <input type="file" name="model" accept=".glb,model/gltf-binary" x-on:change="if ($el.files.length) { sending = true; $el.form.requestSubmit() }" class="sr-only">
+                                    </label>
+                                    <noscript><button class="min-h-11 rounded-full border border-line px-4 text-[12.5px] text-lead hover:border-ink">Wyślij model</button></noscript>
+                                </form>
+                                @if ($arModel)
+                                    <form method="post" action="{{ route('admin.products.model.destroy', $product) }}" x-data x-on:submit="confirm('Usunąć model 3D? Przycisk „Zobacz u siebie” zniknie z karty produktu.') || $event.preventDefault()">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="min-h-11 rounded-full px-3 text-[12.5px] text-error hover:underline">Usuń model<span class="sr-only">: {{ $product->name }}</span></button>
+                                    </form>
+                                @endif
+                                <p class="min-w-0 basis-full text-[12px] leading-[1.5] text-hint">Plik GLB ze skanu (RealityScan, Polycam), najlepiej do 5 MB, w prawdziwej wielkości. Z modelem na karcie produktu pojawia się „Zobacz u siebie”.</p>
+                                @foreach ($modelErrors as $message)
+                                    <p role="alert" class="basis-full text-[13px] text-error">{{ $message }}</p>
+                                @endforeach
+                            </div>
+                        </div>
+
                         <details @if ($errors->hasBag($formKey)) open @endif class="group mt-1">
                             <summary class="flex min-h-11 cursor-pointer list-none items-center text-[13px] text-brown [&::-webkit-details-marker]:hidden">
                                 <span class="group-open:hidden">Edytuj rozmiary, ceny i opis +</span><span class="hidden group-open:inline">Zwiń −</span>

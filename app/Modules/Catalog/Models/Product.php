@@ -32,12 +32,23 @@ class Product extends Model implements HasMedia
     /** @use HasFactory<ProductFactory> */
     use HasFactory, HasTranslations, InteractsWithMedia;
 
+    public const MODEL_COLLECTION = 'model';
+
     /** Read in the language of the page; the Polish text lives in the columns themselves. */
     protected array $translatable = ['slug', 'name', 'piece_name', 'description', 'story', 'seo_description', 'care_note', 'deviation', 'size_tolerance', 'safety_warnings'];
 
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('images')->acceptsMimeTypes(['image/webp', 'image/jpeg', 'image/png']);
+
+        // The scanned piece for „Zobacz u siebie” (MA-310): one binary glTF file. iPhones get a USDZ copy made in the browser.
+        $this->addMediaCollection(self::MODEL_COLLECTION)->singleFile();
+    }
+
+    /** The 3D model shown in augmented reality, or null when the product has none. */
+    public function arModel(): ?Media
+    {
+        return $this->getFirstMedia(self::MODEL_COLLECTION);
     }
 
     /**
@@ -47,9 +58,9 @@ class Product extends Model implements HasMedia
     public function registerMediaConversions(?Media $media = null): void
     {
         // Not cut: the frame on the page cuts it, around the point set in the panel (FocalPoint).
-        $this->addMediaConversion('thumb')->fit(Fit::Max, 400, 500)->format('webp')->quality(80)->nonQueued();
-        $this->addMediaConversion('phone')->fit(Fit::Max, 720, 900)->format('webp')->quality(80)->nonQueued();
-        $this->addMediaConversion('card')->fit(Fit::Max, 1200, 1500)->format('webp')->quality(82)->nonQueued();
+        $this->addMediaConversion('thumb')->fit(Fit::Max, 400, 500)->format('webp')->quality(80)->nonQueued()->performOnCollections('images');
+        $this->addMediaConversion('phone')->fit(Fit::Max, 720, 900)->format('webp')->quality(80)->nonQueued()->performOnCollections('images');
+        $this->addMediaConversion('card')->fit(Fit::Max, 1200, 1500)->format('webp')->quality(82)->nonQueued()->performOnCollections('images');
     }
 
     /**

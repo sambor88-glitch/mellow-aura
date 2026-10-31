@@ -2,6 +2,7 @@
 
 use App\Modules\Catalog\Http\Controllers\Admin\CategoryController;
 use App\Modules\Catalog\Http\Controllers\Admin\ProductController;
+use App\Modules\Catalog\Http\Controllers\Admin\ProductModelController;
 use App\Modules\Catalog\Http\Controllers\Admin\ProductPhotoController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +18,10 @@ Route::post('/produkty/{product}/widocznosc', [ProductController::class, 'toggle
 Route::post('/produkty/{product}/zdjecia', [ProductPhotoController::class, 'store'])->whereNumber('product')->name('products.photos.store');
 Route::post('/produkty/{product}/zdjecia/{media}/przesun', [ProductPhotoController::class, 'move'])->whereNumber(['product', 'media'])->scopeBindings()->name('products.photos.move');
 Route::delete('/produkty/{product}/zdjecia/{media}', [ProductPhotoController::class, 'destroy'])->whereNumber(['product', 'media'])->scopeBindings()->name('products.photos.destroy');
+
+// The 3D model for „Zobacz u siebie” (MA-310): one per product, a new file replaces the old.
+Route::post('/produkty/{product}/model-3d', [ProductModelController::class, 'store'])->whereNumber('product')->name('products.model.store');
+Route::delete('/produkty/{product}/model-3d', [ProductModelController::class, 'destroy'])->whereNumber('product')->name('products.model.destroy');
 
 Route::get('/kategorie', [CategoryController::class, 'index'])->name('categories.index');
 Route::put('/kategorie/skroty', [CategoryController::class, 'shortcuts'])->name('categories.shortcuts');

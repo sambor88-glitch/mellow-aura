@@ -314,5 +314,35 @@ export default function createMug(stage, { ink, glaze }) {
     document.fonts?.load(`400 120px ${FONT}`).then(draw, draw);
     draw();
 
-    return { setText, setGlaze, setInk };
+    /*
+     * The mug as a binary glTF file for „Zobacz u siebie” (MA-310), with the text and glaze as they are now.
+     * AR shows it in real size, and the panel gives a size only as a capacity: the model is scaled so that its
+     * inside holds that many millilitres. The pressed letters stay painted on; glTF has no bump map.
+     */
+    async function toGlb(capacityMl) {
+        const { GLTFExporter } = await import('three/addons/exporters/GLTFExporter.js');
+        const copy = body.clone();
+        copy.scale.set(1, 1, 1);
+        const mug = new Group();
+        mug.add(copy);
+        mug.scale.setScalar(metresPerUnit(capacityMl));
+
+        return new GLTFExporter().parseAsync(mug, { binary: true });
+    }
+
+    return { setText, setGlaze, setInk, toGlb };
+}
+
+// The inside of the model, from the glazed floor to the rim, in cubic units; one millilitre is a cubic centimetre.
+function metresPerUnit(capacityMl) {
+    const slices = 200;
+    const bottom = (2 / STEPS) * HEIGHT;
+    const step = (HEIGHT - bottom) / slices;
+    let volume = 0;
+    for (let i = 0; i < slices; i++) {
+        const k = (bottom + (i + 0.5) * step) / HEIGHT;
+        volume += Math.PI * (radiusAt(k) - WALL) ** 2 * step;
+    }
+
+    return Math.cbrt((capacityMl * 1e-6) / volume);
 }

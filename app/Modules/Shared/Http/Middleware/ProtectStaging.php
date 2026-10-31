@@ -16,8 +16,9 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ProtectStaging
 {
+    // modele-3d: Android's Scene Viewer fetches a product's 3D model without the browser's login (MA-310).
     /** @var list<string> */
-    private const OPEN = ['up', 'przelewy24/powiadomienie', 'social-catalog.xml'];
+    private const OPEN = ['up', 'przelewy24/powiadomienie', 'social-catalog.xml', 'modele-3d/*'];
 
     public function handle(Request $request, Closure $next): Response
     {

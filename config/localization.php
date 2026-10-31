@@ -65,6 +65,8 @@ return [
         'shop.category' => 'shop.index',
         // The page of a bought piece speaks the language of its order and has no twin (MA-234).
         'piece.show' => 'shop.index',
+        // A 3D model file for „Zobacz u siebie” (MA-310): one file for both languages, never a page of its own.
+        'product.model' => 'shop.index',
         'workshops.index' => 'shop.index',
         'workshops.booking.create' => 'shop.index',
         'workshops.booking.calendar' => 'shop.index',

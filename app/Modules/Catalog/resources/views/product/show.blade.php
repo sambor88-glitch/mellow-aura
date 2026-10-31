@@ -102,6 +102,11 @@
                         <p class="mt-3.5 text-[12.5px] text-label">{{ __('catalog::product.sample_text') }}</p>
                     @endif
                 @endif
+                {{-- A scanned piece from the panel (MA-310); without a model, no button. --}}
+                @if ($arModel = $product->arModel())
+                    <x-catalog::ar-view class="mt-3.5" :name="$product->name"
+                                        :data="'arViewer('.Js::from(['source' => route('product.model', [$arModel, $arModel->file_name]), 'alt' => __('catalog::product.ar_dialog', ['name' => $product->name]), 'texts' => ['place' => __('catalog::product.ar_place')]]).')'" />
+                @endif
                 @if ($images->count() > 1)
                     <div class="mt-3 flex flex-wrap gap-2.5">
                         @foreach ($images as $index => $image)
