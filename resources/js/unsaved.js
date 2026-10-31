@@ -149,8 +149,12 @@ export default (texts) => ({
 
         box.querySelector('[data-go]').addEventListener('click', () => {
             box.remove();
-            unsaved.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
-            fields(unsaved).find((field) => field.offsetParent !== null)?.focus({ preventScroll: true });
+            // A form in another tab opens its tab first (MA-315), and is scrolled to once it shows.
+            unsaved.dispatchEvent(new CustomEvent('reveal', { bubbles: true }));
+            requestAnimationFrame(() => {
+                unsaved.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+                fields(unsaved).find((field) => field.offsetParent !== null)?.focus({ preventScroll: true });
+            });
         });
         box.querySelector('[data-drop]').addEventListener('click', () => {
             box.remove();

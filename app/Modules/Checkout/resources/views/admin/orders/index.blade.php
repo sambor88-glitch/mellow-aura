@@ -6,12 +6,13 @@
     $filterOff = 'border-line-strong text-lead hover:border-ink hover:bg-sand hover:text-ink';
 @endphp
 <x-admin::layout title="Zamówienia">
-    <div class="mb-[30px] flex flex-wrap gap-4">
+    {{-- On a phone the numbers are one row of counters, so the parcels to send start on the first screen (MA-313). --}}
+    <div class="mb-[30px] flex flex-wrap gap-2 max-md:mb-4 md:gap-4">
         @foreach ($tiles as $tile)
-            <div class="min-w-0 flex-[1_1_180px] rounded-[4px] border border-line bg-cream px-[22px] py-5">
-                <div class="font-serif text-[34px] leading-none tabular-nums">{{ $tile['value'] }}</div>
-                <div class="mt-1.5 text-[11.5px] tracking-[0.14em] text-label uppercase">{{ $tile['label'] }}</div>
-                <div class="mt-2 text-[12.5px] text-hint">{{ $tile['hint'] }}</div>
+            <div class="inline-flex min-w-0 flex-none items-baseline gap-1.5 rounded-full border border-line bg-cream px-3.5 py-2 md:block md:flex-[1_1_180px] md:rounded-[4px] md:px-[22px] md:py-5">
+                <div class="font-serif text-[19px] leading-none tabular-nums md:text-[34px]">{{ $tile['value'] }}</div>
+                <div class="text-[12.5px] text-label lowercase md:mt-1.5 md:text-[11.5px] md:tracking-[0.14em] md:uppercase">{{ $tile['label'] }}</div>
+                <div class="mt-2 hidden text-[12.5px] text-hint md:block">{{ $tile['hint'] }}</div>
             </div>
         @endforeach
     </div>
