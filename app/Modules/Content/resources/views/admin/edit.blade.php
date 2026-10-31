@@ -31,32 +31,43 @@
     $fieldLabel = 'mb-1 block text-[12.5px] text-graphite';
     $small = 'grid min-h-11 min-w-11 place-items-center rounded-full border border-line-strong px-3 text-[13px] text-ink hover:border-ink hover:bg-sand-dark';
     $manualErrors = $errors->getBag('instagram-reczne');
+    $tabs = [
+        'teksty' => 'Teksty na stronach',
+        'czeste-pytania' => ['label' => 'Częste pytania', 'count' => count($questions)],
+        'pracownia' => 'Pracownia',
+        'zamowienia-indywidualne' => 'Zamówienia indywidualne',
+        'gastronomia' => 'Dla lokali',
+        'kontakt' => 'Sprawy w formularzu',
+        'instagram' => 'Instagram',
+    ];
+    // The pages under „Teksty na stronach” fold away; the one with a mistake stays open.
+    $pageOpen = fn (array $page) => collect(array_keys($page['fields']))->contains(fn ($key) => $textErrors->has($key));
 @endphp
-<x-admin::layout title="Treści" lead="Każde zdanie na stronach „O mnie”, „Pracownia”, „Zamówienia indywidualne”, „Dla kawiarni i restauracji”, „Kontakt” i w częstych pytaniach. Zmiany widać na stronie od razu.">
-    <nav aria-label="Karty na tej stronie" class="mb-[22px] flex flex-wrap gap-2.5 text-[13px]">
-        @foreach (['teksty' => 'Teksty na stronach', 'czeste-pytania' => 'Częste pytania', 'pracownia' => 'Pracownia — dobrze wiedzieć', 'zamowienia-indywidualne' => 'Zamówienia indywidualne — kroki', 'gastronomia' => 'Dla lokali — karty', 'kontakt' => 'Sprawy w formularzu', 'instagram' => 'Instagram na stronie głównej', 'instagram-reczne' => 'Instagram — posty ręczne'] as $id => $label)
-            <a href="#{{ $id }}" class="rounded-full border border-line-strong px-4 py-2 text-lead hover:border-ink hover:bg-sand hover:text-ink">{{ $label }}</a>
-        @endforeach
-    </nav>
-
+<x-admin::layout title="Treści" lead="Każde zdanie na stronach poza sklepem i częste pytania. Zmiany widać na stronie od razu.">
+    {{-- One card at a time (MA-317). Every card keeps its own form and its #id, so saving comes back to its tab. --}}
+  <x-admin::tabs :tabs="$tabs" label="Części treści">
     <div class="grid max-w-[880px] gap-[22px]">
+      <x-admin::tab-panel name="teksty">
         <form id="teksty" method="post" action="{{ route('admin.content.texts') }}" novalidate class="{{ $card }}">
             @csrf
             @method('PUT')
             <h2 class="{{ $heading }}">Teksty na stronach</h2>
             <p class="{{ $intro }}">Pisz tak, jak mówisz do klientki. Puste pole nie pokaże się na stronie.</p>
             @if ($textErrors->any())
-                <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+                <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
             @endif
-            <div class="grid gap-6">
+            <div class="grid">
                 @foreach (SavePageTextsRequest::PAGES as $page)
-                    <fieldset class="grid gap-3.5 border-t border-sand-dark pt-4 first:border-t-0 first:pt-0">
-                        <legend class="float-left mb-1 flex w-full flex-wrap items-baseline justify-between gap-x-4 font-serif text-[20px]">
+                    <details class="group border-t border-sand-dark first:border-t-0" @if ($pageOpen($page)) open @endif>
+                        <summary class="flex min-h-12 cursor-pointer list-none items-center justify-between gap-x-4 py-2 font-serif text-[20px] [&::-webkit-details-marker]:hidden">
                             {{ $page['title'] }}
-                            @if ($page['route'] && Route::has($page['route']))
-                                <a href="{{ route($page['route']) }}" target="_blank" rel="noopener" class="font-sans text-[13px]">Zobacz stronę →</a>
-                            @endif
-                        </legend>
+                            <span class="flex flex-none items-center gap-2 font-sans text-[12.5px] text-label">{{ trans_choice(':count pole|:count pola|:count pól', count($page['fields']), [], 'pl') }}
+                                <span aria-hidden="true" class="text-[15px] transition-transform group-open:rotate-180">⌄</span></span>
+                        </summary>
+                      <div class="grid gap-3.5 pt-1 pb-5">
+                        @if ($page['route'] && Route::has($page['route']))
+                            <a href="{{ route($page['route']) }}" target="_blank" rel="noopener" class="text-[13px]">Zobacz stronę →</a>
+                        @endif
                         @foreach ($page['fields'] as $key => $field)
                             @php
                                 [$label, $rows, $max] = $field;
@@ -77,18 +88,21 @@
                                 @endif
                             </div>
                         @endforeach
-                    </fieldset>
+                      </div>
+                    </details>
                 @endforeach
             </div>
             <p class="{{ $hint }}">Kafelki o glinie, jedwabiu i złocie na „O mnie” zmieniasz w <a href="{{ route('admin.settings.edit') }}#materialy">Ustawieniach</a>.</p>
             <button class="{{ $button }}">Zapisz teksty na stronach</button>
         </form>
+      </x-admin::tab-panel>
 
         @foreach ($lists as $list)
             @php
                 $bag = $errors->getBag($list['id']);
                 [$filled, $rows] = $listRows($list['name'], $list['rows'], $list['fields']);
             @endphp
+          <x-admin::tab-panel :name="$list['id']">
             <form id="{{ $list['id'] }}" method="post" action="{{ route($list['route']) }}" novalidate class="{{ $card }}">
                 @csrf
                 @method('PUT')
@@ -118,7 +132,7 @@
                 @endswitch
 
                 @if ($bag->any())
-                    <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+                    <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
                 @endif
 
                 <div class="grid gap-2.5">
@@ -132,6 +146,11 @@
                         <div @class(['rounded-[4px] border p-3', 'border-sand-dark bg-linen' => ! $new, 'border-dashed border-line-strong' => $new])>
                             @switch($list['name'])
                                 @case('faq')
+                                  <details class="group" @if ($new || $has('question') || $has('answer')) open @endif>
+                                    <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-[14px] text-ink group-open:mb-2 [&::-webkit-details-marker]:hidden">
+                                        <span class="min-w-0 truncate">{{ $new ? 'Nowe pytanie' : ($row['question'] ?? '') }}</span>
+                                        <span aria-hidden="true" class="flex-none text-[15px] text-label transition-transform group-open:rotate-180">⌄</span>
+                                    </summary>
                                     <div class="grid gap-2">
                                         <input name="{{ $name }}[question]" value="{{ $row['question'] ?? '' }}" maxlength="160"
                                                aria-label="Pytanie {{ $index + 1 }}" placeholder="{{ $new ? 'Nowe pytanie' : 'Pytanie' }}"
@@ -140,6 +159,7 @@
                                                   aria-label="Odpowiedź na pytanie {{ $index + 1 }}" placeholder="Odpowiedź — dwa, trzy zdania"
                                                   @class([$input, 'resize-y leading-[1.6]', 'border-error' => $has('answer'), 'border-line' => ! $has('answer')])>{{ $row['answer'] ?? '' }}</textarea>
                                     </div>
+                                  </details>
                                     @break
                                 @case('steps')
                                     <div class="grid gap-2">
@@ -195,15 +215,17 @@
                 <p class="{{ $hint }}">W puste wiersze na dole wpisz nowe. Strzałki zapisują całą kartę i przestawiają wiersz o jedno miejsce.</p>
                 <button class="{{ $button }}">{{ ['faq' => 'Zapisz częste pytania', 'facts' => 'Zapisz fakty o pracowni', 'steps' => 'Zapisz kroki zamówienia', 'b2b' => 'Zapisz karty dla lokali', 'topics' => 'Zapisz sprawy w formularzu'][$list['name']] }}</button>
             </form>
+          </x-admin::tab-panel>
         @endforeach
 
+      <x-admin::tab-panel name="instagram" class="grid gap-[22px]">
         <form id="instagram" method="post" action="{{ route('admin.content.instagram') }}" novalidate class="{{ $card }}">
             @csrf
             @method('PUT')
             <h2 class="{{ $heading }}">Instagram na stronie głównej</h2>
             <p class="{{ $intro }}">Sekcja pokazuje {{ \App\Modules\Content\Actions\RefreshInstagramFeed::POSTS }} zdjęć: najpierw te, które dodasz ręcznie niżej, potem najnowsze z kanału Behold.so. Strona trzyma zdjęcia u siebie, więc odwiedzający nie łączą się z Instagramem.</p>
             @if ($errors->hasBag('instagram'))
-                <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+                <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
             @endif
             <label class="mb-3 flex min-h-11 items-center gap-2.5 text-[14px] text-graphite">
                 <input type="hidden" name="home_show_instagram_feed" value="0">
@@ -279,7 +301,7 @@
                 @csrf
                 <h3 class="mb-2.5 font-serif text-[19px]">Nowy post</h3>
                 @if ($manualErrors->any())
-                    <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby dodać post.</p>
+                    <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby dodać post.</p>
                 @endif
                 <div class="grid gap-2.5">
                     <div class="min-w-0">
@@ -301,5 +323,7 @@
                 <button class="{{ $button }}">Dodaj post</button>
             </form>
         </section>
+      </x-admin::tab-panel>
     </div>
+  </x-admin::tabs>
 </x-admin::layout>

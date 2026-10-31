@@ -1,11 +1,19 @@
 @use('App\Modules\Catalog\Http\Requests\Admin\SaveShopShortcutsRequest')
 @use('App\Modules\Localization\Support\Locales')
 @use('App\Modules\Shared\Support\Seo')
+{{--
+    Kategorie (MA-318): a list of the shelves with what each still lacks, one shelf open at a time with „Zapisz i następna”,
+    and the captions under the shop's shortcut cards in a tab of their own.
+--}}
 @php
-    $card = 'scroll-mt-6 rounded-[4px] border border-line bg-cream p-[22px]';
+    $card = 'scroll-mt-24 rounded-[4px] border border-line bg-cream px-[18px] py-5 md:p-[22px]';
     $input = 'w-full min-w-0 rounded-[4px] border bg-white px-4 py-[13px] text-[15px] leading-[1.6] text-ink placeholder:text-hint focus:border-ink';
+    $keys = $categories->map(fn ($category) => 'kategoria-'.$category->id)->values()->all();
+    $mistake = collect($keys)->first(fn ($key) => $errors->getBag($key)->any());
 @endphp
 <x-admin::layout title="Kategorie" lead="Co Google pokazuje dla każdej półki w sklepie i krótki wstęp nad jej produktami. Puste pole — strona złoży tytuł i opis sama.">
+  <x-admin::tabs :tabs="['polki' => ['label' => 'Półki w sklepie', 'count' => $categories->count()], 'skroty' => 'Skróty pod produktami']" label="Części ekranu kategorii">
+    <x-admin::tab-panel name="skroty">
     <div class="grid max-w-[880px] gap-[22px]">
         @php
             $bag = $errors->getBag('skroty');
@@ -20,7 +28,7 @@
             </div>
             <p class="mb-4 text-[13.5px] text-muted">Krótki podpis pod nazwą każdej karty. Puste pole — karta pokaże samą nazwę.</p>
             @if ($bag->any())
-                <p role="alert" class="mb-3.5 rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text">Popraw zaznaczone pola, żeby zapisać.</p>
+                <p role="alert" data-error class="mb-3.5 rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text">Popraw zaznaczone pola, żeby zapisać.</p>
             @endif
             <div class="grid gap-3.5">
                 @foreach ($shortcutNotes as $label => $note)
@@ -43,6 +51,34 @@
             </div>
             <button class="mt-[18px] min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Zapisz podpisy</button>
         </form>
+    </div>
+    </x-admin::tab-panel>
+
+    <x-admin::tab-panel name="polki">
+    <div class="grid max-w-[880px] gap-[22px]" x-data="{ open: @js($mistake) }"
+         x-init="const key = decodeURIComponent(location.hash.slice(1)); if (@js($keys).includes(key)) open = key"
+         x-effect="if (open) $nextTick(() => document.getElementById(open)?.scrollIntoView({ block: 'nearest' }))">
+        <ul x-show="open === null" @if ($mistake) style="display: none" @endif class="grid gap-2">
+            @foreach ($categories as $category)
+                @php
+                    $google = filled($category->seo_title) && filled($category->seo_description);
+                @endphp
+                <li>
+                    <button type="button" x-on:click="open = @js('kategoria-'.$category->id)" aria-controls="kategoria-{{ $category->id }}"
+                            class="flex min-h-14 w-full flex-wrap items-center gap-x-4 gap-y-1 rounded-[4px] border border-line bg-cream px-[18px] py-3 text-left transition-colors hover:border-ink">
+                        <span class="min-w-0 flex-[1_1_200px]">
+                            <span class="block text-[15px] text-ink">{{ $category->name }}</span>
+                            <span class="block text-[12.5px] text-label">produktów: {{ $category->products_count }}</span>
+                        </span>
+                        <span class="flex flex-wrap gap-1.5 text-[12px]">
+                            <span @class(['rounded-full px-2.5 py-1', 'bg-success-soft text-success' => $google, 'bg-linen text-label' => ! $google])>{{ $google ? 'Google ✓' : 'Google: złoży sama' }}</span>
+                            <span @class(['rounded-full px-2.5 py-1', 'bg-success-soft text-success' => filled($category->intro), 'bg-linen text-label' => blank($category->intro)])>{{ filled($category->intro) ? 'wstęp ✓' : 'bez wstępu' }}</span>
+                        </span>
+                        <span aria-hidden="true" class="text-[13px] text-brown">Otwórz →</span>
+                    </button>
+                </li>
+            @endforeach
+        </ul>
 
         @foreach ($categories as $category)
             @php
@@ -53,16 +89,18 @@
                 $english = $category->translation('en');
                 $autoTitle = Seo::title($category->name, __('catalog::shop.category_title_suffix', [], 'pl'));
             @endphp
-            <form id="{{ $formKey }}" method="post" action="{{ route('admin.categories.update', $category) }}" novalidate class="{{ $card }}">
+            <form id="{{ $formKey }}" method="post" action="{{ route('admin.categories.update', $category) }}" novalidate class="{{ $card }}"
+                  x-show="open === @js($formKey)" @if ($mistake !== $formKey) style="display: none" @endif data-unsaved-name="{{ $category->name }}">
                 @csrf
                 @method('PUT')
                 <input type="hidden" name="form" value="{{ $formKey }}">
+                <button type="button" x-on:click="open = null" class="-mt-2 mb-1 inline-flex min-h-11 items-center gap-1.5 text-[13px] text-lead hover:text-ink">← Wszystkie półki</button>
                 <div class="mb-4 flex flex-wrap items-baseline justify-between gap-3">
                     <h2 class="font-serif text-[23px]">{{ $category->name }}</h2>
                     <a href="{{ route('shop.category', $category) }}" target="_blank" rel="noopener" class="text-[13px]">/sklep/{{ $category->slug }} — produktów: {{ $category->products_count }}</a>
                 </div>
                 @if ($bag->any())
-                    <p role="alert" class="mb-3.5 rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text">Popraw zaznaczone pola, żeby zapisać.</p>
+                    <p role="alert" data-error class="mb-3.5 rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text">Popraw zaznaczone pola, żeby zapisać.</p>
                 @endif
                 <div class="grid gap-3.5">
                     <x-shared::seo-field name="seo_title" :id="$formKey.'-title'" label="Tytuł w Google" :limit="60" :max="120" :bag="$formKey"
@@ -100,8 +138,15 @@
                         </fieldset>
                     @endif
                 </div>
-                <button class="mt-[18px] min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Zapisz</button>
+                <div class="mt-[18px] flex flex-wrap gap-2.5">
+                    <button class="min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Zapisz</button>
+                    @if (! $loop->last)
+                        <button name="next" value="{{ $categories[$loop->index + 1]->id }}" class="min-h-11 rounded-full border border-line-strong px-6 py-3 text-[13.5px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark">Zapisz i następna →</button>
+                    @endif
+                </div>
             </form>
         @endforeach
     </div>
+    </x-admin::tab-panel>
+  </x-admin::tabs>
 </x-admin::layout>

@@ -38,6 +38,8 @@ export default (initial, keys) => ({
             this.show(next);
         }
         if (target && holding(target) === next) {
+            // A #link to a folded part opens it too (a gift set, a mail).
+            target.closest('details')?.setAttribute('open', '');
             this.$nextTick(() => target.scrollIntoView({ block: 'start' }));
         }
 

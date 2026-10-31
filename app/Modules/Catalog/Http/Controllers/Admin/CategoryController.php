@@ -30,14 +30,16 @@ class CategoryController extends Controller
         ]);
     }
 
+    /** „Zapisz i następna” saves and opens the next category in the list (MA-318). */
     public function update(SaveCategoryTextsRequest $request, Category $category, SaveCategoryTexts $saveTexts): RedirectResponse
     {
         ['texts' => $texts, 'translations' => $translations] = $request->texts();
         $saveTexts($category, $texts, $translations);
+        $next = $request->filled('next') ? Category::query()->find($request->integer('next')) : null;
 
         return to_route('admin.categories.index')
-            ->withFragment('kategoria-'.$category->id)
-            ->with('panel_status', 'Zapisane. Google zobaczy zmianę przy następnej wizycie.');
+            ->withFragment('kategoria-'.($next ?? $category)->id)
+            ->with('panel_status', $next ? 'Zapisane. Teraz: '.$next->name.'.' : 'Zapisane. Google zobaczy zmianę przy następnej wizycie.');
     }
 
     public function shortcuts(SaveShopShortcutsRequest $request, SaveSettings $saveSettings): RedirectResponse
