@@ -33,7 +33,7 @@
     $stepErrors = $errors->getBag('kroki');
 @endphp
 <x-admin::layout title="Usługi" lead="Strony „Z Twojej apaszki” i „Odcisk Twojej rośliny”: zdjęcia przed i po, teksty, cennik i kroki. Zmiany widać na stronie od razu.">
-    <nav aria-label="Usługi" class="mb-3.5 flex flex-wrap gap-2.5">
+    <nav aria-label="Usługi" class="mb-3.5 flex flex-wrap items-center gap-2.5">
         @foreach (Service::cases() as $tab)
             <a href="{{ route('admin.services.edit', $tab->slug()) }}" @if ($tab === $service) aria-current="page" @endif
                @class([
@@ -42,16 +42,13 @@
                    'border-line-strong text-lead hover:border-ink hover:bg-sand hover:text-ink' => $tab !== $service,
                ])>{{ $tab->label() }}</a>
         @endforeach
-    </nav>
-    <nav aria-label="Karty na tej stronie" class="mb-[22px] flex flex-wrap gap-x-4 gap-y-1 text-[13px]">
-        @foreach (['przed-i-po' => 'Przed i po', 'teksty' => 'Teksty', 'cennik' => 'Cennik', 'kroki' => 'Kroki'] as $id => $text)
-            <a href="#{{ $id }}" class="inline-flex min-h-11 items-center">{{ $text }}</a>
-        @endforeach
-        <a href="{{ $pageUrl }}" target="_blank" rel="noopener" class="ml-auto inline-flex min-h-11 items-center">Zobacz stronę →</a>
+        <a href="{{ $pageUrl }}" target="_blank" rel="noopener" class="ml-auto inline-flex min-h-11 items-center text-[13px]">Zobacz stronę →</a>
     </nav>
 
+    {{-- One card at a time (MA-323); every card keeps its #id, so saving comes back to its tab. --}}
+  <x-admin::tabs :tabs="['przed-i-po' => ['label' => 'Przed i po', 'count' => count($examples)], 'teksty' => 'Teksty', 'cennik' => 'Cennik', 'kroki' => 'Kroki']" label="Części strony usługi">
     <div class="grid max-w-[880px] gap-[22px]">
-        {{-- Przed i po --}}
+      <x-admin::tab-panel name="przed-i-po">
         <section id="przed-i-po" class="{{ $card }}">
             <h2 class="{{ $heading }} mb-1.5">Przed i po</h2>
             <p class="{{ $intro }}">
@@ -151,7 +148,7 @@
                 @csrf
                 <h3 class="mb-2.5 font-serif text-[19px]">Nowa para</h3>
                 @if ($pairErrors->any())
-                    <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby dodać parę.</p>
+                    <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby dodać parę.</p>
                 @endif
                 <p x-show="error" x-text="error" x-cloak role="alert" class="{{ $alert }}"></p>
                 <div class="grid gap-2.5 sm:grid-cols-2">
@@ -185,15 +182,17 @@
                 <button x-bind:disabled="sending" class="{{ $button }}"><span x-text="sending ? 'Wysyłam zdjęcia…' : 'Dodaj parę zdjęć'">Dodaj parę zdjęć</span></button>
             </form>
         </section>
+      </x-admin::tab-panel>
 
         {{-- Teksty --}}
+      <x-admin::tab-panel name="teksty">
         <form id="teksty" method="post" action="{{ route('admin.services.texts', $service->slug()) }}" novalidate class="{{ $card }}">
             @csrf
             @method('PUT')
             <h2 class="{{ $heading }} mb-1.5">Teksty na stronie</h2>
             <p class="{{ $intro }}">Enter w nagłówku przenosi wyraz do nowej linii — dokładnie tak, jak zobaczy to klientka. Puste pole się nie pokaże.</p>
             @if ($textErrors->any())
-                <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+                <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
             @endif
             <div class="grid gap-3">
                 @foreach (['heading' => ['Nagłówek', 3], 'lead' => ['Pierwszy akapit — większym pismem', 4], 'lead_2' => ['Drugi akapit', 3], 'note' => ['Notka pod cennikiem', 3]] as $name => [$text, $rows])
@@ -209,8 +208,10 @@
             </div>
             <button class="{{ $button }}">Zapisz teksty</button>
         </form>
+      </x-admin::tab-panel>
 
         {{-- Cennik --}}
+      <x-admin::tab-panel name="cennik">
         <form id="cennik" method="post" action="{{ route('admin.services.prices', $service->slug()) }}" novalidate class="{{ $card }}">
             @csrf
             @method('PUT')
@@ -218,7 +219,7 @@
             <h2 class="{{ $heading }} mb-1.5">Cennik</h2>
             <p class="{{ $intro }}">Pozycja bez nazwy albo ceny nie pokaże się na stronie. „Przed obniżką” wpisz tylko przy promocji: strona przekreśli tę cenę, gdy obniżysz cenę, i sama poda najniższą cenę z 30 dni.</p>
             @if ($priceErrors->any())
-                <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+                <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
             @endif
             <div class="grid gap-2.5">
                 @foreach ($priceRows as $index => $row)
@@ -251,8 +252,10 @@
             </div>
             <button class="{{ $button }}">Zapisz cennik</button>
         </form>
+      </x-admin::tab-panel>
 
         {{-- Kroki --}}
+      <x-admin::tab-panel name="kroki">
         <form id="kroki" method="post" action="{{ route('admin.services.steps', $service->slug()) }}" novalidate class="{{ $card }}">
             @csrf
             @method('PUT')
@@ -260,7 +263,7 @@
             <h2 class="{{ $heading }} mb-1.5">Kroki</h2>
             <p class="{{ $intro }}">Numerowane kroki pod zdjęciem. Kod Twojego Paczkomatu z <a href="{{ route('admin.settings.edit') }}#pracownia">Ustawień</a> pokazuje się pod nimi sam.</p>
             @if ($stepErrors->any())
-                <p role="alert" class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+                <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
             @endif
             <div class="grid gap-2.5">
                 @foreach ($stepRows as $index => $row)
@@ -289,5 +292,7 @@
             </div>
             <button class="{{ $button }}">Zapisz kroki</button>
         </form>
+      </x-admin::tab-panel>
     </div>
+  </x-admin::tabs>
 </x-admin::layout>
