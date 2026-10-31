@@ -95,3 +95,34 @@ test('a computer keeps the sorting as a row', async ({ page }, testInfo) => {
 
     expect(errors).toEqual([]);
 });
+
+// The narrowest phone (MA-305): „Wybierz rozmiar”, „Do koszyka” and the rest stay on one line, so the buttons in a row
+// share one height. Below 360 px the card's button takes a smaller font and side padding; 375 px and up are untouched.
+test('the card buttons keep to one line on a 320 px phone, in Polish and in English', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'iphone', 'A phone width.');
+    const errors = watchErrors(page);
+    await page.setViewportSize({ width: 320, height: 640 });
+
+    for (const [path, required] of [['/sklep', true], ['/en/shop', false]]) {
+        await page.goto(path, { waitUntil: 'networkidle' });
+        await settle(page);
+
+        const buttons = await page.locator('[data-shelf-card] .mt-auto').locator('a, button').evaluateAll((elements) => elements.map((element) => {
+            const range = document.createRange();
+            range.selectNodeContents(element.firstChild);
+            const rows = new Set([...range.getClientRects()].map((rect) => Math.round(rect.top))).size;
+            return { text: element.firstChild.textContent.trim(), rows, height: element.getBoundingClientRect().height };
+        }));
+        if (required) {
+            expect(buttons.length, `${path} shows no card buttons`).toBeGreaterThan(0);
+        }
+        for (const button of buttons) {
+            expect(button.rows, `„${button.text}” on ${path} breaks into two lines`).toBe(1);
+            expect(button.height, `„${button.text}” on ${path} is under 44 px`).toBeGreaterThanOrEqual(44);
+        }
+        await noSidewaysScroll(page);
+        await page.screenshot({ path: testInfo.outputPath(`shop-cards-320${path.replaceAll('/', '-')}.png`), fullPage: true });
+    }
+
+    expect(errors).toEqual([]);
+});

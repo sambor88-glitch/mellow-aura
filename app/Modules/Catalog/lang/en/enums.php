@@ -25,9 +25,9 @@ return [
         'options_many' => ':count options',
     ],
     'variant_kind_choose' => [
-        'sizes' => 'Choose a size',
-        'amounts' => 'Choose an amount',
-        'colors' => 'Choose a colour',
-        'options' => 'Choose an option',
+        'sizes' => 'Pick a size',
+        'amounts' => 'Pick an amount',
+        'colors' => 'Pick a colour',
+        'options' => 'Pick an option',
     ],
 ];
