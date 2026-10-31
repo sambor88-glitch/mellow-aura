@@ -55,11 +55,12 @@ class EuroRateTest extends TestCase
 
         $this->actingAs($user)
             ->put('/panel/produkty/ceny-w-euro', ['euro_markup_percent' => '15'])
-            ->assertRedirect(route('admin.products.index').'#ceny-w-euro')
+            ->assertRedirect(route('admin.products.settings').'#ceny-w-euro')
             ->assertSessionHasNoErrors();
 
         $this->assertSame([6490, 5000], [$following->price('EUR'), $typed->fresh()->price('EUR')]);
-        $this->actingAs($user)->get('/panel/produkty')->assertSee('value="15"', false)->assertSee('z narzutem 15%');
+        $this->actingAs($user)->get('/panel/produkty/ustawienia')->assertSee('value="15"', false);
+        $this->actingAs($user)->get('/panel/produkty/'.$following->product_id)->assertSee('z narzutem 15%');
 
         $this->actingAs($user)->put('/panel/produkty/ceny-w-euro', ['euro_markup_percent' => ''])->assertSessionHasNoErrors();
         $this->assertSame(5690, $following->fresh()->price('EUR'));

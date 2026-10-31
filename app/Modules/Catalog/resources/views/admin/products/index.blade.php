@@ -1,180 +1,161 @@
+@use('App\Modules\Shared\Support\FocalPoint')
 @use('App\Modules\Shared\Support\Money')
-<x-admin::layout title="Produkty" lead="Dodawaj produkty, zmieniaj ceny i stany. Zmiany widać na stronie od razu.">
-    <div class="flex flex-wrap gap-[26px]">
-        <div class="min-w-0 flex-[1_1_340px]">
-            <div id="nowy-produkt" class="rounded-[4px] border border-line bg-cream px-[26px] py-7">
-                <h2 class="mb-1 font-serif text-[25px]">Dodaj produkt</h2>
-                <p class="mb-[22px] text-[13.5px] text-label">Kubek, miska, talerz, wazon, scrunchie, kosmetyczka, piórnik — cokolwiek zrobisz.</p>
-                @include('catalog::admin.products.form', ['product' => null, 'formKey' => 'nowy-produkt'])
+@use('Illuminate\Support\Str')
+@php
+    // One row per product; only what needs attention stands out (MA-307). The states feed the filters above the list.
+    $rows = $products->map(function ($product) {
+        $visible = $product->variants->reject(fn ($variant) => $variant->is_hidden);
+        $prices = $visible->pluck('price_gross');
+        $counted = $visible->contains(fn ($variant) => $variant->stock !== null);
+        $stock = $counted ? $visible->sum(fn ($variant) => (int) $variant->stock) : null;
+        $soldOut = $counted && $visible->isNotEmpty() && $visible->every(fn ($variant) => $variant->stock === 0);
+        $name = fn ($variant) => $variant->label ?: 'jedyny rozmiar';
+        $zeros = $visible->filter(fn ($variant) => $variant->stock === 0)->map($name);
+        $lasts = $visible->filter(fn ($variant) => $variant->stock === 1)->map($name);
+        $missing = array_keys(array_filter(['zdjęcia' => $product->getMedia('images')->isEmpty(), 'opisu' => blank($product->description)]));
+        // „3 osoby czekają na powrót”, with the sizes when there are several.
+        $waitingVariants = $product->variants->where('stock_notifications_count', '>', 0);
+        $waiting = $waitingVariants->sum('stock_notifications_count');
+        $low = $product->is_published && ($soldOut || $zeros->isNotEmpty() || $lasts->isNotEmpty());
+
+        return [
+            'product' => $product,
+            'cover' => $product->getMedia('images')->first(),
+            'price' => $prices->isEmpty() ? '—' : ($prices->min() === $prices->max() ? Money::format($prices->min()) : 'od '.Money::format($prices->min())),
+            'stock' => $stock === null ? '—' : $stock.' szt.',
+            'counted' => $counted,
+            // Kind, how many sizes, and whether it is ready for the English shop: without a euro price it stays out of it.
+            'sub' => implode(' · ', array_filter([
+                $product->category->name,
+                $visible->count() > 1 ? $product->variant_kind?->count($visible->count()) : null,
+                match (true) {
+                    ! $product->hasTranslation('en') => null,
+                    $product->variants->contains(fn ($variant) => $variant->price('EUR') !== null) => 'EN',
+                    default => 'EN bez ceny w euro',
+                },
+            ])),
+            'missing' => $missing,
+            'soldOut' => $soldOut,
+            'zeros' => $soldOut ? collect() : $zeros,
+            'lasts' => $soldOut ? collect() : $lasts,
+            'waiting' => $waiting === 0 ? null : trans_choice(':count osoba czeka|:count osoby czekają|:count osób czeka', $waiting, [], 'pl').' na powrót'
+                .($product->variants->count() > 1 ? ' ('.$waitingVariants->map(fn ($variant) => $variant->label.': '.$variant->stock_notifications_count)->join(', ').')' : ''),
+            'states' => implode(' ', array_keys(array_filter(['live' => $product->is_published, 'hidden' => ! $product->is_published, 'low' => $low, 'todo' => $missing !== []]))),
+            'search' => Str::lower(Str::ascii(implode(' ', [$product->name, $product->category->name, $product->piece_name, ...$product->variants->pluck('label')]))),
+        ];
+    });
+    $filters = collect([
+        'all' => ['Wszystkie', $rows->count()],
+        'live' => ['W sklepie', $rows->filter(fn ($row) => str_contains($row['states'], 'live'))->count()],
+        'hidden' => ['Ukryte', $rows->filter(fn ($row) => str_contains($row['states'], 'hidden'))->count()],
+        'low' => ['Kończą się', $rows->filter(fn ($row) => str_contains($row['states'], 'low'))->count()],
+        'todo' => ['Do uzupełnienia', $rows->filter(fn ($row) => str_contains($row['states'], 'todo'))->count()],
+    ])->filter(fn ($filter, $key) => $key === 'all' || $filter[1] > 0);
+    $arrow = 'grid size-11 place-items-center rounded-full border border-line bg-cream text-[11px] text-muted hover:border-ink disabled:cursor-not-allowed disabled:opacity-40';
+    $warn = 'relative z-[1] inline-flex min-h-6 items-center gap-1.5 text-[12.5px] before:size-1.5 before:flex-none before:rounded-full before:bg-current';
+@endphp
+<x-admin::layout title="Produkty" :compact="true">
+    <x-slot:actions>
+        <x-shared::button href="{{ route('admin.products.create') }}" size="md">+ Dodaj produkt</x-shared::button>
+    </x-slot:actions>
+
+    <div x-data="productList(@js(request()->boolean('kolejnosc')))">
+        <div class="mb-3.5 flex flex-wrap items-center gap-x-3 gap-y-2.5">
+            <label class="flex min-w-0 flex-[1_1_240px] items-center gap-2.5 rounded-full border border-line bg-white px-4 text-label transition focus-within:border-ink focus-within:shadow-[0_0_0_4px_rgb(36_65_126/.14)] md:max-w-[380px]">
+                <svg viewBox="0 0 24 24" aria-hidden="true" class="size-[18px] flex-none fill-none stroke-current stroke-[1.6]"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20" stroke-linecap="round"/></svg>
+                <span class="sr-only">Szukaj w produktach</span>
+                <input type="search" x-model="q" placeholder="Szukaj w produktach" autocomplete="off" class="min-w-0 flex-1 bg-transparent py-[11px] text-[15px] text-ink outline-none placeholder:text-hint [&::-webkit-search-cancel-button]:appearance-none pointer-coarse:text-[16px]">
+            </label>
+            <div role="group" aria-label="Pokaż" class="-mx-4 flex max-w-[calc(100%+32px)] min-w-0 flex-[1_1_100%] gap-1 overflow-x-auto px-4 py-0.5 [scrollbar-width:none] md:mx-0 md:max-w-full md:flex-[0_1_auto] md:px-0.5" x-show="! ordering">
+                @foreach ($filters as $key => [$label, $count])
+                    <button type="button" x-on:click="filter = @js($key)" aria-pressed="{{ $key === 'all' ? 'true' : 'false' }}" x-bind:aria-pressed="(filter === @js($key)).toString()"
+                            class="inline-flex min-h-10 flex-none items-center gap-2 rounded-full border border-transparent py-0 pr-2 pl-3.5 text-[13px] text-lead transition-colors hover:border-line-strong hover:bg-sand hover:text-ink aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-linen">
+                        {{ $label }}
+                        <span @class(['inline-flex h-6 min-w-6 items-center justify-center rounded-full px-[7px] text-[11.5px] font-semibold tabular-nums', 'bg-cream text-lead' => ! in_array($key, ['low', 'todo'], true), 'bg-alert text-alert-text' => in_array($key, ['low', 'todo'], true)])>{{ $count }}</span>
+                    </button>
+                @endforeach
+                <span aria-hidden="true" class="mx-1.5 h-[22px] w-px flex-none self-center bg-line"></span>
+                <button type="button" x-on:click="ordering = true" class="inline-flex min-h-10 flex-none items-center rounded-full border border-transparent px-3.5 text-[13px] text-lead hover:border-line-strong hover:bg-sand hover:text-ink">Ustaw kolejność</button>
             </div>
         </div>
 
-        <div class="min-w-0 flex-[1_1_420px]">
-            <div class="mb-[22px] rounded-[4px] border border-line bg-cream px-[22px] py-6">
-                <h2 class="mb-1 font-serif text-[23px]">Strona główna</h2>
-                <p class="mb-[18px] text-[13.5px] text-label">Duże zdjęcie na górze strony ciągnie z katalogu — wybierz, który produkt tam stoi. Cena aktualizuje się sama.</p>
-                <form method="post" action="{{ route('admin.products.hero') }}" novalidate class="flex flex-wrap items-end gap-3">
-                    @csrf
-                    @method('PUT')
-                    <div class="min-w-0 flex-[1_1_200px]">
-                        <label for="hero-product" class="mb-1.5 block text-[13.5px] text-graphite">Produkt na dużym zdjęciu</label>
-                        <select id="hero-product" name="home_hero_product" class="w-full min-w-0 rounded-[4px] border border-line bg-white px-[15px] py-[13px] text-[15px] text-ink focus:border-ink">
-                            @foreach ($products->where('is_published', true) as $product)
-                                <option value="{{ $product->slug }}" @selected(old('home_hero_product', $heroSlug) === $product->slug)>{{ $product->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('home_hero_product')
-                            <p class="mt-1.5 text-[13px] text-error">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    <x-shared::field name="home_hero_badge" id="hero-badge" label="Etykieta" :value="old('home_hero_badge', $heroBadge)" placeholder="np. nowość" class="flex-[0_1_160px]" />
-                    <button class="min-h-11 rounded-full border border-line-strong px-5 py-3 text-[13.5px] text-ink hover:border-ink hover:bg-sand-dark">Zapisz</button>
-                </form>
-                <p class="mt-3 text-[12.5px] leading-[1.5] text-hint">Sekcja „Co teraz jest w pracowni” pokazuje cztery pierwsze widoczne produkty z listy poniżej — strzałkami ▲▼ ustawiasz kolejność. Pole „szt.” to stan magazynowy: po zejściu do zera produkt sam znika ze sklepu.</p>
-            </div>
+        <div x-show="ordering" x-cloak class="mb-3.5 flex flex-wrap items-center gap-x-4 gap-y-2.5 rounded-[4px] border border-line-strong bg-sand px-4 py-3 text-[13px] text-lead">
+            <p class="min-w-0 flex-[1_1_300px]">Kolejność tutaj to kolejność w sklepie. Cztery pierwsze widoczne produkty stoją na stronie głównej w „Co teraz jest w pracowni”.</p>
+            <x-shared::button type="button" variant="secondary" size="md" x-on:click="ordering = false">Gotowe</x-shared::button>
+        </div>
 
-            <div id="ceny-w-euro" class="mb-[22px] rounded-[4px] border border-line bg-cream px-[22px] py-6">
-                <h2 class="mb-1 font-serif text-[23px]">Ceny w euro</h2>
-                <p class="mb-[18px] text-[13.5px] text-label">Dotyczy produktów z zaznaczonym „Cena w euro z kursu NBP”: cena w złotych po kursie, plus narzut, w górę do końcówki ,90.</p>
-                <form method="post" action="{{ route('admin.products.euro-markup') }}" novalidate class="flex flex-wrap items-end gap-3">
-                    @csrf
-                    @method('PUT')
-                    <x-shared::field name="euro_markup_percent" id="euro-markup" label="Narzut w procentach" :value="old('euro_markup_percent', $euroMarkup)" inputmode="numeric" placeholder="np. 15" class="flex-[0_1_200px]" />
-                    <button class="min-h-11 rounded-full border border-line-strong px-5 py-3 text-[13.5px] text-ink hover:border-ink hover:bg-sand-dark">Zapisz</button>
-                </form>
-                <p class="mt-3 text-[12.5px] leading-[1.5] text-hint">Puste pole to bez narzutu. Ceny w euro wpisane ręcznie zostają, jak są.</p>
+        <div class="rounded-[4px] border border-line bg-cream">
+            <div aria-hidden="true" class="hidden min-h-10 grid-cols-[52px_minmax(0,1fr)_100px_96px_84px] items-center gap-3.5 px-4 text-[10.5px] tracking-[0.14em] whitespace-nowrap text-label uppercase md:grid">
+                <span></span><span>Produkt</span><span class="text-right">Cena</span><span class="text-right">Na półce</span><span class="text-center">W sklepie</span>
             </div>
-
-            <h2 class="mb-3.5 text-[11.5px] tracking-[0.16em] text-label uppercase">Wszystko, co masz w ofercie</h2>
-            <div class="overflow-hidden rounded-[4px] border border-line bg-cream">
-                @foreach ($products as $product)
-                    @php
-                        $formKey = 'produkt-'.$product->id;
-                        $photos = $product->getMedia('images');
-                        $cover = $photos->first();
-                        $photoErrors = collect($errors->getBag('zdjecia-'.$product->id)->all())->unique();
-                        $prices = $product->variants->pluck('price_gross');
-                        // Written in English is half of it: without a euro price the product stays out of the English shop.
-                        $english = match (true) {
-                            ! $product->hasTranslation('en') => null,
-                            $product->variants->contains(fn ($variant) => $variant->price('EUR') !== null) => 'EN',
-                            default => 'EN bez ceny w euro',
-                        };
-                        $soldOut = $product->variants->isNotEmpty() && $product->variants->every(fn ($variant) => $variant->stock === 0);
-                        [$state, $stateClass] = match (true) {
-                            ! $product->is_published => ['ukryty w sklepie', 'text-label'],
-                            $soldOut => ['wyprzedany — dodaj sztuki, żeby wrócił', 'text-error'],
-                            default => ['widoczny w sklepie', 'text-success'],
-                        };
-                        // „3 osoby czekają na powrót”, with the sizes when there are several.
-                        $waitingVariants = $product->variants->where('stock_notifications_count', '>', 0);
-                        $waiting = $waitingVariants->sum('stock_notifications_count');
-                        $waitingNote = $waiting === 0 ? null : trans_choice(':count osoba czeka|:count osoby czekają|:count osób czeka', $waiting, [], 'pl').' na powrót'
-                            .($product->variants->count() > 1 ? ' ('.$waitingVariants->map(fn ($variant) => $variant->label.': '.$variant->stock_notifications_count)->join(', ').')' : '');
-                        $photoCount = match (true) {
-                            $photos->isEmpty() => 'Zdjęcia — jeszcze żadnego',
-                            $photos->count() === 1 => 'Jedno zdjęcie',
-                            in_array($photos->count() % 10, [2, 3, 4], true) && ! in_array($photos->count() % 100, [12, 13, 14], true) => $photos->count().' zdjęcia',
-                            default => $photos->count().' zdjęć',
-                        };
-                        $arrow = 'grid size-11 place-items-center rounded-full border border-line text-[11px] text-muted hover:border-ink disabled:cursor-not-allowed disabled:opacity-40';
-                        // Small buttons on a photo, each with a 44 px touch area that stays inside the tile.
-                        $photoButton = 'absolute grid size-6 place-items-center rounded-full text-[13px] leading-none transition-colors duration-300 after:absolute after:-inset-2.5';
-                    @endphp
-                    <div id="{{ $formKey }}" class="scroll-mt-6 border-b border-sand-dark px-4 py-3.5 last:border-b-0">
-                        <div class="flex flex-wrap items-center gap-3.5">
-                            @if ($cover)
-                                <img src="{{ $cover->getAvailableUrl(['thumb']) }}" alt="{{ $cover->getCustomProperty('alt') ?: $product->name }}" width="46" height="56" style="{{ \App\Modules\Shared\Support\FocalPoint::style($cover) }}" class="h-14 w-[46px] flex-none rounded-[3px] object-cover">
-                            @else
-                                <span class="grid h-14 w-[46px] flex-none place-items-center rounded-[3px] border border-dashed border-line-strong bg-sand-dark text-[11px] text-hint">brak</span>
-                            @endif
-                            <div class="min-w-0 flex-[1_1_150px]">
-                                <div class="text-[14.5px] leading-[1.3]">{{ $product->name }}</div>
-                                <div class="mt-[3px] text-[12px] {{ $stateClass }}">{{ $product->category->name }} &middot; {{ $state }}@if ($english) &middot; {{ $english }} @endif</div>
-                                @if ($waitingNote)
-                                    <div class="mt-[3px] text-[12px] text-navy-text">{{ $waitingNote }}</div>
+            @foreach ($rows as $row)
+                @php($product = $row['product'])
+                <div id="produkt-{{ $product->id }}" data-states="{{ $row['states'] }}" data-search="{{ $row['search'] }}" x-show="shows($el)"
+                     class="relative grid scroll-mt-24 grid-cols-[52px_minmax(0,1fr)_auto] items-center gap-3 border-t border-divider py-2.5 pr-2 pl-3 transition-colors hover:bg-linen has-[a.row-link:focus-visible]:outline-2 has-[a.row-link:focus-visible]:-outline-offset-2 has-[a.row-link:focus-visible]:outline-navy md:min-h-[84px] md:grid-cols-[52px_minmax(0,1fr)_100px_96px_84px] md:gap-3.5 md:px-4">
+                    @if ($row['cover'])
+                        <img src="{{ $row['cover']->getAvailableUrl(['thumb']) }}" alt="" width="52" height="64" loading="lazy" style="{{ FocalPoint::style($row['cover']) }}" class="h-16 w-[52px] rounded-[8px] object-cover">
+                    @else
+                        <span class="grid h-16 w-[52px] place-items-center rounded-[8px] border border-dashed border-line-strong bg-sand-dark text-[10.5px] text-label">brak</span>
+                    @endif
+                    <div class="min-w-0">
+                        <a href="{{ route('admin.products.edit', $product) }}" class="row-link text-[15px] leading-[1.3] font-medium text-ink outline-none after:absolute after:inset-0 hover:text-ink">{{ $product->name }}</a>
+                        <div class="mt-0.5 text-[12.5px] text-label">{{ $row['sub'] }}</div>
+                        <div class="mt-0.5 text-[12.5px] text-lead tabular-nums md:hidden"><span class="font-serif text-[15.5px] font-light">{{ $row['price'] }}</span> &middot; {{ $row['stock'] }}</div>
+                        @if ($row['missing'] || $row['soldOut'] || $row['zeros']->isNotEmpty() || $row['lasts']->isNotEmpty() || $row['waiting'])
+                            <div class="mt-1 flex flex-wrap gap-x-3.5 gap-y-0.5">
+                                @if ($row['missing'])
+                                    <a href="{{ route('admin.products.edit', [$product, 'tab' => 'desc']) }}" class="{{ $warn }} text-brown hover:text-ink hover:underline">Brakuje {{ implode(' i ', $row['missing']) }}</a>
+                                @endif
+                                @if ($row['soldOut'])
+                                    <a href="{{ route('admin.products.edit', $product) }}" class="{{ $warn }} text-error hover:underline">Wyprzedany — dodaj sztuki, żeby wrócił</a>
+                                @endif
+                                @if ($row['zeros']->isNotEmpty())
+                                    <span class="{{ $warn }} text-error">{{ $row['zeros']->count() > 2 ? 'Brak w '.$row['zeros']->count().' wariantach' : 'Brak: '.$row['zeros']->join(', ') }}</span>
+                                @endif
+                                @if ($row['lasts']->isNotEmpty())
+                                    <span class="{{ $warn }} text-brown">{{ $row['lasts']->count() > 2 ? 'Ostatnie sztuki w '.$row['lasts']->count().' wariantach' : 'Ostatnia sztuka: '.$row['lasts']->join(', ') }}</span>
+                                @endif
+                                @if ($row['waiting'])
+                                    <span class="{{ $warn }} text-navy-text">{{ $row['waiting'] }}</span>
                                 @endif
                             </div>
-                            @if ($prices->isNotEmpty())
-                                <div class="flex-none text-[14px] tabular-nums">{{ $prices->min() === $prices->max() ? Money::format($prices->min()) : 'od '.Money::format($prices->min()) }}</div>
-                            @endif
-                            <div class="flex flex-none gap-1.5">
-                                <form method="post" action="{{ route('admin.products.move', $product) }}">
-                                    @csrf
-                                    <input type="hidden" name="kierunek" value="wyzej">
-                                    <button aria-label="Wyżej: {{ $product->name }}" @disabled($loop->first) class="{{ $arrow }}">▲</button>
-                                </form>
-                                <form method="post" action="{{ route('admin.products.move', $product) }}">
-                                    @csrf
-                                    <input type="hidden" name="kierunek" value="nizej">
-                                    <button aria-label="Niżej: {{ $product->name }}" @disabled($loop->last) class="{{ $arrow }}">▼</button>
-                                </form>
-                            </div>
-                            <form method="post" action="{{ route('admin.products.toggle', $product) }}">
-                                @csrf
-                                <button class="min-h-11 rounded-full border border-line px-4 text-[12.5px] text-lead hover:border-ink">{{ $product->is_published ? 'Ukryj' : 'Pokaż' }}</button>
-                            </form>
-                        </div>
-
-                        <div class="mt-3.5 border-t border-dashed border-sand-dark pt-3">
-                            <h3 class="mb-[9px] text-[11px] tracking-[0.14em] text-hint uppercase">{{ $photoCount }}</h3>
-                            <div class="flex flex-wrap items-center gap-2">
-                                @foreach ($photos as $photo)
-                                    <div @class(['relative h-[90px] w-[76px] flex-none rounded-[4px] border bg-line-soft', 'border-ink' => $loop->first, 'border-line' => ! $loop->first])>
-                                        <img src="{{ $photo->getAvailableUrl(['thumb']) }}" alt="{{ $photo->getCustomProperty('alt') ?: 'Zdjęcie '.$loop->iteration }}" loading="lazy" width="76" height="90" style="{{ \App\Modules\Shared\Support\FocalPoint::style($photo) }}" class="size-full rounded-[3px] object-cover">
-                                        <form method="post" action="{{ route('admin.products.photos.destroy', [$product, $photo]) }}" x-data x-on:submit="confirm('Usunąć to zdjęcie? Nie da się tego cofnąć.') || $event.preventDefault()">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button aria-label="Usuń zdjęcie {{ $loop->iteration }}: {{ $product->name }}" class="{{ $photoButton }} top-[3px] right-[3px] bg-ink/75 text-linen hover:bg-error">×</button>
-                                        </form>
-                                        @unless ($loop->first)
-                                            <form method="post" action="{{ route('admin.products.photos.move', [$product, $photo]) }}">
-                                                @csrf
-                                                <input type="hidden" name="kierunek" value="lewo">
-                                                <button aria-label="Zdjęcie {{ $loop->iteration }} w lewo: {{ $product->name }}" class="{{ $photoButton }} bottom-[3px] left-[3px] bg-cream/85 text-ink hover:bg-cream">‹</button>
-                                            </form>
-                                        @endunless
-                                        @unless ($loop->last)
-                                            <form method="post" action="{{ route('admin.products.photos.move', [$product, $photo]) }}">
-                                                @csrf
-                                                <input type="hidden" name="kierunek" value="prawo">
-                                                <button aria-label="Zdjęcie {{ $loop->iteration }} w prawo: {{ $product->name }}" class="{{ $photoButton }} right-[3px] bottom-[3px] bg-cream/85 text-ink hover:bg-cream">›</button>
-                                            </form>
-                                        @endunless
-                                    </div>
-                                @endforeach
-
-                                <form method="post" action="{{ route('admin.products.photos.store', $product) }}" enctype="multipart/form-data"
-                                      x-data="photoPicker(@js($photoLimits))" x-on:pageshow.window="sending = false" class="contents">
-                                    @csrf
-                                    <label x-bind:class="sending && 'pointer-events-none opacity-60'"
-                                           class="relative grid h-[90px] w-[76px] flex-none cursor-pointer place-items-center rounded-[4px] border border-dashed border-line-strong bg-linen text-[20px] text-gold transition-colors duration-300 hover:border-ink hover:bg-sand-dark has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy">
-                                        <span aria-hidden="true" x-text="sending ? '…' : '+'">+</span>
-                                        <span class="sr-only">Dodaj zdjęcia: {{ $product->name }}</span>
-                                        <input type="file" name="photos[]" accept="image/jpeg,image/png,image/webp" multiple x-on:change="send($el)" class="sr-only">
-                                    </label>
-                                    <noscript><button class="min-h-11 rounded-full border border-line px-4 text-[12.5px] text-lead hover:border-ink">Wyślij wybrane</button></noscript>
-                                    <p class="min-w-0 flex-[1_1_160px] text-[12px] leading-[1.5] text-hint">Pierwsze zdjęcie to okładka w sklepie. Strzałkami ‹ › zmieniasz kolejność.</p>
-                                    <p role="status" x-text="sending ? 'Dodaję zdjęcia — chwilę to potrwa' : ''" class="basis-full text-[13px] text-lead empty:hidden"></p>
-                                    <p role="alert" x-text="error" class="basis-full text-[13px] text-error empty:hidden"></p>
-                                    @foreach ($photoErrors as $message)
-                                        <p class="basis-full text-[13px] text-error">{{ $message }}</p>
-                                    @endforeach
-                                </form>
-                            </div>
-                        </div>
-
-                        <details @if ($errors->hasBag($formKey)) open @endif class="group mt-1">
-                            <summary class="flex min-h-11 cursor-pointer list-none items-center text-[13px] text-brown [&::-webkit-details-marker]:hidden">
-                                <span class="group-open:hidden">Edytuj rozmiary, ceny i opis +</span><span class="hidden group-open:inline">Zwiń −</span>
-                            </summary>
-                            <div class="border-t border-dashed border-sand-dark pt-3.5">
-                                @include('catalog::admin.products.form', ['product' => $product, 'formKey' => $formKey])
-                            </div>
-                        </details>
+                        @endif
                     </div>
-                @endforeach
+                    <span class="hidden text-right font-serif text-[17px] font-light whitespace-nowrap tabular-nums md:block">{{ $row['price'] }}</span>
+                    <span @class(['hidden text-right text-[13px] whitespace-nowrap tabular-nums md:block', 'text-error' => $row['soldOut'], 'text-brown' => ! $row['soldOut'] && ($row['zeros']->isNotEmpty() || $row['lasts']->isNotEmpty()), 'text-label' => ! $row['counted'], 'text-lead' => $row['counted'] && ! $row['soldOut'] && $row['zeros']->isEmpty() && $row['lasts']->isEmpty()])>{{ $row['stock'] }}</span>
+                    {{-- One click hides or shows the product; the page comes back with what happened (MA-307). --}}
+                    <form method="post" action="{{ route('admin.products.toggle', $product) }}" x-show="! ordering" class="relative z-[1] justify-self-center">
+                        @csrf
+                        <button role="switch" aria-checked="{{ $product->is_published ? 'true' : 'false' }}" aria-label="Widoczny w sklepie: {{ $product->name }}" class="grid h-11 w-12 place-items-center rounded-full">
+                            <span aria-hidden="true" class="switch-track"></span>
+                        </button>
+                    </form>
+                    <div x-show="ordering" x-cloak class="relative z-[1] flex gap-1.5 justify-self-end max-md:flex-col md:col-start-5">
+                        <form method="post" action="{{ route('admin.products.move', $product) }}">
+                            @csrf
+                            <input type="hidden" name="kierunek" value="wyzej">
+                            <button aria-label="Wyżej: {{ $product->name }}" @disabled($loop->first) class="{{ $arrow }}">▲</button>
+                        </form>
+                        <form method="post" action="{{ route('admin.products.move', $product) }}">
+                            @csrf
+                            <input type="hidden" name="kierunek" value="nizej">
+                            <button aria-label="Niżej: {{ $product->name }}" @disabled($loop->last) class="{{ $arrow }}">▼</button>
+                        </form>
+                    </div>
+                </div>
+            @endforeach
+            <div x-show="empty" x-cloak class="border-t border-divider px-6 py-9 text-center">
+                <p class="mb-2 font-serif text-[22px] font-light">Nic tu nie pasuje</p>
+                <p class="mx-auto mb-4 max-w-[42ch] text-[13.5px] text-label">Sprawdź pisownię albo pokaż wszystkie produkty.</p>
+                <x-shared::button type="button" variant="secondary" size="md" x-on:click="q = ''; filter = 'all'">Pokaż wszystkie</x-shared::button>
             </div>
+        </div>
+
+        <p class="mt-3.5 text-[12.5px] text-hint">Produkt na dużym zdjęciu strony głównej i narzut na ceny w euro są w <a href="{{ route('admin.products.settings') }}" class="text-brown underline decoration-line-strong underline-offset-[3px] hover:text-ink">Ustawieniach produktów</a>.</p>
+
+        {{-- On a phone the main action waits under the thumb. --}}
+        <div class="sticky bottom-[calc(16px+env(safe-area-inset-bottom))] z-40 mt-3.5 flex justify-end md:hidden">
+            <x-shared::button href="{{ route('admin.products.create') }}" size="md" class="shadow-[0_18px_36px_-18px_rgb(47_38_32/.6)]">+ Dodaj</x-shared::button>
         </div>
     </div>
 </x-admin::layout>

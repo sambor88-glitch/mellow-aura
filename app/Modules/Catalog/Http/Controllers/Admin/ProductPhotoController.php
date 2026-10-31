@@ -14,8 +14,8 @@ use Illuminate\Validation\ValidationException;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
- * The photo strip under each product in the panel: add, reorder and delete. Photo descriptions are saved
- * with the product form.
+ * The photos on the „Opis i zdjęcia” tab of the product card: add, reorder and delete. Photo descriptions and
+ * focal points are saved with the product form.
  */
 class ProductPhotoController extends Controller
 {
@@ -50,7 +50,7 @@ class ProductPhotoController extends Controller
 
     private function backTo(Product $product): string
     {
-        return route('admin.products.index').'#produkt-'.$product->id;
+        return route('admin.products.edit', [$product, 'tab' => 'desc']).'#zdjecia';
     }
 
     private function addedLabel(int $count): string

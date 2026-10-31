@@ -5,7 +5,11 @@ use App\Modules\Catalog\Http\Controllers\Admin\ProductController;
 use App\Modules\Catalog\Http\Controllers\Admin\ProductPhotoController;
 use Illuminate\Support\Facades\Route;
 
+// The list, a short form for a new product, the card of one product and the settings that apply to all of them (MA-307).
 Route::get('/produkty', [ProductController::class, 'index'])->name('products.index');
+Route::get('/produkty/nowy', [ProductController::class, 'create'])->name('products.create');
+Route::get('/produkty/ustawienia', [ProductController::class, 'settings'])->name('products.settings');
+Route::get('/produkty/{product}', [ProductController::class, 'edit'])->whereNumber('product')->name('products.edit');
 Route::post('/produkty', [ProductController::class, 'store'])->name('products.store');
 Route::put('/produkty/strona-glowna', [ProductController::class, 'hero'])->name('products.hero');
 Route::put('/produkty/ceny-w-euro', [ProductController::class, 'euroMarkup'])->name('products.euro-markup');
