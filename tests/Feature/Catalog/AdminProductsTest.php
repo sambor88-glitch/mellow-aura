@@ -337,15 +337,24 @@ class AdminProductsTest extends TestCase
         $this->assertTrue($vase->is_published);
     }
 
-    public function test_arrows_set_the_order_and_hiding_takes_a_product_off_the_shop(): void
+    public function test_dragging_sets_the_order_and_hiding_takes_a_product_off_the_shop(): void
     {
         $vases = $this->product('Wazony', 1, [23900]);
-        $this->product('Patery', 2, [32900]);
+        $platters = $this->product('Patery', 2, [32900]);
         $plates = $this->product('Talerze', 3, [8900]);
         $owner = User::factory()->create();
 
-        $this->actingAs($owner)->post('/panel/produkty/'.$plates->id.'/przesun', ['kierunek' => 'wyzej'])->assertRedirect();
-        $this->get('/sklep')->assertSeeInOrder(['Wazony', 'Talerze', 'Patery']);
+        // Talerze dragged to the very top: the list sends every product in its new order.
+        $this->actingAs($owner)->putJson('/panel/produkty/kolejnosc', ['order' => [$plates->id, $vases->id, $platters->id]])
+            ->assertOk()
+            ->assertJson(['message' => 'Kolejność zapisana. Tak stoi teraz w sklepie.']);
+        $this->get('/sklep')->assertSeeInOrder(['Talerze', 'Wazony', 'Patery']);
+        $this->assertSame([1, 2, 3], [$plates->fresh()->sort_order, $vases->fresh()->sort_order, $platters->fresh()->sort_order]);
+
+        // A list without a product added meanwhile on another device changes nothing.
+        $this->actingAs($owner)->putJson('/panel/produkty/kolejnosc', ['order' => [$vases->id, $plates->id]])->assertStatus(409);
+        $this->get('/sklep')->assertSeeInOrder(['Talerze', 'Wazony', 'Patery']);
+        $this->actingAs($owner)->putJson('/panel/produkty/kolejnosc', ['order' => [$vases->id, $vases->id, $plates->id]])->assertUnprocessable();
 
         $this->actingAs($owner)
             ->post('/panel/produkty/'.$vases->id.'/widocznosc')

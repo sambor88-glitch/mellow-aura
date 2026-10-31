@@ -5,7 +5,7 @@ namespace App\Modules\Catalog\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Modules\Catalog\Actions\AddProductPhotos;
 use App\Modules\Catalog\Actions\ConvertEuroPrices;
-use App\Modules\Catalog\Actions\MoveProduct;
+use App\Modules\Catalog\Actions\ReorderProducts;
 use App\Modules\Catalog\Actions\SaveProduct;
 use App\Modules\Catalog\Http\Requests\Admin\PhotoRules;
 use App\Modules\Catalog\Http\Requests\Admin\SaveProductRequest;
@@ -13,6 +13,7 @@ use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Settings\Actions\SaveSettings;
 use App\Modules\Settings\Settings;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -101,11 +102,24 @@ class ProductController extends Controller
             ->with('panel_status', $next ? 'Zapisane. Teraz: '.$next->name.'.' : 'Zapisane. Klienci już to widzą.');
     }
 
-    public function move(Request $request, Product $product, MoveProduct $moveProduct): RedirectResponse
+    /** The list sends every product in the order Kasia dragged it into; the shop and the home page follow it. */
+    public function reorder(Request $request, ReorderProducts $reorderProducts): JsonResponse|RedirectResponse
     {
-        $moveProduct($product, $request->input('kierunek') === 'wyzej' ? -1 : 1);
+        $data = $request->validate([
+            'order' => ['required', 'array'],
+            'order.*' => ['integer', 'distinct'],
+        ]);
 
-        return to_route('admin.products.index', ['kolejnosc' => 1])->withFragment('produkt-'.$product->id);
+        $saved = $reorderProducts(array_map(intval(...), $data['order']));
+        $message = $saved
+            ? 'Kolejność zapisana. Tak stoi teraz w sklepie.'
+            : 'Lista produktów zmieniła się w międzyczasie — odśwież stronę i przeciągnij jeszcze raz.';
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message], $saved ? 200 : 409);
+        }
+
+        return to_route('admin.products.index')->with('panel_status', $message);
     }
 
     public function toggle(Product $product): RedirectResponse

@@ -1032,3 +1032,14 @@ form[data-dirty]::before {
         grid-template-areas: "price stock";
     }
 }
+
+/* Dragging a product on the list (MA-307): the gap shows where it lands, the row in hand floats above the list. */
+.drag-ghost {
+    opacity: .35;
+}
+.drag-lifted {
+    opacity: 1 !important;
+    border-radius: 14px;
+    background: var(--color-cream);
+    box-shadow: 0 18px 40px -20px rgb(47 38 32 / .55);
+}
