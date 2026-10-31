@@ -80,3 +80,38 @@ test('a change in one form is never lost silently', async ({ page }) => {
 
     expect(dialogs, 'no browser dialog on the way').toEqual([]);
 });
+
+test('the search finds a setting without Polish letters and opens it with the cursor in the field', async ({ page }, testInfo) => {
+    await signIn(page);
+    await page.goto('/panel/produkty', { waitUntil: 'networkidle' });
+
+    // Ctrl+K on a computer, the magnifier next to „Menu” on a phone (MA-308).
+    const opener = testInfo.project.name === 'iphone'
+        ? page.getByRole('button', { name: 'Szukaj w panelu' }).filter({ visible: true })
+        : null;
+    if (opener) {
+        await opener.click();
+    } else {
+        await page.keyboard.press('Control+k');
+    }
+
+    const field = page.getByRole('combobox', { name: 'Czego szukasz?' });
+    await expect(field).toBeFocused();
+    await expect(page.getByRole('option', { name: /Dodaj produkt/ })).toBeVisible();
+
+    await field.fill('prog');
+    await expect(page.getByRole('option', { name: /Próg darmowej wysyłki/ })).toHaveAttribute('aria-selected', 'true');
+    await field.press('Enter');
+
+    await expect(page).toHaveURL(/\/panel\/ustawienia#dostawa-free-shipping-threshold$/);
+    await expect(page.locator('#dostawa-free-shipping-threshold')).toBeFocused();
+
+    // Esc closes the window and gives the focus back to what opened it.
+    if (opener) {
+        await opener.click();
+        await expect(field).toBeFocused();
+        await page.keyboard.press('Escape');
+        await expect(field).toBeHidden();
+        await expect(opener).toBeFocused();
+    }
+});

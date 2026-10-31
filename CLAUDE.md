@@ -69,7 +69,8 @@ app/Modules/Catalog/
 - Mail dziedziczy po `Shared\Mail\QueuedMail`: idzie przez kolejkę, ponawia się przez dwie godziny, a jeśli nie wyjdzie,
   trafia do panelu „Niewysłane maile” z opisem z `description()`. Wyjątek to odpowiedź na reklamację — Kasia musi
   od razu wiedzieć, czy wyszła. Alerty techniczne (`Monitoring\Support\Alerts`) idą od razu, nigdy przez kolejkę.
-- Ekrany panelu należą do modułu, którego dotyczą. `Admin` daje tylko logowanie, układ panelu i menu.
+- Ekrany panelu należą do modułu, którego dotyczą. `Admin` daje tylko logowanie, układ panelu, menu i wyszukiwarkę
+  (MA-308) — wyniki do niej każdy moduł dodaje sam, przez `SearchProvider` w swoim providerze.
 - Testy: `tests/Feature/<Name>` i `tests/Unit/<Name>`.
 
 Pierwsza fala: `Shared` (układ strony, komponenty Blade, formatowanie kwot, SEO), `Localization` (prefiks

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Checkout;
 
+use App\Modules\Admin\Support\Search\PanelSearch;
 use App\Modules\Checkout\Events\OrderPaid;
 use App\Modules\Checkout\Events\OrderPlaced;
 use App\Modules\Checkout\Events\OrderShipped;
@@ -16,6 +17,7 @@ use App\Modules\Checkout\Mail\OrderConfirmed;
 use App\Modules\Checkout\Mail\OrderUnavailable;
 use App\Modules\Checkout\Mail\ParcelOnItsWay;
 use App\Modules\Checkout\Mail\WithdrawalConfirmed;
+use App\Modules\Checkout\Support\Search\OrderSearch;
 use App\Modules\Shared\ModuleServiceProvider;
 use Illuminate\Support\Facades\Event;
 
@@ -28,6 +30,11 @@ class CheckoutServiceProvider extends ModuleServiceProvider
         ParcelOnItsWay::class,
         WithdrawalConfirmed::class,
     ];
+
+    public function register(): void
+    {
+        $this->callAfterResolving(PanelSearch::class, fn (PanelSearch $search) => $search->add(new OrderSearch));
+    }
 
     public function boot(): void
     {

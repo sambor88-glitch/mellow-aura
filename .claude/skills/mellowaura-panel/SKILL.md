@@ -78,6 +78,23 @@ Ekran, który na iPhonie ma więcej niż 3 ekrany przewijania, dzielisz. Wzorzec
 - Na telefonie tytuł ekranu jest tylko w górnym pasku (`x-admin::layout`), a karty mają `px-[18px] py-5`
   zamiast `px-[26px] py-7`.
 
+## Wyszukiwarka na górze (MA-308)
+
+Na każdym ekranie: Ctrl+K, Cmd+K albo „/” na komputerze, lupa obok „Menu” na telefonie. Wygląd z makiety MA-306, ekran 4.
+
+- **Wyniki w grupach** w stałej kolejności: Produkty, Zamówienia, Klienci, Warsztaty, Ustawienia, Ekrany, Szybko.
+  Najwyżej 5 w grupie. Bez wpisanego tekstu okno pokazuje „Ostatnio otwierane” (localStorage, osobno dla konta)
+  i „Szybko”.
+- **Moduł dodaje swoje wyniki sam.** Klasa z `App\Modules\Admin\Support\Search\SearchProvider` w `Support/Search`
+  modułu. W providerze modułu: `callAfterResolving(PanelSearch::class, fn ($search) => $search->add(new …))`.
+  Dostawca szuka tylko we własnych tabelach i zwraca `SearchResult` z trasą ekranu.
+- **Uprawnienia:** `PanelSearch` pyta tylko dostawców, których ekran (`screen()`) konto może otworzyć, i odrzuca
+  wynik z trasą spoza `PanelAccess`. Osoba pomagająca widzi więc tylko zamówienia.
+- **Bez polskich znaków:** `PanelSearch::whereWords()` (MySQL `LIKE`, słowa w dowolnej kolejności) i `matches()`
+  do sprawdzenia w PHP. „prog” znajduje „Próg”, „lucja” znajduje „Łucja”.
+- **Pole ustawienia:** wynik prowadzi do `#id-pola`. Zakładka sama się otwiera, a kursor staje w polu. Nowe pole
+  w Ustawieniach dopisujesz do `Settings\Support\Search\SettingSearch`. Test sprawdza, że każde `id` z listy jest na ekranie.
+
 ## Kafelek z liczbą
 
 Panel otwiera rząd czterech liczb: dziś, ten tydzień, do wysłania, do odpisania.
