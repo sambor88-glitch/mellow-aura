@@ -45,7 +45,7 @@
 
     <div class="mx-auto max-w-[1280px] animate-ma-view px-4 pt-5 pb-24 md:px-7 md:pt-11 md:pb-16">
         @if ($heading)
-            <div @class(['mb-[30px] flex flex-wrap items-end justify-between gap-5 max-md:mb-5', 'max-md:mb-0' => $compact])>
+            <div @class(['mb-[30px] flex flex-wrap items-end justify-between gap-5 max-md:mb-5', 'max-md:mb-0' => $compact || (! isset($actions) && blank($lead))])>
                 <div class="max-md:sr-only">
                     <div class="mb-3.5 text-[10.5px] tracking-[0.3em] text-brown uppercase">tylko dla Ciebie &middot; nie widzą tego klienci</div>
                     <h1 class="font-serif text-[length:clamp(32px,4.4vw,52px)] leading-[1.04] font-light">{{ $title }}</h1>
