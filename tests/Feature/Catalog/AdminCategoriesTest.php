@@ -43,6 +43,28 @@ class AdminCategoriesTest extends TestCase
             ->assertSee('placeholder="Kubki i filiżanki — rękodzieło z Krakowa', false);
     }
 
+    public function test_the_list_shows_what_a_shelf_lacks_and_save_and_next_opens_the_next_one(): void
+    {
+        $vases = Category::factory()->create(['name' => 'Wazony i patery', 'slug' => 'wazony-i-patery', 'group' => CategoryGroup::Ceramics]);
+        $this->mugs->update(['seo_title' => 'Kubki z Krakowa', 'seo_description' => 'Kubki z gliny.']);
+        $owner = User::factory()->create();
+
+        $this->actingAs($owner)->get('/panel/kategorie')
+            ->assertOk()
+            ->assertSee('Półki w sklepie')
+            ->assertSee('Google ✓')
+            ->assertSee('Google: złoży sama')
+            ->assertSee('Zapisz i następna →');
+
+        $first = Category::query()->orderBy('sort_order')->orderBy('id')->first();
+        $second = $first->is($vases) ? $this->mugs : $vases;
+
+        $this->put('/panel/kategorie/'.$first->id, ['form' => 'kategoria-'.$first->id, 'intro' => 'Wstęp.', 'next' => $second->id])
+            ->assertRedirect('/panel/kategorie#kategoria-'.$second->id)
+            ->assertSessionHas('panel_status', 'Zapisane. Teraz: '.$second->name.'.');
+        $this->assertSame('Wstęp.', $first->fresh()->intro);
+    }
+
     public function test_texts_reach_the_shop_and_clearing_them_brings_back_the_composed_ones(): void
     {
         $owner = User::factory()->create();
