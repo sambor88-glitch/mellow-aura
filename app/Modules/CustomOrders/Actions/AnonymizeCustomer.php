@@ -21,7 +21,7 @@ class AnonymizeCustomer
         $requests = CustomOrderRequest::query()->whereRaw('lower(email) = ?', [PersonalData::normalize($email)])->get();
 
         foreach ($requests as $request) {
-            $request->clearMediaCollection('photos');
+            $request->deletePhotos();
             $request->update([
                 'name' => PersonalData::ERASED_NAME,
                 'email' => PersonalData::ERASED_EMAIL,

@@ -66,6 +66,8 @@
                                 </li>
                             @endforeach
                         </ul>
+                    @elseif ($idea->photos_deleted_at)
+                        <p class="text-[12.5px] text-hint">Zdjęcia usunięte {{ $idea->photos_deleted_at->format('j.m.Y') }}</p>
                     @endif
 
                     <form method="post" action="{{ route('admin.custom-orders.update', $idea) }}" class="flex flex-wrap items-end gap-2 border-t border-divider pt-3">
