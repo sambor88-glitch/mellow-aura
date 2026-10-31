@@ -246,7 +246,8 @@ export default (config) => ({
         return parts;
     },
 
-    // What was opened last stays on this device only, for this account.
+    // What was opened last stays on this device only, for this account, and only until signing out. It keeps the title
+    // and the link, not the line under it: an order's line names the customer, and her data belongs on the server.
     memory() {
         return `panel-search:${config.account}`;
     },
@@ -255,19 +256,32 @@ export default (config) => ({
         try {
             const saved = JSON.parse(localStorage.getItem(this.memory()) ?? '[]');
 
-            return Array.isArray(saved) ? saved.filter((result) => typeof result?.url === 'string' && typeof result?.title === 'string').slice(0, RECENT) : [];
+            return Array.isArray(saved)
+                ? saved.filter((result) => typeof result?.url === 'string' && typeof result?.title === 'string')
+                    .slice(0, RECENT)
+                    .map(({ title, url, image = null, icon = null }) => ({ title, url, image, icon }))
+                : [];
         } catch {
             return [];
         }
     },
 
     remember(result) {
-        const { title, url, detail = null, image = null, icon = null } = result;
+        const { title, url, image = null, icon = null } = result;
         try {
             const kept = this.recent().filter((saved) => saved.url !== url);
-            localStorage.setItem(this.memory(), JSON.stringify([{ title, url, detail, image, icon }, ...kept].slice(0, RECENT)));
+            localStorage.setItem(this.memory(), JSON.stringify([{ title, url, image, icon }, ...kept].slice(0, RECENT)));
         } catch {
             // Without storage the search simply starts without „Ostatnio otwierane”.
+        }
+    },
+
+    // Signing out clears „Ostatnio otwierane” of every account on this device.
+    forget() {
+        try {
+            Object.keys(localStorage).filter((key) => key.startsWith('panel-search:')).forEach((key) => localStorage.removeItem(key));
+        } catch {
+            // Nothing was kept.
         }
     },
 });
