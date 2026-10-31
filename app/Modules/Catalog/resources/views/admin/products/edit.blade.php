@@ -152,6 +152,11 @@
                 @if ($product->is_published)
                     <x-shared::button href="{{ route('product.show', $product) }}" target="_blank" variant="glass" size="md">Zobacz w sklepie ↗</x-shared::button>
                 @endif
+                {{-- A hidden copy right after this product, with its name ready to change (MA-307). --}}
+                <form method="post" action="{{ route('admin.products.duplicate', $product) }}" class="flex-none">
+                    @csrf
+                    <x-shared::button type="submit" variant="glass" size="md">Duplikuj</x-shared::button>
+                </form>
             </div>
         </div>
 
@@ -316,6 +321,10 @@
                     </div>
                     <div class="grid gap-4">
                         <x-shared::field name="name" :id="$formKey.'-name'" label="Nazwa" :value="$old('name', $product->name)" :bag="$formKey" maxlength="120" placeholder="np. Miska z odciskiem paproci" />
+                        @if (session('duplicated'))
+                            {{-- A fresh copy: the name is selected, so typing replaces „… (kopia)”. --}}
+                            <span hidden x-data x-init="$nextTick(() => { const name = document.getElementById(@js($formKey.'-name')); name?.focus(); name?.select() })"></span>
+                        @endif
                         <x-shared::field name="piece_name" :id="$formKey.'-piece-name'" label="Nazwa jednej sztuki" :value="$old('piece_name', $product->piece_name)" :bag="$formKey" maxlength="120" placeholder="np. Wazon"
                                          hint="Na certyfikacie i stronie kupionej sztuki — „Wazon” zamiast „Wazony”. Puste pole: zostanie nazwa produktu." />
                         <div class="min-w-0">

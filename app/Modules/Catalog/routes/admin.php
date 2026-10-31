@@ -18,6 +18,9 @@ Route::put('/produkty/ceny-w-euro', [ProductController::class, 'euroMarkup'])->n
 Route::put('/produkty/kolejnosc', [ProductController::class, 'reorder'])->name('products.reorder');
 Route::put('/produkty/{product}', [ProductController::class, 'update'])->whereNumber('product')->name('products.update');
 Route::post('/produkty/{product}/widocznosc', [ProductController::class, 'toggle'])->whereNumber('product')->name('products.toggle');
+// − and + on the list save the pieces on the shelf at once; „Duplikuj” makes a hidden copy (MA-307).
+Route::put('/produkty/{product}/sztuki', [ProductController::class, 'stock'])->whereNumber('product')->name('products.stock');
+Route::post('/produkty/{product}/duplikuj', [ProductController::class, 'duplicate'])->whereNumber('product')->name('products.duplicate');
 
 // A photo is found through its product, so a photo of another product gives 404.
 Route::post('/produkty/{product}/zdjecia', [ProductPhotoController::class, 'store'])->whereNumber('product')->name('products.photos.store');
