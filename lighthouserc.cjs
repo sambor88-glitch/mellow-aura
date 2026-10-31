@@ -18,19 +18,18 @@ const target = {
     'total-blocking-time': median('error', { maxNumericValue: 200 }),
 };
 
-// Where the shop misses a target today, the budget holds the level measured on 29.10 so it cannot get worse.
-// Each one has a task to reach the target; tighten the number back to `target` when it is done.
+// Where the shop misses a target, the budget holds the level the shop reaches so it cannot get worse.
 const measured = preset === 'mobile'
     ? [
-        // Phone after the fonts in MA-271 (31.10, measured locally): LCP 2.3–2.9 s, Performance 89–93; CI runs about 0.3 s slower,
-        // with up to ±0.5 s between runs. The margin keeps that noise from failing the job. Without any web font the pages
-        // reach 1.9–2.2 s, so what is left of the gap is the fonts being fetched before the photo at all.
+        // Phone, decision of 31.10 (MA-271, option D): Performance holds the MA-267 target, LCP stays at 3 s. CI after the
+        // fonts (#194): Performance 91–94, LCP 2.26–2.86 s. This is `artisan serve` on a runner, without Cloudflare, HTTP/2
+        // or a warm cache, so 2.5 s waits for real data from Search Console after the launch (MA-119). The remaining gap is
+        // the web fonts fetched before the first photo; loading them later was turned down because the swap would show.
         {
             matchingUrlPattern: '.*',
             assertions: {
                 ...target,
-                'categories:performance': median('error', { minScore: 0.85 }),
-                'largest-contentful-paint': median('error', { maxNumericValue: 3500 }),
+                'largest-contentful-paint': median('error', { maxNumericValue: 3000 }),
             },
         },
     ]
