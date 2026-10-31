@@ -63,7 +63,9 @@ class ProductArModelTest extends TestCase
             ->assertOk()
             ->assertSee('Zobacz u siebie')
             ->assertSee('arViewer(', false)
-            ->assertSee(str_replace('/', '\/', $url), false);
+            // The address sits inside the Alpine expression, JSON-encoded, so its slashes are escaped there.
+            ->assertSee('modele-3d', false)
+            ->assertSee($model->file_name, false);
 
         auth()->logout();
         $response = $this->get($url)->assertOk();
