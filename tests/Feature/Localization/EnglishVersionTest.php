@@ -181,7 +181,8 @@ class EnglishVersionTest extends TestCase
             ->assertSee('<title>MellowAura — handmade ceramics &amp; silk, Kraków</title>', false)
             ->assertSee('Clay and silk from <em class="text-brown italic">one pair of</em> hands.', false)
             ->assertDontSee('aura-intro')
-            ->assertSee('Let’s design it together')
+            // Custom orders are written in Polish until MA-187 (MA-301), so the home page has no card for them.
+            ->assertDontSee('Let’s design it together')
             ->assertSee('>Basket</span>', false)
             // Złoty-only payment, services and workshops held in Polish, Kasia's Polish panel texts.
             ->assertDontSee('płatność w 10 sekund')

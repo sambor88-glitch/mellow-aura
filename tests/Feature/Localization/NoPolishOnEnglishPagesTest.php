@@ -6,6 +6,7 @@ use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
 use App\Modules\Catalog\Models\ProductVariant;
 use App\Modules\Settings\Database\Seeders\SettingsSeeder;
+use App\Modules\Settings\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as Router;
@@ -35,6 +36,8 @@ class NoPolishOnEnglishPagesTest extends TestCase
 
         $this->withoutVite();
         $this->seed(SettingsSeeder::class);
+        // With analytics in the panel every page carries the cookie banner, so its words are checked too.
+        Setting::query()->updateOrCreate(['key' => 'google_analytics_id'], ['value' => 'G-AB12CD34EF']);
     }
 
     public function test_no_english_page_shows_polish_text(): void
