@@ -27,18 +27,9 @@ class PackingStepsTest extends TestCase
             ->assertSee('Jak pakuję i wysyłam')
             ->assertSeeInOrder(['Każdą rzecz owijam osobno w papier pakowy.', 'dostajesz mailem numer do śledzenia.']);
 
-        $this->get('/en/shipping-and-care')
-            ->assertOk()
-            ->assertSee('How I pack and ship')
-            ->assertSee('you get an email with a tracking number.')
-            ->assertDontSee('Każdą rzecz owijam');
-    }
-
-    public function test_an_empty_english_text_leaves_the_section_out_instead_of_showing_polish(): void
-    {
-        Setting::query()->whereKey('text_packing_steps_en')->update(['value' => null]);
-
-        $this->get('/en/shipping-and-care')->assertOk()->assertDontSee('How I pack and ship')->assertDontSee('papier pakowy');
+        // The rest of the page is written in Polish, so it has no English address until MA-187 (MA-301);
+        // the English packing steps wait in the panel for it.
+        $this->get('/en/shipping-and-care')->assertNotFound();
     }
 
     public function test_the_panel_saves_both_texts(): void

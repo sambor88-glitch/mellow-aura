@@ -9,7 +9,7 @@ return [
     'email_placeholder' => 'name@example.com',
     'consent' => 'I agree to one e-mail when this piece is back. No newsletter — I delete the address once it’s sent.',
     'privacy' => 'More about your data in the :link.',
-    'privacy_link' => 'privacy policy',
+    'privacy_link' => 'privacy policy (in Polish)',
     'submit' => 'Tell me when it’s back',
     'subscribed' => 'Saved. I’ll write when this piece is back on the shelf.',
     'waiting' => 'You’re waiting for this piece — I’ll write when it’s back.',

@@ -6,7 +6,8 @@ import { renewSpeculations } from './transitions';
  * The cart drawer. Cart forms post in the background and the server answers with the drawer's
  * fresh content, so Blade stays the only place that renders the cart.
  */
-const failure = 'Coś się zacięło po mojej stronie. Twój koszyk jest bezpieczny — spróbuj za chwilę.';
+// The words come from the drawer in the language of the page (cart::drawer).
+export const text = (key) => document.getElementById('cart')?.dataset[key] ?? '';
 
 export default {
     count: 0,
@@ -68,7 +69,7 @@ export default {
         }
 
         if (!response?.ok || !data) {
-            this.say(response?.status === 422 && data?.message ? data.message : failure);
+            this.say(response?.status === 422 && data?.message ? data.message : text('failure'));
 
             return false;
         }

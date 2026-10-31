@@ -1,11 +1,12 @@
 @extends('errors::layout')
+@use('App\Modules\Shared\Support\ErrorPage')
 
-@section('title', 'Nie da się otworzyć tej strony')
-@section('eyebrow', 'nie da się otworzyć')
-@section('heading', 'Tej strony nie da się otworzyć')
-@section('lead', 'Sprawdź adres albo zacznij od strony głównej. Jeśli link na mojej stronie prowadzi tutaj, napisz do mnie — poprawię go.')
+@section('title', ErrorPage::text('4xx.title'))
+@section('eyebrow', ErrorPage::text('4xx.eyebrow'))
+@section('heading', ErrorPage::text('4xx.heading'))
+@section('lead', ErrorPage::text('4xx.lead'))
 
 @section('actions')
-    <a href="{{ url('/sklep') }}" class="button button-primary">Przejdź do sklepu</a>
-    <a href="{{ url('/') }}" class="button button-secondary">Strona główna</a>
+    <a href="{{ ErrorPage::shop() }}" class="button button-primary">{{ ErrorPage::text('shop') }}</a>
+    <a href="{{ ErrorPage::home() }}" class="button button-secondary">{{ ErrorPage::text('home') }}</a>
 @endsection

@@ -67,7 +67,6 @@ class AdminPagePhotosTest extends TestCase
             ->assertOk()
             ->assertSee('alt="Kasia przy kole"', false)
             ->assertSee('style="object-position: 30% 70%"', false);
-        $this->get('/en/about')->assertOk()->assertDontSee('Kasia przy kole');
         $this->get('/panel/zdjecia-stron')->assertSeeInOrder(['id="about-main"', 'Przywróć pierwszy kadr'], false)->assertDontSee('Przywróć pierwsze zdjęcie');
 
         $this->post('/panel/zdjecia-stron/about-main/przywroc')->assertRedirect('/panel/zdjecia-stron#about-main');

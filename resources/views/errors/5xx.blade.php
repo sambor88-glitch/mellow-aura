@@ -1,13 +1,14 @@
 @extends('errors::layout')
+@use('App\Modules\Shared\Support\ErrorPage')
 
-@section('title', 'Coś się zacięło')
-@section('eyebrow', 'chwilowa usterka')
-@section('heading', 'Coś się zacięło po mojej stronie')
-@section('lead', 'Twój koszyk jest bezpieczny — spróbuj za chwilę. Jeśli to się powtarza, napisz do mnie przez stronę kontaktową.')
+@section('title', ErrorPage::text('5xx.title'))
+@section('eyebrow', ErrorPage::text('5xx.eyebrow'))
+@section('heading', ErrorPage::text('5xx.heading'))
+@section('lead', ErrorPage::text('5xx.lead'))
 
 @section('actions')
     @if (request()->isMethod('get'))
-        <a href="{{ url()->full() }}" class="button button-primary">Spróbuj jeszcze raz</a>
+        <a href="{{ url()->full() }}" class="button button-primary">{{ ErrorPage::text('5xx.retry') }}</a>
     @endif
-    <a href="{{ url('/') }}" class="button button-secondary">Strona główna</a>
+    <a href="{{ ErrorPage::home() }}" class="button button-secondary">{{ ErrorPage::text('home') }}</a>
 @endsection

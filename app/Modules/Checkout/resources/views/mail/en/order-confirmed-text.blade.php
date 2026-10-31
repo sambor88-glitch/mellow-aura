@@ -26,7 +26,7 @@ You can also message me on WhatsApp: {!! $contactPhone !!}.
 
 Attached are the shop terms{!! $order->terms_version ? ' ('.$order->terms_version.')' : '' !!} and the model withdrawal form.
 @if (Route::has('withdrawal.create'))
-The easiest way to withdraw is online: {!! route('withdrawal.create', ['zamowienie' => $order->number]) !!}
+The easiest way to withdraw is online (the form is in Polish): {!! route('withdrawal.create', ['zamowienie' => $order->number]) !!}
 @endif
 
 {!! $mailTexts->signature() !!}

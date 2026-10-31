@@ -34,10 +34,12 @@ class EnglishVersionTest extends TestCase
     public function test_links_on_an_english_page_lead_to_english_addresses(): void
     {
         $this->get('/en/shop')
-            ->assertSee('href="'.url('/en/about').'"', false)
-            ->assertSee('href="'.url('/en/contact').'"', false)
+            ->assertSee('href="'.url('/en/custom-text-mug').'"', false)
             ->assertSee('href="'.url('/en').'"', false)
-            ->assertSee('>About</a>', false);
+            // About and contact wait for their English texts (MA-301): no link in the English menu, none to a Polish page.
+            ->assertDontSee('href="'.url('/en/about').'"', false)
+            ->assertDontSee('>About</a>', false)
+            ->assertDontSee('href="'.url('/o-mnie').'"', false);
     }
 
     public function test_polish_only_pages_have_no_english_address_and_stay_out_of_the_english_menu(): void
@@ -83,16 +85,18 @@ class EnglishVersionTest extends TestCase
     public function test_from_a_polish_only_page_the_switch_leads_to_the_nearest_page_and_says_why(): void
     {
         $this->get('/warsztaty-ceramiczne-krakow')
-            ->assertSee('href="'.url('/en/about').'?unavailable=1" hreflang="en"', false);
+            ->assertSee('href="'.url('/en/shop').'?unavailable=1" hreflang="en"', false);
 
-        $this->get('/wypal-ceramiki-krakow')
-            ->assertSee('href="'.url('/en/studio').'?unavailable=1" hreflang="en"', false);
+        // The content pages are Polish only until their texts are in English (MA-301).
+        foreach (['/wypal-ceramiki-krakow', '/o-mnie', '/kontakt', '/regulamin'] as $polishOnly) {
+            $this->get($polishOnly)->assertSee('href="'.url('/en/shop').'?unavailable=1" hreflang="en"', false);
+        }
 
-        $this->get('/en/about?unavailable=1')
+        $this->get('/en/shop?unavailable=1')
             ->assertOk()
             ->assertSee('The page you came from is in Polish only');
 
-        $this->get('/en/about')->assertDontSee('The page you came from is in Polish only');
+        $this->get('/en/shop')->assertDontSee('The page you came from is in Polish only');
     }
 
     public function test_the_browser_language_only_offers_the_other_version(): void
@@ -150,9 +154,12 @@ class EnglishVersionTest extends TestCase
 
         $english = $footer($this->get('/en/shop')->getContent());
         $this->assertStringContainsString('>Shop everything</a>', $english);
-        $this->assertStringContainsString('>Custom orders</a>', $english);
-        $this->assertStringContainsString('href="'.url('/en/custom-orders').'"', $english);
         $this->assertStringContainsString('>Cookie settings</a>', $english);
+        // The legal pages stay one click away, in Polish and saying so (MA-301).
+        $this->assertStringContainsString('<a href="'.url('/regulamin').'" hreflang="pl" class="inline-flex min-h-11 items-center text-label-dark hover:text-rose">Terms (in Polish)</a>', $english);
+        $this->assertStringContainsString('>Privacy policy (in Polish)</a>', $english);
+        $this->assertStringContainsString('>Withdraw from a purchase here (in Polish)</a>', $english);
+        $this->assertStringNotContainsString('/en/custom-orders', $english);
         $this->assertStringContainsString('<span>Studio visits by appointment</span>', $english);
 
         // Studio services held in Polish, the Polish voucher category and the złoty payment line stay out.
@@ -174,7 +181,8 @@ class EnglishVersionTest extends TestCase
             ->assertSee('<title>MellowAura — handmade ceramics &amp; silk, Kraków</title>', false)
             ->assertSee('Clay and silk from <em class="text-brown italic">one pair of</em> hands.', false)
             ->assertDontSee('aura-intro')
-            ->assertSee('Let’s design it together')
+            // Custom orders are written in Polish until MA-187 (MA-301), so the home page has no card for them.
+            ->assertDontSee('Let’s design it together')
             ->assertSee('>Basket</span>', false)
             // Złoty-only payment, services and workshops held in Polish, Kasia's Polish panel texts.
             ->assertDontSee('płatność w 10 sekund')

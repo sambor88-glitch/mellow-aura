@@ -50,14 +50,11 @@ class BriefFormTest extends TestCase
         $this->get('/zamowienia-indywidualne?usluga=nieznana')->assertDontSee('selected>', false);
     }
 
-    public function test_the_english_page_has_no_polish_form_and_the_form_takes_no_english_posts(): void
+    public function test_the_page_and_its_form_have_no_english_address_until_their_texts_are_in_english(): void
     {
-        $this->get('/en/custom-orders')
-            ->assertOk()
-            ->assertDontSee('action="'.route('custom-orders.store').'"', false)
-            ->assertSee('Napisz przez formularz');
-
-        $this->post('/en/custom-orders', $this->form())->assertStatus(405);
+        // MA-301: the page is written in Polish, so /en/ has no copy of it until MA-187.
+        $this->get('/en/custom-orders')->assertNotFound();
+        $this->post('/en/custom-orders', $this->form())->assertNotFound();
     }
 
     public function test_an_idea_with_photos_is_saved_and_mailed_to_kasia_with_the_photos_and_to_the_customer(): void

@@ -23,5 +23,7 @@ return [
     'terms' => 'Terms',
     'privacy' => 'Privacy policy',
     'withdrawal' => 'Withdraw from a purchase here',
+    // Next to a legal page that exists in Polish only (MA-301).
+    'in_polish' => '(in Polish)',
     'cookies' => 'Cookie settings',
 ];

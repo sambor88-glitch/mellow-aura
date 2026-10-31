@@ -1,11 +1,12 @@
 @extends('errors::layout')
+@use('App\Modules\Shared\Support\ErrorPage')
 
-@section('title', 'Strona wygasła')
-@section('eyebrow', 'strona wygasła')
-@section('heading', 'Ta strona była otwarta zbyt długo')
-@section('lead', 'Dla bezpieczeństwa formularz wygasa po pewnym czasie. Wróć, odśwież stronę i wyślij go jeszcze raz.')
+@section('title', ErrorPage::text('419.title'))
+@section('eyebrow', ErrorPage::text('419.eyebrow'))
+@section('heading', ErrorPage::text('419.heading'))
+@section('lead', ErrorPage::text('419.lead'))
 
 @section('actions')
-    <a href="{{ url()->previous(url('/')) }}" class="button button-primary">Wróć do formularza</a>
-    <a href="{{ url('/') }}" class="button button-secondary">Strona główna</a>
+    <a href="{{ url()->previous(ErrorPage::home()) }}" class="button button-primary">{{ ErrorPage::text('419.back') }}</a>
+    <a href="{{ ErrorPage::home() }}" class="button button-secondary">{{ ErrorPage::text('home') }}</a>
 @endsection
