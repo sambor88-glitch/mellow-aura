@@ -1,7 +1,12 @@
+@use('App\Modules\Shared\Support\Money')
 @inject('settings', 'App\Modules\Settings\Settings')
 @php
     $lead = $settings->get('text_gifts_lead');
     $voucherNote = $settings->get('text_gifts_voucher_note');
+    // Only what the shop does: paid wrapping from the panel and delivery to any address.
+    $wrapPrice = $settings->get('gift_wrap_price');
+    $description = 'Prezent z ceramiki i jedwabiu: filtruj po okazji i budżecie. '
+        .(is_numeric($wrapPrice) ? 'Pakowanie na prezent za '.Money::format((int) $wrapPrice).', wysyłka' : 'Wysyłka').' prosto do obdarowanej osoby.';
     $count = $ideas->count();
     // A filter with fewer than two chips has nothing to choose from; without any left the box stays out.
     $shownFilters = collect($filters)->filter(fn ($chips) => $chips->count() >= 2);
@@ -15,7 +20,7 @@
 
 <x-shared::layout
     title="Szukam prezentu — ceramika handmade na każdą okazję"
-    description="Prezent z ceramiki i jedwabiu: filtruj po okazji i budżecie. Pakowanie na prezent, kartka z życzeniami, wysyłka prosto do obdarowanej osoby."
+    :$description
     :canonical="route('gifts.index')"
 >
     <div class="mx-auto max-w-[1280px] animate-ma-view px-7 pt-14 pb-24">

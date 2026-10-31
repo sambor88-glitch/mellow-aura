@@ -1,5 +1,11 @@
 @use('App\Modules\Localization\Support\Locales')
 @use('App\Modules\Shared\Support\Money')
+@use('Illuminate\Support\Str')
+@inject('settings', 'App\Modules\Settings\Settings')
+@php
+    // How soon Kasia answers, in her words from the panel; Polish, so an English page leaves it out until MA-188.
+    $replyTime = Locales::current() === Locales::default() ? $settings->get('text_reply_time') : null;
+@endphp
 <x-shared::layout title="Wysyłka, płatności i pielęgnacja ceramiki — FAQ"
                   description="Jak myć ceramikę ze złotem, czy można do zmywarki, ile trwa wysyłka, jak zapłacić BLIK-iem i jak wyglądają zwroty."
                   :canonical="route('content.faq')">
@@ -70,7 +76,7 @@
         <div class="mt-12 flex flex-wrap items-center justify-between gap-6 rounded-[20px] border border-divider bg-cream p-8">
             <div class="min-w-0">
                 <h2 class="mb-1.5 font-serif text-[24px]">Nie ma tu Twojego pytania?</h2>
-                <p class="text-[15px] text-muted">{{ $phone ? 'Napisz na WhatsAppie — to najszybsza droga do mnie.' : 'Napisz do mnie — odpisuję zwykle tego samego dnia.' }}</p>
+                <p class="text-[15px] text-muted">{{ $phone ? 'Napisz na WhatsAppie — to najszybsza droga do mnie.' : 'Napisz do mnie'.($replyTime ? ' — '.Str::lcfirst(rtrim($replyTime, '.')) : '').'.' }}</p>
             </div>
             <a href="{{ route('content.contact') }}" class="rounded-full bg-ink px-[30px] py-[15px] text-[14px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Kontakt</a>
         </div>

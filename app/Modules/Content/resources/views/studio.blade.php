@@ -1,13 +1,19 @@
 @use('App\Modules\Localization\Support\Locales')
+@use('App\Modules\Shared\Support\Seo')
+@use('Illuminate\Support\Str')
 @php
     // Buttons to pages that don't exist yet, or not in the language of this page, fall back to the contact page,
     // so this page never ends in a dead end and /en/studio never leads to a Polish page.
     $workshopsUrl = Locales::has('workshops.index', Locales::current()) ? route('workshops.index') : null;
     $firingUrl = Locales::has('firing.index', Locales::current()) ? route('firing.index') : null;
+    // The description follows the facts from the panel, so it never promises what the page doesn't.
+    $description = Seo::description('Kameralna domowa pracownia w Krakowie'.($facts->isNotEmpty()
+        ? ': '.$facts->map(fn (array $fact) => Str::lcfirst(trim($fact['title'])))->join(', ').'.'
+        : '.'));
 @endphp
 
 <x-shared::layout title="Pracownia w Krakowie — ciepło, empatia, cierpliwość"
-                  description="Kameralna domowa pracownia w Krakowie: jeden stół, do sześciu osób, dwa wypały w cenie warsztatu."
+                  :$description
                   :canonical="route('content.studio')">
     <div class="animate-ma-view pb-24">
         @if ($hero !== null)

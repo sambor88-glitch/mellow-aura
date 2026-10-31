@@ -28,6 +28,20 @@ class MugOptions
     public function __construct(private Settings $settings) {}
 
     /**
+     * The mug in one sentence for Google and the English lead. How many sizes and glazes it names is counted from the panel,
+     * so it never promises a size or a colour the page doesn't offer.
+     */
+    public function description(): string
+    {
+        $options = array_filter([
+            ($sizes = $this->sizes()->count()) > 0 ? trans_choice('mug-configurator::mug.size_count', $sizes) : null,
+            ($glazes = $this->glazes()->count()) > 0 ? trans_choice('mug-configurator::mug.glaze_count', $glazes) : null,
+        ]);
+
+        return __('mug-configurator::mug.description', ['options' => $options === [] ? '' : ', '.implode(', ', $options)]);
+    }
+
+    /**
      * Sizes for the page's currency and language. „label” is the size's name in the panel, which the basket keeps
      * whatever the page; „title” is that name for this page, „name” the title with the capacity, and „price” what
      * she pays here. A euro

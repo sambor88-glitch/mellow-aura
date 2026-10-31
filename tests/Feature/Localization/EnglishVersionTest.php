@@ -163,7 +163,7 @@ class EnglishVersionTest extends TestCase
         $polish = $footer($this->get('/sklep')->getContent());
         $this->assertStringContainsString('>Wszystkie produkty</a>', $polish);
         $this->assertStringContainsString('>Warsztaty i cennik</a>', $polish);
-        $this->assertStringContainsString('BLIK · Przelewy24 · karta', $polish);
+        $this->assertStringContainsString('<span>BLIK · Karta · Przelewy24 · Przelew tradycyjny</span>', $polish);
         $this->assertStringContainsString('<span>Pracownia na zapisy</span>', $polish);
     }
 
