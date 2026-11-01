@@ -218,7 +218,7 @@ class OrderEmailsTest extends TestCase
             ->assertSeeInText('Zwrócę Ci całą wpłatę — 115 zł — najpóźniej w ciągu 14 dni.');
         (new NewOrderReceived($second))
             ->assertSeeInHtml('Nic z tego zamówienia nie zostało na półce:')
-            ->assertSeeInHtml('zwrócisz jej 115 zł');
+            ->assertSeeInHtml('zwrócisz mu 115 zł');
     }
 
     public function test_the_locker_the_customer_picked_is_in_her_mail_and_in_kasias(): void
