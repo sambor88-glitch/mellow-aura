@@ -88,8 +88,8 @@ class AdminMailSignatureImageTest extends TestCase
             }
         }
 
-        // 18 customer mails, five of them in English too.
-        $this->assertSame(23, $rendered);
+        // 19 customer mails, six of them in English too.
+        $this->assertSame(25, $rendered);
     }
 
     public function test_without_a_picture_or_with_its_file_gone_the_signature_stays_as_it_was(): void

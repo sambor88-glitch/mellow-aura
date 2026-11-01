@@ -23,4 +23,9 @@ return [
         'intro' => 'I’ve sent your order {numer}.',
         'outro' => 'Something wrong with the parcel? Just reply to this e-mail — it comes straight to me.',
     ],
+    'review_request' => [
+        'subject' => 'How are you getting on with order {numer}?',
+        'intro' => 'Your order {numer} is with you now. I hope everything arrived in one piece and you’re enjoying it.',
+        'outro' => 'Something not right with your order? Just reply to this e-mail — it comes straight to me.',
+    ],
 ];
