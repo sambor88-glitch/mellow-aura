@@ -34,7 +34,7 @@
         </form>
     </div>
 
-  <x-admin::tabs :tabs="$tabs" label="Historia klientki">
+  <x-admin::tabs :tabs="$tabs" label="Historia klienta">
     <x-admin::tab-panel name="zamowienia">
     {{-- The newest five first; the rest wait under „Pokaż wszystkie”, so the tab stays short for a regular customer (MA-326). --}}
     <section aria-labelledby="zamowienia" class="mb-10" x-data="{ all: false }">

@@ -112,9 +112,9 @@ class CreateShipment
 
         return match (true) {
             $response->status() === 401 || $response->status() === 403 => 'InPost nie przyjął klucza ShipX. Trzeba sprawdzić INPOST_SHIPX_TOKEN na serwerze.',
-            $mentions('target_point') => 'InPost nie zna paczkomatu '.$targetPoint.'. Sprawdź kod z klientką albo wybierz najbliższy na inpost.pl/znajdz-paczkomat.',
-            $mentions('phone') => 'InPost nie przyjął numeru telefonu klientki. Sprawdź go w zamówieniu.',
-            $mentions('address') || $mentions('post_code') => 'InPost nie przyjął adresu klientki. Sprawdź ulicę, numer i kod pocztowy.',
+            $mentions('target_point') => 'InPost nie zna paczkomatu '.$targetPoint.'. Sprawdź kod z klientem albo wybierz najbliższy na inpost.pl/znajdz-paczkomat.',
+            $mentions('phone') => 'InPost nie przyjął numeru telefonu klienta. Sprawdź go w zamówieniu.',
+            $mentions('address') || $mentions('post_code') => 'InPost nie przyjął adresu klienta. Sprawdź ulicę, numer i kod pocztowy.',
             default => 'InPost nie przyjął przesyłki'.(filled($message = $response->json('message')) ? ': '.$message : '.').' Spróbuj jeszcze raz albo nadaj ją w InPost Managerze.',
         };
     }

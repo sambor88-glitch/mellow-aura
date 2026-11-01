@@ -63,7 +63,7 @@ class WorkshopBookingController extends Controller
 
         return to_route('admin.workshops.dates.bookings', $to)->withFragment('zapis-'.$booking->id)
             ->with('panel_status', 'Zapis '.$booking->order->number.' przeniesiony na '.$to->dayLabel().', '.$to->timeLabel().'. Miejsce na starym terminie jest wolne.'
-                .($request->boolean('notify') ? ' Klientka dostanie maila z nowym terminem.' : ''));
+                .($request->boolean('notify') ? ' Klient dostanie maila z nowym terminem.' : ''));
     }
 
     public function cancel(Request $request, WorkshopBooking $booking, CancelBooking $cancelBooking): RedirectResponse

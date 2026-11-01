@@ -308,7 +308,7 @@ class GiftChoiceTest extends TestCase
             ->assertSeeInOrder(['Po terminie — Twoja decyzja', $choice->code, 'Po terminie', 'Kubek bez napisu', 'Zamień na voucher']);
 
         $this->actingAs($owner)->post(route('admin.gift-choices.resolve', $choice), ['resolution' => 'voucher'])
-            ->assertSessionHas('panel_status', 'Karta '.$choice->code.' zamieniona na voucher — kupująca dostała go mailem.');
+            ->assertSessionHas('panel_status', 'Karta '.$choice->code.' zamieniona na voucher — kupujący dostał go mailem.');
         $voucher = Voucher::sole();
         $this->assertSame(9500, $voucher->amount_minor);
         $this->assertSame(9500, $voucher->balance_minor);

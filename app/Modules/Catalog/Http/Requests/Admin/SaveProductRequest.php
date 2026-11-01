@@ -155,7 +155,7 @@ class SaveProductRequest extends FormRequest
             'en.story.max' => 'Angielską historię zmieszczę do :max znaków — napisz ją krócej',
             'en.seo_description.max' => 'Angielski opis dla Google zmieszczę do :max znaków — Google i tak pokaże tylko pierwsze 155',
             'en.care_note.max' => 'Zdanie o pielęgnacji po angielsku zmieszczę do :max znaków',
-            'en.deviation.required' => 'Produkt ma angielską nazwę i cechę do potwierdzenia — wpisz ją też po angielsku, bo klientka z zagranicy musi ją zaakceptować przy zamówieniu',
+            'en.deviation.required' => 'Produkt ma angielską nazwę i cechę do potwierdzenia — wpisz ją też po angielsku, bo klient z zagranicy musi ją zaakceptować przy zamówieniu',
             'en.deviation.max' => 'Tę cechę po angielsku zmieszczę do :max znaków — napisz ją krócej',
             'en.size_tolerance.max' => 'Różnicę wymiarów po angielsku zmieszczę do :max znaków, np. 0.5 cm',
             'en.safety_warnings.required' => 'Produkt ma angielską nazwę i ostrzeżenia — wpisz je też po angielsku, prawo wymaga ich w języku kupującej',

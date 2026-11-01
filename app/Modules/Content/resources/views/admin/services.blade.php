@@ -190,7 +190,7 @@
             @csrf
             @method('PUT')
             <h2 class="{{ $heading }} mb-1.5">Teksty na stronie</h2>
-            <p class="{{ $intro }}">Enter w nagłówku przenosi wyraz do nowej linii — dokładnie tak, jak zobaczy to klientka. Puste pole się nie pokaże.</p>
+            <p class="{{ $intro }}">Enter w nagłówku przenosi wyraz do nowej linii — dokładnie tak, jak zobaczy to klient. Puste pole się nie pokaże.</p>
             @if ($textErrors->any())
                 <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
             @endif

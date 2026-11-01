@@ -61,7 +61,7 @@
                 <button type="button" x-on:click="show()" aria-haspopup="dialog" aria-keyshortcuts="Control+K Meta+K /"
                         class="ml-6 hidden min-h-11 max-w-[520px] min-w-0 flex-1 items-center gap-2.5 rounded-full border border-line-strong bg-cream pr-2 pl-4 text-left text-[13.5px] text-hint transition-colors duration-300 hover:border-ink hover:text-lead md:flex">
                     <svg viewBox="0 0 24 24" aria-hidden="true" class="size-[18px] flex-none fill-none stroke-current stroke-[1.6] [stroke-linecap:round]"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg>
-                    <span class="min-w-0 flex-1 truncate">{{ $owner ? 'Szukaj produktu, zamówienia, klientki, ustawienia…' : 'Szukaj zamówienia…' }}</span>
+                    <span class="min-w-0 flex-1 truncate">{{ $owner ? 'Szukaj produktu, zamówienia, klienta, ustawienia…' : 'Szukaj zamówienia…' }}</span>
                     <span aria-hidden="true" x-text="shortcut" class="flex-none rounded-full border border-line bg-linen px-2.5 py-0.5 text-[11px] tracking-[0.04em] text-label">Ctrl K</span>
                 </button>
             @endauth

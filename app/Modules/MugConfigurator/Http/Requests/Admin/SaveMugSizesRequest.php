@@ -47,7 +47,7 @@ class SaveMugSizesRequest extends FormRequest
             'sizes.max' => 'Zmieszczę do :max rozmiarów',
             'sizes.*.label.required' => 'Nazwij rozmiar — np. Średni',
             'sizes.*.label.max' => 'Nazwę rozmiaru zmieszczę do :max znaków',
-            'sizes.*.label.distinct' => 'Dwa rozmiary mają tę samą nazwę — klientka ich nie odróżni',
+            'sizes.*.label.distinct' => 'Dwa rozmiary mają tę samą nazwę — klient ich nie odróżni',
             'sizes.*.capacity.*' => 'Pojemność to liczba mililitrów, np. 300 — albo puste pole',
             'sizes.*.price.required' => 'Wpisz cenę, np. 79 albo 79,90',
             'sizes.*.price.regex' => 'Wpisz cenę, np. 79 albo 79,90',

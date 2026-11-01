@@ -87,7 +87,7 @@ class OrderController extends Controller
         $change($order, $status, $request->validated('tracking_number'), $request->validated('problem_note'));
 
         return to_route('admin.orders.show', $order)->with('panel_status', match ($status) {
-            OrderStatus::Shipped => $sentBefore ? 'Znowu wysłane — klientka dostała maila za pierwszym razem, drugi nie wyjdzie.' : ($order->tracking_number ? 'Wysłane — klientka dostanie maila z numerem przesyłki.' : 'Wysłane — klientka dostanie maila.'),
+            OrderStatus::Shipped => $sentBefore ? 'Znowu wysłane — klient dostał maila za pierwszym razem, drugi nie wyjdzie.' : ($order->tracking_number ? 'Wysłane — klient dostanie maila z numerem przesyłki.' : 'Wysłane — klient dostanie maila.'),
             OrderStatus::Completed => 'Zakończone — '.$order->number.' nie czeka już na Ciebie.',
             OrderStatus::Problem => 'Problem zapisany — widać go na liście zamówień.',
             default => 'Z powrotem w realizacji.',
@@ -100,7 +100,7 @@ class OrderController extends Controller
         abort_unless($order->payment_method === PaymentMethod::BankTransfer && $order->payment_status !== PaymentStatus::Failed, 403);
 
         return to_route('admin.orders.show', $order)->with('panel_status', $confirm($order, $request->user())
-            ? 'Opłacone — klientka dostanie maila z potwierdzeniem.'
+            ? 'Opłacone — klient dostanie maila z potwierdzeniem.'
             : 'Ta wpłata jest już zapisana — nic się nie zmieniło.');
     }
 }

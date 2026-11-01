@@ -193,7 +193,7 @@ class OrderEmailsTest extends TestCase
         (new NewOrderReceived($second))
             ->assertSeeInHtml('Brakuje na półce:')
             ->assertSeeInHtml('Kadzielnice (Złoty kołnierz, 1 szt.)')
-            ->assertSeeInHtml('Klientka dostała maila, że zwrócisz jej 99 zł najpóźniej w ciągu 14 dni.');
+            ->assertSeeInHtml('Klient dostał maila, że zwrócisz mu 99 zł najpóźniej w ciągu 14 dni.');
         (new OrderConfirmed($first->refresh()))->assertDontSeeInHtml('Ktoś kupił ostatnią sztukę');
     }
 
@@ -218,7 +218,7 @@ class OrderEmailsTest extends TestCase
             ->assertSeeInText('Zwrócę Ci całą wpłatę — 115 zł — najpóźniej w ciągu 14 dni.');
         (new NewOrderReceived($second))
             ->assertSeeInHtml('Nic z tego zamówienia nie zostało na półce:')
-            ->assertSeeInHtml('zwrócisz jej 115 zł');
+            ->assertSeeInHtml('zwrócisz mu 115 zł');
     }
 
     public function test_the_locker_the_customer_picked_is_in_her_mail_and_in_kasias(): void

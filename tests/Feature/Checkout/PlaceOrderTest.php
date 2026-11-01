@@ -128,7 +128,7 @@ class PlaceOrderTest extends TestCase
 
         $this->actingAs(User::factory()->create())
             ->get('/panel/zamowienia/'.$order->number)
-            ->assertSeeInOrder(['Talerz ze złotem', 'Klientka zaakceptowała osobnym polem:', 'Nie do zmywarki ani mikrofalówki — złota krawędź.']);
+            ->assertSeeInOrder(['Talerz ze złotem', 'Klient zaakceptował osobnym polem:', 'Nie do zmywarki ani mikrofalówki — złota krawędź.']);
     }
 
     public function test_missing_details_come_back_with_hints_and_the_cart_stays(): void

@@ -142,7 +142,7 @@
                                             @if ($noteError)
                                                 <p id="maker_note-{{ $item->id }}-note" class="mt-1.5 text-[13px] text-error">{{ $noteError }}</p>
                                             @else
-                                                <p id="maker_note-{{ $item->id }}-note" class="mt-1.5 text-[12.5px] text-hint">Na stronie sztuki zamiast wspólnego cytatu. Widzi ją każdy, kto ma kartę z kodem — bez imienia klientki.@if ($order->locale === 'en') Zamówienie po angielsku — napisz po angielsku.@endif</p>
+                                                <p id="maker_note-{{ $item->id }}-note" class="mt-1.5 text-[12.5px] text-hint">Na stronie sztuki zamiast wspólnego cytatu. Widzi ją każdy, kto ma kartę z kodem — bez imienia klienta.@if ($order->locale === 'en') Zamówienie po angielsku — napisz po angielsku.@endif</p>
                                             @endif
                                         </div>
                                         <button class="{{ $action }}">Zapisz na stronie sztuki i certyfikacie</button>
@@ -151,11 +151,11 @@
                             </div>
                         @endif
                         @if ($item->accepted_deviation !== null)
-                            <p class="mt-2.5 text-[13px] text-label">Klientka zaakceptowała osobnym polem: <span class="text-ink">{{ $item->accepted_deviation }}</span></p>
+                            <p class="mt-2.5 text-[13px] text-label">Klient zaakceptował osobnym polem: <span class="text-ink">{{ $item->accepted_deviation }}</span></p>
                         @endif
                         @if ($item->missing_quantity > 0)
                             <p class="mt-2.5 rounded-[4px] border border-alert-line bg-alert px-3.5 py-2.5 text-[13.5px] text-alert-text">
-                                Brakuje {{ $item->missing_quantity }} szt. — ktoś kupił ostatnią sztukę chwilę wcześniej. Klientka dostała maila, że zwrócisz jej {{ $order->money($item->unit_price_gross * $item->missing_quantity) }} najpóźniej w ciągu 14 dni. Podobną sztukę zrób, jeśli o nią poprosi.
+                                Brakuje {{ $item->missing_quantity }} szt. — ktoś kupił ostatnią sztukę chwilę wcześniej. Klient dostał maila, że zwrócisz mu {{ $order->money($item->unit_price_gross * $item->missing_quantity) }} najpóźniej w ciągu 14 dni. Podobną sztukę zrób, jeśli o nią poprosi.
                             </p>
                         @endif
                     </div>
@@ -220,7 +220,7 @@
                         <form method="post" action="{{ route('admin.orders.paid', $order) }}" x-show="asking" x-cloak x-on:submit="sending = true" class="flex flex-wrap items-center gap-2.5">
                             @csrf
                             @method('patch')
-                            <span class="text-[13px] text-ink">Na pewno? Klientka dostanie maila, a sztuki zejdą ze stanu.</span>
+                            <span class="text-[13px] text-ink">Na pewno? Klient dostanie maila, a sztuki zejdą ze stanu.</span>
                             <button x-bind:disabled="sending" class="rounded-full bg-ink px-4 py-2 text-[12.5px] text-linen disabled:cursor-wait disabled:opacity-60"><span x-text="sending ? 'Zapisuję…' : 'Tak, opłacone'">Tak, opłacone</span></button>
                             <button type="button" x-show="! sending" x-on:click="asking = false" class="rounded-full px-3 py-2 text-[12.5px] text-label hover:text-ink">Anuluj</button>
                         </form>
@@ -238,8 +238,8 @@
                                 @method('patch')
                                 <input type="hidden" name="status" value="{{ OrderStatus::Shipped->value }}">
                                 <x-shared::field name="tracking_number" label="Numer przesyłki" autocomplete="off" autocapitalize="characters" spellcheck="false"
-                                                 :hint="$order->tracking_number ? 'Puste pole zostawia numer '.$order->tracking_number : 'Nieobowiązkowe — z numerem klientka śledzi paczkę'" />
-                                <button x-bind:disabled="sending" class="w-full rounded-full bg-ink p-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97] disabled:opacity-60">{{ $order->shipped_at ? 'Znowu wysłane — bez drugiego maila' : 'Wysłane — powiadom klientkę' }}</button>
+                                                 :hint="$order->tracking_number ? 'Puste pole zostawia numer '.$order->tracking_number : 'Nieobowiązkowe — z numerem klient śledzi paczkę'" />
+                                <button x-bind:disabled="sending" class="w-full rounded-full bg-ink p-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97] disabled:opacity-60">{{ $order->shipped_at ? 'Znowu wysłane — bez drugiego maila' : 'Wysłane — powiadom klienta' }}</button>
                             </form>
                         @endif
 
@@ -317,7 +317,7 @@
                         </p>
                     @endif
                     @if (Route::has('admin.complaints.index') && Gate::allows('manage-shop'))
-                        <a href="{{ route('admin.complaints.index', ['zamowienie' => $order->number]) }}#zapisz" class="mt-1 text-[13px]">Klientka zgłosiła reklamację →</a>
+                        <a href="{{ route('admin.complaints.index', ['zamowienie' => $order->number]) }}#zapisz" class="mt-1 text-[13px]">Klient zgłosił reklamację →</a>
                     @endif
                 </div>
             </section>

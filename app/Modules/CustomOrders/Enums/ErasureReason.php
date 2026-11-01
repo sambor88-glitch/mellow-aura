@@ -18,7 +18,7 @@ enum ErasureReason: string
     {
         return match ($this) {
             self::Retention => 'minął czas przechowywania',
-            self::Request => 'na prośbę klientki',
+            self::Request => 'na prośbę klienta',
         };
     }
 }

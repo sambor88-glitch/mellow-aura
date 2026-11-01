@@ -11,7 +11,7 @@
     @endif
     <p style="margin: 18px 0 0; color: #5C5043;">
         @if (isset($customOrderRequest->summary()['Zdjęcia']))
-            Zdjęcia od klientki są w załącznikach.
+            Zdjęcia od klienta są w załącznikach.
         @endif
         Odpisz na tego maila — trafi prosto do niej.
     </p>

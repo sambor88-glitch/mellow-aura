@@ -50,8 +50,8 @@ class RecordComplaintRequest extends FormRequest
             'received_on.required' => $date,
             'received_on.date_format' => $date,
             'received_on.before_or_equal' => 'Ta data jest w przyszłości — wpisz dzień, w którym reklamacja doszła',
-            'description.required' => 'Napisz krótko, co klientka zgłasza — np. „pęknięta miska, zdjęcie w mailu”',
-            'description.max' => 'Opis zmieszczę do :max znaków — resztę zostaw w mailu od klientki',
+            'description.required' => 'Napisz krótko, co klient zgłasza — np. „pęknięta miska, zdjęcie w mailu”',
+            'description.max' => 'Opis zmieszczę do :max znaków — resztę zostaw w mailu od klienta',
         ];
     }
 

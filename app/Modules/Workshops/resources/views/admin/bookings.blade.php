@@ -94,9 +94,9 @@
                                 Wyślij klientce maila o anulowaniu i zwrocie
                             </label>
                         @elseif ($booking->status === BookingStatus::Overbooked)
-                            <p class="text-[13px] text-muted">Klientka dostała już maila o zwrocie.</p>
+                            <p class="text-[13px] text-muted">Klient dostał już maila o zwrocie.</p>
                         @else
-                            <p class="text-[13px] text-muted">Jeszcze nie zapłaciła — nie ma czego zwracać.</p>
+                            <p class="text-[13px] text-muted">Jeszcze nie zapłacił — nie ma czego zwracać.</p>
                         @endif
                         <button class="ml-auto min-h-11 rounded-full border border-line-strong px-4 text-[13px] text-lead hover:border-error hover:text-error">Anuluj zapis</button>
                     </form>
@@ -115,7 +115,7 @@
                 @foreach ($inactive as $booking)
                     <li class="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-line px-4 py-3 text-[13px] last:border-b-0">
                         <span class="min-w-0 flex-[1_1_200px] text-ink">{{ $booking->order->name }} <span class="text-label">· {{ $people($booking->seats) }} · <a href="{{ route('admin.orders.show', $booking->order) }}">{{ $booking->order->number }}</a></span></span>
-                        <span class="text-muted tabular-nums">{{ $booking->status === BookingStatus::Held ? 'Nie zapłaciła w czasie' : $booking->status->label().($booking->cancelled_at ? ' '.$booking->cancelled_at->format('j.m, H:i') : '') }}</span>
+                        <span class="text-muted tabular-nums">{{ $booking->status === BookingStatus::Held ? 'Nie zapłacił w czasie' : $booking->status->label().($booking->cancelled_at ? ' '.$booking->cancelled_at->format('j.m, H:i') : '') }}</span>
                     </li>
                 @endforeach
             </ul>

@@ -80,6 +80,6 @@ class RefreshShipment
     {
         return 'InPost: '.ShipXStatus::label($shipment->status).'.'
             .($shipment->tracking_number ? ' Przesyłka '.$shipment->tracking_number.'.' : '')
-            .' Sprawdź ją w InPost Managerze i napisz do klientki.';
+            .' Sprawdź ją w InPost Managerze i napisz do klienta.';
     }
 }

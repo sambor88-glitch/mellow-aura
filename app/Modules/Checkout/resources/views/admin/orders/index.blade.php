@@ -1,15 +1,18 @@
 @use('App\Modules\Checkout\Enums\OrderStatus')
 @use('App\Modules\Checkout\Enums\PaymentStatus')
 @php
-    $filter = 'rounded-full border px-[18px] py-[9px] text-[13px]';
+    $filter = 'flex min-h-11 items-center justify-center rounded-full border px-3 py-[9px] text-center text-[13px] md:inline-flex md:px-[18px]';
     $filterOn = 'border-ink bg-ink text-linen hover:text-linen';
     $filterOff = 'border-line-strong text-lead hover:border-ink hover:bg-sand hover:text-ink';
 @endphp
 <x-admin::layout title="Zamówienia">
-    {{-- On a phone the numbers are one row of counters, so the parcels to send start on the first screen (MA-313). --}}
-    <div class="mb-[30px] flex flex-wrap gap-2 max-md:mb-4 md:gap-4">
+    {{--
+        On a phone the numbers are one row of counters, so the parcels to send start on the first screen (MA-313),
+        and the counters and filters sit in an even grid instead of wrapping into ragged rows (MA-332).
+    --}}
+    <div class="mb-4 grid grid-cols-3 gap-2 md:mb-[30px] md:flex md:flex-wrap md:gap-4">
         @foreach ($tiles as $tile)
-            <div class="inline-flex min-w-0 flex-none items-baseline gap-1.5 rounded-full border border-line bg-cream px-3.5 py-2 md:block md:flex-[1_1_180px] md:rounded-[4px] md:px-[22px] md:py-5">
+            <div class="flex min-w-0 flex-col items-center justify-center gap-1 rounded-[14px] border border-line bg-cream px-2 py-2.5 text-center md:block md:flex-[1_1_180px] md:rounded-[4px] md:px-[22px] md:py-5 md:text-left">
                 <div class="font-serif text-[19px] leading-none tabular-nums md:text-[34px]">{{ $tile['value'] }}</div>
                 <div class="text-[12.5px] text-label lowercase md:mt-1.5 md:text-[11.5px] md:tracking-[0.14em] md:uppercase">{{ $tile['label'] }}</div>
                 <div class="mt-2 hidden text-[12.5px] text-hint md:block">{{ $tile['hint'] }}</div>
@@ -17,7 +20,7 @@
         @endforeach
     </div>
 
-    <nav aria-label="Filtry zamówień" class="mb-4 flex flex-wrap gap-2.5">
+    <nav aria-label="Filtry zamówień" class="mb-4 grid grid-cols-2 gap-2 md:flex md:flex-wrap md:gap-2.5">
         {{-- „Do wysłania” first and open by default: the old „Opłacone” showed the same orders under another name (MA-250). --}}
         @foreach ($filters as $option)
             <a href="{{ route('admin.orders.index', ['status' => $option['slug']]) }}" @if ($option['active']) aria-current="page" @endif class="{{ $filter }} {{ $option['active'] ? $filterOn : $filterOff }}">{{ $option['label'] }} ({{ $option['count'] }})</a>

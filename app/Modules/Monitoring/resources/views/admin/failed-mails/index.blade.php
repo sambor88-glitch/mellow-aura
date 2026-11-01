@@ -6,7 +6,7 @@
         </div>
     @else
         <div class="mb-5 flex flex-wrap items-center justify-between gap-4 rounded-[4px] border border-line bg-cream px-[18px] py-4">
-            <p class="min-w-0 flex-[1_1_320px] text-[13.5px] leading-[1.55] text-lead">Najpierw wyślij jeszcze raz. Jeśli mail znów tu wróci, napisz do klientki ze swojej skrzynki albo zadzwoń, a osobie, która opiekuje się sklepem, prześlij szczegóły techniczne.</p>
+            <p class="min-w-0 flex-[1_1_320px] text-[13.5px] leading-[1.55] text-lead">Najpierw wyślij jeszcze raz. Jeśli mail znów tu wróci, napisz do klienta ze swojej skrzynki albo zadzwoń, a osobie, która opiekuje się sklepem, prześlij szczegóły techniczne.</p>
             @if ($mails->count() > 1)
                 <form method="post" action="{{ route('admin.failed-mails.retry-all') }}">
                     @csrf

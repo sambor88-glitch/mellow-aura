@@ -39,7 +39,7 @@ class BookingOverbooked extends QueuedMail implements HasEditableTexts
 
     public function description(): string
     {
-        return 'Nadkomplet na warsztacie — mail do klientki '.$this->booking->order->number;
+        return 'Nadkomplet na warsztacie — mail do klienta '.$this->booking->order->number;
     }
 
     public function envelope(): Envelope

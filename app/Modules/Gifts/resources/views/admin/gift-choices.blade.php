@@ -2,11 +2,11 @@
 @php
     $card = 'scroll-mt-6 rounded-[4px] border border-line bg-cream px-[26px] py-7';
     $alert = 'mb-3.5 rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text';
-    $tab = 'inline-flex min-h-11 items-center rounded-full border px-4 text-[13.5px]';
+    $tab = 'inline-flex min-h-11 items-center justify-center rounded-full border px-4 text-[13.5px]';
     $field = 'min-h-11 min-w-0 rounded-[4px] border border-line bg-white px-3 py-2.5 text-[14px] text-ink focus:border-ink';
     $settingErrors = $errors->getBag('ustawienia');
 @endphp
-<x-admin::layout title="Karty wyboru" lead="Kubki „Podaruj wybór”: kupująca płaci za rozmiar i dostawę, a obdarowana sama wymyśla napis, wybiera kolor wnętrza i podaje adres. Gotowy wybór trafia do zamówień jako „W realizacji”.">
+<x-admin::layout title="Karty wyboru" lead="Kubki „Podaruj wybór”: kupujący płaci za rozmiar i dostawę, a obdarowana osoba sama wymyśla napis, wybiera kolor wnętrza i podaje adres. Gotowy wybór trafia do zamówień jako „W realizacji”.">
     @if ($awaiting->isNotEmpty())
         <section class="mb-8">
             <h2 class="mb-1 font-serif text-[25px]">Po terminie — Twoja decyzja</h2>
@@ -19,18 +19,19 @@
         </section>
     @endif
 
-    <form method="get" action="{{ route('admin.gift-choices.index') }}" role="search" class="mb-5 flex flex-wrap items-end gap-2.5">
-        <label for="szukaj" class="grid min-w-0 flex-[1_1_280px] gap-1.5 text-[12.5px] text-label">
-            Kod karty, numer zamówienia, imię albo e-mail
-            <input id="szukaj" name="szukaj" type="search" value="{{ $search }}" autocomplete="off" spellcheck="false" class="{{ $field }}">
-        </label>
-        <button class="min-h-11 rounded-full bg-ink px-6 text-[13.5px] text-linen hover:bg-navy">Szukaj</button>
+    <form method="get" action="{{ route('admin.gift-choices.index') }}" role="search" class="mb-5 grid gap-1.5">
+        <label for="szukaj" class="text-[12.5px] text-label">Kod karty, numer zamówienia, imię albo e-mail</label>
+        {{-- The field and its button stay on one row, so on a phone the button does not hang alone under it (MA-333). --}}
+        <div class="flex gap-2">
+            <input id="szukaj" name="szukaj" type="search" value="{{ $search }}" autocomplete="off" spellcheck="false" class="{{ $field }} flex-1">
+            <button class="min-h-11 flex-none rounded-full bg-ink px-6 text-[13.5px] text-linen hover:bg-navy">Szukaj</button>
+        </div>
         @if ($search !== '')
-            <a href="{{ route('admin.gift-choices.index') }}" class="min-h-11 px-2 py-3 text-[13px] text-lead">Pokaż wszystkie</a>
+            <a href="{{ route('admin.gift-choices.index') }}" class="inline-flex min-h-11 items-center justify-self-start text-[13px] text-lead">Pokaż wszystkie</a>
         @endif
     </form>
 
-    <div class="mb-4 flex flex-wrap items-center gap-2.5">
+    <div class="mb-4 grid grid-cols-2 gap-2 md:flex md:flex-wrap md:items-center md:gap-2.5">
         <a href="{{ route('admin.gift-choices.index') }}" @class([$tab, 'border-ink bg-ink text-linen hover:text-linen' => $filter === 'open', 'border-line-strong text-ink' => $filter !== 'open'])>Czekają na wybór</a>
         <a href="{{ route('admin.gift-choices.index', ['pokaz' => 'wszystkie']) }}" @class([$tab, 'border-ink bg-ink text-linen hover:text-linen' => $filter === 'all', 'border-line-strong text-ink' => $filter !== 'all'])>Wszystkie</a>
     </div>

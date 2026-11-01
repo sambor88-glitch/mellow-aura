@@ -36,7 +36,7 @@ class OrderConfirmed extends QueuedMail implements HasEditableTexts
         return new EditableTexts(
             key: 'order_confirmed',
             label: 'Potwierdzenie zamówienia',
-            when: 'Gdy płatność dojdzie: co kupiła, za ile, dokąd idzie paczka. Z regulaminem i formularzem odstąpienia w załącznikach.',
+            when: 'Gdy płatność dojdzie: co zamówione, za ile, dokąd idzie paczka. Z regulaminem i formularzem odstąpienia w załącznikach.',
             lang: 'checkout::mail-texts.order_confirmed',
             placeholders: ['numer' => 'numer zamówienia'],
             locales: ['pl', 'en'],

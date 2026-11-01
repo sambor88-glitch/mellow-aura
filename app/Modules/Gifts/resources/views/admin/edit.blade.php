@@ -76,7 +76,7 @@
                 @csrf
                 @method('PUT')
                 <h2 class="{{ $heading }}">Teksty na stronie zestawów</h2>
-                <p class="{{ $intro }}">Enter w nagłówku przenosi wyraz do nowej linii — dokładnie tak, jak zobaczy to klientka.</p>
+                <p class="{{ $intro }}">Enter w nagłówku przenosi wyraz do nowej linii — dokładnie tak, jak zobaczy to klient.</p>
                 @if ($textErrors->any())
                     <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
                 @endif

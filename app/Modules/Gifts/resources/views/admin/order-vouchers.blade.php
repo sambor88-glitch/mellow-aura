@@ -35,7 +35,7 @@
 @if ($vouchers->isNotEmpty())
     <section class="{{ $card }}">
         <h2 class="mb-2 font-serif text-[23px]">Vouchery</h2>
-        <p class="mb-2 text-[13.5px] text-label">Klientka dostała je mailem jako PDF.</p>
+        <p class="mb-2 text-[13.5px] text-label">Klient dostał je mailem jako PDF.</p>
         @foreach ($vouchers as $voucher)
             <div class="flex flex-wrap items-center justify-between gap-3 border-b border-sand-dark py-3.5 last:border-b-0">
                 <div class="min-w-0">

@@ -88,7 +88,7 @@ class BriefFormTest extends TestCase
             && count($mail->attachments()) === 2);
         Mail::queued(BriefReceived::class)->sole()
             ->assertHasAttachedData(Storage::disk('local')->get($photos[0]->getPathRelativeToRoot()), 'pomysl-1-1.webp', ['mime' => 'image/webp'])
-            ->assertSeeInHtml('Zdjęcia od klientki są w załącznikach.');
+            ->assertSeeInHtml('Zdjęcia od klienta są w załącznikach.');
         Mail::assertQueued(BriefConfirmed::class, fn (BriefConfirmed $mail) => $mail->hasTo('ola@example.com')
             && $mail->hasReplyTo('kasia@example.com'));
 
@@ -118,7 +118,7 @@ class BriefFormTest extends TestCase
         $toKasia->assertSeeInOrderInHtml(['Opaska z Twojej apaszki', '2', '&lt;i&gt;maj&lt;/i&gt;', 'do 300 zł', 'Apaszka po babci', '600 100 200'], false);
         $toKasia->assertSeeInHtml('Ola &lt;b&gt;', false);
         $toKasia->assertDontSeeInHtml('<script>alert(1)</script>', false);
-        $toKasia->assertDontSeeInHtml('Zdjęcia od klientki');
+        $toKasia->assertDontSeeInHtml('Zdjęcia od klienta');
         $toKasia->assertSeeInText("Budżet: do 300 zł\n\nApaszka po babci\n<script>alert(1)</script>", false);
 
         $toCustomer = new BriefConfirmed($brief);

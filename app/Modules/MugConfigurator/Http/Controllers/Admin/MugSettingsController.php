@@ -37,7 +37,7 @@ class MugSettingsController extends Controller
     {
         $replacePhoto($request->file('photo'));
 
-        return to_route('admin.mug.edit')->withFragment('zdjecie')->with('panel_status', 'Nowe zdjęcie kubka — klientki już na nim piszą');
+        return to_route('admin.mug.edit')->withFragment('zdjecie')->with('panel_status', 'Nowe zdjęcie kubka — klienci już na nim piszą');
     }
 
     public function resetPhoto(ReplaceMugPhoto $replacePhoto): RedirectResponse

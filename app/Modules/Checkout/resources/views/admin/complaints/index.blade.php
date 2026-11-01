@@ -82,7 +82,7 @@
                                      hint="Od tego dnia liczysz 14 dni na odpowiedź" />
                 </div>
                 <div class="min-w-0">
-                    <label for="nowa-opis" class="{{ $label }}">Co zgłasza klientka</label>
+                    <label for="nowa-opis" class="{{ $label }}">Co zgłasza klient</label>
                     <textarea id="nowa-opis" name="description" rows="4" maxlength="2000" aria-describedby="nowa-opis-note"
                               @if ($errors->complaint->has('description')) aria-invalid="true" @endif
                               placeholder="np. Miska pękła po pierwszym myciu, zdjęcie w mailu z 24.10."
@@ -90,7 +90,7 @@
                     @if ($errors->complaint->has('description'))
                         <p id="nowa-opis-note" class="mt-1.5 text-[13px] text-error">{{ $errors->complaint->first('description') }}</p>
                     @else
-                        <p id="nowa-opis-note" class="mt-1.5 text-[12.5px] text-hint">Wystarczy krótko — cały mail od klientki zostaje w Twojej skrzynce.</p>
+                        <p id="nowa-opis-note" class="mt-1.5 text-[12.5px] text-hint">Wystarczy krótko — cały mail od klienta zostaje w Twojej skrzynce.</p>
                     @endif
                 </div>
                 <div>
@@ -192,7 +192,7 @@
         </form>
 
         <section aria-labelledby="podglad-listu" class="min-w-0 flex-[1_1_320px]">
-            <h2 id="podglad-listu" class="mb-2.5 text-[11.5px] tracking-[0.16em] text-label uppercase">Tak dostanie to klientka</h2>
+            <h2 id="podglad-listu" class="mb-2.5 text-[11.5px] tracking-[0.16em] text-label uppercase">Tak dostanie to klient</h2>
             @if ($letter)
                 @if ($deadline)
                     <p @class(['mb-3 rounded-[4px] px-4 py-3 text-[13.5px]', 'border border-alert-line bg-alert text-alert-text' => $deadline->isPast() && ! $deadline->isToday(), 'bg-sand-dark text-graphite' => ! $deadline->isPast() || $deadline->isToday()])>
@@ -221,7 +221,7 @@
     @if ($answers->isEmpty())
         <div class="rounded-[4px] border border-dashed border-line-strong bg-linen px-7 py-10 text-center">
             <div class="mb-2 font-serif text-[22px]">Jeszcze nic tu nie ma</div>
-            <p class="mx-auto max-w-[46ch] text-[13.5px] text-label">Każda wysłana odpowiedź zostaje tu słowo w słowo, z datą — to dowód, co i kiedy dostała klientka.</p>
+            <p class="mx-auto max-w-[46ch] text-[13.5px] text-label">Każda wysłana odpowiedź zostaje tu słowo w słowo, z datą — to dowód, co i kiedy dostał klient.</p>
         </div>
     @else
         <div class="grid gap-2.5">

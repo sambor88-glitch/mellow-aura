@@ -41,7 +41,7 @@ class AdminMugTest extends TestCase
             ->assertSeeInOrder(['Zdjęcie kubka pod napisy', 'bez żadnego napisu', 'Wgraj inne zdjęcie kubka'])
             ->assertDontSee('Przywróć domyślne zdjęcie')
             ->assertSeeInOrder(['Rozmiary, pojemność i ceny', 'value="Mały"', 'value="200"', 'value="69"', 'value="Duży"', 'value="400"', 'value="95"', 'nowy rozmiar'], false)
-            ->assertSeeInOrder(['Ile znaków wolno wpisać', 'name="max_chars_per_line" value="16"', 'name="max_lines" value="3"', 'Klientka wpisze najwyżej', '48'], false)
+            ->assertSeeInOrder(['Ile znaków wolno wpisać', 'name="max_chars_per_line" value="16"', 'name="max_lines" value="3"', 'Klient wpisze najwyżej', '48'], false)
             ->assertSeeInOrder(['Gdzie ma siedzieć napis', 'TWÓJ NAPIS', 'Kolor napisu', 'value="graphite"', 'checked', 'name="x_percent"', 'value="70"', 'name="rotation_deg"', 'value="-2"'], false)
             ->assertSeeInOrder(['Teksty na stronie kubka', 'Kubek, który mówi to,'], false);
     }
@@ -74,7 +74,7 @@ class AdminMugTest extends TestCase
             'max_lines' => '0',
         ])->assertSessionHasErrorsIn('rozmiary', [
             'sizes.0.capacity' => 'Pojemność to liczba mililitrów, np. 300 — albo puste pole',
-            'sizes.1.label' => 'Dwa rozmiary mają tę samą nazwę — klientka ich nie odróżni',
+            'sizes.1.label' => 'Dwa rozmiary mają tę samą nazwę — klient ich nie odróżni',
             'sizes.1.price' => 'Wpisz cenę, np. 79 albo 79,90',
             'max_chars_per_line' => 'Znaków w linii: od 4 do 30',
             'max_lines' => 'Liczba linii: od 1 do 6',
@@ -126,7 +126,7 @@ class AdminMugTest extends TestCase
         $this->actingAs($this->owner)
             ->post('/panel/kubek-z-napisem/zdjecie', ['photo' => UploadedFile::fake()->image('IMG_2451.jpg', 1600, 1600)])
             ->assertRedirect('/panel/kubek-z-napisem#zdjecie')
-            ->assertSessionHas('panel_status', 'Nowe zdjęcie kubka — klientki już na nim piszą');
+            ->assertSessionHas('panel_status', 'Nowe zdjęcie kubka — klienci już na nim piszą');
 
         $first = Setting::find('mug_configurator_image')->value;
         $this->assertMatchesRegularExpression('#^mug-configurator/kubek-z-napisem-[a-z0-9]{6}\.webp$#', $first);

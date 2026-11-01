@@ -78,7 +78,7 @@ class GiftChoicesController extends Controller
         }
 
         return back()->with('panel_status', $resolution === GiftChoiceResolution::Voucher
-            ? 'Karta '.$choice->code.' zamieniona na voucher — kupująca dostała go mailem.'
+            ? 'Karta '.$choice->code.' zamieniona na voucher — kupujący dostał go mailem.'
             : 'Zapisane: kubek bez napisu. Ustal adres z kupującą.');
     }
 }

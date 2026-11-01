@@ -128,7 +128,7 @@ class GiftsController extends Controller
         $amount = $restore($order);
 
         return redirect()->to(route('admin.orders.show', $order).'#vouchery-zamowienia')->with('panel_status', $amount > 0
-            ? $order->money($amount).' wróciło na vouchery. Klientka zapłaci nimi jeszcze raz tym samym kodem.'
+            ? $order->money($amount).' wróciło na vouchery. Klient zapłaci nimi jeszcze raz tym samym kodem.'
             : 'Na vouchery nie było już czego oddać.');
     }
 

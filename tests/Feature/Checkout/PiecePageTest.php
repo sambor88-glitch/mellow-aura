@@ -241,7 +241,7 @@ class PiecePageTest extends TestCase
         $this->get('/panel/zamowienia/'.$order->number)
             ->assertOk()
             ->assertSee('Kilka słów od Ciebie')
-            ->assertSee('bez imienia klientki')
+            ->assertSee('bez imienia klienta')
             ->assertDontSee('Zamówienie po angielsku — napisz po angielsku');
 
         $this->patch(route('admin.orders.piece', [$order, $vase]), ['maker_note' => " Lepiłam go w pierwszy mroźny poranek.\n"])
