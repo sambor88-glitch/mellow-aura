@@ -83,6 +83,25 @@ class PanelAppTest extends TestCase
             ->assertSee('<link rel="manifest"', false);
     }
 
+    public function test_the_app_files_leave_the_session_alone_so_a_flash_message_reaches_the_next_page(): void
+    {
+        // The state right after a form's POST answered with a redirect: the message waits for the very next request.
+        $this->actingAs(User::factory()->create())
+            ->withSession(['panel_status' => 'Zapisane. Klienci już to widzą.', '_flash' => ['old' => ['panel_status'], 'new' => []]]);
+
+        // The browser fetches the worker, the manifest or the offline page before it follows the redirect (MA-357).
+        foreach (['/panel/sw.js', '/panel/manifest.webmanifest', '/panel/brak-polaczenia'] as $address) {
+            $this->get($address)
+                ->assertOk()
+                ->assertCookieMissing(config('session.cookie'))
+                ->assertCookieMissing('XSRF-TOKEN');
+        }
+
+        $this->get('/panel')
+            ->assertOk()
+            ->assertSee('Zapisane. Klienci już to widzą.');
+    }
+
     public function test_staging_lets_the_phone_read_the_manifest_but_keeps_the_worker_behind_the_password(): void
     {
         config(['staging.password' => 'secret']);
