@@ -4,6 +4,7 @@ namespace Tests\Feature\Admin;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class PanelAppTest extends TestCase
@@ -81,6 +82,54 @@ class PanelAppTest extends TestCase
             ->get('/panel')
             ->assertOk()
             ->assertSee('<link rel="manifest"', false);
+    }
+
+    /**
+     * MA-354: the browser fetches the app's files on its own, also between a form's POST and the page it redirects to.
+     * A flash lives through one more request after the POST, so a fetch through the session in between would use it up.
+     * The order here is the one from the e2e log: POST, then the browser's own fetches, then the page.
+     */
+    public function test_the_browser_fetching_the_app_files_keeps_the_errors_meant_for_the_next_page(): void
+    {
+        $this->from('/panel/logowanie')
+            ->post('/panel/logowanie', ['email' => 'kasia@example.com', 'password' => 'nie-to-haslo'])
+            // Not assertSessionHasErrors(): in a test it leaves the page after it with an empty error bag.
+            ->assertRedirect('/panel/logowanie');
+
+        $this->fetchTheAppFilesWithoutTheSession();
+
+        $this->get('/panel/logowanie')
+            ->assertOk()
+            ->assertSee('Ten e-mail albo hasło się nie zgadza')
+            // The panel's own pages keep the session as before.
+            ->assertCookie(config('session.cookie'));
+    }
+
+    public function test_the_browser_fetching_the_app_files_keeps_the_saved_message_in_the_panel(): void
+    {
+        Mail::fake();
+        $helper = User::factory()->helper()->create(['email' => 'ola@example.com']);
+
+        $this->actingAs(User::factory()->create())
+            ->post('/panel/konta/'.$helper->id.'/link')
+            ->assertRedirect(route('admin.accounts.index'));
+
+        $this->fetchTheAppFilesWithoutTheSession();
+
+        $this->get(route('admin.accounts.index'))
+            ->assertOk()
+            ->assertSee('Nowy link do hasła poszedł na ola@example.com.');
+    }
+
+    /** Fetches the three files as the browser does and checks that none of them starts a session or sets a cookie. */
+    private function fetchTheAppFilesWithoutTheSession(): void
+    {
+        foreach (['/panel/manifest.webmanifest', '/panel/sw.js', '/panel/brak-polaczenia'] as $file) {
+            $response = $this->get($file)->assertOk();
+
+            $this->assertSame([], $response->headers->getCookies(), $file.' sets no cookie');
+            $this->assertFalse($response->baseRequest->hasSession(), $file.' starts no session');
+        }
     }
 
     public function test_staging_lets_the_phone_read_the_manifest_but_keeps_the_worker_behind_the_password(): void
