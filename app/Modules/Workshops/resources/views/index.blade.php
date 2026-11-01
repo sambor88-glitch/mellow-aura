@@ -1,4 +1,5 @@
 @use('App\Modules\Checkout\Enums\PaymentMethod')
+@use('App\Modules\Content\Support\PagePhotos')
 @use('App\Modules\Shared\Support\Money')
 @use('App\Modules\Shared\Support\Seo')
 @use('App\Modules\Workshops\Http\Controllers\BookingController')
@@ -35,7 +36,7 @@
 
 <x-shared::layout :$title :$description
                   :canonical="route('workshops.index')"
-                  :preload-image="$hero !== null ? ['src' => $hero, 'srcset' => $heroSrcset, 'sizes' => $heroSizes] : null">
+                  :preload-image="$hero !== null ? ['src' => $hero->url, 'srcset' => $heroSrcset, 'sizes' => $heroSizes] : null">
     <x-slot:head>{!! $structuredData !!}</x-slot:head>
     {{-- „Terminy (n)” on a card shows that workshop's dates only; without JS the list shows them all. --}}
     <div x-data="{
@@ -61,8 +62,8 @@
         @endif
 
         @if ($hero !== null)
-            <img src="{{ $hero }}" @if ($heroSrcset) srcset="{{ $heroSrcset }}" sizes="{{ $heroSizes }}" @endif alt="" fetchpriority="high" width="1280" height="520"
-                 class="mb-[76px] block h-[clamp(240px,40vh,460px)] w-full rounded-[20px] bg-line-soft object-cover">
+            <img src="{{ $hero->url }}" @if ($heroSrcset) srcset="{{ $heroSrcset }}" sizes="{{ $heroSizes }}" @endif alt="" fetchpriority="high" width="1280" height="520"
+                 style="{{ $hero->style() }}" class="mb-[76px] block h-[clamp(240px,40vh,460px)] w-full rounded-[20px] bg-line-soft object-cover">
         @endif
 
         @if ($workshops->isNotEmpty())
@@ -196,15 +197,18 @@
             </div>
         </div>
 
-        @if ($gallery->isNotEmpty())
+        @if ($gallery !== [])
             <div class="pt-[76px]">
                 <div class="mb-5 flex flex-wrap items-baseline justify-between gap-4">
                     <h2 class="font-serif text-[length:clamp(28px,3.4vw,40px)] font-light">Pracownia</h2>
                     <a href="{{ route('content.studio') }}" class="border-b border-line-strong pb-[3px] text-[13.5px] tracking-[0.06em]">Zobacz pracownię <span aria-hidden="true">→</span></a>
                 </div>
                 <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3.5">
+                    {{-- Four to a row from about 900 px, three from 684 px, two from 470 px, one below. --}}
                     @foreach ($gallery as $photo)
-                        <img src="{{ $photo['url'] }}" alt="{{ $photo['alt'] }}" loading="lazy" width="600" height="600" class="block aspect-square w-full rounded-[20px] bg-line-soft object-cover">
+                        <img src="{{ $photo->url }}" {{ $photo->srcsetAttributes('(min-width: 1280px) 296px, (min-width: 900px) 24vw, (min-width: 684px) 31vw, (min-width: 470px) 47vw, calc(100vw - 56px)') }}
+                             alt="{{ $photo->alt(PagePhotos::defaultAlt($photo->key)) }}" loading="lazy" width="600" height="600" style="{{ $photo->style() }}"
+                             class="block aspect-square w-full rounded-[20px] bg-line-soft object-cover">
                     @endforeach
                 </div>
             </div>

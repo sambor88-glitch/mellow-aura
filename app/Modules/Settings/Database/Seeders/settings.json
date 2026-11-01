@@ -162,10 +162,6 @@
         "value": true
     },
     {
-        "key": "studio_hero_image",
-        "value": "zdjecia/zestaw-flatlay.webp"
-    },
-    {
         "key": "instagram_feed_url",
         "value": null
     },
@@ -524,55 +520,6 @@
             {
                 "title": "Wysyłka prac",
                 "text": "Jeśli nie możesz przyjechać — wyślę."
-            }
-        ]
-    },
-    {
-        "key": "studio_gallery",
-        "value": [
-            {
-                "path": "zdjecia/kubek-ochujeje.webp",
-                "alt": "Kubek z wbijanym tekstem"
-            },
-            {
-                "path": "zdjecia/zestaw-filizanka-talerz.webp",
-                "alt": "Filiżanka z talerzykiem"
-            },
-            {
-                "path": "zdjecia/podstawki-muszle-roz.webp",
-                "alt": "Różowe podstawki w kształcie muszli"
-            },
-            {
-                "path": "zdjecia/kasia-talerz-zloto.webp",
-                "alt": "Kasia z talerzem zdobionym złotem"
-            },
-            {
-                "path": "zdjecia/patera-czarna-kolce.webp",
-                "alt": "Czarna patera z kolcami"
-            },
-            {
-                "path": "zdjecia/kubek-cappuccino.webp",
-                "alt": "Kubek malowany ręcznie"
-            },
-            {
-                "path": "zdjecia/kadzielnica-pszczoly.webp",
-                "alt": "Kadzielnica ze złoconym kołnierzem"
-            },
-            {
-                "path": "zdjecia/talerz-niebieski-odcisk.webp",
-                "alt": "Talerz z odciskiem rośliny"
-            },
-            {
-                "path": "zdjecia/scrunchies-fiolet.webp",
-                "alt": "Jedwabne scrunchies"
-            },
-            {
-                "path": "zdjecia/kubek-nie-powinnam.webp",
-                "alt": "Kubek z wbijanym napisem w dłoni"
-            },
-            {
-                "path": "zdjecia/zestaw-flatlay.webp",
-                "alt": "Filiżanka na talerzyku z malowaną lawendą"
             }
         ]
     },

@@ -7,9 +7,10 @@ use App\Modules\Shared\Support\FocalPoint;
 use App\Modules\Shared\Support\SitePhoto;
 
 /**
- * The photos of the shop's own pages, each in its place: the hero, the arch next to „Kasia”, the cards of the services.
- * Every place starts with its photo from zdjecia/ and its frame from the Aura design; in the panel („Zdjęcia stron”) Kasia
- * puts in her own photo, takes the photo off the page or moves the point that stays in view (FocalPoint).
+ * The photos of the shop's own pages, each in its place: the hero, the arch next to „Kasia”, the cards of the services,
+ * the studio's gallery. Every place starts with its photo from zdjecia/ (or empty, as room for one more in a gallery) and
+ * its frame from the Aura design; in the panel („Zdjęcia stron”) Kasia puts in her own photo, takes the photo off the page
+ * or moves the point that stays in view (FocalPoint).
  *
  * The setting `page_photos` keeps only what she changed, by place: `path` (a photo on the public disk, or null for no
  * photo at all), `focus`, `focus_phone`, `alt` and `product_id`. A place she never touched has no entry, so the page looks
@@ -24,9 +25,11 @@ class PagePhotos
     /**
      * Places by page. `frames` are the shapes of the place for the preview in the panel; `phone` gives the place a second
      * point for a phone, where the shape of the place changes most; `decorative` places have alt="" and no description;
-     * a `product` place can lead to the product it shows (MA-280) and stays decoration until Kasia picks one.
+     * a `product` place can lead to the product it shows (MA-280) and stays decoration until Kasia picks one; `alt`
+     * describes the photo from zdjecia/ until Kasia writes her own. A place with no `file` starts empty, as room for
+     * one more photo in a gallery.
      *
-     * @var array<string, array{page: string, label: string, file: string, frames: array<string, ?string>, focus?: array{int, int}, phone?: bool, decorative?: bool, product?: bool}>
+     * @var array<string, array{page: string, label: string, file: ?string, frames: array<string, ?string>, focus?: array{int, int}, phone?: bool, decorative?: bool, product?: bool, alt?: string}>
      */
     private const PLACES = [
         'home-hero' => ['page' => 'Strona główna', 'label' => 'Na samej górze — zdjęcie w ramce, które otwiera się przy przewijaniu', 'file' => 'kasia-talerz-zloto.webp', 'frames' => ['aspect-[3/4]' => 'na starcie', 'aspect-[16/10]' => 'otwarta'], 'focus' => [50, 82], 'phone' => true],
@@ -54,6 +57,26 @@ class PagePhotos
         'custom-orders-1' => ['page' => 'Zamówienia indywidualne', 'label' => 'Pod krokami — pierwsze', 'file' => 'zestaw-filizanka-talerz.webp', 'frames' => ['aspect-square' => null]],
         'custom-orders-2' => ['page' => 'Zamówienia indywidualne', 'label' => 'Pod krokami — drugie', 'file' => 'kubek-krolowa-matka.webp', 'frames' => ['aspect-square' => null]],
         'custom-orders-3' => ['page' => 'Zamówienia indywidualne', 'label' => 'Pod krokami — trzecie (na telefonie szerokie)', 'file' => 'podstawki-muszle-roz.webp', 'frames' => ['aspect-square' => 'komputer', 'aspect-[2/1]' => 'telefon']],
+        // The workshops and the studio (MA-349): until then the hero and the gallery were settings with no screen in the panel.
+        'workshops-hero' => ['page' => 'Warsztaty', 'label' => 'Pod wstępem — szerokie zdjęcie', 'file' => 'zestaw-flatlay.webp', 'frames' => ['aspect-[3/1]' => 'komputer', 'aspect-square' => 'telefon'], 'decorative' => true],
+        'workshops-studio-1' => ['page' => 'Warsztaty', 'label' => '„Pracownia” na dole — 1.', 'file' => 'kubek-ochujeje.webp', 'alt' => 'Kubek z wbijanym tekstem', 'frames' => ['aspect-square' => null]],
+        'workshops-studio-2' => ['page' => 'Warsztaty', 'label' => '„Pracownia” na dole — 2.', 'file' => 'zestaw-filizanka-talerz.webp', 'alt' => 'Filiżanka z talerzykiem', 'frames' => ['aspect-square' => null]],
+        'workshops-studio-3' => ['page' => 'Warsztaty', 'label' => '„Pracownia” na dole — 3.', 'file' => 'podstawki-muszle-roz.webp', 'alt' => 'Różowe podstawki w kształcie muszli', 'frames' => ['aspect-square' => null]],
+        'workshops-studio-4' => ['page' => 'Warsztaty', 'label' => '„Pracownia” na dole — 4.', 'file' => 'kasia-talerz-zloto.webp', 'alt' => 'Kasia z talerzem zdobionym złotem', 'frames' => ['aspect-square' => null]],
+        'studio-hero' => ['page' => 'Pracownia', 'label' => 'Na samej górze — pod napisem', 'file' => 'zestaw-flatlay.webp', 'frames' => ['aspect-[3/1]' => 'komputer', 'aspect-square' => 'telefon'], 'decorative' => true],
+        'studio-gallery-1' => ['page' => 'Pracownia', 'label' => 'Galeria — 1.', 'file' => 'kubek-ochujeje.webp', 'alt' => 'Kubek z wbijanym tekstem', 'frames' => ['aspect-square' => null]],
+        'studio-gallery-2' => ['page' => 'Pracownia', 'label' => 'Galeria — 2.', 'file' => 'zestaw-filizanka-talerz.webp', 'alt' => 'Filiżanka z talerzykiem', 'frames' => ['aspect-square' => null]],
+        'studio-gallery-3' => ['page' => 'Pracownia', 'label' => 'Galeria — 3.', 'file' => 'podstawki-muszle-roz.webp', 'alt' => 'Różowe podstawki w kształcie muszli', 'frames' => ['aspect-square' => null]],
+        'studio-gallery-4' => ['page' => 'Pracownia', 'label' => 'Galeria — 4.', 'file' => 'kasia-talerz-zloto.webp', 'alt' => 'Kasia z talerzem zdobionym złotem', 'frames' => ['aspect-square' => null]],
+        'studio-gallery-5' => ['page' => 'Pracownia', 'label' => 'Galeria — 5.', 'file' => 'patera-czarna-kolce.webp', 'alt' => 'Czarna patera z kolcami', 'frames' => ['aspect-square' => null]],
+        'studio-gallery-6' => ['page' => 'Pracownia', 'label' => 'Galeria — 6.', 'file' => 'kubek-cappuccino.webp', 'alt' => 'Kubek malowany ręcznie', 'frames' => ['aspect-square' => null]],
+        'studio-gallery-7' => ['page' => 'Pracownia', 'label' => 'Galeria — 7.', 'file' => 'kadzielnica-pszczoly.webp', 'alt' => 'Kadzielnica ze złoconym kołnierzem', 'frames' => ['aspect-square' => null]],
+        'studio-gallery-8' => ['page' => 'Pracownia', 'label' => 'Galeria — 8.', 'file' => 'talerz-niebieski-odcisk.webp', 'alt' => 'Talerz z odciskiem rośliny', 'frames' => ['aspect-square' => null]],
+        'studio-gallery-9' => ['page' => 'Pracownia', 'label' => 'Galeria — 9.', 'file' => 'scrunchies-fiolet.webp', 'alt' => 'Jedwabne scrunchies', 'frames' => ['aspect-square' => null]],
+        'studio-gallery-10' => ['page' => 'Pracownia', 'label' => 'Galeria — 10.', 'file' => 'kubek-nie-powinnam.webp', 'alt' => 'Kubek z wbijanym napisem w dłoni', 'frames' => ['aspect-square' => null]],
+        'studio-gallery-11' => ['page' => 'Pracownia', 'label' => 'Galeria — 11.', 'file' => 'zestaw-flatlay.webp', 'alt' => 'Filiżanka na talerzyku z malowaną lawendą', 'frames' => ['aspect-square' => null]],
+        // Twelve fill whole rows of two, three and four, so the page shows all of them at every width.
+        'studio-gallery-12' => ['page' => 'Pracownia', 'label' => 'Galeria — 12.', 'file' => null, 'frames' => ['aspect-square' => null]],
     ];
 
     public function __construct(private Settings $settings) {}
@@ -65,17 +88,25 @@ class PagePhotos
     }
 
     /**
-     * @return array{page: string, label: string, file: string, frames: array<string, ?string>, focus?: array{int, int}, phone?: bool, decorative?: bool, product?: bool}
+     * @return array{page: string, label: string, file: ?string, frames: array<string, ?string>, focus?: array{int, int}, phone?: bool, decorative?: bool, product?: bool, alt?: string}
      */
     public static function place(string $key): array
     {
         return self::PLACES[$key] ?? throw new \InvalidArgumentException('No page photo place '.$key);
     }
 
-    /** The photo from zdjecia/ the place starts with. */
-    public static function defaultPath(string $key): string
+    /** The photo from zdjecia/ the place starts with, null for a place that starts empty. */
+    public static function defaultPath(string $key): ?string
     {
-        return 'zdjecia/'.self::place($key)['file'];
+        $file = self::place($key)['file'];
+
+        return $file === null ? null : 'zdjecia/'.$file;
+    }
+
+    /** What the photo from zdjecia/ shows, for a place that keeps it in PLACES; a page passes it to PagePhoto::alt(). */
+    public static function defaultAlt(string $key): string
+    {
+        return self::place($key)['alt'] ?? '';
     }
 
     public function get(string $key): PagePhoto
@@ -99,6 +130,21 @@ class PagePhotos
             isDefault: $saved === [],
             isReplaced: array_key_exists('path', $saved),
         );
+    }
+
+    /**
+     * The places of one row of photos (`studio-gallery-1`, `studio-gallery-2`, …) in their order, without the empty ones.
+     *
+     * @return list<PagePhoto>
+     */
+    public function series(string $prefix): array
+    {
+        return collect(self::keys())
+            ->filter(fn (string $key) => str_starts_with($key, $prefix) && ctype_digit(substr($key, strlen($prefix))))
+            ->map(fn (string $key) => $this->get($key))
+            ->filter(fn (PagePhoto $photo) => $photo->exists())
+            ->values()
+            ->all();
     }
 
     /**

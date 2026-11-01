@@ -2,6 +2,7 @@
     Zdjęcia stron (MA-316): a tab for each page, the places on it as thumbnails, and one place at a time to change.
     Saving comes back to the same place (#key), and a mistake opens its tab and its place.
 --}}
+@use('App\Modules\Content\Support\PagePhotos')
 @use('Illuminate\Support\Str')
 @php
     $card = 'scroll-mt-24 rounded-[4px] border border-line bg-cream px-[18px] py-5 md:px-[22px] md:py-6';
@@ -120,7 +121,8 @@
                                     <button class="{{ $quiet }}">Zdejmij zdjęcie ze strony</button>
                                 </form>
                             @endif
-                            @unless ($photo->isDefault)
+                            {{-- A place that starts empty (the last one in a gallery) has nothing to bring back: „Zdejmij” empties it. --}}
+                            @unless ($photo->isDefault || PagePhotos::defaultPath($photo->key) === null)
                                 <form method="post" action="{{ route('admin.page-photos.restore', $photo->key) }}">
                                     @csrf
                                     <button class="{{ $quiet }}">{{ $photo->isReplaced ? 'Przywróć pierwsze zdjęcie' : 'Przywróć pierwszy kadr' }}</button>

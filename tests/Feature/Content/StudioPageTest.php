@@ -55,9 +55,12 @@ class StudioPageTest extends TestCase
     public function test_a_missing_photo_or_an_empty_fact_is_left_out(): void
     {
         $this->settings([
-            'studio_hero_image' => 'zdjecia/nie-ma-takiego.webp',
             'studio_facts' => [['title' => 'Do 4 osób', 'text' => ''], ['title' => '', 'text' => 'Bez tytułu'], 'nie fakt'],
-            'studio_gallery' => [['path' => 'zdjecia/nie-ma-takiego.webp', 'alt' => 'Zgubione zdjęcie'], ['path' => 'zdjecia/misa-laguna.webp', 'alt' => 'Misa w kolorze laguny']],
+            'page_photos' => [
+                'studio-hero' => ['path' => 'zdjecia/nie-ma-takiego.webp'],
+                'studio-gallery-1' => ['path' => 'zdjecia/nie-ma-takiego.webp', 'alt' => 'Zgubione zdjęcie'],
+                'studio-gallery-2' => ['path' => 'zdjecia/misa-laguna.webp', 'alt' => 'Misa w kolorze laguny'],
+            ],
         ]);
 
         $this->get('/pracownia')
@@ -69,6 +72,25 @@ class StudioPageTest extends TestCase
             ->assertDontSee('nie fakt')
             ->assertDontSee('Zgubione zdjęcie')
             ->assertSee('alt="Misa w kolorze laguny"', false);
+    }
+
+    public function test_the_photos_come_from_zdjecia_stron_with_their_point_and_twelve_fill_whole_rows(): void
+    {
+        $this->settings(['page_photos' => [
+            'studio-hero' => ['focus' => ['x' => 30, 'y' => 70]],
+            'studio-gallery-2' => ['alt' => 'Filiżanka z talerzykiem w pracowni'],
+            'studio-gallery-12' => ['path' => 'zdjecia/misa-laguna.webp', 'alt' => 'Misa w kolorze laguny', 'focus' => ['x' => 20, 'y' => 40]],
+        ]]);
+
+        $page = $this->get('/pracownia')->assertOk()
+            ->assertSee('style="object-position: 30% 70%" class="block h-[clamp(320px,46vh,520px)]', false)
+            ->assertSeeInOrder(['alt="Kubek z wbijanym tekstem"', 'alt="Filiżanka z talerzykiem w pracowni"', 'alt="Misa w kolorze laguny"'], false)
+            ->assertSee('style="object-position: 20% 40%"', false)
+            ->getContent();
+
+        // Twelve photos make whole rows of two, three and four, so none is hidden at any width.
+        $this->assertSame(12, substr_count($page, 'class="block aspect-square w-full rounded-[20px]'));
+        $this->assertStringNotContainsString('max-sm:hidden', $page);
     }
 
     public function test_the_buttons_lead_to_the_workshops_and_firing_price_lists(): void
@@ -95,7 +117,7 @@ class StudioPageTest extends TestCase
     private function settings(array $values): void
     {
         foreach ($values as $key => $value) {
-            Setting::query()->where('key', $key)->update(['value' => json_encode($value)]);
+            Setting::query()->updateOrCreate(['key' => $key], ['value' => $value]);
         }
     }
 }
