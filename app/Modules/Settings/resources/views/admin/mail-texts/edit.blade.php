@@ -15,9 +15,9 @@
     $label = 'mb-1 block text-[12.5px] text-graphite';
     $invalidMails = collect($fields)->filter(fn (array $field) => $field['mail'] !== null && $bag->has($field['setting']))->pluck('mail')->unique()->all();
     $imageBag = $errors->getBag('grafika-podpisu');
-    $tabs = ['maile' => ['label' => 'Maile do klientek', 'count' => count($mails)], 'podpis' => 'Podpis, stopka i grafika'];
+    $tabs = ['maile' => ['label' => 'Maile do klientów', 'count' => count($mails)], 'podpis' => 'Podpis, stopka i grafika'];
 @endphp
-<x-admin::layout title="Maile" lead="Maile, które sklep wysyła klientkom. Układ, kwoty i dane zamówienia biorą się same — tu zmienisz temat, pierwsze i ostatnie zdanie, podpis z grafiką i stopkę.">
+<x-admin::layout title="Maile" lead="Maile, które sklep wysyła klientom. Układ, kwoty i dane zamówienia biorą się same — tu zmienisz temat, pierwsze i ostatnie zdanie, podpis z grafiką i stopkę.">
   <x-admin::tabs :tabs="$tabs" label="Części ekranu maili" :active="$imageBag->any() ? 'podpis' : null">
     <form id="maile" method="post" action="{{ route('admin.mail-texts.update') }}" novalidate class="max-w-[880px] scroll-mt-24 rounded-[4px] border border-line bg-cream px-[18px] py-5 md:p-[22px]">
         @csrf
@@ -31,7 +31,7 @@
         @endif
 
         <x-admin::tab-panel name="maile">
-        <h2 class="mb-2.5 text-[11.5px] tracking-[0.16em] text-label uppercase">Maile do klientek</h2>
+        <h2 class="mb-2.5 text-[11.5px] tracking-[0.16em] text-label uppercase">Maile do klientów</h2>
         <div class="grid gap-2">
             @foreach ($mails as $mail)
                 @php $mailLocales = array_values(array_intersect($mail->locales, $locales)); @endphp
