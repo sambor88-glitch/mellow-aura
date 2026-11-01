@@ -8,6 +8,7 @@ use App\Modules\Settings\Http\Requests\Admin\SaveAnalyticsRequest;
 use App\Modules\Settings\Http\Requests\Admin\SaveCompanyDetailsRequest;
 use App\Modules\Settings\Http\Requests\Admin\SaveMaterialTilesRequest;
 use App\Modules\Settings\Http\Requests\Admin\SaveProductCardRequest;
+use App\Modules\Settings\Http\Requests\Admin\SaveReviewRequestRequest;
 use App\Modules\Settings\Http\Requests\Admin\SaveShippingRequest;
 use App\Modules\Settings\Http\Requests\Admin\SaveStudioDetailsRequest;
 use App\Modules\Settings\Settings;
@@ -16,7 +17,7 @@ use Illuminate\View\View;
 
 /**
  * The panel's „Ustawienia”, like the prototype: delivery and fees, the studio's details, the company's details
- * for the terms of sale, the sentences shared by product pages and the material tiles. Each card saves on its own, so a mistake in one does not hold back the others. The workshop
+ * for the terms of sale, the sentences shared by product pages, the mail asking for a Google review and the material tiles. Each card saves on its own, so a mistake in one does not hold back the others. The workshop
  * deposit joins the page together with workshop booking.
  */
 class SettingsController extends Controller
@@ -35,6 +36,7 @@ class SettingsController extends Controller
             'productCard' => collect(SaveProductCardRequest::KEYS)->mapWithKeys(fn (string $key) => [$key => $settings->get($key)])->all(),
             'tiles' => array_values((array) $settings->get('material_tiles', [])),
             'analyticsId' => $settings->get('google_analytics_id'),
+            'reviewRequest' => ['review_request_url' => $settings->get('review_request_url'), 'review_request_days' => $settings->get('review_request_days')],
         ]);
     }
 
@@ -81,6 +83,18 @@ class SettingsController extends Controller
         return to_route('admin.settings.edit')
             ->withFragment('statystyki')
             ->with('panel_status', $request->settings()['google_analytics_id'] ? 'Zapisane. Statystyki ruszą po zgodzie w okienku.' : 'Statystyki i okienko zgód wyłączone');
+    }
+
+    public function reviews(SaveReviewRequestRequest $request, SaveSettings $saveSettings): RedirectResponse
+    {
+        $values = $request->settings();
+        $saveSettings($values);
+
+        return to_route('admin.settings.edit')
+            ->withFragment('opinie')
+            ->with('panel_status', $values['review_request_url'] && $values['review_request_days']
+                ? 'Zapisane. Prośba o opinię wyjdzie '.$values['review_request_days'].($values['review_request_days'] === 1 ? ' dzień' : ' dni').' po zakończeniu zamówienia.'
+                : 'Zapisane. Bez linku i liczby dni prośba o opinię nie wychodzi.');
     }
 
     public function materials(SaveMaterialTilesRequest $request, SaveSettings $saveSettings): RedirectResponse

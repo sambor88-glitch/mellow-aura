@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\URL;
 
 #[Fillable([
     'number', 'status', 'name', 'email', 'phone', 'shipping_method', 'shipping_address', 'delivery_country', 'locker_code', 'tracking_number',
-    'shipping_gross', 'total_gross', 'vouchers_gross', 'currency', 'eur_rate', 'eur_rate_on', 'locale', 'payment_method', 'payment_status', 'payment_provider_id', 'paid_at', 'payment_confirmed_by', 'shipped_at', 'completed_at',
+    'shipping_gross', 'total_gross', 'vouchers_gross', 'currency', 'eur_rate', 'eur_rate_on', 'locale', 'payment_method', 'payment_status', 'payment_provider_id', 'paid_at', 'payment_confirmed_by', 'shipped_at', 'completed_at', 'review_requested_at',
     'note', 'problem_note', 'invoice_nip', 'terms_version', 'terms_accepted_at',
     'ga_client_id', 'ga_session_id', 'analytics_items', 'analytics_ad_user_data', 'analytics_sent_at',
 ])]
@@ -142,6 +142,7 @@ class Order extends Model
             'paid_at' => 'datetime',
             'shipped_at' => 'datetime',
             'completed_at' => 'datetime',
+            'review_requested_at' => 'datetime',
             'terms_accepted_at' => 'datetime',
             'analytics_items' => 'array',
             'analytics_ad_user_data' => 'boolean',

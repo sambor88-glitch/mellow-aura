@@ -86,6 +86,14 @@
         "value": null
     },
     {
+        "key": "review_request_url",
+        "value": null
+    },
+    {
+        "key": "review_request_days",
+        "value": 7
+    },
+    {
         "key": "location_description",
         "value": "Kraków, okolice Błoń Krakowskich"
     },

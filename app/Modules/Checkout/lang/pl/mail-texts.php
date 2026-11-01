@@ -27,4 +27,9 @@ return [
         'subject' => 'Potwierdzenie odstąpienia od umowy — {numer}',
         'outro' => 'Masz pytanie? Odpisz na tego maila — trafi prosto do mnie.',
     ],
+    'review_request' => [
+        'subject' => 'Jak się u Ciebie sprawdza zamówienie {numer}?',
+        'intro' => 'Twoje zamówienie {numer} jest już u Ciebie. Mam nadzieję, że wszystko dotarło całe i cieszy na co dzień.',
+        'outro' => 'Coś jest nie tak z zamówieniem? Odpisz na tego maila — trafi prosto do mnie.',
+    ],
 ];

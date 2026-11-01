@@ -38,8 +38,8 @@
     $button = 'mt-[18px] min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]';
     $tileInput = 'w-full min-w-0 rounded-[4px] border bg-white px-3 py-2.5 text-[14px] text-ink placeholder:text-hint focus:border-ink';
 @endphp
-<x-admin::layout title="Ustawienia" lead="Dostawa, dane pracowni i firmy, karta produktu, statystyki i kafelki o materiale. Zmiany widać na stronie od razu.">
-  <x-admin::tabs :tabs="['dostawa' => 'Dostawa i opłaty', 'pracownia' => 'Pracownia', 'firma' => 'Firma', 'karta-produktu' => 'Karta produktu', 'statystyki' => 'Statystyki', 'materialy' => 'Materiały']" label="Części ustawień">
+<x-admin::layout title="Ustawienia" lead="Dostawa, dane pracowni i firmy, karta produktu, statystyki, prośba o opinię i kafelki o materiale. Zmiany widać na stronie od razu.">
+  <x-admin::tabs :tabs="['dostawa' => 'Dostawa i opłaty', 'pracownia' => 'Pracownia', 'firma' => 'Firma', 'karta-produktu' => 'Karta produktu', 'statystyki' => 'Statystyki', 'opinie' => 'Opinie', 'materialy' => 'Materiały']" label="Części ustawień">
     <x-admin::tab-panel name="dostawa" class="max-w-[880px]">
         <form id="dostawa" method="post" action="{{ route('admin.settings.shipping') }}" novalidate class="{{ $card }}">
             @csrf
@@ -192,6 +192,29 @@
                              hint="Google Analytics → Administracja → Strumienie danych. Puste pole wyłącza statystyki i okienko." />
         </div>
         <button class="{{ $button }}">Zapisz statystyki</button>
+    </form>
+    </x-admin::tab-panel>
+    <x-admin::tab-panel name="opinie" class="max-w-[880px]">
+    <form id="opinie" method="post" action="{{ route('admin.settings.reviews') }}" novalidate class="{{ $card }}">
+        @csrf
+        @method('PUT')
+        <h2 class="{{ $heading }}">Prośba o opinię w Google</h2>
+        @if ($errors->hasBag('opinie'))
+            <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+        @endif
+        <p class="mb-3.5 max-w-[70ch] text-[13.5px] leading-[1.6] text-label">
+            Kilka dni po zakończeniu zamówienia klientka dostaje jednego maila z prośbą o opinię na wizytówce Google. Nie dostaje go, gdy przy zamówieniu był problem, odstąpienie od umowy albo reklamacja. Treść maila zmienisz w „Maile”.
+        </p>
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,260px),1fr))] gap-3">
+            <x-shared::field name="review_request_url" id="opinie-link" type="url" bag="opinie" label="Link do wystawienia opinii"
+                             :value="old('review_request_url', $reviewRequest['review_request_url'])" placeholder="https://g.page/r/…/review"
+                             hint="Wizytówka Google → „Poproś o opinie” → skopiuj link. Puste pole wyłącza maila." />
+            <x-shared::field name="review_request_days" id="opinie-dni" bag="opinie" label="Ile dni po zakończeniu zamówienia" inputmode="numeric"
+                             :value="old('review_request_days', $reviewRequest['review_request_days'])" placeholder="np. 7"
+                             hint="Liczysz od statusu „Zakończone”, czyli zwykle od doręczenia." />
+        </div>
+        <p class="{{ $hint }}">Mail tylko prosi o opinię — bez rabatu i bez nagrody. Google i UOKiK zakazują nagradzania za opinie.</p>
+        <button class="{{ $button }}">Zapisz prośbę o opinię</button>
     </form>
     </x-admin::tab-panel>
     <x-admin::tab-panel name="materialy" class="max-w-[880px]">
