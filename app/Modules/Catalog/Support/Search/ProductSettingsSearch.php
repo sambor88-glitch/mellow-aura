@@ -16,6 +16,7 @@ final class ProductSettingsSearch implements SearchProvider
         'hero-product' => ['Produkt na dużym zdjęciu strony głównej', 'hero glowna strona glowna duze zdjecie'],
         'hero-badge' => ['Etykieta na dużym zdjęciu strony głównej', 'nowosc hero glowna'],
         'euro-markup' => ['Narzut na ceny w euro', 'eur euro nbp kurs waluta angielski sklep'],
+        'last-pieces' => ['Próg ostatnich sztuk', 'ostatnie sztuki ostatnia sztuka wyprzedane stan magazyn konczy sie'],
     ];
 
     public function group(): string
