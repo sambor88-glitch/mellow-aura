@@ -40,7 +40,7 @@ class SaveStudioFactsRequest extends FormRequest
     {
         return [
             'facts_heading.max' => 'Nagłówek zmieszczę do :max znaków',
-            'facts.max' =>'Zmieszczę do :max faktów — karta ma zostać krótka',
+            'facts.max' => 'Zmieszczę do :max faktów — karta ma zostać krótka',
             'facts.*.title.required_with' => 'Wpisz fakt, np. Do 6 osób',
             'facts.*.title.max' => 'Fakt zmieszczę do :max znaków',
             'facts.*.text.max' => 'Zdanie pod faktem zmieszczę do :max znaków',
