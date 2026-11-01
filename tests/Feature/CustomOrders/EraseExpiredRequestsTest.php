@@ -236,7 +236,7 @@ class EraseExpiredRequestsTest extends TestCase
             ->get('/panel/zamowienia-indywidualne?status=declined')
             ->assertOk()
             ->assertSee('Dane i zdjęcia usunięte 1.05.2026 — minął czas przechowywania')
-            ->assertSee('Dane i zdjęcia usunięte 10.02.2026 — na prośbę klientki')
+            ->assertSee('Dane i zdjęcia usunięte 10.02.2026 — na prośbę klienta')
             ->assertDontSee('Kubki dla świadków');
 
         $this->get('/panel/zamowienia-indywidualne/'.$expired->id.'/zdjecia/1')->assertNotFound();

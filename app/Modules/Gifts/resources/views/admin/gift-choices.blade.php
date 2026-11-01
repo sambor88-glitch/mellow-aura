@@ -6,7 +6,7 @@
     $field = 'min-h-11 min-w-0 rounded-[4px] border border-line bg-white px-3 py-2.5 text-[14px] text-ink focus:border-ink';
     $settingErrors = $errors->getBag('ustawienia');
 @endphp
-<x-admin::layout title="Karty wyboru" lead="Kubki „Podaruj wybór”: kupująca płaci za rozmiar i dostawę, a obdarowana sama wymyśla napis, wybiera kolor wnętrza i podaje adres. Gotowy wybór trafia do zamówień jako „W realizacji”.">
+<x-admin::layout title="Karty wyboru" lead="Kubki „Podaruj wybór”: kupujący płaci za rozmiar i dostawę, a obdarowana osoba sama wymyśla napis, wybiera kolor wnętrza i podaje adres. Gotowy wybór trafia do zamówień jako „W realizacji”.">
     @if ($awaiting->isNotEmpty())
         <section class="mb-8">
             <h2 class="mb-1 font-serif text-[25px]">Po terminie — Twoja decyzja</h2>

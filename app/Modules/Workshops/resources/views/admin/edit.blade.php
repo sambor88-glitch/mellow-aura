@@ -18,7 +18,7 @@
     $dateErrors = $errors->getBag('terminy');
     $seats = fn (int $count) => $count.' '.($count === 1 ? 'miejsce' : (in_array($count % 10, [2, 3, 4], true) && ! in_array($count % 100, [12, 13, 14], true) ? 'miejsca' : 'miejsc'));
 @endphp
-<x-admin::layout title="Warsztaty" lead="Cennik na stronie warsztatów i terminarz. Terminy pokażą się na stronie razem z zapisami online — do tego czasu klientki piszą na WhatsAppie albo przez formularz.">
+<x-admin::layout title="Warsztaty" lead="Cennik na stronie warsztatów i terminarz. Terminy pokażą się na stronie razem z zapisami online — do tego czasu klienci piszą na WhatsAppie albo przez formularz.">
   <x-admin::tabs :tabs="['terminy' => ['label' => 'Terminarz', 'count' => $dates->count()], 'cennik' => 'Cennik']" label="Części ekranu warsztatów">
     <x-admin::tab-panel name="terminy">
     <section id="terminy" aria-labelledby="terminy-tytul" class="flex max-w-[880px] scroll-mt-24 flex-wrap items-start gap-[22px]">

@@ -58,7 +58,7 @@ class BankTransferPaymentTest extends TestCase
         $this->actingAs(User::factory()->create(['name' => 'Kasia']))
             ->patch('/panel/zamowienia/'.$order->number.'/wplata')
             ->assertRedirect('/panel/zamowienia/'.$order->number)
-            ->assertSessionHas('panel_status', 'Opłacone — klientka dostanie maila z potwierdzeniem.');
+            ->assertSessionHas('panel_status', 'Opłacone — klient dostanie maila z potwierdzeniem.');
 
         $order->refresh();
         $this->assertSame(PaymentStatus::Paid, $order->payment_status);

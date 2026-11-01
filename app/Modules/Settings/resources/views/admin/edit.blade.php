@@ -91,7 +91,7 @@
                 </fieldset>
             </div>
             <p class="{{ $hint }}">Próg darmowej wysyłki od razu zmienia pasek w koszyku i dopiski „gratis od” na stronie. Puste pole wyłącza darmową wysyłkę, a puste pakowanie znika ze strony zestawów. Czas wysyłki widać na karcie produktu, na stronie głównej, po zamówieniu i w danych dla Google.</p>
-            <p class="{{ $hint }}">Ceny „w angielskiej kasie” płaci klientka z angielskiej wersji sklepu, w euro. Dostawa bez ceny w euro nie pokazuje się tam wcale. Darmowa wysyłka działa tylko w złotych.</p>
+            <p class="{{ $hint }}">Ceny „w angielskiej kasie” płaci klient z angielskiej wersji sklepu, w euro. Dostawa bez ceny w euro nie pokazuje się tam wcale. Darmowa wysyłka działa tylko w złotych.</p>
             <button class="{{ $button }}">Zapisz dostawę</button>
         </form>
     </x-admin::tab-panel>
@@ -148,7 +148,7 @@
             <x-shared::field name="company_address" id="firma-adres" bag="firma" label="Adres firmy i do doręczeń"
                              :value="old('company_address', $company['company_address'])" hint="Ten z CEIDG, np. wirtualnego biura — pokaże się publicznie" />
             <x-shared::field name="return_address" id="firma-zwroty" bag="firma" label="Adres do zwrotów albo Paczkomat"
-                             :value="old('return_address', $company['return_address'])" hint="Tu klientki odsyłają rzeczy po odstąpieniu od umowy" />
+                             :value="old('return_address', $company['return_address'])" hint="Tu klienci odsyłają rzeczy po odstąpieniu od umowy" />
             <x-shared::field name="payment_operator" id="firma-operator" bag="firma" label="Operator płatności — pełna nazwa"
                              :value="old('payment_operator', $company['payment_operator'])" placeholder="np. PayPro S.A. (Przelewy24)" />
             <x-shared::field name="company_vat_note" id="firma-vat" bag="firma" label="Informacja o VAT"
@@ -203,7 +203,7 @@
             <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
         @endif
         <p class="mb-3.5 max-w-[70ch] text-[13.5px] leading-[1.6] text-label">
-            Kilka dni po zakończeniu zamówienia klientka dostaje jednego maila z prośbą o opinię na wizytówce Google. Nie dostaje go, gdy przy zamówieniu był problem, odstąpienie od umowy albo reklamacja. Treść maila zmienisz w „Maile”.
+            Kilka dni po zakończeniu zamówienia klient dostaje jednego maila z prośbą o opinię na wizytówce Google. Nie dostaje go, gdy przy zamówieniu był problem, odstąpienie od umowy albo reklamacja. Treść maila zmienisz w „Maile”.
         </p>
         <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,260px),1fr))] gap-3">
             <x-shared::field name="review_request_url" id="opinie-link" type="url" bag="opinie" label="Link do wystawienia opinii"

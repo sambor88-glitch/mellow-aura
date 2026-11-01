@@ -48,7 +48,7 @@ class PanelAccountsTest extends TestCase
         $this->get('/panel/zamowienia')->assertOk();
         $this->get('/panel/zamowienia/'.$order->number)
             ->assertOk()
-            ->assertSee('Wysłane — powiadom klientkę')
+            ->assertSee('Wysłane — powiadom klienta')
             ->assertDontSee('Wszystkie odstąpienia')
             ->assertDontSee('Odpowiedz na reklamację');
         Mail::fake();

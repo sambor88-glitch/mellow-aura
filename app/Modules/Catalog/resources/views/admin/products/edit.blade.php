@@ -298,7 +298,7 @@
                     @php($arModel = $product->arModel())
                     @php($modelErrors = collect($errors->getBag('model-'.$product->id)->all())->unique())
                     <div id="model-3d" class="grid scroll-mt-24 gap-2 rounded-[4px] border border-divider bg-linen px-4 py-3">
-                        <p class="text-[14px] text-graphite">{{ $arModel ? 'Model 3D — klientki zobaczą go u siebie' : 'Model 3D — jeszcze żadnego' }}</p>
+                        <p class="text-[14px] text-graphite">{{ $arModel ? 'Model 3D — klienci zobaczą go u siebie' : 'Model 3D — jeszcze żadnego' }}</p>
                         <div class="flex flex-wrap items-center gap-2">
                             @if ($arModel)
                                 <span class="min-w-0 text-[13px] text-lead break-all">{{ $arModel->file_name }}</span>
@@ -379,7 +379,7 @@
 
                     <div>
                         <h2 class="{{ $sub }}">Prawo i pielęgnacja</h2>
-                        <p class="{{ $lead }} mt-1">Tego wymaga regulamin i prawo. Klientka zobaczy to na karcie produktu przed zakupem.</p>
+                        <p class="{{ $lead }} mt-1">Tego wymaga regulamin i prawo. Klient zobaczy to na karcie produktu przed zakupem.</p>
                     </div>
                     <div class="min-w-0">
                         <label for="{{ $formKey }}-food" class="mb-1.5 block text-[13.5px] text-graphite">Kontakt z żywnością</label>
@@ -399,7 +399,7 @@
                                      placeholder="np. Zmywarka tak, złoto tylko ręcznie" hint="Jedno zdanie na karcie produktu. Puste pole nie pokaże się na stronie." />
                     <x-shared::field name="deviation" :id="$formKey.'-deviation'" label="Cecha do osobnego potwierdzenia" :value="$old('deviation', $product->deviation)" :bag="$formKey" maxlength="160"
                                      placeholder="np. Nie do zmywarki ani mikrofalówki — złota krawędź"
-                                     hint="Tylko to, czego nikt by się nie spodziewał. Klientka potwierdzi to osobnym polem przy zamówieniu." />
+                                     hint="Tylko to, czego nikt by się nie spodziewał. Klient potwierdzi to osobnym polem przy zamówieniu." />
                     <div class="min-w-0">
                         <label for="{{ $formKey }}-warnings" class="mb-1.5 block text-[13.5px] text-graphite">Ostrzeżenia — na karcie produktu i na certyfikacie</label>
                         <textarea id="{{ $formKey }}-warnings" name="safety_warnings" rows="2" maxlength="400" aria-describedby="{{ $formKey }}-warnings-note" placeholder="np. Nie stawiaj na ogniu ani na płycie grzewczej."

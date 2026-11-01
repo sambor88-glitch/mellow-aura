@@ -193,7 +193,7 @@ class OrderEmailsTest extends TestCase
         (new NewOrderReceived($second))
             ->assertSeeInHtml('Brakuje na półce:')
             ->assertSeeInHtml('Kadzielnice (Złoty kołnierz, 1 szt.)')
-            ->assertSeeInHtml('Klientka dostała maila, że zwrócisz jej 99 zł najpóźniej w ciągu 14 dni.');
+            ->assertSeeInHtml('Klient dostał maila, że zwrócisz mu 99 zł najpóźniej w ciągu 14 dni.');
         (new OrderConfirmed($first->refresh()))->assertDontSeeInHtml('Ktoś kupił ostatnią sztukę');
     }
 

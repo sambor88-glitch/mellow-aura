@@ -202,7 +202,7 @@ test('a customer buys a product and Kasia ships it', async ({ page }, testInfo) 
         const ship = page.locator('form', { has: page.locator('[name="tracking_number"]') }).first();
 
         await ship.locator('[name="tracking_number"]').fill('620000000000000000000000');
-        await ship.getByRole('button', { name: 'Wysłane — powiadom klientkę' }).click();
+        await ship.getByRole('button', { name: 'Wysłane — powiadom klienta' }).click();
 
         await expect(page.locator('main')).toContainText('Wysłane');
         await expectNoSideScroll(page);

@@ -52,7 +52,7 @@
             @csrf
             @method('PUT')
             <h2 class="{{ $heading }}">Teksty na stronach</h2>
-            <p class="{{ $intro }}">Pisz tak, jak mówisz do klientki. Puste pole nie pokaże się na stronie.</p>
+            <p class="{{ $intro }}">Pisz tak, jak mówisz do klienta. Puste pole nie pokaże się na stronie.</p>
             @if ($textErrors->any())
                 <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
             @endif

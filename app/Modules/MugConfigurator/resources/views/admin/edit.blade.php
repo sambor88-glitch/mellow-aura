@@ -60,7 +60,7 @@
     <x-admin::tab-panel name="zdjecie" class="grid max-w-[880px] gap-[22px]">
             <section id="zdjecie" class="{{ $card }}">
                 <h2 class="{{ $heading }}">Zdjęcie kubka pod napisy</h2>
-                <p class="{{ $intro }}">Na tym zdjęciu klientka widzi swój tekst. Najlepiej Twój własny kubek, sfotografowany prosto z boku, na jednolitym tle — i <strong class="font-medium">bez żadnego napisu</strong>, bo tekst ze strony nałoży się na istniejący.</p>
+                <p class="{{ $intro }}">Na tym zdjęciu klient widzi swój tekst. Najlepiej Twój własny kubek, sfotografowany prosto z boku, na jednolitym tle — i <strong class="font-medium">bez żadnego napisu</strong>, bo tekst ze strony nałoży się na istniejący.</p>
                 @if ($photo)
                     <img src="{{ $photo }}" alt="Zdjęcie kubka w konfiguratorze" width="1200" height="1200" class="mb-3 block max-h-[240px] w-full rounded-[3px] bg-line-soft object-cover">
                 @else
@@ -151,7 +151,7 @@
 
                 <fieldset>
                     <legend class="mb-1 text-[12.5px] text-muted">Kolor napisu — <span x-text="inks[ink]?.name">{{ $ink['name'] }}</span></legend>
-                    <p class="mb-2.5 text-[12px] leading-[1.5] text-hint">Tylko dla Ciebie — klientki tego nie wybierają. Dopasuj do kubka, który masz w tle.</p>
+                    <p class="mb-2.5 text-[12px] leading-[1.5] text-hint">Tylko dla Ciebie — klienci tego nie wybierają. Dopasuj do kubka, który masz w tle.</p>
                     <div class="mb-5 flex flex-wrap gap-2.5">
                         @foreach ($inks as $colour)
                             <label title="{{ $colour['name'] }}" style="background-color: {{ $colour['hex'] }}"
@@ -243,7 +243,7 @@
                         @endif
                     @endforeach
                     <p class="mt-3 text-[12.5px] leading-[1.5] text-hint" aria-live="polite">
-                        Klientka wpisze najwyżej <span x-text="lines">{{ $maxLines }}</span> × <span x-text="chars">{{ $maxChars }}</span> znaków,
+                        Klient wpisze najwyżej <span x-text="lines">{{ $maxLines }}</span> × <span x-text="chars">{{ $maxChars }}</span> znaków,
                         czyli <span x-text="(parseInt(lines, 10) || 0) * (parseInt(chars, 10) || 0)">{{ $maxLines * $maxChars }}</span> liter do wbicia.
                         Najwyżej {{ MugOptions::MAX_LINES }} linii po {{ MugOptions::MAX_CHARS_PER_LINE }} znaków.
                     </p>

@@ -14,7 +14,7 @@
                 <td style="background: #F7ECE9; border: 1px solid #E0C3BC; border-radius: 4px; padding: 14px 16px; font-size: 14.5px; line-height: 1.6; color: #7A3A2E;">
                     {{ $nothingLeft ? 'Nic z tego zamówienia nie zostało na półce:' : 'Brakuje na półce:' }}
                     @foreach ($missing as $item){{ $item->product_name }} ({{ $item->variant_label }}, {{ $item->missing_quantity }} szt.){{ $loop->last ? '.' : ', ' }}@endforeach
-                    Ktoś zapłacił za to chwilę wcześniej. Klientka dostała maila, że zwrócisz jej {{ $order->money($refund) }} najpóźniej w ciągu 14 dni. Podobną sztukę zrób, jeśli o nią poprosi.
+                    Ktoś zapłacił za to chwilę wcześniej. Klient dostał maila, że zwrócisz mu {{ $order->money($refund) }} najpóźniej w ciągu 14 dni. Podobną sztukę zrób, jeśli o nią poprosi.
                 </td>
             </tr>
         </table>

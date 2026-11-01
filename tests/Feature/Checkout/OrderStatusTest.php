@@ -38,11 +38,11 @@ class OrderStatusTest extends TestCase
 
         $this->get('/panel/zamowienia/'.$order->number)
             ->assertOk()
-            ->assertSeeInOrder(['Status', 'W realizacji', 'Numer przesyłki', 'Wysłane — powiadom klientkę', 'Zakończ zamówienie', 'Oznacz problem']);
+            ->assertSeeInOrder(['Status', 'W realizacji', 'Numer przesyłki', 'Wysłane — powiadom klienta', 'Zakończ zamówienie', 'Oznacz problem']);
 
         $this->patch('/panel/zamowienia/'.$order->number.'/status', ['status' => 'shipped', 'tracking_number' => ' 6200 1234 5678 9012 '])
             ->assertRedirect('/panel/zamowienia/'.$order->number)
-            ->assertSessionHas('panel_status', 'Wysłane — klientka dostanie maila z numerem przesyłki.');
+            ->assertSessionHas('panel_status', 'Wysłane — klient dostanie maila z numerem przesyłki.');
 
         $order->refresh();
         $this->assertSame(OrderStatus::Shipped, $order->status);
@@ -66,7 +66,7 @@ class OrderStatusTest extends TestCase
 
         $this->get('/panel/zamowienia/'.$order->number)
             ->assertSeeInOrder(['Wysłane', 'Nr przesyłki', '6200123456789012', 'Doręczone — zakończ', 'Wróć do „W realizacji”'])
-            ->assertDontSee('Wysłane — powiadom klientkę');
+            ->assertDontSee('Wysłane — powiadom klienta');
     }
 
     public function test_an_order_can_end_have_a_problem_and_go_back_to_the_studio(): void
@@ -87,7 +87,7 @@ class OrderStatusTest extends TestCase
         $this->get('/panel/zamowienia?status=problem')
             ->assertSee('Problem (1)')
             ->assertSeeInOrder([$order->number, 'Problem']);
-        $this->get('/panel/zamowienia/'.$order->number)->assertSeeInOrder(['Problem', 'Paczka wróciła do nadawcy', 'Wysłane — powiadom klientkę']);
+        $this->get('/panel/zamowienia/'.$order->number)->assertSeeInOrder(['Problem', 'Paczka wróciła do nadawcy', 'Wysłane — powiadom klienta']);
 
         $this->patch('/panel/zamowienia/'.$order->number.'/status', ['status' => 'in_progress'])
             ->assertSessionHas('panel_status', 'Z powrotem w realizacji.');
@@ -139,7 +139,7 @@ class OrderStatusTest extends TestCase
             ->assertSee('Znowu wysłane — bez drugiego maila');
 
         $this->patch($url.'/status', ['status' => 'shipped', 'tracking_number' => ''])
-            ->assertSessionHas('panel_status', 'Znowu wysłane — klientka dostała maila za pierwszym razem, drugi nie wyjdzie.');
+            ->assertSessionHas('panel_status', 'Znowu wysłane — klient dostał maila za pierwszym razem, drugi nie wyjdzie.');
 
         $order->refresh();
         $this->assertSame([OrderStatus::Shipped, '620012345678901'], [$order->status, $order->tracking_number]);
@@ -177,7 +177,7 @@ class OrderStatusTest extends TestCase
 
         $this->get('/panel/zamowienia/'.$pickup->number)
             ->assertSee('Odebrane — zakończ')
-            ->assertDontSee('Wysłane — powiadom klientkę');
+            ->assertDontSee('Wysłane — powiadom klienta');
         $this->from('/panel/zamowienia/'.$pickup->number)
             ->patch('/panel/zamowienia/'.$pickup->number.'/status', ['status' => 'shipped'])
             ->assertSessionHasErrors(['status' => 'Tego statusu nie da się ustawić przy tym zamówieniu']);

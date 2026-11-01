@@ -74,7 +74,7 @@ class AdminComplaintRecordsTest extends TestCase
                 'name' => 'Wpisz imię i nazwisko osoby, która złożyła reklamację',
                 'email' => 'Adres e-mail bez małpy — sprawdź, czy nie uciekła',
                 'received_on' => 'Ta data jest w przyszłości — wpisz dzień, w którym reklamacja doszła',
-                'description' => 'Napisz krótko, co klientka zgłasza — np. „pęknięta miska, zdjęcie w mailu”',
+                'description' => 'Napisz krótko, co klient zgłasza — np. „pęknięta miska, zdjęcie w mailu”',
             ]);
 
         $this->assertSame(0, Complaint::count());

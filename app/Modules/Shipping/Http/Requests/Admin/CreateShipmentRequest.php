@@ -48,7 +48,7 @@ class CreateShipmentRequest extends FormRequest
         return [
             'size.required' => 'Wybierz rozmiar paczki',
             'size.in' => 'Wybierz rozmiar paczki',
-            'target_point.required' => 'Wpisz kod paczkomatu klientki, np. KRA01M',
+            'target_point.required' => 'Wpisz kod paczkomatu klienta, np. KRA01M',
             'target_point.regex' => 'Kod paczkomatu to litery i cyfry, np. KRA01M',
             'weight.required' => 'Wpisz wagę paczki w kilogramach',
             'weight.numeric' => 'Wagę wpisz liczbą, np. 1,5',

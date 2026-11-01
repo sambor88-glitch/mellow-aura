@@ -83,7 +83,7 @@ class WorkshopBookingMoveTest extends TestCase
 
         $this->post(route('admin.workshops.bookings.move', $booking), ['workshop_date_id' => $to->id, 'notify' => '1'])
             ->assertRedirect(route('admin.workshops.dates.bookings', $to).'#zapis-'.$booking->id)
-            ->assertSessionHas('panel_status', 'Zapis '.$order->number.' przeniesiony na sob. 7 listopada, 11:00 – 13:00. Miejsce na starym terminie jest wolne. Klientka dostanie maila z nowym terminem.');
+            ->assertSessionHas('panel_status', 'Zapis '.$order->number.' przeniesiony na sob. 7 listopada, 11:00 – 13:00. Miejsce na starym terminie jest wolne. Klient dostanie maila z nowym terminem.');
 
         $booking->refresh();
         $this->assertSame([$to->id, BookingStatus::Confirmed, null], [$booking->workshop_date_id, $booking->status, $booking->reminded_at]);

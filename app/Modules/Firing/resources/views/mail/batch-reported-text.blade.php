@@ -14,5 +14,5 @@ Telefon: {!! $firingRequest->phone !!}
 @endif
 
 --
-Klientka dostała tę samą wycenę mailem. Odpisz na tego maila — trafi prosto do niej. Napisz, gdzie ma przywieźć prace.
+Klient dostał tę samą wycenę mailem. Odpisz na tego maila — trafi prosto do niego. Napisz, gdzie ma przywieźć prace.
 Zgłoszenie w panelu: {!! route('admin.firing.requests.index') !!}#zgloszenie-{!! $firingRequest->id !!}

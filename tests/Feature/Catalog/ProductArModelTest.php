@@ -56,7 +56,7 @@ class ProductArModelTest extends TestCase
         // A model is not a photo: no thumbnails made from it.
         $this->assertSame([], array_filter($model->generated_conversions));
 
-        $this->get('/panel/produkty/'.$this->product->id)->assertOk()->assertSee('Model 3D — klientki zobaczą go u siebie')->assertSee($model->file_name);
+        $this->get('/panel/produkty/'.$this->product->id)->assertOk()->assertSee('Model 3D — klienci zobaczą go u siebie')->assertSee($model->file_name);
 
         $url = route('product.model', [$model, $model->file_name]);
         $this->get('/produkt/kubek-mleczna-droga')

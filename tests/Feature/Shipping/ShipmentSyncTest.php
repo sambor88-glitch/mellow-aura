@@ -93,7 +93,7 @@ class ShipmentSyncTest extends TestCase
 
         $order->refresh();
         $this->assertSame(OrderStatus::Problem, $order->status);
-        $this->assertSame('InPost: Wraca do Ciebie. Przesyłka '.self::TRACKING.'. Sprawdź ją w InPost Managerze i napisz do klientki.', $order->problem_note);
+        $this->assertSame('InPost: Wraca do Ciebie. Przesyłka '.self::TRACKING.'. Sprawdź ją w InPost Managerze i napisz do klienta.', $order->problem_note);
 
         $this->actingAs(User::factory()->create())
             ->get('/panel/zamowienia/'.$order->number)

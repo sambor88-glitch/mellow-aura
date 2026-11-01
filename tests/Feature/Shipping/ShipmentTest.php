@@ -64,7 +64,7 @@ class ShipmentTest extends TestCase
             ->get('/panel/zamowienia/'.$order->number)
             ->assertSee('Nadaj w InPost')
             ->assertSee('value="KRA01M"', false)
-            ->assertSee('Wybrany przez klientkę przy zakupie');
+            ->assertSee('Wybrany przez klienta przy zakupie');
 
         $this->actingAs(User::factory()->create())
             ->post('/panel/zamowienia/'.$order->number.'/przesylka', ['size' => 'small', 'target_point' => ' kra01m '])
@@ -161,7 +161,7 @@ class ShipmentTest extends TestCase
 
         $this->actingAs(User::factory()->create())
             ->post('/panel/zamowienia/'.$order->number.'/przesylka', ['size' => 'huge', 'target_point' => ''])
-            ->assertSessionHasErrors(['size' => 'Wybierz rozmiar paczki', 'target_point' => 'Wpisz kod paczkomatu klientki, np. KRA01M']);
+            ->assertSessionHasErrors(['size' => 'Wybierz rozmiar paczki', 'target_point' => 'Wpisz kod paczkomatu klienta, np. KRA01M']);
 
         Http::assertNothingSent();
     }

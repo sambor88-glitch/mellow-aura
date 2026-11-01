@@ -217,7 +217,7 @@ class VoucherBalanceTest extends TestCase
             ->assertSee('Oddaj 255 zł na voucher');
 
         $this->put('/panel/prezenty/zamowienie/'.$order->id.'/oddaj-na-voucher')
-            ->assertSessionHas('panel_status', '255 zł wróciło na vouchery. Klientka zapłaci nimi jeszcze raz tym samym kodem.');
+            ->assertSessionHas('panel_status', '255 zł wróciło na vouchery. Klient zapłaci nimi jeszcze raz tym samym kodem.');
 
         $this->assertSame(30000, $voucher->fresh()->balance_minor);
         $this->assertSame(RedemptionStatus::Returned, VoucherRedemption::sole()->status);

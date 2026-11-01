@@ -34,9 +34,9 @@
                     @method('patch')
                     <input type="hidden" name="status" value="{{ OrderStatus::Shipped->value }}">
                     <input type="hidden" name="tracking_number" value="{{ $shipment->tracking_number }}">
-                    <button class="w-full rounded-full bg-ink p-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Wysłane — powiadom klientkę</button>
+                    <button class="w-full rounded-full bg-ink p-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Wysłane — powiadom klienta</button>
                 </form>
-                <p class="mt-1.5 text-[12.5px] text-hint">Klientka dostanie maila z numerem przesyłki. Możesz też nic nie klikać — gdy InPost odbierze paczkę, mail pójdzie sam.</p>
+                <p class="mt-1.5 text-[12.5px] text-hint">Klient dostanie maila z numerem przesyłki. Możesz też nic nie klikać — gdy InPost odbierze paczkę, mail pójdzie sam.</p>
             @endif
         @else
             <form method="post" action="{{ route('admin.orders.shipment.store', $order) }}" class="grid gap-3">
@@ -54,9 +54,9 @@
                     @enderror
                 </fieldset>
                 @if ($locker)
-                    <x-shared::field name="target_point" label="Paczkomat klientki" :value="old('target_point', $order->locker_code)"
+                    <x-shared::field name="target_point" label="Paczkomat klienta" :value="old('target_point', $order->locker_code)"
                                      autocomplete="off" autocapitalize="characters" spellcheck="false"
-                                     :hint="$order->locker_code ? 'Wybrany przez klientkę przy zakupie' : 'Klientka nie wybrała — dobierz najbliższy po numerze telefonu'" />
+                                     :hint="$order->locker_code ? 'Wybrany przez klienta przy zakupie' : 'Klient nie wybrał — dobierz najbliższy po numerze telefonu'" />
                 @else
                     <x-shared::field name="weight" label="Waga w kg" inputmode="decimal" :value="old('weight', '2')" hint="Kurier InPost bierze paczki do 30 kg" />
                 @endif

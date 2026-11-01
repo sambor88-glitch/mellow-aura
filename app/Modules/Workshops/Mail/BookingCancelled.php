@@ -53,7 +53,7 @@ class BookingCancelled extends QueuedMail implements HasEditableTexts
 
     public function description(): string
     {
-        return 'Anulowanie zapisu na warsztat — mail do klientki '.$this->booking->order->number;
+        return 'Anulowanie zapisu na warsztat — mail do klienta '.$this->booking->order->number;
     }
 
     public function envelope(): Envelope
