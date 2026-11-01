@@ -10,7 +10,8 @@ use Illuminate\Http\Response;
  * The panel as an app on Kasia's phone (MA-328): added to the home screen, it opens without the browser's bar.
  *
  * The three files sit outside the login: the browser fetches the manifest and the worker without asking anyone,
- * and they hold nothing but the panel's name, colours and a page that says the phone is offline.
+ * and they hold nothing but the panel's name, colours and a page that says the phone is offline. They sit outside
+ * the session as well (MA-354, routes/web.php), so a fetch between a save and the page after it keeps „Zapisane…”.
  * The worker keeps only that page. No screen of the panel is ever stored on the phone — it shows customers'
  * names, addresses and orders, and a lost phone must not give them away.
  */

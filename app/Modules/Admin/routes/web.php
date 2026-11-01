@@ -3,7 +3,12 @@
 use App\Modules\Admin\Http\Controllers\LoginController;
 use App\Modules\Admin\Http\Controllers\PanelAppController;
 use App\Modules\Admin\Http\Controllers\PasswordController;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 Route::middleware('guest')->group(function () {
     Route::get('/panel/logowanie', [LoginController::class, 'show'])->name('admin.login');
@@ -16,6 +21,20 @@ Route::middleware('guest')->group(function () {
 });
 
 // The panel as an app on the phone (MA-328). Outside the login: the browser fetches these on its own.
-Route::get('/panel/manifest.webmanifest', [PanelAppController::class, 'manifest'])->name('admin.app.manifest');
-Route::get('/panel/sw.js', [PanelAppController::class, 'worker'])->name('admin.app.worker');
-Route::get('/panel/brak-polaczenia', [PanelAppController::class, 'offline'])->name('admin.app.offline');
+// Outside the session and cookies too (MA-354): the browser fetches them whenever it likes, also between a form's POST
+// and the page it redirects to. Through the session, that request would use up the flash meant for the page —
+// „Zapisane…”, the errors under the fields, „Mam Twój pomysł…” — and the page would show nothing.
+// A class here also drops its subclasses: StartSession covers the shop's own from Shared. Not the other way round —
+// ValidateCsrfToken would miss PreventRequestForgery, the parent that Laravel 13 puts in the group.
+Route::withoutMiddleware([
+    EncryptCookies::class,
+    AddQueuedCookiesToResponse::class,
+    StartSession::class,
+    ShareErrorsFromSession::class,
+    PreventRequestForgery::class,
+])->group(function () {
+    Route::get('/panel/manifest.webmanifest', [PanelAppController::class, 'manifest'])->name('admin.app.manifest');
+    Route::get('/panel/sw.js', [PanelAppController::class, 'worker'])->name('admin.app.worker');
+    // The worker stores this page when it installs, so the browser fetches it on its own as well.
+    Route::get('/panel/brak-polaczenia', [PanelAppController::class, 'offline'])->name('admin.app.offline');
+});
