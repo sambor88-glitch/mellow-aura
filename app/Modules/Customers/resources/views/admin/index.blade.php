@@ -2,14 +2,15 @@
     $field = 'min-w-0 rounded-[4px] border border-line bg-white px-3 py-2.5 text-[14px] text-ink focus:border-ink';
 @endphp
 <x-admin::layout title="Klienci" lead="Każda osoba, która coś kupiła, zapisała się, wysłała pomysł albo wsad — zebrana po adresie e-mail. Tu przygotujesz jej kopię danych albo usuniesz dane, gdy o to poprosi.">
-    <form method="get" action="{{ route('admin.customers.index') }}" role="search" class="mb-6 flex flex-wrap items-end gap-2.5">
-        <label for="szukaj" class="grid min-w-0 flex-[1_1_280px] gap-1.5 text-[12.5px] text-label">
-            Imię, e-mail albo telefon
-            <input id="szukaj" name="szukaj" type="search" value="{{ $query }}" autocomplete="off" class="{{ $field }}">
-        </label>
-        <button class="min-h-11 rounded-full bg-ink px-6 text-[13.5px] text-linen hover:bg-navy">Szukaj</button>
+    <form method="get" action="{{ route('admin.customers.index') }}" role="search" class="mb-6 grid gap-1.5">
+        <label for="szukaj" class="text-[12.5px] text-label">Imię, e-mail albo telefon</label>
+        {{-- The field and its button stay on one row, so on a phone the button does not hang alone under it (MA-333). --}}
+        <div class="flex gap-2">
+            <input id="szukaj" name="szukaj" type="search" value="{{ $query }}" autocomplete="off" class="{{ $field }} flex-1">
+            <button class="min-h-11 flex-none rounded-full bg-ink px-6 text-[13.5px] text-linen hover:bg-navy">Szukaj</button>
+        </div>
         @if ($query !== '')
-            <a href="{{ route('admin.customers.index') }}" class="min-h-11 px-2 py-3 text-[13px] text-lead">Pokaż wszystkie</a>
+            <a href="{{ route('admin.customers.index') }}" class="inline-flex min-h-11 items-center justify-self-start text-[13px] text-lead">Pokaż wszystkie</a>
         @endif
     </form>
 
