@@ -291,7 +291,9 @@ npm install && npm run dev        # Vite na Macu, nie w kontenerze
   `PRZELEWY24_WALLETS=true` — kasa pokazuje Apple Pay i Google Pay; ustaw dopiero, gdy P24 włączy portfele na koncie (MA-98).
 - Maile: Postmark (`MAIL_MAILER=postmark`, `POSTMARK_API_KEY`), konto na kasia@mellow-aura.com, serwer „My First Server”.
   `MAIL_REDIRECT_TO=kasia@mellow-aura.com` — każdy mail ze stagingu trafia do Kasi z adresatem w temacie `[do: …]`.
-  Wniosek o zatwierdzenie konta wysłany 25.10 (wg Macieja; odpowiedź Postmarka do sprawdzenia). Do zatwierdzenia maile dochodzą tylko na adresy @mellow-aura.com.
+  Konto zatwierdzone 1.11 (MA-28) — maile dochodzą na każdy adres. Plan darmowy: 100 maili miesięcznie, wspólne dla stagingu
+  i produkcji, odnowienie 17. dnia miesiąca. Około 5 maili na zamówienie, więc próby na stagingu oszczędnie; przy liczniku
+  około 80 (Postmark → Account → Plans) przejść na Basic (15 $ miesięcznie, 10 000 maili) — decyzja Macieja 1.11.
 - Worker kolejki: Forge → strona → Processes (`queue:work database`). Deploy wysyła `queue:restart`, ale 25.10 worker
   i tak został na starym wdrożeniu bez tokenu Postmarka (w logu `User is not set`, maile zamówień nie wychodziły).
   Po każdej zmianie w Environment: Deploy, potem **Restart workera w Processes**, potem próbne zamówienie
