@@ -40,7 +40,7 @@ class StudioPageTest extends TestCase
                 'Przy jednym stole siada najwyżej sześć osób',
                 'Dokładny adres podaję po zapisaniu się',
             ])
-            ->assertSeeInOrder(['dobrze wiedzieć', 'Do 6 osób', 'Przy jednym stole, bez tłoku.', 'Wysyłka prac', 'Jeśli nie możesz przyjechać — wyślę.'])
+            ->assertSeeInOrder(['Dobrze wiedzieć', 'Do 6 osób', 'Przy jednym stole, bez tłoku.', 'Wysyłka prac', 'Jeśli nie możesz przyjechać — wyślę.'])
             ->assertSeeInOrder(['alt="Kubek z wbijanym tekstem"', 'alt="Filiżanka na talerzyku z malowaną lawendą"'], false)
             ->assertDontSee('ul. Tajna 7');
     }
@@ -72,6 +72,27 @@ class StudioPageTest extends TestCase
             ->assertDontSee('nie fakt')
             ->assertDontSee('Zgubione zdjęcie')
             ->assertSee('alt="Misa w kolorze laguny"', false);
+    }
+
+    public function test_the_facts_card_takes_its_heading_from_the_panel(): void
+    {
+        $this->settings(['studio_facts_heading' => 'Zanim przyjdziesz <b>']);
+
+        $this->get('/pracownia')
+            ->assertOk()
+            ->assertSeeInOrder(['<h2 class="mb-[18px] text-[11px] tracking-[0.2em] text-brown uppercase">Zanim przyjdziesz &lt;b&gt;</h2>', '<dt class="text-ink">Do 6 osób</dt>'], false)
+            ->assertDontSee('Dobrze wiedzieć');
+    }
+
+    public function test_an_empty_heading_leaves_the_card_with_its_facts_only(): void
+    {
+        $this->settings(['studio_facts_heading' => null]);
+
+        $this->get('/pracownia')
+            ->assertOk()
+            ->assertDontSee('tracking-[0.2em] text-brown uppercase', false)
+            ->assertDontSee('Dobrze wiedzieć')
+            ->assertSee('<dt class="text-ink">Do 6 osób</dt>', false);
     }
 
     public function test_the_photos_come_from_zdjecia_stron_with_their_point_and_twelve_fill_whole_rows(): void

@@ -39,7 +39,7 @@ class AdminContentTest extends TestCase
             ->assertSee('>Treści</a>', false)
             ->assertSeeInOrder(['Strona główna', 'Lubię łączyć surowość z miękkością', 'O mnie', 'href="'.route('content.about').'"', 'Tworzę MellowAura', 'Pracownia', 'Warsztaty, które uczą', 'Kontakt', 'Odpisuję zwykle tego samego dnia', 'Hasło pod logo', 'Domowa pracownia w Krakowie'], false)
             ->assertSeeInOrder(['Częste pytania', 'value="Jak szybko wyślesz zamówienie?"', 'Rzeczy, które są na stanie', 'value="Wysyłasz za granicę?"', 'placeholder="Nowe pytanie"'], false)
-            ->assertSeeInOrder(['Pracownia — dobrze wiedzieć', 'value="Do 6 osób"', 'value="Przy jednym stole, bez tłoku."'], false)
+            ->assertSeeInOrder(['Pracownia — dobrze wiedzieć', 'Nagłówek karty', 'value="Dobrze wiedzieć"', 'value="Do 6 osób"', 'value="Przy jednym stole, bez tłoku."'], false)
             ->assertSeeInOrder(['Sprawy w formularzu kontaktowym', 'value="Zamówienie ze sklepu"', 'value="Współpraca albo prasa"'], false)
             ->assertSee('aria-label="Przesuń niżej: Jak szybko wyślesz zamówienie?"', false)
             ->assertDontSee('aria-label="Przesuń wyżej: Jak szybko wyślesz zamówienie?"', false);
@@ -156,5 +156,40 @@ class AdminContentTest extends TestCase
         app(Settings::class)->refresh();
         $this->get('/pracownia')->assertSee('Do 4 osób')->assertSee('Herbata w cenie')->assertDontSee('Od 6 lat');
         $this->get('/kontakt')->assertSeeInOrder(['W jakiej sprawie?', 'Warsztaty', 'Zamówienie ze sklepu'])->assertDontSee('Współpraca albo prasa');
+    }
+
+    public function test_the_studio_facts_heading_is_saved_with_the_facts_and_can_be_emptied(): void
+    {
+        $facts = [['title' => 'Do 6 osób', 'text' => 'Przy jednym stole, bez tłoku.']];
+
+        $this->actingAs($this->owner)
+            ->put('/panel/tresci/pracownia', ['facts_heading' => '  Zanim przyjdziesz  ', 'facts' => $facts])
+            ->assertRedirect('/panel/tresci#pracownia')
+            ->assertSessionHas('panel_status', 'Fakty o pracowni zapisane');
+
+        $this->assertSame('Zanim przyjdziesz', Setting::find('studio_facts_heading')->value);
+
+        app(Settings::class)->refresh();
+        $this->get('/pracownia')->assertSeeInOrder(['Zanim przyjdziesz', 'Do 6 osób'])->assertDontSee('Dobrze wiedzieć');
+        $this->get('/panel/tresci')->assertSee('value="Zanim przyjdziesz"', false);
+
+        $this->put('/panel/tresci/pracownia', ['facts_heading' => '', 'facts' => $facts])->assertRedirect('/panel/tresci#pracownia');
+
+        $this->assertNull(Setting::find('studio_facts_heading')->value);
+        app(Settings::class)->refresh();
+        $this->get('/pracownia')->assertSee('Do 6 osób')->assertDontSee('Zanim przyjdziesz');
+    }
+
+    public function test_a_studio_facts_heading_too_long_is_explained_and_nothing_is_saved(): void
+    {
+        $this->actingAs($this->owner)
+            ->followingRedirects()
+            ->put('/panel/tresci/pracownia', ['facts_heading' => str_repeat('a', 41), 'facts' => [['title' => 'Do 4 osób', 'text' => '']]])
+            ->assertSee('Popraw zaznaczone pola, żeby zapisać.')
+            ->assertSee('Nagłówek zmieszczę do 40 znaków')
+            ->assertSee('value="'.str_repeat('a', 41).'"', false);
+
+        $this->assertSame('Dobrze wiedzieć', Setting::find('studio_facts_heading')->value);
+        $this->assertSame('Do 6 osób', Setting::find('studio_facts')->value[0]['title']);
     }
 }
