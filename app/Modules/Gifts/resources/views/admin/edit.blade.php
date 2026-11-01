@@ -139,7 +139,9 @@
                     @endif
                 </div>
                 @foreach (['recipients' => ['Dla kogo', 'osobę', 'np. Dla babci'], 'occasions' => ['Okazja', 'okazję', 'np. Komunia']] as $list => [$legend, $what, $example])
-                    @php($tagList = $tagRows[$list])
+                    @php
+                        $tagList = $tagRows[$list];
+                    @endphp
                     <fieldset class="mb-5" id="szukam-{{ $list }}">
                         <legend class="mb-2 text-[11.5px] tracking-[0.1em] text-label uppercase">{{ $legend }}</legend>
                         <div class="grid gap-2">
