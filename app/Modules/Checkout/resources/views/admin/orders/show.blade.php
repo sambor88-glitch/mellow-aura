@@ -12,7 +12,7 @@
     $action = 'w-full rounded-full border border-line-strong px-4 py-2.5 text-[13.5px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark active:scale-[.98]';
 @endphp
 <x-admin::layout title="Zamówienie {{ $order->number }}">
-    <a href="{{ route('admin.orders.index') }}" class="mb-5 inline-block text-[13.5px]">← Wszystkie zamówienia</a>
+    <a href="{{ route('admin.orders.index') }}" class="mb-3 inline-flex min-h-11 items-center text-[13.5px]">← Wszystkie zamówienia</a>
 
     {{-- On a phone the two columns become one, and what Kasia needs while packing comes first: an unhandled withdrawal,
          the status with the next step, then the address. The items follow (MA-314). --}}

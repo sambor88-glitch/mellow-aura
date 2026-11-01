@@ -5,7 +5,7 @@
 @endphp
 <x-admin::layout title="Zapisy" :lead="collect([$workshop ?? 'warsztatu nie ma już w cenniku', $date->starts_at->translatedFormat('l, j F'), $date->timeLabel()])->join(' · ')">
     <div class="mb-6 flex flex-wrap items-baseline justify-between gap-x-5 gap-y-2">
-        <a href="{{ route('admin.workshops.edit') }}#terminy" class="text-[13px]">← Terminarz</a>
+        <a href="{{ route('admin.workshops.edit') }}#terminy" class="inline-flex min-h-11 items-center text-[13px]">← Terminarz</a>
         <p class="text-[13.5px] text-graphite tabular-nums">Zajęte {{ $taken }} z {{ $date->seats }} · {{ $date->seatsLeftLabel() }}</p>
     </div>
 

@@ -18,7 +18,7 @@
     ]);
 @endphp
 <x-admin::layout :title="$customer->name">
-    <a href="{{ route('admin.customers.index') }}" class="mb-5 inline-block text-[13px] text-lead">← Wszyscy klienci</a>
+    <a href="{{ route('admin.customers.index') }}" class="mb-3 inline-flex min-h-11 items-center text-[13px] text-lead">← Wszyscy klienci</a>
 
     <div class="{{ $card }} mb-5 flex flex-wrap items-center gap-x-6 gap-y-3">
         <div class="min-w-0 flex-[1_1_260px]">

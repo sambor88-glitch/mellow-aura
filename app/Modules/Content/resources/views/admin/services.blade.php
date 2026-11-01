@@ -39,7 +39,7 @@
             @foreach (Service::cases() as $tab)
                 <a href="{{ route('admin.services.edit', $tab->slug()) }}" @if ($tab === $service) aria-current="page" @endif
                    @class([
-                       'rounded-full border px-[18px] py-[9px] text-[13.5px]',
+                       'rounded-full border px-3 py-[9px] text-[13.5px] md:px-[18px]',
                        'border-ink bg-ink text-linen hover:text-linen' => $tab === $service,
                        'border-line-strong text-lead hover:border-ink hover:bg-sand hover:text-ink' => $tab !== $service,
                    ])>{{ $tab->label() }}</a>
