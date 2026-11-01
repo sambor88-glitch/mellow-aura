@@ -1064,3 +1064,13 @@ form[data-dirty]::before {
     background: var(--color-cream);
     box-shadow: 0 18px 40px -20px rgb(47 38 32 / .55);
 }
+
+/*
+ * A field under 16 px makes Safari on an iPhone zoom the page in on tap (mellowaura-aplikacja, „Pola formularza”).
+ * Panel screens set their own 13.5–15 px field classes; outside the layers this beats every one of them, on touch only (MA-335).
+ */
+@media (pointer: coarse) {
+    :where(input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"], [type="submit"], [type="button"], [type="reset"], [type="image"], [type="hidden"]), select, textarea) {
+        font-size: 16px;
+    }
+}

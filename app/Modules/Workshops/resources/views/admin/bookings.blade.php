@@ -70,7 +70,7 @@
                                     <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
                                         <label class="flex min-h-11 items-center gap-2 text-[13px] text-graphite">
                                             <input type="checkbox" name="notify" value="1" checked class="size-4 accent-ink">
-                                            Wyślij klientce maila z nowym terminem i adresem
+                                            Wyślij klientowi maila z nowym terminem i adresem
                                         </label>
                                         <button class="ml-auto min-h-11 rounded-full bg-ink px-5 text-[13px] text-linen hover:bg-rose hover:text-ink">Przenieś zapis</button>
                                     </div>
@@ -86,12 +86,12 @@
                         @if ($booking->status === BookingStatus::Confirmed && $booking->voucher)
                             <label class="flex min-h-11 items-center gap-2 text-[13px] text-graphite">
                                 <input type="checkbox" name="notify" value="1" checked class="size-4 accent-ink">
-                                Wyślij klientce maila, że voucher znów jest ważny
+                                Wyślij klientowi maila, że voucher znów jest ważny
                             </label>
                         @elseif ($booking->status === BookingStatus::Confirmed)
                             <label class="flex min-h-11 items-center gap-2 text-[13px] text-graphite">
                                 <input type="checkbox" name="notify" value="1" checked class="size-4 accent-ink">
-                                Wyślij klientce maila o anulowaniu i zwrocie
+                                Wyślij klientowi maila o anulowaniu i zwrocie
                             </label>
                         @elseif ($booking->status === BookingStatus::Overbooked)
                             <p class="text-[13px] text-muted">Klient dostał już maila o zwrocie.</p>

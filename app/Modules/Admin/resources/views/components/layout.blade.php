@@ -27,8 +27,9 @@
     @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-sand-dark" x-data="{ menu: false }" x-on:keydown.escape.window="if (menu) { menu = false; $refs.menuButton.focus() }">
+<body class="bg-sand-dark" x-data="{ menu: false }" x-on:keydown.escape.window="if (menu) { menu = false; document.getElementById('panel-menu-button').focus() }">
     {{-- On a phone the sections hide under „Menu” and the bar names the screen, so the orders come first (MA-249). --}}
+    {{-- Escape reaches the button by id: it sits inside the header's own Alpine component, out of reach of $refs here (MA-335). --}}
     {{-- The search (MA-308) lives in the header: the pill on a computer, the magnifier next to „Menu” on a phone. --}}
     @php($owner = auth()->user()?->isOwner())
     <header class="border-b border-line" @auth x-data="panelSearch(@js([
@@ -38,7 +39,7 @@
     ]))" @endauth>
         <div class="mx-auto flex max-w-[1280px] items-center gap-x-3 px-4 py-3 md:gap-x-6 md:px-7 md:py-4">
             @auth
-                <button type="button" x-ref="menuButton" x-on:click="menu = ! menu" aria-controls="panel-menu" aria-expanded="false" x-bind:aria-expanded="menu.toString()"
+                <button type="button" id="panel-menu-button" x-on:click="menu = ! menu" aria-controls="panel-menu" aria-expanded="false" x-bind:aria-expanded="menu.toString()"
                         x-bind:class="menu ? 'border-ink bg-ink text-linen' : 'border-line-strong bg-cream text-ink'"
                         class="inline-flex min-h-11 flex-none items-center gap-2 rounded-full border py-0 pr-2 pl-4 text-[13.5px] md:hidden">
                     Menu

@@ -10,7 +10,7 @@
     $field = 'min-w-0 rounded-[4px] border border-line bg-white px-3 py-2 text-[13.5px] text-ink focus:border-ink';
     $bag = $errors->getBag('pomysl');
 @endphp
-<x-admin::layout title="Zamówienia indywidualne" lead="Pomysły z formularza na stronie zamówień indywidualnych, od najstarszego. Każdy przyszedł też do Ciebie mailem ze zdjęciami — na maila odpowiadasz klientce, tutaj zapisujesz wycenę i notatkę dla siebie.">
+<x-admin::layout title="Zamówienia indywidualne" lead="Pomysły z formularza na stronie zamówień indywidualnych, od najstarszego. Każdy przyszedł też do Ciebie mailem ze zdjęciami — na maila odpowiadasz klientowi, tutaj zapisujesz wycenę i notatkę dla siebie.">
     <nav aria-label="Status" class="mb-6 flex flex-wrap gap-2">
         <a href="{{ route('admin.custom-orders.index') }}" @if ($current === null) aria-current="page" @endif class="{{ $filter }} {{ $current === null ? $filterOn : $filterOff }}">Do zrobienia ({{ $openCount }})</a>
         @foreach (CustomOrderStatus::cases() as $status)

@@ -39,7 +39,7 @@ class CheckQueueCommand extends Command
             $alerts->send(
                 key: 'queue-silent',
                 subject: 'Kolejka nie działa od '.$silentFor.' min',
-                details: 'Proces queue:work nie dał znaku życia od '.$silentFor.' min. Zadań w kolejce: '.$waiting.' — to głównie maile do klientek, które czekają na wysłanie.'
+                details: 'Proces queue:work nie dał znaku życia od '.$silentFor.' min. Zadań w kolejce: '.$waiting.' — to głównie maile do klientów, które czekają na wysłanie.'
                     ."\n\nSprawdź proces na Forge (serwer → Background processes) i storage/logs/laravel.log.",
             );
         } elseif ($waitingFor >= $limit) {

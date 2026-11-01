@@ -143,19 +143,20 @@
                 <h1 class="font-serif text-[length:clamp(28px,4vw,44px)] leading-[1.05] font-light text-balance">{{ $product->name }}</h1>
                 <p class="mt-1.5 text-[13px] text-label">{{ $product->category->name }} &middot; <span class="text-lead tabular-nums">{{ $price }}</span> &middot; <span class="text-lead tabular-nums">{{ $stock }}</span></p>
             </div>
-            <div class="flex flex-[1_1_100%] items-center gap-2 md:flex-none">
-                <label x-data="{ on: @js($published) }" class="inline-flex min-h-11 flex-1 cursor-pointer items-center gap-2.5 rounded-full border border-line-strong bg-cream py-0 pr-4 pl-2 text-[13px] whitespace-nowrap text-lead hover:border-ink md:flex-none">
+            {{-- On a phone: the switch on its own row, the two actions as equal halves under it, nothing pushed off the screen (MA-335). --}}
+            <div class="grid flex-[1_1_100%] grid-cols-2 gap-2 md:flex md:flex-none md:items-center">
+                <label x-data="{ on: @js($published) }" class="col-span-2 inline-flex min-h-11 cursor-pointer items-center gap-2.5 rounded-full border border-line-strong bg-cream py-0 pr-4 pl-2 text-[13px] whitespace-nowrap text-lead hover:border-ink md:flex-none">
                     <input type="checkbox" form="{{ $formKey }}" name="is_published" value="1" x-model="on" @checked($published) class="peer sr-only">
                     <span aria-hidden="true" class="switch-track"></span>
                     <span><span x-text="on ? 'Widoczny' : 'Ukryty'">{{ $published ? 'Widoczny' : 'Ukryty' }}</span> w sklepie</span>
                 </label>
                 @if ($product->is_published)
-                    <x-shared::button href="{{ route('product.show', $product) }}" target="_blank" variant="glass" size="md">Zobacz w sklepie ↗</x-shared::button>
+                    <x-shared::button href="{{ route('product.show', $product) }}" target="_blank" variant="glass" size="md" class="whitespace-nowrap max-md:px-3">Zobacz w sklepie ↗</x-shared::button>
                 @endif
                 {{-- A hidden copy right after this product, with its name ready to change (MA-307). --}}
-                <form method="post" action="{{ route('admin.products.duplicate', $product) }}" class="flex-none">
+                <form method="post" action="{{ route('admin.products.duplicate', $product) }}" @class(['flex-none', 'col-span-2' => ! $product->is_published])>
                     @csrf
-                    <x-shared::button type="submit" variant="glass" size="md">Duplikuj</x-shared::button>
+                    <x-shared::button type="submit" variant="glass" size="md" class="w-full whitespace-nowrap max-md:px-3 md:w-auto">Duplikuj</x-shared::button>
                 </form>
             </div>
         </div>

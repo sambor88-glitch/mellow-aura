@@ -79,7 +79,7 @@ class WorkshopBookingMoveTest extends TestCase
             ->assertSee('Przenieś na inny termin')
             ->assertSee('sob. 7 listopada, 11:00 – 13:00 · 3 wolne miejsca')
             ->assertDontSee('value="'.$other->id.'"', false)
-            ->assertSee('Wyślij klientce maila z nowym terminem i adresem');
+            ->assertSee('Wyślij klientowi maila z nowym terminem i adresem');
 
         $this->post(route('admin.workshops.bookings.move', $booking), ['workshop_date_id' => $to->id, 'notify' => '1'])
             ->assertRedirect(route('admin.workshops.dates.bookings', $to).'#zapis-'.$booking->id)

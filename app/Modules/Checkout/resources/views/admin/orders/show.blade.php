@@ -127,7 +127,7 @@
                                                              :value="$bag->any() ? old('glaze') : ($item->glaze ?? '')" />
                                         </div>
                                         <x-shared::field name="plant" id="plant-{{ $item->id }}" label="Roślina" :bag="'piece'.$item->id" maxlength="120"
-                                                         :value="$bag->any() ? old('plant') : ($item->plant ?? '')" hint="Nieobowiązkowe — puste pola nie pokażą się klientce" />
+                                                         :value="$bag->any() ? old('plant') : ($item->plant ?? '')" hint="Nieobowiązkowe — puste pola nie pokażą się klientowi" />
                                         {{-- Shown only on the page of the piece, in place of the quote every piece shares (MA-292). --}}
                                         @php($noteError = $bag->first('maker_note'))
                                         <div class="min-w-0">
