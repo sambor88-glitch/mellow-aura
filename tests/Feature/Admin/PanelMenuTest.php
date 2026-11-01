@@ -121,7 +121,7 @@ class PanelMenuTest extends TestCase
             ->assertSee('x-bind:aria-expanded="menu.toString()"', false)
             ->assertSee('id="panel-menu"', false)
             ->assertSee("x-bind:class=\"{ 'max-md:hidden': ! menu }\"", false)
-            ->assertSee('<span aria-hidden="true" class="min-w-0 flex-1 truncate font-serif text-[21px] font-light md:hidden">Zamówienia</span>', false);
+            ->assertSee('<span aria-hidden="true" class="line-clamp-2 min-w-0 flex-1 font-serif text-[20px] leading-[1.1] font-light text-balance md:hidden">Zamówienia</span>', false);
     }
 
     public function test_the_login_page_has_no_menu(): void

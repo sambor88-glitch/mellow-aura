@@ -47,7 +47,7 @@ class AdminServicesTest extends TestCase
             ->assertSee('href="'.route('content.scarf').'" target="_blank"', false)
             ->assertSeeInOrder(['Jeszcze nie ma par', 'Nowa para', 'Dodaj parę zdjęć'])
             ->assertSee("Apaszka babci\nnie musi leżeć\nw szafie</textarea>", false)
-            ->assertSeeInOrder(['value="Opaska szeroka, pikowana"', 'value="119"', 'value="Zestaw: opaska i dwie scrunchies"', 'value="199"', 'placeholder="Nowa pozycja"'], false)
+            ->assertSeeInOrder(['value="Opaska szeroka, pikowana"', 'value="119"', 'value="Zestaw: opaska i dwie scrunchies"', 'value="199"', 'Nowa pozycja — nazwa'], false)
             ->assertSee('aria-label="Przesuń niżej: Opaska szeroka, pikowana"', false)
             ->assertSeeInOrder(['value="Wysyłasz zdjęcie tkaniny"', 'value="Szyję i odsyłam"', 'placeholder="Nowy krok"'], false)
             ->assertDontSee('value="Talerzyk deserowy 18 cm"', false);
