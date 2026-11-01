@@ -30,7 +30,7 @@ class B2bPageTest extends TestCase
             ->assertSee('<title>Ceramika dla kawiarni i restauracji | MellowAura</title>', false)
             ->assertSee('<meta name="description" content="Powtarzalne formy w ręcznej ceramice dla kawiarni i restauracji: minimum 12 sztuk, próbka przed serią, dosypka po stłuczkach, logo lub sygnatura.">', false)
             ->assertSee('focus-on-dark', false)
-            ->assertSeeInOrder(['dla kawiarni, restauracji i hoteli', 'Naczynia, które<br>widać na zdjęciach<br>Twoich gości', 'Ręczna ceramika w powtarzalnej formie', $contact, 'Poproś o wycenę'], false)
+            ->assertSeeInOrder(['dla kawiarni, restauracji i hoteli', "whitespace-pre-line text-cream\">Naczynia, które\nwidać na zdjęciach\nTwoich gości</h1>", 'Ręczna ceramika w powtarzalnej formie', $contact, 'Poproś o wycenę'], false)
             ->assertSeeInOrder(['Minimum 12 sztuk', 'Od dwunastu robi się sens', 'Próbka przed serią', 'Dosypka po stłuczkach', 'Logo lub sygnatura', 'Faktura i przelew z terminem 14 dni.'])
             ->assertSeeInOrder(['Prowadzicie lokal w Krakowie?', 'Przywiozę próbki', 'href="https://wa.me/48600100200"', $contact, 'Umów spotkanie'], false);
 
@@ -41,11 +41,13 @@ class B2bPageTest extends TestCase
 
     public function test_empty_cards_and_texts_are_left_out(): void
     {
-        $this->settings(['b2b_facts' => [['title' => '', 'text' => 'Bez nagłówka']], 'text_b2b_lead' => null, 'text_b2b_cta_heading' => null, 'text_b2b_cta' => null]);
+        $this->settings(['b2b_facts' => [['title' => '', 'text' => 'Bez nagłówka']], 'text_b2b_eyebrow' => null, 'text_b2b_heading' => null, 'text_b2b_lead' => null, 'text_b2b_cta_heading' => null, 'text_b2b_cta' => null]);
 
         $this->get('/ceramika-dla-gastronomii')
             ->assertOk()
             ->assertSee('<meta name="description" content="Powtarzalne formy w ręcznej ceramice dla kawiarni i restauracji.">', false)
+            ->assertDontSee('dla kawiarni, restauracji i hoteli')
+            ->assertSee('text-cream">Ceramika dla kawiarni i restauracji</h1>', false)
             ->assertDontSee('Bez nagłówka')
             ->assertDontSee('Ręczna ceramika w powtarzalnej formie')
             ->assertSee('Porozmawiajmy o Twoim lokalu')
@@ -68,11 +70,26 @@ class B2bPageTest extends TestCase
 
         $this->assertEquals([['title' => 'Minimum 24 sztuki', 'text' => 'Od tylu robię serię.']], Setting::find('b2b_facts')->value);
 
-        $this->put('/panel/tresci/teksty', ['text_b2b_lead' => 'Kubki do kawiarni.', 'text_b2b_cta_heading' => 'Macie kawiarnię?', 'text_b2b_cta' => '']);
+        $this->get('/panel/tresci')
+            ->assertSeeInOrder(['Nad nagłówkiem — małymi literami', 'dla kawiarni, restauracji i hoteli</textarea>', 'Nagłówek', "Naczynia, które\nwidać na zdjęciach\nTwoich gości</textarea>", 'Puste pole pokaże „Ceramika dla kawiarni i restauracji”'], false);
+
+        $this->put('/panel/tresci/teksty', [
+            'text_b2b_eyebrow' => 'dla kawiarni i hoteli',
+            'text_b2b_heading' => "Kubki, do których\r\nwracają goście ",
+            'text_b2b_lead' => 'Kubki do kawiarni.',
+            'text_b2b_cta_heading' => 'Macie kawiarnię?',
+            'text_b2b_cta' => '',
+        ]);
+        $this->assertSame("Kubki, do których\nwracają goście", Setting::find('text_b2b_heading')->value);
         $this->get('/ceramika-dla-gastronomii')
             ->assertSee('dla kawiarni i restauracji: minimum 24 sztuki.">', false)
-            ->assertSeeInOrder(['Kubki do kawiarni.', 'Minimum 24 sztuki', 'Macie kawiarnię?'])
+            ->assertSeeInOrder(['dla kawiarni i hoteli', "Kubki, do których\nwracają goście</h1>", 'Kubki do kawiarni.', 'Minimum 24 sztuki', 'Macie kawiarnię?'], false)
+            ->assertDontSee('Naczynia, które')
             ->assertDontSee('Przywiozę próbki');
+
+        $this->followingRedirects()
+            ->put('/panel/tresci/teksty', ['text_b2b_heading' => str_repeat('a', 121)])
+            ->assertSee('Ten tekst zmieszczę do 120 znaków');
 
         $this->followingRedirects()
             ->put('/panel/tresci/gastronomia', ['b2b' => [['title' => str_repeat('a', 41)]]])

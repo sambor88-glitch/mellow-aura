@@ -16,8 +16,11 @@
         <div class="focus-on-dark bg-ink text-divider">
             <div class="mx-auto flex max-w-[1280px] flex-wrap items-center gap-12 px-7 py-[72px]">
                 <div class="min-w-0 flex-[1_1_400px]">
-                    <div class="mb-5 text-[10.5px] tracking-[0.3em] text-label-dark uppercase">dla kawiarni, restauracji i hoteli</div>
-                    <h1 class="mb-[22px] font-serif text-[length:clamp(36px,5vw,64px)] leading-[1.05] font-light tracking-[-0.02em] text-cream">Naczynia, które<br>widać na zdjęciach<br>Twoich gości</h1>
+                    @if ($eyebrow)
+                        <div class="mb-5 text-[10.5px] tracking-[0.3em] text-label-dark uppercase">{{ $eyebrow }}</div>
+                    @endif
+                    {{-- Enter in the panel moves a word to the next line, as the <br>s did before (MA-356). --}}
+                    <h1 class="mb-[22px] font-serif text-[length:clamp(36px,5vw,64px)] leading-[1.05] font-light tracking-[-0.02em] whitespace-pre-line text-cream">{{ $heading ?: 'Ceramika dla kawiarni i restauracji' }}</h1>
                     @if ($lead)
                         <p class="mb-8 max-w-[48ch] text-[17px] leading-[1.7] text-pretty text-line-strong">{{ $lead }}</p>
                     @endif

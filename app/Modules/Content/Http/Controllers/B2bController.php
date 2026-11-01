@@ -16,6 +16,8 @@ class B2bController extends Controller
     public function __invoke(Settings $settings): View
     {
         return view('content::b2b', [
+            'eyebrow' => $settings->get('text_b2b_eyebrow'),
+            'heading' => $settings->get('text_b2b_heading'),
             'lead' => $settings->get('text_b2b_lead'),
             'structuredData' => ServiceStructuredData::for('Ceramika dla kawiarni i restauracji', route('content.b2b'), $settings->get('text_b2b_lead')),
             'facts' => collect((array) $settings->get('b2b_facts', []))

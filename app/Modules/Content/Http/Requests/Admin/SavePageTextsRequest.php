@@ -37,6 +37,8 @@ class SavePageTextsRequest extends FormRequest
             'text_custom_orders_lead' => ['Zdanie pod „Zaprojektujmy to razem”', 3, 400],
         ]],
         ['title' => 'Dla kawiarni i restauracji', 'route' => 'content.b2b', 'fields' => [
+            'text_b2b_eyebrow' => ['Nad nagłówkiem — małymi literami', 1, 60],
+            'text_b2b_heading' => ['Nagłówek', 3, 120, 'Enter przenosi wyraz do nowej linii — dokładnie tak, jak zobaczy to klient. Puste pole pokaże „Ceramika dla kawiarni i restauracji”.'],
             'text_b2b_lead' => ['Zdanie pod nagłówkiem', 3, 400],
             'text_b2b_cta_heading' => ['Pytanie w ramce na dole strony', 2, 120],
             'text_b2b_cta' => ['Zdanie pod pytaniem', 2, 300],
