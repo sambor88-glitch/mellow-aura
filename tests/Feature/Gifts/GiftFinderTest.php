@@ -202,6 +202,8 @@ class GiftFinderTest extends TestCase
                 ['key' => '', 'label' => 'Komunia'],
                 ['key' => '', 'label' => ''],
             ],
+            // The card always sends its budget ranges too.
+            'budgets' => [['min' => '0', 'max' => '100'], ['min' => '100', 'max' => '']],
         ])->assertRedirect('/panel/prezenty#szukam-prezentu')->assertSessionHas('panel_status', 'Zapisane. „Szukam prezentu” już tak wygląda.');
 
         $this->assertSame(
