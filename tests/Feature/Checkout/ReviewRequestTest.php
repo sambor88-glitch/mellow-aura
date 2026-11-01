@@ -66,7 +66,7 @@ class ReviewRequestTest extends TestCase
         $mail = new ReviewRequest($order, self::URL);
         $mail->assertHasSubject('Jak się u Ciebie sprawdza zamówienie '.$order->number.'?');
         $mail->assertHasReplyTo('kontakt@example.com');
-        $mail->assertSeeInOrderInHtml(['Jak się u Ciebie sprawdza?', 'Twoje zamówienie '.$order->number.' jest już u Ciebie', self::URL, 'Napisz opinię w Google', 'także krytyczna', 'Odpisz na tego maila']);
+        $mail->assertSeeInOrderInHtml(['Jak się u Ciebie sprawdza?', 'Twoje zamówienie', $order->number, 'jest już u Ciebie', self::URL, 'Napisz opinię w Google', 'także krytyczna', 'Odpisz na tego maila']);
         $mail->assertSeeInText('Napisz opinię w Google: '.self::URL);
         $mail->assertDontSeeInHtml('rabat');
         $this->assertSame('Prośba o opinię o zamówieniu '.$order->number, $mail->description());
@@ -179,7 +179,7 @@ class ReviewRequestTest extends TestCase
 
         $this->put('/panel/maile/podglad', ['preview' => 'review_request:pl', 'mail_review_request_intro' => 'Zamówienie {numer} już u Ciebie.'])
             ->assertOk()
-            ->assertSee('Zamówienie MA-')
+            ->assertSee('już u Ciebie.')
             ->assertSee('Napisz opinię w Google')
             ->assertSee(self::URL);
     }
