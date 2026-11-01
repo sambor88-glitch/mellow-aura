@@ -27,8 +27,9 @@
     @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-sand-dark" x-data="{ menu: false }" x-on:keydown.escape.window="if (menu) { menu = false; $refs.menuButton.focus() }">
+<body class="bg-sand-dark" data-autosize x-data="{ menu: false }" x-on:keydown.escape.window="if (menu) { menu = false; document.getElementById('panel-menu-button').focus() }">
     {{-- On a phone the sections hide under „Menu” and the bar names the screen, so the orders come first (MA-249). --}}
+    {{-- Escape reaches the button by id: it sits inside the header's own Alpine component, out of reach of $refs here (MA-335). --}}
     {{-- The search (MA-308) lives in the header: the pill on a computer, the magnifier next to „Menu” on a phone. --}}
     @php($owner = auth()->user()?->isOwner())
     <header class="border-b border-line" @auth x-data="panelSearch(@js([
@@ -38,7 +39,7 @@
     ]))" @endauth>
         <div class="mx-auto flex max-w-[1280px] items-center gap-x-3 px-4 py-3 md:gap-x-6 md:px-7 md:py-4">
             @auth
-                <button type="button" x-ref="menuButton" x-on:click="menu = ! menu" aria-controls="panel-menu" aria-expanded="false" x-bind:aria-expanded="menu.toString()"
+                <button type="button" id="panel-menu-button" x-on:click="menu = ! menu" aria-controls="panel-menu" aria-expanded="false" x-bind:aria-expanded="menu.toString()"
                         x-bind:class="menu ? 'border-ink bg-ink text-linen' : 'border-line-strong bg-cream text-ink'"
                         class="inline-flex min-h-11 flex-none items-center gap-2 rounded-full border py-0 pr-2 pl-4 text-[13.5px] md:hidden">
                     Menu
@@ -47,7 +48,7 @@
                         <span class="sr-only">, {{ $waiting }} {{ $waiting === 1 ? 'sprawa czeka' : 'spraw czeka' }}</span>
                     @endif
                 </button>
-                <span aria-hidden="true" class="min-w-0 flex-1 truncate font-serif text-[21px] font-light md:hidden">{{ $title }}</span>
+                <span aria-hidden="true" class="line-clamp-2 min-w-0 flex-1 font-serif text-[20px] leading-[1.1] font-light text-balance md:hidden">{{ $title }}</span>
                 <button type="button" x-on:click="show()" aria-haspopup="dialog" aria-label="Szukaj w panelu"
                         class="grid size-11 flex-none place-items-center rounded-full border border-line-strong bg-cream text-ink md:hidden">
                     <svg viewBox="0 0 24 24" aria-hidden="true" class="size-[18px] fill-none stroke-current stroke-[1.6] [stroke-linecap:round]"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg>
@@ -67,7 +68,8 @@
             @endauth
             <a href="{{ url('/') }}" @class(['ml-auto text-[13px] text-lead hover:text-navy', 'hidden md:inline' => auth()->check()])>Zobacz stronę</a>
             @auth
-                <form method="post" action="{{ route('admin.logout') }}" x-on:submit="forget()" class="flex-none">
+                {{-- On a phone „Wyloguj” lives at the bottom of the menu: the bar keeps room for the title (MA-335). --}}
+                <form method="post" action="{{ route('admin.logout') }}" x-on:submit="forget()" class="hidden flex-none md:block">
                     @csrf
                     <button class="min-h-11 min-w-11 px-1 text-[13px] text-label hover:text-ink">Wyloguj</button>
                 </form>
@@ -125,7 +127,13 @@
                             </ul>
                         </div>
                     @endforeach
-                    <a href="{{ url('/') }}" class="flex min-h-12 items-center border-t border-line px-[18px] text-[14px] text-lead md:hidden">Zobacz stronę →</a>
+                    <div class="grid grid-cols-2 gap-2 border-t border-line pt-4 md:hidden">
+                        <a href="{{ url('/') }}" class="flex min-h-12 items-center justify-center rounded-full border border-line-strong px-4 text-[14px] text-lead hover:border-ink hover:text-ink">Zobacz stronę →</a>
+                        <form method="post" action="{{ route('admin.logout') }}" x-on:submit="window.dispatchEvent(new CustomEvent('panel-logout'))">
+                            @csrf
+                            <button class="flex min-h-12 w-full items-center justify-center rounded-full border border-line-strong px-4 text-[14px] text-lead hover:border-ink hover:text-ink">Wyloguj</button>
+                        </form>
+                    </div>
                 </nav>
             @endauth
             {{-- A changed form says so and asks before its changes are lost (MA-251, resources/js/unsaved.js). --}}

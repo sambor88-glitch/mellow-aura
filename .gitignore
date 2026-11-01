@@ -64,3 +64,6 @@ Homestead.yaml
 # Lighthouse (MA-267)
 /lighthouse-results
 /.lighthouseci
+
+# Panel audit output (MA-335)
+/audit-results

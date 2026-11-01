@@ -12,7 +12,7 @@
     $action = 'w-full rounded-full border border-line-strong px-4 py-2.5 text-[13.5px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark active:scale-[.98]';
 @endphp
 <x-admin::layout title="Zamówienie {{ $order->number }}">
-    <a href="{{ route('admin.orders.index') }}" class="mb-5 inline-block text-[13.5px]">← Wszystkie zamówienia</a>
+    <a href="{{ route('admin.orders.index') }}" class="mb-3 inline-flex min-h-11 items-center text-[13.5px]">← Wszystkie zamówienia</a>
 
     {{-- On a phone the two columns become one, and what Kasia needs while packing comes first: an unhandled withdrawal,
          the status with the next step, then the address. The items follow (MA-314). --}}
@@ -114,7 +114,7 @@
                                     </form>
                                 </div>
                                 <details @if ($bag->any()) open @endif class="mt-1.5">
-                                    <summary class="cursor-pointer text-[13px] text-brown">
+                                    <summary class="cursor-pointer py-3 text-[13px] text-brown">
                                         {{ collect([$item->fired_on ? 'wypał '.$item->fired_on->format('j.m.Y') : null, $item->glaze, $item->plant, filled($item->maker_note) ? 'kilka słów od Ciebie' : null])->filter()->join(' · ') ?: 'Dopisz datę wypału, szkliwo i kilka słów' }}
                                     </summary>
                                     <form method="post" action="{{ route('admin.orders.piece', [$order, $item]) }}" class="mt-2.5 grid gap-3">
@@ -127,7 +127,7 @@
                                                              :value="$bag->any() ? old('glaze') : ($item->glaze ?? '')" />
                                         </div>
                                         <x-shared::field name="plant" id="plant-{{ $item->id }}" label="Roślina" :bag="'piece'.$item->id" maxlength="120"
-                                                         :value="$bag->any() ? old('plant') : ($item->plant ?? '')" hint="Nieobowiązkowe — puste pola nie pokażą się klientce" />
+                                                         :value="$bag->any() ? old('plant') : ($item->plant ?? '')" hint="Nieobowiązkowe — puste pola nie pokażą się klientowi" />
                                         {{-- Shown only on the page of the piece, in place of the quote every piece shares (MA-292). --}}
                                         @php($noteError = $bag->first('maker_note'))
                                         <div class="min-w-0">
@@ -258,7 +258,7 @@
 
                         @if ($order->status !== OrderStatus::Problem)
                             <details @if ($errors->has('problem_note')) open @endif class="group">
-                                <summary class="cursor-pointer list-none text-[13px] text-brown [&::-webkit-details-marker]:hidden">Coś poszło nie tak? Oznacz problem</summary>
+                                <summary class="flex min-h-11 cursor-pointer list-none items-center text-[13px] text-brown [&::-webkit-details-marker]:hidden">Coś poszło nie tak? Oznacz problem</summary>
                                 <form method="post" action="{{ route('admin.orders.status', $order) }}" class="mt-2.5 grid gap-2.5">
                                     @csrf
                                     @method('patch')
@@ -282,7 +282,7 @@
                             {{-- Asked in place, like removing an account: the date and the tracking number stay either way. --}}
                             <div x-data="{ asking: false }" class="flex flex-wrap items-center gap-2.5">
                                 <button type="button" x-show="! asking" x-on:click="asking = true"
-                                        class="text-[13px] text-label underline decoration-line-strong underline-offset-4 hover:text-ink">Wróć do „W realizacji”</button>
+                                        class="inline-flex min-h-11 items-center text-[13px] text-label underline decoration-line-strong underline-offset-4 hover:text-ink">Wróć do „W realizacji”</button>
                                 <form method="post" action="{{ route('admin.orders.status', $order) }}" x-show="asking" x-cloak class="flex flex-wrap items-center gap-2.5">
                                     @csrf
                                     @method('patch')

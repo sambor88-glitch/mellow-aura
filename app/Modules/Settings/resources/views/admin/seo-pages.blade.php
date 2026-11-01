@@ -46,8 +46,9 @@
             </details>
         @endforeach
 
-        <div class="sticky bottom-[calc(16px+env(safe-area-inset-bottom))] mt-3">
-            <button class="min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen shadow-card-hover transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Zapisz wszystkie strony</button>
+        {{-- On a phone a bar across the screen with the sand behind it, so the button never sits on top of a field's hint (MA-335). --}}
+        <div class="sticky bottom-[calc(16px+env(safe-area-inset-bottom))] mt-3 max-md:-mx-4 max-md:bottom-0 max-md:border-t max-md:border-line max-md:bg-sand-dark/95 max-md:px-4 max-md:pt-3 max-md:pb-[calc(12px+env(safe-area-inset-bottom))]">
+            <button class="min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen shadow-card-hover transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97] max-md:w-full">Zapisz wszystkie strony</button>
         </div>
     </form>
 </x-admin::layout>

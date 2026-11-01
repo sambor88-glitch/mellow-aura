@@ -77,7 +77,7 @@
                     </div>
                     <div class="flex-none font-serif text-[19px] tabular-nums">{{ $order->money($order->total_gross) }}</div>
                     <span class="flex-none rounded-full px-3 py-[5px] text-[11.5px] {{ $chipClass }}">{{ $chip }}</span>
-                    <a href="{{ route('admin.orders.show', $order) }}" class="flex-none rounded-full border border-line-strong px-4 py-2 text-[12.5px] text-ink hover:border-ink hover:bg-sand-dark hover:text-ink">Szczegóły</a>
+                    <a href="{{ route('admin.orders.show', $order) }}" class="inline-flex min-h-11 flex-none items-center rounded-full border border-line-strong px-4 text-[12.5px] text-ink hover:border-ink hover:bg-sand-dark hover:text-ink">Szczegóły</a>
                 </div>
             @endforeach
         </div>

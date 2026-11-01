@@ -208,7 +208,7 @@ class WorkshopVoucherBookingTest extends TestCase
 
         $this->get(route('admin.workshops.dates.bookings', $date))
             ->assertSee('voucher '.$voucher->code)
-            ->assertSee('Wyślij klientce maila, że voucher znów jest ważny')
+            ->assertSee('Wyślij klientowi maila, że voucher znów jest ważny')
             ->assertDontSee('Anulowanie opłaconego zapisu nie oddaje pieniędzy samo');
 
         $this->post(route('admin.workshops.bookings.cancel', $booking), ['notify' => '1'])

@@ -16,7 +16,7 @@
                                 <button class="rounded-full border border-line-strong px-4 py-2 text-[12.5px] text-ink hover:border-ink hover:bg-sand-dark">Wyślij link do hasła</button>
                             </form>
                             <button type="button" x-show="! asking" x-on:click="asking = true" aria-label="Usuń dostęp: {{ $account->name }}"
-                                    class="rounded-full px-3 py-2 text-[12.5px] text-hint hover:text-error">Usuń dostęp</button>
+                                    class="inline-flex min-h-11 items-center rounded-full border border-line-strong px-4 text-[12.5px] text-lead hover:border-error hover:text-error">Usuń dostęp</button>
                             <form method="post" action="{{ route('admin.accounts.destroy', $account) }}" x-show="asking" x-cloak class="flex items-center gap-2.5">
                                 @csrf
                                 @method('delete')

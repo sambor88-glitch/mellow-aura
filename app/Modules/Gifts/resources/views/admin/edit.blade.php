@@ -120,9 +120,7 @@
                                        @class(['min-h-11 w-[76px] min-w-0 rounded-[4px] border bg-white px-2.5 text-right text-[14px] text-ink focus:border-ink', 'border-error' => $finderErrors->has('budgets.'.$index.'.max'), 'border-line' => ! $finderErrors->has('budgets.'.$index.'.max')])>
                                 <span>zł</span>
                                 @if ($index < $savedBudgets)
-                                    <label class="ml-auto flex min-h-11 items-center gap-1.5 text-[12.5px]">
-                                        <input type="checkbox" name="budgets[{{ $index }}][remove]" value="1" class="size-4 accent-error"> usuń
-                                    </label>
+                                    <x-shared::admin.remove-toggle :name="'budgets['.$index.'][remove]'" class="ml-auto" />
                                 @endif
                             </div>
                             @foreach (['min', 'max'] as $field)
@@ -155,11 +153,11 @@
             <section id="sprawdz-voucher" class="{{ $card }}">
                 <h2 class="{{ $heading }}">Sprawdź voucher</h2>
                 <p class="{{ $intro }}">Wpisz kod z vouchera: zobaczysz, czy jest ważny i czy ktoś się nim już zapisał. Tu też uzupełnisz warsztat i miejsca, przedłużysz ważność albo oznaczysz voucher jako wykorzystany, gdy zapisujesz kogoś ręcznie — wtedy kod nie zadziała już na stronie.</p>
-                <form method="get" action="{{ route('admin.gifts.edit') }}#sprawdz-voucher" class="flex flex-wrap gap-2.5">
+                <form method="get" action="{{ route('admin.gifts.edit') }}#sprawdz-voucher" class="flex gap-2">
                     <label for="sprawdz-kod" class="sr-only">Kod vouchera</label>
-                    <input id="sprawdz-kod" name="kod" value="{{ $voucherCode }}" maxlength="30" autocomplete="off" spellcheck="false" placeholder="MA-7KQ2-9XHT"
-                           class="{{ $input }} flex-[1_1_200px] border-line uppercase">
-                    <button class="min-h-11 rounded-full bg-ink px-5 text-[14px] text-linen hover:bg-rose hover:text-ink">Sprawdź</button>
+                    <input id="sprawdz-kod" name="kod" value="{{ $voucherCode }}" maxlength="30" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="MA-7KQ2-9XHT"
+                           class="{{ $input }} flex-1 border-line uppercase">
+                    <button class="min-h-11 flex-none self-stretch rounded-full bg-ink px-5 text-[14px] text-linen hover:bg-rose hover:text-ink">Sprawdź</button>
                 </form>
                 @if ($voucherCode !== '' && $foundVoucher === null)
                     <p role="status" class="mt-3.5 text-[13.5px] text-error">Nie ma vouchera z takim kodem.</p>

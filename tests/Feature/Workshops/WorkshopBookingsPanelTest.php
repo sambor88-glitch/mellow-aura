@@ -71,7 +71,7 @@ class WorkshopBookingsPanelTest extends TestCase
         $this->get(route('admin.workshops.dates.bookings', $date))
             ->assertOk()
             ->assertSeeInOrder(['Lepienie kubków', 'Zajęte 2 z 5', '3 wolne miejsca', 'Anna Nowak', '2 osoby', 'ania@example.com', '600100200', Order::query()->oldest('id')->first()->number, '440 zł', 'Potwierdzony'])
-            ->assertSee('Wyślij klientce maila o anulowaniu i zwrocie')
+            ->assertSee('Wyślij klientowi maila o anulowaniu i zwrocie')
             ->assertSeeInOrder(['Anulowane i niezapłacone (1)', 'Ola Kowalska']);
     }
 

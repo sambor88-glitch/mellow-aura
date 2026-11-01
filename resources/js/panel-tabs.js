@@ -37,6 +37,11 @@ export default (initial, keys) => ({
         if (target && holding(target) === next) {
             this.reach(target);
         }
+        this.$nextTick(() => {
+            this.bring();
+            this.edges();
+        });
+        window.addEventListener('resize', () => this.edges(), { passive: true });
 
         // A #link followed on the same screen (the search, a „Dodaj →” link) opens its tab too.
         window.addEventListener('hashchange', () => {
@@ -82,8 +87,37 @@ export default (initial, keys) => ({
         return `panel-tab:${location.pathname}`;
     },
 
+    // On a phone the tab list scrolls sideways: the open tab is never left cut at the edge (MA-335).
+    bring() {
+        const list = this.$refs.tablist;
+        const open = list?.querySelector('[aria-selected="true"]');
+        if (!list || !open || list.scrollWidth <= list.clientWidth) {
+            return;
+        }
+        const room = 28;
+        if (open.offsetLeft - room < list.scrollLeft) {
+            list.scrollLeft = open.offsetLeft - room;
+        } else if (open.offsetLeft + open.offsetWidth + room > list.scrollLeft + list.clientWidth) {
+            list.scrollLeft = open.offsetLeft + open.offsetWidth + room - list.clientWidth;
+        }
+    },
+
+    // Which edges hide more tabs: the CSS fades them, so it shows there is more to scroll to.
+    edges() {
+        const list = this.$refs.tablist;
+        if (!list) {
+            return;
+        }
+        const end = list.scrollWidth - list.clientWidth;
+        list.dataset.more = end <= 1 ? '' : [list.scrollLeft > 1 ? 'start' : '', list.scrollLeft < end - 1 ? 'end' : ''].join(' ').trim();
+    },
+
     show(tab) {
         this.tab = tab;
+        this.$nextTick(() => {
+            this.bring();
+            this.edges();
+        });
 
         try {
             const url = new URL(location.href);

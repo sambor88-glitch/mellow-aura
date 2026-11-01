@@ -33,7 +33,7 @@
                         <div class="mt-1 text-[12.5px] text-hint">{{ $customer->activity() }}</div>
                     </div>
                     <div class="flex-none text-[12.5px] text-hint tabular-nums">ostatnio {{ $customer->lastSeenAt->format('j.m.Y') }}</div>
-                    <a href="{{ route('admin.customers.show', $customer->key) }}" class="flex-none rounded-full border border-line-strong px-4 py-2 text-[12.5px] text-ink hover:border-ink hover:bg-sand-dark hover:text-ink">Karta</a>
+                    <a href="{{ route('admin.customers.show', $customer->key) }}" class="inline-flex min-h-11 flex-none items-center rounded-full border border-line-strong px-4 text-[12.5px] text-ink hover:border-ink hover:bg-sand-dark hover:text-ink">Karta</a>
                 </div>
             @endforeach
         </div>

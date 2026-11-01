@@ -129,7 +129,7 @@
 
             <fieldset>
                 <legend class="{{ $label }}">Twoja decyzja</legend>
-                <div class="flex flex-wrap gap-2">
+                <div class="grid gap-2 md:flex md:flex-wrap">
                     @foreach (ComplaintDecision::cases() as $decision)
                         <label class="{{ $chip }}">
                             <input type="radio" name="decision" value="{{ $decision->value }}" x-model="decision" @checked(old('decision') === $decision->value) class="sr-only">{{ $decision->label() }}
@@ -143,7 +143,7 @@
 
             <fieldset x-show="decision === '' || decision === @js(ComplaintDecision::Accepted->value)">
                 <legend class="{{ $label }}">Jak ją załatwisz — przy uznaniu</legend>
-                <div class="flex flex-wrap gap-2">
+                <div class="grid gap-2 md:flex md:flex-wrap">
                     @foreach (ComplaintRemedy::cases() as $remedy)
                         <label class="{{ $chip }}">
                             <input type="radio" name="remedy" value="{{ $remedy->value }}" @checked(old('remedy') === $remedy->value) class="sr-only">{{ $remedy->label() }}
@@ -169,7 +169,7 @@
 
             <fieldset x-show="decision !== @js(ComplaintDecision::Accepted->value)">
                 <legend class="{{ $label }}">Mediacja — gdy nie uznajesz całej reklamacji</legend>
-                <div class="flex flex-wrap gap-2">
+                <div class="grid gap-2 md:flex md:flex-wrap">
                     @foreach (MediationConsent::cases() as $consent)
                         <label class="{{ $chip }}">
                             <input type="radio" name="mediation" value="{{ $consent->value }}" @checked(old('mediation') === $consent->value) class="sr-only">{{ $consent->label() }}

@@ -1,0 +1,95 @@
+# Every panel screen on a phone (MA-335): the browser tests fill the shop, then tests/audit walks /panel/* at 390 and
+# 360 px and leaves screenshots, report.json and summary.txt in the `panel-audit` artifact. Run it by hand from
+# Actions, or it runs by itself when the audit changes.
+name: panel-audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['claude/**']
+    paths:
+      - 'tests/audit/**'
+      - 'playwright.audit.config.js'
+      - '.github/workflows/panel-audit.yml'
+      - 'app/**/resources/views/admin/**'
+      - 'app/Modules/Admin/resources/views/**'
+      - 'resources/css/**'
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, pdo_sqlite, gd, exif, intl
+          coverage: none
+
+      - uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+
+      - run: composer install --no-interaction --prefer-dist --no-progress
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci && npm run build
+
+      - name: Playwright version
+        id: playwright
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Chromium
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}-chromium
+
+      - name: Install Chromium
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Install Chromium system libraries
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          password=$(openssl rand -hex 16)
+          echo "::add-mask::$password"
+          echo "E2E_ADMIN_PASSWORD=$password" >> "$GITHUB_ENV"
+
+      - name: Start the shop
+        run: |
+          bash tests/e2e/serve.sh > serve.log 2>&1 &
+          for i in $(seq 1 90); do curl -sf http://127.0.0.1:8123/up >/dev/null && exit 0; sleep 2; done
+          cat serve.log; exit 1
+
+      # Orders, bookings, gift cards and ideas for the panel to show. A failing flow only means less data.
+      - name: Fill the shop with the browser tests
+        continue-on-error: true
+        run: npx playwright test -c playwright.audit.config.js --project=flows
+
+      - name: Audit every panel screen
+        run: npx playwright test -c playwright.audit.config.js --project=audit
+
+      - name: Screenshots and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: panel-audit
+          path: |
+            audit-results/
+            serve.log
+          retention-days: 14

@@ -8,7 +8,7 @@
     $bag = $errors->getBag('zgloszenie');
 @endphp
 <x-admin::layout title="Zgłoszenia do wypału" lead="Wsady z formularza na stronie wypałów, pogrupowane w partie według dnia, w którym klienci je przywożą. Każde zgłoszenie przyszło też do Ciebie mailem.">
-    <nav aria-label="Widok" class="mb-6 flex flex-wrap gap-2">
+    <nav aria-label="Widok" class="mb-6 pill-grid">
         <a href="{{ route('admin.firing.requests.index') }}" @unless ($collected) aria-current="page" @endunless class="{{ $filter }} {{ $collected ? $filterOff : $filterOn }}">Do zrobienia ({{ $openCount }})</a>
         <a href="{{ route('admin.firing.requests.index', ['widok' => 'odebrane']) }}" @if ($collected) aria-current="page" @endif class="{{ $filter }} {{ $collected ? $filterOn : $filterOff }}">Odebrane</a>
         <a href="{{ route('admin.firing.edit') }}" class="{{ $filter }} {{ $filterOff }}">Cennik i dzień wsadu</a>

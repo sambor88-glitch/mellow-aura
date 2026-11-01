@@ -240,9 +240,7 @@
                                       @class([$tileInput, 'resize-y leading-[1.55]', 'border-error' => $tileErrors->has('tiles.'.$index.'.text'), 'border-line' => ! $tileErrors->has('tiles.'.$index.'.text')])>{{ $tile['text'] ?? '' }}</textarea>
                         </div>
                         @if ($saved)
-                            <label class="flex min-h-11 items-center gap-1.5 text-[12.5px] text-label">
-                                <input type="checkbox" name="tiles[{{ $index }}][remove]" value="1" class="size-4 accent-error"> usuń
-                            </label>
+                            <x-shared::admin.remove-toggle :name="'tiles['.$index.'][remove]'" />
                         @endif
                     </div>
                     @foreach (['title', 'text'] as $field)

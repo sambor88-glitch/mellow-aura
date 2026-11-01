@@ -54,7 +54,7 @@ class PanelTabsTest extends TestCase
 
         $this->assertStringContainsString("panelTabs('studio'", $html);
         $this->assertStringContainsString(' — są błędy', $html);
-        $this->assertStringContainsString('<span class="text-[11.5px] text-label tabular-nums">3</span>', $html);
+        $this->assertStringContainsString('<span class="text-[11.5px] text-label tabular-nums group-aria-selected:text-sand">3</span>', $html);
         $this->assertMatchesRegularExpression('/data-tab-panel="delivery"\s+x-show="tab === \'delivery\'"\s+style="display: none"/', $html);
     }
 }
