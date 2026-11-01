@@ -58,7 +58,7 @@
             @endif
         </div>
 
-        <form id="dodaj-termin" method="post" action="{{ route('admin.workshops.dates.store') }}" novalidate class="{{ $card }} grid min-w-0 flex-[0_1_320px] gap-3">
+        <form id="dodaj-termin" method="post" action="{{ route('admin.workshops.dates.store') }}" novalidate class="{{ $card }} grid min-w-0 flex-[1_1_320px] gap-3">
             @csrf
             <h2 class="text-[11.5px] tracking-[0.16em] text-label uppercase">Dodaj termin</h2>
             @if ($names->isEmpty())
