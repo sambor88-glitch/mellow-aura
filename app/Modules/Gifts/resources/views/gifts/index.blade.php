@@ -1,6 +1,8 @@
 @use('App\Modules\Shared\Support\Money')
 @inject('settings', 'App\Modules\Settings\Settings')
 @php
+    // The heading from the panel, a new line in it a line break on the page (MA-352).
+    $heading = (string) $settings->get('text_gifts_heading', "Powiedz, dla kogo\ni za ile");
     $lead = $settings->get('text_gifts_lead');
     $voucherNote = $settings->get('text_gifts_voucher_note');
     // Only what the shop does: paid wrapping from the panel and delivery to any address.
@@ -25,7 +27,7 @@
 >
     <div class="mx-auto max-w-[1280px] animate-ma-view px-7 pt-14 pb-24">
         <div class="mb-5 text-[10.5px] tracking-[0.3em] text-brown uppercase">szukam prezentu</div>
-        <h1 class="mb-[18px] font-serif text-[length:clamp(38px,5.2vw,68px)] leading-[1.04] font-light tracking-[-0.02em]">Powiedz, dla kogo<br>i za ile</h1>
+        <h1 class="mb-[18px] font-serif text-[length:clamp(38px,5.2vw,68px)] leading-[1.04] font-light tracking-[-0.02em]">{!! nl2br(e($heading), false) !!}</h1>
         @if ($lead)
             <p class="mb-10 max-w-[54ch] text-[17px] leading-[1.7] text-lead">{{ $lead }}</p>
         @endif

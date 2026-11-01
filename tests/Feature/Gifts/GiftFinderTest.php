@@ -28,6 +28,20 @@ class GiftFinderTest extends TestCase
             ['min_gross' => 40000, 'max_gross' => null],
         ]]);
         Setting::create(['key' => 'text_gifts_lead', 'value' => 'Dobiorę resztę.']);
+        Setting::create(['key' => 'gift_recipients', 'value' => [
+            ['key' => 'for_her', 'label' => 'Dla niej'],
+            ['key' => 'for_him', 'label' => 'Dla niego / taty'],
+            ['key' => 'for_couple', 'label' => 'Dla pary'],
+        ]]);
+        Setting::create(['key' => 'gift_occasions', 'value' => [
+            ['key' => 'birthday', 'label' => 'Urodziny'],
+            ['key' => 'mothers_day', 'label' => 'Dzień Matki'],
+            ['key' => 'wedding', 'label' => 'Ślub'],
+            ['key' => 'housewarming', 'label' => 'Parapetówka'],
+            ['key' => 'anniversary', 'label' => 'Rocznica'],
+            ['key' => 'christmas', 'label' => 'Święta'],
+            ['key' => 'self_gift', 'label' => 'Dla siebie'],
+        ]]);
     }
 
     public function test_the_page_offers_the_three_filters_and_every_idea_on_sale(): void
@@ -42,8 +56,11 @@ class GiftFinderTest extends TestCase
             ->assertSee('<link rel="canonical" href="'.route('gifts.index').'">', false)
             ->assertSeeInOrder(['href="'.route('gifts.index').'"', 'aria-current="page"', 'Prezenty'], false)
             ->assertSeeInOrder(['szukam prezentu', 'Powiedz, dla kogo', 'i za ile', 'Dobiorę resztę.'])
-            ->assertSeeInOrder(['Dla kogo', 'Dla każdego', 'Dla niej', 'Dla niego / taty', 'Dla pary'])
-            ->assertSeeInOrder(['Okazja', 'Wszystkie okazje', 'Urodziny', 'Dzień Matki', 'Ślub', 'Parapetówka', 'Rocznica', 'Święta', 'Dla siebie'])
+            // Only who and what occasions a product on sale is ticked with: the hidden product does not count.
+            ->assertSeeInOrder(['Dla kogo', 'Dla każdego', 'Dla niej', 'Dla niego / taty', 'Okazja', 'Wszystkie okazje', 'Urodziny', 'Ślub'])
+            ->assertDontSee('Dla pary')
+            ->assertDontSee('Dzień Matki')
+            ->assertDontSee('Parapetówka')
             ->assertSeeInOrder(['Budżet', 'Każdy budżet', 'do 100 zł', '100–200 zł', '200–400 zł', 'powyżej 400 zł'])
             ->assertSeeInOrder(['2 pomysły', 'od 69 zł', 'Kubki malowane ręcznie', 'Wybierz wariant', '239 zł', 'Wazony', 'Do koszyka'])
             ->assertDontSee('Ukryte');
@@ -159,6 +176,136 @@ class GiftFinderTest extends TestCase
         $this->assertSame('Dobiorę resztę.', Setting::find('text_gifts_lead')->value);
         $this->assertNull(Setting::find('text_gifts_voucher_note')->value);
         $this->get('/prezenty')->assertSeeInOrder(['do 150 zł', '150–300 zł', 'powyżej 300 zł']);
+    }
+
+    public function test_kasia_names_who_a_gift_is_for_and_the_occasions_and_renaming_keeps_the_products_ticked(): void
+    {
+        $this->product('Kubki malowane ręcznie', [6900], ['birthday'], ['for_her']);
+        $this->product('Wazony', [23900], ['wedding'], ['for_her', 'for_couple']);
+
+        $this->actingAs(User::factory()->create())
+            ->get('/panel/prezenty')
+            ->assertOk()
+            ->assertSeeInOrder(['Nagłówek', 'Zdanie pod nagłówkiem', 'Dla kogo', 'Okazja', 'Budżet', 'Pod listą — o voucherach'])
+            ->assertSeeInOrder(['name="recipients[0][key]" value="for_her"', 'name="recipients[0][label]" value="Dla niej"', '2 produkty w sklepie', 'name="recipients[1][label]" value="Dla niego / taty"', '0 produktów w sklepie — strona jej nie pokaże', 'name="recipients[2][label]" value="Dla pary"', '1 produkt', 'name="recipients[3][label]" value=""'], false)
+            ->assertSee('value="occasions:1:up"', false)
+            ->assertSeeInOrder(['name="occasions[0][label]" value="Urodziny"', '1 produkt', 'name="occasions[7][label]" value=""'], false);
+
+        $this->put('/panel/prezenty/szukam-prezentu', [
+            'text_gifts_heading' => "Prezent\r\nna każdą okazję ",
+            'recipients' => [
+                ['key' => 'for_her', 'label' => ' Dla mamy '],
+                ['key' => 'for_him', 'label' => 'Dla niego / taty', 'remove' => '1'],
+                ['key' => 'for_couple', 'label' => 'Dla pary'],
+                ['key' => '', 'label' => 'Dla babci'],
+            ],
+            'occasions' => [
+                ['key' => 'birthday', 'label' => 'Urodziny'],
+                ['key' => 'wedding', 'label' => 'Ślub'],
+                ['key' => '', 'label' => 'Komunia'],
+                ['key' => '', 'label' => ''],
+            ],
+            // The card always sends its budget ranges too.
+            'budgets' => [['min' => '0', 'max' => '100'], ['min' => '100', 'max' => '']],
+        ])->assertRedirect('/panel/prezenty#szukam-prezentu')->assertSessionHas('panel_status', 'Zapisane. „Szukam prezentu” już tak wygląda.');
+
+        $this->assertSame(
+            [['key' => 'for_her', 'label' => 'Dla mamy'], ['key' => 'for_couple', 'label' => 'Dla pary'], ['key' => 'dla_babci', 'label' => 'Dla babci']],
+            Setting::find('gift_recipients')->value,
+        );
+        $this->assertSame(
+            [['key' => 'birthday', 'label' => 'Urodziny'], ['key' => 'wedding', 'label' => 'Ślub'], ['key' => 'komunia', 'label' => 'Komunia']],
+            Setting::find('gift_occasions')->value,
+        );
+        $this->assertSame("Prezent\nna każdą okazję", Setting::find('text_gifts_heading')->value);
+
+        // The renamed tag keeps both products; the removed one is gone from the page and from the address.
+        $this->get('/prezenty')
+            ->assertSee('Prezent<br>'."\n".'na każdą okazję', false)
+            ->assertSeeInOrder(['Dla kogo', 'Dla każdego', 'Dla mamy', 'Dla pary', 'Okazja', 'Wszystkie okazje', 'Urodziny', 'Ślub'])
+            ->assertDontSee('Dla niego / taty')
+            ->assertDontSee('Parapetówka')
+            // New ones wait for their first product.
+            ->assertDontSee('Dla babci')
+            ->assertDontSee('Komunia');
+        $this->assertSame(['Dla mamy', 'Wszystkie okazje', 'Każdy budżet'], $this->activeChips('/prezenty?recipient=for_her', '2 pomysły'));
+        $this->assertSame(['Dla każdego', 'Wszystkie okazje', 'Każdy budżet'], $this->activeChips('/prezenty?recipient=for_him', '2 pomysły'));
+        // Chosen in the address, an occasion without products keeps its chip, so the page says what it shows.
+        $this->get('/prezenty?occasion=komunia')->assertSee('Nic nie pasuje do tych warunków')->assertSeeInOrder(['aria-current="true"', 'Komunia'], false);
+
+        // The arrows move one row of the list they belong to and keep what was typed.
+        $this->put('/panel/prezenty/szukam-prezentu', [
+            'move' => 'occasions:2:up',
+            'recipients' => [['key' => 'for_her', 'label' => 'Dla mamy'], ['key' => 'for_couple', 'label' => 'Dla pary'], ['key' => 'dla_babci', 'label' => 'Dla babci']],
+            'occasions' => [['key' => 'birthday', 'label' => 'Urodziny'], ['key' => 'wedding', 'label' => 'Ślub'], ['key' => 'komunia', 'label' => 'Komunia (I)']],
+        ])->assertSessionHas('panel_status', 'Kolejność zmieniona. Klienci już ją widzą.');
+
+        $this->assertSame(['for_her', 'for_couple', 'dla_babci'], array_column(Setting::find('gift_recipients')->value, 'key'));
+        $this->assertSame([['key' => 'birthday', 'label' => 'Urodziny'], ['key' => 'komunia', 'label' => 'Komunia (I)'], ['key' => 'wedding', 'label' => 'Ślub']], Setting::find('gift_occasions')->value);
+    }
+
+    public function test_a_tag_list_takes_no_twins_no_long_names_and_a_new_key_never_repeats_one(): void
+    {
+        $this->actingAs(User::factory()->create());
+
+        $this->put('/panel/prezenty/szukam-prezentu', [
+            'occasions' => [['key' => 'wedding', 'label' => 'Ślub'], ['key' => '', 'label' => 'ślub'], ['key' => '', 'label' => str_repeat('a', 41)]],
+        ])->assertSessionHasErrorsIn('szukam-prezentu', ['occasions.2.label' => 'Nazwę zmieszczę do 40 znaków']);
+
+        $this->put('/panel/prezenty/szukam-prezentu', [
+            'occasions' => [['key' => 'wedding', 'label' => 'Ślub'], ['key' => '', 'label' => 'ślub']],
+        ])->assertSessionHasErrorsIn('szukam-prezentu', ['occasions' => '„ślub” jest na liście dwa razy — zmień nazwę albo usuń jedną']);
+
+        $this->put('/panel/prezenty/szukam-prezentu', [
+            'occasions' => collect(range(1, 13))->map(fn (int $number) => ['key' => '', 'label' => 'Okazja '.$number])->all(),
+        ])->assertSessionHasErrorsIn('szukam-prezentu', ['occasions' => 'Zmieszczę do 12 pozycji']);
+
+        // A new name that makes a key already taken gets the next one, and one of only digits gets a word in front.
+        $this->put('/panel/prezenty/szukam-prezentu', [
+            'occasions' => [['key' => 'komunia', 'label' => 'Komunia święta'], ['key' => '', 'label' => 'Komunia!'], ['key' => '', 'label' => '18']],
+        ])->assertSessionHas('panel_status', 'Zapisane. „Szukam prezentu” już tak wygląda.');
+
+        $this->assertSame(['komunia', 'komunia_2', 'tag_18'], array_column(Setting::find('gift_occasions')->value, 'key'));
+        // A list the form does not send stays as it was.
+        $this->assertCount(3, Setting::find('gift_recipients')->value);
+    }
+
+    public function test_the_product_card_offers_the_tags_from_the_panel_and_takes_no_other(): void
+    {
+        $vases = $this->product('Wazony', [23900], ['wedding'], ['for_her']);
+        Setting::query()->where('key', 'gift_occasions')->update(['value' => json_encode([['key' => 'wedding', 'label' => 'Ślub'], ['key' => 'komunia', 'label' => 'Komunia']])]);
+        app(Settings::class)->refresh();
+
+        $this->actingAs(User::factory()->create())
+            ->get('/panel/produkty/'.$vases->id.'?tab=gift')
+            ->assertOk()
+            ->assertSeeInOrder(['Na jaką okazję', 'value="wedding" checked', 'Ślub', 'value="komunia"', 'Komunia', 'Dla kogo', 'value="for_her" checked', 'Dla niej', 'Dla pary'], false)
+            ->assertDontSee('Urodziny');
+
+        $this->from('/panel/produkty/'.$vases->id)->put('/panel/produkty/'.$vases->id, [
+            'form' => 'produkt-'.$vases->id,
+            'name' => 'Wazony',
+            'category_id' => $vases->category_id,
+            'occasions' => ['birthday'],
+            'variants' => [['id' => $vases->variants->first()->id, 'label' => '', 'price' => '239', 'stock' => '']],
+        ])->assertSessionHasErrorsIn('produkt-'.$vases->id, ['occasions.0' => 'Wybierz okazję z listy']);
+
+        Setting::query()->where('key', 'gift_recipients')->update(['value' => json_encode([])]);
+        app(Settings::class)->refresh();
+        $this->get('/panel/produkty/'.$vases->id.'?tab=gift')->assertSee('Lista jest pusta.');
+    }
+
+    /**
+     * The labels of the chips marked as chosen on a page that counts the given number of ideas.
+     *
+     * @return list<string>
+     */
+    private function activeChips(string $url, string $count): array
+    {
+        $page = $this->get($url)->assertOk()->assertSee($count)->getContent();
+        preg_match_all('/aria-current="true"[^>]*>([^<]+)</', $page, $matches);
+
+        return array_map('trim', $matches[1]);
     }
 
     /**
