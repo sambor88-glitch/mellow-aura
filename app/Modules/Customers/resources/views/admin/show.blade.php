@@ -54,7 +54,7 @@
                 </div>
                 <div class="flex-none font-serif text-[19px] tabular-nums">{{ $order->money($order->total_gross) }}</div>
                 <span class="flex-none rounded-full px-3 py-[5px] text-[11.5px] {{ $order->payment_status === PaymentStatus::Paid ? $order->status->chipClass() : 'bg-linen text-label' }}">{{ $order->payment_status === PaymentStatus::Paid ? $order->status->label() : $order->payment_status->label() }}</span>
-                <a href="{{ route('admin.orders.show', $order) }}" class="flex-none rounded-full border border-line-strong px-4 py-2 text-[12.5px] text-ink hover:border-ink hover:bg-sand-dark hover:text-ink">Szczegóły</a>
+                <a href="{{ route('admin.orders.show', $order) }}" class="inline-flex min-h-11 flex-none items-center rounded-full border border-line-strong px-4 text-[12.5px] text-ink hover:border-ink hover:bg-sand-dark hover:text-ink">Szczegóły</a>
             </div>
         @empty
             <p class="{{ $empty }}">Żadnego zamówienia.</p>
@@ -84,7 +84,7 @@
                     <div class="flex-none font-serif text-[19px] tabular-nums">{{ Money::format($idea->quote) }}</div>
                 @endif
                 <span class="flex-none rounded-full px-3 py-[5px] text-[11.5px] {{ $idea->status->chipClass() }}">{{ $idea->status->label() }}</span>
-                <a href="{{ route('admin.custom-orders.index', ['status' => $idea->status->value]) }}#pomysl-{{ $idea->id }}" class="flex-none rounded-full border border-line-strong px-4 py-2 text-[12.5px] text-ink hover:border-ink hover:bg-sand-dark hover:text-ink">Szczegóły</a>
+                <a href="{{ route('admin.custom-orders.index', ['status' => $idea->status->value]) }}#pomysl-{{ $idea->id }}" class="inline-flex min-h-11 flex-none items-center rounded-full border border-line-strong px-4 text-[12.5px] text-ink hover:border-ink hover:bg-sand-dark hover:text-ink">Szczegóły</a>
             </div>
         @empty
             <p class="{{ $empty }}">Żadnego pomysłu z formularza.</p>
@@ -98,7 +98,7 @@
                 <div class="flex-none text-[12.5px] text-hint tabular-nums">{{ $batch->created_at->format('j.m.Y') }}</div>
                 <div class="min-w-0 flex-[1_1_260px] text-[13.5px] text-ink">{{ collect($batch->summary())->map(fn ($value, $label) => $label.': '.$value)->join(' · ') }}</div>
                 <span class="flex-none rounded-full px-3 py-[5px] text-[11.5px] {{ $batch->status->chipClass() }}">{{ $batch->status->label() }}</span>
-                <a href="{{ route('admin.firing.requests.index') }}#zgloszenie-{{ $batch->id }}" class="flex-none rounded-full border border-line-strong px-4 py-2 text-[12.5px] text-ink hover:border-ink hover:bg-sand-dark hover:text-ink">Szczegóły</a>
+                <a href="{{ route('admin.firing.requests.index') }}#zgloszenie-{{ $batch->id }}" class="inline-flex min-h-11 flex-none items-center rounded-full border border-line-strong px-4 text-[12.5px] text-ink hover:border-ink hover:bg-sand-dark hover:text-ink">Szczegóły</a>
             </div>
         @empty
             <p class="{{ $empty }}">Żadnego wsadu.</p>

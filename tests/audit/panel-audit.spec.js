@@ -12,9 +12,9 @@ const VIEWPORTS = [
     { name: '360', width: 360, height: 780 },
 ];
 // Files, sign-out and photos are not screens.
-const SKIP = [/\/wyloguj/, /\/karta$/, /\/certyfikat/, /\/etykieta/, /\/zdjecia\/\d+/, /\/manifest/, /\/sw\.js/, /\/eksport/, /\.(pdf|csv|zip|png|jpe?g|webp)$/];
+const SKIP = [/\/wyloguj/, /\/karta$/, /\/certyfikaty$/, /\/etykieta/, /\/zdjecia\/\d+/, /\/manifest/, /\/sw\.js/, /\/eksport/, /\.(pdf|csv|zip|png|jpe?g|webp)$/];
 const START = [
-    '/panel', '/panel/konta', '/panel/szukaj', '/panel/kategorie', '/panel/produkty', '/panel/produkty/nowy',
+    '/panel', '/panel/certyfikat', '/panel/konta', '/panel/szukaj', '/panel/kategorie', '/panel/produkty', '/panel/produkty/nowy',
     '/panel/produkty/ustawienia', '/panel/odstapienia', '/panel/reklamacje', '/panel/zamowienia', '/panel/tresci',
     '/panel/uslugi', '/panel/zdjecia-stron', '/panel/zamowienia-indywidualne', '/panel/klienci', '/panel/wypaly',
     '/panel/wypaly/zgloszenia', '/panel/karty-wyboru', '/panel/prezenty', '/panel/niewyslane-maile',
@@ -228,10 +228,19 @@ function inspect() {
     }
 
     // 8. Button and pill labels breaking into two lines.
+    // Lines of visible text only: screen-reader text and stacked blocks (a count under a label) do not count.
     const lines = (el) => {
-        const range = document.createRange();
-        range.selectNodeContents(el);
-        const tops = new Set([...range.getClientRects()].filter((q) => q.width > 1).map((q) => Math.round(q.top)));
+        const tops = new Set();
+        const texts = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+        let text;
+        while ((text = texts.nextNode())) {
+            const holder = text.parentElement;
+            if (!text.textContent.trim() || !visible(holder) || holder.getBoundingClientRect().width <= 1) continue;
+            if (holder !== el && getComputedStyle(holder).display === 'block') continue;
+            const range = document.createRange();
+            range.selectNodeContents(text);
+            [...range.getClientRects()].filter((q) => q.width > 1).forEach((q) => tops.add(Math.round(q.top / 4)));
+        }
         return tops.size;
     };
     for (const el of all.filter((e) => e.matches('button, a[class*="rounded-full"], [role="tab"], summary, a[class*="bg-ink"]'))) {

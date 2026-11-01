@@ -33,17 +33,19 @@
     $stepErrors = $errors->getBag('kroki');
 @endphp
 <x-admin::layout title="Usługi" lead="Strony „Z Twojej apaszki” i „Odcisk Twojej rośliny”: zdjęcia przed i po, teksty, cennik i kroki. Zmiany widać na stronie od razu.">
-    <nav aria-label="Usługi" class="mb-3.5 flex flex-wrap items-center gap-2.5">
-        @foreach (Service::cases() as $tab)
-            <a href="{{ route('admin.services.edit', $tab->slug()) }}" @if ($tab === $service) aria-current="page" @endif
-               @class([
-                   'rounded-full border px-[18px] py-[9px] text-[13.5px]',
-                   'border-ink bg-ink text-linen hover:text-linen' => $tab === $service,
-                   'border-line-strong text-lead hover:border-ink hover:bg-sand hover:text-ink' => $tab !== $service,
-               ])>{{ $tab->label() }}</a>
-        @endforeach
+    <div class="mb-3.5 flex flex-wrap items-center gap-x-2.5 gap-y-1">
+        <nav aria-label="Usługi" class="pill-grid flex-[1_1_100%] md:flex-none">
+            @foreach (Service::cases() as $tab)
+                <a href="{{ route('admin.services.edit', $tab->slug()) }}" @if ($tab === $service) aria-current="page" @endif
+                   @class([
+                       'rounded-full border px-[18px] py-[9px] text-[13.5px]',
+                       'border-ink bg-ink text-linen hover:text-linen' => $tab === $service,
+                       'border-line-strong text-lead hover:border-ink hover:bg-sand hover:text-ink' => $tab !== $service,
+                   ])>{{ $tab->label() }}</a>
+            @endforeach
+        </nav>
         <a href="{{ $pageUrl }}" target="_blank" rel="noopener" class="ml-auto inline-flex min-h-11 items-center text-[13px]">Zobacz stronę →</a>
-    </nav>
+    </div>
 
     {{-- One card at a time (MA-323); every card keeps its #id, so saving comes back to its tab. --}}
   <x-admin::tabs :tabs="['przed-i-po' => ['label' => 'Przed i po', 'count' => count($examples)], 'teksty' => 'Teksty', 'cennik' => 'Cennik', 'kroki' => 'Kroki']" label="Części strony usługi">
@@ -229,15 +231,29 @@
                     @endphp
                     <fieldset @class(['rounded-[4px] border p-3', 'border-sand-dark bg-linen' => ! $new, 'border-dashed border-line-strong' => $new])>
                         <legend class="sr-only">{{ $new ? 'Nowa pozycja' : ($row['label'] ?: 'Pozycja '.($index + 1)) }}</legend>
-                        <div class="grid gap-2 sm:grid-cols-[minmax(0,3fr)_minmax(0,1fr)]">
-                            <input name="prices[{{ $index }}][label]" value="{{ $row['label'] ?? '' }}" maxlength="80" aria-label="Pozycja {{ $index + 1 }} — nazwa" placeholder="{{ $new ? 'Nowa pozycja' : 'Nazwa' }}"
-                                   @class([$input, 'border-error' => $has('label'), 'border-line' => ! $has('label')])>
-                            <input name="prices[{{ $index }}][price]" value="{{ $row['price'] ?? '' }}" inputmode="decimal" aria-label="Pozycja {{ $index + 1 }} — cena w zł" placeholder="cena, zł"
-                                   @class([$input, 'text-right tabular-nums', 'border-error' => $has('price'), 'border-line' => ! $has('price')])>
-                            <input name="prices[{{ $index }}][note]" value="{{ $row['note'] ?? '' }}" maxlength="120" aria-label="Pozycja {{ $index + 1 }} — dopisek" placeholder="dopisek pod nazwą"
-                                   @class([$input, 'border-error' => $has('note'), 'border-line' => ! $has('note')])>
-                            <input name="prices[{{ $index }}][compare_at]" value="{{ $row['compare_at'] ?? '' }}" inputmode="decimal" aria-label="Pozycja {{ $index + 1 }} — cena przed obniżką w zł" placeholder="przed obniżką"
-                                   @class([$input, 'text-right tabular-nums', 'border-error' => $has('compare_at'), 'border-line' => ! $has('compare_at')])>
+                        {{-- Every field says what it is: a price without a label read like the promotional one (MA-335). --}}
+                        @php($small = 'mb-1 block text-[12.5px] text-graphite')
+                        <div class="grid grid-cols-2 gap-x-2.5 gap-y-2">
+                            <label class="col-span-2 min-w-0">
+                                <span class="{{ $small }}">{{ $new ? 'Nowa pozycja — nazwa' : 'Nazwa' }}</span>
+                                <input name="prices[{{ $index }}][label]" value="{{ $row['label'] ?? '' }}" maxlength="80" placeholder="np. Opaska szeroka"
+                                       @class([$input, 'border-error' => $has('label'), 'border-line' => ! $has('label')])>
+                            </label>
+                            <label class="col-span-2 min-w-0">
+                                <span class="{{ $small }}">Dopisek pod nazwą</span>
+                                <input name="prices[{{ $index }}][note]" value="{{ $row['note'] ?? '' }}" maxlength="120" placeholder="np. z apaszki 65 × 65 cm"
+                                       @class([$input, 'border-error' => $has('note'), 'border-line' => ! $has('note')])>
+                            </label>
+                            <label class="min-w-0">
+                                <span class="{{ $small }}">Cena, zł</span>
+                                <input name="prices[{{ $index }}][price]" value="{{ $row['price'] ?? '' }}" inputmode="decimal" placeholder="np. 119"
+                                       @class([$input, 'text-right tabular-nums', 'border-error' => $has('price'), 'border-line' => ! $has('price')])>
+                            </label>
+                            <label class="min-w-0">
+                                <span class="{{ $small }}">Przed obniżką, zł</span>
+                                <input name="prices[{{ $index }}][compare_at]" value="{{ $row['compare_at'] ?? '' }}" inputmode="decimal" placeholder="tylko przy promocji"
+                                       @class([$input, 'text-right tabular-nums', 'border-error' => $has('compare_at'), 'border-line' => ! $has('compare_at')])>
+                            </label>
                         </div>
                         @foreach (['label', 'price', 'note', 'compare_at'] as $name)
                             @if ($has($name))

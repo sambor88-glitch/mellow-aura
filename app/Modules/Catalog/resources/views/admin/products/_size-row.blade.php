@@ -80,9 +80,7 @@
                 <label class="flex min-h-11 items-center gap-2 text-[13px] text-label">
                     <input type="checkbox" name="variants[{{ $index }}][is_hidden]" value="1" @checked($hidden) class="size-4 accent-ink"> ukryj w sklepie
                 </label>
-                <label class="flex min-h-11 items-center gap-2 text-[13px] text-error">
-                    <input type="checkbox" name="variants[{{ $index }}][remove]" value="1" class="size-4 accent-error"> usuń przy zapisie
-                </label>
+                <x-shared::admin.remove-toggle :name="'variants['.$index.'][remove]'" />
             @endif
         </div>
     @endif

@@ -8,11 +8,11 @@
             <svg viewBox="0 0 24 24" aria-hidden="true" class="size-[18px] flex-none fill-none stroke-current stroke-[1.6] [stroke-linecap:round]"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg>
             <input x-ref="input" x-model="term" type="search" role="combobox" aria-label="Czego szukasz?" aria-expanded="true" aria-controls="szukaj-wyniki" aria-autocomplete="list"
                    x-bind:aria-activedescendant="activeId()" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" maxlength="80"
-                   placeholder="{{ $owner ? 'Szukaj produktu, zamówienia, klienta, ustawienia…' : 'Szukaj zamówienia — numer, imię, e-mail' }}"
+                   placeholder="{{ $owner ? 'Czego szukasz?' : 'Numer, imię albo e-mail' }}"
                    x-on:keydown.arrow-down.prevent="move(1)" x-on:keydown.arrow-up.prevent="move(-1)" x-on:keydown.enter.prevent="pick()"
                    class="min-w-0 flex-1 border-0 bg-transparent py-3.5 text-[17px] text-ink outline-none placeholder:text-hint [&::-webkit-search-cancel-button]:appearance-none">
             <span aria-hidden="true" class="flex-none rounded-full border border-line bg-linen px-2.5 py-0.5 text-[11px] tracking-[0.04em] text-label max-sm:hidden">Esc</span>
-            <button type="button" x-on:click="hide()" class="min-h-11 flex-none px-1 text-[13.5px] text-lead sm:hidden">Zamknij</button>
+            <button type="button" x-on:click="hide()" class="min-h-11 flex-none rounded-full border border-line-strong px-4 text-[13.5px] text-lead sm:hidden">Zamknij</button>
         </div>
 
         <div id="szukaj-wyniki" role="listbox" aria-label="Wyniki" class="flex-1 overflow-auto overscroll-contain px-2 pt-1.5 pb-3">

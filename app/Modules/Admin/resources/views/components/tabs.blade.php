@@ -14,16 +14,17 @@
 @endphp
 <div x-data="panelTabs(@js($open), @js($keys))" {{ $attributes }}>
     {{ $head ?? '' }}
-    <div role="tablist" aria-label="{{ $label }}" x-ref="tablist" x-on:keydown="move($event)"
-         @class(['sticky top-[env(safe-area-inset-top,0px)] z-30 -mx-4 mb-[18px] flex gap-1 overflow-x-auto border-b border-line bg-sand-dark px-4 py-2.5 [scrollbar-width:none] md:mx-0 md:px-0', 'mt-3.5' => isset($head)])>
+    {{-- On a phone the tabs scroll sideways: the open one is brought into view and a fading edge says there is more (MA-335). --}}
+    <div role="tablist" aria-label="{{ $label }}" x-ref="tablist" x-on:keydown="move($event)" x-on:scroll.passive="edges()" data-tabs-scroll
+         @class(['sticky top-[env(safe-area-inset-top,0px)] z-30 -mx-4 mb-[18px] flex gap-1 overflow-x-auto scroll-px-4 border-b border-line bg-sand-dark px-4 py-2.5 [scrollbar-width:none] md:mx-0 md:px-0', 'mt-3.5' => isset($head)])>
         @foreach ($items as $key => $tab)
             <button type="button" role="tab" id="tab-{{ $key }}" data-tab="{{ $key }}" aria-controls="panel-{{ $key }}"
                     aria-selected="{{ $open === (string) $key ? 'true' : 'false' }}" x-bind:aria-selected="(tab === @js((string) $key)).toString()"
                     tabindex="{{ $open === (string) $key ? 0 : -1 }}" x-bind:tabindex="tab === @js((string) $key) ? 0 : -1" x-on:click="show(@js((string) $key))"
-                    class="inline-flex min-h-10 flex-none items-center gap-2 rounded-full border border-transparent px-4 text-[13.5px] text-lead transition-colors hover:border-line-strong hover:bg-sand hover:text-ink aria-selected:border-ink aria-selected:bg-ink aria-selected:text-linen">
+                    class="group inline-flex min-h-11 flex-none items-center gap-2 rounded-full border border-transparent px-4 text-[13.5px] text-lead transition-colors hover:border-line-strong hover:bg-sand hover:text-ink aria-selected:border-ink aria-selected:bg-ink aria-selected:text-linen">
                 {{ $tab['label'] }}
-                @if (isset($tab['count']) && $tab['count'] !== '')<span class="text-[11.5px] text-label tabular-nums">{{ $tab['count'] }}</span>@endif
-                @if (filled($tab['note'] ?? null))<span class="text-[11px] text-label">{{ $tab['note'] }}</span>@endif
+                @if (isset($tab['count']) && $tab['count'] !== '')<span class="text-[11.5px] text-label tabular-nums group-aria-selected:text-sand">{{ $tab['count'] }}</span>@endif
+                @if (filled($tab['note'] ?? null))<span class="text-[11px] text-label group-aria-selected:text-sand">{{ $tab['note'] }}</span>@endif
                 @if (($tab['dot'] ?? null) !== null)
                     <span aria-hidden="true" @class(['size-[7px] rounded-full', 'bg-error' => $tab['dot'] === 'error', 'bg-brown' => $tab['dot'] !== 'error'])></span>
                     <span class="sr-only">{{ $tab['dot'] === 'error' ? ' — są błędy' : ' — do uzupełnienia' }}</span>

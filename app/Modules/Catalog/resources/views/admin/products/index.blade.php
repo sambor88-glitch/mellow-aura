@@ -62,15 +62,17 @@
 
     <div x-data="productList(@js(['reorderUrl' => route('admin.products.reorder'), 'stockUrl' => route('admin.products.stock', '__id__'), 'toggleUrl' => route('admin.products.toggle', '__id__'), 'token' => csrf_token()]))">
         <div class="mb-3.5 flex flex-wrap items-center gap-x-3 gap-y-2.5">
-            <label class="flex min-w-0 flex-[1_1_240px] items-center gap-2.5 rounded-full border border-line bg-white px-4 text-label transition focus-within:border-ink focus-within:shadow-[0_0_0_4px_rgb(36_65_126/.14)] md:max-w-[380px]">
+            <label class="flex min-w-0 flex-[1_1_0] items-center gap-2.5 rounded-full border border-line bg-white px-4 text-label md:flex-[1_1_240px] transition focus-within:border-ink focus-within:shadow-[0_0_0_4px_rgb(36_65_126/.14)] md:max-w-[380px]">
                 <svg viewBox="0 0 24 24" aria-hidden="true" class="size-[18px] flex-none fill-none stroke-current stroke-[1.6]"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20" stroke-linecap="round"/></svg>
                 <span class="sr-only">Szukaj w produktach</span>
                 <input type="search" x-model="q" placeholder="Szukaj w produktach" autocomplete="off" class="min-w-0 flex-1 bg-transparent py-[11px] text-[15px] text-ink outline-none placeholder:text-hint [&::-webkit-search-cancel-button]:appearance-none pointer-coarse:text-[16px]">
             </label>
-            <div role="group" aria-label="Pokaż" class="-mx-4 flex max-w-[calc(100%+32px)] min-w-0 flex-[1_1_100%] gap-1 overflow-x-auto px-4 py-0.5 [scrollbar-width:none] md:mx-0 md:max-w-full md:flex-[0_1_auto] md:px-0.5">
+            {{-- On a phone „+ Dodaj” stands next to the search: floating at the bottom it covered the switches of the rows (MA-335). --}}
+            <x-shared::button href="{{ route('admin.products.create') }}" size="md" class="flex-none whitespace-nowrap max-md:px-4 md:hidden">+ Dodaj</x-shared::button>
+            <div role="group" aria-label="Pokaż" data-scroll-fade class="-mx-4 flex max-w-[calc(100%+32px)] min-w-0 flex-[1_1_100%] gap-1 overflow-x-auto px-4 py-0.5 [scrollbar-width:none] md:mx-0 md:max-w-full md:flex-[0_1_auto] md:px-0.5">
                 @foreach ($filters as $key => [$label, $count])
                     <button type="button" x-on:click="filter = @js($key)" aria-pressed="{{ $key === 'all' ? 'true' : 'false' }}" x-bind:aria-pressed="(filter === @js($key)).toString()"
-                            class="inline-flex min-h-10 flex-none items-center gap-2 rounded-full border border-transparent py-0 pr-2 pl-3.5 text-[13px] text-lead transition-colors hover:border-line-strong hover:bg-sand hover:text-ink aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-linen">
+                            class="inline-flex min-h-11 flex-none items-center gap-2 rounded-full border border-transparent py-0 pr-2 pl-3.5 text-[13px] text-lead transition-colors hover:border-line-strong hover:bg-sand hover:text-ink aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-linen">
                         {{ $label }}
                         <span @class(['inline-flex h-6 min-w-6 items-center justify-center rounded-full px-[7px] text-[11.5px] font-semibold tabular-nums', 'bg-cream text-lead' => ! in_array($key, ['low', 'todo'], true), 'bg-alert text-alert-text' => in_array($key, ['low', 'todo'], true)])>{{ $count }}</span>
                     </button>
@@ -176,9 +178,5 @@
         </div>
         <p class="mt-1.5 text-[12.5px] text-hint">Produkt na dużym zdjęciu strony głównej i narzut na ceny w euro są w <a href="{{ route('admin.products.settings') }}" class="text-brown underline decoration-line-strong underline-offset-[3px] hover:text-ink">Ustawieniach produktów</a>.</p>
 
-        {{-- On a phone the main action waits under the thumb. --}}
-        <div class="sticky bottom-[calc(16px+env(safe-area-inset-bottom))] z-40 mt-3.5 flex justify-end md:hidden">
-            <x-shared::button href="{{ route('admin.products.create') }}" size="md" class="shadow-[0_18px_36px_-18px_rgb(47_38_32/.6)]">+ Dodaj</x-shared::button>
-        </div>
     </div>
 </x-admin::layout>

@@ -4,17 +4,17 @@
         @includeIf('monitoring::admin.dashboard-notice')
     @endcan
 
-    {{-- On a phone the tiles are a row of counters, so what waits starts on the first screen (MA-313). --}}
-    <div class="mb-9 flex flex-wrap gap-2 max-md:mb-6 md:gap-4">
+    {{-- On a phone the counters are rows of one card, the number at the right edge, so five of them never wrap into
+         ragged rows and what waits still starts on the first screen (MA-313, MA-335). On a computer: tiles. --}}
+    <div class="mb-9 overflow-hidden rounded-[4px] border border-line bg-cream max-md:mb-6 md:flex md:flex-wrap md:gap-4 md:overflow-visible md:rounded-none md:border-0 md:bg-transparent">
         @foreach ($tiles as $tile)
             <a href="{{ $tile['route'] }}" @class([
-                'min-w-0 border bg-cream text-ink transition-colors duration-300 hover:border-ink hover:text-ink',
-                'inline-flex min-h-11 flex-none items-baseline gap-1.5 rounded-full px-3.5 py-2 md:block md:flex-[1_1_180px] md:rounded-[4px] md:px-[22px] md:py-5',
-                'border-error md:border-line' => $tile['late'],
-                'border-line' => ! $tile['late'],
+                'flex min-h-12 min-w-0 items-center gap-3 border-b border-line px-4 py-2 text-ink transition-colors duration-300 last:border-b-0 hover:bg-sand hover:text-ink',
+                'md:block md:flex-[1_1_180px] md:rounded-[4px] md:border md:border-line md:bg-cream md:px-[22px] md:py-5 md:last:border-b md:hover:border-ink md:hover:bg-cream',
             ])>
-                <span @class(['font-serif text-[19px] leading-none font-light tabular-nums md:block md:text-[34px]', 'text-label' => $tile['value'] === 0, 'max-md:text-error' => $tile['late']])>{{ $tile['value'] }}</span>
-                <span class="text-[12.5px] text-label lowercase md:mt-1.5 md:block md:text-[11.5px] md:tracking-[0.14em] md:uppercase">{{ $tile['label'] }}</span>
+                <span @class(['order-2 ml-auto font-serif text-[22px] leading-none font-light tabular-nums md:ml-0 md:block md:text-[34px]', 'text-label' => $tile['value'] === 0, 'text-error' => $tile['late']])>{{ $tile['value'] }}</span>
+                <span @class(['order-1 text-[14.5px] max-md:first-letter:uppercase md:mt-1.5 md:block md:text-[11.5px] md:tracking-[0.14em] md:uppercase', 'text-lead md:text-label' => ! $tile['late'], 'text-error' => $tile['late']])>{{ $tile['label'] }}</span>
+                <span aria-hidden="true" class="order-3 text-[18px] text-hint md:hidden">›</span>
                 <span @class(['mt-2 hidden text-[12.5px] md:block', 'text-error' => $tile['late'], 'text-hint' => ! $tile['late']])>{{ $tile['hint'] }}</span>
                 <span class="mt-3.5 hidden text-[12.5px] md:block">{{ $tile['go'] }} →</span>
             </a>

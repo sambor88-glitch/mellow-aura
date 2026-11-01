@@ -205,9 +205,7 @@
                                 <span class="text-[12.5px] text-label">€</span>
                             </span>
                             @if ($index < count($savedSizes))
-                                <label class="flex min-h-11 items-center gap-1.5 text-[12.5px] text-label">
-                                    <input type="checkbox" name="sizes[{{ $index }}][remove]" value="1" class="size-4 accent-error"> usuń
-                                </label>
+                                <x-shared::admin.remove-toggle :name="'sizes['.$index.'][remove]'" />
                             @endif
                         </div>
                         @foreach (['label', 'capacity', 'price', 'price_eur'] as $field)

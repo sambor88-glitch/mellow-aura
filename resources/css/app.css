@@ -1074,3 +1074,44 @@ form[data-dirty]::before {
         font-size: 16px;
     }
 }
+
+/* A tab list that scrolls sideways fades at the edge that hides more tabs (MA-335, resources/js/panel-tabs.js). */
+[data-tabs-scroll][data-more~="end"], [data-scroll-fade][data-more~="end"] {
+    mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);
+}
+
+[data-tabs-scroll][data-more~="start"], [data-scroll-fade][data-more~="start"] {
+    mask-image: linear-gradient(to left, #000 calc(100% - 36px), transparent);
+}
+
+[data-tabs-scroll][data-more~="start"][data-more~="end"], [data-scroll-fade][data-more~="start"][data-more~="end"] {
+    mask-image: linear-gradient(to right, transparent, #000 36px, #000 calc(100% - 36px), transparent);
+}
+
+/*
+ * Filter pills on a phone (MA-335): two equal columns instead of ragged rows, an odd last pill across the row.
+ * From 768 px they wrap as before. Put it on the row that holds the pills.
+ */
+@utility pill-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+
+    & > * {
+        display: flex;
+        min-height: 44px;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    & > *:last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+    }
+
+    @media (width >= 48rem) {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+}

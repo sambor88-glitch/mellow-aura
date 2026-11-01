@@ -15,7 +15,7 @@
 @endphp
 <x-admin::layout title="Wypały" lead="Cennik na stronie wypałów na zlecenie. Z niego formularz „Zgłoś wsad” liczy klientom wycenę — zgłoszenie dostajesz mailem.">
     {{-- „Wypały” is one section of the menu with two tabs: the batches and this price list (MA-249). --}}
-    <nav aria-label="Widok" class="mb-6 flex flex-wrap gap-2">
+    <nav aria-label="Widok" class="mb-6 pill-grid">
         <a href="{{ route('admin.firing.requests.index') }}" class="rounded-full border border-line-strong px-[18px] py-[9px] text-[13px] text-lead hover:border-ink hover:bg-sand hover:text-ink">Zgłoszenia</a>
         <span aria-current="page" class="rounded-full border border-ink bg-ink px-[18px] py-[9px] text-[13px] text-linen">Cennik i dzień wsadu</span>
     </nav>
@@ -74,8 +74,9 @@
                 <fieldset @class(['rounded-[4px] border p-3.5', 'border-sand-dark bg-linen' => ! $new, 'border-dashed border-line-strong' => $new])>
                     <legend class="sr-only">{{ $new ? 'Nowa usługa' : ($row['label'] ?: 'Usługa '.($index + 1)) }}</legend>
                     <input type="hidden" name="{{ $name }}[code]" value="{{ $row['code'] ?? '' }}">
-                    <div class="grid gap-2.5 sm:grid-cols-[minmax(0,3fr)_minmax(0,1fr)_minmax(0,1fr)]">
-                        <div class="min-w-0">
+                    {{-- On a phone: name across, price and unit side by side, note across, then the price before a promotion (MA-335). --}}
+                    <div class="grid grid-cols-2 gap-2.5 sm:grid-cols-[minmax(0,3fr)_minmax(0,1fr)_minmax(0,1fr)]">
+                        <div class="col-span-2 min-w-0 sm:col-span-1">
                             <label for="{{ $id }}-label" class="{{ $label }}">{{ $new ? 'Nowa usługa — nazwa' : 'Nazwa' }}</label>
                             <input id="{{ $id }}-label" name="{{ $name }}[label]" value="{{ $row['label'] ?? '' }}" maxlength="80" placeholder="np. Wypał na ostro do 1240°C"
                                    @class([$input, 'border-error' => $has('label'), 'border-line' => ! $has('label')])>
@@ -87,17 +88,17 @@
                         </div>
                         <div class="min-w-0">
                             <label for="{{ $id }}-unit" class="{{ $label }}">Za</label>
-                            <input id="{{ $id }}-unit" name="{{ $name }}[unit_label]" value="{{ $row['unit_label'] ?? '' }}" maxlength="20" placeholder="/ kg"
+                            <input id="{{ $id }}-unit" name="{{ $name }}[unit_label]" value="{{ $row['unit_label'] ?? '' }}" maxlength="20" placeholder="np. / kg"
                                    @class([$input, 'border-error' => $has('unit_label'), 'border-line' => ! $has('unit_label')])>
                         </div>
-                        <div class="min-w-0">
+                        <div class="col-span-2 min-w-0 sm:col-span-1">
                             <label for="{{ $id }}-note" class="{{ $label }}">Dopisek pod nazwą</label>
                             <input id="{{ $id }}-note" name="{{ $name }}[note]" value="{{ $row['note'] ?? '' }}" maxlength="120" placeholder="np. liczony od wagi prac"
                                    @class([$input, 'border-error' => $has('note'), 'border-line' => ! $has('note')])>
                         </div>
-                        <div class="min-w-0">
+                        <div class="col-span-2 min-w-0 sm:col-span-1">
                             <label for="{{ $id }}-compare" class="{{ $label }}">Przed obniżką, zł</label>
-                            <input id="{{ $id }}-compare" name="{{ $name }}[compare_at]" value="{{ $row['compare_at'] ?? '' }}" inputmode="decimal" placeholder="—"
+                            <input id="{{ $id }}-compare" name="{{ $name }}[compare_at]" value="{{ $row['compare_at'] ?? '' }}" inputmode="decimal" placeholder="tylko przy promocji"
                                    @class([$input, 'text-right tabular-nums', 'border-error' => $has('compare_at'), 'border-line' => ! $has('compare_at')])>
                         </div>
                     </div>

@@ -58,7 +58,7 @@
             @endif
         </div>
 
-        <form id="dodaj-termin" method="post" action="{{ route('admin.workshops.dates.store') }}" novalidate class="{{ $card }} grid min-w-0 flex-[1_1_320px] gap-3">
+        <form id="dodaj-termin" method="post" action="{{ route('admin.workshops.dates.store') }}" novalidate class="{{ $card }} grid min-w-0 flex-[1_1_320px] grid-cols-2 gap-3 [&>*]:col-span-2">
             @csrf
             <h2 class="text-[11.5px] tracking-[0.16em] text-label uppercase">Dodaj termin</h2>
             @if ($names->isEmpty())
@@ -71,13 +71,14 @@
                     'workshop' => ['Warsztat', null],
                     'date' => ['Dzień', ['type' => 'date', 'min' => now()->format('Y-m-d')]],
                     'start' => ['Początek', ['type' => 'time', 'step' => 300]],
-                    'end' => ['Koniec — jeśli chcesz podać', ['type' => 'time', 'step' => 300]],
+                    'end' => ['Koniec (nieobowiązkowo)', ['type' => 'time', 'step' => 300]],
                     'seats' => ['Ile miejsc', ['type' => 'number', 'min' => 1, 'max' => \App\Modules\Workshops\Http\Requests\Admin\StoreWorkshopDateRequest::MAX_SEATS, 'inputmode' => 'numeric', 'placeholder' => 'np. 6']],
                 ] as $field => [$text, $extra])
                     @php
                         $has = $dateErrors->has($field);
                     @endphp
-                    <div class="min-w-0">
+                    {{-- Start and end side by side: one decision, one row (MA-335). --}}
+                    <div @class(['min-w-0', 'col-span-1!' => in_array($field, ['start', 'end'], true)])>
                         <label for="termin-{{ $field }}" class="{{ $label }}">{{ $text }}</label>
                         @if ($field === 'workshop')
                             <select id="termin-workshop" name="workshop" @if ($has) aria-invalid="true" aria-describedby="termin-workshop-note" @endif
@@ -161,8 +162,8 @@
                     <legend class="sr-only">{{ $new ? 'Nowy warsztat' : ($row['name'] ?: 'Warsztat '.($index + 1)) }}</legend>
                     <input type="hidden" name="{{ $name }}[code]" value="{{ $row['code'] ?? '' }}">
                     <input type="hidden" name="{{ $name }}[unit]" value="{{ $row['unit'] ?? '' }}">
-                    <div class="grid gap-2.5 sm:grid-cols-[minmax(0,3fr)_minmax(0,1fr)_minmax(0,1fr)]">
-                        <div class="min-w-0">
+                    <div class="grid grid-cols-2 gap-2.5 sm:grid-cols-[minmax(0,3fr)_minmax(0,1fr)_minmax(0,1fr)]">
+                        <div class="col-span-2 min-w-0 sm:col-span-1">
                             <label for="{{ $id }}-name" class="{{ $label }}">{{ $new ? 'Nowy warsztat — nazwa' : 'Nazwa' }}</label>
                             <input id="{{ $id }}-name" name="{{ $name }}[name]" value="{{ $row['name'] ?? '' }}" maxlength="60" placeholder="np. Lepienie z ręki"
                                    @class([$input, 'border-error' => $has('name'), 'border-line' => ! $has('name')])>
@@ -177,7 +178,7 @@
                             <input id="{{ $id }}-unit" name="{{ $name }}[unit_label]" value="{{ $row['unit_label'] ?? '' }}" maxlength="30" placeholder="os."
                                    @class([$input, 'border-error' => $has('unit_label'), 'border-line' => ! $has('unit_label')])>
                         </div>
-                        <div class="min-w-0 sm:col-span-1">
+                        <div class="min-w-0">
                             <label for="{{ $id }}-duration" class="{{ $label }}">Czas</label>
                             <input id="{{ $id }}-duration" name="{{ $name }}[duration_label]" value="{{ $row['duration_label'] ?? '' }}" maxlength="30" placeholder="2,5 godziny"
                                    @class([$input, 'border-error' => $has('duration_label'), 'border-line' => ! $has('duration_label')])>
@@ -187,17 +188,17 @@
                             <input id="{{ $id }}-compare" name="{{ $name }}[compare_at]" value="{{ $row['compare_at'] ?? '' }}" inputmode="decimal" placeholder="—"
                                    @class([$input, 'text-right tabular-nums', 'border-error' => $has('compare_at'), 'border-line' => ! $has('compare_at')])>
                         </div>
-                        <div class="min-w-0">
+                        <div class="col-span-2 min-w-0 sm:col-span-1">
                             <label for="{{ $id }}-group" class="{{ $label }}">Grupa</label>
                             <input id="{{ $id }}-group" name="{{ $name }}[group_label]" value="{{ $row['group_label'] ?? '' }}" maxlength="40" placeholder="grupa do 6 osób"
                                    @class([$input, 'border-error' => $has('group_label'), 'border-line' => ! $has('group_label')])>
                         </div>
-                        <div class="min-w-0 sm:col-span-3">
+                        <div class="col-span-2 min-w-0 sm:col-span-3">
                             <label for="{{ $id }}-summary" class="{{ $label }}">Opis — jedno, dwa zdania</label>
                             <textarea id="{{ $id }}-summary" name="{{ $name }}[summary]" rows="2" maxlength="220"
                                       @class([$input, 'resize-y leading-[1.55]', 'border-error' => $has('summary'), 'border-line' => ! $has('summary')])>{{ $row['summary'] ?? '' }}</textarea>
                         </div>
-                        <div class="min-w-0 sm:col-span-3">
+                        <div class="col-span-2 min-w-0 sm:col-span-3">
                             <label for="{{ $id }}-includes" class="{{ $label }}">Co w cenie — każda rzecz w osobnej linii</label>
                             <textarea id="{{ $id }}-includes" name="{{ $name }}[includes]" rows="3" maxlength="400"
                                       @class([$input, 'resize-y leading-[1.55]', 'border-error' => $has('includes'), 'border-line' => ! $has('includes')])>{{ $row['includes'] ?? '' }}</textarea>

@@ -2,7 +2,9 @@
 @use('App\Modules\Admin\Support\Tabs')
 @php
     $bag = $errors->getBag('maile');
-    $names = ['pl' => 'Po polsku', 'en' => 'Po angielsku — w mailach do zamówień z angielskiej strony'];
+    $names = ['pl' => 'Po polsku', 'en' => 'Po angielsku'];
+    // A short legend fits one line on a phone; what the English text is for goes under it (MA-335).
+    $notes = ['en' => 'Do zamówień z angielskiej strony.'];
     $parts = [
         'subject' => 'Temat',
         'intro' => 'Zdanie na początek',
@@ -47,7 +49,7 @@
                         @foreach ($mailLocales as $locale)
                             <fieldset class="min-w-0">
                                 @if (count($mailLocales) > 1)
-                                    <legend class="mb-2 text-[12.5px] text-graphite">{{ $names[$locale] ?? $locale }}</legend>
+                                    <legend class="mb-2 text-[12.5px] text-graphite">{{ $names[$locale] ?? $locale }}@isset($notes[$locale])<span class="text-hint"> · {{ $notes[$locale] }}</span>@endisset</legend>
                                 @endif
                                 <div class="grid gap-3">
                                     @foreach ($mail->parts as $part)
@@ -55,7 +57,7 @@
                                     @endforeach
                                 </div>
                                 <button name="preview" value="{{ $mail->key }}:{{ $locale }}" formaction="{{ route('admin.mail-texts.preview') }}" formtarget="_blank"
-                                        class="mt-3 min-h-11 rounded-full border border-line-strong px-5 py-3 text-[13.5px] text-ink hover:border-ink hover:bg-sand-dark">Podgląd{{ count($mailLocales) > 1 ? ' — '.($locale === 'pl' ? 'po polsku' : 'po angielsku') : '' }}</button>
+                                        class="mt-3 min-h-11 w-full rounded-full border border-line-strong px-5 py-3 text-[13.5px] text-ink hover:border-ink hover:bg-sand-dark md:w-auto">Podgląd{{ count($mailLocales) > 1 ? ' — '.($locale === 'pl' ? 'po polsku' : 'po angielsku') : '' }}</button>
                             </fieldset>
                         @endforeach
                     </div>
@@ -70,6 +72,9 @@
             @foreach ($locales as $locale)
                 <fieldset class="min-w-0 rounded-[4px] border border-sand-dark bg-linen p-3.5">
                     <legend class="px-1 text-[12.5px] text-graphite">{{ $names[$locale] ?? $locale }}</legend>
+                    @isset($notes[$locale])
+                        <p class="-mt-1 mb-2.5 text-[12.5px] text-hint">{{ $notes[$locale] }}</p>
+                    @endisset
                     <div class="grid gap-3">
                         @foreach (\App\Modules\Shared\Mail\MailTexts::COMMON as $part => $limits)
                             @include('settings::admin.mail-texts.field', ['key' => \App\Modules\Shared\Mail\MailTexts::setting($part, $locale)])
