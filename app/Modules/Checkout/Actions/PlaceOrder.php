@@ -64,6 +64,7 @@ class PlaceOrder
                 'payment_method' => $data['payment_method'],
                 'payment_status' => PaymentStatus::Pending,
                 'note' => $data['note'] ?? null,
+                'gift_message' => $data['gift_message'] ?? null,
                 'invoice_nip' => $data['invoice_nip'] ?? null,
                 'terms_version' => $data['terms_version'] ?? null,
                 'terms_accepted_at' => isset($data['terms_version']) ? now() : null,
