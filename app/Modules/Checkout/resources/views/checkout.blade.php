@@ -14,7 +14,7 @@
     // Vouchers sent as PDFs alone need no note for the parcel, only an invoice may. The address sits with the courier.
     $more = $needsDelivery ? ['invoice_nip', 'note'] : ['invoice_nip'];
     $moreOpen = $errors->hasAny($more) || collect($more)->contains(fn (string $field) => filled(old($field)));
-    // The gift message (MA-342); no inline @php below, since a later @endphp would swallow the markup between them.
+    // The gift message (MA-342). Worked out up here: a one-line PHP directive further down would pair with a later block's end.
     $giftMax = PlaceOrderRequest::GIFT_MESSAGE_MAX;
     $giftError = $errors->first('gift_message');
     $radio = 'group flex cursor-pointer items-center gap-3.5 rounded-[20px] border border-line bg-cream/60 px-[18px] transition-[border-color,background-color,transform] duration-300 hover:-translate-y-0.5 hover:border-ink has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy';
