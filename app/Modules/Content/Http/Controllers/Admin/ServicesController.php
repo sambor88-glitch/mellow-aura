@@ -9,6 +9,7 @@ use App\Modules\Content\Http\Requests\Admin\SaveServicePricesRequest;
 use App\Modules\Content\Http\Requests\Admin\SaveServiceStepsRequest;
 use App\Modules\Content\Http\Requests\Admin\SaveServiceTextsRequest;
 use App\Modules\Content\Models\ServiceExample;
+use App\Modules\Content\Support\PagePhotos;
 use App\Modules\Content\Support\ServicePrices;
 use App\Modules\Settings\Actions\SaveSettings;
 use App\Modules\Settings\Settings;
@@ -18,12 +19,13 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 /**
- * „Usługi” in the panel: for „Z Twojej apaszki” and „Odcisk Twojej rośliny” the „przed i po” photos, the sentences,
- * the price list and the steps. Each card saves on its own.
+ * „Usługi” in the panel: for „Z Twojej apaszki” and „Odcisk Twojej rośliny” the „przed i po” photos, every sentence on
+ * the page, the price list and the steps, and the way to the photo next to the introduction („Zdjęcia stron”) and to the
+ * title for Google („Google”). Each card saves on its own.
  */
 class ServicesController extends Controller
 {
-    public function edit(Settings $settings, string $service = 'apaszka'): View
+    public function edit(Settings $settings, PagePhotos $pagePhotos, string $service = 'apaszka'): View
     {
         $current = Service::fromSlug($service) ?? abort(404);
         $rows = fn (string $key, array $fields) => collect((array) $settings->get($current->setting($key), []))
@@ -34,7 +36,8 @@ class ServicesController extends Controller
 
         return view('content::admin.services', [
             'service' => $current,
-            'texts' => collect(array_keys(SaveServiceTextsRequest::FIELDS))->mapWithKeys(fn (string $field) => [$field => $settings->get($current->setting($field))])->all(),
+            'texts' => collect(SaveServiceTextsRequest::fields())->mapWithKeys(fn (array $rules, string $field) => [$field => $settings->get($current->setting($field))])->all(),
+            'photo' => $pagePhotos->get($current->photoPlace()),
             'prices' => collect($rows('prices', ['label', 'price_gross', 'note', 'compare_at_price']))
                 ->map(fn (array $row) => [
                     'label' => $row['label'],
