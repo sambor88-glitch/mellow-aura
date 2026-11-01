@@ -839,6 +839,14 @@
         ]
     },
     {
+        "key": "text_b2b_eyebrow",
+        "value": "dla kawiarni, restauracji i hoteli"
+    },
+    {
+        "key": "text_b2b_heading",
+        "value": "Naczynia, które\nwidać na zdjęciach\nTwoich gości"
+    },
+    {
         "key": "text_b2b_lead",
         "value": "Ręczna ceramika w powtarzalnej formie: ten sam kształt i szkliwo w kolejnych dostawach, ale każda sztuka nadal swoja. Testuję wytrzymałość w zmywarce gastronomicznej przed pierwszą dużą partią."
     },
