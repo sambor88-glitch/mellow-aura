@@ -173,8 +173,8 @@
         </div>
         <div style="flex: 1 1 360px; min-width: 0; padding: 44px 40px; display: flex; flex-direction: column; justify-content: center">
           <div style="font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #855F3D; margin-bottom: 18px">zestawy prezentowe</div>
-          <h2 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(27px, 3.2vw, 38px); line-height: 1.14; margin: 0 0 16px">Kubek i scrunchie<br />w jednym odcieniu</h2>
-          <p style="font-size: 16px; line-height: 1.66; color: #5C5043; margin: 0 0 24px; max-width: 46ch">Dobieram szkliwo do tkaniny, nie odwrotnie. Zestawu, w którym glina i jedwab mają ten sam kolor, nie kupisz w pracowni, która robi tylko jedno z dwóch.</p>
+          <h2 style="font-family: Newsreader, serif; font-weight: 300; font-size: clamp(27px, 3.2vw, 38px); line-height: 1.14; margin: 0 0 16px">Kubek i scrunchie<br />w jednym zestawie</h2>
+          <p style="font-size: 16px; line-height: 1.66; color: #5C5043; margin: 0 0 24px; max-width: 46ch">Kubek maluję ręcznie, scrunchie szyję z jedwabiu — jedno i drugie w mojej pracowni. Takiego zestawu nie kupisz tam, gdzie robią tylko jedno z dwóch.</p>
           <div style="display: flex; gap: 14px; flex-wrap: wrap">
             <button onClick="{{ goBundles }}" style="background: #2F2620; color: #F7F2EA; border: 0; border-radius: 999px; padding: 15px 30px; font-size: 14px; transition: background .3s ease, transform .15s ease" style-hover="background: #24417E" style-active="transform: scale(.97)">Zobacz zestawy</button>
             <button onClick="{{ goGifts }}" style="background: transparent; color: #2F2620; border: 1px solid #C6B8A5; border-radius: 999px; padding: 15px 30px; font-size: 14px; transition: border-color .3s ease, background .3s ease, transform .15s ease" style-hover="border-color: #2F2620; background: #EDE4D8" style-active="transform: scale(.98)">Szukam prezentu</button>
@@ -2476,7 +2476,7 @@ const ROUTES = {
   gifts: { path: '/prezenty', title: 'Szukam prezentu — ceramika handmade na każdą okazję',
     desc: 'Prezent z ceramiki i jedwabiu: filtruj po okazji i budżecie. Pakowanie na prezent, kartka z życzeniami, wysyłka prosto do obdarowanej osoby.' },
   bundles: { path: '/zestawy-prezentowe', title: 'Zestawy prezentowe — ceramika i jedwab w pudełku',
-    desc: 'Gotowe zestawy: kubek i scrunchie w jednym kolorze, talerz z filiżanką, kadzielnica z podstawką. Taniej niż osobno, zapakowane na prezent.' },
+    desc: 'Gotowe zestawy: kubek i scrunchie w jednym zestawie, talerz z filiżanką, kadzielnica z podstawką. Taniej niż osobno, zapakowane na prezent.' },
   scarf: { path: '/z-twojej-apaszki', title: 'Przeszycie apaszki po babci — opaska z Twojej tkaniny',
     desc: 'Co zrobić z apaszką po babci? Przeszyję ją na opaskę i scrunchies z Twojej własnej tkaniny. Upcycling jedwabiu na zamówienie z jawnym cennikiem.' },
   imprint: { path: '/odcisk-twojej-rosliny', title: 'Pamiątka z bukietu ślubnego — kwiat odciśnięty w glinie',
@@ -2528,7 +2528,7 @@ const TEXTS = {
   mugLead: 'Wbijam litery stemplem w surową jeszcze glinę — jedna po drugiej, bez nadruku i bez kalkomanii. Napis zostaje w ściance na zawsze, nie zetrze się w zmywarce.',
   mugNote: 'Podgląd jest orientacyjny — litery wbijam ręcznie, jedna po drugiej, więc linia nigdy nie jest idealnie równa. To właśnie w tym jest najlepsze.',
   bndH1: 'Glina i jedwab\nw jednym pudełku',
-  bndLead: 'Zestawy, których nie znajdziesz w innej pracowni — bo mało kto robi jednocześnie ceramikę i rękodzieło tekstylne. Dobieram odcień szkliwa do tkaniny, nie odwrotnie.',
+  bndLead: 'Zestawy, których nie znajdziesz w innej pracowni — bo mało kto robi jednocześnie ceramikę i rękodzieło tekstylne.',
   wrapH: 'Pakowanie na prezent',
   wrapLead: 'Szare pudełko, wióry, sznurek i ręcznie pisana kartka z Twoim tekstem. Mogę wysłać prosto do obdarowanej osoby — bez paragonu w środku.',
   scarfH1: 'Apaszka babci\nnie musi leżeć\nw szafie',
@@ -2640,9 +2640,9 @@ const WHO = {
 const CARE_CERAMIC = 'Zmywarka tak, złoto tylko ręcznie';
 
 const BUNDLES = [
-  { id: 'b1', name: 'Kubek i scrunchie w jednym kolorze', ids: ['kubki-malowane', 'scrunchies'],
+  { id: 'b1', name: 'Kubek i scrunchie w jednym zestawie', ids: ['kubki-malowane', 'scrunchies'],
     img: 'zdjecia/kubek-cappuccino.webp', img2: 'zdjecia/scrunchies-fiolet.webp', save: 0.1,
-    desc: 'Mój znak firmowy: glina i jedwab dobrane w jeden odcień. Kubek 300 ml i scrunchie w rozmiarze średnim, zapakowane razem.' },
+    desc: 'Mój znak firmowy: glina i jedwab z jednej pracowni. Kubek 300 ml i scrunchie w rozmiarze średnim, zapakowane razem.' },
   { id: 'b2', name: 'Poranek we dwoje', ids: ['zestaw-4-filizanek', 'talerze'],
     img: 'zdjecia/zestaw-filizanka-talerz.webp', img2: 'zdjecia/talerz-niebieski-odcisk.webp', save: 0.1,
     desc: 'Dwie filiżanki z talerzykami i talerz deserowy z odciskiem roślinnym. Na parapetówkę albo pierwszą wspólną kuchnię.' },

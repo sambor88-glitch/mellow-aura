@@ -287,6 +287,11 @@
                 "code": "powder_pink",
                 "name": "Pudrowy róż",
                 "hex": "#D6A39C"
+            },
+            {
+                "code": "transparent",
+                "name": "Transparentne",
+                "hex": "#D9C4A8"
             }
         ]
     },
@@ -669,7 +674,7 @@
     },
     {
         "key": "text_bundles_lead",
-        "value": "Zestawy, których nie znajdziesz w innej pracowni — bo mało kto robi jednocześnie ceramikę i rękodzieło tekstylne. Dobieram odcień szkliwa do tkaniny, nie odwrotnie."
+        "value": "Zestawy, których nie znajdziesz w innej pracowni — bo mało kto robi jednocześnie ceramikę i rękodzieło tekstylne."
     },
     {
         "key": "text_gift_wrap_heading",

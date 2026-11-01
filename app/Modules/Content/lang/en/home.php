@@ -39,8 +39,8 @@ return [
     'gifts_scrunchies_alt' => 'Silk scrunchies',
     'gifts_eyebrow' => 'gift sets',
     'gifts_heading' => 'A mug and a scrunchie :em',
-    'gifts_heading_em' => 'in one shade',
-    'gifts_text' => 'I match the glaze to the fabric, not the other way round. A set where clay and silk share one colour is something a studio that does only one of the two can’t make.',
+    'gifts_heading_em' => 'in one set',
+    'gifts_text' => 'I hand-paint the mug and sew the scrunchie from silk, both in my studio. A studio that makes only one of the two can’t put this set together.',
     'gifts_bundles' => 'See the sets',
     'gifts_finder' => 'Find a gift',
 

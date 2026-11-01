@@ -35,7 +35,7 @@ class MugPageTest extends TestCase
             ->assertSeeInOrder(['na zamówienie', 'gotowe w 4–8 tygodni', "Kubek, który mówi to,\nco myślisz", 'Wbijam litery stemplem'])
             ->assertSeeInOrder(['Twój napis', 'name="text"', 'Wycisz stempel', 'Podziel na linie'], false)
             ->assertSeeInOrder(['Rozmiar', 'Mały', '200 ml', '69 zł', 'value="Średni" x-model="size" checked', 'Średni', '300 ml', '79 zł', 'Duży', '400 ml', '95 zł'], false)
-            ->assertSeeInOrder(['Kolor wnętrza', 'value="turquoise" x-model="glaze" checked', 'Turkus', 'Kobalt', 'Ceglany', 'Grafit', 'Pudrowy róż'], false)
+            ->assertSeeInOrder(['Kolor wnętrza', 'value="turquoise" x-model="glaze" checked', 'Turkus', 'Kobalt', 'Ceglany', 'Grafit', 'Pudrowy róż', 'Transparentne'], false)
             ->assertSeeInOrder(['Dodaj do koszyka', '79 zł', 'wysyłka gratis od 400 zł'])
             ->assertSeeInOrder(['Zamawiasz więcej?', 'Od sześciu kubków robię rabat', 'Czego nie wbiję', 'Mowy nienawiści'])
             ->assertSee('Podgląd jest orientacyjny')
