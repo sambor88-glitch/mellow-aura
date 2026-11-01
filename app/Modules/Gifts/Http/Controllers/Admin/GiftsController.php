@@ -109,11 +109,14 @@ class GiftsController extends Controller
     }
 
     /**
+     * „Dla kogo” and the occasions with how many products on sale are ticked with each.
+     *
      * @return array<string, array{tags: list<array{key: string, label: string}>, counts: array<string, int>}>
      */
     private function tagLists(Settings $settings): array
     {
-        $products = Product::query()->get(['id', 'recipients', 'occasions']);
+        // Counted like the page shows them: products on sale only, so „0” means the chip is not on the page.
+        $products = Product::query()->live()->get(['id', 'recipients', 'occasions']);
 
         return collect(SaveGiftFinderRequest::TAG_LISTS)
             ->map(fn (string $setting, string $list) => [

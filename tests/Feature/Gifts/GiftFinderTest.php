@@ -56,8 +56,11 @@ class GiftFinderTest extends TestCase
             ->assertSee('<link rel="canonical" href="'.route('gifts.index').'">', false)
             ->assertSeeInOrder(['href="'.route('gifts.index').'"', 'aria-current="page"', 'Prezenty'], false)
             ->assertSeeInOrder(['szukam prezentu', 'Powiedz, dla kogo', 'i za ile', 'Dobiorę resztę.'])
-            ->assertSeeInOrder(['Dla kogo', 'Dla każdego', 'Dla niej', 'Dla niego / taty', 'Dla pary'])
-            ->assertSeeInOrder(['Okazja', 'Wszystkie okazje', 'Urodziny', 'Dzień Matki', 'Ślub', 'Parapetówka', 'Rocznica', 'Święta', 'Dla siebie'])
+            // Only who and what occasions a product on sale is ticked with: the hidden product does not count.
+            ->assertSeeInOrder(['Dla kogo', 'Dla każdego', 'Dla niej', 'Dla niego / taty', 'Okazja', 'Wszystkie okazje', 'Urodziny', 'Ślub'])
+            ->assertDontSee('Dla pary')
+            ->assertDontSee('Dzień Matki')
+            ->assertDontSee('Parapetówka')
             ->assertSeeInOrder(['Budżet', 'Każdy budżet', 'do 100 zł', '100–200 zł', '200–400 zł', 'powyżej 400 zł'])
             ->assertSeeInOrder(['2 pomysły', 'od 69 zł', 'Kubki malowane ręcznie', 'Wybierz wariant', '239 zł', 'Wazony', 'Do koszyka'])
             ->assertDontSee('Ukryte');
@@ -184,7 +187,7 @@ class GiftFinderTest extends TestCase
             ->get('/panel/prezenty')
             ->assertOk()
             ->assertSeeInOrder(['Nagłówek', 'Zdanie pod nagłówkiem', 'Dla kogo', 'Okazja', 'Budżet', 'Pod listą — o voucherach'])
-            ->assertSeeInOrder(['name="recipients[0][key]" value="for_her"', 'name="recipients[0][label]" value="Dla niej"', '2 produkty', 'name="recipients[1][label]" value="Dla niego / taty"', '0 produktów', 'name="recipients[2][label]" value="Dla pary"', '1 produkt', 'name="recipients[3][label]" value=""'], false)
+            ->assertSeeInOrder(['name="recipients[0][key]" value="for_her"', 'name="recipients[0][label]" value="Dla niej"', '2 produkty w sklepie', 'name="recipients[1][label]" value="Dla niego / taty"', '0 produktów w sklepie — strona jej nie pokaże', 'name="recipients[2][label]" value="Dla pary"', '1 produkt', 'name="recipients[3][label]" value=""'], false)
             ->assertSee('value="occasions:1:up"', false)
             ->assertSeeInOrder(['name="occasions[0][label]" value="Urodziny"', '1 produkt', 'name="occasions[7][label]" value=""'], false);
 
@@ -219,12 +222,16 @@ class GiftFinderTest extends TestCase
         // The renamed tag keeps both products; the removed one is gone from the page and from the address.
         $this->get('/prezenty')
             ->assertSee('Prezent<br>'."\n".'na każdą okazję', false)
-            ->assertSeeInOrder(['Dla kogo', 'Dla każdego', 'Dla mamy', 'Dla pary', 'Dla babci', 'Okazja', 'Wszystkie okazje', 'Urodziny', 'Ślub', 'Komunia'])
+            ->assertSeeInOrder(['Dla kogo', 'Dla każdego', 'Dla mamy', 'Dla pary', 'Okazja', 'Wszystkie okazje', 'Urodziny', 'Ślub'])
             ->assertDontSee('Dla niego / taty')
-            ->assertDontSee('Parapetówka');
+            ->assertDontSee('Parapetówka')
+            // New ones wait for their first product.
+            ->assertDontSee('Dla babci')
+            ->assertDontSee('Komunia');
         $this->assertSame(['Dla mamy', 'Wszystkie okazje', 'Każdy budżet'], $this->activeChips('/prezenty?recipient=for_her', '2 pomysły'));
         $this->assertSame(['Dla każdego', 'Wszystkie okazje', 'Każdy budżet'], $this->activeChips('/prezenty?recipient=for_him', '2 pomysły'));
-        $this->get('/prezenty?occasion=komunia')->assertSee('Nic nie pasuje do tych warunków');
+        // Chosen in the address, an occasion without products keeps its chip, so the page says what it shows.
+        $this->get('/prezenty?occasion=komunia')->assertSee('Nic nie pasuje do tych warunków')->assertSeeInOrder(['aria-current="true"', 'Komunia'], false);
 
         // The arrows move one row of the list they belong to and keep what was typed.
         $this->put('/panel/prezenty/szukam-prezentu', [

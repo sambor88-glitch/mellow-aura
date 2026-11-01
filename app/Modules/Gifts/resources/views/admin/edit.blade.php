@@ -117,7 +117,7 @@
                     <h2 class="{{ $heading }}">Szukam prezentu</h2>
                     <a href="{{ route('gifts.index') }}" target="_blank" rel="noopener" class="text-[13px]">Zobacz stronę →</a>
                 </div>
-                <p class="{{ $intro }}">Wszystko, co klienci widzą na stronie, od góry do dołu. „Dla kogo”, okazje i budżet to przyciski filtrów. Pozycje „Dla kogo” i okazje zaznaczasz przy każdym produkcie: Produkty → karta produktu → „Prezent i Google”.</p>
+                <p class="{{ $intro }}">Wszystko, co klienci widzą na stronie, od góry do dołu. „Dla kogo”, okazje i budżet to przyciski filtrów. Pozycje „Dla kogo” i okazje zaznaczasz przy każdym produkcie: Produkty → karta produktu → „Prezent i Google”. Pozycja bez produktu w sklepie nie pokazuje się na stronie.</p>
                 @if ($finderErrors->any())
                     <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
                 @endif
@@ -161,7 +161,7 @@
                                                @if ($hasError) aria-invalid="true" @endif
                                                @class([$input, 'flex-[1_1_220px]', 'border-error' => $hasError, 'border-line' => ! $hasError])>
                                         @unless ($new)
-                                            <span class="text-[12.5px] text-label">{{ $count > 0 ? trans_choice(':count produkt|:count produkty|:count produktów', $count, [], 'pl') : '0 produktów — zaznacz ją przy produkcie' }}</span>
+                                            <span class="text-[12.5px] text-label">{{ $count > 0 ? trans_choice(':count produkt|:count produkty|:count produktów', $count, [], 'pl').' w sklepie' : '0 produktów w sklepie — strona jej nie pokaże' }}</span>
                                         @endunless
                                     </div>
                                     @if ($hasError)

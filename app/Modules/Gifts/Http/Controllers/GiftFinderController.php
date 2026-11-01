@@ -15,7 +15,8 @@ use Illuminate\View\View;
 
 /**
  * /prezenty: products on sale filtered by who a gift is for, the occasion and the budget — all three lists from the
- * panel (MA-352). The filters are query parameters and the canonical address stays bare, as the specification asks.
+ * panel (MA-352); a person or an occasion without a product on sale has no chip. The filters are query parameters and
+ * the canonical address stays bare, as the specification asks.
  */
 class GiftFinderController extends Controller
 {
@@ -28,11 +29,22 @@ class GiftFinderController extends Controller
         $budgets = BudgetRanges::from($settings);
         $budget = $budgets->firstWhere('key', (string) $request->query('budget', ''));
 
-        $ideas = Product::query()->live()->with(['category', 'variants' => fn ($variants) => $variants->visible(), 'media'])->orderBy('sort_order')->orderBy('id')->get()
+        $onSale = Product::query()->live()->with(['category', 'variants' => fn ($variants) => $variants->visible(), 'media'])->orderBy('sort_order')->orderBy('id')->get();
+        $ideas = $onSale
             ->filter(fn (Product $product) => $recipient === null || in_array($recipient, $product->recipients ?? [], true))
             ->filter(fn (Product $product) => $occasion === null || in_array($occasion, $product->occasions ?? [], true))
             ->filter(fn (Product $product) => $budget === null || BudgetRanges::contains($budget, (int) $product->variants->min('price_gross')))
             ->values();
+
+        // A chip no product on sale is ticked with would lead to an empty list, so it stays off the page — unless the
+        // address already chose it (MA-352).
+        $withProducts = fn (array $tags, string $field, ?string $chosen) => array_filter(
+            $tags,
+            fn (string $key) => $key === $chosen || $onSale->contains(fn (Product $product) => in_array($key, (array) $product->{$field}, true)),
+            ARRAY_FILTER_USE_KEY,
+        );
+        $recipients = $withProducts($recipients, 'recipients', $recipient);
+        $occasions = $withProducts($occasions, 'occasions', $occasion);
 
         $current = ['recipient' => $recipient, 'occasion' => $occasion, 'budget' => $budget['key'] ?? null];
         $url = fn (array $changes) => route('gifts.index').(($query = array_filter([...$current, ...$changes])) ? '?'.http_build_query($query) : '');
