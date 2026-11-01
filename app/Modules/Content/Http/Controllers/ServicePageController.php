@@ -10,8 +10,9 @@ use App\Modules\Settings\Settings;
 use Illuminate\View\View;
 
 /**
- * /z-twojej-apaszki and /odcisk-twojej-rosliny: the sentences, steps and prices from the panel and the
- * „przed i po” pairs Kasia uploads. An order is agreed through the contact form or WhatsApp.
+ * /z-twojej-apaszki and /odcisk-twojej-rosliny: the sentences, steps and prices from the panel (Usługi) and the
+ * „przed i po” pairs Kasia uploads. An empty text drops out of the page. An order is agreed through the custom order
+ * form or WhatsApp.
  */
 class ServicePageController extends Controller
 {
@@ -27,12 +28,24 @@ class ServicePageController extends Controller
 
     private function show(Service $service, Settings $settings, ServicePrices $prices): View
     {
+        $text = fn (string $name): ?string => filled($value = $settings->get($service->setting($name))) ? (string) $value : null;
+
         return view('content::services.show', [
             'service' => $service,
-            'heading' => $settings->get($service->setting('heading')),
-            'lead' => $settings->get($service->setting('lead')),
-            'lead2' => $settings->get($service->setting('lead_2')),
-            'note' => $settings->get($service->setting('note')),
+            'eyebrow' => $text('eyebrow'),
+            'heading' => $text('heading'),
+            'lead' => $text('lead'),
+            'lead2' => $text('lead_2'),
+            'cta' => $text('cta'),
+            'examplesLead' => $text('examples_lead'),
+            'pricesHeading' => $text('prices_heading'),
+            'note' => $text('note'),
+            'card' => [
+                'eyebrow' => $text('card_eyebrow'),
+                'heading' => $text('card_heading'),
+                'list' => array_values(array_filter(array_map('trim', explode("\n", (string) $text('card_list'))), 'strlen')),
+                'text' => $text('card_text'),
+            ],
             'prices' => $prices->for($service),
             'steps' => collect((array) $settings->get($service->setting('steps'), []))
                 ->filter(fn (mixed $step) => is_array($step) && filled($step['title'] ?? null))

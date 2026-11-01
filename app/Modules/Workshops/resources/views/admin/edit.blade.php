@@ -220,6 +220,7 @@
             <p class="mt-1.5 text-[13px] text-error">{{ $bag->first('workshops') }}</p>
         @endif
         <p class="mt-3.5 text-[12.5px] leading-[1.6] text-label">W pusty wiersz na dole wpisz nowy warsztat. Strzałki zapisują cały cennik i przestawiają warsztat o jedno miejsce. „Przed obniżką” wpisz tylko przy promocji: strona przekreśli tę cenę, gdy obniżysz cenę, i sama poda najniższą cenę z 30 dni.</p>
+        <a href="{{ route('admin.page-photos.edit', ['tab' => 'warsztaty']) }}" class="inline-flex min-h-11 items-center text-[13px] text-lead underline underline-offset-2 hover:text-ink">Zdjęcia na stronie warsztatów zmienisz w „Zdjęciach stron” →</a>
         <button class="mt-[18px] min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]">Zapisz cennik warsztatów</button>
     </form>
     </x-admin::tab-panel>

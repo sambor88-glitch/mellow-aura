@@ -52,7 +52,7 @@ class PageFactsTest extends TestCase
             ->assertSee('zapłacisz w 10 sekund kodem z aplikacji banku');
 
         $this->get('/kubek-z-napisem')
-            ->assertSee('<meta name="description" content="Zaprojektuj kubek z własnym napisem: litery wbijane stemplem w glinę, trzy rozmiary, pięć kolorów szkliwa. Prezent, którego nie ma nikt inny. Kraków.">', false)
+            ->assertSee('<meta name="description" content="Zaprojektuj kubek z własnym napisem: litery wbijane stemplem w glinę, trzy rozmiary, sześć kolorów szkliwa. Prezent, którego nie ma nikt inny. Kraków.">', false)
             ->assertSee('zapłacisz w 10 sekund');
 
         $this->get('/kontakt')

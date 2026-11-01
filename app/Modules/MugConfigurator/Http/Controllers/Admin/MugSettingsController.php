@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Modules\MugConfigurator\Actions\ReplaceLetteringPhoto;
 use App\Modules\MugConfigurator\Actions\ReplaceMugPhoto;
 use App\Modules\MugConfigurator\Http\Requests\Admin\SaveLetteringPhotoRequest;
+use App\Modules\MugConfigurator\Http\Requests\Admin\SaveMugGlazesRequest;
 use App\Modules\MugConfigurator\Http\Requests\Admin\SaveMugLookRequest;
 use App\Modules\MugConfigurator\Http\Requests\Admin\SaveMugPhotoRequest;
 use App\Modules\MugConfigurator\Http\Requests\Admin\SaveMugSizesRequest;
@@ -18,8 +19,8 @@ use Illuminate\View\View;
 
 /**
  * „Kubek z napisem” in the panel, like the prototype's tab: the photo under the text, sizes with prices,
- * how much text fits, where it sits and its colour, the sentences on the page and two close-ups of a real,
- * fired text („Napis z bliska”). Each card saves on its own.
+ * the inside colours a customer picks from (MA-350), how much text fits, where it sits and its colour,
+ * the sentences on the page and two close-ups of a real, fired text („Napis z bliska”). Each card saves on its own.
  */
 class MugSettingsController extends Controller
 {
@@ -66,6 +67,13 @@ class MugSettingsController extends Controller
         $saveSettings($request->settings());
 
         return to_route('admin.mug.edit')->withFragment('rozmiary')->with('panel_status', 'Zapisane. Koszyk już liczy według nowych cen.');
+    }
+
+    public function glazes(SaveMugGlazesRequest $request, SaveSettings $saveSettings): RedirectResponse
+    {
+        $saveSettings($request->settings());
+
+        return to_route('admin.mug.edit')->withFragment('szkliwa')->with('panel_status', 'Zapisane. Klienci wybierają już z tych kolorów.');
     }
 
     public function look(SaveMugLookRequest $request, SaveSettings $saveSettings): RedirectResponse

@@ -19,6 +19,8 @@ class WorkshopsPageTest extends TestCase
         parent::setUp();
 
         $this->withoutVite();
+        // Smaller copies of the page's photos are made on the first visit; they stay off the real disk.
+        Storage::fake('public');
         $this->seed(SettingsSeeder::class);
     }
 
@@ -159,30 +161,27 @@ class WorkshopsPageTest extends TestCase
 
     public function test_the_studio_photos_from_the_panel_show_with_a_link_to_the_studio(): void
     {
-        $this->settings([
-            'studio_hero_image' => 'zdjecia/misa-laguna.webp',
-            'studio_gallery' => [
-                ['path' => 'zdjecia/nie-ma-takiego.webp', 'alt' => 'Zgubione zdjęcie'],
-                ['path' => 'zdjecia/kubek-cappuccino.webp', 'alt' => 'Kubek malowany ręcznie'],
-                ['path' => 'zdjecia/kasia-talerz-zloto.webp', 'alt' => 'Kasia z talerzem'],
-                ['path' => 'zdjecia/kadzielnica-pszczoly.webp', 'alt' => 'Kadzielnica'],
-                ['path' => 'zdjecia/kubek-cappuccino.webp', 'alt' => 'Czwarte'],
-                ['path' => 'zdjecia/kubek-cappuccino.webp', 'alt' => 'Piąte — już na /pracownia'],
-            ],
-        ]);
+        // The page has its own places in Zdjęcia stron (MA-349): a photo changed for /pracownia does not change here.
+        $this->settings(['page_photos' => [
+            'workshops-hero' => ['path' => 'zdjecia/misa-laguna.webp', 'focus' => ['x' => 30, 'y' => 70]],
+            'workshops-studio-1' => ['path' => 'zdjecia/nie-ma-takiego.webp', 'alt' => 'Zgubione zdjęcie'],
+            'workshops-studio-2' => ['path' => 'zdjecia/kubek-cappuccino.webp', 'alt' => 'Kubek malowany ręcznie'],
+            'workshops-studio-4' => ['focus' => ['x' => 20, 'y' => 40]],
+            'studio-gallery-3' => ['alt' => 'Tylko na /pracownia'],
+        ]]);
 
         $this->get('/warsztaty-ceramiczne-krakow')
             // Without Vite in tests a photo's address is empty, so the hero is found by its size.
-            ->assertSeeInOrder(['Zanurz dłonie<br>w glinie', 'h-[clamp(240px,40vh,460px)]', 'Jak się zapisać', 'Zobacz pracownię', 'alt="Kubek malowany ręcznie"', 'alt="Kasia z talerzem"', 'alt="Kadzielnica"', 'alt="Czwarte"'], false)
+            ->assertSeeInOrder(['Zanurz dłonie<br>w glinie', 'style="object-position: 30% 70%" class="mb-[76px] block h-[clamp(240px,40vh,460px)]', 'Jak się zapisać', 'Zobacz pracownię',
+                'alt="Kubek malowany ręcznie"', 'alt="Różowe podstawki w kształcie muszli"', 'alt="Kasia z talerzem zdobionym złotem"', 'style="object-position: 20% 40%"'], false)
             ->assertSee('href="'.route('content.studio').'"', false)
             ->assertDontSee('Zgubione zdjęcie')
-            ->assertDontSee('Piąte');
+            ->assertDontSee('Tylko na /pracownia');
     }
 
     public function test_the_studio_photo_offers_a_phone_smaller_copies_and_is_asked_for_first(): void
     {
         Storage::fake('public');
-        $this->settings(['studio_hero_image' => 'zdjecia/zestaw-flatlay.webp']);
 
         $html = $this->get('/warsztaty-ceramiczne-krakow')->assertOk()->getContent();
 
@@ -195,7 +194,10 @@ class WorkshopsPageTest extends TestCase
 
     public function test_without_studio_photos_the_page_leaves_them_out(): void
     {
-        $this->settings(['studio_hero_image' => 'zdjecia/nie-ma-takiego.webp', 'studio_gallery' => [['path' => 'zdjecia/nie-ma-takiego.webp', 'alt' => 'Zgubione']]]);
+        $this->settings(['page_photos' => [
+            'workshops-hero' => ['path' => 'zdjecia/nie-ma-takiego.webp'],
+            ...collect(range(1, 4))->mapWithKeys(fn (int $n) => ['workshops-studio-'.$n => ['path' => null]]),
+        ]]);
 
         $this->get('/warsztaty-ceramiczne-krakow')->assertDontSee('h-[clamp(240px,40vh,460px)]', false)->assertDontSee('Zobacz pracownię');
     }
@@ -242,7 +244,7 @@ class WorkshopsPageTest extends TestCase
     private function settings(array $values): void
     {
         foreach ($values as $key => $value) {
-            Setting::query()->where('key', $key)->update(['value' => json_encode($value)]);
+            Setting::query()->updateOrCreate(['key' => $key], ['value' => $value]);
         }
     }
 

@@ -162,10 +162,6 @@
         "value": true
     },
     {
-        "key": "studio_hero_image",
-        "value": "zdjecia/zestaw-flatlay.webp"
-    },
-    {
         "key": "instagram_feed_url",
         "value": null
     },
@@ -287,6 +283,11 @@
                 "code": "powder_pink",
                 "name": "Pudrowy róż",
                 "hex": "#D6A39C"
+            },
+            {
+                "code": "transparent",
+                "name": "Transparentne",
+                "hex": "#D9C4A8"
             }
         ]
     },
@@ -527,55 +528,6 @@
         "value": "Dobrze wiedzieć"
     },
     {
-        "key": "studio_gallery",
-        "value": [
-            {
-                "path": "zdjecia/kubek-ochujeje.webp",
-                "alt": "Kubek z wbijanym tekstem"
-            },
-            {
-                "path": "zdjecia/zestaw-filizanka-talerz.webp",
-                "alt": "Filiżanka z talerzykiem"
-            },
-            {
-                "path": "zdjecia/podstawki-muszle-roz.webp",
-                "alt": "Różowe podstawki w kształcie muszli"
-            },
-            {
-                "path": "zdjecia/kasia-talerz-zloto.webp",
-                "alt": "Kasia z talerzem zdobionym złotem"
-            },
-            {
-                "path": "zdjecia/patera-czarna-kolce.webp",
-                "alt": "Czarna patera z kolcami"
-            },
-            {
-                "path": "zdjecia/kubek-cappuccino.webp",
-                "alt": "Kubek malowany ręcznie"
-            },
-            {
-                "path": "zdjecia/kadzielnica-pszczoly.webp",
-                "alt": "Kadzielnica ze złoconym kołnierzem"
-            },
-            {
-                "path": "zdjecia/talerz-niebieski-odcisk.webp",
-                "alt": "Talerz z odciskiem rośliny"
-            },
-            {
-                "path": "zdjecia/scrunchies-fiolet.webp",
-                "alt": "Jedwabne scrunchies"
-            },
-            {
-                "path": "zdjecia/kubek-nie-powinnam.webp",
-                "alt": "Kubek z wbijanym napisem w dłoni"
-            },
-            {
-                "path": "zdjecia/zestaw-flatlay.webp",
-                "alt": "Filiżanka na talerzyku z malowaną lawendą"
-            }
-        ]
-    },
-    {
         "key": "text_kiln_lead",
         "value": "Lepisz w domu i nie masz pieca? Przywieź prace do pracowni. Pilnuję krzywej grzewczej i studzenia, więc nie pękają na szoku termicznym."
     },
@@ -673,7 +625,7 @@
     },
     {
         "key": "text_bundles_lead",
-        "value": "Zestawy, których nie znajdziesz w innej pracowni — bo mało kto robi jednocześnie ceramikę i rękodzieło tekstylne. Dobieram odcień szkliwa do tkaniny, nie odwrotnie."
+        "value": "Zestawy, których nie znajdziesz w innej pracowni — bo mało kto robi jednocześnie ceramikę i rękodzieło tekstylne."
     },
     {
         "key": "text_gift_wrap_heading",
@@ -714,6 +666,62 @@
     {
         "key": "text_imprint_note",
         "value": "Nie gwarantuję, że odcisk wyjdzie z pierwszego podejścia — dlatego proszę o kilka sztuk rośliny. Jeśli żadna się nie odciśnie, oddaję całość wpłaty i mówię wprost, dlaczego."
+    },
+    {
+        "key": "text_scarf_eyebrow",
+        "value": "usługa · z Twojej tkaniny"
+    },
+    {
+        "key": "text_scarf_cta",
+        "value": "Napisz, co chcesz przysłać"
+    },
+    {
+        "key": "text_scarf_examples_lead",
+        "value": "Tkaniny, które do mnie przyszły, obok tego, co z nich uszyłam."
+    },
+    {
+        "key": "text_scarf_prices_heading",
+        "value": "Co wychodzi z jednej apaszki"
+    },
+    {
+        "key": "text_scarf_card_eyebrow",
+        "value": "dlaczego to robię"
+    },
+    {
+        "key": "text_scarf_card_heading",
+        "value": "Najładniejsze wzory, jakie przeszły mi przez ręce, były z cudzych szaf."
+    },
+    {
+        "key": "text_scarf_card_text",
+        "value": "Stare apaszki mają desenie, których nie kupisz na metry — i historię, której nie da się dodrukować. Szkoda, żeby to leżało."
+    },
+    {
+        "key": "text_imprint_eyebrow",
+        "value": "usługa · z Twojej rośliny"
+    },
+    {
+        "key": "text_imprint_cta",
+        "value": "Napisz, co chcesz odcisnąć"
+    },
+    {
+        "key": "text_imprint_examples_lead",
+        "value": "Rośliny, które do mnie przyszły, obok ceramiki, na której zostawiły ślad."
+    },
+    {
+        "key": "text_imprint_prices_heading",
+        "value": "Na czym odciskam"
+    },
+    {
+        "key": "text_imprint_card_eyebrow",
+        "value": "na co to zamawiają"
+    },
+    {
+        "key": "text_imprint_card_list",
+        "value": "Bukiet ślubny, który miał uschnąć w wazonie\nKwiaty z pożegnania kogoś bliskiego\nZioła z pierwszego własnego balkonu\nListek z drzewa zasadzonego przy narodzinach"
+    },
+    {
+        "key": "text_imprint_card_text",
+        "value": "Piszą do mnie zwykle tydzień po wydarzeniu, kiedy kwiaty jeszcze da się uratować. Jeśli Twoje już zasychają — nie czekaj z wiadomością."
     },
     {
         "key": "scarf_service_prices",
