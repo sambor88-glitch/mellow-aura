@@ -64,7 +64,9 @@ class CategoryTreeShopTest extends TestCase
 
         $this->get('/sklep/kolczyki')->assertSee('Kolczyki koła')->assertDontSee('Podstawki pod biżuterię');
         $this->get('/sklep')->assertSee('4 z 4 produktów na półce');
-        $this->assertSame([$this->jewellery->id, $this->incense->id, $this->clay->id], $stands->fresh()->shelfIds());
+        // The main shelf first; the others in no particular order (MySQL reads the pivot by its key).
+        $this->assertSame($this->jewellery->id, $stands->fresh()->shelfIds()[0]);
+        $this->assertEqualsCanonicalizing([$this->jewellery->id, $this->incense->id, $this->clay->id], $stands->fresh()->shelfIds());
         $this->assertNotNull($hoops);
     }
 
