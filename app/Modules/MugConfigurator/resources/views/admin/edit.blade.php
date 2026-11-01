@@ -1,4 +1,6 @@
-{{-- Kubek z napisem (MA-322): the photos, where the lettering sits, the sizes with prices and the page texts in tabs. --}}
+{{-- Kubek z napisem (MA-322): the photos, where the lettering sits, the sizes with prices, the inside colours (MA-350)
+     and the page texts in tabs. --}}
+@use('App\Modules\MugConfigurator\Http\Requests\Admin\SaveMugGlazesRequest')
 @use('App\Modules\MugConfigurator\Support\MugOptions')
 @use('App\Modules\Shared\Support\Money')
 @php
@@ -11,6 +13,7 @@
     $sizeErrors = $errors->getBag('rozmiary');
     $lookErrors = $errors->getBag('napis');
     $textErrors = $errors->getBag('teksty');
+    $glazeErrors = $errors->getBag('szkliwa');
 
     $savedSizes = array_values((array) old('sizes', $options->sizes()->map(fn (array $size) => [
         'label' => $size['label'],
@@ -20,6 +23,13 @@
     ])->all()));
     // One empty row for a new size; left empty, it is not saved.
     $sizeRows = [...$savedSizes, ['label' => '', 'capacity' => '', 'price' => '', 'price_eur' => '']];
+    $savedGlazes = array_values((array) old('glazes', $options->glazes()->map(fn (array $glaze) => [
+        'code' => $glaze['code'],
+        'name' => $glaze['name'],
+        'hex' => $glaze['hex'],
+    ])->all()));
+    // One empty row for a new glaze; without a name, it is not saved.
+    $glazeRows = [...$savedGlazes, ['code' => '', 'name' => '', 'hex' => '#D9C4A8']];
     $maxChars = (int) old('max_chars_per_line', $options->maxCharsPerLine());
     $maxLines = (int) old('max_lines', $options->maxLines());
 
@@ -56,7 +66,7 @@
     $border = fn ($bag, string $key) => $bag->has($key) ? 'border-error' : 'border-line';
 @endphp
 <x-admin::layout title="Kubek z napisem" lead="Zdjęcie pod napisy, rozmiary z cenami i to, jak napis siedzi na kubku. Zmiany widać na stronie od razu.">
-  <x-admin::tabs :tabs="['zdjecie' => 'Zdjęcia', 'napis' => 'Położenie napisu', 'rozmiary' => 'Rozmiary i ceny', 'teksty' => 'Teksty']" label="Części ekranu kubka">
+  <x-admin::tabs :tabs="['zdjecie' => 'Zdjęcia', 'napis' => 'Położenie napisu', 'rozmiary' => 'Rozmiary i ceny', 'szkliwa' => 'Kolory wnętrza', 'teksty' => 'Teksty']" label="Części ekranu kubka">
     <x-admin::tab-panel name="zdjecie" class="grid max-w-[880px] gap-[22px]">
             <section id="zdjecie" class="{{ $card }}">
                 <h2 class="{{ $heading }}">Zdjęcie kubka pod napisy</h2>
@@ -247,6 +257,61 @@
                     </p>
                 </div>
                 <button class="{{ $button }}">Zapisz rozmiary i limit znaków</button>
+            </form>
+    </x-admin::tab-panel>
+
+    <x-admin::tab-panel name="szkliwa" class="grid max-w-[880px] gap-[22px]">
+            <form id="szkliwa" method="post" action="{{ route('admin.mug.glazes') }}" novalidate class="{{ $card }}">
+                @csrf
+                @method('PUT')
+                <h2 class="{{ $heading }}">Kolory wnętrza</h2>
+                <p class="{{ $intro }}">Z tych kolorów klient wybiera szkliwo do środka kubka. Kolor ustaw po próbnym wypale — tak, jak szkliwo wychodzi z pieca. Pierwszy z listy jest zaznaczony, gdy ktoś otwiera stronę.</p>
+                @if ($glazeErrors->any())
+                    <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+                @endif
+                <div class="grid gap-2.5">
+                    @foreach ($glazeRows as $index => $row)
+                        @php
+                            $saved = $index < count($savedGlazes);
+                            $hex = preg_match('/^#[0-9A-Fa-f]{6}$/', (string) ($row['hex'] ?? '')) ? strtoupper($row['hex']) : '#D9C4A8';
+                        @endphp
+                        <div data-glaze-row @class(['grid gap-1.5', 'border-b border-line-soft pb-2.5 md:border-0 md:pb-0' => $saved])>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <input type="hidden" name="glazes[{{ $index }}][code]" value="{{ $row['code'] ?? '' }}">
+                                {{-- The native picker opens from the swatch: a wheel on a phone, a palette on a computer. --}}
+                                <label x-data="{ hex: @js($hex) }" style="background-color: {{ $hex }}" x-bind:style="{ backgroundColor: hex }"
+                                       class="relative size-11 flex-none cursor-pointer rounded-full shadow-[inset_0_0_0_2px_var(--color-cream),0_0_0_1px_var(--color-line-strong)] has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy">
+                                    <input type="color" name="glazes[{{ $index }}][hex]" value="{{ strtolower($hex) }}" x-model="hex"
+                                           class="absolute inset-0 size-full cursor-pointer rounded-full opacity-0">
+                                    <span class="sr-only">{{ $saved ? 'Kolor szkliwa: '.($row['name'] ?? '') : 'Kolor nowego szkliwa' }}</span>
+                                </label>
+                                <input name="glazes[{{ $index }}][name]" value="{{ $row['name'] ?? '' }}" placeholder="{{ $saved ? 'nazwa' : 'nowe szkliwo, np. Oliwka' }}"
+                                       aria-label="{{ $saved ? 'Szkliwo '.($index + 1).' — nazwa' : 'Nowe szkliwo — nazwa' }}" maxlength="24"
+                                       class="{{ $input }} {{ $border($glazeErrors, 'glazes.'.$index.'.name') }} min-h-11 flex-[1_1_160px] px-3">
+                                @if ($saved)
+                                    {{-- On a phone the buttons go under the name, to the right, so the whole name stays readable. --}}
+                                    <div class="ml-auto flex flex-none gap-2">
+                                        {{-- Moves the row up on the screen; the order is saved with the card. --}}
+                                        <button type="button" aria-label="Przesuń wyżej: {{ $row['name'] ?? '' }}" title="Przesuń wyżej"
+                                                x-on:click="const row = $el.closest('[data-glaze-row]'); row.previousElementSibling?.before(row); $el.focus()"
+                                                class="grid size-11 flex-none place-items-center rounded-full border border-line-strong text-[16px] text-lead hover:border-ink hover:text-ink active:scale-[.95]">↑</button>
+                                        <x-shared::admin.remove-toggle :name="'glazes['.$index.'][remove]'" :label="$row['name'] ?? ''" />
+                                    </div>
+                                @endif
+                            </div>
+                            @foreach (['name', 'hex', 'code'] as $field)
+                                @if ($glazeErrors->has('glazes.'.$index.'.'.$field))
+                                    <p class="text-[13px] text-error">{{ $glazeErrors->first('glazes.'.$index.'.'.$field) }}</p>
+                                @endif
+                            @endforeach
+                        </div>
+                    @endforeach
+                    @if ($glazeErrors->has('glazes'))
+                        <p class="text-[13px] text-error">{{ $glazeErrors->first('glazes') }}</p>
+                    @endif
+                </div>
+                <p class="mt-2.5 text-[12.5px] leading-[1.5] text-hint">Kółko otwiera paletę kolorów. W pusty wiersz wpisz nazwę nowego szkliwa. Od 1 do {{ SaveMugGlazesRequest::MAX_GLAZES }} kolorów.</p>
+                <button class="{{ $button }}">Zapisz kolory wnętrza</button>
             </form>
     </x-admin::tab-panel>
 

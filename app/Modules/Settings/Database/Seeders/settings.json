@@ -287,6 +287,11 @@
                 "code": "powder_pink",
                 "name": "Pudrowy róż",
                 "hex": "#D6A39C"
+            },
+            {
+                "code": "transparent",
+                "name": "Transparentne",
+                "hex": "#D9C4A8"
             }
         ]
     },

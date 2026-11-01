@@ -84,6 +84,87 @@ class AdminMugTest extends TestCase
             ->assertSessionHasErrorsIn('rozmiary', ['sizes' => 'Zostaw choć jeden rozmiar z ceną']);
     }
 
+    public function test_the_inside_colours_are_listed_with_a_row_for_a_new_one(): void
+    {
+        $this->actingAs($this->owner)
+            ->get('/panel/kubek-z-napisem')
+            ->assertSee('Kolory wnętrza')
+            ->assertSeeInOrder(['Kolor ustaw po próbnym wypale', 'value="turquoise"', 'value="#2e7a85"', 'value="Turkus"', 'Przesuń wyżej: Turkus', 'value="transparent"', 'value="#d9c4a8"', 'value="Transparentne"', 'nowe szkliwo, np. Oliwka', 'Zapisz kolory wnętrza'], false);
+    }
+
+    public function test_the_inside_colours_are_renamed_recoloured_reordered_removed_and_added(): void
+    {
+        $this->actingAs($this->owner)
+            ->put('/panel/kubek-z-napisem/szkliwa', [
+                'glazes' => [
+                    5 => ['code' => 'transparent', 'name' => 'Transparentne', 'hex' => '#e0cfb6'],
+                    0 => ['code' => 'turquoise', 'name' => ' Morski turkus ', 'hex' => '#2E7A85'],
+                    1 => ['code' => 'cobalt', 'name' => 'Kobalt', 'hex' => '#24417E', 'remove' => '1'],
+                    6 => ['code' => '', 'name' => 'Oliwka', 'hex' => '#6b7046'],
+                    7 => ['code' => '', 'name' => '', 'hex' => '#d9c4a8'],
+                ],
+            ])
+            ->assertRedirect('/panel/kubek-z-napisem#szkliwa')
+            ->assertSessionHas('panel_status', 'Zapisane. Klienci wybierają już z tych kolorów.');
+
+        $this->assertEquals([
+            ['code' => 'transparent', 'name' => 'Transparentne', 'hex' => '#E0CFB6'],
+            ['code' => 'turquoise', 'name' => 'Morski turkus', 'hex' => '#2E7A85'],
+            ['code' => 'oliwka', 'name' => 'Oliwka', 'hex' => '#6B7046'],
+        ], Setting::find('mug_glazes')->value);
+
+        // The first colour is the one chosen when the page opens; a removed one is no longer for sale.
+        $this->get('/kubek-z-napisem')
+            ->assertSee('value="transparent" x-model="glaze" checked', false)
+            ->assertSeeInOrder(['Kolor wnętrza', 'Transparentne', 'Morski turkus', 'Oliwka'])
+            ->assertDontSee('Kobalt');
+    }
+
+    public function test_the_inside_colours_need_a_name_a_colour_and_at_least_one_row(): void
+    {
+        $this->actingAs($this->owner)
+            ->put('/panel/kubek-z-napisem/szkliwa', [
+                'glazes' => [
+                    ['code' => 'turquoise', 'name' => 'Turkus', 'hex' => 'turkusowy'],
+                    ['code' => '', 'name' => 'turkus', 'hex' => '#123456'],
+                    ['code' => '', 'name' => str_repeat('a', 25), 'hex' => '#123456'],
+                ],
+            ])
+            ->assertRedirect('/panel/kubek-z-napisem#szkliwa')
+            ->assertSessionHasErrorsIn('szkliwa', [
+                'glazes.0.hex' => 'Wybierz kolor z palety',
+                'glazes.1.name' => 'Dwa kolory mają tę samą nazwę — klient ich nie odróżni',
+                'glazes.2.name' => 'Nazwę koloru zmieszczę do 24 znaków',
+            ]);
+
+        $this->put('/panel/kubek-z-napisem/szkliwa', ['glazes' => [['code' => 'turquoise', 'name' => 'Turkus', 'hex' => '#2E7A85', 'remove' => '1']]])
+            ->assertSessionHasErrorsIn('szkliwa', ['glazes' => 'Zostaw choć jeden kolor — bez niego kubka nie da się zamówić']);
+
+        $this->assertCount(6, Setting::find('mug_glazes')->value);
+    }
+
+    public function test_two_new_colours_with_the_same_code_get_their_own(): void
+    {
+        $this->actingAs($this->owner)
+            ->put('/panel/kubek-z-napisem/szkliwa', [
+                'glazes' => [
+                    ['code' => 'turquoise', 'name' => 'Turkus', 'hex' => '#2E7A85'],
+                    ['code' => '', 'name' => 'Turkus!', 'hex' => '#2E7A86'],
+                ],
+            ]);
+
+        $this->assertSame(['turquoise', 'turkus'], array_column(Setting::find('mug_glazes')->value, 'code'));
+
+        $this->put('/panel/kubek-z-napisem/szkliwa', [
+            'glazes' => [
+                ['code' => 'turkus', 'name' => 'Turkus', 'hex' => '#2E7A85'],
+                ['code' => '', 'name' => 'Turkus?', 'hex' => '#2E7A86'],
+            ],
+        ]);
+
+        $this->assertSame(['turkus', 'turkus_2'], array_column(Setting::find('mug_glazes')->value, 'code'));
+    }
+
     public function test_the_position_and_ink_colour_are_saved(): void
     {
         $this->actingAs($this->owner)
