@@ -14,7 +14,7 @@ const send = (url, method, body, token) => fetch(url, {
     body: JSON.stringify(body),
 });
 
-export default ({ reorderUrl, stockUrl, toggleUrl, token }) => ({
+export default ({ reorderUrl, stockUrl, toggleUrl, token, filter = null }) => ({
     q: '',
     filter: 'all',
     notice: '',
@@ -31,6 +31,17 @@ export default ({ reorderUrl, stockUrl, toggleUrl, token }) => ({
             this.filter = typeof saved.filter === 'string' ? saved.filter : 'all';
         } catch {
             // Private mode or blocked storage: the list starts unfiltered.
+        }
+
+        // A link that opens the list on a filter, e.g. „Ostatnie sztuki” from „Na dziś” (MA-343), wins over the saved one.
+        // The address loses it at once, so after a visit to a product card the list comes back as Kasia left it.
+        if (filter) {
+            this.q = '';
+            this.filter = filter;
+            this.remember();
+            const url = new URL(window.location.href);
+            url.searchParams.delete('pokaz');
+            window.history.replaceState(window.history.state, '', url);
         }
 
         const changed = () => {

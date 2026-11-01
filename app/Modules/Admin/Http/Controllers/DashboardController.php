@@ -4,6 +4,7 @@ namespace App\Modules\Admin\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Admin\Support\PanelAccess;
+use App\Modules\Catalog\Support\LastPieces;
 use App\Modules\Checkout\Enums\OrderStatus;
 use App\Modules\Checkout\Enums\PaymentStatus;
 use App\Modules\Checkout\Models\Complaint;
@@ -20,14 +21,15 @@ use Illuminate\View\View;
 /**
  * „Na dziś” (MA-250): what to send and what to answer, not a second menu. Tiles, each leading to its filtered list,
  * and under them everything that waits for Kasia, the oldest first. A complaint waits from the day it arrived and shows
- * its 14-day deadline (MA-261). A helper gets only the orders.
+ * its 14-day deadline (MA-261). „Ostatnie sztuki” counts what is about to leave the shop, from the Catalog (MA-343).
+ * A helper gets only the orders.
  */
 class DashboardController extends Controller
 {
     /** The list under the tiles stops here; the tiles still count everything. */
     private const SHOWN = 20;
 
-    public function __invoke(OrderWait $wait, FailedMails $failedMails): View
+    public function __invoke(OrderWait $wait, FailedMails $failedMails, LastPieces $lastPieces): View
     {
         $paid = fn (OrderStatus $status) => Order::query()->where('payment_status', PaymentStatus::Paid)->where('status', $status);
         $toSend = $paid(OrderStatus::InProgress)->with('items')->orderBy('paid_at')->orderBy('id')->get();
@@ -39,6 +41,7 @@ class DashboardController extends Controller
             ? Complaint::query()->open()->orderBy('received_on')->orderBy('id')->get()
             : collect();
         $mails = $this->allowed('admin.failed-mails.index') ? $failedMails->all() : collect();
+        $stock = $this->allowed('admin.products.index') ? $lastPieces->summary() : null;
         $oldest = $toSend->first();
         $late = $toSend->filter(fn (Order $order) => $wait->overdue($order))->count();
 
@@ -64,6 +67,11 @@ class DashboardController extends Controller
             [
                 'value' => $problems->count(), 'label' => 'problem', 'route' => route('admin.orders.index', ['status' => 'problem']), 'go' => 'Pokaż',
                 'hint' => 'nadkomplet, brak sztuki, zwrot, paczka nie doszła', 'late' => false,
+            ],
+            $stock === null ? null : [
+                'value' => $stock['soldOut'] + $stock['last'], 'label' => 'ostatnie sztuki',
+                'route' => route('admin.products.index', ['pokaz' => 'ostatnie-sztuki']), 'go' => 'Co lepić',
+                'hint' => $this->stockHint($stock), 'late' => false,
             ],
             $this->allowed('admin.failed-mails.index') ? [
                 'value' => $mails->count(), 'label' => 'niewysłane maile', 'route' => route('admin.failed-mails.index'), 'go' => 'Wyślij jeszcze raz',
@@ -120,6 +128,25 @@ class DashboardController extends Controller
             ->take(self::SHOWN)
             ->map(fn (array $row) => ['deadline' => null, ...$row, 'age' => $this->age($row['since'])])
             ->values();
+    }
+
+    /**
+     * „wyprzedane: 1 · ostatnia sztuka: 2 · czekają: 3” — sold out apart from the last pieces, and the people
+     * waiting for them (MA-343).
+     *
+     * @param  array{soldOut: int, last: int, waiting: int, threshold: int}  $stock
+     */
+    private function stockHint(array $stock): string
+    {
+        if ($stock['soldOut'] + $stock['last'] === 0) {
+            return 'nic się nie kończy';
+        }
+
+        return implode(' · ', array_filter([
+            $stock['soldOut'] > 0 ? 'wyprzedane: '.$stock['soldOut'] : null,
+            $stock['last'] > 0 ? ($stock['threshold'] === 1 ? 'ostatnia sztuka: ' : 'do '.$stock['threshold'].' szt.: ').$stock['last'] : null,
+            $stock['waiting'] > 0 ? 'czekają: '.$stock['waiting'] : null,
+        ]));
     }
 
     private function age(CarbonInterface $since): string

@@ -13,6 +13,7 @@ use App\Modules\Catalog\Http\Requests\Admin\PhotoRules;
 use App\Modules\Catalog\Http\Requests\Admin\SaveProductRequest;
 use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
+use App\Modules\Catalog\Support\LastPieces;
 use App\Modules\Settings\Actions\SaveSettings;
 use App\Modules\Settings\Settings;
 use Illuminate\Http\JsonResponse;
@@ -30,9 +31,14 @@ class ProductController extends Controller
     /** The tabs of the product card, in their order. */
     public const TABS = ['sale', 'desc', 'details', 'gift', 'en'];
 
-    public function index(): View
+    /** Filters the list can open on from a link, e.g. the „Ostatnie sztuki” tile on „Na dziś” (MA-343). */
+    public const FILTERS = ['ostatnie-sztuki' => 'low'];
+
+    public function index(Request $request, LastPieces $lastPieces): View
     {
         return view('catalog::admin.products.index', [
+            'lastPieces' => $lastPieces,
+            'filter' => self::FILTERS[$request->query('pokaz')] ?? null,
             'products' => Product::query()
                 // Translations for the English marker on the list; the people waiting for a sold-out size help Kasia
                 // decide what to make next (MA-266).
@@ -70,13 +76,14 @@ class ProductController extends Controller
         ]);
     }
 
-    public function settings(Settings $settings): View
+    public function settings(Settings $settings, LastPieces $lastPieces): View
     {
         return view('catalog::admin.products.settings', [
             'products' => Product::query()->where('is_published', true)->orderBy('sort_order')->orderBy('id')->get(),
             'heroSlug' => $settings->get('home_hero_product'),
             'heroBadge' => $settings->get('home_hero_badge'),
             'euroMarkup' => $settings->get(ConvertEuroPrices::MARKUP),
+            'lastPiecesThreshold' => $lastPieces->threshold(),
         ]);
     }
 
@@ -196,6 +203,25 @@ class ProductController extends Controller
         ]);
 
         return to_route('admin.products.settings')->with('panel_status', 'Zapisane. Strona główna już to pokazuje.');
+    }
+
+    /** How many pieces still count as the last ones on „Na dziś” and on the list (MA-343). */
+    public function lastPieces(Request $request, SaveSettings $saveSettings): RedirectResponse
+    {
+        $data = $request->validate([
+            LastPieces::THRESHOLD => ['required', 'integer', 'min:1', 'max:'.LastPieces::MAX_THRESHOLD],
+        ], [
+            LastPieces::THRESHOLD.'.required' => 'Wpisz liczbę sztuk, np. 1',
+            LastPieces::THRESHOLD.'.integer' => 'Wpisz liczbę sztuk, np. 1',
+            LastPieces::THRESHOLD.'.min' => 'Wpisz co najmniej 1 sztukę',
+            LastPieces::THRESHOLD.'.max' => 'Najwyżej :max sztuk',
+        ]);
+
+        $saveSettings([LastPieces::THRESHOLD => (int) $data[LastPieces::THRESHOLD]]);
+
+        return to_route('admin.products.settings')
+            ->withFragment('ostatnie-sztuki')
+            ->with('panel_status', 'Zapisane. „Na dziś” liczy ostatnie sztuki z tym progiem.');
     }
 
     /**

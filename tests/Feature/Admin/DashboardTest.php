@@ -3,6 +3,10 @@
 namespace Tests\Feature\Admin;
 
 use App\Models\User;
+use App\Modules\Catalog\Models\Category;
+use App\Modules\Catalog\Models\Product;
+use App\Modules\Catalog\Models\ProductVariant;
+use App\Modules\Catalog\Models\StockNotification;
 use App\Modules\Checkout\Enums\OrderStatus;
 use App\Modules\Checkout\Enums\PaymentMethod;
 use App\Modules\Checkout\Enums\PaymentStatus;
@@ -86,6 +90,34 @@ class DashboardTest extends TestCase
             ->assertSee('Na dziś wszystko zrobione');
     }
 
+    public function test_the_last_pieces_tile_counts_sold_out_and_last_pieces_and_leads_to_the_filtered_list(): void
+    {
+        $category = Category::factory()->create();
+        $mug = Product::factory()->create(['category_id' => $category->id, 'is_published' => true]);
+        $sold = ProductVariant::factory()->create(['product_id' => $mug->id, 'label' => 'S', 'stock' => 0]);
+        ProductVariant::factory()->create(['product_id' => $mug->id, 'label' => 'M', 'stock' => 1]);
+        ProductVariant::factory()->create(['product_id' => $mug->id, 'label' => 'L', 'stock' => 6]);
+        $vase = Product::factory()->create(['category_id' => $category->id, 'is_published' => true, 'is_one_off' => true]);
+        ProductVariant::factory()->create(['product_id' => $vase->id, 'stock' => 1]);
+        StockNotification::query()->create(['product_variant_id' => $sold->id, 'email' => 'ola@example.com', 'locale' => 'pl', 'token' => str()->random(40)]);
+
+        $this->actingAs(User::factory()->create())
+            ->get('/panel')
+            ->assertOk()
+            ->assertSeeInOrder(['2', 'ostatnie sztuki', 'wyprzedane: 1 · ostatnia sztuka: 1 · czekają: 1', 'Co lepić'])
+            ->assertSee('href="'.route('admin.products.index', ['pokaz' => 'ostatnie-sztuki']).'"', false);
+    }
+
+    public function test_with_nothing_running_out_the_tile_says_so(): void
+    {
+        Setting::query()->create(['key' => 'last_pieces_threshold', 'value' => 3]);
+
+        $this->actingAs(User::factory()->create())
+            ->get('/panel')
+            ->assertOk()
+            ->assertSeeInOrder(['0', 'ostatnie sztuki', 'nic się nie kończy']);
+    }
+
     public function test_a_helper_gets_only_the_order_tiles_and_orders(): void
     {
         $this->order('Anna Nowak', OrderStatus::InProgress, '2026-10-27 09:00');
@@ -100,7 +132,8 @@ class DashboardTest extends TestCase
         $response->assertSee('Anna Nowak')
             ->assertDontSee('nowe pomysły')
             ->assertDontSee('Kasia Lis')
-            ->assertDontSee('niewysłane maile');
+            ->assertDontSee('niewysłane maile')
+            ->assertDontSee('ostatnie sztuki');
     }
 
     private function order(string $name, OrderStatus $status, string $paidAt, PaymentStatus $payment = PaymentStatus::Paid): Order

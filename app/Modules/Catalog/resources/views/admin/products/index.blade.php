@@ -3,7 +3,7 @@
 @use('Illuminate\Support\Str')
 @php
     // One row per product; only what needs attention stands out (MA-307). The states feed the filters above the list.
-    $rows = $products->map(function ($product) {
+    $rows = $products->map(function ($product) use ($lastPieces) {
         $visible = $product->variants->reject(fn ($variant) => $variant->is_hidden);
         $prices = $visible->pluck('price_gross');
         $counted = $visible->contains(fn ($variant) => $variant->stock !== null);
@@ -11,12 +11,17 @@
         $soldOut = $counted && $visible->isNotEmpty() && $visible->every(fn ($variant) => $variant->stock === 0);
         $name = fn ($variant) => $variant->label ?: 'jedyny rozmiar';
         $zeros = $visible->filter(fn ($variant) => $variant->stock === 0)->map($name);
-        $lasts = $visible->filter(fn ($variant) => $variant->stock === 1)->map($name);
+        // „Ostatnie sztuki” (MA-343): down to the threshold from the panel; a one-off piece is one by nature, no alarm.
+        $lastVariants = $visible->filter(fn ($variant) => $lastPieces->isLast($product, $variant));
+        $lastOnes = $lastVariants->every(fn ($variant) => $variant->stock === 1);
+        $lasts = $lastOnes
+            ? $lastVariants->map($name)
+            : $lastVariants->map(fn ($variant) => ($variant->label ? $variant->label.' — ' : '').$variant->stock.' szt.');
         $missing = array_keys(array_filter(['zdjęcia' => $product->getMedia('images')->isEmpty(), 'opisu' => blank($product->description)]));
         // „3 osoby czekają na powrót”, with the sizes when there are several.
         $waitingVariants = $product->variants->where('stock_notifications_count', '>', 0);
         $waiting = $waitingVariants->sum('stock_notifications_count');
-        $low = $product->is_published && ($soldOut || $zeros->isNotEmpty() || $lasts->isNotEmpty());
+        $low = $visible->contains(fn ($variant) => $lastPieces->isLow($product, $variant));
 
         return [
             'product' => $product,
@@ -38,6 +43,7 @@
             'soldOut' => $soldOut,
             'zeros' => $soldOut ? collect() : $zeros,
             'lasts' => $soldOut ? collect() : $lasts,
+            'lastLabel' => $lastOnes ? 'Ostatnia sztuka: ' : 'Ostatnie sztuki: ',
             'waiting' => $waiting === 0 ? null : trans_choice(':count osoba czeka|:count osoby czekają|:count osób czeka', $waiting, [], 'pl').' na powrót'
                 .($product->variants->count() > 1 ? ' ('.$waitingVariants->map(fn ($variant) => $variant->label.': '.$variant->stock_notifications_count)->join(', ').')' : ''),
             'states' => implode(' ', array_keys(array_filter(['live' => $product->is_published, 'hidden' => ! $product->is_published, 'low' => $low, 'todo' => $missing !== []]))),
@@ -50,9 +56,9 @@
         'all' => ['Wszystkie', $rows->count()],
         'live' => ['W sklepie', $rows->filter(fn ($row) => str_contains($row['states'], 'live'))->count()],
         'hidden' => ['Ukryte', $rows->filter(fn ($row) => str_contains($row['states'], 'hidden'))->count()],
-        'low' => ['Kończą się', $rows->filter(fn ($row) => str_contains($row['states'], 'low'))->count()],
+        'low' => ['Ostatnie sztuki', $rows->filter(fn ($row) => str_contains($row['states'], 'low'))->count()],
         'todo' => ['Do uzupełnienia', $rows->filter(fn ($row) => str_contains($row['states'], 'todo'))->count()],
-    ])->filter(fn ($filter, $key) => $key === 'all' || $filter[1] > 0);
+    ])->filter(fn ($chip, $key) => $key === 'all' || $key === $filter || $chip[1] > 0);
     $warn = 'relative z-[1] inline-flex min-h-6 items-center gap-1.5 text-[12.5px] before:size-1.5 before:flex-none before:rounded-full before:bg-current';
 @endphp
 <x-admin::layout title="Produkty" :compact="true">
@@ -60,7 +66,7 @@
         <x-shared::button href="{{ route('admin.products.create') }}" size="md">+ Dodaj produkt</x-shared::button>
     </x-slot:actions>
 
-    <div x-data="productList(@js(['reorderUrl' => route('admin.products.reorder'), 'stockUrl' => route('admin.products.stock', '__id__'), 'toggleUrl' => route('admin.products.toggle', '__id__'), 'token' => csrf_token()]))">
+    <div x-data="productList(@js(['reorderUrl' => route('admin.products.reorder'), 'stockUrl' => route('admin.products.stock', '__id__'), 'toggleUrl' => route('admin.products.toggle', '__id__'), 'token' => csrf_token(), 'filter' => $filter]))">
         <div class="mb-3.5 flex flex-wrap items-center gap-x-3 gap-y-2.5">
             <label class="flex min-w-0 flex-[1_1_0] items-center gap-2.5 rounded-full border border-line bg-white px-4 text-label md:flex-[1_1_240px] transition focus-within:border-ink focus-within:shadow-[0_0_0_4px_rgb(36_65_126/.14)] md:max-w-[380px]">
                 <svg viewBox="0 0 24 24" aria-hidden="true" class="size-[18px] flex-none fill-none stroke-current stroke-[1.6]"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20" stroke-linecap="round"/></svg>
@@ -71,7 +77,7 @@
             <x-shared::button href="{{ route('admin.products.create') }}" size="md" class="flex-none whitespace-nowrap max-md:px-4 md:hidden">+ Dodaj</x-shared::button>
             <div role="group" aria-label="Pokaż" data-scroll-fade class="-mx-4 flex max-w-[calc(100%+32px)] min-w-0 flex-[1_1_100%] gap-1 overflow-x-auto px-4 py-0.5 [scrollbar-width:none] md:mx-0 md:max-w-full md:flex-[0_1_auto] md:px-0.5">
                 @foreach ($filters as $key => [$label, $count])
-                    <button type="button" x-on:click="filter = @js($key)" aria-pressed="{{ $key === 'all' ? 'true' : 'false' }}" x-bind:aria-pressed="(filter === @js($key)).toString()"
+                    <button type="button" x-on:click="filter = @js($key)" aria-pressed="{{ $key === ($filter ?? 'all') ? 'true' : 'false' }}" x-bind:aria-pressed="(filter === @js($key)).toString()"
                             class="inline-flex min-h-11 flex-none items-center gap-2 rounded-full border border-transparent py-0 pr-2 pl-3.5 text-[13px] text-lead transition-colors hover:border-line-strong hover:bg-sand hover:text-ink aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-linen">
                         {{ $label }}
                         <span @class(['inline-flex h-6 min-w-6 items-center justify-center rounded-full px-[7px] text-[11.5px] font-semibold tabular-nums', 'bg-cream text-lead' => ! in_array($key, ['low', 'todo'], true), 'bg-alert text-alert-text' => in_array($key, ['low', 'todo'], true)])>{{ $count }}</span>
@@ -119,7 +125,7 @@
                                     <span class="{{ $warn }} text-error">{{ $row['zeros']->count() > 2 ? 'Brak w '.$row['zeros']->count().' wariantach' : 'Brak: '.$row['zeros']->join(', ') }}</span>
                                 @endif
                                 @if ($row['lasts']->isNotEmpty())
-                                    <span class="{{ $warn }} text-brown">{{ $row['lasts']->count() > 2 ? 'Ostatnie sztuki w '.$row['lasts']->count().' wariantach' : 'Ostatnia sztuka: '.$row['lasts']->join(', ') }}</span>
+                                    <span class="{{ $warn }} text-brown">{{ $row['lasts']->count() > 2 ? 'Ostatnie sztuki w '.$row['lasts']->count().' wariantach' : $row['lastLabel'].$row['lasts']->join(', ') }}</span>
                                 @endif
                                 @if ($row['waiting'])
                                     <span class="{{ $warn }} text-navy-text">{{ $row['waiting'] }}</span>

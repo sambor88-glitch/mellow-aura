@@ -1,4 +1,4 @@
-<x-admin::layout title="Ustawienia produktów" lead="To, co dotyczy wszystkich produktów naraz: duże zdjęcie na stronie głównej i narzut na ceny w euro.">
+<x-admin::layout title="Ustawienia produktów" lead="To, co dotyczy wszystkich produktów naraz: duże zdjęcie na stronie głównej, ostatnie sztuki i narzut na ceny w euro.">
     <a href="{{ route('admin.products.index') }}" class="-mt-2 mb-3 inline-flex min-h-11 items-center gap-1.5 text-[13px] text-lead hover:text-ink">← Produkty</a>
 
     <div class="grid max-w-[720px] gap-[22px]">
@@ -23,6 +23,18 @@
                 <x-shared::button variant="secondary" size="md">Zapisz</x-shared::button>
             </form>
             <p class="mt-3 text-[12.5px] leading-[1.5] text-hint">Sekcja „Co teraz jest w pracowni” pokazuje cztery pierwsze widoczne produkty z listy — kolejność ustawiasz na liście produktów.</p>
+        </section>
+
+        <section id="ostatnie-sztuki" class="scroll-mt-6 rounded-[4px] border border-line bg-cream px-[22px] py-6">
+            <h2 class="mb-1 font-serif text-[23px] font-light">Ostatnie sztuki</h2>
+            <p class="mb-[18px] text-[13.5px] text-label">Kafelek na „Na dziś” liczy rozmiary wyprzedane i te, których zostało tyle sztuk albo mniej. Sztuki jednorazowe się nie liczą.</p>
+            <form method="post" action="{{ route('admin.products.last-pieces') }}" novalidate class="flex flex-wrap items-end gap-3">
+                @csrf
+                @method('PUT')
+                <x-shared::field name="last_pieces_threshold" id="last-pieces" label="Najwyżej tyle sztuk" :value="old('last_pieces_threshold', $lastPiecesThreshold)" inputmode="numeric" placeholder="np. 1" class="flex-[0_1_200px]" />
+                <x-shared::button variant="secondary" size="md">Zapisz</x-shared::button>
+            </form>
+            <p class="mt-3 text-[12.5px] leading-[1.5] text-hint">1 to tylko ostatnia sztuka. Wpisz 2, jeśli chcesz wiedzieć wcześniej, co lepić.</p>
         </section>
 
         <section id="ceny-w-euro" class="scroll-mt-6 rounded-[4px] border border-line bg-cream px-[22px] py-6">
