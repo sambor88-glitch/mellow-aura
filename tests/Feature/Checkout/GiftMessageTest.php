@@ -26,6 +26,9 @@ class GiftMessageTest extends TestCase
 {
     use RefreshDatabase;
 
+    /** The folded gift field, opened. */
+    private const GIFT_OPEN = '/<details\s+open\s+class="group mt-1 /';
+
     private const MESSAGE = "Wszystkiego dobrego, Olu!\nPij z niego kawę powoli.\n— Marta";
 
     protected function setUp(): void
@@ -44,15 +47,16 @@ class GiftMessageTest extends TestCase
     {
         $this->basket();
 
-        $this->get('/zamowienie')
+        $page = $this->get('/zamowienie')
             ->assertOk()
             ->assertSeeInOrder(['Dopisz kilka słów do obdarowanej', 'Liścik do prezentu', 'name="gift_message"', 'maxlength="300"'], false)
             ->assertSee('Wydrukuję go na kartce i włożę do paczki.')
-            ->assertSee('0 z 300 znaków')
-            ->assertDontSee('<details open class="group mt-1', false);
+            ->assertSee('0 z 300 znaków');
+
+        $this->assertDoesNotMatchRegularExpression(self::GIFT_OPEN, $page->getContent());
     }
 
-    public function test_the_message_is_saved_tidied_and_an_order_without_one_keeps_none(): void
+    public function test_the_message_is_saved_tidied(): void
     {
         $this->basket();
 
@@ -60,11 +64,15 @@ class GiftMessageTest extends TestCase
             ->assertRedirect('/zamowienie/potwierdzenie');
 
         $this->assertSame("Wszystkiego dobrego, Olu!\nPij z niego kawę powoli.\n\n— Marta", Order::sole()->gift_message);
+    }
 
+    public function test_a_message_of_blanks_alone_keeps_none(): void
+    {
         $this->basket();
-        $this->post('/zamowienie', $this->form(['email' => 'ola@example.com', 'gift_message' => "  \r\n "]))->assertRedirect('/zamowienie/potwierdzenie');
 
-        $this->assertNull(Order::query()->where('email', 'ola@example.com')->sole()->gift_message);
+        $this->post('/zamowienie', $this->form(['gift_message' => "  \r\n "]))->assertRedirect('/zamowienie/potwierdzenie');
+
+        $this->assertNull(Order::sole()->gift_message);
     }
 
     public function test_the_server_keeps_the_message_to_what_fits_on_the_card(): void
@@ -73,13 +81,13 @@ class GiftMessageTest extends TestCase
 
         // 300 characters, Polish letters and line breaks included, fit; one more does not.
         $fits = str_repeat('ż', 290)."\r\n".str_repeat('a', 9);
-        $this->from('/zamowienie')
+        $page = $this->from('/zamowienie')
             ->followingRedirects()
             ->post('/zamowienie', $this->form(['gift_message' => $fits.'a']))
             ->assertSee('Na kartce zmieszczę do 300 znaków — skróć liścik')
-            // The field opens by itself with what was typed, so nothing has to be written again.
-            ->assertSee('<details open class="group mt-1', false)
             ->assertSee('aria-invalid="true"', false);
+        // The field opens by itself with what was typed, so nothing has to be written again.
+        $this->assertMatchesRegularExpression(self::GIFT_OPEN, $page->getContent());
         $this->assertSame(0, Order::count());
 
         $this->post('/zamowienie', $this->form(['gift_message' => $fits]))->assertRedirect('/zamowienie/potwierdzenie');
