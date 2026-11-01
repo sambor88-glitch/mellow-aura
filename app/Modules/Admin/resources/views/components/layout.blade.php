@@ -11,6 +11,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Panel | MellowAura</title>
     <meta name="robots" content="noindex, nofollow">
+    {{-- Added to the home screen, the panel opens like an app, without the browser's bar (MA-328). --}}
+    <link rel="manifest" href="{{ route('admin.app.manifest') }}" crossorigin="use-credentials">
+    <meta name="theme-color" content="#EDE4D8">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="MellowAura">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="apple-touch-icon" href="{{ asset('icons/panel-apple-touch.png') }}">
+    <script>
+        if ('serviceWorker' in navigator) {
+            addEventListener('load', () => navigator.serviceWorker.register(@js(route('admin.app.worker', absolute: false)), { scope: @js(\App\Modules\Admin\Http\Controllers\PanelAppController::SCOPE) }).catch(() => {}));
+        }
+    </script>
     @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
