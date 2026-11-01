@@ -393,47 +393,6 @@
         ]
     },
     {
-        "key": "material_tiles",
-        "value": [
-            {
-                "title": "Glina",
-                "text": "Szamot i porcelana. Nierówne krawędzie zostawiam, bo tak wygląda ręka."
-            },
-            {
-                "title": "Jedwab",
-                "text": "Z drugiego obiegu."
-            },
-            {
-                "title": "Złoto 24k",
-                "text": "Prawdziwy metal, trzeci wypał. Dlatego złocone rzeczy myje się ręcznie."
-            },
-            {
-                "title": "Rośliny",
-                "text": "Zbierane pod pracownią, odciskane w surowej glinie i wypalane na popiół."
-            },
-            {
-                "title": "Temperatura wypału",
-                "text": null
-            },
-            {
-                "title": "Zmywarka",
-                "text": "Można myć w zmywarce. Złocone rzeczy tylko ręcznie."
-            },
-            {
-                "title": "Mikrofalówka",
-                "text": "Można używać w mikrofalówce, poza rzeczami ze złotem."
-            },
-            {
-                "title": "Atest szkliw",
-                "text": null
-            },
-            {
-                "title": "Pakowanie",
-                "text": "Zamówienia są dobrze zabezpieczone przed wysyłką. Wysyłam InPostem, z numerem do śledzenia."
-            }
-        ]
-    },
-    {
         "key": "faq_items",
         "value": [
             {

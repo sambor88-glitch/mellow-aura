@@ -96,7 +96,8 @@ class KasiaFirstAnswersMigrationTest extends TestCase
     private function settings(array $values): void
     {
         foreach ($values as $key => $value) {
-            Setting::query()->where('key', $key)->update(['value' => json_encode($value)]);
+            // material_tiles is no longer seeded (MA-353), so a missing setting is created.
+            Setting::query()->updateOrCreate(['key' => $key], ['value' => $value]);
         }
     }
 }
