@@ -26,7 +26,15 @@
             <h2 id="terminy-tytul" class="mb-1.5 text-[11.5px] tracking-[0.16em] text-label uppercase">Terminarz</h2>
             <p class="mb-4 text-[13.5px] leading-[1.6] text-muted">Najbliższe terminy. Te, które minęły, znikają z listy same.</p>
             @if ($dates->isEmpty())
-                <p class="rounded-[4px] border border-dashed border-line-strong px-4 py-5 text-[14px] text-muted">Nie ma jeszcze żadnego terminu. Dodaj pierwszy obok.</p>
+                {{-- The form sits beside this card on a computer and under it on a phone, so the way there is a link, not a direction (MA-330). --}}
+                <p class="rounded-[4px] border border-dashed border-line-strong px-4 py-5 text-[14px] text-muted">
+                    Nie ma jeszcze żadnego terminu.
+                    @if ($names->isEmpty())
+                        Najpierw wpisz warsztat z nazwą i ceną w <a href="#cennik">cenniku</a> — wtedy dodasz pierwszy termin.
+                    @else
+                        <a href="#dodaj-termin" class="inline-flex min-h-11 items-center">Dodaj pierwszy termin</a>
+                    @endif
+                </p>
             @else
                 <ul class="overflow-hidden rounded-[4px] border border-line bg-white">
                     @foreach ($dates as $date)
@@ -50,11 +58,11 @@
             @endif
         </div>
 
-        <form method="post" action="{{ route('admin.workshops.dates.store') }}" novalidate class="{{ $card }} grid min-w-0 flex-[0_1_320px] gap-3">
+        <form id="dodaj-termin" method="post" action="{{ route('admin.workshops.dates.store') }}" novalidate class="{{ $card }} grid min-w-0 flex-[0_1_320px] gap-3">
             @csrf
             <h2 class="text-[11.5px] tracking-[0.16em] text-label uppercase">Dodaj termin</h2>
             @if ($names->isEmpty())
-                <p class="text-[13.5px] leading-[1.6] text-muted">Najpierw wpisz w cenniku warsztat z nazwą i ceną.</p>
+                <p class="text-[13.5px] leading-[1.6] text-muted">Najpierw wpisz w <a href="#cennik">cenniku</a> warsztat z nazwą i ceną.</p>
             @else
                 @if ($dateErrors->any())
                     <p role="alert" class="rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text">Popraw zaznaczone pola, żeby dodać termin.</p>
