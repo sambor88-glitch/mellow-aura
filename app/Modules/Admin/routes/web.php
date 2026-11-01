@@ -3,7 +3,12 @@
 use App\Modules\Admin\Http\Controllers\LoginController;
 use App\Modules\Admin\Http\Controllers\PanelAppController;
 use App\Modules\Admin\Http\Controllers\PasswordController;
+use App\Modules\Shared\Http\Middleware\StartSession;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Facades\Route;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 Route::middleware('guest')->group(function () {
     Route::get('/panel/logowanie', [LoginController::class, 'show'])->name('admin.login');
@@ -16,6 +21,17 @@ Route::middleware('guest')->group(function () {
 });
 
 // The panel as an app on the phone (MA-328). Outside the login: the browser fetches these on its own.
-Route::get('/panel/manifest.webmanifest', [PanelAppController::class, 'manifest'])->name('admin.app.manifest');
-Route::get('/panel/sw.js', [PanelAppController::class, 'worker'])->name('admin.app.worker');
-Route::get('/panel/brak-polaczenia', [PanelAppController::class, 'offline'])->name('admin.app.offline');
+// Without the session too (MA-357): the browser asks for them at any moment, also between a form's POST and the
+// redirect after it, and a request with the session would use up the flash message meant for the next page.
+// ProtectStaging is global middleware, so the staging password still guards them as before.
+Route::withoutMiddleware([
+    EncryptCookies::class,
+    AddQueuedCookiesToResponse::class,
+    StartSession::class,
+    ShareErrorsFromSession::class,
+    ValidateCsrfToken::class,
+])->group(function () {
+    Route::get('/panel/manifest.webmanifest', [PanelAppController::class, 'manifest'])->name('admin.app.manifest');
+    Route::get('/panel/sw.js', [PanelAppController::class, 'worker'])->name('admin.app.worker');
+    Route::get('/panel/brak-polaczenia', [PanelAppController::class, 'offline'])->name('admin.app.offline');
+});
