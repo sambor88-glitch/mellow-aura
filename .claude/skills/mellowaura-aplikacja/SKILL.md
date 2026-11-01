@@ -138,6 +138,11 @@ dodana do ekranu głównego, otwiera się bez paska przeglądarki. Potrzebne są
 2. `<meta name="theme-color" content="#F3EDE4">` — pasek systemowy dostaje kolor piasku.
 3. Service worker z pamięcią podręczną na zdjęcia produktów.
 
+Panel już tak działa (MA-328): `Admin\Http\Controllers\PanelAppController` daje manifest (`/panel/manifest.webmanifest`,
+otwarty także za hasłem stagingu), service worker (`/panel/sw.js`, zasięg `/panel`) i stronę „Brak połączenia”.
+Worker trzyma w pamięci tylko tę stronę — żadnego ekranu panelu, bo są na nich dane klientek. Ikony w `public/icons/panel-*`
+to tymczasowe „M” do czasu pliku logo (MA-158). Sklep dla klientek nie jest PWA.
+
 Czego PWA nie da: płatności w App Store, powiadomień push na iPhonie bez dodania do ekranu głównego,
 obecności w sklepach z aplikacjami. Powiedz to wprost, zanim ktoś zapłaci za aplikację natywną,
 której ten biznes na tym etapie nie potrzebuje.
