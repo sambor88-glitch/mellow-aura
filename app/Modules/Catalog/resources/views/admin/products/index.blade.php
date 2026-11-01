@@ -3,7 +3,7 @@
 @use('Illuminate\Support\Str')
 @php
     // One row per product; only what needs attention stands out (MA-307). The states feed the filters above the list.
-    $rows = $products->map(function ($product) {
+    $rows = $products->map(function ($product) use ($lastPieces) {
         $visible = $product->variants->reject(fn ($variant) => $variant->is_hidden);
         $prices = $visible->pluck('price_gross');
         $counted = $visible->contains(fn ($variant) => $variant->stock !== null);
