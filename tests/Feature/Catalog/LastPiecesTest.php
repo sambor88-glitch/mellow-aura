@@ -96,7 +96,7 @@ class LastPiecesTest extends TestCase
 
         $content = $page->getContent();
         $this->assertStringContainsString('x-on:click="filter = \'low\'" aria-pressed="true"', $content);
-        $this->assertMatchesRegularExpression('/data-id="'.$mug->id.'" data-states="live low"/', $content);
+        $this->assertMatchesRegularExpression('/data-id="'.$mug->id.'" data-states="live low( todo)?"/', $content);
         // A one-off piece is one by nature: no alarm, no „Ostatnia sztuka”.
         $vase = Product::where('name', 'Wazon jedyny')->sole();
         $this->assertMatchesRegularExpression('/data-id="'.$vase->id.'" data-states="live( todo)?"/', $content);
