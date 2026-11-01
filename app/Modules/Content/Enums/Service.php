@@ -47,8 +47,15 @@ enum Service: string
         };
     }
 
+    /** The place of the photo next to the introduction in „Zdjęcia stron” (Content\Support\PagePhotos). */
+    public function photoPlace(): string
+    {
+        return 'service-'.$this->value;
+    }
+
     /**
-     * @param  'heading'|'lead'|'lead_2'|'note'|'prices'|'steps'  $name
+     * The setting behind a part of the service page: the price list, the steps or one of the texts
+     * (Content\Http\Requests\Admin\SaveServiceTextsRequest::PARTS), e.g. `text_scarf_heading`.
      */
     public function setting(string $name): string
     {

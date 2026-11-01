@@ -712,6 +712,62 @@
         "value": "Nie gwarantuję, że odcisk wyjdzie z pierwszego podejścia — dlatego proszę o kilka sztuk rośliny. Jeśli żadna się nie odciśnie, oddaję całość wpłaty i mówię wprost, dlaczego."
     },
     {
+        "key": "text_scarf_eyebrow",
+        "value": "usługa · z Twojej tkaniny"
+    },
+    {
+        "key": "text_scarf_cta",
+        "value": "Napisz, co chcesz przysłać"
+    },
+    {
+        "key": "text_scarf_examples_lead",
+        "value": "Tkaniny, które do mnie przyszły, obok tego, co z nich uszyłam."
+    },
+    {
+        "key": "text_scarf_prices_heading",
+        "value": "Co wychodzi z jednej apaszki"
+    },
+    {
+        "key": "text_scarf_card_eyebrow",
+        "value": "dlaczego to robię"
+    },
+    {
+        "key": "text_scarf_card_heading",
+        "value": "Najładniejsze wzory, jakie przeszły mi przez ręce, były z cudzych szaf."
+    },
+    {
+        "key": "text_scarf_card_text",
+        "value": "Stare apaszki mają desenie, których nie kupisz na metry — i historię, której nie da się dodrukować. Szkoda, żeby to leżało."
+    },
+    {
+        "key": "text_imprint_eyebrow",
+        "value": "usługa · z Twojej rośliny"
+    },
+    {
+        "key": "text_imprint_cta",
+        "value": "Napisz, co chcesz odcisnąć"
+    },
+    {
+        "key": "text_imprint_examples_lead",
+        "value": "Rośliny, które do mnie przyszły, obok ceramiki, na której zostawiły ślad."
+    },
+    {
+        "key": "text_imprint_prices_heading",
+        "value": "Na czym odciskam"
+    },
+    {
+        "key": "text_imprint_card_eyebrow",
+        "value": "na co to zamawiają"
+    },
+    {
+        "key": "text_imprint_card_list",
+        "value": "Bukiet ślubny, który miał uschnąć w wazonie\nKwiaty z pożegnania kogoś bliskiego\nZioła z pierwszego własnego balkonu\nListek z drzewa zasadzonego przy narodzinach"
+    },
+    {
+        "key": "text_imprint_card_text",
+        "value": "Piszą do mnie zwykle tydzień po wydarzeniu, kiedy kwiaty jeszcze da się uratować. Jeśli Twoje już zasychają — nie czekaj z wiadomością."
+    },
+    {
         "key": "scarf_service_prices",
         "value": [
             {
