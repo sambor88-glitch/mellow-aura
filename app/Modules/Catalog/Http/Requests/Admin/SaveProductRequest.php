@@ -5,9 +5,9 @@ namespace App\Modules\Catalog\Http\Requests\Admin;
 use App\Modules\Catalog\Enums\Dimension;
 use App\Modules\Catalog\Enums\FoodContact;
 use App\Modules\Catalog\Enums\GoogleCategory;
-use App\Modules\Catalog\Enums\Occasion;
-use App\Modules\Catalog\Enums\Recipient;
 use App\Modules\Catalog\Enums\VariantKind;
+use App\Modules\Catalog\Support\GiftTags;
+use App\Modules\Settings\Settings;
 use App\Modules\Shared\Rules\PriceBeforeReduction;
 use App\Modules\Shared\Support\FocalPoint;
 use App\Modules\Shared\Support\Money;
@@ -56,10 +56,11 @@ class SaveProductRequest extends FormRequest
             'google_category' => ['nullable', Rule::enum(GoogleCategory::class)],
             'dimensions' => ['nullable', 'array'],
             'dimensions.*' => ['nullable', 'string', 'max:20', 'regex:/^[\d\s.,x×-]+$/u'],
+            // The lists Kasia keeps in Prezenty → „Szukam prezentu” (MA-352).
             'occasions' => ['nullable', 'array'],
-            'occasions.*' => [Rule::enum(Occasion::class)],
+            'occasions.*' => ['string', Rule::in(array_keys(GiftTags::occasions(app(Settings::class))))],
             'recipients' => ['nullable', 'array'],
-            'recipients.*' => [Rule::enum(Recipient::class)],
+            'recipients.*' => ['string', Rule::in(array_keys(GiftTags::recipients(app(Settings::class))))],
             'variant_kind' => ['nullable', Rule::enum(VariantKind::class)],
             'variants' => ['required', 'array', 'max:30'],
             'variants.*.id' => ['nullable', 'integer'],
@@ -131,8 +132,8 @@ class SaveProductRequest extends FormRequest
             'google_category.enum' => 'Wybierz rodzaj z listy albo zostaw „Niech Google dobierze sam”',
             'dimensions.*.max' => $dimension,
             'dimensions.*.regex' => $dimension,
-            'occasions.*.enum' => 'Wybierz okazję z listy',
-            'recipients.*.enum' => 'Wybierz z listy, dla kogo',
+            'occasions.*' => 'Wybierz okazję z listy',
+            'recipients.*' => 'Wybierz z listy, dla kogo',
             'variants.required' => 'Dodaj choć jeden rozmiar z ceną',
             'variants.max' => 'Zmieszczę do :max rozmiarów',
             'variants.*.label.required' => 'Nazwij każdy rozmiar — np. Mały 12 cm',

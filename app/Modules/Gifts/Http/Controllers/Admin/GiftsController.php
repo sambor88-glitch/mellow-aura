@@ -5,6 +5,7 @@ namespace App\Modules\Gifts\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Modules\Catalog\Enums\CategoryGroup;
 use App\Modules\Catalog\Models\Product;
+use App\Modules\Catalog\Support\GiftTags;
 use App\Modules\Checkout\Models\Order;
 use App\Modules\Gifts\Actions\RestoreVoucherBalance;
 use App\Modules\Gifts\Actions\SaveBundle;
@@ -26,7 +27,7 @@ use Illuminate\View\View;
 
 /**
  * „Prezenty i zestawy” in the panel: the gift sets with their parts and discounts, the sentences on
- * their page, the budgets in „Szukam prezentu”, the voucher settings and the workshop description on each
+ * their page, „Szukam prezentu” with its lists and budgets (MA-352), the voucher settings and the workshop description on each
  * voucher. Each card saves on its own. A voucher looked up by its code can be filled in or extended (MA-137).
  */
 class GiftsController extends Controller
@@ -55,7 +56,9 @@ class GiftsController extends Controller
                 ])
                 ->values()
                 ->all(),
-            'finderTexts' => ['text_gifts_lead' => $settings->get('text_gifts_lead'), 'text_gifts_voucher_note' => $settings->get('text_gifts_voucher_note')],
+            'finderTexts' => collect(['text_gifts_heading', 'text_gifts_lead', 'text_gifts_voucher_note'])->mapWithKeys(fn (string $key) => [$key => $settings->get($key)])->all(),
+            // „Dla kogo” and the occasions, with how many products are ticked with each (MA-352).
+            'tagLists' => $this->tagLists($settings),
             'voucherSettings' => [
                 'voucher_validity_months' => $settings->get('voucher_validity_months', 12),
                 'voucher_recipient_name_max_chars' => $settings->get('voucher_recipient_name_max_chars', 40),
@@ -102,7 +105,22 @@ class GiftsController extends Controller
     {
         $saveSettings($request->settings());
 
-        return to_route('admin.gifts.edit')->withFragment('szukam-prezentu')->with('panel_status', 'Zapisane. „Szukam prezentu” już tak wygląda.');
+        return to_route('admin.gifts.edit')->withFragment('szukam-prezentu')->with('panel_status', $request->moved() ? 'Kolejność zmieniona. Klienci już ją widzą.' : 'Zapisane. „Szukam prezentu” już tak wygląda.');
+    }
+
+    /**
+     * @return array<string, array{tags: list<array{key: string, label: string}>, counts: array<string, int>}>
+     */
+    private function tagLists(Settings $settings): array
+    {
+        $products = Product::query()->get(['id', 'recipients', 'occasions']);
+
+        return collect(SaveGiftFinderRequest::TAG_LISTS)
+            ->map(fn (string $setting, string $list) => [
+                'tags' => collect(GiftTags::from($settings, $setting))->map(fn (string $label, string $key) => ['key' => (string) $key, 'label' => $label])->values()->all(),
+                'counts' => $products->flatMap(fn (Product $product) => array_unique((array) $product->{$list}))->countBy()->all(),
+            ])
+            ->all();
     }
 
     public function vouchers(SaveVoucherSettingsRequest $request, SaveSettings $saveSettings): RedirectResponse
