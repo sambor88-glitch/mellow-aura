@@ -18,6 +18,7 @@ return [
     'nip_digits' => 'NIP ma 10 cyfr — sprawdź, czy żadna nie uciekła',
     'nip_checksum' => 'Ten NIP się nie zgadza — sprawdź cyfry',
     'note_max' => 'Dopisek zmieszczę do :max znaków',
+    'gift_message_max' => 'Na kartce zmieszczę do :max znaków — skróć liścik',
     'shipping_method' => 'Wybierz, jak mam wysłać paczkę',
     'locker_code_required' => 'Wpisz kod paczkomatu — bez niego nie wiem, dokąd wysłać paczkę',
     'locker_code' => 'Kod paczkomatu to litery i cyfry, np. KRA01M — sprawdź go w aplikacji InPost',

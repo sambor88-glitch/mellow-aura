@@ -21,5 +21,10 @@ Faktura na NIP {!! $order->invoice_nip !!}
 @if ($order->note)
 Dopisek: {!! $order->note !!}
 @endif
+@if (filled($order->gift_message))
+
+LIŚCIK DO PREZENTU (wydrukujesz go z karty zamówienia w panelu)
+{!! $order->gift_message !!}
+@endif
 
 Otwórz zamówienie w panelu: {!! route('admin.orders.show', $order) !!}

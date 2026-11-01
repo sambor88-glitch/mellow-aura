@@ -183,6 +183,19 @@
                     @endif
                 </dl>
             </section>
+
+            @if (filled($order->gift_message))
+                {{-- Typed by the buyer for the person who gets the gift (MA-342): escaped, printed on an A6 card for the parcel. --}}
+                <section class="{{ $card }} max-md:-order-2" aria-labelledby="gift-heading">
+                    <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
+                        <h2 id="gift-heading" class="font-serif text-[23px]">Liścik do prezentu</h2>
+                        <a href="{{ route('admin.orders.gift-card', $order) }}" target="_blank" rel="noopener"
+                           class="inline-flex min-h-11 items-center rounded-full border border-line-strong px-5 text-[13.5px] text-ink transition duration-300 hover:border-ink hover:bg-sand-dark hover:text-ink">Drukuj liścik</a>
+                    </div>
+                    <blockquote class="rounded-[4px] bg-linen px-3.5 py-3 font-serif text-[17px] leading-[1.5] italic whitespace-pre-line [overflow-wrap:anywhere]">{{ $order->gift_message }}</blockquote>
+                    <p class="mt-2.5 text-[12.5px] text-hint">Kartka A6 do paczki — bez ceny i bez numeru zamówienia. W potwierdzeniu dla klienta liściku nie ma.</p>
+                </section>
+            @endif
         </div>
 
         <div class="grid min-w-0 flex-[0_1_300px] content-start gap-[26px] max-md:contents">

@@ -1,4 +1,5 @@
 @use('App\Modules\Checkout\Enums\PaymentMethod')
+@use('App\Modules\Checkout\Http\Requests\PlaceOrderRequest')
 @use('App\Modules\Localization\Support\Locales')
 @use('App\Modules\Shared\Support\Money')
 @inject('settings', 'App\Modules\Settings\Settings')
@@ -13,6 +14,9 @@
     // Vouchers sent as PDFs alone need no note for the parcel, only an invoice may. The address sits with the courier.
     $more = $needsDelivery ? ['invoice_nip', 'note'] : ['invoice_nip'];
     $moreOpen = $errors->hasAny($more) || collect($more)->contains(fn (string $field) => filled(old($field)));
+    // The gift message (MA-342). Worked out up here: a one-line PHP directive further down would pair with a later block's end.
+    $giftMax = PlaceOrderRequest::GIFT_MESSAGE_MAX;
+    $giftError = $errors->first('gift_message');
     $radio = 'group flex cursor-pointer items-center gap-3.5 rounded-[20px] border border-line bg-cream/60 px-[18px] transition-[border-color,background-color,transform] duration-300 hover:-translate-y-0.5 hover:border-ink has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-navy';
 @endphp
 
@@ -62,6 +66,33 @@
                                 @endif
                             </div>
                         </details>
+
+                        @if ($needsDelivery)
+                            {{-- A few words Kasia prints on a card for the parcel (MA-342). Escaped here, in the panel and on the card. --}}
+                            <details @if ($giftError || filled(old('gift_message'))) open @endif class="group mt-1 border-t border-line pt-1"
+                                     x-data="{ length: @js(mb_strlen((string) old('gift_message'))) }">
+                                <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-[13.5px] text-brown [&::-webkit-details-marker]:hidden">
+                                    <span>{{ $t('gift_toggle') }}</span>
+                                    <span aria-hidden="true" class="group-open:hidden">+</span><span aria-hidden="true" class="hidden group-open:inline">−</span>
+                                </summary>
+                                <div class="mt-3.5 min-w-0 animate-ma-up-quick">
+                                    <label for="gift_message" class="mb-1.5 block text-[13.5px] text-graphite">{{ $t('gift_label') }} <span class="text-hint">{{ __('shared::forms.optional') }}</span></label>
+                                    <textarea id="gift_message" name="gift_message" rows="4" maxlength="{{ $giftMax }}" placeholder="{{ $t('gift_placeholder') }}"
+                                              aria-describedby="gift_message-note gift_message-count" @if ($giftError) aria-invalid="true" @endif
+                                              x-on:input="length = $el.value.length"
+                                              class="field-control resize-y leading-[1.6]">{{ old('gift_message') }}</textarea>
+                                    <div class="mt-1.5 flex flex-wrap justify-between gap-x-4 gap-y-1">
+                                        @if ($giftError)
+                                            <p id="gift_message-note" class="min-w-0 flex-1 text-[13px] text-error">{{ $giftError }}</p>
+                                        @else
+                                            <p id="gift_message-note" class="min-w-0 flex-1 text-[12.5px] text-hint">{{ $t('gift_hint') }}</p>
+                                        @endif
+                                        <p id="gift_message-count" class="text-[12.5px] text-hint tabular-nums"
+                                           x-text="@js($t('gift_count', ['max' => $giftMax])).replace(':count', length)">{{ $t('gift_count', ['count' => mb_strlen((string) old('gift_message')), 'max' => $giftMax]) }}</p>
+                                    </div>
+                                </div>
+                            </details>
+                        @endif
                     </div>
 
                     @if ($needsDelivery)

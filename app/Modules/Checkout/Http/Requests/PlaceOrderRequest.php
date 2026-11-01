@@ -19,10 +19,14 @@ use Illuminate\Validation\Rule;
  * feature of a product in the cart (terms §4.5). A cart of vouchers sent as PDFs has no delivery to choose.
  * The courier needs the address, and the address goes with the courier alone: the parcel locker and pickup
  * at the studio have no door to deliver to, but the parcel locker needs its code: without one Kasia has nowhere
- * to send the parcel (MA-248). The NIP and note are optional, but a NIP has to add up.
+ * to send the parcel (MA-248). The NIP and note are optional, but a NIP has to add up. The gift message is optional too:
+ * Kasia prints it on a card for the parcel (MA-342), so a cart of vouchers sent as PDFs has none.
  */
 class PlaceOrderRequest extends FormRequest
 {
+    /** What fits on the A6 card for the parcel in a type big enough to read like a letter. */
+    public const GIFT_MESSAGE_MAX = 300;
+
     /** @var list<string> */
     protected $dontFlash = ['blik_code'];
 
@@ -45,6 +49,7 @@ class PlaceOrderRequest extends FormRequest
             'city' => ['exclude_unless:shipping_method,courier', 'required', 'string', 'max:80'],
             'invoice_nip' => ['bail', 'nullable', 'digits:10', $this->checksum(...)],
             'note' => ['nullable', 'string', 'max:500'],
+            'gift_message' => $this->needsDelivery() ? ['nullable', 'string', 'max:'.self::GIFT_MESSAGE_MAX] : ['exclude'],
             // Vouchers sent as PDFs alone have nothing to deliver; the controller records them as sent by e-mail.
             'shipping_method' => $this->needsDelivery()
                 ? ['required', Rule::in($this->container->make(ShippingMethods::class)->all()->keys())]
@@ -87,6 +92,7 @@ class PlaceOrderRequest extends FormRequest
             'city.max' => $t('city_max'),
             'invoice_nip.digits' => $t('nip_digits'),
             'note.max' => $t('note_max'),
+            'gift_message.max' => $t('gift_message_max'),
             'shipping_method.required' => $t('shipping_method'),
             'shipping_method.in' => $t('shipping_method'),
             'locker_code.required' => $t('locker_code_required'),
@@ -129,10 +135,14 @@ class PlaceOrderRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $postalCode = (string) $this->input('postal_code');
+        // The browser counts a line break as one character and sends two; at most one empty line between paragraphs.
+        $giftMessage = $this->input('gift_message');
+        $giftMessage = is_string($giftMessage) ? trim((string) preg_replace(["/\r\n?/", "/\n{3,}/"], ["\n", "\n\n"], $giftMessage)) : $giftMessage;
 
         $this->merge([
             'blik_code' => preg_replace('/\D+/', '', (string) $this->input('blik_code')),
             'invoice_nip' => preg_replace('/\D+/', '', (string) $this->input('invoice_nip')) ?: null,
+            'gift_message' => $giftMessage === '' ? null : $giftMessage,
             // Typed by hand as „kra 01m” or picked on the map: InPost's codes are capitals without spaces.
             'locker_code' => strtoupper((string) preg_replace('/\s+/', '', (string) $this->input('locker_code'))) ?: null,
             // The iPhone's number pad has no dash, so „30001” and „30 001” count as 30-001.
