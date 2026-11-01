@@ -2,8 +2,8 @@ import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
 
 // The whole purchase in a real browser, as a customer and then as Kasia in the panel:
-// shop → product → checkout with BLIK (TestGateway pays at once) → confirmation → empty cart
-// → panel order „Opłacone” → „Wysłane” → three mails to the customer in the log.
+// shop → product → checkout with BLIK and a gift message (TestGateway pays at once) → confirmation → empty cart
+// → panel order „Opłacone” with the gift message to print → „Wysłane” → three mails to the customer in the log.
 
 const logFile = new URL('../../storage/logs/laravel.log', import.meta.url);
 
@@ -113,6 +113,7 @@ test('a customer buys a product and Kasia ships it', async ({ page }, testInfo) 
     });
 
     let orderNumber;
+    const giftMessage = 'Wszystkiego dobrego, Olu!\n— Marta';
 
     await test.step('checkout with BLIK and a parcel locker, the code typed last', async () => {
         await page.goto('/zamowienie');
@@ -154,6 +155,14 @@ test('a customer buys a product and Kasia ships it', async ({ page }, testInfo) 
         for (const deviation of await page.locator('[data-deviation]').all()) {
             await deviation.check();
         }
+
+        // A few words for the person who gets the gift (MA-342): folded away until asked for, counted as typed.
+        const gift = page.locator('#gift_message');
+
+        await expect(gift).toBeHidden();
+        await page.getByText('Dopisz kilka słów do obdarowanej').click();
+        await gift.fill(giftMessage);
+        await expect(page.locator('#gift_message-count')).toHaveText(`${giftMessage.length} z 300 znaków`);
 
         await page.locator('[name="accept_terms"]').check();
 
@@ -198,6 +207,13 @@ test('a customer buys a product and Kasia ships it', async ({ page }, testInfo) 
         await page.goto(`/panel/zamowienia/${orderNumber}`);
         await expect(page.locator('main')).toContainText('Opłacone');
         await expectNoSideScroll(page);
+
+        // The gift message, with its line break, and the A6 card to print it on.
+        await expect(page.locator('section[aria-labelledby="gift-heading"] blockquote')).toHaveText(giftMessage);
+        const card = await page.request.get(await page.getByRole('link', { name: 'Drukuj liścik' }).getAttribute('href'));
+
+        expect(card.status()).toBe(200);
+        expect(card.headers()['content-type']).toBe('application/pdf');
 
         const ship = page.locator('form', { has: page.locator('[name="tracking_number"]') }).first();
 

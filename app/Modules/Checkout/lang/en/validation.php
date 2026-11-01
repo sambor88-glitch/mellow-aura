@@ -18,6 +18,7 @@ return [
     'nip_digits' => 'A NIP has 10 digits — check none went missing',
     'nip_checksum' => 'This NIP doesn’t add up — check the digits',
     'note_max' => 'The note fits in :max characters',
+    'gift_message_max' => 'The card fits :max characters — please make the note shorter',
     'shipping_method' => 'Choose how I should send your parcel',
     'locker_code_required' => 'Enter the parcel locker code — without it I don’t know where to send your parcel',
     'locker_code' => 'A locker code is letters and digits, e.g. KRA01M — check it in the InPost app',

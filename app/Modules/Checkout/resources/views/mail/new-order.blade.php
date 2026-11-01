@@ -33,6 +33,14 @@
     @if ($order->note)
         <p style="margin: 8px 0 0; color: #5C5043;">Dopisek: {{ $order->note }}</p>
     @endif
+    @if (filled($order->gift_message))
+        {{-- For the person who gets the gift (MA-342): Kasia prints it from the panel. Only in this mail, never the customer's. --}}
+        <div style="margin: 26px 0 6px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #726456;">Liścik do prezentu</div>
+        <div style="padding: 16px 20px; background: #F3EDE4; border-radius: 16px;">
+            <p style="margin: 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 17px; line-height: 1.5; color: #5C5043; overflow-wrap: anywhere;">{!! nl2br(e($order->gift_message)) !!}</p>
+        </div>
+        <p style="margin: 6px 0 0; font-size: 13px; color: #726456;">Wydrukujesz go na kartce A6 z karty zamówienia w panelu.</p>
+    @endif
 
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 26px 0 0;">
         <tr>

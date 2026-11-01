@@ -164,6 +164,7 @@ class CustomerRecords
                 'parcel_locker' => $order->locker_code,
                 'tracking_number' => $order->tracking_number,
                 'note' => $order->note,
+                'gift_message' => $order->gift_message,
                 'invoice_nip' => $order->invoice_nip,
                 'terms' => ['version' => $order->terms_version, 'accepted_at' => $order->terms_accepted_at?->toIso8601String()],
                 'currency' => $order->currency,
