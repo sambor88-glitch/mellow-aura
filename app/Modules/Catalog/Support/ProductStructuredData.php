@@ -23,7 +23,10 @@ use Spatie\SchemaOrg\Schema;
  */
 class ProductStructuredData
 {
-    public static function for(Product $product, Settings $settings): string
+    /**
+     * @param  list<array{string, string}>  $categoryTrail  the shelves above the product, as the page shows them (CategoryTree::trail)
+     */
+    public static function for(Product $product, Settings $settings, array $categoryTrail = []): string
     {
         $url = route('product.show', $product);
         $images = $product->getMedia('images')->map(fn (Media $image) => $image->getAvailableUrl(['card']))->all();
@@ -84,10 +87,10 @@ class ProductStructuredData
         }
 
         // The same trail the page shows: a category not written in this language has no page in it (MA-296).
-        return $group->toScript().BreadcrumbStructuredData::for(array_values(array_filter([
+        return $group->toScript().BreadcrumbStructuredData::for([
             [__('catalog::shop.heading'), route('shop.index')],
-            $product->category->hasTranslation(Locales::current()) ? [$product->category->name, route('shop.category', $product->category)] : null,
+            ...$categoryTrail,
             [$product->name, $url],
-        ])));
+        ]);
     }
 }

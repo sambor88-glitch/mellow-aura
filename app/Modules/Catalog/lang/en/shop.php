@@ -14,6 +14,8 @@ return [
     'shortcut_scarf' => 'From your scarf',
     'shortcut_imprint' => 'Your plant imprint',
     'shortcut_custom_orders' => 'Custom order',
+    // The configurator card at the front of „Kubki z własnym napisem” (MA-351).
+    'configurator_cta' => 'Add your words',
     'home' => 'Home',
     'products' => 'Shop',
     'heading' => 'Shop',
@@ -24,6 +26,8 @@ return [
     'search_label' => 'Search the shop',
     'search_clear' => 'Clear search',
     'all' => 'All',
+    // The label of a row of shelves under the one open (MA-351).
+    'subcategories' => ':category — subcategories',
     'favorites_chip' => 'Saved',
     'sort' => 'Sort',
     'sort_featured' => 'Featured',

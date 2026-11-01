@@ -14,6 +14,8 @@ return [
     'shortcut_scarf' => 'Z Twojej apaszki',
     'shortcut_imprint' => 'Odcisk Twojej rośliny',
     'shortcut_custom_orders' => 'Zamówienie indywidualne',
+    // The configurator card at the front of „Kubki z własnym napisem” (MA-351).
+    'configurator_cta' => 'Wpisz napis',
     'home' => 'Strona główna',
     'products' => 'Sklep',
     'heading' => 'Sklep',
@@ -25,6 +27,8 @@ return [
     'search_label' => 'Szukaj produktów',
     'search_clear' => 'Wyczyść szukanie',
     'all' => 'Wszystkie',
+    // The label of a row of shelves under the one open (MA-351).
+    'subcategories' => ':category — podkategorie',
     'favorites_chip' => 'Ulubione',
     'sort' => 'Sortuj',
     'sort_featured' => 'Polecane',

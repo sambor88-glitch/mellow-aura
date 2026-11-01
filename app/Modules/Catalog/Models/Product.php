@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
@@ -153,6 +154,27 @@ class Product extends Model implements HasMedia
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * The other shelves the product shows on („Pokaż też w”, MA-351). Its address, breadcrumbs and the Google feed follow
+     * the main one only.
+     *
+     * @return BelongsToMany<Category, $this>
+     */
+    public function alsoInCategories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class, 'category_product');
+    }
+
+    /**
+     * Every shelf the product stands on: the main one first.
+     *
+     * @return list<int>
+     */
+    public function shelfIds(): array
+    {
+        return array_values(array_unique([$this->category_id, ...$this->alsoInCategories->modelKeys()]));
     }
 
     /**

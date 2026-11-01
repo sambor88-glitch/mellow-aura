@@ -13,7 +13,7 @@ class OldAddressesTest extends TestCase
     public function test_old_sumup_addresses_go_permanently_to_the_same_thing_on_the_new_site(): void
     {
         $this->get('/produkty')->assertStatus(301)->assertRedirect(route('shop.index'));
-        $this->get('/kategoria/tekstylia')->assertRedirect(route('shop.category', 'jedwab'));
+        $this->get('/kategoria/tekstylia')->assertRedirect(route('shop.category', 'szycie'));
         $this->get('/produkt/kubki-malowane-recznie')->assertStatus(301)->assertRedirect(route('product.show', 'kubki-malowane'));
         $this->get('/strona/galeria-warsztaty-ceramiczne-krakow')->assertRedirect(route('workshops.index'));
         $this->get('/strona/warunki-korzystania')->assertRedirect(route('content.terms'));

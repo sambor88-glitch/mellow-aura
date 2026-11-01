@@ -18,6 +18,8 @@ use Illuminate\Support\Str;
  * Prices in other currencies ride along the same way, each with its own history — or, for a product whose euro
  * prices follow the NBP rate, come from ConvertEuroPrices.
  *
+ * So do the other shelves it shows on („Pokaż też w”, MA-351), when the form sends them.
+ *
  * Its other languages ride along: a product with an English name gets an English row (and its own English
  * address, also set once); an emptied English name removes the row, and the product leaves /en/.
  *
@@ -29,7 +31,7 @@ class SaveProduct
     public function __construct(private ConvertEuroPrices $convertEuroPrices, private SendRestockNotices $sendRestockNotices) {}
 
     /**
-     * @param  array{name: string, piece_name?: ?string, category_id: int, description: ?string, story?: ?string, seo_description?: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, variant_kind?: ?string, euro_from_rate?: bool, workshop_code?: ?string, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels?: array<string, string>, price_gross: int, compare_at_price: ?int, prices?: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post?: bool, voucher_seats?: ?int, media_id?: ?int, is_hidden?: bool}>, photo_alts?: array<int, string>, photo_focus?: array<int, array{x: int, y: int}>, translations?: array<string, array<string, ?string>>}  $data
+     * @param  array{name: string, piece_name?: ?string, category_id: int, also_in?: list<int>, description: ?string, story?: ?string, seo_description?: ?string, care_note: ?string, food_contact: ?string, deviation: ?string, size_tolerance: ?string, safety_warnings: ?string, google_category: ?int, show_in_google: bool, is_published: bool, is_one_off: bool, is_exact_piece: bool, variant_kind?: ?string, euro_from_rate?: bool, workshop_code?: ?string, dimensions: array<string, string>, occasions: list<string>, recipients: list<string>, variants: list<array{id: ?int, label: string, labels?: array<string, string>, price_gross: int, compare_at_price: ?int, prices?: array<string, array{amount: ?int, compare_at: ?int}>, stock: ?int, sent_by_post?: bool, voucher_seats?: ?int, media_id?: ?int, is_hidden?: bool}>, photo_alts?: array<int, string>, photo_focus?: array<int, array{x: int, y: int}>, translations?: array<string, array<string, ?string>>}  $data
      */
     public function __invoke(?Product $product, array $data): Product
     {
@@ -75,6 +77,11 @@ class SaveProduct
                 ]);
             } else {
                 $product->update($attributes);
+            }
+
+            // „Pokaż też w” (MA-351), when the form had the list.
+            if (array_key_exists('also_in', $data)) {
+                $product->alsoInCategories()->sync($data['also_in']);
             }
 
             // A size may point only at a photo of this product; anything else falls back to the first photo.
