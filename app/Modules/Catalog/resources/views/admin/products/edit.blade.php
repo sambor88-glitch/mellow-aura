@@ -333,11 +333,36 @@
                             <select id="{{ $formKey }}-category" name="category_id" @if ($bag->has('category_id')) aria-invalid="true" @endif class="field-control">
                                 <option value="">Wybierz rodzaj</option>
                                 @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}" @selected((int) $old('category_id', $product->category_id) === $category->id)>{{ $category->name }}</option>
+                                    <option value="{{ $category->id }}" @selected((int) $old('category_id', $product->category_id) === $category->id)>{{ $categoryTree->label($category) }}</option>
                                 @endforeach
                             </select>
                             {!! $error('category_id') !!}
                         </div>
+                        {{-- „Pokaż też w” (MA-351): the product stays on its main shelf — its address, breadcrumbs and Google follow that one —
+                             and shows on these too, e.g. jewellery stands among the incense holders. --}}
+                        {{-- Inline: a @php block here would swallow the inline ones above it. --}}
+                        @php($alsoIn = collect($old('also_in', $product->alsoInCategories->modelKeys()))->map(fn ($id) => (int) $id)->all())
+                        <fieldset class="min-w-0" x-data="{ main: @js((int) $old('category_id', $product->category_id)) }"
+                                  x-init="document.getElementById(@js($formKey.'-category'))?.addEventListener('change', (event) => main = Number(event.target.value))">
+                            <input type="hidden" name="also_in_sent" value="1">
+                            <details @if ($alsoIn !== [] || $bag->has('also_in.*')) open @endif class="group rounded-[4px] border border-line bg-white">
+                                <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 px-4 text-[13.5px] text-graphite [&::-webkit-details-marker]:hidden">
+                                    <span>Pokaż też w <span class="text-hint">— nieobowiązkowe{{ $alsoIn !== [] ? ', zaznaczone: '.count($alsoIn) : '' }}</span></span>
+                                    <span aria-hidden="true" class="text-[11px] transition-transform group-open:rotate-180">▾</span>
+                                </summary>
+                                <div class="grid max-h-[320px] gap-0.5 overflow-y-auto border-t border-line px-2 py-2">
+                                    @foreach ($categories as $category)
+                                        <label class="flex min-h-10 cursor-pointer items-center gap-2.5 rounded-[4px] px-2 text-[13.5px] text-ink hover:bg-linen"
+                                               style="padding-left: {{ 8 + ($categoryTree->depth($category) - 1) * 18 }}px" x-show="main !== {{ $category->id }}">
+                                            <input type="checkbox" name="also_in[]" value="{{ $category->id }}" @checked(in_array($category->id, $alsoIn, true)) class="size-4 accent-ink">
+                                            {{ $category->name }}
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </details>
+                            <p class="mt-1.5 text-[12.5px] text-hint">Adres, ścieżka nad nazwą i Google idą za „Rodzajem w sklepie”.</p>
+                            {!! $error('also_in.*') !!}
+                        </fieldset>
                         <div class="min-w-0">
                             <label for="{{ $formKey }}-description" class="mb-1.5 block text-[13.5px] text-graphite">Opis</label>
                             <textarea id="{{ $formKey }}-description" name="description" rows="5" maxlength="2000" placeholder="z czego, jak powstaje, co z tym zrobisz"

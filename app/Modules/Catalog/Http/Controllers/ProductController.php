@@ -4,6 +4,7 @@ namespace App\Modules\Catalog\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Catalog\Models\Product;
+use App\Modules\Catalog\Support\CategoryTree;
 use App\Modules\Catalog\Support\ProductStructuredData;
 use App\Modules\Localization\Support\Locales;
 use App\Modules\Settings\Settings;
@@ -18,7 +19,7 @@ class ProductController extends Controller
         // A hidden product may still be in Google or in someone's link: its shelf is the closest thing (specification, point 1).
         // On an English page only when the category is written in English, or its address would have no slug.
         if (! $product->is_published) {
-            return $product->category->hasTranslation(Locales::current())
+            return $product->category->availableIn(Locales::current())
                 ? to_route('shop.category', $product->category, 301)
                 : to_route('shop.index', status: 301);
         }
@@ -52,11 +53,17 @@ class ProductController extends Controller
             ->take(4)
             ->values();
 
+        // Sklep / Glina / Biżuteria / the product: every shelf above it links back up (MA-351).
+        $tree = CategoryTree::load();
+        $trail = $tree->trail($product->category_id);
+
         return view('catalog::product.show', [
             'product' => $product,
             'variant' => $variant,
             'related' => $related,
-            'structuredData' => ProductStructuredData::for($product, $settings),
+            'categoryTrail' => $trail,
+            'categorySlugs' => $tree->path($product->category_id)->map(fn ($category) => $category->getRawOriginal('slug'))->all(),
+            'structuredData' => ProductStructuredData::for($product, $settings, $trail),
         ]);
     }
 }

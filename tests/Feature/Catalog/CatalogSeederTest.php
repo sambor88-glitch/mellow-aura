@@ -28,7 +28,8 @@ class CatalogSeederTest extends TestCase
     {
         $this->seed(CatalogSeeder::class);
 
-        $this->assertSame(8, Category::count());
+        // Glina and Szycie with everything under them (MA-351), and the vouchers outside the tree.
+        $this->assertSame(30, Category::count());
         $this->assertSame(17, Product::count());
         $this->assertSame(13, Product::where('is_published', true)->count());
         $this->assertSame(49, ProductVariant::count());
@@ -95,8 +96,34 @@ class CatalogSeederTest extends TestCase
     {
         $this->seed(CatalogSeeder::class);
 
-        $this->assertSame('Mugs & cups', Category::query()->where('slug', 'kubki-i-filizanki')->first()->translation('en')->name);
-        $this->assertSame('silk', Category::query()->where('slug', 'jedwab')->first()->translation('en')->slug);
+        $this->assertSame('Mugs', Category::query()->where('slug', 'kubki')->first()->translation('en')->name);
+        $this->assertSame('textiles', Category::query()->where('slug', 'szycie')->first()->translation('en')->slug);
         $this->assertFalse(Category::query()->where('slug', 'vouchery')->first()->hasTranslation('en'));
+        // Without an English name Kasia gives it in the panel: not on /en/.
+        $this->assertFalse(Category::query()->where('slug', 'migotki')->first()->hasTranslation('en'));
+    }
+
+    public function test_the_categories_stand_in_a_tree_under_glina_and_szycie(): void
+    {
+        $this->seed(CatalogSeeder::class);
+
+        $category = fn (string $slug) => Category::query()->where('slug', $slug)->first();
+
+        $this->assertNull($category('glina')->parent_id);
+        $this->assertNull($category('szycie')->parent_id);
+        $this->assertNull($category('vouchery')->parent_id);
+        $this->assertSame($category('glina')->id, $category('bizuteria')->parent_id);
+        $this->assertSame($category('bizuteria')->id, $category('kolczyki')->parent_id);
+        $this->assertSame($category('szycie')->id, $category('etui-na-klucze')->parent_id);
+        // The group comes from the top of the branch: the care rule of ceramics or of sewn things.
+        $this->assertSame(CategoryGroup::Ceramics, $category('pierscionki')->group);
+        $this->assertSame(CategoryGroup::Crafts, $category('scrunchie')->group);
+        $this->assertSame(['kubki-z-wlasnym-napisem', 'kubki', 'filizanki'], Category::query()->where('parent_id', $category('glina')->id)->orderBy('sort_order')->limit(3)->pluck('slug')->all());
+
+        // Maciej, 1.11.2026: the jewellery stands come with the jewellery and also among the incense holders.
+        $stands = Product::query()->where('slug', 'podstawki-pod-bizuterie')->first();
+        $this->assertSame('bizuteria', $stands->category->slug);
+        $this->assertSame(['kadzielnice'], $stands->alsoInCategories->pluck('slug')->all());
+        $this->assertSame('scrunchie', Product::query()->where('slug', 'scrunchies')->first()->category->slug);
     }
 }

@@ -32,6 +32,10 @@ Route::delete('/produkty/{product}/zdjecia/{media}', [ProductPhotoController::cl
 Route::post('/produkty/{product}/model-3d', [ProductModelController::class, 'store'])->whereNumber('product')->name('products.model.store');
 Route::delete('/produkty/{product}/model-3d', [ProductModelController::class, 'destroy'])->whereNumber('product')->name('products.model.destroy');
 
+// The tree of shelves under Glina and Szycie (MA-351): a new shelf, the whole tree after a drag, one shelf's card, an empty one away.
 Route::get('/kategorie', [CategoryController::class, 'index'])->name('categories.index');
+Route::post('/kategorie', [CategoryController::class, 'store'])->name('categories.store');
 Route::put('/kategorie/skroty', [CategoryController::class, 'shortcuts'])->name('categories.shortcuts');
+Route::put('/kategorie/kolejnosc', [CategoryController::class, 'arrange'])->name('categories.arrange');
 Route::put('/kategorie/{category}', [CategoryController::class, 'update'])->whereNumber('category')->name('categories.update');
+Route::delete('/kategorie/{category}', [CategoryController::class, 'destroy'])->whereNumber('category')->name('categories.destroy');

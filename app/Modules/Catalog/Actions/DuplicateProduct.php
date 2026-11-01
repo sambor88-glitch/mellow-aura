@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 
 /**
  * „Duplikuj” on the product card (MA-307): a hidden copy right after the original, to change its name and what differs.
- * It takes the texts, sizes with prices (also in other currencies), translations and photos with their descriptions
+ * It takes the texts, the shelves it also shows on, sizes with prices (also in other currencies), translations and photos with their descriptions
  * and crops. It leaves behind what belonged to the original piece: the promotion (price before a reduction), the pieces
  * on the shelf (counted sizes start at 0), the people waiting for a size, the price history and the 3D model.
  */
@@ -29,6 +29,7 @@ class DuplicateProduct
             $copy->sort_order = $product->sort_order + 1;
             $copy->is_published = false;
             $copy->save();
+            $copy->alsoInCategories()->sync($product->alsoInCategories()->pluck('categories.id')->all());
 
             foreach ($product->translations as $translation) {
                 $copy->translations()->create([

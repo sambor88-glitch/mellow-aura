@@ -29,7 +29,7 @@ Pliki `.dc.html` otwierają się w przeglądarce i muszą leżeć obok `support.
 
 ## Stos
 
-Laravel 13 + Blade, Alpine.js, GSAP z ScrollTrigger, Lenis, three.js (tylko kubek 3D), `@google/model-viewer` (tylko „Zobacz u siebie”, AR — MA-310) i SortableJS (tylko przeciąganie kolejności produktów w panelu — MA-307) przez npm, MySQL, własny panel na Blade (nie Filament), paczki Spatie: medialibrary,
+Laravel 13 + Blade, Alpine.js, GSAP z ScrollTrigger, Lenis, three.js (tylko kubek 3D), `@google/model-viewer` (tylko „Zobacz u siebie”, AR — MA-310) i SortableJS (tylko przeciąganie w panelu: kolejność produktów — MA-307, drzewo kategorii — MA-351) przez npm, MySQL, własny panel na Blade (nie Filament), paczki Spatie: medialibrary,
 sitemap, schema-org. Serwer na Forge, przed nim Cloudflare. PHP 8.4 lokalnie i na serwerze.
 Bez Next.js, Astro i WooCommerce — uzasadnienie w planie, punkt 3.
 
@@ -158,6 +158,19 @@ Szczegóły w `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html`. Tu zasady,
   Zapisuje to `Checkout\Actions\PlaceOrder` przez `Checkout\Support\OrderTax`: `orders.delivery_country` (na razie zawsze `PL`,
   kraj w kasie dojdzie z MA-128), `orders.eur_rate` i `eur_rate_on` (kurs NBP z chwili zamówienia), `order_items.vat_rate`
   i `vat_exemption` z ustawień `vat_rate` i `vat_exemption`. Licznik WSTO i kafelek w panelu czekają na MA-121.
+
+## Kategorie (MA-351)
+
+- Drzewo do trzech poziomów: na górze Glina i Szycie, pod nimi półki, pod półkami podpółki (Glina › Biżuteria › Kolczyki).
+  Grupa (`ceramics`, `crafts`) i z nią zasada pielęgnacji idzie z góry gałęzi. Vouchery stoją na górze poza drzewem.
+- Kasia dodaje, przeciąga, przenosi i usuwa puste półki w panelu (Kategorie). Nowej kategorii głównej z panelu nie ma.
+- Adres płaski `/sklep/{slug}`, ustawiany raz przy zakładaniu — zmiana nazwy ani przeniesienie go nie ruszają.
+  Stary adres (po MA-351 np. `/sklep/kubki-i-filizanki`) prowadzi 301 przez `category_redirects`.
+- Produkt ma jedną kategorię główną (`category_id`: adres, okruszki, feed Google) i „Pokaż też w” (`category_product`).
+  Kategoria pokazuje produkty swoje i wszystkich podkategorii, każdy raz.
+- Drzewo czytasz przez `Catalog\Support\CategoryTree` (jedno zapytanie), nie przez relacje `parent` w pętli.
+- Pusta kategoria nie ma pigułki w sklepie, dostaje `noindex` i nie trafia do sitemap.xml. Wyjątek: „Kubki z własnym napisem”
+  z kartą konfiguratora (`Category::PERSONALISED_MUGS`).
 
 ## Treści i dane
 

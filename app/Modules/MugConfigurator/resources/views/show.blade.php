@@ -239,7 +239,7 @@
             </section>
         @endif
 
-        <x-catalog::category-links :slugs="['kubki-i-filizanki', 'talerze-i-miski']" :heading="__('catalog::shop.ready_heading')" class="mt-14" />
+        <x-catalog::category-links :slugs="['kubki', 'filizanki']" :heading="__('catalog::shop.ready_heading')" class="mt-14" />
 
         {{-- On a phone the price and the button stay at the bottom (mellowaura-aplikacja), out of the way while typing
              and while any part of the form is in view. A solid ground, not glass: text showed through it (MA-255).

@@ -30,7 +30,7 @@
     $wholeShop = ! $category && $search === '';
 @endphp
 
-<x-shared::layout :title="$title" :description="$description" :canonical="$baseUrl" :noindex="$search !== ''"
+<x-shared::layout :title="$title" :description="$description" :canonical="$baseUrl" :noindex="$noindex"
                   :preload-image="$firstPhoto ? ProductPhoto::preload($firstPhoto, ProductPhoto::cardSizes()) : null">
     @isset($structuredData)
         <x-slot:head>{!! $structuredData !!}</x-slot:head>
@@ -41,8 +41,9 @@
     <div x-data="{ favorites: @js($wholeShop) && location.hash === '#ulubione', ids: @js($products->pluck('id')), get savedHere() { return this.ids.filter((id) => $store.favorites.has(id)).length } }"
          x-on:hashchange.window="favorites = @js($wholeShop) && location.hash === '#ulubione'"
          class="mx-auto max-w-[1280px] animate-ma-view px-7 pt-9 pb-24 md:pt-14">
+        {{-- Every shelf above this one links back up (MA-351): Sklep / Glina / Biżuteria / Kolczyki. --}}
         <x-shared::breadcrumb class="mb-[22px]" :items="$category
-            ? [[__('catalog::shop.products'), route('shop.index')], [$category->name, null]]
+            ? [[__('catalog::shop.products'), route('shop.index')], ...array_slice($trail, 0, -1), [$category->name, null]]
             : [[__('catalog::shop.products'), null]]" />
 
         <h1 class="mb-3.5 font-serif text-[length:clamp(38px,5vw,66px)] leading-[normal] font-light tracking-[-0.02em]">
@@ -86,25 +87,38 @@
                 </ul>
             </details>
 
-            {{-- The categories take their own row on a wide screen, so none drops alone into a second one;
-                 the search and the sorting share the row under them. --}}
-            <div x-init="const chip = $el.querySelector('[aria-current=page]'); if (chip && chip.offsetLeft + chip.offsetWidth > $el.clientWidth) $el.scrollLeft = chip.offsetLeft - 28"
-                 class="relative -mx-7 flex w-[calc(100%+56px)] snap-x snap-mandatory scroll-px-7 gap-2.5 overflow-x-auto px-7 pb-1 [scrollbar-width:none] md:order-first md:mx-0 md:w-full md:flex-wrap md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
-                @foreach ($chips as $chip)
-                    <a href="{{ $chip['url'] }}" @if ($chip['active']) aria-current="page" x-bind:aria-current="favorites ? 'false' : 'page'" x-bind:class="favorites && 'border-line-strong! bg-transparent! text-lead!'" @endif @class([
-                        'inline-flex min-h-11 shrink-0 snap-start items-center rounded-full border px-5 text-[13.5px] tracking-[0.03em] whitespace-nowrap',
-                        'border-ink bg-ink text-linen hover:text-linen' => $chip['active'],
-                        'border-line-strong text-lead hover:text-navy' => ! $chip['active'],
-                    ])>{{ $chip['label'] }} <span class="ml-0.5 text-[12px] opacity-85">{{ $chip['count'] }}</span></a>
-                @endforeach
-                @if ($wholeShop)
-                    <a href="#ulubione" x-cloak x-show="$store.favorites.count > 0 || favorites" x-bind:aria-current="favorites ? 'page' : 'false'"
-                       x-bind:class="favorites ? 'border-ink bg-ink text-linen hover:text-linen' : 'border-line-strong text-lead hover:text-navy'"
-                       class="inline-flex min-h-11 shrink-0 snap-start items-center rounded-full border px-5 text-[13.5px] tracking-[0.03em] whitespace-nowrap">♥ {{ __('catalog::shop.favorites_chip') }} <span class="ml-0.5 text-[12px] opacity-85" x-text="savedHere"></span></a>
-                @else
-                    <a href="{{ route('shop.index') }}#ulubione" x-cloak x-show="$store.favorites.count > 0"
-                       class="inline-flex min-h-11 shrink-0 snap-start items-center rounded-full border border-line-strong px-5 text-[13.5px] tracking-[0.03em] whitespace-nowrap text-lead hover:text-navy">♥ {{ __('catalog::shop.favorites_chip') }} <span class="ml-0.5 text-[12px] opacity-85" x-text="$store.favorites.count"></span></a>
-                @endif
+            {{-- The categories take their own rows on a wide screen, so none drops alone into a second one; the search and the
+                 sorting share the row under them. One row per level of the open branch (MA-351): Glina and Szycie, then the
+                 shelves of the open one, then the shelves under the open one of those. Each row scrolls on its own on a phone. --}}
+            <div class="grid w-full min-w-0 gap-2.5 md:order-first">
+            @foreach ($chipRows as $chips)
+                <div x-init="const chip = $el.querySelector('[data-chosen]'); if (chip && chip.offsetLeft + chip.offsetWidth > $el.clientWidth) $el.scrollLeft = chip.offsetLeft - 28"
+                     @if (! $loop->first) aria-label="{{ __('catalog::shop.subcategories', ['category' => $chipRows[$loop->index - 1]->firstWhere('chosen', true)['label'] ?? '']) }}" role="group" @endif
+                     class="relative -mx-7 flex w-[calc(100%+56px)] snap-x snap-mandatory scroll-px-7 gap-2.5 overflow-x-auto px-7 pb-1 [scrollbar-width:none] md:mx-0 md:w-full md:flex-wrap md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
+                    @foreach ($chips as $chip)
+                        {{-- The open shelf is ink; a shelf above it keeps an ink outline, so the way down stays visible. --}}
+                        <a href="{{ $chip['url'] }}" @if ($chip['chosen']) data-chosen @endif
+                           @if ($chip['current']) aria-current="page" x-bind:aria-current="favorites ? 'false' : 'page'" x-bind:class="favorites && 'border-line-strong! bg-transparent! text-lead!'" @endif @class([
+                            'inline-flex min-h-11 shrink-0 snap-start items-center rounded-full border tracking-[0.03em] whitespace-nowrap',
+                            'px-5 text-[13.5px]' => $loop->parent->first,
+                            'px-4 text-[13px]' => ! $loop->parent->first,
+                            'border-ink bg-ink text-linen hover:text-linen' => $chip['current'],
+                            'border-ink text-ink hover:text-navy' => $chip['chosen'] && ! $chip['current'],
+                            'border-line-strong text-lead hover:text-navy' => ! $chip['chosen'],
+                        ])>{{ $chip['label'] }} <span class="ml-0.5 text-[12px] opacity-85">{{ $chip['count'] }}</span></a>
+                    @endforeach
+                    @if ($loop->first)
+                        @if ($wholeShop)
+                            <a href="#ulubione" x-cloak x-show="$store.favorites.count > 0 || favorites" x-bind:aria-current="favorites ? 'page' : 'false'"
+                               x-bind:class="favorites ? 'border-ink bg-ink text-linen hover:text-linen' : 'border-line-strong text-lead hover:text-navy'"
+                               class="inline-flex min-h-11 shrink-0 snap-start items-center rounded-full border px-5 text-[13.5px] tracking-[0.03em] whitespace-nowrap">♥ {{ __('catalog::shop.favorites_chip') }} <span class="ml-0.5 text-[12px] opacity-85" x-text="savedHere"></span></a>
+                        @else
+                            <a href="{{ route('shop.index') }}#ulubione" x-cloak x-show="$store.favorites.count > 0"
+                               class="inline-flex min-h-11 shrink-0 snap-start items-center rounded-full border border-line-strong px-5 text-[13.5px] tracking-[0.03em] whitespace-nowrap text-lead hover:text-navy">♥ {{ __('catalog::shop.favorites_chip') }} <span class="ml-0.5 text-[12px] opacity-85" x-text="$store.favorites.count"></span></a>
+                        @endif
+                    @endif
+                </div>
+            @endforeach
             </div>
             <div class="hidden flex-wrap items-center gap-1.5 md:flex">
                 <span class="mr-1.5 shrink-0 text-[12px] tracking-[0.12em] text-hint uppercase">{{ __('catalog::shop.sort') }}</span>
@@ -118,7 +132,7 @@
             </div>
         </div>
 
-        @if ($products->isEmpty())
+        @if ($products->isEmpty() && ! $mugConfigurator)
             <div class="rounded-[20px] bg-sand-dark px-9 py-11 text-center">
                 <div class="mb-2 font-serif text-[26px]">{{ __('catalog::shop.empty_title') }}</div>
                 <p class="mb-[22px] text-[15.5px] text-lead">{{ __('catalog::shop.empty_text') }}</p>
@@ -135,6 +149,24 @@
         </div>
 
         <div class="grid grid-cols-2 gap-x-3.5 gap-y-8 sm:grid-cols-[repeat(auto-fill,minmax(240px,1fr))] sm:gap-x-[26px] sm:gap-y-[30px]">
+            @if ($mugConfigurator)
+                {{-- „Kubki z własnym napisem” opens with the configurator, before the mugs with Kasia's own quotes (MA-351). --}}
+                @php
+                    $mugNote = $settings->get(ShopShortcuts::noteKey('mug', Locales::current()));
+                @endphp
+                <div x-show="! favorites" class="min-w-0">
+                    <a href="{{ route('mug.index') }}" class="group flex animate-ma-up flex-col text-ink hover:text-ink">
+                        <span class="relative mb-3.5 flex aspect-[4/5] flex-col justify-end overflow-hidden rounded-[18px] border border-line bg-sand-dark p-4 transition-[box-shadow,transform] duration-500 ease-clay group-hover:-translate-y-1 group-hover:shadow-card-hover sm:p-5">
+                            <span class="mb-2 text-[10px] tracking-[0.2em] text-brown uppercase max-sm:hidden">{{ __('catalog::shop.shortcuts_heading') }}</span>
+                            <span class="font-serif text-[length:clamp(20px,5.2vw,30px)] leading-[1.05] font-light text-balance">{{ __('catalog::shop.shortcut_mug') }}</span>
+                            @if ($mugNote)
+                                <span class="mt-2 text-[13px] leading-[1.35] text-lead">{{ $mugNote }}</span>
+                            @endif
+                            <span class="glass mt-3 inline-flex min-h-11 w-max max-w-full items-center rounded-full px-4 text-[13px] whitespace-nowrap text-ink max-sm:px-3 sm:mt-4">{{ __('catalog::shop.configurator_cta') }}&nbsp;<span aria-hidden="true">→</span></span>
+                        </span>
+                    </a>
+                </div>
+            @endif
             @foreach ($products as $product)
                 <div x-show="! favorites || $store.favorites.has({{ $product->id }})" class="min-w-0">
                     <x-catalog::product-card :product="$product" :delay="min($loop->index, 11) * 0.06" :eager="$loop->index < 2" />

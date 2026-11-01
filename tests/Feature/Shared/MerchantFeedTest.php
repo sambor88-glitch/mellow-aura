@@ -31,7 +31,9 @@ class MerchantFeedTest extends TestCase
     public function test_every_size_of_a_published_product_with_a_photo_goes_to_google_with_its_price_stock_and_delivery(): void
     {
         $this->deliveryOptions();
-        $vases = Category::factory()->create(['name' => 'Wazony i patery', 'group' => CategoryGroup::Ceramics]);
+        // The whole branch of the main shelf (MA-351).
+        $clay = Category::factory()->create(['name' => 'Glina', 'slug' => 'glina', 'group' => CategoryGroup::Ceramics]);
+        $vases = Category::factory()->create(['name' => 'Wazony', 'slug' => 'wazony', 'parent_id' => $clay->id, 'group' => CategoryGroup::Ceramics]);
         $vase = $this->product(['slug' => 'wazony', 'name' => 'Wazony', 'category_id' => $vases->id, 'description' => "Wazon <b>lepiony</b>\n\nz ręki.", 'google_category' => GoogleCategory::Vases]);
         $low = ProductVariant::factory()->create(['product_id' => $vase->id, 'label' => 'Niski 16 cm', 'price_gross' => 23900, 'compare_at_price' => 27900, 'stock' => 3]);
         $tall = ProductVariant::factory()->create(['product_id' => $vase->id, 'label' => 'Wysoki 24 cm', 'price_gross' => 45000, 'stock' => 0]);
@@ -57,7 +59,7 @@ class MerchantFeedTest extends TestCase
         $this->assertSame('no', (string) $first->identifier_exists);
         $this->assertSame('new', (string) $first->condition);
         $this->assertSame('602', (string) $first->google_product_category);
-        $this->assertSame('Ceramika > Wazony i patery', (string) $first->product_type);
+        $this->assertSame('Glina > Wazony', (string) $first->product_type);
         $this->assertCount(0, $first->return_policy_label);
 
         // Pickup at the studio is no delivery; times come from the panel and the delivery option's note.
@@ -105,7 +107,7 @@ class MerchantFeedTest extends TestCase
         $card = $items['v'.$amount->id];
         $this->assertSame('in_stock', (string) $card->availability);
         $this->assertSame('53', (string) $card->google_product_category);
-        $this->assertSame('Warsztaty > Vouchery', (string) $card->product_type);
+        $this->assertSame('Vouchery', (string) $card->product_type);
         $this->assertCount(0, $card->return_policy_label);
         $this->assertSame(['PL', 'InPost Paczkomat', '16.00 PLN'], $this->shipping($card->shipping[0]));
     }
