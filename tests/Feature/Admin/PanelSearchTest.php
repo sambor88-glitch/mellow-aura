@@ -143,7 +143,7 @@ class PanelSearchTest extends TestCase
         $page = $this->actingAs(User::factory()->create())->get(route('admin.settings.edit'))->assertOk()->getContent();
 
         // Every field of the index, tab by tab; „Ustawienia produktów” has its own screen, checked above.
-        foreach (['dostawa', 'pracownia', 'firma', 'karta produktu', 'statystyki', 'materialy'] as $tab) {
+        foreach (['dostawa', 'pracownia', 'firma', 'karta produktu', 'statystyki'] as $tab) {
             foreach (collect($this->search($tab)->json('groups'))->firstWhere('label', 'Ustawienia')['results'] ?? [] as $result) {
                 if (str_starts_with($result['url'], route('admin.settings.edit').'#')) {
                     $this->assertStringContainsString('id="'.Str::after($result['url'], '#').'"', $page, $result['title']);

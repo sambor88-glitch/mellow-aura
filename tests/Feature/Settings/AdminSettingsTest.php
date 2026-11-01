@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Modules\Settings\Database\Seeders\SettingsSeeder;
 use App\Modules\Settings\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 class AdminSettingsTest extends TestCase
@@ -37,8 +38,7 @@ class AdminSettingsTest extends TestCase
             ->assertSee('href="'.route('admin.settings.edit').'"', false)
             ->assertSeeInOrder(['Dostawa i opłaty', 'Darmowa wysyłka od', 'value="400"', 'InPost Paczkomat', 'value="16"', 'Pakowanie na prezent', 'value="12"'], false)
             ->assertSeeInOrder(['Wysyłka rzeczy z półki', 'name="dispatch_days_min" value="3"', 'name="dispatch_days_max" value="5"'], false)
-            ->assertSeeInOrder(['Dane pracowni', 'value="Kraków, okolice Błoń Krakowskich"', 'Dokładny adres'], false)
-            ->assertSeeInOrder(['kafelki na „O mnie”', 'value="Glina"', 'Nierówne krawędzie zostawiam'], false);
+            ->assertSeeInOrder(['Dane pracowni', 'value="Kraków, okolice Błoń Krakowskich"', 'Dokładny adres'], false);
     }
 
     public function test_delivery_prices_and_the_free_shipping_threshold_are_saved(): void
@@ -202,26 +202,16 @@ class AdminSettingsTest extends TestCase
         $this->assertNull(Setting::find('contact_email')->value);
     }
 
-    public function test_material_tiles_are_edited_removed_and_added(): void
+    public function test_the_material_tiles_are_no_longer_in_the_settings(): void
     {
+        // Kasia took the tiles off „O mnie” (MA-353), so the panel has nothing left to edit them for.
         $this->actingAs($this->owner)
-            ->put('/panel/ustawienia/materialy', ['tiles' => [
-                ['title' => 'Glina', 'text' => 'Opis gliny.'],
-                ['title' => 'Jedwab', 'text' => 'Opis jedwabiu.', 'remove' => '1'],
-                ['title' => 'Zmywarka', 'text' => ''],
-                ['title' => '', 'text' => ''],
-                ['title' => 'Atest szkliw', 'text' => 'Opis atestu.'],
-            ]])
-            ->assertRedirect('/panel/ustawienia#materialy');
+            ->get('/panel/ustawienia')
+            ->assertOk()
+            ->assertDontSee('id="materialy"', false)
+            ->assertDontSee('Materiały — kafelki na „O mnie”');
 
-        // MySQL stores JSON object keys in its own order, so only the content is compared.
-        $this->assertEquals([
-            ['title' => 'Glina', 'text' => 'Opis gliny.'],
-            ['title' => 'Zmywarka', 'text' => null],
-            ['title' => 'Atest szkliw', 'text' => 'Opis atestu.'],
-        ], Setting::find('material_tiles')->value);
-
-        $this->put('/panel/ustawienia/materialy', ['tiles' => [['title' => '', 'text' => 'Opis bez nazwy.']]])
-            ->assertSessionHasErrorsIn('materialy', ['tiles.0.title' => 'Nazwij kafelek — np. Glina']);
+        $this->put('/panel/ustawienia/materialy', ['tiles' => [['title' => 'Glina', 'text' => 'Opis gliny.']]])->assertNotFound();
+        $this->assertFalse(Route::has('admin.settings.materials'));
     }
 }
