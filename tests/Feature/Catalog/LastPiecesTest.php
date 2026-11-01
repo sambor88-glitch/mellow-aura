@@ -95,7 +95,7 @@ class LastPiecesTest extends TestCase
             ->assertDontSee('Kończą się');
 
         $content = $page->getContent();
-        $this->assertStringContainsString('&quot;filter&quot;:&quot;low&quot;', $content);
+        $this->assertStringContainsString('x-on:click="filter = \'low\'" aria-pressed="true"', $content);
         $this->assertMatchesRegularExpression('/data-id="'.$mug->id.'" data-states="live low"/', $content);
         // A one-off piece is one by nature: no alarm, no „Ostatnia sztuka”.
         $vase = Product::where('name', 'Wazon jedyny')->sole();
@@ -109,7 +109,7 @@ class LastPiecesTest extends TestCase
 
         $content = $this->actingAs(User::factory()->create())->get('/panel/produkty?pokaz=cokolwiek')->assertOk()->getContent();
 
-        $this->assertStringContainsString('&quot;filter&quot;:null', $content);
+        $this->assertStringContainsString('x-on:click="filter = \'all\'" aria-pressed="true"', $content);
         $this->assertStringNotContainsString('Ostatnie sztuki', $content);
     }
 
