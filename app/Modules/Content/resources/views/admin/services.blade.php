@@ -251,7 +251,7 @@
                             </label>
                             <label class="min-w-0">
                                 <span class="{{ $small }}">Przed obniżką, zł</span>
-                                <input name="prices[{{ $index }}][compare_at]" value="{{ $row['compare_at'] ?? '' }}" inputmode="decimal" placeholder="tylko przy promocji"
+                                <input name="prices[{{ $index }}][compare_at]" value="{{ $row['compare_at'] ?? '' }}" inputmode="decimal" placeholder="np. 139"
                                        @class([$input, 'text-right tabular-nums', 'border-error' => $has('compare_at'), 'border-line' => ! $has('compare_at')])>
                             </label>
                         </div>
