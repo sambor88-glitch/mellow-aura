@@ -31,13 +31,14 @@ class ServicePagesTest extends TestCase
             ->assertOk()
             ->assertSee('<title>Przeszycie apaszki po babci — opaska z Twojej tkaniny</title>', false)
             ->assertSee('<link rel="canonical" href="'.route('content.scarf').'">', false)
-            ->assertSeeInOrder(['usługa &middot; z Twojej tkaniny', "Apaszka babci\nnie musi leżeć\nw szafie", 'Przyślij mi tkaninę, która coś dla Ciebie znaczy', 'Szyję z tkanin z drugiego obiegu'], false)
+            ->assertSeeInOrder(['usługa · z Twojej tkaniny', "Apaszka babci\nnie musi leżeć\nw szafie", 'Przyślij mi tkaninę, która coś dla Ciebie znaczy', 'Szyję z tkanin z drugiego obiegu'], false)
             ->assertSeeInOrder(['href="'.route('custom-orders.index', ['usluga' => 'apaszka']).'#formularz"', 'Napisz, co chcesz przysłać', 'href="'.route('content.imprint').'"', 'Odcisk Twojej rośliny <span aria-hidden="true">→</span>'], false)
             ->assertSeeInOrder(['01', 'Wysyłasz zdjęcie tkaniny', 'Powiem od razu', '04', 'Szyję i odsyłam'])
             ->assertSee('Kod Paczkomatu, do którego wyślesz paczkę, podam w wiadomości.')
             ->assertSeeInOrder(['Co wychodzi z jednej apaszki', 'Opaska szeroka, pikowana', 'z apaszki 65 × 65 cm zostaje zapas', '119 zł', 'Zestaw: opaska i dwie scrunchies', '199 zł'])
             ->assertSee('Wysyłka tkaniny do mnie na Twój koszt')
-            ->assertSee('dlaczego to robię')
+            ->assertSeeInOrder(['dlaczego to robię', 'Najładniejsze wzory, jakie przeszły mi przez ręce', 'Stare apaszki mają desenie'])
+            ->assertDontSee('<ul class="mb-5 grid', false)
             // No crossed-out price: services keep no price history for the lowest price from 30 days.
             ->assertDontSee('239 zł')
             ->assertDontSee('id="przed-i-po"', false)
@@ -62,7 +63,7 @@ class ServicePagesTest extends TestCase
             ->assertSeeInOrder(['Szybciej na WhatsAppie:', 'href="https://wa.me/48600100200"', '+48 600 100 200</a>'], false)
             ->assertSeeInOrder(['Suszysz roślinę płasko', 'Dwa wypały i wysyłka', 'Paczki do mnie: Paczkomat KRA01M.'])
             ->assertSeeInOrder(['Na czym odciskam', 'Talerzyk deserowy 18 cm', '149 zł', 'Para talerzy na rocznicę', '329 zł'])
-            ->assertSee('na co to zamawiają')
+            ->assertSeeInOrder(['na co to zamawiają', '<li>Bukiet ślubny, który miał uschnąć w wazonie</li>', '<li>Listek z drzewa zasadzonego przy narodzinach</li>', 'Piszą do mnie zwykle tydzień po wydarzeniu'], false)
             ->assertDontSee('Opaska szeroka, pikowana');
     }
 
@@ -73,6 +74,12 @@ class ServicePagesTest extends TestCase
             'text_scarf_lead' => '',
             'text_scarf_lead_2' => null,
             'text_scarf_note' => null,
+            'text_scarf_eyebrow' => '',
+            'text_scarf_cta' => null,
+            'text_scarf_prices_heading' => null,
+            'text_scarf_card_eyebrow' => null,
+            'text_scarf_card_heading' => '',
+            'text_scarf_card_text' => null,
             'scarf_steps' => [['title' => '', 'text' => 'Bez nazwy'], 'nie krok'],
             'scarf_service_prices' => [['label' => 'Bez ceny', 'price_gross' => null], ['label' => '', 'price_gross' => 4321], ['label' => 'Opaska', 'note' => null, 'price_gross' => 12900]],
         ]);
@@ -87,7 +94,59 @@ class ServicePagesTest extends TestCase
             ->assertDontSee('Bez ceny')
             ->assertDontSee('43,21 zł')
             ->assertSeeInOrder(['Opaska', '129 zł'])
-            ->assertDontSee('Wysyłka tkaniny do mnie');
+            ->assertDontSee('Wysyłka tkaniny do mnie')
+            ->assertDontSee('usługa ·')
+            // The button stays: it is the way to order.
+            ->assertSeeInOrder(['href="'.route('custom-orders.index', ['usluga' => 'apaszka']).'#formularz"', 'Napisz do mnie'], false)
+            ->assertDontSee('Co wychodzi z jednej apaszki')
+            ->assertDontSee('dlaczego to robię')
+            ->assertDontSee('rounded-[20px] px-[30px] py-8 bg-ink', false);
+    }
+
+    public function test_the_sentences_kasia_writes_in_the_panel_replace_the_starting_ones(): void
+    {
+        $this->settings([
+            'text_scarf_eyebrow' => 'szyję z Twojej tkaniny',
+            'text_scarf_cta' => 'Wyślij zdjęcie apaszki',
+            'text_scarf_examples_lead' => 'Tak wyglądały, tak wyglądają.',
+            'text_scarf_prices_heading' => 'Cennik szycia',
+            'text_scarf_card_eyebrow' => 'skąd to się wzięło',
+            'text_scarf_card_heading' => null,
+            'text_scarf_card_text' => '<b>Babcia</b> szyła.',
+        ]);
+        Setting::create(['key' => 'text_scarf_card_list', 'value' => "Apaszka mamy\n\n  Krawat taty  "]);
+        $add = app(AddServiceExample::class);
+        $add(Service::Scarf, UploadedFile::fake()->image('a.jpg'), UploadedFile::fake()->image('b.jpg'), ['caption' => null]);
+
+        $this->get('/z-twojej-apaszki')
+            ->assertOk()
+            ->assertSeeInOrder(['szyję z Twojej tkaniny', "Apaszka babci\nnie musi leżeć\nw szafie", 'Wyślij zdjęcie apaszki'])
+            ->assertSee('Tak wyglądały, tak wyglądają. Przeciągnij uchwyt na zdjęciu, żeby zobaczyć zmianę.')
+            ->assertSeeInOrder(['Cennik szycia', 'Opaska szeroka, pikowana'])
+            ->assertSeeInOrder(['skąd to się wzięło', '<li>Apaszka mamy</li>', '<li>Krawat taty</li>', '&lt;b&gt;Babcia&lt;/b&gt; szyła.'], false)
+            ->assertDontSee('<li></li>', false)
+            ->assertDontSee('Najładniejsze wzory')
+            ->assertDontSee('Napisz, co chcesz przysłać');
+    }
+
+    public function test_the_migration_adds_the_starting_texts_and_keeps_what_kasia_saved(): void
+    {
+        Setting::query()->where(fn ($query) => $query->where('key', 'like', 'text_scarf_%')->orWhere('key', 'like', 'text_imprint_%'))
+            ->whereNotIn('key', ['text_scarf_heading', 'text_scarf_lead', 'text_scarf_lead_2', 'text_scarf_note', 'text_imprint_heading', 'text_imprint_lead', 'text_imprint_lead_2', 'text_imprint_note'])
+            ->delete();
+        Setting::create(['key' => 'text_scarf_cta', 'value' => 'Wyślij zdjęcie apaszki']);
+        Setting::create(['key' => 'text_imprint_card_eyebrow', 'value' => null]);
+
+        $migration = require base_path('app/Modules/Settings/Database/Migrations/2026_11_01_210000_add_the_rest_of_the_service_texts_to_settings.php');
+        $migration->up();
+
+        $this->assertSame('Wyślij zdjęcie apaszki', Setting::find('text_scarf_cta')->value);
+        // Emptied in the panel on purpose: it stays empty.
+        $this->assertNull(Setting::find('text_imprint_card_eyebrow')->value);
+        $this->assertSame('usługa · z Twojej tkaniny', Setting::find('text_scarf_eyebrow')->value);
+        $this->assertSame('Napisz, co chcesz odcisnąć', Setting::find('text_imprint_cta')->value);
+        $this->assertStringStartsWith("Bukiet ślubny, który miał uschnąć w wazonie\nKwiaty", Setting::find('text_imprint_card_list')->value);
+        $this->assertNull(Setting::find('text_scarf_card_list'));
     }
 
     public function test_a_before_and_after_pair_shows_once_both_photos_are_there(): void

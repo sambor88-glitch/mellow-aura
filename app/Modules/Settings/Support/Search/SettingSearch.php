@@ -49,9 +49,6 @@ final class SettingSearch implements SearchProvider
         'Statystyki' => [
             ['statystyki-id', 'Identyfikator pomiaru GA4', 'google analytics statystyki pomiar'],
         ],
-        'Materiały' => [
-            ['materialy', 'Materiały — kafelki na „O mnie”', 'glina szkliwo kafelki o mnie'],
-        ],
     ];
 
     public function group(): string

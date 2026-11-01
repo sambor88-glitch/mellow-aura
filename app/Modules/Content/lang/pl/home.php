@@ -38,8 +38,8 @@ return [
     'gifts_scrunchies_alt' => 'Jedwabne scrunchies',
     'gifts_eyebrow' => 'zestawy prezentowe',
     'gifts_heading' => 'Kubek i scrunchie :em',
-    'gifts_heading_em' => 'w jednym odcieniu',
-    'gifts_text' => 'Dobieram szkliwo do tkaniny, nie odwrotnie. Zestawu, w którym glina i jedwab mają ten sam kolor, nie kupisz w pracowni, która robi tylko jedno z dwóch.',
+    'gifts_heading_em' => 'w jednym zestawie',
+    'gifts_text' => 'Kubek maluję ręcznie, scrunchie szyję z jedwabiu — jedno i drugie w mojej pracowni. Takiego zestawu nie kupisz tam, gdzie robią tylko jedno z dwóch.',
     'gifts_bundles' => 'Zobacz zestawy',
     'gifts_finder' => 'Szukam prezentu',
 

@@ -81,6 +81,72 @@ class AdminServicesTest extends TestCase
         $this->get('/odcisk-twojej-rosliny')->assertSee('Przyślij roślinę.')->assertSee('Zwracam wpłatę.')->assertDontSee('Roślina spala się w piecu');
     }
 
+    public function test_every_sentence_of_the_page_is_in_the_texts_tab_in_the_order_of_the_page(): void
+    {
+        $this->actingAs($this->owner)
+            ->get('/panel/uslugi/odcisk')
+            ->assertOk()
+            ->assertSee('href="'.route('admin.seo-pages.edit').'#strona-content-imprint"', false)
+            ->assertSeeInOrder([
+                'Góra strony', 'name="eyebrow" value="usługa · z Twojej rośliny"', 'name="heading"', 'name="lead"', 'name="lead_2"', 'name="cta" value="Napisz, co chcesz odcisnąć"',
+                'Przed i po', 'name="examples_lead"', 'Rośliny, które do mnie przyszły',
+                'Cennik', 'name="prices_heading" value="Na czym odciskam"', 'name="note"',
+                'Ramka obok cennika', 'name="card_eyebrow" value="na co to zamawiają"', 'name="card_heading"', 'name="card_list"', "Bukiet ślubny, który miał uschnąć w wazonie\nKwiaty z pożegnania", 'name="card_text"',
+                'Zapisz teksty',
+            ], false)
+            ->assertSee('aria-describedby="teksty-cta-hint"', false);
+    }
+
+    public function test_the_new_texts_are_saved_one_line_where_the_page_has_one_line(): void
+    {
+        $this->actingAs($this->owner)
+            ->put('/panel/uslugi/apaszka/teksty', [
+                'eyebrow' => " szyję\r\nz Twojej  tkaniny ",
+                'heading' => "Apaszka\r\nzostaje",
+                'cta' => 'Wyślij zdjęcie',
+                'examples_lead' => '',
+                'prices_heading' => 'Cennik',
+                'card_eyebrow' => 'skąd to',
+                'card_list' => "Apaszka mamy\r\nKrawat taty",
+                'card_text' => 'Babcia szyła.',
+            ])
+            ->assertRedirect('/panel/uslugi/apaszka#teksty');
+
+        $this->assertSame('szyję z Twojej tkaniny', Setting::find('text_scarf_eyebrow')->value);
+        $this->assertSame("Apaszka\nzostaje", Setting::find('text_scarf_heading')->value);
+        $this->assertSame("Apaszka mamy\nKrawat taty", Setting::find('text_scarf_card_list')->value);
+        $this->assertNull(Setting::find('text_scarf_examples_lead')->value);
+        // A field the form did not send is emptied too: the form always sends all of them.
+        $this->assertNull(Setting::find('text_scarf_card_heading')->value);
+        $this->assertSame('skąd to', Setting::find('text_scarf_card_eyebrow')->value);
+
+        $this->get('/z-twojej-apaszki')
+            ->assertSeeInOrder(['szyję z Twojej tkaniny', 'Wyślij zdjęcie', 'Cennik', 'skąd to', '<li>Apaszka mamy</li>', '<li>Krawat taty</li>', 'Babcia szyła.'], false)
+            ->assertDontSee('Najładniejsze wzory');
+        $this->get('/odcisk-twojej-rosliny')->assertSee('usługa · z Twojej rośliny')->assertSee('Na czym odciskam');
+
+        $this->followingRedirects()
+            ->put('/panel/uslugi/apaszka/teksty', ['cta' => str_repeat('a', 41)])
+            ->assertSee('Ten tekst zmieszczę do 40 znaków — skróć go o kilka słów')
+            ->assertSee('value="'.str_repeat('a', 41).'"', false);
+        $this->assertSame('Wyślij zdjęcie', Setting::find('text_scarf_cta')->value);
+    }
+
+    public function test_the_photo_tab_shows_the_photo_next_to_the_introduction_and_leads_to_page_photos(): void
+    {
+        $this->actingAs($this->owner)
+            ->get('/panel/uslugi')
+            ->assertSee('Zdjęcie u góry')
+            ->assertDontSee('Brak zdjęcia — strona pokazuje sam tekst')
+            ->assertSeeInOrder(['href="'.route('admin.page-photos.edit').'#service-scarf"', 'Zmień zdjęcie albo kadr'], false);
+
+        $this->delete('/panel/zdjecia-stron/service-imprint');
+
+        $this->get('/panel/uslugi/odcisk')
+            ->assertSee('Brak zdjęcia — strona pokazuje sam tekst')
+            ->assertSeeInOrder(['href="'.route('admin.page-photos.edit').'#service-imprint"', 'Dodaj zdjęcie'], false);
+    }
+
     public function test_a_too_long_text_is_explained_and_not_saved(): void
     {
         $this->actingAs($this->owner)

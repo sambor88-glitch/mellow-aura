@@ -36,17 +36,24 @@ class AdminPagePhotosTest extends TestCase
 
     public function test_every_place_has_its_photo_from_zdjecia_and_the_hero_a_second_point_for_a_phone(): void
     {
+        $empty = [];
         foreach (PagePhotos::keys() as $key) {
-            $this->assertFileExists(base_path(PagePhotos::defaultPath($key)), $key);
+            if (($path = PagePhotos::defaultPath($key)) === null) {
+                $empty[] = $key;
+            } else {
+                $this->assertFileExists(base_path($path), $key);
+            }
         }
 
-        $this->assertCount(25, PagePhotos::keys());
+        $this->assertCount(43, PagePhotos::keys());
+        // Only the last place of the studio's gallery starts empty, as room for one more photo.
+        $this->assertSame(['studio-gallery-12'], $empty);
 
         $this->actingAs($this->owner)
             ->get('/panel/zdjecia-stron')
             ->assertOk()
             ->assertSee('>Zdjęcia stron</a>', false)
-            ->assertSeeInOrder(['Strona główna', 'Na samej górze', 'name="focus[y]" min="0" max="100" step="1" value="82"', 'Na telefonie ramka jest węższa', 'name="focus_phone[y]" min="0" max="100" step="1" value="82"', 'O mnie', 'Kontakt', 'Dla lokali', 'Usługi', 'Zamówienia indywidualne'], false)
+            ->assertSeeInOrder(['Strona główna', 'Na samej górze', 'name="focus[y]" min="0" max="100" step="1" value="82"', 'Na telefonie ramka jest węższa', 'name="focus_phone[y]" min="0" max="100" step="1" value="82"', 'O mnie', 'Kontakt', 'Dla lokali', 'Usługi', 'Zamówienia indywidualne', 'Warsztaty', 'Pod wstępem', '„Pracownia” na dole — 4.', 'Pracownia', 'Na samej górze — pod napisem', 'Galeria — 12.'], false)
             ->assertSee('name="focus_phone[x]"', false)
             ->assertSee('name="focus[x]" min="0" max="100" step="5" value="50"', false)
             ->assertDontSee('Przywróć pierwsze zdjęcie');
@@ -142,6 +149,34 @@ class AdminPagePhotosTest extends TestCase
         $this->get('/ceramika-dla-gastronomii')->assertOk()->assertSee('alt="Kawa w ręcznie robionym kubku"', false);
     }
 
+    public function test_kasia_fills_the_empty_place_of_the_studio_gallery_and_empties_it_again(): void
+    {
+        Storage::fake('public');
+
+        $this->actingAs($this->owner)
+            ->get('/panel/zdjecia-stron')
+            ->assertSeeInOrder(['id="studio-gallery-12"', 'Brak zdjęcia — to miejsce na stronie jest puste', 'Wybierz zdjęcie z telefonu albo komputera'], false);
+
+        $this->post('/panel/zdjecia-stron/studio-gallery-12', ['photo' => UploadedFile::fake()->image('IMG_3001.jpg', 1200, 1200)])
+            ->assertRedirect('/panel/zdjecia-stron#studio-gallery-12');
+        $this->put('/panel/zdjecia-stron/studio-gallery-12', ['focus' => ['x' => 40, 'y' => 60], 'alt' => 'Koło garncarskie w pracowni'])
+            ->assertRedirect('/panel/zdjecia-stron#studio-gallery-12');
+
+        $path = Setting::find(PagePhotos::SETTING)->value['studio-gallery-12']['path'];
+        $this->get('/pracownia')->assertOk()
+            ->assertSee('src="'.Storage::disk('public')->url($path).'"', false)
+            ->assertSee('alt="Koło garncarskie w pracowni"', false);
+        // The workshops page has its own four places.
+        $this->get('/warsztaty-ceramiczne-krakow')->assertOk()->assertDontSee('Koło garncarskie w pracowni');
+        // There is no first photo to bring back: „Zdejmij” is the way to empty the place.
+        $this->get('/panel/zdjecia-stron')->assertSee('Zdejmij zdjęcie ze strony')->assertDontSee('Przywróć pierwsze zdjęcie')->assertDontSee('Przywróć pierwszy kadr');
+
+        $this->delete('/panel/zdjecia-stron/studio-gallery-12')->assertRedirect('/panel/zdjecia-stron#studio-gallery-12');
+        Storage::disk('public')->assertMissing($path);
+        $this->get('/pracownia')->assertOk()->assertDontSee('Koło garncarskie w pracowni');
+        $this->get('/panel/zdjecia-stron')->assertDontSee('Przywróć pierwsze zdjęcie');
+    }
+
     public function test_a_file_that_is_not_a_photo_is_refused_at_its_place(): void
     {
         Storage::fake('public');
@@ -158,7 +193,7 @@ class AdminPagePhotosTest extends TestCase
     {
         Setting::query()->updateOrCreate(['key' => PagePhotos::SETTING], ['value' => collect(PagePhotos::keys())->mapWithKeys(fn (string $key) => [$key => ['path' => null]])->all()]);
 
-        foreach (['/', '/o-mnie', '/kontakt', '/ceramika-dla-gastronomii', '/z-twojej-apaszki', '/zamowienia-indywidualne'] as $url) {
+        foreach (['/', '/o-mnie', '/kontakt', '/ceramika-dla-gastronomii', '/z-twojej-apaszki', '/zamowienia-indywidualne', '/warsztaty-ceramiczne-krakow', '/pracownia'] as $url) {
             $this->get($url)->assertOk()->assertDontSee('zdjecia/', false)->assertDontSee('object-position: 50% 50%', false);
         }
     }

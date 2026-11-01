@@ -92,7 +92,6 @@
                     </details>
                 @endforeach
             </div>
-            <p class="{{ $hint }}">Kafelki o glinie, jedwabiu i złocie na „O mnie” zmieniasz w <a href="{{ route('admin.settings.edit') }}#materialy">Ustawieniach</a>.</p>
             <button class="{{ $button }}">Zapisz teksty na stronach</button>
         </form>
       </x-admin::tab-panel>

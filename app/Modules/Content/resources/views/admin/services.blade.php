@@ -33,7 +33,7 @@
     $stepErrors = $errors->getBag('kroki');
     $small = 'mb-1 block text-[12.5px] text-graphite';
 @endphp
-<x-admin::layout title="Usługi" lead="Strony „Z Twojej apaszki” i „Odcisk Twojej rośliny”: zdjęcia przed i po, teksty, cennik i kroki. Zmiany widać na stronie od razu.">
+<x-admin::layout title="Usługi" lead="Strony „Z Twojej apaszki” i „Odcisk Twojej rośliny”: zdjęcia przed i po, zdjęcie u góry, wszystkie teksty, cennik i kroki. Zmiany widać na stronie od razu.">
     <div class="mb-3.5 flex flex-wrap items-center gap-x-2.5 gap-y-1">
         <nav aria-label="Usługi" class="pill-grid flex-[1_1_100%] md:flex-none">
             @foreach (Service::cases() as $tab)
@@ -49,7 +49,7 @@
     </div>
 
     {{-- One card at a time (MA-323); every card keeps its #id, so saving comes back to its tab. --}}
-  <x-admin::tabs :tabs="['przed-i-po' => ['label' => 'Przed i po', 'count' => count($examples)], 'teksty' => 'Teksty', 'cennik' => 'Cennik', 'kroki' => 'Kroki']" label="Części strony usługi">
+  <x-admin::tabs :tabs="['przed-i-po' => ['label' => 'Przed i po', 'count' => count($examples)], 'zdjecie' => 'Zdjęcie u góry', 'teksty' => 'Teksty', 'cennik' => 'Cennik', 'kroki' => 'Kroki']" label="Części strony usługi">
     <div class="grid max-w-[880px] gap-[22px]">
       <x-admin::tab-panel name="przed-i-po">
         <section id="przed-i-po" class="{{ $card }}">
@@ -187,26 +187,60 @@
         </section>
       </x-admin::tab-panel>
 
+        {{-- Zdjęcie u góry: changed where every photo of the pages is (Zdjęcia stron), so there is one place to do it. --}}
+      <x-admin::tab-panel name="zdjecie">
+        <section id="zdjecie" class="{{ $card }}">
+            <h2 class="{{ $heading }} mb-1.5">Zdjęcie u góry strony</h2>
+            <p class="{{ $intro }}">Duże zdjęcie obok nagłówka. Wgrywasz je, kadrujesz i opisujesz w „Zdjęciach stron” — razem z innymi zdjęciami stron.</p>
+            <div class="flex flex-wrap items-end gap-[18px]">
+                @if ($photo->exists())
+                    <img src="{{ $photo->url }}" alt="" loading="lazy" width="180" height="240" style="{{ $photo->style() }}"
+                         class="block aspect-[3/4] w-[180px] max-w-full rounded-[4px] border border-line bg-line-soft object-cover">
+                @else
+                    <div class="grid aspect-[3/4] w-[180px] max-w-full place-items-center rounded-[4px] border border-dashed border-line-strong bg-sand-dark px-3 text-center text-[12.5px] text-hint">Brak zdjęcia — strona pokazuje sam tekst</div>
+                @endif
+                <a href="{{ route('admin.page-photos.edit') }}#{{ $service->photoPlace() }}"
+                   class="inline-flex min-h-11 items-center rounded-full border border-ink px-5 text-[13.5px] text-ink hover:bg-sand-dark">{{ $photo->exists() ? 'Zmień zdjęcie albo kadr' : 'Dodaj zdjęcie' }} →</a>
+            </div>
+        </section>
+      </x-admin::tab-panel>
+
         {{-- Teksty --}}
       <x-admin::tab-panel name="teksty">
         <form id="teksty" method="post" action="{{ route('admin.services.texts', $service->slug()) }}" novalidate class="{{ $card }}">
             @csrf
             @method('PUT')
             <h2 class="{{ $heading }} mb-1.5">Teksty na stronie</h2>
-            <p class="{{ $intro }}">Enter w nagłówku przenosi wyraz do nowej linii — dokładnie tak, jak zobaczy to klient. Puste pole się nie pokaże.</p>
+            <p class="{{ $intro }}">Wszystkie zdania ze strony, od góry do dołu. Puste pole się nie pokaże. Tytuł i opis w wynikach Google zmienisz w <a href="{{ route('admin.seo-pages.edit') }}#strona-{{ str_replace('.', '-', $service->route()) }}">Google</a>.</p>
             @if ($textErrors->any())
                 <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
             @endif
-            <div class="grid gap-3">
-                @foreach (['heading' => ['Nagłówek', 3], 'lead' => ['Pierwszy akapit — większym pismem', 4], 'lead_2' => ['Drugi akapit', 3], 'note' => ['Notka pod cennikiem', 3]] as $name => [$text, $rows])
-                    <div class="min-w-0">
-                        <label for="teksty-{{ $name }}" class="{{ $label }}">{{ $text }}</label>
-                        <textarea id="teksty-{{ $name }}" name="{{ $name }}" rows="{{ $rows }}" maxlength="{{ SaveServiceTextsRequest::FIELDS[$name] }}"
-                                  @class([$input, 'resize-y leading-[1.6]', 'border-error' => $textErrors->has($name), 'border-line' => ! $textErrors->has($name)])>{{ old($name, $texts[$name]) }}</textarea>
-                        @if ($textErrors->has($name))
-                            <p class="mt-1.5 text-[13px] text-error">{{ $textErrors->first($name) }}</p>
-                        @endif
-                    </div>
+            <div class="grid gap-[18px]">
+                @foreach (SaveServiceTextsRequest::PARTS as $part)
+                    <fieldset class="grid min-w-0 gap-3 border-t border-dashed border-sand-dark pt-3.5 first:border-t-0 first:pt-0">
+                        <legend class="float-left mb-0.5 w-full font-serif text-[18px] text-ink">{{ $part['title'] }}</legend>
+                        @foreach ($part['fields'] as $name => $field)
+                            @php
+                                $class = [$input, 'border-error' => $textErrors->has($name), 'border-line' => ! $textErrors->has($name)];
+                            @endphp
+                            <div class="min-w-0">
+                                <label for="teksty-{{ $name }}" class="{{ $label }}">{{ $field['label'] }}</label>
+                                @isset($field['rows'])
+                                    <textarea id="teksty-{{ $name }}" name="{{ $name }}" rows="{{ $field['rows'] }}" maxlength="{{ $field['max'] }}" @if (isset($field['hint'])) aria-describedby="teksty-{{ $name }}-hint" @endif
+                                              @class([...$class, 'resize-y leading-[1.6]'])>{{ old($name, $texts[$name]) }}</textarea>
+                                @else
+                                    <input id="teksty-{{ $name }}" name="{{ $name }}" value="{{ old($name, $texts[$name]) }}" maxlength="{{ $field['max'] }}" @if (isset($field['hint'])) aria-describedby="teksty-{{ $name }}-hint" @endif
+                                           @class($class)>
+                                @endisset
+                                @isset($field['hint'])
+                                    <p id="teksty-{{ $name }}-hint" class="mt-1 text-[12.5px] leading-[1.5] text-label">{{ $field['hint'] }}</p>
+                                @endisset
+                                @if ($textErrors->has($name))
+                                    <p class="mt-1.5 text-[13px] text-error">{{ $textErrors->first($name) }}</p>
+                                @endif
+                            </div>
+                        @endforeach
+                    </fieldset>
                 @endforeach
             </div>
             <button class="{{ $button }}">Zapisz teksty</button>

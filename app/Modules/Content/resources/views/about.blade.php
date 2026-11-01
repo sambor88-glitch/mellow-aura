@@ -4,10 +4,6 @@
     $lead = $settings->get('text_about_paragraph_1');
     $paragraphs = array_filter([$settings->get('text_about_paragraph_2'), $settings->get('text_about_paragraph_3')]);
 
-    // A tile without its text is waiting for Kasia to fill it in, so it stays off the page.
-    $materials = collect((array) $settings->get('material_tiles', []))
-        ->filter(fn (mixed $tile) => is_array($tile) && filled($tile['title'] ?? null) && filled($tile['text'] ?? null));
-
     $studioUrl = Route::has('content.studio') ? route('content.studio') : null;
 @endphp
 
@@ -49,19 +45,7 @@
             </div>
         </div>
 
-        @if ($materials->isNotEmpty())
-            <div class="ma-reveal mx-auto max-w-[1280px] px-7 pt-21">
-                <dl class="flex flex-wrap gap-px overflow-hidden rounded-[20px] border border-divider bg-divider">
-                    @foreach ($materials as $tile)
-                        <div class="min-w-0 flex-[1_1_220px] bg-cream px-[26px] py-8">
-                            <dt class="mb-2 font-serif text-[21px]">{{ $tile['title'] }}</dt>
-                            <dd class="text-[14.5px] leading-[1.6] text-muted">{{ $tile['text'] }}</dd>
-                        </div>
-                    @endforeach
-                </dl>
-            </div>
-        @endif
-
+        {{-- No material tiles here: Kasia took them off „O mnie” (1.11). --}}
         @if ($featured->isNotEmpty())
             <section class="ma-reveal mx-auto max-w-[1280px] px-7 pt-21">
                 <h2 class="mb-1.5 font-serif text-[length:clamp(30px,3.6vw,44px)] font-light">Niektóre z moich prac</h2>

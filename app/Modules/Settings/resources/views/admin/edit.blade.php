@@ -3,7 +3,6 @@
 @php
     // Three forms on one page: each card saves on its own and keeps its own mistakes.
     $shippingErrors = $errors->getBag('dostawa');
-    $tileErrors = $errors->getBag('materialy');
 
     $moneyRows = [
         ['free_shipping_threshold', 'free_shipping_threshold', 'Darmowa wysyłka od', old('free_shipping_threshold', $freeFrom === null ? null : Money::input((int) $freeFrom)), 'zł'],
@@ -27,19 +26,14 @@
         ['gift_wrap_price', 'gift_wrap_price', 'Pakowanie na prezent', old('gift_wrap_price', $giftWrapPrice === null ? null : Money::input((int) $giftWrapPrice)), 'zł'],
     ];
 
-    $savedTiles = array_values((array) old('tiles', $tiles));
-    // Two empty rows for new tiles; left empty, they are not saved.
-    $tileRows = [...$savedTiles, ['title' => '', 'text' => ''], ['title' => '', 'text' => '']];
-
     $card = 'scroll-mt-24 rounded-[4px] border border-line bg-cream px-[18px] py-5 md:p-[22px]';
     $heading = 'mb-3 text-[11.5px] tracking-[0.16em] text-label uppercase';
     $alert = 'mb-3.5 rounded-[4px] border border-alert-line bg-alert px-4 py-3 text-[13.5px] text-alert-text';
     $hint = 'mt-3.5 text-[12.5px] leading-[1.6] text-label';
     $button = 'mt-[18px] min-h-11 rounded-full bg-ink px-6 py-3 text-[13.5px] text-linen transition duration-300 hover:bg-rose hover:text-ink active:scale-[.97]';
-    $tileInput = 'w-full min-w-0 rounded-[4px] border bg-white px-3 py-2.5 text-[14px] text-ink placeholder:text-hint focus:border-ink';
 @endphp
-<x-admin::layout title="Ustawienia" lead="Dostawa, dane pracowni i firmy, karta produktu, statystyki, prośba o opinię i kafelki o materiale. Zmiany widać na stronie od razu.">
-  <x-admin::tabs :tabs="['dostawa' => 'Dostawa i opłaty', 'pracownia' => 'Pracownia', 'firma' => 'Firma', 'karta-produktu' => 'Karta produktu', 'statystyki' => 'Statystyki', 'opinie' => 'Opinie', 'materialy' => 'Materiały']" label="Części ustawień">
+<x-admin::layout title="Ustawienia" lead="Dostawa, dane pracowni i firmy, karta produktu, statystyki i prośba o opinię. Zmiany widać na stronie od razu.">
+  <x-admin::tabs :tabs="['dostawa' => 'Dostawa i opłaty', 'pracownia' => 'Pracownia', 'firma' => 'Firma', 'karta-produktu' => 'Karta produktu', 'statystyki' => 'Statystyki', 'opinie' => 'Opinie']" label="Części ustawień">
     <x-admin::tab-panel name="dostawa" class="max-w-[880px]">
         <form id="dostawa" method="post" action="{{ route('admin.settings.shipping') }}" novalidate class="{{ $card }}">
             @csrf
@@ -215,47 +209,6 @@
         </div>
         <p class="{{ $hint }}">Mail tylko prosi o opinię — bez rabatu i bez nagrody. Google i UOKiK zakazują nagradzania za opinie.</p>
         <button class="{{ $button }}">Zapisz prośbę o opinię</button>
-    </form>
-    </x-admin::tab-panel>
-    <x-admin::tab-panel name="materialy" class="max-w-[880px]">
-    <form id="materialy" method="post" action="{{ route('admin.settings.materials') }}" novalidate class="{{ $card }}">
-        @csrf
-        @method('PUT')
-        <h2 class="{{ $heading }}">Materiały — kafelki na „O mnie”</h2>
-        @if ($tileErrors->any())
-            <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
-        @endif
-        <div class="grid gap-3.5 sm:gap-2.5">
-            @foreach ($tileRows as $index => $tile)
-                @php($saved = $index < count($savedTiles))
-                <div>
-                    {{-- The „usuń” column keeps one width, so saved and empty rows line up; on a phone the name sits above the description. --}}
-                    <div class="grid grid-cols-[minmax(0,1fr)_4.25rem] items-start gap-2">
-                        <div class="grid gap-2 sm:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
-                            <input name="tiles[{{ $index }}][title]" value="{{ $tile['title'] ?? '' }}" maxlength="40"
-                                   aria-label="Kafelek {{ $index + 1 }} — nazwa" placeholder="{{ $saved ? 'Nazwa' : 'Nowy kafelek' }}"
-                                   @class([$tileInput, 'border-error' => $tileErrors->has('tiles.'.$index.'.title'), 'border-line' => ! $tileErrors->has('tiles.'.$index.'.title')])>
-                            <textarea name="tiles[{{ $index }}][text]" rows="2" maxlength="300"
-                                      aria-label="Kafelek {{ $index + 1 }} — opis" placeholder="Jedno, dwa zdania"
-                                      @class([$tileInput, 'resize-y leading-[1.55]', 'border-error' => $tileErrors->has('tiles.'.$index.'.text'), 'border-line' => ! $tileErrors->has('tiles.'.$index.'.text')])>{{ $tile['text'] ?? '' }}</textarea>
-                        </div>
-                        @if ($saved)
-                            <x-shared::admin.remove-toggle :name="'tiles['.$index.'][remove]'" />
-                        @endif
-                    </div>
-                    @foreach (['title', 'text'] as $field)
-                        @if ($tileErrors->has('tiles.'.$index.'.'.$field))
-                            <p class="mt-1.5 text-[13px] text-error">{{ $tileErrors->first('tiles.'.$index.'.'.$field) }}</p>
-                        @endif
-                    @endforeach
-                </div>
-            @endforeach
-        </div>
-        @if ($tileErrors->has('tiles'))
-            <p class="mt-1.5 text-[13px] text-error">{{ $tileErrors->first('tiles') }}</p>
-        @endif
-        <p class="{{ $hint }}">Kafelek bez opisu nie pokaże się na stronie. W puste wiersze na dole wpisz nowe kafelki.</p>
-        <button class="{{ $button }}">Zapisz kafelki</button>
     </form>
     </x-admin::tab-panel>
   </x-admin::tabs>

@@ -36,7 +36,9 @@ class AdminWorkshopsTest extends TestCase
             ->assertOk()
             ->assertSee('>Warsztaty</a>', false)
             ->assertSeeInOrder(['Ceny zawierają glinę', 'value="Lepienie kubków"', 'value="220"', 'value="os."', 'value="2 godziny"', 'Glina i wszystkie narzędzia', 'value="Rodzinnie z dzieckiem"', 'Nowy warsztat — nazwa'], false)
-            ->assertSee('aria-label="Przesuń niżej: Lepienie kubków"', false);
+            ->assertSee('aria-label="Przesuń niżej: Lepienie kubków"', false)
+            // The page's photos are in Zdjęcia stron, on their own tab (MA-349).
+            ->assertSee('href="'.route('admin.page-photos.edit', ['tab' => 'warsztaty']).'"', false);
     }
 
     public function test_the_price_list_is_saved_with_a_new_workshop_and_without_a_removed_one(): void

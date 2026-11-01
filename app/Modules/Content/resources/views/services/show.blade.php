@@ -4,33 +4,26 @@
 @use('App\Modules\Shared\Support\ServiceStructuredData')
 @inject('pagePhotos', 'App\Modules\Content\Support\PagePhotos')
 @php
+    // What stays in the code: Google's title and description (the panel's „Google” screen overrides them), the photo's
+    // place and its default description, the links and the fixed hints (WhatsApp, Paczkomat, the slider). Every other
+    // sentence on the page comes from Usługi → Teksty (MA-348), and an empty one drops out.
     $page = match ($service) {
         Service::Scarf => [
             'title' => 'Przeszycie apaszki po babci — opaska z Twojej tkaniny',
             'description' => 'Co zrobić z apaszką po babci? Przeszyję ją na opaskę i scrunchies z Twojej własnej tkaniny. Upcycling jedwabiu na zamówienie z jawnym cennikiem.',
             'serviceName' => 'Opaska z Twojej apaszki',
-            'eyebrow' => 'usługa &middot; z Twojej tkaniny',
-            'photo' => 'service-scarf',
             'photoAlt' => 'Opaska i scrunchie uszyte z jedwabnej apaszki',
-            'cta' => 'Napisz, co chcesz przysłać',
             'brief' => 'apaszka',
             'other' => [Service::Imprint, 'Odcisk Twojej rośliny'],
-            'examplesLead' => 'Tkaniny, które do mnie przyszły, obok tego, co z nich uszyłam. Przeciągnij uchwyt na zdjęciu, żeby zobaczyć zmianę.',
-            'pricesHeading' => 'Co wychodzi z jednej apaszki',
             'shop' => ['jedwab', 'kosmetyczki-i-piorniki'],
         ],
         Service::Imprint => [
             'title' => 'Pamiątka z bukietu ślubnego — kwiat odciśnięty w glinie',
             'description' => 'Co zrobić z bukietem po weselu? Odciskam zasuszony kwiat w glinie i wypalam. Zostaje talerz, z którego jesz, a nie kwiat za szkłem.',
             'serviceName' => 'Talerz z odciskiem Twojej rośliny',
-            'eyebrow' => 'usługa &middot; z Twojej rośliny',
-            'photo' => 'service-imprint',
             'photoAlt' => 'Talerz z odciskiem prawdziwej rośliny',
-            'cta' => 'Napisz, co chcesz odcisnąć',
             'brief' => 'odcisk',
             'other' => [Service::Scarf, 'Z Twojej apaszki'],
-            'examplesLead' => 'Rośliny, które do mnie przyszły, obok ceramiki, na której zostawiły ślad. Przeciągnij uchwyt na zdjęciu, żeby zobaczyć zmianę.',
-            'pricesHeading' => 'Na czym odciskam',
             'shop' => ['talerze-i-miski', 'wazony-i-patery'],
         ],
     };
@@ -46,7 +39,9 @@
         <div class="mx-auto max-w-[1280px] px-7 pt-14">
             <div class="flex flex-wrap items-center gap-14">
                 <div class="min-w-0 flex-[1_1_400px]">
-                    <div class="mb-5 text-[10.5px] tracking-[0.3em] text-brown uppercase">{!! $page['eyebrow'] !!}</div>
+                    @if ($eyebrow)
+                        <div class="mb-5 text-[10.5px] tracking-[0.3em] text-brown uppercase">{{ $eyebrow }}</div>
+                    @endif
                     <h1 class="mb-6 font-serif text-[length:clamp(38px,5.4vw,72px)] leading-[1.02] font-light tracking-[-0.02em] whitespace-pre-line">{{ $heading ?: $service->label() }}</h1>
                     @if ($lead)
                         <p class="mb-5 max-w-[46ch] text-[17.5px] leading-[1.68] text-pretty text-graphite">{{ $lead }}</p>
@@ -55,7 +50,7 @@
                         <p class="mb-[34px] max-w-[46ch] text-[16px] leading-[1.7] text-lead">{{ $lead2 }}</p>
                     @endif
                     <div class="cta-row">
-                        <x-shared::button href="{{ $briefUrl }}">{{ $page['cta'] }}</x-shared::button>
+                        <x-shared::button href="{{ $briefUrl }}">{{ $cta ?? 'Napisz do mnie' }}</x-shared::button>
                         <x-shared::button href="{{ route($page['other'][0]->route()) }}" variant="secondary">{{ $page['other'][1] }} <span aria-hidden="true">→</span></x-shared::button>
                     </div>
                     @if ($phone)
@@ -63,7 +58,7 @@
                     @endif
                 </div>
                 <div class="min-w-0 flex-[1_1_320px]">
-                    @if (($photo = $pagePhotos->get($page['photo']))->exists())
+                    @if (($photo = $pagePhotos->get($service->photoPlace()))->exists())
                         <img src="{{ $photo->url }}" {{ $photo->srcsetAttributes('(min-width: 768px) 45vw, 100vw') }} alt="{{ $photo->alt($page['photoAlt']) }}" width="600" height="800" style="{{ $photo->style() }}" class="block aspect-[3/4] w-full rounded-[20px] bg-line-soft object-cover">
                     @endif
                 </div>
@@ -90,7 +85,7 @@
         @if ($examples->isNotEmpty())
             <section aria-labelledby="przed-i-po" class="mx-auto max-w-[1280px] px-7 pt-[72px]">
                 <h2 id="przed-i-po" class="mb-2 font-serif text-[length:clamp(28px,3.4vw,40px)] leading-[1.1] font-light text-pretty">Przed i po</h2>
-                <p class="mb-[26px] max-w-[52ch] text-[15.5px] leading-[1.6] text-muted">{{ $page['examplesLead'] }}</p>
+                <p class="mb-[26px] max-w-[52ch] text-[15.5px] leading-[1.6] text-muted">{{ ltrim($examplesLead.' Przeciągnij uchwyt na zdjęciu, żeby zobaczyć zmianę.') }}</p>
                 <div class="grid grid-cols-[repeat(auto-fill,minmax(min(100%,340px),1fr))] gap-[26px]">
                     @foreach ($examples as $example)
                         <figure x-data="beforeAfter" class="m-0 self-start overflow-hidden rounded-[20px] border border-divider bg-cream">
@@ -120,7 +115,9 @@
             <div class="flex flex-wrap gap-11">
                 <div class="min-w-0 flex-[1_1_400px]">
                     @if ($prices->isNotEmpty())
-                        <h2 class="mb-[22px] font-serif text-[length:clamp(28px,3.4vw,40px)] leading-[1.1] font-light text-pretty">{{ $page['pricesHeading'] }}</h2>
+                        @if ($pricesHeading)
+                            <h2 class="mb-[22px] font-serif text-[length:clamp(28px,3.4vw,40px)] leading-[1.1] font-light text-pretty">{{ $pricesHeading }}</h2>
+                        @endif
                         <div class="overflow-hidden rounded-[20px] border border-divider bg-cream">
                             @foreach ($prices as $price)
                                 <div class="flex justify-between gap-5 border-b border-sand-dark px-6 py-5 last:border-b-0">
@@ -142,9 +139,11 @@
                         <p class="mt-3.5 text-[13px] leading-[1.6] text-hint">{{ $note }}</p>
                     @endif
                 </div>
-                <div class="min-w-[min(100%,280px)] flex-[1_1_300px]">
-                    @include('content::services.'.$service->value.'-card')
-                </div>
+                @if (array_filter($card))
+                    <div class="min-w-[min(100%,280px)] flex-[1_1_300px]">
+                        @include('content::services.card')
+                    </div>
+                @endif
             </div>
             <x-catalog::category-links :slugs="$page['shop']" :heading="__('catalog::shop.ready_heading')" class="mt-12" />
         </div>

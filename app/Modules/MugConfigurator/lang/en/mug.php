@@ -74,5 +74,6 @@ return [
         'brick_red' => 'Brick red',
         'graphite' => 'Graphite',
         'powder_pink' => 'Powder pink',
+        'transparent' => 'Clear',
     ],
 ];
