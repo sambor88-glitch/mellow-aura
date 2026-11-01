@@ -22,7 +22,7 @@ class AboutPageTest extends TestCase
         $this->seed(SettingsSeeder::class);
     }
 
-    public function test_kasia_tells_about_herself_and_the_materials_from_the_panel(): void
+    public function test_kasia_tells_about_herself_without_the_material_tiles(): void
     {
         Setting::query()->where('key', 'text_about_paragraph_3')->update(['value' => json_encode(null)]);
         $category = Category::factory()->create();
@@ -40,8 +40,10 @@ class AboutPageTest extends TestCase
             ->assertSeeInOrder(['Tworzę MellowAura — kameralną pracownię', 'Zajmuję się ceramiką i rękodziełem tekstylnym'])
             ->assertDontSee('Lubię łączyć surowość z miękkością, prostotę z symboliką')
             ->assertSee('href="'.route('content.contact').'"', false)
-            ->assertSeeInOrder(['<dt class="mb-2 font-serif text-[21px]">Glina</dt>', 'Nierówne krawędzie zostawiam', 'Rośliny'], false)
-            ->assertDontSee('Temperatura wypału')
+            // The tiles stay in the panel's settings, but Kasia did not want them on this page.
+            ->assertDontSee('<dl', false)
+            ->assertDontSee('Nierówne krawędzie zostawiam')
+            ->assertDontSee('Można używać w mikrofalówce')
             ->assertSeeInOrder(['Niektóre z moich prac', 'Wazony', 'Patery', 'Talerze', 'Kadzielnice'])
             ->assertDontSee('Scrunchies');
     }
