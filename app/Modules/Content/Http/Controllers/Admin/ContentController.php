@@ -35,6 +35,7 @@ class ContentController extends Controller
             'texts' => collect(SavePageTextsRequest::textKeys())->mapWithKeys(fn (string $key) => [$key => $settings->get($key)])->all(),
             'questions' => $rows('faq_items', ['question', 'answer']),
             'facts' => $rows('studio_facts', ['title', 'text']),
+            'factsHeading' => $settings->get('studio_facts_heading'),
             'customOrderSteps' => $rows('custom_order_steps', ['title', 'text']),
             'b2bFacts' => $rows('b2b_facts', ['title', 'text']),
             'instagram' => [

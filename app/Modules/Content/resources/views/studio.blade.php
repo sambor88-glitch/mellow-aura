@@ -57,7 +57,9 @@
                 @if ($facts->isNotEmpty())
                     <div class="min-w-0 basis-full sm:min-w-[260px] sm:flex-[0_1_300px]">
                         <div class="rounded-[20px] border border-divider bg-cream p-7">
-                            <h2 class="mb-[18px] text-[11px] tracking-[0.2em] text-brown uppercase">dobrze wiedzieć</h2>
+                            @if (filled($factsHeading))
+                                <h2 class="mb-[18px] text-[11px] tracking-[0.2em] text-brown uppercase">{{ $factsHeading }}</h2>
+                            @endif
                             <dl class="grid gap-4 text-[14.5px] leading-[1.6] text-lead">
                                 @foreach ($facts as $fact)
                                     <div>

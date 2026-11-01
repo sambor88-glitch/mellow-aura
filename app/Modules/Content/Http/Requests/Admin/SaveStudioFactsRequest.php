@@ -6,7 +6,7 @@ use App\Modules\Shared\Http\Requests\Concerns\EditsListRows;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * The „dobrze wiedzieć” card on /pracownia: a short fact and one sentence under it.
+ * The „dobrze wiedzieć” card on /pracownia: its heading, and a short fact with one sentence under it.
  */
 class SaveStudioFactsRequest extends FormRequest
 {
@@ -26,6 +26,7 @@ class SaveStudioFactsRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'facts_heading' => ['nullable', 'string', 'max:40'],
             'facts' => ['nullable', 'array', 'max:12'],
             'facts.*.title' => ['exclude_if:facts.*.remove,1', 'nullable', 'string', 'max:40', 'required_with:facts.*.text'],
             'facts.*.text' => ['exclude_if:facts.*.remove,1', 'nullable', 'string', 'max:160'],
@@ -38,7 +39,8 @@ class SaveStudioFactsRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'facts.max' => 'Zmieszczę do :max faktów — karta ma zostać krótka',
+            'facts_heading.max' => 'Nagłówek zmieszczę do :max znaków',
+            'facts.max' =>'Zmieszczę do :max faktów — karta ma zostać krótka',
             'facts.*.title.required_with' => 'Wpisz fakt, np. Do 6 osób',
             'facts.*.title.max' => 'Fakt zmieszczę do :max znaków',
             'facts.*.text.max' => 'Zdanie pod faktem zmieszczę do :max znaków',
@@ -46,11 +48,18 @@ class SaveStudioFactsRequest extends FormRequest
     }
 
     /**
-     * @return array{studio_facts: list<array<string, ?string>>}
+     * An emptied heading is saved as null, so the card shows without one.
+     *
+     * @return array{studio_facts_heading: ?string, studio_facts: list<array<string, ?string>>}
      */
     public function settings(): array
     {
-        return ['studio_facts' => $this->listRows('facts', ['title', 'text'])];
+        $heading = trim((string) $this->input('facts_heading'));
+
+        return [
+            'studio_facts_heading' => $heading !== '' ? $heading : null,
+            'studio_facts' => $this->listRows('facts', ['title', 'text']),
+        ];
     }
 
     protected function getRedirectUrl(): string

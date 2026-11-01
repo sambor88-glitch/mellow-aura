@@ -116,7 +116,7 @@
                         @break
                     @case('facts')
                         <h2 class="{{ $heading }}">Pracownia — dobrze wiedzieć</h2>
-                        <p class="{{ $intro }}">Karta obok opisu na stronie <a href="{{ route('content.studio') }}" target="_blank" rel="noopener">„Pracownia”</a>: krótki fakt i jedno zdanie pod nim.</p>
+                        <p class="{{ $intro }}">Karta obok opisu na stronie <a href="{{ route('content.studio') }}" target="_blank" rel="noopener">„Pracownia”</a>: nagłówek, a pod nim krótkie fakty, każdy z jednym zdaniem.</p>
                         @break
                     @case('steps')
                         <h2 class="{{ $heading }}">Zamówienia indywidualne — kroki</h2>
@@ -133,6 +133,13 @@
 
                 @if ($bag->any())
                     <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
+                @endif
+
+                @if ($list['name'] === 'facts')
+                    {{-- The card's heading (MA-355) saves with the facts. --}}
+                    <x-shared::field name="facts_heading" id="pracownia-naglowek" bag="pracownia" label="Nagłówek karty" maxlength="40"
+                                     :value="old('facts_heading', $factsHeading)" placeholder="np. Dobrze wiedzieć"
+                                     hint="Na stronie wielkimi literami. Puste pole — karta bez nagłówka." class="mb-3.5" />
                 @endif
 
                 <div class="grid gap-2.5">

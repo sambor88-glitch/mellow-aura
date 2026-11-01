@@ -25,6 +25,7 @@ class StudioController extends Controller
             'heroSize' => $hero !== null ? $sizes->dimensions((string) $heroPath) : null,
             'lead' => $settings->get('text_studio_lead'),
             'paragraphs' => array_filter([$settings->get('text_studio_paragraph_1'), $settings->get('text_studio_paragraph_2')]),
+            'factsHeading' => $settings->get('studio_facts_heading'),
             'facts' => collect((array) $settings->get('studio_facts', []))
                 ->filter(fn (mixed $fact) => is_array($fact) && filled($fact['title'] ?? null))
                 ->values(),
