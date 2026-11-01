@@ -4,6 +4,8 @@ namespace Tests\Feature\Workshops;
 
 use App\Models\User;
 use App\Modules\Settings\Database\Seeders\SettingsSeeder;
+use App\Modules\Settings\Models\Setting;
+use App\Modules\Settings\Settings;
 use App\Modules\Workshops\Models\WorkshopDate;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -77,9 +79,24 @@ class AdminWorkshopDatesTest extends TestCase
             ->assertDontSee('<option value="kiln_tour"', false);
     }
 
-    public function test_an_empty_calendar_says_so(): void
+    public function test_an_empty_calendar_links_to_the_form_beside_or_below_it(): void
     {
-        $this->actingAs($this->owner)->get('/panel/warsztaty')->assertSee('Nie ma jeszcze żadnego terminu');
+        // The form sits beside the list on a computer and under it on a phone, so the empty state links to it.
+        $this->actingAs($this->owner)->get('/panel/warsztaty')
+            ->assertSee('Nie ma jeszcze żadnego terminu')
+            ->assertSee('href="#dodaj-termin"', false)
+            ->assertSee('id="dodaj-termin"', false);
+    }
+
+    public function test_an_empty_calendar_without_a_priced_workshop_points_to_the_price_list(): void
+    {
+        Setting::query()->updateOrCreate(['key' => 'workshop_types'], ['value' => []]);
+        app(Settings::class)->refresh();
+
+        $this->actingAs($this->owner)->get('/panel/warsztaty')
+            ->assertSee('Nie ma jeszcze żadnego terminu')
+            ->assertDontSee('href="#dodaj-termin"', false)
+            ->assertSeeInOrder(['href="#cennik"', 'wtedy dodasz pierwszy termin'], false);
     }
 
     public function test_mistakes_are_explained_on_their_field(): void
