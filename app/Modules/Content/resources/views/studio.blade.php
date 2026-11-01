@@ -1,3 +1,4 @@
+@use('App\Modules\Content\Support\PagePhotos')
 @use('App\Modules\Localization\Support\Locales')
 @use('App\Modules\Shared\Support\Seo')
 @use('Illuminate\Support\Str')
@@ -18,10 +19,10 @@
     <div class="animate-ma-view pb-24">
         @if ($hero !== null)
             <div class="relative">
-                <img src="{{ $hero }}" alt="" fetchpriority="high"
+                <img src="{{ $hero->url }}" alt="" fetchpriority="high"
                      @if ($heroSrcset) srcset="{{ $heroSrcset }}" sizes="100vw" @endif
                      @if ($heroSize) width="{{ $heroSize['width'] }}" height="{{ $heroSize['height'] }}" @endif
-                     class="block h-[clamp(320px,46vh,520px)] w-full bg-line-soft object-cover brightness-82">
+                     style="{{ $hero->style() }}" class="block h-[clamp(320px,46vh,520px)] w-full bg-line-soft object-cover brightness-82">
                 {{-- Darker in the lower 40 %, so the small eyebrow keeps 4.5:1 on a light photo. --}}
                 <div class="absolute inset-0 flex items-end bg-linear-to-t from-scrim/72 via-scrim/60 via-40% to-scrim/5">
                     <div class="mx-auto w-full max-w-[1280px] px-7 pb-12">
@@ -77,14 +78,15 @@
         @if ($gallery->isNotEmpty())
             <div class="mx-auto max-w-[1280px] px-7 pt-16">
                 {{-- Two, three or four to a row, and only whole rows: a photo left alone in the last row is not shown
-                     at that width (Kasia adds photos in the panel, so their number is not known in advance). --}}
+                     at that width (Kasia takes photos off and adds them in the panel, so their number is not known in advance). --}}
                 @php
                     $count = $gallery->count();
                     $whole = fn (int $columns) => $count >= $columns ? $count - $count % $columns : $count;
                 @endphp
                 <div class="grid grid-cols-2 gap-3.5 sm:grid-cols-3 lg:grid-cols-4">
                     @foreach ($gallery as $photo)
-                        <img src="{{ $photo['url'] }}" alt="{{ $photo['alt'] }}" loading="lazy" width="600" height="600" @class([
+                        <img src="{{ $photo->url }}" {{ $photo->srcsetAttributes('(min-width: 1280px) 296px, (min-width: 1024px) 24vw, (min-width: 640px) 31vw, 47vw') }}
+                             alt="{{ $photo->alt(PagePhotos::defaultAlt($photo->key)) }}" loading="lazy" width="600" height="600" style="{{ $photo->style() }}" @class([
                             'block aspect-square w-full rounded-[20px] bg-line-soft object-cover',
                             'max-sm:hidden' => $loop->index >= $whole(2),
                             'sm:max-lg:hidden' => $loop->index >= $whole(3),
