@@ -143,7 +143,7 @@
                             $rowLabel = $new ? 'nowy wiersz' : ($row[$list['fields'][0]] ?? '');
                             $has = fn (string $field) => $bag->has($list['name'].'.'.$index.'.'.$field);
                         @endphp
-                        <div @class(['rounded-[4px] border p-3', 'border-sand-dark bg-linen' => ! $new, 'border-dashed border-line-strong' => $new])>
+                        <div @class(['min-w-0 rounded-[4px] border p-3', 'border-sand-dark bg-linen' => ! $new, 'border-dashed border-line-strong' => $new])>
                             @switch($list['name'])
                                 @case('faq')
                                   <details class="group" @if ($new || $has('question') || $has('answer')) open @endif>

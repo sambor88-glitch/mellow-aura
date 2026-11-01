@@ -31,6 +31,7 @@
     $textErrors = $errors->getBag('teksty');
     $priceErrors = $errors->getBag('cennik');
     $stepErrors = $errors->getBag('kroki');
+    $small = 'mb-1 block text-[12.5px] text-graphite';
 @endphp
 <x-admin::layout title="Usługi" lead="Strony „Z Twojej apaszki” i „Odcisk Twojej rośliny”: zdjęcia przed i po, teksty, cennik i kroki. Zmiany widać na stronie od razu.">
     <div class="mb-3.5 flex flex-wrap items-center gap-x-2.5 gap-y-1">
@@ -232,7 +233,6 @@
                     <fieldset @class(['rounded-[4px] border p-3', 'border-sand-dark bg-linen' => ! $new, 'border-dashed border-line-strong' => $new])>
                         <legend class="sr-only">{{ $new ? 'Nowa pozycja' : ($row['label'] ?: 'Pozycja '.($index + 1)) }}</legend>
                         {{-- Every field says what it is: a price without a label read like the promotional one (MA-335). --}}
-                        @php($small = 'mb-1 block text-[12.5px] text-graphite')
                         <div class="grid grid-cols-2 gap-x-2.5 gap-y-2">
                             <label class="col-span-2 min-w-0">
                                 <span class="{{ $small }}">{{ $new ? 'Nowa pozycja — nazwa' : 'Nazwa' }}</span>

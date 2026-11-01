@@ -165,8 +165,9 @@ function inspect() {
         }
     }
 
-    // 5. Fields under 16 px: Safari zooms the page in.
-    for (const el of all.filter((e) => e.matches('input:not([type=checkbox]):not([type=radio]):not([type=hidden]):not([type=file]), select, textarea'))) {
+    // 5. Fields under 16 px: Safari zooms the page in. Only meaningful where the browser reports a touch screen,
+    // since the panel raises fields to 16 px under (pointer: coarse).
+    if (matchMedia('(pointer: coarse)').matches) for (const el of all.filter((e) => e.matches('input:not([type=checkbox]):not([type=radio]):not([type=hidden]):not([type=file]), select, textarea'))) {
         const fs = parseFloat(getComputedStyle(el).fontSize);
         if (fs < 16) add('zoom-on-focus', 'major', el, `font ${fs}px (iPhone zooms below 16)`);
     }
@@ -197,8 +198,11 @@ function inspect() {
         if (pills.length >= 3) {
             const rows = [...new Set(pills.map(([, r]) => Math.round(r.top)))];
             const widths = pills.map(([, r]) => Math.round(r.width));
-            const scroller = clipsX(pills[0][0]) || (getComputedStyle(pills[0][0].parentElement).overflowX !== 'visible' ? pills[0][0].parentElement : null);
-            if (!scroller && rows.length > 1 && Math.max(...widths) - Math.min(...widths) > 12) {
+            const holder = pills[0][0].parentElement;
+            const scroller = clipsX(pills[0][0]) || (getComputedStyle(holder).overflowX !== 'visible' ? holder : null);
+            // A grid of equal columns (pill-grid) is even by design, its odd last pill spans the row.
+            const grid = getComputedStyle(holder).display === 'grid';
+            if (!scroller && !grid && rows.length > 1 && Math.max(...widths) - Math.min(...widths) > 12) {
                 add('ragged-pills', 'major', pills[0][0].parentElement, `${pills.length} pills in ${rows.length} rows, widths ${Math.min(...widths)}–${Math.max(...widths)} px`);
             }
         }
@@ -312,6 +316,9 @@ test('every panel screen on a phone', async ({ browser }) => {
 
     const context = await browser.newContext({ isMobile: true, hasTouch: true, deviceScaleFactor: 2, viewport: { width: 390, height: 844 }, locale: 'pl-PL' });
     const page = await context.newPage();
+    // A phone has a coarse pointer and no hover; some Chromium builds do not say so for an emulated touch screen.
+    const cdp = await context.newCDPSession(page);
+    await cdp.send('Emulation.setEmulatedMedia', { features: [{ name: 'pointer', value: 'coarse' }, { name: 'hover', value: 'none' }] }).catch(() => {});
     const errors = [];
     page.on('pageerror', (e) => errors.push({ url: page.url(), error: String(e) }));
     page.on('console', (m) => m.type() === 'error' && errors.push({ url: page.url(), error: m.text() }));
@@ -334,6 +341,8 @@ test('every panel screen on a phone', async ({ browser }) => {
     };
 
     await page.goto('/panel/logowanie', { waitUntil: 'networkidle' });
+    const touch = await page.evaluate(() => matchMedia('(pointer: coarse)').matches);
+    console.log(`pointer: coarse = ${touch}${touch ? '' : ' — the 16 px field check is skipped'}`);
     await capture('logowanie', 'Logowanie');
     await signIn(page);
 
@@ -419,13 +428,13 @@ test('every panel screen on a phone', async ({ browser }) => {
         await capture('szukaj_wyniki', 'Wyszukiwarka (wyniki)');
     }
 
-    fs.writeFileSync(`${OUT}/report.json`, JSON.stringify({ pages, errors, report }, null, 1));
+    fs.writeFileSync(`${OUT}/report.json`, JSON.stringify({ pages, touch, errors, report }, null, 1));
 
     // A readable summary in the log: counts per kind, then every finding that is not minor.
     const flat = report.flatMap((r) => r.findings.map((f) => ({ ...f, screen: r.screen, viewport: r.viewport, url: r.url })));
     const counts = {};
     for (const f of flat) counts[`${f.severity} ${f.kind}`] = (counts[`${f.severity} ${f.kind}`] ?? 0) + 1;
-    const lines = [`Screens: ${pages}, captures: ${report.length}, findings: ${flat.length}, JS/HTTP errors: ${errors.length}`, ''];
+    const lines = [`Screens: ${pages}, captures: ${report.length}, findings: ${flat.length}, JS/HTTP errors: ${errors.length}, pointer coarse: ${touch}`, ''];
     for (const [k, n] of Object.entries(counts).sort()) lines.push(`${String(n).padStart(4)}  ${k}`);
     fs.writeFileSync(`${OUT}/summary.txt`, `${lines.join('\n')}\n`);
     console.log(lines.join('\n'));
