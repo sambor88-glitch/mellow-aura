@@ -20,12 +20,18 @@ przypomnieniach systemowych — 30.10 sesja MA-295 pisała je po angielsku mimo 
 | `Aura - panel.html` | wygląd panelu: „Na dziś”, menu w grupach z licznikami, menu na telefonie, niezapisane zmiany, wymagany Paczkomat w kasie (MA-248…MA-251) |
 | `MellowAura.dc.html` | teksty, ceny, przebieg i zachowanie każdego ekranu; jego wygląd zastąpiła Aura |
 | `Specyfikacja wdrozenia - MellowAura.dc.html` | adresy, tytuły, opisy, JSON-LD, zakres panelu, integracje |
-| `Plan wdrozenia - Laravel krok po kroku.dc.html` | stos, schemat bazy, harmonogram do 10 listopada |
+| `Plan wdrozenia - Laravel krok po kroku.dc.html` | stos, schemat bazy; daty z harmonogramu są nieaktualne (sekcja „Termin startu”) |
 | `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html` | drugi język, druga waluta, strefy wysyłki, próg WSTO — rozstrzyga wszystko, co dotyczy `/en/` i euro |
 | `.claude/skills/` | paleta, efekty, komponenty, UX, teksty, dostępność — kolory, kroje i efekty zmieniasz tylko w `mellowaura-design` |
 
 Pliki `.dc.html` otwierają się w przeglądarce i muszą leżeć obok `support.js`
 (dokumenty do druku także obok `doc-page.js`).
+
+## Termin startu
+
+Data startu nie jest ustalona — może przesunąć się na nowy rok (decyzja Macieja 1.11). Nie planuj, nie ustalaj
+priorytetów i nie skracaj zakresu pod konkretną datę. Daty w starszych dokumentach i zadaniach (30.11, „do 10 listopada”,
+„przed świętami”) są nieaktualne.
 
 ## Stos
 
@@ -81,7 +87,7 @@ Pierwsza fala: `Shared` (układ strony, komponenty Blade, formatowanie kwot, SEO
 z decyzji Macieja 26.10, epik MA-16),
 `Customers` (ekran „Klienci”: osoba zebrana po e-mailu, kopia danych i usunięcie na żądanie RODO — MA-241;
 każdy moduł usuwa dane ze swoich tabel własną akcją `AnonymizeCustomer`, opłacone zamówienia zostają do księgowości).
-Po świętach: `Workshops`, `Firing`, `Journal`.
+Później: `Workshops`, `Firing`, `Journal`.
 
 ## Sesja i cache w plikach
 
@@ -119,7 +125,7 @@ Szczegóły w `Plan wdrozenia - dwujezycznosc i sprzedaz UE.dc.html`. Tu zasady,
   w którym strona istnieje, z tymi samymi odnośnikami co jej `hreflang` (`Locales::versions`). Nie dodawaj `Url::create(route(...))` ręcznie.
 - Teksty interfejsu w `lang/pl` i `lang/en` modułu, jako `__('modul::plik.klucz')`. Moduł wczytuje je sam.
 - `APP_LOCALES` włącza języki: produkcja `pl`, lokalnie i staging `pl,en`. Testy chodzą z `pl,en`.
-  Na start (30.11) tylko `pl` — angielski czeka na VAT w UE, regulamin EN i wysyłkę do UE (MA-121, MA-122, MA-128,
+  Na start tylko `pl` — angielski czeka na VAT w UE, regulamin EN i wysyłkę do UE (MA-121, MA-122, MA-128,
   MA-131). Ta sama strona na Forge zostaje produkcją, więc przy przełączeniu domeny zmień `APP_LOCALES` na `pl`;
   `php artisan seo:launch-check` sprawdza, że `/en` daje 404 (MA-186).
 - Waluta wynika z języka: PL to PLN, EN to EUR. Nie ma osobnego przełącznika waluty i nie ma koszyka
