@@ -2,10 +2,9 @@
 @use('App\Modules\Catalog\Enums\Dimension')
 @use('App\Modules\Catalog\Enums\FoodContact')
 @use('App\Modules\Catalog\Enums\GoogleCategory')
-@use('App\Modules\Catalog\Enums\Occasion')
-@use('App\Modules\Catalog\Enums\Recipient')
 @use('App\Modules\Catalog\Enums\VariantKind')
 @use('App\Modules\Catalog\Models\ExchangeRate')
+@use('App\Modules\Catalog\Support\GiftTags')
 @use('App\Modules\Localization\Support\Locales')
 @use('App\Modules\Shared\Support\FocalPoint')
 @use('App\Modules\Shared\Support\Money')
@@ -429,22 +428,23 @@
                         <h2 class="{{ $legend }}">„Szukam prezentu”</h2>
                         <p class="{{ $lead }} mt-1">Produkt pokaże się w podpowiedziach prezentów dla zaznaczonych okazji i osób.</p>
                     </div>
-                    <fieldset class="min-w-0">
-                        <legend class="mb-2 text-[13.5px] text-graphite">Na jaką okazję</legend>
-                        <div class="flex flex-wrap gap-2">
-                            @foreach (Occasion::cases() as $occasion)
-                                <label class="{{ $chip }}"><input type="checkbox" name="occasions[]" value="{{ $occasion->value }}" @checked(in_array($occasion->value, $occasions, true)) class="sr-only">{{ $occasion->label() }}</label>
-                            @endforeach
-                        </div>
-                    </fieldset>
-                    <fieldset class="min-w-0">
-                        <legend class="mb-2 text-[13.5px] text-graphite">Dla kogo</legend>
-                        <div class="flex flex-wrap gap-2">
-                            @foreach (Recipient::cases() as $recipient)
-                                <label class="{{ $chip }}"><input type="checkbox" name="recipients[]" value="{{ $recipient->value }}" @checked(in_array($recipient->value, $recipients, true)) class="sr-only">{{ $recipient->label() }}</label>
-                            @endforeach
-                        </div>
-                    </fieldset>
+                    {{-- Both lists come from Prezenty → „Szukam prezentu” (MA-352); a tag removed there is not shown, so saving drops it. --}}
+                    @foreach (['occasions' => ['Na jaką okazję', GiftTags::occasions($settings)], 'recipients' => ['Dla kogo', GiftTags::recipients($settings)]] as $field => [$question, $tags])
+                        <fieldset class="min-w-0">
+                            <legend class="mb-2 text-[13.5px] text-graphite">{{ $question }}</legend>
+                            @if ($tags === [])
+                                <p class="text-[13px] text-label">Lista jest pusta. Wpisz pozycje w <a href="{{ route('admin.gifts.edit') }}#szukam-prezentu">Prezenty → Szukam prezentu</a>.</p>
+                            @else
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach ($tags as $key => $tagLabel)
+                                        <label class="{{ $chip }}"><input type="checkbox" name="{{ $field }}[]" value="{{ $key }}" @checked(in_array((string) $key, $field === 'occasions' ? $occasions : $recipients, true)) class="sr-only">{{ $tagLabel }}</label>
+                                    @endforeach
+                                </div>
+                            @endif
+                            {!! $error($field.'.*') !!}
+                        </fieldset>
+                    @endforeach
+                    <p class="-mt-2 text-[12.5px] text-label">Nazwy i kolejność zmienisz w <a href="{{ route('admin.gifts.edit') }}#szukam-prezentu">Prezenty → Szukam prezentu</a>.</p>
                     <h2 class="{{ $sub }}">Zakupy Google — bezpłatne wyniki</h2>
                     <x-shared::seo-field name="seo_description" :id="$formKey.'-seo-description'" label="Opis dla Google" :limit="155" :max="255" :rows="2" :bag="$formKey"
                                          :value="$old('seo_description', $product->seo_description)"

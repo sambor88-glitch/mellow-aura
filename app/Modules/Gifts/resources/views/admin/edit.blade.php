@@ -13,6 +13,15 @@
     // One empty row for a new range; left empty, it is not saved.
     $budgetRows = [...$budgetRows, ['min' => '', 'max' => '']];
     $savedBudgets = count((array) old('budgets', $budgets));
+    // „Dla kogo” and the occasions (MA-352): the saved rows, or what came back with a mistake, and one empty row for a new one.
+    $tagRows = collect($tagLists)->map(function (array $list, string $field) {
+        $rows = collect((array) old($field, $list['tags']))
+            ->filter(fn (mixed $row) => is_array($row))
+            ->reject(fn (array $row) => blank($row['label'] ?? null) && blank($row['key'] ?? null))
+            ->values();
+
+        return ['rows' => [...$rows->all(), ['key' => '', 'label' => '']], 'filled' => $rows->count(), 'counts' => $list['counts']];
+    });
     $voucherErrors = $errors->getBag('vouchery');
 
     $textFields = [
@@ -102,11 +111,73 @@
             <form id="szukam-prezentu" method="post" action="{{ route('admin.gifts.finder') }}" novalidate class="{{ $card }}">
                 @csrf
                 @method('PUT')
-                <h2 class="{{ $heading }}">Szukam prezentu</h2>
-                <p class="{{ $intro }}">Przedziały budżetu to przyciski na stronie. Produkt trafia do przedziału według swojej najniższej ceny. Okazje i „dla kogo” zaznaczasz przy każdym produkcie.</p>
+                {{-- Enter in a field saves the card instead of pressing the first arrow. --}}
+                <button tabindex="-1" aria-hidden="true" class="sr-only">Zapisz</button>
+                <div class="flex flex-wrap items-baseline justify-between gap-x-4">
+                    <h2 class="{{ $heading }}">Szukam prezentu</h2>
+                    <a href="{{ route('gifts.index') }}" target="_blank" rel="noopener" class="text-[13px]">Zobacz stronę →</a>
+                </div>
+                <p class="{{ $intro }}">Wszystko, co klienci widzą na stronie, od góry do dołu. „Dla kogo”, okazje i budżet to przyciski filtrów. Pozycje „Dla kogo” i okazje zaznaczasz przy każdym produkcie: Produkty → karta produktu → „Prezent i Google”. Pozycja bez produktu w sklepie nie pokazuje się na stronie.</p>
                 @if ($finderErrors->any())
                     <p role="alert" data-error class="{{ $alert }}">Popraw zaznaczone pola, żeby zapisać.</p>
                 @endif
+                <div class="mb-5 min-w-0">
+                    <label for="szukam-heading" class="mb-1.5 block text-[11.5px] tracking-[0.1em] text-label uppercase">Nagłówek</label>
+                    <textarea id="szukam-heading" name="text_gifts_heading" rows="2" maxlength="80" placeholder="Powiedz, dla kogo&#10;i za ile" aria-describedby="szukam-heading-note"
+                              @class([$input, 'resize-y leading-[1.55]', 'border-error' => $finderErrors->has('text_gifts_heading'), 'border-line' => ! $finderErrors->has('text_gifts_heading')])>{{ old('text_gifts_heading', $finderTexts['text_gifts_heading']) }}</textarea>
+                    @if ($finderErrors->has('text_gifts_heading'))
+                        <p class="mt-1.5 text-[13px] text-error">{{ $finderErrors->first('text_gifts_heading') }}</p>
+                    @endif
+                    <p id="szukam-heading-note" class="mt-1.5 text-[12.5px] text-hint">Nowa linia w polu to nowa linia na stronie. Puste pole — strona pokaże „Powiedz, dla kogo i za ile”.</p>
+                </div>
+                <div class="mb-5 min-w-0">
+                    <label for="szukam-lead" class="mb-1.5 block text-[11.5px] tracking-[0.1em] text-label uppercase">Zdanie pod nagłówkiem</label>
+                    <textarea id="szukam-lead" name="text_gifts_lead" rows="3" maxlength="400"
+                              @class([$input, 'resize-y leading-[1.55]', 'border-error' => $finderErrors->has('text_gifts_lead'), 'border-line' => ! $finderErrors->has('text_gifts_lead')])>{{ old('text_gifts_lead', $finderTexts['text_gifts_lead']) }}</textarea>
+                    @if ($finderErrors->has('text_gifts_lead'))
+                        <p class="mt-1.5 text-[13px] text-error">{{ $finderErrors->first('text_gifts_lead') }}</p>
+                    @endif
+                </div>
+                @foreach (['recipients' => ['Dla kogo', 'osobę', 'np. Dla babci'], 'occasions' => ['Okazja', 'okazję', 'np. Komunia']] as $list => [$legend, $what, $example])
+                    @php
+                        $tagList = $tagRows[$list];
+                    @endphp
+                    <fieldset class="mb-5" id="szukam-{{ $list }}">
+                        <legend class="mb-2 text-[11.5px] tracking-[0.1em] text-label uppercase">{{ $legend }}</legend>
+                        <div class="grid gap-2">
+                            @foreach ($tagList['rows'] as $index => $row)
+                                @php
+                                    $new = $index >= $tagList['filled'];
+                                    $name = $list.'['.$index.']';
+                                    $id = 'szukam-'.$list.'-'.$index;
+                                    $hasError = $finderErrors->has($list.'.'.$index.'.label');
+                                    $count = (int) ($tagList['counts'][$row['key'] ?? ''] ?? 0);
+                                @endphp
+                                <div @class(['rounded-[4px] border p-3', 'border-sand-dark bg-linen' => ! $new, 'border-dashed border-line-strong' => $new])>
+                                    <input type="hidden" name="{{ $name }}[key]" value="{{ $row['key'] ?? '' }}">
+                                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                                        <label for="{{ $id }}" class="sr-only">{{ $new ? 'Nowa pozycja — '.$legend : $legend.' — nazwa '.($index + 1) }}</label>
+                                        <input id="{{ $id }}" name="{{ $name }}[label]" value="{{ $row['label'] ?? '' }}" maxlength="40" placeholder="{{ $new ? 'Dopisz '.$what.', '.$example : '' }}"
+                                               @if ($hasError) aria-invalid="true" @endif
+                                               @class([$input, 'flex-[1_1_220px]', 'border-error' => $hasError, 'border-line' => ! $hasError])>
+                                        @unless ($new)
+                                            <span class="text-[12.5px] text-label">{{ $count > 0 ? trans_choice(':count produkt|:count produkty|:count produktów', $count, [], 'pl').' w sklepie' : '0 produktów w sklepie — strona jej nie pokaże' }}</span>
+                                        @endunless
+                                    </div>
+                                    @if ($hasError)
+                                        <p class="mt-1.5 text-[13px] text-error">{{ $finderErrors->first($list.'.'.$index.'.label') }}</p>
+                                    @endif
+                                    @unless ($new)
+                                        <x-shared::admin.row-actions :name="$name" :index="$index" :last="$tagList['filled'] - 1" :label="($row['label'] ?? '') ?: 'pozycja '.($index + 1)" :removed="(bool) ($row['remove'] ?? false)" :list="$list" />
+                                    @endunless
+                                </div>
+                            @endforeach
+                        </div>
+                        @if ($finderErrors->has($list))
+                            <p class="mt-1.5 text-[13px] text-error">{{ $finderErrors->first($list) }}</p>
+                        @endif
+                    </fieldset>
+                @endforeach
                 <fieldset>
                     <legend class="mb-2 text-[11.5px] tracking-[0.1em] text-label uppercase">Budżet</legend>
                     <div class="grid gap-2">
@@ -132,12 +203,7 @@
                     </div>
                     <p class="mt-2.5 text-[12.5px] leading-[1.5] text-hint">Puste „do” to przedział bez górnej granicy — na stronie „powyżej 400 zł”. W pusty wiersz wpisz nowy przedział.</p>
                 </fieldset>
-                <div class="mt-4 grid gap-3.5">
-                    <div class="min-w-0">
-                        <label for="szukam-lead" class="mb-1.5 block text-[11.5px] tracking-[0.1em] text-label uppercase">Zdanie pod nagłówkiem</label>
-                        <textarea id="szukam-lead" name="text_gifts_lead" rows="3" maxlength="400"
-                                  @class([$input, 'resize-y leading-[1.55]', 'border-error' => $finderErrors->has('text_gifts_lead'), 'border-line' => ! $finderErrors->has('text_gifts_lead')])>{{ old('text_gifts_lead', $finderTexts['text_gifts_lead']) }}</textarea>
-                    </div>
+                <div class="mt-5 grid gap-3.5">
                     <div class="min-w-0">
                         <label for="szukam-voucher" class="mb-1.5 block text-[11.5px] tracking-[0.1em] text-label uppercase">Pod listą — o voucherach</label>
                         <textarea id="szukam-voucher" name="text_gifts_voucher_note" rows="2" maxlength="200"

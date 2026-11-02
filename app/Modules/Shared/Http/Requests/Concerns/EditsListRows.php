@@ -5,6 +5,7 @@ namespace App\Modules\Shared\Http\Requests\Concerns;
 /**
  * A list edited in rows: every row has a „usuń” box, a few empty rows at the end take new entries,
  * and the ↑ ↓ buttons send the whole form with `move=<row>:up|down`, so nothing typed is lost.
+ * A card with more than one list names it: `move=<list>:<row>:up|down` moves a row of that list only.
  * Validation runs on the rows as sent, so each error stays next to its row.
  */
 trait EditsListRows
@@ -25,7 +26,7 @@ trait EditsListRows
     {
         $rows = array_values(array_filter((array) $this->input($name, []), 'is_array'));
 
-        if ($move = $this->move()) {
+        if ($move = $this->move($name)) {
             [$from, $to] = $move;
 
             if (isset($rows[$from], $rows[$to])) {
@@ -44,14 +45,19 @@ trait EditsListRows
     }
 
     /**
+     * @param  ?string  $list  the list asking; a move naming another list is not its own
      * @return array{int, int}|null
      */
-    private function move(): ?array
+    private function move(?string $list = null): ?array
     {
-        if (! preg_match('/^(\d+):(up|down)$/', (string) $this->input('move'), $match)) {
+        if (! preg_match('/^(?:([a-z_]+):)?(\d+):(up|down)$/', (string) $this->input('move'), $match)) {
             return null;
         }
 
-        return [(int) $match[1], $match[2] === 'up' ? (int) $match[1] - 1 : (int) $match[1] + 1];
+        if ($list !== null && $match[1] !== '' && $match[1] !== $list) {
+            return null;
+        }
+
+        return [(int) $match[2], $match[3] === 'up' ? (int) $match[2] - 1 : (int) $match[2] + 1];
     }
 }
