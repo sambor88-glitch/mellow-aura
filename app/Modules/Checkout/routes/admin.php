@@ -6,6 +6,7 @@ use App\Modules\Checkout\Http\Controllers\Admin\ComplaintController;
 use App\Modules\Checkout\Http\Controllers\Admin\GiftCardController;
 use App\Modules\Checkout\Http\Controllers\Admin\OrderController;
 use App\Modules\Checkout\Http\Controllers\Admin\PieceController;
+use App\Modules\Checkout\Http\Controllers\Admin\SalesSummaryController;
 use App\Modules\Checkout\Http\Controllers\Admin\WithdrawalController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,8 @@ Route::patch('/zamowienia/{order:number}/sztuka/{item}', [PieceController::class
 Route::post('/zamowienia/{order:number}/sztuka/{item}/zdjecie', [PieceController::class, 'storePhoto'])->whereNumber('item')->name('orders.piece-photo');
 Route::delete('/zamowienia/{order:number}/sztuka/{item}/zdjecie', [PieceController::class, 'destroyPhoto'])->whereNumber('item')->name('orders.piece-photo.destroy');
 Route::get('/zamowienia/{order:number}/sztuka/{item}/karta', [PieceController::class, 'card'])->whereNumber('item')->name('orders.piece-card');
+// The sales summary (MA-344); the owner's alone, like every screen PanelAccess does not name.
+Route::get('/sprzedaz', SalesSummaryController::class)->name('sales.index');
 Route::get('/certyfikat', [CertificateTextsController::class, 'edit'])->name('certificate.edit');
 Route::put('/certyfikat', [CertificateTextsController::class, 'update'])->name('certificate.update');
 Route::put('/certyfikat/podglad', [CertificateTextsController::class, 'preview'])->name('certificate.preview');
