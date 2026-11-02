@@ -393,6 +393,56 @@
         ]
     },
     {
+        "key": "gift_recipients",
+        "value": [
+            {
+                "key": "for_her",
+                "label": "Dla niej"
+            },
+            {
+                "key": "for_him",
+                "label": "Dla niego / taty"
+            },
+            {
+                "key": "for_couple",
+                "label": "Dla pary"
+            }
+        ]
+    },
+    {
+        "key": "gift_occasions",
+        "value": [
+            {
+                "key": "birthday",
+                "label": "Urodziny"
+            },
+            {
+                "key": "mothers_day",
+                "label": "Dzień Matki"
+            },
+            {
+                "key": "wedding",
+                "label": "Ślub"
+            },
+            {
+                "key": "housewarming",
+                "label": "Parapetówka"
+            },
+            {
+                "key": "anniversary",
+                "label": "Rocznica"
+            },
+            {
+                "key": "christmas",
+                "label": "Święta"
+            },
+            {
+                "key": "self_gift",
+                "label": "Dla siebie"
+            }
+        ]
+    },
+    {
         "key": "faq_items",
         "value": [
             {

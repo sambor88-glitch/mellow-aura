@@ -54,6 +54,8 @@ class AdminProductsTest extends TestCase
     public function test_adding_a_product_publishes_it_with_sizes_prices_and_details(): void
     {
         $this->product('Wazony', 1, [23900]);
+        Setting::create(['key' => 'gift_occasions', 'value' => [['key' => 'birthday', 'label' => 'Urodziny']]]);
+        Setting::create(['key' => 'gift_recipients', 'value' => [['key' => 'for_her', 'label' => 'Dla niej']]]);
 
         $this->actingAs(User::factory()->create())
             ->post('/panel/produkty', [
