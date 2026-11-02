@@ -7,6 +7,7 @@ use App\Modules\Checkout\Events\OrderPaid;
 use App\Modules\Shared\ModuleServiceProvider;
 use App\Modules\Shared\Support\SitemapPages;
 use App\Modules\Workshops\Console\SendRemindersCommand;
+use App\Modules\Workshops\Listeners\NotifyPanelAboutBooking;
 use App\Modules\Workshops\Listeners\SendBookingEmails;
 use App\Modules\Workshops\Mail\BookingCancelled;
 use App\Modules\Workshops\Mail\BookingConfirmed;
@@ -44,6 +45,7 @@ class WorkshopsServiceProvider extends ModuleServiceProvider
         parent::boot();
 
         Event::listen(OrderPaid::class, SendBookingEmails::class);
+        Event::listen(OrderPaid::class, NotifyPanelAboutBooking::class);
 
         if ($this->app->runningInConsole()) {
             $this->commands([SendRemindersCommand::class]);

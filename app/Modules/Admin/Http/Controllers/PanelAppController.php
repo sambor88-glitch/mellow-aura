@@ -13,6 +13,7 @@ use Illuminate\Http\Response;
  * and they hold nothing but the panel's name, colours and a page that says the phone is offline.
  * The worker keeps only that page. No screen of the panel is ever stored on the phone — it shows customers'
  * names, addresses and orders, and a lost phone must not give them away.
+ * The worker also shows the notifications about new orders (MA-345) — shown and dropped, never kept.
  */
 class PanelAppController extends Controller
 {
@@ -45,7 +46,11 @@ class PanelAppController extends Controller
 
     public function worker(): Response
     {
-        return response(view('admin::app.worker', ['offline' => route('admin.app.offline', absolute: false)])->render())
+        return response(view('admin::app.worker', [
+            'offline' => route('admin.app.offline', absolute: false),
+            'scope' => self::SCOPE,
+            'icon' => asset('icons/panel-192.png'),
+        ])->render())
             ->header('Content-Type', 'text/javascript; charset=utf-8')
             // Always checked for a newer version, so a fix reaches the phone with the next open.
             ->header('Cache-Control', 'no-cache')

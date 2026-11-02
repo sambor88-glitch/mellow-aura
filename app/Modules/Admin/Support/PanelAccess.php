@@ -9,12 +9,13 @@ use Illuminate\Support\Str;
  * Which panel screens an account may open. The owner opens all of them. A helper only gets the orders — the list,
  * the details, the status, certificates and voucher PDFs to pack — and no money matters, settings or accounts.
  * Marking a bank transfer as received stays the owner's: only she sees the bank account (MA-216).
+ * Her own phone's notifications she turns on herself, and they only tell her about orders (MA-345).
  * A new screen is the owner's until it is added here.
  */
 final class PanelAccess
 {
     /** Route names a helper may open. The search answers her only from these screens (MA-308). */
-    private const HELPER_ROUTES = ['admin.dashboard', 'admin.logout', 'admin.search', 'admin.orders.*', 'admin.vouchers.pdf'];
+    private const HELPER_ROUTES = ['admin.dashboard', 'admin.logout', 'admin.search', 'admin.orders.*', 'admin.vouchers.pdf', 'admin.push.*'];
 
     /** Route names under HELPER_ROUTES that are still the owner's alone. */
     private const OWNER_ROUTES = ['admin.orders.paid'];

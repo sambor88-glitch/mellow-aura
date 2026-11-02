@@ -44,7 +44,7 @@ class PanelMenuTest extends TestCase
                 'Sprzedaż', 'Zamówienia', 'Zamówienia indywidualne', 'Klienci', 'Odstąpienia', 'Reklamacje',
                 'Oferta', 'Produkty', 'Kategorie', 'Kubek z napisem', 'Prezenty i zestawy', 'Warsztaty', 'Wypały', 'Usługi',
                 'Strona', 'Treści', 'Zdjęcia stron', 'Google', 'Maile', 'Certyfikat unikatu',
-                'Ustawienia', 'Ustawienia', 'Konta', 'Niewysłane maile',
+                'Ustawienia', 'Ustawienia', 'Powiadomienia', 'Konta', 'Niewysłane maile',
             ]);
     }
 
@@ -94,7 +94,7 @@ class PanelMenuTest extends TestCase
             ->assertDontSee('sprawa czeka');
     }
 
-    public function test_a_helper_sees_only_the_sales_group_with_the_orders(): void
+    public function test_a_helper_sees_only_the_orders_and_her_notifications(): void
     {
         $this->order(OrderStatus::InProgress);
         $this->idea(CustomOrderStatus::New);
@@ -105,9 +105,12 @@ class PanelMenuTest extends TestCase
         $this->assertStringContainsString('Sprzedaż', $menu);
         $this->assertStringContainsString('Zamówienia', $menu);
         $this->assertStringContainsString(', 1 do wysłania', $menu);
-        foreach (['Oferta', 'Strona', 'Ustawienia', 'Zamówienia indywidualne', 'Klienci', 'Niewysłane maile', 'nowe'] as $hidden) {
+        foreach (['Oferta', 'Strona', 'Zamówienia indywidualne', 'Klienci', 'Konta', 'Niewysłane maile', 'nowe'] as $hidden) {
             $this->assertStringNotContainsString($hidden, $menu);
         }
+        // Her own phone's notifications are the one setting she has (MA-345).
+        $this->assertStringContainsString('>Powiadomienia</a>', $menu);
+        $this->assertStringNotContainsString('href="'.route('admin.settings.edit').'"', $menu);
         // Only what the helper can open counts on the phone's „Menu”.
         $response->assertSee(', 1 sprawa czeka', false);
     }

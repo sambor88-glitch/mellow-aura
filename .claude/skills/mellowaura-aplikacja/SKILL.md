@@ -143,6 +143,12 @@ otwarty także za hasłem stagingu), service worker (`/panel/sw.js`, zasięg `/p
 Worker trzyma w pamięci tylko tę stronę — żadnego ekranu panelu, bo są na nich dane klientek. Ikony w `public/icons/panel-*`
 to tymczasowe „M” do czasu pliku logo (MA-158). Sklep dla klientek nie jest PWA.
 
+Panel ma też powiadomienia push (MA-345): ekran „Powiadomienia” z przyciskiem „Włącz powiadomienia na tym telefonie”
+i listą urządzeń, worker obsługuje `push` i `notificationclick`. Na iPhonie tylko z ikony na ekranie początkowym
+(iOS 16.4+) — w Safari ekran pokazuje trzy kroki „Udostępnij → Do ekranu początkowego”, a nie przycisk. Treść powiadomienia
+widać na zablokowanym ekranie, więc nigdy imię, mail ani adres klientki — numer zamówienia i kwota wystarczą.
+Nowe powiadomienie z innego modułu: `Admin\Support\Push\PanelPush::notify(new PanelNotice(...))`.
+
 Czego PWA nie da: płatności w App Store, powiadomień push na iPhonie bez dodania do ekranu głównego,
 obecności w sklepach z aplikacjami. Powiedz to wprost, zanim ktoś zapłaci za aplikację natywną,
 której ten biznes na tym etapie nie potrzebuje.

@@ -49,6 +49,14 @@ return [
         'wallets' => (bool) env('PRZELEWY24_WALLETS', false),
     ],
 
+    // The panel's notifications on the phone (MA-345). `php artisan admin:vapid-keys` makes the pair once;
+    // the subject is how Apple and Google reach the shop if its messages cause trouble.
+    'webpush' => [
+        'public_key' => env('VAPID_PUBLIC_KEY'),
+        'private_key' => env('VAPID_PRIVATE_KEY'),
+        'subject' => env('VAPID_SUBJECT', 'https://mellow-aura.com'),
+    ],
+
     'resend' => [
         'key' => env('RESEND_API_KEY'),
     ],
