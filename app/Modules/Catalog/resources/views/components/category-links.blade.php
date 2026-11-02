@@ -5,7 +5,7 @@
      Kasia removed, or one not written in the language of this page, drops out. --}}
 @php
     $categories = Category::query()->whereIn('slug', $slugs)->with('translations')->get()
-        ->filter(fn (Category $category) => $category->hasTranslation(Locales::current()))
+        ->filter(fn (Category $category) => $category->availableIn(Locales::current()))
         ->sortBy(fn (Category $category) => array_search($category->getRawOriginal('slug'), $slugs, true));
 @endphp
 @if ($categories->isNotEmpty())

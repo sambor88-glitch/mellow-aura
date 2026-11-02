@@ -11,8 +11,8 @@ use App\Modules\Catalog\Actions\SaveProduct;
 use App\Modules\Catalog\Actions\SetStock;
 use App\Modules\Catalog\Http\Requests\Admin\PhotoRules;
 use App\Modules\Catalog\Http\Requests\Admin\SaveProductRequest;
-use App\Modules\Catalog\Models\Category;
 use App\Modules\Catalog\Models\Product;
+use App\Modules\Catalog\Support\CategoryTree;
 use App\Modules\Catalog\Support\LastPieces;
 use App\Modules\Settings\Actions\SaveSettings;
 use App\Modules\Settings\Settings;
@@ -51,22 +51,28 @@ class ProductController extends Controller
 
     public function create(): View
     {
+        $tree = CategoryTree::load();
+
         return view('catalog::admin.products.create', [
-            'categories' => Category::query()->orderBy('sort_order')->get(),
+            // In the order of the tree, each named with its branch: „Glina › Biżuteria › Kolczyki” (MA-351).
+            'categories' => $tree->inOrder(),
+            'categoryTree' => $tree,
             'photoLimits' => PhotoRules::limits(),
         ]);
     }
 
     public function edit(Request $request, Product $product): View
     {
-        $product->load(['category', 'variants' => fn ($query) => $query->orderBy('id')->withCount('stockNotifications'), 'variants.translations', 'variants.prices', 'media', 'translations']);
+        $product->load(['category', 'alsoInCategories', 'variants' => fn ($query) => $query->orderBy('id')->withCount('stockNotifications'), 'variants.translations', 'variants.prices', 'media', 'translations']);
+        $tree = CategoryTree::load();
         // The card walks to the product before and after it, in the order of the shop.
         $order = Product::query()->orderBy('sort_order')->orderBy('id')->pluck('id');
         $at = $order->search($product->id);
 
         return view('catalog::admin.products.edit', [
             'product' => $product,
-            'categories' => Category::query()->orderBy('sort_order')->get(),
+            'categories' => $tree->inOrder(),
+            'categoryTree' => $tree,
             'photoLimits' => PhotoRules::limits(),
             'tab' => in_array($request->query('tab'), self::TABS, true) ? $request->query('tab') : 'sale',
             'position' => $at + 1,

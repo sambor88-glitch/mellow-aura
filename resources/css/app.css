@@ -1065,6 +1065,15 @@ form[data-dirty]::before {
     box-shadow: 0 18px 40px -20px rgb(47 38 32 / .55);
 }
 
+/* The panel's tree of shelves (MA-351): while a shelf is lifted, every list it still fits in opens as a drop zone,
+   so it can also become a subcategory of a shelf that has none yet. */
+.is-dragging .category-list[data-accepts]:not(:has(> [data-id]:not(.drag-ghost))) {
+    min-height: 44px;
+    margin: 4px 8px 6px 0;
+    border: 1px dashed var(--color-line-strong);
+    border-radius: 12px;
+}
+
 /*
  * A field under 16 px makes Safari on an iPhone zoom the page in on tap (mellowaura-aplikacja, „Pola formularza”).
  * Panel screens set their own 13.5–15 px field classes; outside the layers this beats every one of them, on touch only (MA-335).

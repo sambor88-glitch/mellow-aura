@@ -19,9 +19,13 @@ class CatalogSitemap
     {
         $sitemap->add(SitemapPages::versions('shop.index'));
 
-        $liveCategoryIds = Product::query()->live()->distinct()->pluck('category_id');
+        // A shelf counts what stands on the shelves under it and what is only shown on it (MA-351); an empty one has
+        // noindex, so it stays out. In the order of the tree.
+        $tree = CategoryTree::load();
+        $counts = $tree->counts(Product::query()->live()->with('alsoInCategories:id')->get(['id', 'category_id']));
 
-        Category::query()->whereIn('id', $liveCategoryIds)->orderBy('sort_order')->get()
+        $tree->inOrder()
+            ->filter(fn (Category $category) => ($counts[$category->id] ?? 0) > 0)
             ->each(fn (Category $category) => $sitemap->add(SitemapPages::versions('shop.category', [$category])));
 
         Product::query()->where('is_published', true)->whereHas('variants', fn ($variants) => $variants->visible())->with(['variants' => fn ($variants) => $variants->visible(), 'media'])->orderBy('sort_order')->get()

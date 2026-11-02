@@ -50,11 +50,11 @@
     <x-consent::analytics-event name="view_item" :params="AnalyticsItem::params($variant->price(), [VariantAnalyticsItem::make($variant)])" />
 
     <div class="mx-auto max-w-[1360px] animate-ma-view px-[clamp(18px,4vw,48px)] pt-9 pb-24">
-        <x-shared::breadcrumb class="mb-7" :items="array_values(array_filter([
+        <x-shared::breadcrumb class="mb-7" :items="[
             [__('catalog::shop.products'), route('shop.index')],
-            $product->category->hasTranslation(Locales::current()) ? [$product->category->name, route('shop.category', $product->category)] : null,
+            ...$categoryTrail,
             [$product->name, null],
-        ]))" />
+        ]" />
 
         <div class="flex flex-wrap items-start gap-[clamp(28px,5vw,72px)]">
             <div class="min-w-0 flex-[1_1_460px]" x-data="{ active: {{ $firstPhoto }} }">
@@ -145,13 +145,14 @@
                     <p class="mb-[26px] text-[16.5px] leading-[1.72] text-pretty text-lead">{{ $product->description }}</p>
                 @endif
 
-                {{-- A product that a service makes from the customer's own thing leads to that service (MA-116). --}}
-                @php($service = match ($product->category?->getRawOriginal('slug')) {
-                    'kubki-i-filizanki' => 'mug',
-                    'talerze-i-miski', 'wazony-i-patery' => 'imprint',
-                    'jedwab' => 'scarf',
+                {{-- A product that a service makes from the customer's own thing leads to that service (MA-116),
+                     by the shelf it stands on or one above it (MA-351). --}}
+                @php($service = collect($categorySlugs)->reverse()->map(fn (string $slug) => match ($slug) {
+                    'kubki-z-wlasnym-napisem', 'kubki', 'filizanki' => 'mug',
+                    'talerze', 'miski', 'wazony', 'patery' => 'imprint',
+                    'scrunchie', 'opaski' => 'scarf',
                     default => null,
-                })
+                })->filter()->first())
                 @if ($service)
                     <x-shared::service-links :services="[$service]" :heading="__('shared::services.product_heading')" class="mb-[26px]" />
                 @endif

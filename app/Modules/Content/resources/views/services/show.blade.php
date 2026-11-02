@@ -15,7 +15,7 @@
             'photoAlt' => 'Opaska i scrunchie uszyte z jedwabnej apaszki',
             'brief' => 'apaszka',
             'other' => [Service::Imprint, 'Odcisk Twojej rośliny'],
-            'shop' => ['jedwab', 'kosmetyczki-i-piorniki'],
+            'shop' => ['scrunchie', 'opaski', 'kosmetyczki'],
         ],
         Service::Imprint => [
             'title' => 'Pamiątka z bukietu ślubnego — kwiat odciśnięty w glinie',
@@ -24,7 +24,7 @@
             'photoAlt' => 'Talerz z odciskiem prawdziwej rośliny',
             'brief' => 'odcisk',
             'other' => [Service::Scarf, 'Z Twojej apaszki'],
-            'shop' => ['talerze-i-miski', 'wazony-i-patery'],
+            'shop' => ['talerze', 'miski', 'wazony', 'patery'],
         ],
     };
     // The custom order form opens with this service chosen (CustomOrders\Enums\BriefKind::slug).

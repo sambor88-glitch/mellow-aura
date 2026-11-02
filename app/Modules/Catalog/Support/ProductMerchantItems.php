@@ -29,8 +29,12 @@ class ProductMerchantItems
             ->orderBy('sort_order')
             ->orderBy('id')
             ->get();
+        $tree = CategoryTree::load();
 
         foreach ($products as $product) {
+            // „Glina > Biżuteria > Kolczyki”: the whole branch of the main shelf (MA-351).
+            $productType = $tree->label($tree->get($product->category_id) ?? $product->category, ' > ');
+
             $images = $product->getMedia('images')->map(fn (Media $image) => $image->getAvailableUrl(['card']))->values();
 
             if ($images->isEmpty()) {
@@ -57,7 +61,7 @@ class ProductMerchantItems
                     additionalImages: $images->reject(fn (string $image) => $image === $photo)->values()->all(),
                     salePrice: $reduced ? $variant->price_gross : null,
                     googleCategory: $product->google_category?->value,
-                    productType: $product->category->group->label().' > '.$product->category->name,
+                    productType: $productType,
                     groupId: 'p'.$product->id,
                 );
             }

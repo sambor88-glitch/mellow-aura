@@ -28,42 +28,44 @@ class InternalLinksTest extends TestCase
         $this->seed(SettingsSeeder::class);
 
         foreach ([
-            'kubki-i-filizanki' => 'Kubki i filiżanki',
-            'talerze-i-miski' => 'Talerze i miski',
-            'wazony-i-patery' => 'Wazony i patery',
-            'jedwab' => 'Jedwab',
-            'kosmetyczki-i-piorniki' => 'Kosmetyczki i piórniki',
+            'kubki' => 'Kubki',
+            'filizanki' => 'Filiżanki',
+            'talerze' => 'Talerze',
+            'miski' => 'Miski',
+            'wazony' => 'Wazony',
+            'patery' => 'Patery',
+            'scrunchie' => 'Scrunchie',
+            'opaski' => 'Opaski',
+            'kosmetyczki' => 'Kosmetyczki',
         ] as $slug => $name) {
             Category::factory()->create(['slug' => $slug, 'name' => $name, 'group' => CategoryGroup::Ceramics]);
         }
     }
 
-    public function test_each_service_page_leads_to_two_shop_categories(): void
+    public function test_each_service_page_leads_to_its_shop_categories(): void
     {
         $this->get('/odcisk-twojej-rosliny')
             ->assertOk()
-            ->assertSee('href="'.route('shop.category', 'talerze-i-miski').'"', false)
-            ->assertSee('Talerze i miski w sklepie')
-            ->assertSee('Wazony i patery w sklepie');
+            ->assertSee('href="'.route('shop.category', 'talerze').'"', false)
+            ->assertSeeInOrder(['Talerze w sklepie', 'Miski w sklepie', 'Wazony w sklepie', 'Patery w sklepie']);
 
         $this->get('/z-twojej-apaszki')
             ->assertOk()
-            ->assertSee('Jedwab w sklepie')
-            ->assertSee('Kosmetyczki i piórniki w sklepie');
+            ->assertSeeInOrder(['Scrunchie w sklepie', 'Opaski w sklepie', 'Kosmetyczki w sklepie']);
 
         $this->get('/kubek-z-napisem')
             ->assertOk()
-            ->assertSee('Kubki i filiżanki w sklepie')
-            ->assertSee('Talerze i miski w sklepie');
+            ->assertSee('Kubki w sklepie')
+            ->assertSee('Filiżanki w sklepie');
     }
 
     public function test_a_removed_category_drops_out_instead_of_leading_nowhere(): void
     {
-        Category::where('slug', 'wazony-i-patery')->delete();
+        Category::where('slug', 'wazony')->delete();
 
         $this->get('/odcisk-twojej-rosliny')
-            ->assertSee('Talerze i miski w sklepie')
-            ->assertDontSee('Wazony i patery w sklepie');
+            ->assertSee('Talerze w sklepie')
+            ->assertDontSee('Wazony w sklepie');
     }
 
     public function test_a_product_from_a_service_category_leads_to_that_service(): void
@@ -71,7 +73,7 @@ class InternalLinksTest extends TestCase
         $plate = Product::factory()->create([
             'name' => 'Talerz z paprocią',
             'slug' => 'talerz-z-paprocia',
-            'category_id' => Category::where('slug', 'talerze-i-miski')->value('id'),
+            'category_id' => Category::where('slug', 'talerze')->value('id'),
             'is_published' => true,
         ]);
         ProductVariant::factory()->create(['product_id' => $plate->id, 'price_gross' => 14900, 'stock' => 1]);

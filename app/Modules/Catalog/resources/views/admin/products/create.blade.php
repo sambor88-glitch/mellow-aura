@@ -60,7 +60,7 @@
             <select id="{{ $formKey }}-category" name="category_id" @if ($bag->has('category_id')) aria-invalid="true" @endif class="field-control">
                 <option value="">Wybierz rodzaj</option>
                 @foreach ($categories as $category)
-                    <option value="{{ $category->id }}" @selected($mine && (int) old('category_id') === $category->id)>{{ $category->name }}</option>
+                    <option value="{{ $category->id }}" @selected($mine && (int) old('category_id') === $category->id)>{{ $categoryTree->label($category) }}</option>
                 @endforeach
             </select>
             @if ($bag->has('category_id'))

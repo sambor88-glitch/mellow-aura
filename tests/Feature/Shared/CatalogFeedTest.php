@@ -32,7 +32,9 @@ class CatalogFeedTest extends TestCase
     public function test_every_size_on_the_shelf_goes_to_meta_and_pinterest_with_the_fields_both_require(): void
     {
         $this->deliveryOptions();
-        $vases = Category::factory()->create(['name' => 'Wazony i patery', 'group' => CategoryGroup::Ceramics]);
+        // The whole branch of the main shelf (MA-351).
+        $clay = Category::factory()->create(['name' => 'Glina', 'slug' => 'glina', 'group' => CategoryGroup::Ceramics]);
+        $vases = Category::factory()->create(['name' => 'Wazony', 'slug' => 'wazony', 'parent_id' => $clay->id, 'group' => CategoryGroup::Ceramics]);
         $vase = $this->product(['slug' => 'wazony', 'name' => 'Wazony', 'category_id' => $vases->id, 'description' => "Wazon <b>lepiony</b>\n\nz ręki.", 'google_category' => GoogleCategory::Vases]);
         $low = ProductVariant::factory()->create(['product_id' => $vase->id, 'label' => 'Niski 16 cm', 'price_gross' => 23900, 'compare_at_price' => 27900, 'stock' => 3]);
         $mid = ProductVariant::factory()->create(['product_id' => $vase->id, 'label' => 'Średni 20 cm', 'price_gross' => 32000, 'stock' => 1]);
@@ -64,7 +66,7 @@ class CatalogFeedTest extends TestCase
         $this->assertSame('MellowAura', (string) $first->brand);
         $this->assertSame('new', (string) $first->condition);
         $this->assertSame('602', (string) $first->google_product_category);
-        $this->assertSame('Ceramika > Wazony i patery', (string) $first->product_type);
+        $this->assertSame('Glina > Wazony', (string) $first->product_type);
         // Both sizes are one product with options.
         $this->assertSame('p'.$vase->id, (string) $first->item_group_id);
         $this->assertSame('p'.$vase->id, (string) $items['v'.$mid->id]->item_group_id);

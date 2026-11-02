@@ -18,12 +18,19 @@ class CatalogSeeder extends Seeder
     {
         $data = json_decode(file_get_contents(__DIR__.'/catalog.json'), true, flags: JSON_THROW_ON_ERROR);
 
-        $categories = collect($data['categories'])->mapWithKeys(fn (array $category) => [
-            $category['slug'] => Category::firstOrCreate(['slug' => $category['slug']], collect($category)->except('en')->all()),
-        ]);
+        // Parents come before their children in the file; a child takes the group from the top of its branch (MA-351).
+        $categories = collect();
 
-        // The English names; a category without them (vouchers for workshops) stays Polish-only.
         foreach ($data['categories'] as $category) {
+            $parent = isset($category['parent']) ? $categories[$category['parent']] : null;
+
+            $categories[$category['slug']] = Category::firstOrCreate(['slug' => $category['slug']], [
+                ...collect($category)->except(['en', 'parent'])->all(),
+                'parent_id' => $parent?->id,
+                'group' => $parent?->group ?? $category['group'],
+            ]);
+
+            // The English names; a category without them (vouchers for workshops) stays Polish-only.
             if (isset($category['en'])) {
                 $categories[$category['slug']]->translations()->firstOrCreate(['locale' => 'en'], $category['en']);
             }
@@ -31,9 +38,14 @@ class CatalogSeeder extends Seeder
 
         foreach ($data['products'] as $row) {
             $product = Product::firstOrCreate(['slug' => $row['slug']], [
-                ...collect($row)->except(['category', 'variants', 'images', 'en'])->all(),
+                ...collect($row)->except(['category', 'also_in', 'variants', 'images', 'en'])->all(),
                 'category_id' => $categories[$row['category']]->id,
             ]);
+
+            // The other shelves only for a new product: one Kasia already arranged stays as she left it.
+            if ($product->wasRecentlyCreated && isset($row['also_in'])) {
+                $product->alsoInCategories()->syncWithoutDetaching($categories->only($row['also_in'])->pluck('id')->all());
+            }
 
             // The English text of a product that is also sold on /en/.
             if (isset($row['en'])) {
