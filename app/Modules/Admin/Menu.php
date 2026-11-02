@@ -126,6 +126,7 @@ class Menu
             ]],
             ['label' => 'Ustawienia', 'sections' => [
                 ['label' => 'Ustawienia', 'route' => 'admin.settings.edit', 'active' => ['admin.settings.*'], 'description' => 'E-mail, próg darmowej wysyłki i kod Paczkomatu.'],
+                ['label' => 'Powiadomienia', 'route' => 'admin.push.index', 'active' => ['admin.push.*'], 'description' => 'Telefon dzwoni, gdy przyjdzie opłacone zamówienie, zapis na warsztat albo pomysł na zamówienie indywidualne.'],
                 ['label' => 'Konta', 'route' => 'admin.accounts.index', 'active' => ['admin.accounts.*'], 'description' => 'Kto ma dostęp do panelu: Ty i osoba, która pomaga przy zamówieniach.'],
                 ['label' => 'Niewysłane maile', 'route' => 'admin.failed-mails.index', 'active' => ['admin.failed-mails.*'], 'description' => 'Maile ze sklepu, które nie wyszły mimo kilku prób. Wyślesz je jeszcze raz jednym kliknięciem.',
                     'count' => fn () => app(FailedMails::class)->all()->count(),

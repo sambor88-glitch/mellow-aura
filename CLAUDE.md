@@ -36,7 +36,8 @@ priorytetów i nie skracaj zakresu pod konkretną datę. Daty w starszych dokume
 ## Stos
 
 Laravel 13 + Blade, Alpine.js, GSAP z ScrollTrigger, Lenis, three.js (tylko kubek 3D), `@google/model-viewer` (tylko „Zobacz u siebie”, AR — MA-310) i SortableJS (tylko przeciąganie kolejności produktów w panelu — MA-307) przez npm, MySQL, własny panel na Blade (nie Filament), paczki Spatie: medialibrary,
-sitemap, schema-org. Serwer na Forge, przed nim Cloudflare. PHP 8.4 lokalnie i na serwerze.
+sitemap, schema-org. Powiadomienia push panelu (MA-345) bez paczki — szyfrowanie i VAPID na OpenSSL w `Admin\Support\Push\WebPush`,
+bo `minishlink/web-push` wymaga Guzzle 7, a Laravel 13 ma Guzzle 8. Serwer na Forge, przed nim Cloudflare. PHP 8.4 lokalnie i na serwerze.
 Bez Next.js, Astro i WooCommerce — uzasadnienie w planie, punkt 3.
 
 Płatności tylko przez Przelewy24 (BLIK, karta, szybki przelew) plus przelew tradycyjny. **Bez Stripe** — decyzja Macieja.
@@ -322,4 +323,15 @@ npm install && npm run dev        # Vite na Macu, nie w kontenerze
   Bez webhooka ShipX — jego wywołania nie mają podpisu, a odpytywanie wystarcza.
   Wymaga harmonogramu na Forge: serwer → Scheduler, `php artisan schedule:run` co minutę jako `forge`
   (alert „Harmonogram nie działa” mówi, gdy go brakuje). Bez kluczy ShipX komenda nic nie robi.
+- Powiadomienia push w aplikacji panelu (MA-345, moduł `Admin`): klucze VAPID w `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`
+  i `VAPID_SUBJECT`. Parę robi raz `php artisan admin:vapid-keys` (jako `forge`) i wypisuje ją tylko w terminalu —
+  wpisz ją w Forge → Environment, potem Deploy i **restart workera w Processes**. Nowa para wyłącza powiadomienia
+  na wszystkich telefonach. Bez kluczy nic nie idzie, a ekran „Powiadomienia” mówi, że czekają na serwer.
+  Każde konto włącza je na swoim telefonie (Ustawienia → Powiadomienia); pomoc dostaje tylko zamówienia
+  (`PanelAccess`). Moduł wysyła przez `Admin\Support\Push\PanelPush::notify(new PanelNotice(...))` — job z kolejki,
+  urządzenie z odpowiedzią 404/410 znika, inne błędy mają dwie powtórki. Treść widać na zablokowanym ekranie,
+  więc bez imienia, maila i adresu: numer, kwota, dzień warsztatu, rodzaj pomysłu. Dziś dzwonią: opłacone zamówienie
+  (`Checkout`), zapis na warsztat (`Workshops`, zamiast „Nowe zamówienie”) i nowy pomysł (`CustomOrders\Actions\SendBrief`).
+  Na iPhonie tylko z panelu dodanego do ekranu początkowego (iOS 16.4+). Worker (`admin::app.worker`) pokazuje
+  powiadomienie i otwiera tylko adresy `/panel` — nadal niczego z panelu nie trzyma w pamięci.
 - Tokenów, haseł i kluczy nie wklejamy do czatu, Jiry ani repozytorium. Na zrzutach ekranu zamazujemy.

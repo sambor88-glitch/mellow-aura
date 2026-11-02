@@ -2,6 +2,8 @@
 
 namespace App\Modules\CustomOrders\Actions;
 
+use App\Modules\Admin\Support\Push\PanelNotice;
+use App\Modules\Admin\Support\Push\PanelPush;
 use App\Modules\CustomOrders\Enums\BriefKind;
 use App\Modules\CustomOrders\Enums\CustomOrderStatus;
 use App\Modules\CustomOrders\Mail\BriefConfirmed;
@@ -19,13 +21,14 @@ use Throwable;
 /**
  * Saves an idea from the custom order form with its photos, then mails Kasia and the customer.
  * The idea is saved first: a mail that can't be queued is reported, and the idea still waits for Kasia.
+ * Her phone rings too, when the panel's notifications are on (MA-345).
  */
 class SendBrief
 {
     /** Enough to see a glaze or a pattern; a whole set of six still fits in one mail to Kasia. */
     private const LONGEST_SIDE = 2400;
 
-    public function __construct(private Settings $settings) {}
+    public function __construct(private Settings $settings, private PanelPush $push) {}
 
     /**
      * @param  array{name: string, email: string, phone?: ?string, quantity?: ?string, needed_by?: ?string, budget?: ?string, description: string}  $brief
@@ -70,6 +73,15 @@ class SendBrief
         } catch (Throwable $exception) {
             report($exception);
         }
+
+        // Kasia's phone rings with the kind of idea only, never the customer's name (MA-345).
+        rescue(fn () => $this->push->notify(new PanelNotice(
+            title: 'Nowy pomysł na zamówienie indywidualne',
+            body: $kind->label().' — czeka na wycenę.',
+            url: route('admin.custom-orders.index').'#pomysl-'.$request->id,
+            route: 'admin.custom-orders.index',
+            tag: 'custom-order-'.$request->id,
+        )));
 
         return $request;
     }
